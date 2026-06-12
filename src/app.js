@@ -10,6 +10,9 @@ const state = {
   questionTracked: false,
   completedRunes: new Set(),
   svenPosition: { ...level.player.startPosition },
+  svenMood: "idle",
+  svenFacing: "right",
+  justCompletedRuneId: null,
   totalQuestions: level.runes.reduce((sum, rune) => sum + rune.questions.length, 0),
   answered: 0,
   firstTryCorrect: 0,
@@ -51,6 +54,43 @@ function updateTableProgress(question, result) {
   if (result === "mistake") stats.mistakes += 1;
   if (result === "firstTryCorrect") stats.firstTryCorrect += 1;
   saveStoredTableProgress(progress);
+}
+
+function setSvenPosition(nextPosition) {
+  const currentX = state.svenPosition.x;
+  state.svenFacing = nextPosition.x < currentX ? "left" : "right";
+  state.svenPosition = { ...nextPosition };
+}
+
+function getLearningHint(question) {
+  const { a, b } = question;
+  const low = Math.min(a, b);
+  const high = Math.max(a, b);
+
+  if (a === 9 || b === 9) {
+    const other = a === 9 ? b : a;
+    return `Bijna. 9 x ${other} is 10 x ${other} min ${other}.`;
+  }
+
+  if (a === 8 || b === 8) {
+    const other = a === 8 ? b : a;
+    return `Bijna. 8 x ${other}: denk aan 4 x ${other}, en dan dubbel.`;
+  }
+
+  if (low === 2) {
+    return `Bijna. ${a} x ${b} is hetzelfde als ${b} x ${a}.`;
+  }
+
+  if (b === 5 || a === 5) {
+    const other = b === 5 ? a : b;
+    return `Bijna. Tel met sprongen van 5, ${other} keer.`;
+  }
+
+  if (a > b) {
+    return `Bijna. ${a} groepjes van ${b}. Tel steeds ${b} erbij.`;
+  }
+
+  return `Bijna. ${b} groepjes van ${a} mag ook. Dat is dezelfde som.`;
 }
 
 function runeById(id) {
@@ -113,15 +153,23 @@ function startRune(id) {
   const rune = runeById(id);
   state.screen = "approach";
   state.activeRuneId = id;
-  state.svenPosition = { ...rune.approachPosition };
+  state.svenMood = "walking";
+  state.justCompletedRuneId = null;
+  setSvenPosition(rune.approachPosition);
   state.message = `${level.spiritLines.approaching} ${rune.name} wordt wakker.`;
   state.feedback = "";
   render();
 
   window.setTimeout(() => {
     if (state.screen !== "approach" || state.activeRuneId !== id) return;
-    openRuneChallenge(id);
-  }, 720);
+    state.svenMood = "arrived";
+    render();
+
+    window.setTimeout(() => {
+      if (state.screen !== "approach" || state.activeRuneId !== id) return;
+      openRuneChallenge(id);
+    }, 260);
+  }, 820);
 }
 
 function openRuneChallenge(id) {
@@ -131,6 +179,7 @@ function openRuneChallenge(id) {
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
+  state.svenMood = "idle";
   state.message = rune.intro;
   state.feedback = rune.intro;
   render();
@@ -145,7 +194,8 @@ function answerQuestion(choice) {
   if (choice !== correct) {
     updateTableProgress(question, "mistake");
     state.selectedWrong = true;
-    state.feedback = `Bijna. ${question.a} groepjes van ${question.b}. Tel steeds ${question.b} erbij.`;
+    state.svenMood = "thinking";
+    state.feedback = getLearningHint(question);
     render();
     return;
   }
@@ -158,6 +208,7 @@ function answerQuestion(choice) {
   }
 
   state.answered += 1;
+  state.svenMood = "celebrating";
   state.feedback = `Ja! ${question.a} x ${question.b} = ${correct}.`;
   state.screen = "correct";
   render();
@@ -170,6 +221,7 @@ function nextQuestion() {
     state.questionIndex += 1;
     state.selectedWrong = false;
     state.questionTracked = false;
+    state.svenMood = "idle";
     state.feedback = "De rune wil nog een som.";
     state.screen = "challenge";
     render();
@@ -177,10 +229,12 @@ function nextQuestion() {
   }
 
   state.completedRunes.add(rune.id);
+  state.justCompletedRuneId = rune.id;
   state.activeRuneId = null;
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
+  state.svenMood = "celebrating";
   state.feedback = "";
 
   if (state.completedRunes.size === level.runes.length) {
@@ -208,6 +262,9 @@ function restart() {
   state.selectedWrong = false;
   state.questionTracked = false;
   state.completedRunes = new Set();
+  state.justCompletedRuneId = null;
+  state.svenMood = "idle";
+  state.svenFacing = "right";
   state.svenPosition = { ...level.player.startPosition };
   state.answered = 0;
   state.firstTryCorrect = 0;
@@ -244,6 +301,11 @@ function renderStatus() {
 function renderScene() {
   const gateOpen = state.screen === "gate" || state.screen === "reward";
   const isApproaching = state.screen === "approach";
+  const svenClasses = [
+    "svenInWorld",
+    `sven-${state.svenMood}`,
+    `sven-facing-${state.svenFacing}`
+  ].join(" ");
   return `
     <main class="gameShell">
       ${renderStatus()}
@@ -256,9 +318,10 @@ function renderScene() {
         ${level.runes
           .map((rune) => {
             const done = state.completedRunes.has(rune.id);
+            const justCompleted = state.justCompletedRuneId === rune.id;
             return `
               <button
-                class="runeHotspot ${done ? "runeDone" : ""}"
+                class="runeHotspot ${done ? "runeDone" : ""} ${justCompleted ? "runeJustCompleted" : ""}"
                 style="left:${rune.position.x}%; top:${rune.position.y}%"
                 type="button"
                 data-rune="${rune.id}"
@@ -271,7 +334,7 @@ function renderScene() {
           })
           .join("")}
         <img
-          class="svenInWorld ${isApproaching ? "svenMoving" : ""}"
+          class="${svenClasses}"
           src="assets/sven.png"
           alt="Sven"
           style="left:${state.svenPosition.x}%; bottom:${state.svenPosition.bottom}%"

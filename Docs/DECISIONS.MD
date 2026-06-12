@@ -366,3 +366,19 @@ Each adventure should have:
 * its own assets
 * its own QA validation
 * its own publication status
+
+## D032
+
+Math feedback should use multiple learning strategies.
+
+Reason:
+
+Different multiplication facts are easier to understand through different explanation strategies such as:
+
+repeated addition
+doubling
+near-ten reasoning
+factor swapping
+skip counting
+
+The game should gradually choose the most appropriate explanation for each multiplication fact.

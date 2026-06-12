@@ -45,7 +45,7 @@ async function answerQuestion(page, a, b, options = {}) {
     }, correct);
 
     await tap(page.locator(`button[data-choice="${wrongChoice}"]`));
-    await expect(page.getByText(`Bijna. ${a} groepjes van ${b}. Tel steeds ${b} erbij.`)).toBeVisible();
+    await expect(page.getByText("Bijna. 4 groepjes van 3 mag ook. Dat is dezelfde som.")).toBeVisible();
   }
 
   await tap(page.locator(`button[data-choice="${correct}"]`));

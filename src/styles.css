@@ -277,11 +277,16 @@ button {
     0 0 42px rgba(255, 228, 140, 0.75);
 }
 
+.runeJustCompleted {
+  animation: runeComplete 780ms ease-out both;
+}
+
 .svenInWorld {
   position: absolute;
   z-index: 2;
+  --sven-direction: 1;
   width: clamp(74px, 8.5vw, 118px);
-  transform: translateX(-50%);
+  transform: translateX(-50%) scaleX(var(--sven-direction));
   transition:
     left 700ms cubic-bezier(0.22, 0.9, 0.28, 1),
     bottom 700ms cubic-bezier(0.22, 0.9, 0.28, 1);
@@ -291,8 +296,34 @@ button {
   pointer-events: none;
 }
 
-.svenMoving {
-  animation: svenStep 360ms ease-in-out infinite alternate;
+.sven-facing-left {
+  --sven-direction: -1;
+}
+
+.sven-idle {
+  animation: svenIdle 2.4s ease-in-out infinite;
+}
+
+.sven-walking {
+  animation: svenStep 320ms ease-in-out infinite alternate;
+}
+
+.sven-thinking {
+  animation: svenThink 900ms ease-in-out infinite;
+  filter:
+    drop-shadow(0 16px 20px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 12px rgba(255, 228, 140, 0.42));
+}
+
+.sven-celebrating {
+  animation: svenCelebrate 760ms ease-out both;
+  filter:
+    drop-shadow(0 16px 20px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 18px rgba(255, 228, 140, 0.75));
+}
+
+.sven-arrived {
+  animation: svenArrive 520ms ease-out both;
 }
 
 .dialogue {
@@ -494,12 +525,71 @@ button {
   }
 }
 
+@keyframes svenIdle {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) scaleX(var(--sven-direction));
+  }
+  50% {
+    transform: translateX(-50%) translateY(-2px) scaleX(var(--sven-direction));
+  }
+}
+
 @keyframes svenStep {
   0% {
-    transform: translateX(-50%) translateY(0) rotate(-1deg);
+    transform: translateX(-50%) translateY(0) rotate(-2deg) scaleX(var(--sven-direction));
   }
   100% {
-    transform: translateX(-50%) translateY(-3px) rotate(1deg);
+    transform: translateX(-50%) translateY(-5px) rotate(2deg) scaleX(var(--sven-direction));
+  }
+}
+
+@keyframes svenThink {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg) scaleX(var(--sven-direction));
+  }
+  35% {
+    transform: translateX(-52%) translateY(-1px) rotate(-2deg) scaleX(var(--sven-direction));
+  }
+  70% {
+    transform: translateX(-48%) translateY(0) rotate(2deg) scaleX(var(--sven-direction));
+  }
+}
+
+@keyframes svenCelebrate {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1) scaleX(var(--sven-direction));
+  }
+  42% {
+    transform: translateX(-50%) translateY(-18px) scale(1.07) scaleX(var(--sven-direction));
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scale(1) scaleX(var(--sven-direction));
+  }
+}
+
+@keyframes svenArrive {
+  0% {
+    transform: translateX(-50%) translateY(-4px) scaleX(var(--sven-direction));
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) scaleX(var(--sven-direction));
+  }
+}
+
+@keyframes runeComplete {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1);
+  }
+  45% {
+    transform: translate(-50%, -50%) scale(1.2);
+    filter: brightness(1.45);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1.1);
   }
 }
 
