@@ -382,3 +382,57 @@ factor swapping
 skip counting
 
 The game should gradually choose the most appropriate explanation for each multiplication fact.
+
+## D033
+
+Sven should behave as an actor, not as a visual marker.
+
+Reason:
+
+The player should experience Sven as a character who moves, looks, talks, uses objects and reacts to the world.
+
+---
+
+## D034
+
+World interaction should follow a MoveTo → Action pattern.
+
+Reason:
+
+Clicking or tapping a world object should first move Sven toward the object and then perform the intended interaction.
+
+This creates a stronger sense of agency and presence.
+
+---
+
+## D035
+
+The game should support multiple connected scenes.
+
+Reason:
+
+Adventure feeling increases when Sven travels through locations rather than solving everything on one static screen.
+
+---
+
+## D036
+
+Adjacent scene transitions should prefer spatial movement over generic fades.
+
+Reason:
+
+When locations are physically connected, the transition should feel like movement through a world.
+
+Fades are acceptable for large location changes or interior/exterior transitions.
+
+---
+
+## D037
+
+Puzzles may use different presentation modes.
+
+Reason:
+
+Some puzzles should happen directly in the world, while others may need close-up or full-screen views.
+
+The runtime should eventually support both.

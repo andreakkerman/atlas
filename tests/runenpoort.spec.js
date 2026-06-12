@@ -30,8 +30,24 @@ async function startAdventure(page) {
   await expect(page.getByRole("heading", { name: "Sven en de Runenpoort" })).toBeVisible();
   await tap(page.getByRole("button", { name: "Start avontuur" }));
   await tap(page.getByRole("button", { name: "Verder" }));
-  await tap(page.getByRole("button", { name: "Naar de tempel" }));
+  await tap(page.getByRole("button", { name: "Het bos in" }));
   await waitForImages(page);
+  await expect(page.getByRole("button", { name: "Bosrune" })).toBeVisible();
+}
+
+async function travelToTemple(page) {
+  await tap(page.getByRole("button", { name: "Kijk" }));
+  await tap(page.getByRole("button", { name: "Bosrune" }));
+  await expect(page.getByText("Een oude steen. Hij wijst naar de tempel.")).toBeVisible();
+
+  await tap(page.getByRole("button", { name: "Praat" }));
+  await tap(page.getByRole("button", { name: "Runewachter" }));
+  await expect(page.getByText("De poort opent alleen voor slimme runen. Ga naar de tempel, Sven.")).toBeVisible();
+
+  await tap(page.getByRole("button", { name: "Activeer" }));
+  await tap(page.getByRole("button", { name: "Pad naar de tempel" }));
+  await expect(page.getByText("Sven volgt het pad naar de tempel.")).toBeVisible();
+  await expect(page.getByText("Daar is de tempel. Activeer de drie runen.")).toBeVisible();
   await expect(page.getByRole("button", { name: "Zonrune" })).toBeVisible();
 }
 
@@ -54,10 +70,11 @@ async function answerQuestion(page, a, b, options = {}) {
 
 async function playFullAdventure(page) {
   await startAdventure(page);
+  await travelToTemple(page);
 
   for (const [runeIndex, rune] of runes.entries()) {
     await tap(page.getByRole("button", { name: rune.name }));
-    await expect(page.getByText(`Sven loopt naar de rune... ${rune.name} wordt wakker.`)).toBeVisible();
+    await expect(page.getByText(`Sven loopt erheen... ${rune.name}.`)).toBeVisible();
     await expect(page.getByRole("heading", { name: rune.name })).toBeVisible();
 
     for (const [questionIndex, [a, b]] of rune.questions.entries()) {
