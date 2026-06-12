@@ -7,7 +7,9 @@ const state = {
   activeRuneId: null,
   questionIndex: 0,
   selectedWrong: false,
+  questionTracked: false,
   completedRunes: new Set(),
+  svenPosition: { ...level.player.startPosition },
   totalQuestions: level.runes.reduce((sum, rune) => sum + rune.questions.length, 0),
   answered: 0,
   firstTryCorrect: 0,
@@ -15,6 +17,41 @@ const state = {
   message: level.spiritLines.welcome,
   feedback: ""
 };
+
+function getStoredTableProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(level.progressKey)) || { version: 1, tables: {} };
+  } catch {
+    return { version: 1, tables: {} };
+  }
+}
+
+function saveStoredTableProgress(progress) {
+  progress.updatedAt = new Date().toISOString();
+  localStorage.setItem(level.progressKey, JSON.stringify(progress));
+}
+
+function updateTableProgress(question, result) {
+  const table = String(question.a);
+  const progress = getStoredTableProgress();
+  progress.tables[table] ||= {
+    questionsAsked: 0,
+    attempts: 0,
+    mistakes: 0,
+    firstTryCorrect: 0
+  };
+
+  const stats = progress.tables[table];
+  if (!state.questionTracked) {
+    stats.questionsAsked += 1;
+    state.questionTracked = true;
+  }
+
+  stats.attempts += 1;
+  if (result === "mistake") stats.mistakes += 1;
+  if (result === "firstTryCorrect") stats.firstTryCorrect += 1;
+  saveStoredTableProgress(progress);
+}
 
 function runeById(id) {
   return level.runes.find((rune) => rune.id === id);
@@ -72,12 +109,29 @@ function continueIntro() {
 }
 
 function startRune(id) {
-  if (state.completedRunes.has(id)) return;
+  if (state.completedRunes.has(id) || state.screen === "approach") return;
+  const rune = runeById(id);
+  state.screen = "approach";
+  state.activeRuneId = id;
+  state.svenPosition = { ...rune.approachPosition };
+  state.message = `${level.spiritLines.approaching} ${rune.name} wordt wakker.`;
+  state.feedback = "";
+  render();
+
+  window.setTimeout(() => {
+    if (state.screen !== "approach" || state.activeRuneId !== id) return;
+    openRuneChallenge(id);
+  }, 720);
+}
+
+function openRuneChallenge(id) {
   const rune = runeById(id);
   state.screen = "challenge";
   state.activeRuneId = id;
   state.questionIndex = 0;
   state.selectedWrong = false;
+  state.questionTracked = false;
+  state.message = rune.intro;
   state.feedback = rune.intro;
   render();
 }
@@ -89,14 +143,18 @@ function answerQuestion(choice) {
   state.attempts += 1;
 
   if (choice !== correct) {
+    updateTableProgress(question, "mistake");
     state.selectedWrong = true;
-    state.feedback = `Bijna. Denk aan ${question.a} groepjes van ${question.b}.`;
+    state.feedback = `Bijna. ${question.a} groepjes van ${question.b}. Tel steeds ${question.b} erbij.`;
     render();
     return;
   }
 
   if (!state.selectedWrong) {
     state.firstTryCorrect += 1;
+    updateTableProgress(question, "firstTryCorrect");
+  } else {
+    updateTableProgress(question, "correctAfterRetry");
   }
 
   state.answered += 1;
@@ -111,6 +169,7 @@ function nextQuestion() {
   if (state.questionIndex < rune.questions.length - 1) {
     state.questionIndex += 1;
     state.selectedWrong = false;
+    state.questionTracked = false;
     state.feedback = "De rune wil nog een som.";
     state.screen = "challenge";
     render();
@@ -121,6 +180,7 @@ function nextQuestion() {
   state.activeRuneId = null;
   state.questionIndex = 0;
   state.selectedWrong = false;
+  state.questionTracked = false;
   state.feedback = "";
 
   if (state.completedRunes.size === level.runes.length) {
@@ -146,7 +206,9 @@ function restart() {
   state.activeRuneId = null;
   state.questionIndex = 0;
   state.selectedWrong = false;
+  state.questionTracked = false;
   state.completedRunes = new Set();
+  state.svenPosition = { ...level.player.startPosition };
   state.answered = 0;
   state.firstTryCorrect = 0;
   state.attempts = 0;
@@ -181,11 +243,12 @@ function renderStatus() {
 
 function renderScene() {
   const gateOpen = state.screen === "gate" || state.screen === "reward";
+  const isApproaching = state.screen === "approach";
   return `
     <main class="gameShell">
       ${renderStatus()}
-      <section class="stage ${gateOpen ? "stageOpen" : ""}" aria-label="Vikingtempel">
-        <img class="stageArt" src="assets/viking-temple.png" alt="Een oude Vikingtempel met een gesloten poort" />
+      <section class="stage ${gateOpen ? "stageOpen" : ""} ${isApproaching ? "stageApproach" : ""}" aria-label="Vikingtempel">
+        <img class="stageArt" src="assets/viking-temple.png" alt="Een oude Vikingtempel met een gesloten poort" fetchpriority="high" />
         <div class="sunGlow"></div>
         <button class="gate ${gateOpen ? "gateIsOpen" : ""}" type="button" aria-label="Runenpoort">
           <span>${gateOpen ? "open" : "dicht"}</span>
@@ -200,14 +263,19 @@ function renderScene() {
                 type="button"
                 data-rune="${rune.id}"
                 aria-label="${rune.name}"
-                ${done || state.screen === "gate" ? "disabled" : ""}
+                ${done || state.screen === "gate" || isApproaching ? "disabled" : ""}
               >
                 <span>${rune.symbol}</span>
               </button>
             `;
           })
           .join("")}
-        <img class="svenToken" src="assets/sven.png" alt="Sven" />
+        <img
+          class="svenInWorld ${isApproaching ? "svenMoving" : ""}"
+          src="assets/sven.png"
+          alt="Sven"
+          style="left:${state.svenPosition.x}%; bottom:${state.svenPosition.bottom}%"
+        />
       </section>
       ${renderDialogue()}
     </main>
@@ -257,8 +325,8 @@ function renderChallenge() {
 
   return `
     ${renderScene()}
-    <section class="modalLayer" role="dialog" aria-modal="true" aria-labelledby="challenge-title">
-      <div class="challengeBox">
+    <section class="modalLayer runeLayer" role="dialog" aria-modal="true" aria-labelledby="challenge-title">
+      <div class="challengeBox runeChallengeBox">
         <div class="challengeHeader">
           <img src="assets/rune-stones.png" alt="" />
           <div>
@@ -268,8 +336,9 @@ function renderChallenge() {
         </div>
         <p class="feedback">${state.feedback}</p>
         <p class="sum">Hoeveel is ${question.a} x ${question.b}?</p>
+        <p class="runeWhisper">Raak de juiste steen aan.</p>
         <div class="choices">
-          ${choices.map((choice) => `<button type="button" data-choice="${choice}">${choice}</button>`).join("")}
+          ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
         </div>
       </div>
     </section>
@@ -282,8 +351,8 @@ function renderCorrect() {
 
   return `
     ${renderScene()}
-    <section class="modalLayer" role="dialog" aria-modal="true" aria-labelledby="correct-title">
-      <div class="challengeBox successBox">
+    <section class="modalLayer runeLayer" role="dialog" aria-modal="true" aria-labelledby="correct-title">
+      <div class="challengeBox runeChallengeBox successBox">
         <div class="runeBurst">${rune.symbol}</div>
         <h2 id="correct-title">Goed zo!</h2>
         <p class="feedback">${state.feedback}</p>

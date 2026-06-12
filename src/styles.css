@@ -133,6 +133,7 @@ button {
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
+  align-content: start;
   gap: 10px;
   padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
     max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
@@ -276,14 +277,22 @@ button {
     0 0 42px rgba(255, 228, 140, 0.75);
 }
 
-.svenToken {
+.svenInWorld {
   position: absolute;
-  left: 12%;
-  bottom: 2%;
-  width: clamp(86px, 12vw, 150px);
-  border-radius: 8px;
-  border: 2px solid rgba(255, 231, 166, 0.56);
-  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.32);
+  z-index: 2;
+  width: clamp(74px, 8.5vw, 118px);
+  transform: translateX(-50%);
+  transition:
+    left 700ms cubic-bezier(0.22, 0.9, 0.28, 1),
+    bottom 700ms cubic-bezier(0.22, 0.9, 0.28, 1);
+  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.42));
+  -webkit-mask-image: radial-gradient(ellipse at 50% 52%, #000 48%, transparent 73%);
+  mask-image: radial-gradient(ellipse at 50% 52%, #000 48%, transparent 73%);
+  pointer-events: none;
+}
+
+.svenMoving {
+  animation: svenStep 360ms ease-in-out infinite alternate;
 }
 
 .dialogue {
@@ -330,6 +339,14 @@ button {
   background: rgba(8, 15, 14, 0.62);
 }
 
+.runeLayer {
+  place-items: end center;
+  padding-bottom: clamp(18px, 7vh, 70px);
+  background:
+    radial-gradient(circle at 50% 46%, rgba(46, 230, 220, 0.2), transparent 36%),
+    rgba(8, 15, 14, 0.44);
+}
+
 .challengeBox {
   width: min(560px, 100%);
   max-height: min(720px, calc(100vh - 32px));
@@ -341,6 +358,15 @@ button {
     linear-gradient(180deg, rgba(255, 242, 202, 0.98), rgba(244, 221, 166, 0.98));
   color: var(--paper-ink);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+}
+
+.runeChallengeBox {
+  width: min(620px, calc(100% - 24px));
+  border-color: rgba(103, 255, 241, 0.72);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(46, 230, 220, 0.24), transparent 34%),
+    linear-gradient(180deg, rgba(25, 45, 40, 0.98), rgba(14, 26, 24, 0.98));
+  color: #fff7de;
 }
 
 .challengeHeader {
@@ -375,11 +401,22 @@ button {
   line-height: 1.3;
 }
 
+.runeChallengeBox .feedback {
+  color: #fff0bc;
+}
+
 .sum {
   margin: 8px 0 18px;
   font-size: clamp(1.55rem, 7vw, 3rem);
   font-weight: 1000;
   line-height: 1.05;
+}
+
+.runeWhisper {
+  margin: -8px 0 14px;
+  color: #9cf2e9;
+  font-size: 0.95rem;
+  font-weight: 900;
 }
 
 .choices {
@@ -391,6 +428,16 @@ button {
 .choices button {
   min-height: 74px;
   font-size: clamp(1.45rem, 6vw, 2.5rem);
+}
+
+.runeChallengeBox .answerStone {
+  color: #eafffb;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(46, 230, 220, 0.34), transparent 50%),
+    linear-gradient(180deg, #24423e, #142b29);
+  border: 2px solid rgba(156, 242, 233, 0.72);
+  box-shadow: 0 7px 0 #061a18, 0 14px 28px rgba(0, 0, 0, 0.32);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
 }
 
 .successBox {
@@ -447,6 +494,38 @@ button {
   }
 }
 
+@keyframes svenStep {
+  0% {
+    transform: translateX(-50%) translateY(0) rotate(-1deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-3px) rotate(1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (orientation: portrait) {
+  .gameShell {
+    min-height: 100dvh;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+  }
+
+  .stage {
+    max-height: none;
+  }
+}
+
 @media (max-width: 780px) {
   .gameShell {
     grid-template-rows: auto auto auto;
@@ -481,8 +560,8 @@ button {
     height: 56px;
   }
 
-  .svenToken {
-    width: 76px;
+  .svenInWorld {
+    width: 68px;
   }
 
   .runeHotspot {
