@@ -1,6 +1,38 @@
 const app = document.querySelector("#app");
 const { level } = window.SVEN_CONTENT;
 
+const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
+const ACTOR_ANIMATIONS = {
+  idle: {
+    folder: "assets/characters/sven/idle-right",
+    frames: 12,
+    fps: 8,
+    loop: true
+  },
+  walk: {
+    folder: "assets/characters/sven/walk-right",
+    frames: 24,
+    fps: 15,
+    loop: true
+  },
+  interact: {
+    folder: "assets/characters/sven/interact-right",
+    frames: 12,
+    fps: 12,
+    loop: false,
+    transitionTo: "idle"
+  }
+};
+
+const actorPlayback = {
+  requestedState: "idle",
+  visualState: "idle",
+  frameIndex: 0,
+  lastFrameAt: 0,
+  rafId: null,
+  failedSources: new Set()
+};
+
 const state = {
   screen: "intro",
   introIndex: 0,
@@ -22,6 +54,76 @@ const state = {
   message: level.spiritLines.welcome,
   feedback: ""
 };
+
+function frameSrc(animationName, frameIndex) {
+  const animation = ACTOR_ANIMATIONS[animationName] || ACTOR_ANIMATIONS.idle;
+  const number = String(frameIndex + 1).padStart(2, "0");
+  return `${animation.folder}/frame-${number}.png`;
+}
+
+function actorStateForMood() {
+  if (state.svenMood === "walking") return "walk";
+  if (["arrived", "activating", "looking", "talking"].includes(state.svenMood)) return "interact";
+  return "idle";
+}
+
+function preloadActorAnimations() {
+  Object.values(ACTOR_ANIMATIONS).forEach((animation) => {
+    for (let index = 0; index < animation.frames; index += 1) {
+      const image = new Image();
+      image.src = frameSrc(Object.keys(ACTOR_ANIMATIONS).find((key) => ACTOR_ANIMATIONS[key] === animation), index);
+    }
+  });
+}
+
+function requestActorAnimation(animationName) {
+  const next = ACTOR_ANIMATIONS[animationName] ? animationName : "idle";
+  actorPlayback.requestedState = next;
+  if (actorPlayback.visualState !== next) {
+    actorPlayback.visualState = next;
+    actorPlayback.frameIndex = 0;
+    actorPlayback.lastFrameAt = 0;
+  }
+  if (!actorPlayback.rafId) {
+    actorPlayback.rafId = window.requestAnimationFrame(updateActorAnimation);
+  }
+}
+
+function setActorFrame() {
+  const actor = document.querySelector("[data-actor='sven']");
+  if (!actor) return;
+
+  const src = frameSrc(actorPlayback.visualState, actorPlayback.frameIndex);
+  actor.dataset.animation = actorPlayback.visualState;
+  actor.dataset.frame = String(actorPlayback.frameIndex + 1);
+  actor.src = actorPlayback.failedSources.has(src) ? ACTOR_FALLBACK_SRC : src;
+}
+
+function updateActorAnimation(timestamp) {
+  actorPlayback.rafId = null;
+  if (!document.querySelector("[data-actor='sven']")) return;
+
+  const animation = ACTOR_ANIMATIONS[actorPlayback.visualState] || ACTOR_ANIMATIONS.idle;
+  const frameDuration = 1000 / animation.fps;
+
+  if (!actorPlayback.lastFrameAt) {
+    actorPlayback.lastFrameAt = timestamp;
+    setActorFrame();
+  } else if (timestamp - actorPlayback.lastFrameAt >= frameDuration) {
+    actorPlayback.lastFrameAt = timestamp;
+    if (actorPlayback.frameIndex < animation.frames - 1) {
+      actorPlayback.frameIndex += 1;
+    } else if (animation.loop) {
+      actorPlayback.frameIndex = 0;
+    } else {
+      requestActorAnimation(animation.transitionTo || "idle");
+      return;
+    }
+    setActorFrame();
+  }
+
+  actorPlayback.rafId = window.requestAnimationFrame(updateActorAnimation);
+}
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -193,13 +295,21 @@ function beginInteraction(target, kind) {
 
   window.setTimeout(() => {
     if (!state.moving) return;
-    state.svenMood = verb === "look" ? "looking" : verb === "talk" ? "talking" : "arrived";
+    state.svenMood = verb === "look" ? "looking" : verb === "talk" ? "talking" : "activating";
+    if (verb === "activate") {
+      state.message =
+        kind === "rune"
+          ? `Sven raakt ${target.name} aan.`
+          : target.id === "templePath"
+            ? "Sven kijkt waar het pad heen gaat."
+            : `Sven probeert ${target.name}.`;
+    }
     render();
 
     window.setTimeout(() => {
       if (!state.moving) return;
       finishInteraction(target, kind, verb);
-    }, 260);
+    }, verb === "activate" ? 720 : 520);
   }, 760);
 }
 
@@ -415,8 +525,11 @@ function renderWorldStage() {
         ${level.runes.map(renderRuneHotspot).join("")}
         <img
           class="${svenClasses}"
-          src="assets/sven-stage.png"
+          src="${frameSrc(actorStateForMood(), 0)}"
           alt="Sven"
+          data-actor="sven"
+          data-animation="${actorStateForMood()}"
+          data-frame="1"
           style="left:${state.worldX}%; bottom:${level.player.ground}%"
         />
       </div>
@@ -587,6 +700,18 @@ function render() {
   } else {
     app.innerHTML = renderScene();
   }
+
+  const actor = document.querySelector("[data-actor='sven']");
+  if (actor) {
+    actor.addEventListener("error", () => {
+      actorPlayback.failedSources.add(actor.getAttribute("src"));
+      actor.src = ACTOR_FALLBACK_SRC;
+    });
+    requestActorAnimation(actorStateForMood());
+  } else if (actorPlayback.rafId) {
+    window.cancelAnimationFrame(actorPlayback.rafId);
+    actorPlayback.rafId = null;
+  }
 }
 
 app.addEventListener("click", (event) => {
@@ -624,4 +749,5 @@ app.addEventListener("click", (event) => {
   }
 });
 
+preloadActorAnimations();
 render();

@@ -425,12 +425,13 @@ button {
   z-index: 2;
   --sven-direction: 1;
   width: auto;
-  height: clamp(126px, 18vw, 174px);
+  height: clamp(158px, 22vw, 228px);
   transform: translateX(-50%) scaleX(var(--sven-direction));
   transition:
     left 700ms cubic-bezier(0.22, 0.9, 0.28, 1),
     bottom 700ms cubic-bezier(0.22, 0.9, 0.28, 1);
   filter: drop-shadow(0 14px 9px rgba(0, 0, 0, 0.35));
+  will-change: left, bottom, transform;
   pointer-events: none;
 }
 
@@ -439,31 +440,31 @@ button {
 }
 
 .sven-idle {
-  animation: svenIdle 2.4s ease-in-out infinite;
+  animation: none;
 }
 
 .sven-walking {
-  animation: svenStep 320ms ease-in-out infinite alternate;
+  animation: none;
 }
 
 .sven-thinking {
-  animation: svenThink 900ms ease-in-out infinite;
+  animation: none;
   filter: drop-shadow(0 14px 10px rgba(0, 0, 0, 0.38));
 }
 
 .sven-looking,
 .sven-talking,
 .sven-activating {
-  animation: svenAttend 900ms ease-in-out infinite;
+  animation: none;
 }
 
 .sven-celebrating {
-  animation: svenCelebrate 760ms ease-out both;
+  animation: none;
   filter: drop-shadow(0 12px 10px rgba(0, 0, 0, 0.38));
 }
 
 .sven-arrived {
-  animation: svenArrive 520ms ease-out both;
+  animation: none;
 }
 
 .dialogue {
@@ -807,7 +808,7 @@ button {
   }
 
   .svenInWorld {
-    height: 112px;
+    height: 142px;
   }
 
   .runeHotspot {

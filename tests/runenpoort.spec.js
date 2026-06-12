@@ -94,7 +94,21 @@ async function playFullAdventure(page) {
   await expect(page.getByText("Bewaker van de Runenpoort")).toBeVisible();
 }
 
+async function expectActorFrameChanges(page, animationName) {
+  const actor = page.locator("[data-actor='sven']");
+  await expect(actor).toHaveAttribute("data-animation", animationName);
+  const firstFrame = await actor.getAttribute("data-frame");
+
+  await expect
+    .poll(async () => actor.getAttribute("data-frame"), {
+      message: `${animationName} animation should advance frames`
+    })
+    .not.toBe(firstFrame);
+}
+
 test.describe("Sven en de Runenpoort", () => {
+  test.setTimeout(45000);
+
   test("loads the adventure", async ({ page }) => {
     await page.goto(gameUrl);
     await expect(page).toHaveTitle("Sven en de Runenpoort");
@@ -131,5 +145,24 @@ test.describe("Sven en de Runenpoort", () => {
     const progressAfterReload = await page.evaluate(() => localStorage.getItem("svenadventure-table-progress-v1"));
     expect(completionAfterReload).toBeTruthy();
     expect(progressAfterReload).toBeTruthy();
+  });
+
+  test("animates Sven as an actor", async ({ page }) => {
+    await startAdventure(page);
+
+    const actor = page.locator("[data-actor='sven']");
+    await expect(actor).toBeVisible();
+    await expect(actor).toHaveAttribute("src", /assets\/characters\/sven\/idle-right\/frame-\d+\.png/);
+    await expectActorFrameChanges(page, "idle");
+
+    await tap(page.getByRole("button", { name: "Activeer" }));
+    await tap(page.getByRole("button", { name: "Pad naar de tempel" }));
+    await expect(actor).toHaveAttribute("data-animation", "walk");
+    await expectActorFrameChanges(page, "walk");
+
+    await expect(page.getByText("Daar is de tempel. Activeer de drie runen.")).toBeVisible();
+    await tap(page.getByRole("button", { name: "Zonrune" }));
+    await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible();
+    await expect(actor).toHaveAttribute("data-animation", "interact");
   });
 });
