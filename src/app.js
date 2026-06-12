@@ -1,12 +1,15 @@
 const app = document.querySelector("#app");
-const { level } = window.SVEN_CONTENT;
+const levelCatalog = window.SVEN_LEVEL_MANIFEST?.levels || [];
+window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
+let level = null;
+let walkNodesById = new Map();
 
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const ACTOR_ANIMATIONS = {
   idle: {
     folder: "assets/characters/sven/idle-right",
-    frames: 12,
-    fps: 8,
+    frames: 1,
+    fps: 1,
     loop: true
   },
   walk: {
@@ -33,27 +36,36 @@ const actorPlayback = {
   failedSources: new Set()
 };
 
-const state = {
-  screen: "intro",
-  introIndex: 0,
-  currentVerb: "activate",
-  worldX: level.player.startWorldX,
-  svenMood: "idle",
-  svenFacing: "right",
-  moving: false,
-  activeRuneId: null,
-  questionIndex: 0,
-  selectedWrong: false,
-  questionTracked: false,
-  completedRunes: new Set(),
-  justCompletedRuneId: null,
-  totalQuestions: level.runes.reduce((sum, rune) => sum + rune.questions.length, 0),
-  answered: 0,
-  firstTryCorrect: 0,
-  attempts: 0,
-  message: level.spiritLines.welcome,
-  feedback: ""
+let state = {
+  screen: "menu"
 };
+
+function createLevelState(selectedLevel) {
+  return {
+    screen: "intro",
+    introIndex: 0,
+    worldX: selectedLevel.player.start.x,
+    worldY: selectedLevel.player.start.y,
+    viewportWorldWidth: selectedLevel.world.viewportWidth,
+    worldScale: selectedLevel.world.width / selectedLevel.world.viewportWidth,
+    svenMood: "idle",
+    svenFacing: "right",
+    moving: false,
+    movement: null,
+    activeRuneId: null,
+    questionIndex: 0,
+    selectedWrong: false,
+    questionTracked: false,
+    completedRunes: new Set(),
+    justCompletedRuneId: null,
+    totalQuestions: selectedLevel.runes.reduce((sum, rune) => sum + rune.questions.length, 0),
+    answered: 0,
+    firstTryCorrect: 0,
+    attempts: 0,
+    message: selectedLevel.spiritLines.welcome,
+    feedback: ""
+  };
+}
 
 function frameSrc(animationName, frameIndex) {
   const animation = ACTOR_ANIMATIONS[animationName] || ACTOR_ANIMATIONS.idle;
@@ -74,6 +86,86 @@ function preloadActorAnimations() {
       image.src = frameSrc(Object.keys(ACTOR_ANIMATIONS).find((key) => ACTOR_ANIMATIONS[key] === animation), index);
     }
   });
+}
+
+function preloadMenuAssets() {
+  levelCatalog
+    .map((item) => item.menu?.illustration)
+    .filter(Boolean)
+    .forEach((src) => {
+      const image = new Image();
+      image.src = src;
+    });
+}
+
+function preloadLevelAssets(selectedLevel) {
+  [
+    selectedLevel.world.background,
+    selectedLevel.menu?.illustration,
+    selectedLevel.companion?.portrait,
+    selectedLevel.challengeArt,
+    selectedLevel.reward?.art
+  ]
+    .filter(Boolean)
+    .forEach((src) => {
+      const image = new Image();
+      image.src = src;
+    });
+}
+
+function loadLevelDefinition(entry) {
+  if (window.SVEN_LEVEL_DEFINITIONS[entry.id]) {
+    return Promise.resolve(window.SVEN_LEVEL_DEFINITIONS[entry.id]);
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = entry.script;
+    script.onload = () => {
+      const loadedLevel = window.SVEN_LEVEL_DEFINITIONS[entry.id];
+      if (loadedLevel) {
+        resolve(loadedLevel);
+      } else {
+        reject(new Error(`Level ${entry.id} is niet goed geladen.`));
+      }
+    };
+    script.onerror = () => reject(new Error(`Level ${entry.id} kon niet worden geladen.`));
+    document.head.append(script);
+  });
+}
+
+async function selectLevel(id) {
+  const entry = levelCatalog.find((item) => item.id === id) || levelCatalog[0];
+  if (!entry) return;
+
+  state = { screen: "loading", message: "Avontuur laden..." };
+  render();
+
+  let selectedLevel;
+  try {
+    selectedLevel = await loadLevelDefinition(entry);
+  } catch (error) {
+    state = { screen: "menu", error: error.message };
+    render();
+    return;
+  }
+
+  stopMovement();
+  level = selectedLevel;
+  walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
+  state = createLevelState(level);
+  document.title = level.title;
+  preloadLevelAssets(level);
+  render();
+}
+
+function returnToMenu() {
+  stopMovement();
+  level = null;
+  walkNodesById = new Map();
+  state = { screen: "menu" };
+  document.title = "SvenAdventure";
+  render();
 }
 
 function requestActorAnimation(animationName) {
@@ -130,7 +222,20 @@ function clamp(value, min, max) {
 }
 
 function getCameraX() {
-  return clamp(state.worldX - 25, 0, 50);
+  const lead = state.svenFacing === "right" ? 0.38 : 0.62;
+  return clamp(state.worldX - state.viewportWorldWidth * lead, 0, level.world.width - state.viewportWorldWidth);
+}
+
+function getCameraPercent() {
+  return (getCameraX() / level.world.width) * 100;
+}
+
+function worldXPercent(x) {
+  return (x / level.world.width) * 100;
+}
+
+function worldYPercent(y) {
+  return (y / level.world.height) * 100;
 }
 
 function getAreaName() {
@@ -138,9 +243,264 @@ function getAreaName() {
   return area?.name || "Avontuur";
 }
 
-function setSvenWorldX(nextX) {
-  state.svenFacing = nextX < state.worldX ? "left" : "right";
-  state.worldX = nextX;
+function refreshViewportMetrics() {
+  const viewport = document.querySelector(".stageViewport");
+  if (!viewport) return;
+
+  const rect = viewport.getBoundingClientRect();
+  if (!rect.width || !rect.height) return;
+
+  const trackWidth = rect.height * level.world.aspectRatio;
+  state.viewportWorldWidth = clamp(
+    (rect.width / trackWidth) * level.world.width,
+    1,
+    level.world.width
+  );
+  state.worldScale = level.world.width / state.viewportWorldWidth;
+}
+
+function setSvenWorldPosition(point) {
+  if (Math.abs(point.x - state.worldX) > 0.5) {
+    state.svenFacing = point.x < state.worldX ? "left" : "right";
+  }
+  state.worldX = point.x;
+  state.worldY = point.y;
+}
+
+function updateWorldDom() {
+  const track = document.querySelector(".worldTrack");
+  const actor = document.querySelector("[data-actor='sven']");
+  const actorShell = document.querySelector("[data-actor-shell='sven']");
+  const areaName = document.querySelector("[data-area-name]");
+
+  refreshViewportMetrics();
+
+  if (track) {
+    track.style.setProperty("--camera-percent", String(getCameraPercent()));
+    track.style.setProperty("--world-scale", String(state.worldScale));
+  }
+
+  if (actorShell) {
+    actorShell.style.left = `${worldXPercent(state.worldX)}%`;
+    actorShell.style.top = `${worldYPercent(state.worldY)}%`;
+  }
+
+  if (actor) {
+    actor.dataset.worldX = String(Math.round(state.worldX));
+    actor.dataset.worldY = String(Math.round(state.worldY));
+  }
+
+  if (areaName) {
+    areaName.textContent = getAreaName();
+  }
+}
+
+function routeTo(target) {
+  const destination = target.approach || { x: target.x, y: state.worldY };
+  return routeToPoint(destination);
+}
+
+function distanceBetween(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function getWalkSegments() {
+  return level.walkGraph.edges.map(([fromId, toId]) => {
+    const from = walkNodesById.get(fromId);
+    const to = walkNodesById.get(toId);
+    return {
+      fromId,
+      toId,
+      from,
+      to,
+      length: distanceBetween(from, to)
+    };
+  });
+}
+
+function projectPointToSegment(point, segment) {
+  const dx = segment.to.x - segment.from.x;
+  const dy = segment.to.y - segment.from.y;
+  const lengthSquared = dx * dx + dy * dy;
+  const t = lengthSquared === 0 ? 0 : clamp(
+    ((point.x - segment.from.x) * dx + (point.y - segment.from.y) * dy) / lengthSquared,
+    0,
+    1
+  );
+
+  return {
+    x: segment.from.x + dx * t,
+    y: segment.from.y + dy * t,
+    t,
+    segment,
+    distance: distanceBetween(point, {
+      x: segment.from.x + dx * t,
+      y: segment.from.y + dy * t
+    })
+  };
+}
+
+function projectToWalkGraph(point) {
+  return getWalkSegments()
+    .map((segment) => projectPointToSegment(point, segment))
+    .sort((left, right) => left.distance - right.distance)[0];
+}
+
+function addGraphEdge(adjacency, fromId, toId, weight) {
+  adjacency.get(fromId).push({ id: toId, weight });
+  adjacency.get(toId).push({ id: fromId, weight });
+}
+
+function shortestGraphPath(startProjection, targetProjection) {
+  const coordinates = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
+  const adjacency = new Map([...coordinates.keys()].map((id) => [id, []]));
+
+  level.walkGraph.edges.forEach(([fromId, toId]) => {
+    addGraphEdge(adjacency, fromId, toId, distanceBetween(coordinates.get(fromId), coordinates.get(toId)));
+  });
+
+  coordinates.set("__start", startProjection);
+  coordinates.set("__target", targetProjection);
+  adjacency.set("__start", []);
+  adjacency.set("__target", []);
+
+  function connectProjection(id, projection) {
+    const { segment, t } = projection;
+    addGraphEdge(adjacency, id, segment.fromId, segment.length * t);
+    addGraphEdge(adjacency, id, segment.toId, segment.length * (1 - t));
+  }
+
+  connectProjection("__start", startProjection);
+  connectProjection("__target", targetProjection);
+
+  if (startProjection.segment === targetProjection.segment) {
+    addGraphEdge(
+      adjacency,
+      "__start",
+      "__target",
+      startProjection.segment.length * Math.abs(startProjection.t - targetProjection.t)
+    );
+  }
+
+  const distances = new Map([...coordinates.keys()].map((id) => [id, Infinity]));
+  const previous = new Map();
+  const open = new Set(coordinates.keys());
+  distances.set("__start", 0);
+
+  while (open.size) {
+    const current = [...open].sort((left, right) => distances.get(left) - distances.get(right))[0];
+    if (current === "__target") break;
+    open.delete(current);
+
+    adjacency.get(current).forEach((neighbor) => {
+      if (!open.has(neighbor.id)) return;
+      const nextDistance = distances.get(current) + neighbor.weight;
+      if (nextDistance < distances.get(neighbor.id)) {
+        distances.set(neighbor.id, nextDistance);
+        previous.set(neighbor.id, current);
+      }
+    });
+  }
+
+  const ids = [];
+  for (let id = "__target"; id; id = previous.get(id)) {
+    ids.unshift(id);
+    if (id === "__start") break;
+  }
+
+  return ids.slice(1).map((id) => coordinates.get(id));
+}
+
+function routeToPoint(point) {
+  const start = projectToWalkGraph({ x: state.worldX, y: state.worldY });
+  const target = projectToWalkGraph(point);
+
+  return shortestGraphPath(start, target).filter((routePoint, index, points) => {
+    const previous = index === 0 ? { x: state.worldX, y: state.worldY } : points[index - 1];
+    return distanceBetween(routePoint, previous) > 4;
+  });
+}
+
+function pointFromViewportEvent(event, viewportElement) {
+  const viewport = viewportElement.getBoundingClientRect();
+  const cameraX = getCameraX();
+  return {
+    x: clamp(cameraX + ((event.clientX - viewport.left) / viewport.width) * state.viewportWorldWidth, 0, level.world.width),
+    y: clamp(((event.clientY - viewport.top) / viewport.height) * level.world.height, 0, level.world.height)
+  };
+}
+
+function stopMovement() {
+  if (state.movement?.rafId) {
+    window.cancelAnimationFrame(state.movement.rafId);
+  }
+  state.movement = null;
+}
+
+function walkRoute(points, onArrive) {
+  stopMovement();
+  state.moving = true;
+
+  if (!points.length) {
+    state.svenMood = "arrived";
+    render();
+    onArrive();
+    return;
+  }
+
+  state.svenMood = "walking";
+  state.movement = {
+    points,
+    index: 0,
+    lastTime: 0,
+    speed: 340,
+    onArrive,
+    rafId: null
+  };
+
+  render();
+  state.movement.rafId = window.requestAnimationFrame(stepMovement);
+}
+
+function stepMovement(timestamp) {
+  const movement = state.movement;
+  if (!movement) return;
+
+  if (!movement.lastTime) movement.lastTime = timestamp;
+  let remaining = ((timestamp - movement.lastTime) / 1000) * movement.speed;
+  movement.lastTime = timestamp;
+
+  while (remaining > 0 && state.movement) {
+    const target = movement.points[movement.index];
+    const dx = target.x - state.worldX;
+    const dy = target.y - state.worldY;
+    const distance = Math.hypot(dx, dy);
+
+    if (distance <= remaining || distance < 0.5) {
+      setSvenWorldPosition(target);
+      movement.index += 1;
+      remaining -= distance;
+
+      if (movement.index >= movement.points.length) {
+        const onArrive = movement.onArrive;
+        state.movement = null;
+        updateWorldDom();
+        onArrive();
+        return;
+      }
+    } else {
+      setSvenWorldPosition({
+        x: state.worldX + (dx / distance) * remaining,
+        y: state.worldY + (dy / distance) * remaining
+      });
+      remaining = 0;
+    }
+  }
+
+  updateWorldDom();
+  if (state.movement) {
+    state.movement.rafId = window.requestAnimationFrame(stepMovement);
+  }
 }
 
 function runeById(id) {
@@ -262,109 +622,101 @@ function continueIntro() {
     state.introIndex += 1;
   } else {
     state.screen = "scene";
-    state.message = "Je bent in het bos. Kijk rond of volg het pad.";
+    state.message = "Tik op het pad om te lopen. Tik op iets bijzonders om het te gebruiken.";
   }
   render();
 }
 
-function selectVerb(verb) {
-  state.currentVerb = verb;
-  const label = level.verbs.find((item) => item.id === verb)?.label;
-  state.message = `${label} gekozen. Tik op iets in de wereld.`;
-  render();
+function actionForTarget(target, kind) {
+  if (kind === "rune") return "activate";
+  if (target.defaultAction) return target.defaultAction;
+  if (target.type === "character") return "talk";
+  if (target.type === "gate") return "activate";
+  return "look";
 }
 
 function beginInteraction(target, kind) {
   if (state.moving) return;
 
-  const verb = state.currentVerb;
-  const verbs = kind === "rune" ? ["look", "activate"] : target.verbs;
-  if (!verbs.includes(verb)) {
-    state.svenMood = "thinking";
-    state.message = `Daar kun je nu niet mee ${verb === "talk" ? "praten" : verb === "look" ? "kijken" : "activeren"}.`;
-    render();
-    return;
-  }
+  const action = actionForTarget(target, kind);
 
-  state.moving = true;
-  state.svenMood = "walking";
   state.justCompletedRuneId = null;
-  setSvenWorldX(target.approachX);
   state.message = `${level.spiritLines.moving} ${target.name}.`;
+  walkRoute(routeTo(target), () => arriveAtInteraction(target, kind, action));
+}
+
+function arriveAtInteraction(target, kind, action) {
+  if (Math.abs(target.x - state.worldX) > 2) {
+    state.svenFacing = target.x < state.worldX ? "left" : "right";
+  }
+  state.svenMood = "arrived";
+  state.message = `${target.name}.`;
   render();
 
   window.setTimeout(() => {
     if (!state.moving) return;
-    state.svenMood = verb === "look" ? "looking" : verb === "talk" ? "talking" : "activating";
-    if (verb === "activate") {
+    state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
+    if (action === "activate" || action === "travel") {
       state.message =
         kind === "rune"
           ? `Sven raakt ${target.name} aan.`
-          : target.id === "templePath"
-            ? "Sven kijkt waar het pad heen gaat."
-            : `Sven probeert ${target.name}.`;
+          : `Sven probeert ${target.name}.`;
     }
     render();
 
     window.setTimeout(() => {
       if (!state.moving) return;
-      finishInteraction(target, kind, verb);
-    }, verb === "activate" ? 720 : 520);
-  }, 760);
+      finishInteraction(target, kind, action);
+    }, action === "activate" || action === "travel" ? 820 : 560);
+  }, 180);
 }
 
-function finishInteraction(target, kind, verb) {
-  if (kind === "rune" && verb === "look") {
+function finishInteraction(target, kind, action) {
+  if (kind === "rune" && action === "look") {
     state.moving = false;
-    state.svenMood = "looking";
+    state.svenMood = "idle";
     state.message = state.completedRunes.has(target.id) ? target.solved : target.intro;
     render();
     return;
   }
 
-  if (kind === "rune" && verb === "activate" && state.completedRunes.has(target.id)) {
+  if (kind === "rune" && action === "activate" && state.completedRunes.has(target.id)) {
     state.moving = false;
-    state.svenMood = "looking";
+    state.svenMood = "idle";
     state.message = target.solved;
     render();
     return;
   }
 
-  if (kind === "rune" && verb === "activate") {
+  if (kind === "rune" && action === "activate") {
     state.moving = false;
     openRuneChallenge(target.id);
     return;
   }
 
-  if (target.id === "templePath" && verb === "activate") {
-    travelToTemple(target);
-    return;
-  }
-
-  if (target.id === "templeGate" && verb === "activate" && state.completedRunes.size === level.runes.length) {
+  if (target.id === "templeGate" && action === "activate" && state.completedRunes.size === level.runes.length) {
     state.moving = false;
     showReward();
     return;
   }
 
   state.moving = false;
-  state.svenMood = verb === "activate" ? "activating" : verb === "talk" ? "talking" : "looking";
-  state.message = target[verb] || "Sven kijkt goed.";
+  state.svenMood = "idle";
+  state.message = target[action] || target.look || "Sven kijkt goed.";
   render();
 }
 
-function travelToTemple(pathHotspot) {
-  state.svenMood = "walking";
-  state.message = pathHotspot.activate;
-  setSvenWorldX(pathHotspot.destinationX);
-  render();
+function beginFreeWalk(point) {
+  if (state.screen !== "scene" || state.moving) return;
 
-  window.setTimeout(() => {
+  state.justCompletedRuneId = null;
+  state.message = "Sven loopt.";
+  walkRoute(routeToPoint(point), () => {
     state.moving = false;
     state.svenMood = "idle";
-    state.message = "Daar is de tempel. Activeer de drie runen.";
+    state.message = state.worldX > 1500 ? "Daar is de tempel. Maak de drie runen wakker." : "Volg het pad naar de tempel.";
     render();
-  }, 920);
+  });
 }
 
 function openRuneChallenge(id) {
@@ -451,11 +803,12 @@ function showReward() {
 function restart() {
   state.screen = "intro";
   state.introIndex = 0;
-  state.currentVerb = "activate";
-  state.worldX = level.player.startWorldX;
+  state.worldX = level.player.start.x;
+  state.worldY = level.player.start.y;
   state.svenMood = "idle";
   state.svenFacing = "right";
   state.moving = false;
+  stopMovement();
   state.activeRuneId = null;
   state.questionIndex = 0;
   state.selectedWrong = false;
@@ -470,40 +823,7 @@ function restart() {
   render();
 }
 
-function renderStatus() {
-  const done = state.completedRunes.size;
-  return `
-    <header class="topbar">
-      <div>
-        <p class="eyebrow">${getAreaName()}</p>
-        <h1>${level.title}</h1>
-      </div>
-      <div class="progressPills" aria-label="Runen wakker">
-        ${level.runes
-          .map((rune) => `<span class="pill ${state.completedRunes.has(rune.id) ? "pillDone" : ""}">${rune.shortName}</span>`)
-          .join("")}
-      </div>
-      <div class="counter">${done}/${level.runes.length} runen</div>
-    </header>
-  `;
-}
-
-function renderVerbBar() {
-  return `
-    <nav class="verbBar" aria-label="Acties">
-      ${level.verbs
-        .map((verb) => `
-          <button class="verbButton ${state.currentVerb === verb.id ? "verbActive" : ""}" type="button" data-verb="${verb.id}">
-            ${verb.label}
-          </button>
-        `)
-        .join("")}
-    </nav>
-  `;
-}
-
 function renderWorldStage() {
-  const camera = getCameraX();
   const svenClasses = [
     "svenInWorld",
     `sven-${state.svenMood}`,
@@ -511,27 +831,31 @@ function renderWorldStage() {
   ].join(" ");
 
   return `
-    <section class="stageViewport" aria-label="Verbonden wereld">
-      <div class="worldTrack" style="--camera:${camera}">
-        ${level.areas
-          .map((area) => `
-            <section class="worldArea area-${area.id}" style="left:${area.start}%; width:${area.end - area.start}%">
-              <img class="areaArt" src="${area.background}" alt="${area.name}" />
-            </section>
-          `)
-          .join("")}
+    <section class="stageViewport" aria-label="Verbonden wereld" data-world-stage>
+      <div
+        class="worldTrack"
+        style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
+      >
+        <img class="worldArt" src="${level.world.background}" alt="Een doorlopend bospad naar de Vikingtempel" />
         <div class="forestMist"></div>
         ${level.hotspots.map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
-        <img
+        <span
           class="${svenClasses}"
-          src="${frameSrc(actorStateForMood(), 0)}"
-          alt="Sven"
-          data-actor="sven"
-          data-animation="${actorStateForMood()}"
-          data-frame="1"
-          style="left:${state.worldX}%; bottom:${level.player.ground}%"
-        />
+          data-actor-shell="sven"
+          style="left:${worldXPercent(state.worldX)}%; top:${worldYPercent(state.worldY)}%"
+        >
+          <img
+            class="svenSprite"
+            src="${frameSrc(actorStateForMood(), 0)}"
+            alt="Sven"
+            data-actor="sven"
+            data-animation="${actorStateForMood()}"
+            data-frame="1"
+            data-world-x="${Math.round(state.worldX)}"
+            data-world-y="${Math.round(state.worldY)}"
+          />
+        </span>
       </div>
     </section>
   `;
@@ -539,19 +863,15 @@ function renderWorldStage() {
 
 function renderHotspot(hotspot) {
   const disabled = state.moving || state.screen !== "scene";
-  const label = hotspot.type === "path" ? "→" : hotspot.type === "character" ? "?" : hotspot.type === "gate" ? "⌂" : "ᚱ";
   return `
     <button
       class="worldHotspot hotspot-${hotspot.type}"
-      style="left:${hotspot.x}%; top:${hotspot.y}%"
+      style="left:${worldXPercent(hotspot.x)}%; top:${worldYPercent(hotspot.y)}%"
       type="button"
       data-hotspot="${hotspot.id}"
       aria-label="${hotspot.name}"
       ${disabled ? "disabled" : ""}
-    >
-      ${hotspot.type === "character" ? `<img src="assets/viking-spirit.png" alt="" />` : `<span>${label}</span>`}
-      <strong>${hotspot.name}</strong>
-    </button>
+    ></button>
   `;
 }
 
@@ -562,32 +882,31 @@ function renderRuneHotspot(rune) {
   return `
     <button
       class="runeHotspot ${done ? "runeDone" : ""} ${justCompleted ? "runeJustCompleted" : ""}"
-      style="left:${rune.x}%; top:${rune.y}%"
+      style="left:${worldXPercent(rune.x)}%; top:${worldYPercent(rune.y)}%"
       type="button"
       data-rune="${rune.id}"
       aria-label="${rune.name}"
       ${disabled ? "disabled" : ""}
-    >
-      <span>${rune.symbol}</span>
-      <strong>${rune.shortName}</strong>
-    </button>
+    ></button>
   `;
 }
 
 function renderDialogue() {
-  const canOpen = state.screen === "scene" && state.completedRunes.size === level.runes.length && state.worldX > 60;
-  const verbLabel = level.verbs.find((verb) => verb.id === state.currentVerb)?.label || "Actie";
+  const canOpen = state.screen === "scene" && state.completedRunes.size === level.runes.length && state.worldX > 1900;
+  const done = state.completedRunes.size;
+  const companionName = level.companion?.name || level.spiritName;
+  const companionPortrait = level.companion?.portrait || "assets/sven-stage.png";
   return `
     <section class="dialogue" aria-live="polite">
-      <img class="portrait" src="assets/viking-spirit.png" alt="De Runewachter" />
+      <img class="portrait" src="${companionPortrait}" alt="De ${companionName}" />
       <div class="speech">
-        <p class="speaker">${level.spiritName}</p>
+        <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${level.runes.length} runen</p>
         <p>${state.message}</p>
       </div>
       ${
         canOpen
           ? `<button class="primaryButton" type="button" data-action="reward">Ga naar binnen</button>`
-          : `<div class="miniHint">${verbLabel}: tik op iets.</div>`
+          : ""
       }
     </section>
   `;
@@ -596,22 +915,66 @@ function renderDialogue() {
 function renderScene() {
   return `
     <main class="gameShell">
-      ${renderStatus()}
       ${renderWorldStage()}
-      ${renderVerbBar()}
       ${renderDialogue()}
     </main>
+  `;
+}
+
+function renderMenu() {
+  return `
+    <main class="menuScreen">
+      <section class="menuHeader">
+        <p class="eyebrow">SvenAdventure</p>
+        <h1>Kies een avontuur</h1>
+        <p>Welke plek gaat Sven vandaag ontdekken?</p>
+      </section>
+      <section class="levelGrid" aria-label="Beschikbare avonturen">
+        ${state.error ? `<p class="menuError">${state.error}</p>` : ""}
+        ${
+          levelCatalog.length
+            ? levelCatalog.map(renderLevelTile).join("")
+            : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
+        }
+      </section>
+    </main>
+  `;
+}
+
+function renderLoading() {
+  return `
+    <main class="menuScreen loadingScreen">
+      <section class="menuHeader">
+        <p class="eyebrow">SvenAdventure</p>
+        <h1>${state.message || "Laden..."}</h1>
+      </section>
+    </main>
+  `;
+}
+
+function renderLevelTile(item) {
+  return `
+    <button class="levelTile" type="button" data-level="${item.id}">
+      <img src="${item.menu?.illustration}" alt="" />
+      <span class="levelTileShade"></span>
+      <span class="levelTileText">
+        <span class="levelBadge">${item.menu?.badge || item.id}</span>
+        <strong>${item.title}</strong>
+        <span>${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
+      </span>
+    </button>
   `;
 }
 
 function renderIntro() {
   return `
     <main class="introScreen">
-      <img class="introBackdrop" src="assets/forest-path.png" alt="Een oud bos met een pad naar de tempel" />
+      <img class="introBackdrop" src="${level.world.background}" alt="Een oud bos met een pad naar de tempel" />
       <section class="introPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.title}</h1>
         <p>${level.intro[state.introIndex]}</p>
+        <button class="secondaryButton" type="button" data-action="menu">Terug</button>
         <button class="primaryButton" type="button" data-action="intro-next">
           ${state.introIndex === 0 ? "Start avontuur" : state.introIndex === level.intro.length - 1 ? "Het bos in" : "Verder"}
         </button>
@@ -626,13 +989,23 @@ function renderChallenge() {
   const choices = makeChoices(question);
   const number = state.questionIndex + 1;
   const total = rune.questions.length;
+  const runeScreenX = ((rune.x - getCameraX()) / state.viewportWorldWidth) * 100;
+  const runeScreenY = (rune.y / level.world.height) * 100;
+  const panelClass = runeScreenX < 52 ? "runePanelRight" : "runePanelLeft";
 
   return `
     ${renderScene()}
-    <section class="modalLayer runeLayer" role="dialog" aria-modal="true" aria-labelledby="challenge-title">
+    <section
+      class="modalLayer runeLayer ${panelClass}"
+      style="--rune-screen-x:${runeScreenX}%; --rune-screen-y:${runeScreenY}%"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="challenge-title"
+    >
+      <div class="runeFocusSpark" aria-hidden="true"></div>
       <div class="challengeBox runeChallengeBox">
         <div class="challengeHeader">
-          <img src="assets/rune-stones.png" alt="" />
+          <img src="${level.challengeArt}" alt="" />
           <div>
             <p class="eyebrow">Rune ${number}/${total}</p>
             <h2 id="challenge-title">${rune.name}</h2>
@@ -652,12 +1025,22 @@ function renderChallenge() {
 function renderCorrect() {
   const rune = runeById(state.activeRuneId);
   const lastQuestion = state.questionIndex === rune.questions.length - 1;
+  const runeScreenX = ((rune.x - getCameraX()) / state.viewportWorldWidth) * 100;
+  const runeScreenY = (rune.y / level.world.height) * 100;
+  const panelClass = runeScreenX < 52 ? "runePanelRight" : "runePanelLeft";
 
   return `
     ${renderScene()}
-    <section class="modalLayer runeLayer" role="dialog" aria-modal="true" aria-labelledby="correct-title">
+    <section
+      class="modalLayer runeLayer ${panelClass}"
+      style="--rune-screen-x:${runeScreenX}%; --rune-screen-y:${runeScreenY}%"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="correct-title"
+    >
+      <div class="runeFocusSpark runeFocusCorrect" aria-hidden="true"></div>
       <div class="challengeBox runeChallengeBox successBox">
-        <div class="runeBurst">${rune.symbol}</div>
+        <div class="runeBurst" aria-hidden="true"></div>
         <h2 id="correct-title">Goed zo!</h2>
         <p class="feedback">${state.feedback}</p>
         <button class="primaryButton" type="button" data-action="next-question">
@@ -671,7 +1054,7 @@ function renderCorrect() {
 function renderReward() {
   return `
     <main class="rewardScreen">
-      <img class="rewardArt" src="assets/reward.png" alt="Sven voor de geopende tempelpoort" />
+      <img class="rewardArt" src="${level.reward.art}" alt="Sven voor de geopende tempelpoort" />
       <section class="rewardPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.reward.title}</h1>
@@ -683,13 +1066,18 @@ function renderReward() {
           <span>${state.attempts} pogingen</span>
         </div>
         <button class="primaryButton" type="button" data-action="restart">Speel nog een keer</button>
+        <button class="secondaryButton" type="button" data-action="menu">Menu</button>
       </section>
     </main>
   `;
 }
 
 function render() {
-  if (state.screen === "intro") {
+  if (state.screen === "menu") {
+    app.innerHTML = renderMenu();
+  } else if (state.screen === "loading") {
+    app.innerHTML = renderLoading();
+  } else if (state.screen === "intro") {
     app.innerHTML = renderIntro();
   } else if (state.screen === "challenge") {
     app.innerHTML = renderChallenge();
@@ -712,12 +1100,14 @@ function render() {
     window.cancelAnimationFrame(actorPlayback.rafId);
     actorPlayback.rafId = null;
   }
+
+  updateWorldDom();
 }
 
 app.addEventListener("click", (event) => {
-  const verbTarget = event.target.closest("[data-verb]");
-  if (verbTarget) {
-    selectVerb(verbTarget.dataset.verb);
+  const levelTarget = event.target.closest("[data-level]");
+  if (levelTarget) {
+    selectLevel(levelTarget.dataset.level);
     return;
   }
 
@@ -725,6 +1115,7 @@ app.addEventListener("click", (event) => {
   if (actionTarget) {
     const action = actionTarget.dataset.action;
     if (action === "intro-next") continueIntro();
+    if (action === "menu") returnToMenu();
     if (action === "next-question") nextQuestion();
     if (action === "reward") showReward();
     if (action === "restart") restart();
@@ -746,8 +1137,17 @@ app.addEventListener("click", (event) => {
   const choiceTarget = event.target.closest("[data-choice]");
   if (choiceTarget) {
     answerQuestion(Number(choiceTarget.dataset.choice));
+    return;
+  }
+
+  const stageTarget = event.target.closest("[data-world-stage]");
+  if (stageTarget) {
+    beginFreeWalk(pointFromViewportEvent(event, stageTarget));
   }
 });
 
+window.addEventListener("resize", updateWorldDom);
+
 preloadActorAnimations();
+preloadMenuAssets();
 render();
