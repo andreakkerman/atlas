@@ -50,7 +50,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       type: "rune",
       center: { x: 1465, y: 318 },
       radius: 44,
-      approachNode: "temple-entry",
+      approachNode: "stone-rune-approach",
       label: "Steenrune"
     },
     {
@@ -71,45 +71,20 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       label: "Runenpoort"
     }
   ],
-  walkGraph: {
-    nodes: [
-      { id: "forest-start", x: 170, y: 618 },
-      { id: "forest-rune-approach", x: 285, y: 610 },
-      { id: "forest-path-low", x: 430, y: 604 },
-      { id: "forest-bend", x: 610, y: 602 },
-      { id: "forest-lower-stones", x: 780, y: 616 },
-      { id: "forest-exit", x: 940, y: 604 },
-      { id: "trail-rise-1", x: 1080, y: 568 },
-      { id: "trail-rise-2", x: 1210, y: 520 },
-      { id: "sun-rune-approach", x: 1365, y: 482 },
-      { id: "temple-entry", x: 1490, y: 476 },
-      { id: "temple-path-left", x: 1588, y: 514 },
-      { id: "gate-step-low", x: 1680, y: 558 },
-      { id: "gate-step-mid-1", x: 1765, y: 538 },
-      { id: "gate-step-mid-2", x: 1838, y: 516 },
-      { id: "gate-step-upper", x: 1860, y: 490 },
-      { id: "gate-step-center", x: 1935, y: 522 },
-      { id: "wind-rune-approach", x: 2070, y: 558 }
-    ],
-    edges: [
-      ["forest-start", "forest-rune-approach"],
-      ["forest-rune-approach", "forest-path-low"],
-      ["forest-path-low", "forest-bend"],
-      ["forest-bend", "forest-lower-stones"],
-      ["forest-lower-stones", "forest-exit"],
-      ["forest-exit", "trail-rise-1"],
-      ["trail-rise-1", "trail-rise-2"],
-      ["trail-rise-2", "sun-rune-approach"],
-      ["sun-rune-approach", "temple-entry"],
-      ["temple-entry", "temple-path-left"],
-      ["temple-path-left", "gate-step-low"],
-      ["gate-step-low", "gate-step-mid-1"],
-      ["gate-step-mid-1", "gate-step-mid-2"],
-      ["gate-step-mid-2", "gate-step-upper"],
-      ["gate-step-upper", "gate-step-center"],
-      ["gate-step-center", "wind-rune-approach"]
-    ]
-  },
+  walkPath: [
+    { id: "forest-start", x: 170, y: 626 },
+    { id: "forest-rune-approach", x: 285, y: 628, role: "approach" },
+    { id: "center-trail", x: 585, y: 614 },
+    { id: "lower-trail", x: 930, y: 604 },
+    { id: "trail-rise-2", x: 1168, y: 512 },
+    { id: "trail-top", x: 1265, y: 490 },
+    { id: "sun-rune-approach", x: 1365, y: 552, role: "approach" },
+    { id: "stone-rune-approach", x: 1452, y: 570, role: "approach" },
+    { id: "temple-approach", x: 1620, y: 588 },
+    { id: "gate-step-low", x: 1700, y: 575 },
+    { id: "gate-step-upper", x: 1860, y: 492, role: "approach" },
+    { id: "wind-rune-approach", x: 1950, y: 534, role: "approach" }
+  ],
   intro: [
     "Sven komt aan bij een oud bos.",
     "Tussen de bomen ligt een pad naar een Vikingtempel.",

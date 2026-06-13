@@ -3,7 +3,9 @@ const {
   rootDir,
   resolveProjectPath,
   loadAllLevels,
-  readImageDimensions
+  readImageDimensions,
+  distance,
+  getWalkGraph
 } = require("./level-utils");
 
 function relative(filePath) {
@@ -16,15 +18,41 @@ function plural(count, label) {
 
 function collectWarnings(level, imageDimensions) {
   const warnings = [];
+  const graph = getWalkGraph(level);
   if (imageDimensions && (level.world.width !== imageDimensions.width || level.world.height !== imageDimensions.height)) {
     warnings.push(
       `declared world dimensions ${level.world.width}x${level.world.height} do not match image ${imageDimensions.width}x${imageDimensions.height}`
     );
   }
   if (!level.interactiveObjects?.length) warnings.push("no interactive objects");
-  if (!level.walkGraph?.nodes?.length) warnings.push("no walk graph nodes");
-  if (!level.walkGraph?.edges?.length) warnings.push("no walk graph edges");
+  if (!graph.nodes.length) warnings.push("no walk graph nodes");
+  if (!graph.edges.length) warnings.push("no walk graph edges");
   return warnings;
+}
+
+function summarizeWalkGraph(level) {
+  const graph = getWalkGraph(level);
+  const nodeMap = new Map(graph.nodes.map((node) => [node.id, node]));
+  const lengths = graph.edges.map(([from, to]) => {
+    const fromNode = nodeMap.get(from);
+    const toNode = nodeMap.get(to);
+    return fromNode && toNode ? distance(fromNode, toNode) : 0;
+  });
+  const yValues = graph.nodes.map((node) => node.y);
+  const approachNodes = new Set(
+    (level.interactiveObjects || [])
+      .map((object) => object.approachNode)
+      .filter(Boolean)
+  );
+
+  return {
+    nodeCount: graph.nodes.length,
+    edgeCount: graph.edges.length,
+    longestEdge: lengths.length ? Math.max(...lengths) : 0,
+    yMin: yValues.length ? Math.min(...yValues) : 0,
+    yMax: yValues.length ? Math.max(...yValues) : 0,
+    approachNodes: [...approachNodes]
+  };
 }
 
 function reportLevel(loaded) {
@@ -44,6 +72,7 @@ function reportLevel(loaded) {
   }, {});
   const challengeCount = (level.runes || []).reduce((sum, rune) => sum + (rune.questions?.length || 0), 0);
   const warnings = collectWarnings(level, imageDimensions);
+  const walkSummary = summarizeWalkGraph(level);
 
   console.log(`Level: ${level.id}`);
   console.log(`Title: ${level.title}`);
@@ -63,8 +92,11 @@ function reportLevel(loaded) {
   }`);
   console.log("");
   console.log("Walk Graph:");
-  console.log(`* node count: ${level.walkGraph?.nodes?.length || 0}`);
-  console.log(`* edge count: ${level.walkGraph?.edges?.length || 0}`);
+  console.log(`* node count: ${walkSummary.nodeCount}`);
+  console.log(`* edge count: ${walkSummary.edgeCount}`);
+  console.log(`* longest edge: ${Math.round(walkSummary.longestEdge)}px`);
+  console.log(`* y-range: ${walkSummary.yMin}-${walkSummary.yMax}`);
+  console.log(`* approach nodes: ${walkSummary.approachNodes.join(", ") || "none"}`);
   console.log("");
   console.log("Challenges:");
   console.log(`* rune count: ${level.runes?.length || 0}`);

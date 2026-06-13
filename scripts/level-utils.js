@@ -4,6 +4,7 @@ const vm = require("vm");
 
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
+const DERIVED_WALK_SEGMENT_LENGTH = 90;
 
 function runScript(filePath, context) {
   const source = fs.readFileSync(filePath, "utf8");
@@ -94,8 +95,76 @@ function distance(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
+function authoredWalkPathPoints(level) {
+  if (Array.isArray(level.walkPath)) return level.walkPath;
+  if (Array.isArray(level.walkPath?.main)) return level.walkPath.main;
+  return [];
+}
+
+function normalizeWalkPathPoint(point, index) {
+  if (Array.isArray(point)) {
+    return {
+      id: `path-${String(index + 1).padStart(2, "0")}`,
+      x: point[0],
+      y: point[1]
+    };
+  }
+
+  return {
+    ...point,
+    id: point.id || `path-${String(index + 1).padStart(2, "0")}`
+  };
+}
+
+function deriveWalkGraph(level) {
+  const pathPoints = authoredWalkPathPoints(level);
+  if (!pathPoints.length) return level.walkGraph;
+
+  const nodes = pathPoints.map(normalizeWalkPathPoint);
+  return densifyWalkGraph(nodes);
+}
+
+function densifyWalkGraph(authoredNodes) {
+  const nodes = [];
+  const edges = [];
+
+  authoredNodes.forEach((node, index) => {
+    if (index === 0) {
+      nodes.push(node);
+      return;
+    }
+
+    const from = authoredNodes[index - 1];
+    const segmentLength = distance(from, node);
+    const insertedCount = Math.max(0, Math.ceil(segmentLength / DERIVED_WALK_SEGMENT_LENGTH) - 1);
+    let previousId = from.id;
+
+    for (let insertIndex = 1; insertIndex <= insertedCount; insertIndex += 1) {
+      const t = insertIndex / (insertedCount + 1);
+      const derivedNode = {
+        id: `${from.id}--${node.id}--${insertIndex}`,
+        x: Math.round(from.x + (node.x - from.x) * t),
+        y: Math.round(from.y + (node.y - from.y) * t),
+        derived: true
+      };
+      nodes.push(derivedNode);
+      edges.push([previousId, derivedNode.id]);
+      previousId = derivedNode.id;
+    }
+
+    nodes.push(node);
+    edges.push([previousId, node.id]);
+  });
+
+  return { nodes, edges };
+}
+
+function getWalkGraph(level) {
+  return deriveWalkGraph(level) || { nodes: [], edges: [] };
+}
+
 function buildNodeMap(level) {
-  return new Map((level.walkGraph?.nodes || []).map((node) => [node.id, node]));
+  return new Map(getWalkGraph(level).nodes.map((node) => [node.id, node]));
 }
 
 function buildObjectMap(level) {
@@ -108,6 +177,9 @@ module.exports = {
   loadAllLevels,
   readImageDimensions,
   distance,
+  authoredWalkPathPoints,
+  deriveWalkGraph,
+  getWalkGraph,
   buildNodeMap,
   buildObjectMap
 };

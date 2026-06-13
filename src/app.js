@@ -3,8 +3,10 @@ const levelCatalog = window.SVEN_LEVEL_MANIFEST?.levels || [];
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 let level = null;
 let walkNodesById = new Map();
+let debugOverlayEnabled = false;
 
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
+const DERIVED_WALK_SEGMENT_LENGTH = 90;
 const ACTOR_ANIMATIONS = {
   idle: {
     folder: "assets/characters/sven/idle-right",
@@ -66,6 +68,75 @@ function createLevelState(selectedLevel) {
     message: selectedLevel.spiritLines.welcome,
     feedback: ""
   };
+}
+
+function authoredWalkPathPoints(selectedLevel) {
+  if (Array.isArray(selectedLevel.walkPath)) return selectedLevel.walkPath;
+  if (Array.isArray(selectedLevel.walkPath?.main)) return selectedLevel.walkPath.main;
+  return [];
+}
+
+function normalizeWalkPoint(point, index) {
+  if (Array.isArray(point)) {
+    return {
+      id: `path-${String(index + 1).padStart(2, "0")}`,
+      x: point[0],
+      y: point[1]
+    };
+  }
+
+  return {
+    ...point,
+    id: point.id || `path-${String(index + 1).padStart(2, "0")}`
+  };
+}
+
+function deriveWalkGraph(selectedLevel) {
+  const pathPoints = authoredWalkPathPoints(selectedLevel);
+  if (!pathPoints.length) return selectedLevel.walkGraph;
+
+  const nodes = pathPoints.map(normalizeWalkPoint);
+  return densifyWalkGraph(nodes);
+}
+
+function densifyWalkGraph(authoredNodes) {
+  const nodes = [];
+  const edges = [];
+
+  authoredNodes.forEach((node, index) => {
+    if (index === 0) {
+      nodes.push(node);
+      return;
+    }
+
+    const from = authoredNodes[index - 1];
+    const segmentLength = distanceBetween(from, node);
+    const insertedCount = Math.max(0, Math.ceil(segmentLength / DERIVED_WALK_SEGMENT_LENGTH) - 1);
+    let previousId = from.id;
+
+    for (let insertIndex = 1; insertIndex <= insertedCount; insertIndex += 1) {
+      const t = insertIndex / (insertedCount + 1);
+      const derivedNode = {
+        id: `${from.id}--${node.id}--${insertIndex}`,
+        x: Math.round(from.x + (node.x - from.x) * t),
+        y: Math.round(from.y + (node.y - from.y) * t),
+        derived: true
+      };
+      nodes.push(derivedNode);
+      edges.push([previousId, derivedNode.id]);
+      previousId = derivedNode.id;
+    }
+
+    nodes.push(node);
+    edges.push([previousId, node.id]);
+  });
+
+  return { nodes, edges };
+}
+
+function normalizeLevel(selectedLevel) {
+  selectedLevel.walkGraph = deriveWalkGraph(selectedLevel);
+  return selectedLevel;
 }
 
 function frameSrc(animationName, frameIndex) {
@@ -152,7 +223,7 @@ async function selectLevel(id) {
   }
 
   stopMovement();
-  level = selectedLevel;
+  level = normalizeLevel(selectedLevel);
   walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
   state = createLevelState(level);
   document.title = level.title;
@@ -888,6 +959,54 @@ function restart() {
   render();
 }
 
+function debugWalkGraph() {
+  const authoredNodes = authoredWalkPathPoints(level).map(normalizeWalkPoint);
+  if (!authoredNodes.length) return level.walkGraph;
+  return {
+    nodes: authoredNodes,
+    edges: authoredNodes.slice(1).map((node, index) => [authoredNodes[index].id, node.id])
+  };
+}
+
+function renderDebugOverlay() {
+  const approachIds = new Set(level.interactiveObjects.map((object) => object.approachNode).filter(Boolean));
+  const graph = debugWalkGraph();
+  const debugNodesById = new Map(graph.nodes.map((node) => [node.id, node]));
+  const edges = graph.edges.map(([fromId, toId]) => {
+    const from = debugNodesById.get(fromId);
+    const to = debugNodesById.get(toId);
+    if (!from || !to) return "";
+    return `<line class="debugPathEdge" x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" />`;
+  });
+  const nodes = graph.nodes.map((node) => `
+    <g class="${approachIds.has(node.id) ? "debugApproachNode" : "debugWalkNode"}" data-debug-node="${node.id}">
+      <circle cx="${node.x}" cy="${node.y}" r="${approachIds.has(node.id) ? 10 : 7}" />
+      <text x="${node.x + 11}" y="${node.y - 10}">${node.id}</text>
+    </g>
+  `);
+  const objects = level.interactiveObjects.map((object) => `
+    <g class="debugObject" data-debug-object="${object.id}">
+      <circle cx="${object.center.x}" cy="${object.center.y}" r="${object.radius}" />
+      <circle cx="${object.center.x}" cy="${object.center.y}" r="6" />
+      <text x="${object.center.x + object.radius + 8}" y="${object.center.y + 4}">${object.id}</text>
+    </g>
+  `);
+
+  return `
+    <svg
+      class="pathDebugOverlay"
+      data-debug-overlay
+      viewBox="0 0 ${level.world.width} ${level.world.height}"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      ${edges.join("")}
+      ${nodes.join("")}
+      ${objects.join("")}
+    </svg>
+  `;
+}
+
 function renderWorldStage() {
   const actorPosition = worldToScreen({ x: state.worldX, y: state.worldY }, "track");
   const svenClasses = [
@@ -904,6 +1023,7 @@ function renderWorldStage() {
       >
         <img class="worldArt" src="${level.world.background}" alt="Een doorlopend bospad naar de Vikingtempel" />
         <div class="forestMist"></div>
+        ${debugOverlayEnabled ? renderDebugOverlay() : ""}
         ${level.hotspots.filter(isTargetVisible).map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
         <span
@@ -1239,6 +1359,15 @@ app.addEventListener("click", (event) => {
 });
 
 window.addEventListener("resize", updateWorldDom);
+
+window.addEventListener("keydown", (event) => {
+  if (!(event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d")) return;
+  event.preventDefault();
+  debugOverlayEnabled = !debugOverlayEnabled;
+  if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
+    render();
+  }
+});
 
 preloadActorAnimations();
 preloadMenuAssets();

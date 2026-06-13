@@ -43,6 +43,7 @@ async function startAdventure(page) {
   await expect(page.getByRole("button", { name: "Runewachter" })).toHaveCount(0);
   await expect(page.getByText("Tik in de wereld")).toHaveCount(0);
   await expect(page.locator(".svenBlink")).toHaveCount(0);
+  await expect(page.locator("[data-debug-overlay]")).toHaveCount(0);
   await expect(page.locator(".runeHotspot")).toHaveText(["", "", ""]);
   await expect(page.locator("[data-world-stage]")).toBeVisible();
 }
@@ -278,8 +279,32 @@ test.describe("Sven en de Runenpoort", () => {
     });
 
     expect(alignment.objectIds).toEqual(["forestRune", "zon", "steen", "wind", "templeGate"]);
-    expect(alignment.pathRange).toBeGreaterThan(90);
-    expect(alignment.stepRange).toBeGreaterThan(60);
+    expect(alignment.pathRange).toBeGreaterThan(120);
+    expect(alignment.targets.length).toBe(4);
+    expect(alignment.stepRange).toBeGreaterThan(70);
+
+    await page.keyboard.press("Control+Shift+D");
+    await expect(page.locator("[data-debug-overlay]")).toBeVisible();
+    const debugOverlay = await page.evaluate(() => {
+      const level = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"];
+      return {
+        nodeCount: document.querySelectorAll("[data-debug-node]").length,
+        objectCount: document.querySelectorAll("[data-debug-object]").length,
+        edgeCount: document.querySelectorAll(".debugPathEdge").length,
+        expectedNodeCount: level.walkPath.length,
+        expectedObjectCount: level.interactiveObjects.length,
+        expectedEdgeCount: level.walkPath.length - 1,
+        derivedNodeCount: level.walkGraph.nodes.length,
+        hasWalkPath: Array.isArray(level.walkPath)
+      };
+    });
+    expect(debugOverlay.hasWalkPath).toBe(true);
+    expect(debugOverlay.nodeCount).toBe(debugOverlay.expectedNodeCount);
+    expect(debugOverlay.objectCount).toBe(debugOverlay.expectedObjectCount);
+    expect(debugOverlay.edgeCount).toBe(debugOverlay.expectedEdgeCount);
+    expect(debugOverlay.derivedNodeCount).toBeGreaterThan(debugOverlay.expectedNodeCount);
+    await page.keyboard.press("Control+Shift+D");
+    await expect(page.locator("[data-debug-overlay]")).toHaveCount(0);
 
     for (const item of alignment.targets) {
       expect(item.worldX, `${item.id} center x`).toBeGreaterThan(0);
@@ -326,7 +351,7 @@ test.describe("Sven en de Runenpoort", () => {
       .poll(async () => Number(await actor.getAttribute("data-world-y")), {
         message: "Free clicks should stay inside the painted lower path"
       })
-      .toBeLessThan(625);
+      .toBeLessThan(640);
 
     await walkTowardTemple(page, pathYSamples);
     await expect

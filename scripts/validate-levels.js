@@ -140,6 +140,38 @@ function validatePoint(point, label, world) {
   }
 }
 
+function authoredWalkPathPoints(level) {
+  if (Array.isArray(level.walkPath)) return level.walkPath;
+  if (Array.isArray(level.walkPath?.main)) return level.walkPath.main;
+  return [];
+}
+
+function normalizeWalkPathPoint(point, index) {
+  if (Array.isArray(point)) {
+    return {
+      id: `path-${String(index + 1).padStart(2, "0")}`,
+      x: point[0],
+      y: point[1]
+    };
+  }
+
+  return {
+    ...point,
+    id: point.id || `path-${String(index + 1).padStart(2, "0")}`
+  };
+}
+
+function getEffectiveWalkGraph(level) {
+  const pathPoints = authoredWalkPathPoints(level);
+  if (pathPoints.length) {
+    const nodes = pathPoints.map(normalizeWalkPathPoint);
+    const edges = nodes.slice(1).map((node, index) => [nodes[index].id, node.id]);
+    return { nodes, edges };
+  }
+
+  return level.walkGraph || { nodes: [], edges: [] };
+}
+
 function validateManifest() {
   const context = { window: {} };
   if (!runScript(manifestPath, context, "Level manifest")) return null;
@@ -233,21 +265,29 @@ function validateWorld(level, levelFolder, label) {
 }
 
 function validateWalkGraph(level, world, label) {
-  if (!isObject(level.walkGraph)) {
-    fail(`${label}.walkGraph must be an object.`);
+  const hasWalkPath = authoredWalkPathPoints(level).length > 0;
+  const hasWalkGraph = isObject(level.walkGraph);
+  const graph = getEffectiveWalkGraph(level);
+
+  if (hasWalkPath && hasWalkGraph) {
+    fail(`${label} should use either walkPath or walkGraph, not both.`);
+  }
+
+  if (!hasWalkPath && !hasWalkGraph) {
+    fail(`${label} must define walkPath or walkGraph.`);
     return { nodeIds: new Set() };
   }
 
-  if (!Array.isArray(level.walkGraph.nodes) || level.walkGraph.nodes.length === 0) {
-    fail(`${label}.walkGraph.nodes must be a non-empty array.`);
+  if (!Array.isArray(graph.nodes) || graph.nodes.length === 0) {
+    fail(`${label}.walkGraph.nodes must be a non-empty array after path normalization.`);
   }
-  if (!Array.isArray(level.walkGraph.edges) || level.walkGraph.edges.length === 0) {
-    fail(`${label}.walkGraph.edges must be a non-empty array.`);
+  if (!Array.isArray(graph.edges) || graph.edges.length === 0) {
+    fail(`${label}.walkGraph.edges must be a non-empty array after path normalization.`);
   }
 
   const nodeIds = new Set();
-  (level.walkGraph.nodes || []).forEach((node, index) => {
-    const nodeLabel = `${label}.walkGraph.nodes[${index}]`;
+  (graph.nodes || []).forEach((node, index) => {
+    const nodeLabel = hasWalkPath ? `${label}.walkPath[${index}]` : `${label}.walkGraph.nodes[${index}]`;
     if (!isObject(node)) {
       fail(`${nodeLabel} must be an object.`);
       return;
@@ -258,7 +298,7 @@ function validateWalkGraph(level, world, label) {
     validatePoint({ x: node.x, y: node.y }, nodeLabel, world);
   });
 
-  (level.walkGraph.edges || []).forEach((edge, index) => {
+  (graph.edges || []).forEach((edge, index) => {
     const edgeLabel = `${label}.walkGraph.edges[${index}]`;
     if (!Array.isArray(edge) || edge.length !== 2) {
       fail(`${edgeLabel} must be a [fromId, toId] pair.`);
