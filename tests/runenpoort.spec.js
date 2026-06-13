@@ -47,6 +47,7 @@ async function startAdventure(page, url = gameUrl) {
   await expect(page.locator("[data-debug-overlay]")).toHaveCount(0);
   await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
+  await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
   await expect(page.locator(".teamPortraits")).toHaveAttribute("aria-label", "Avonturenteam");
   await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
   await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
@@ -144,6 +145,7 @@ async function answerQuestion(page, a, b, options = {}) {
 
   await tap(page.locator(`button[data-choice="${correct}"]`));
   await expect(page.getByText(`Ja! ${a} x ${b} = ${correct}.`)).toBeVisible();
+  await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
 }
 
 async function playFullAdventure(page) {
@@ -153,6 +155,11 @@ async function playFullAdventure(page) {
   for (const [runeIndex, rune] of runes.entries()) {
     await tap(page.getByRole("button", { name: rune.name }));
     await expect(page.getByRole("heading", { name: rune.name })).toBeVisible();
+    await expect(page.locator("[data-challenge-character='runewachter']")).toBeVisible();
+    await expect(page.locator("[data-challenge-character='runewachter']")).toContainText("Runewachter");
+    await expect(page.locator("[data-challenge-character='runewachter'] img")).toHaveAttribute("src", /viking-spirit\.png/);
+    await expect(page.getByText(`Laat de ${rune.name} ontwaken.`)).toBeVisible();
+    await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Runewachter");
 
     for (const [questionIndex, [a, b]] of rune.questions.entries()) {
       await answerQuestion(page, a, b, {
@@ -190,6 +197,7 @@ async function playFullAdventure(page) {
   await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
   await expect(page.locator("[data-adventure-team-bar]")).toContainText("Goed gedaan, Sven. De poort is open.");
+  await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
 }
 
 async function expectActorFrameChanges(page, animationName) {
@@ -500,6 +508,8 @@ test.describe("Sven en de Runenpoort", () => {
       })
       .toBe("interact");
     await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible();
+    await expect(page.locator("[data-challenge-character='runewachter']")).toBeVisible();
+    await expect(page.getByText("Laat de Zonrune ontwaken.")).toBeVisible();
 
     const anchorAlignment = await page.evaluate(() => {
       const rune = document.querySelector('[data-rune="zon"]');

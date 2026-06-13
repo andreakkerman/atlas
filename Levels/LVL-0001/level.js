@@ -16,6 +16,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     name: "Runewachter",
     portrait: "Levels/LVL-0001/assets/viking-spirit.png"
   },
+  challengeCharacter: {
+    id: "runewachter",
+    name: "Runewachter",
+    portrait: "Levels/LVL-0001/assets/viking-spirit.png",
+    role: "runenwachter"
+  },
   guides: {
     minnie: {
       name: "Minnie",

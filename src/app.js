@@ -1525,6 +1525,8 @@ function renderChallenge() {
   const object = interactiveObjectForTarget(rune);
   const anchor = objectScreenAnchor(object);
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
+  const challengeCharacter = getChallengeCharacter();
+  const challengeLine = challengePromptForRune(rune);
 
   return `
     ${renderScene()}
@@ -1537,11 +1539,12 @@ function renderChallenge() {
     >
       <div class="runeFocusSpark" aria-hidden="true"></div>
       <div class="challengeBox runeChallengeBox">
-        <div class="challengeHeader">
-          <img src="${level.challengeArt}" alt="" />
-          <div>
-            <p class="eyebrow">Rune ${number}/${total}</p>
+        <div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
+          <img class="challengeCharacterPortrait" src="${challengeCharacter.portrait}" alt="${challengeCharacter.name}" />
+          <div class="challengeCharacterSpeech">
+            <p class="eyebrow">${challengeCharacter.name} - Rune ${number}/${total}</p>
             <h2 id="challenge-title">${rune.name}</h2>
+            <p>${challengeLine}</p>
           </div>
         </div>
         <p class="feedback">${state.feedback}</p>
@@ -1553,6 +1556,18 @@ function renderChallenge() {
       </div>
     </section>
   `;
+}
+
+function getChallengeCharacter() {
+  return level.challengeCharacter || level.companion || {
+    id: "runewachter",
+    name: level.spiritName || "Runewachter",
+    portrait: level.challengeArt || "Levels/LVL-0001/assets/viking-spirit.png"
+  };
+}
+
+function challengePromptForRune(rune) {
+  return `Laat de ${rune.name} ontwaken.`;
 }
 
 function renderCorrect() {

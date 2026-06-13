@@ -1006,6 +1006,7 @@ button {
 }
 
 .rewardScreen .rewardPanel {
+  z-index: 7;
   margin-bottom: clamp(88px, 13dvh, 112px);
 }
 
@@ -1108,17 +1109,22 @@ button {
 
 .challengeHeader {
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: clamp(88px, 16vw, 124px) minmax(0, 1fr);
+  gap: clamp(12px, 2.4vw, 18px);
   align-items: center;
 }
 
 .challengeHeader img {
-  width: 92px;
-  height: 72px;
+  width: 100%;
+  height: clamp(92px, 17vw, 132px);
   object-fit: cover;
+  object-position: center 18%;
   border-radius: 8px;
-  border: 2px solid rgba(10, 92, 96, 0.4);
+  border: 2px solid rgba(156, 242, 233, 0.48);
+  background: rgba(6, 26, 24, 0.56);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.28),
+    0 0 28px rgba(46, 230, 220, 0.18);
 }
 
 .challengeHeader h2,
@@ -1127,6 +1133,14 @@ button {
   font-size: clamp(1.7rem, 5vw, 2.9rem);
   line-height: 1;
   letter-spacing: 0;
+}
+
+.challengeCharacterSpeech p:last-child {
+  margin: 6px 0 0;
+  color: #fff0bc;
+  font-size: clamp(1rem, 2.3vw, 1.25rem);
+  font-weight: 850;
+  line-height: 1.22;
 }
 
 .feedback {
