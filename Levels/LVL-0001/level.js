@@ -16,6 +16,16 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     name: "Runewachter",
     portrait: "Levels/LVL-0001/assets/viking-spirit.png"
   },
+  guides: {
+    minnie: {
+      name: "Minnie",
+      portrait: "assets/guides/minnie.png"
+    },
+    moose: {
+      name: "Moose",
+      portrait: "assets/guides/moose.png"
+    }
+  },
   world: {
     width: 2172,
     height: 724,
@@ -97,6 +107,44 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     moving: "Sven loopt erheen...",
     allRunes: "Alle runen gloeien. De tempel wordt wakker!",
     reward: "Goed gedaan, Sven. Jij hebt de Runenpoort geopend."
+  },
+  guideLines: {
+    welcome: {
+      speaker: "minnie",
+      text: "Oeh, dit bos zit vol geheimen."
+    },
+    start: {
+      speaker: "minnie",
+      text: "Volgens mij glimt daar iets. Zullen we kijken?"
+    },
+    moving: {
+      speaker: "moose",
+      text: "Rustig. Sven loopt erheen."
+    },
+    forest: {
+      speaker: "minnie",
+      text: "Ik wed dat hier ergens iets glimt."
+    },
+    temple: {
+      speaker: "moose",
+      text: "Daar is de tempel. Die poort gaat niet zomaar open."
+    },
+    object: {
+      speaker: "minnie",
+      text: "Kijk! Daar is iets bijzonders."
+    },
+    runeSolved: {
+      speaker: "minnie",
+      text: "Yes! De rune wordt wakker."
+    },
+    allRunes: {
+      speaker: "moose",
+      text: "Alle runen gloeien. Nu voorzichtig naar de poort."
+    },
+    reward: {
+      speaker: "moose",
+      text: "Goed gedaan, Sven. De poort is open."
+    }
   },
   areas: [
     { id: "forest", name: "Bos", start: 0, end: 1120 },

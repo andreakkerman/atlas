@@ -56,6 +56,13 @@ let walkPathEditor = {
 };
 
 function createLevelState(selectedLevel) {
+  const initialGuideMessage = guideLineForLevel(
+    selectedLevel,
+    "welcome",
+    selectedLevel.spiritLines?.welcome || "Welkom, Sven.",
+    "minnie"
+  );
+
   return {
     screen: "intro",
     introIndex: 0,
@@ -78,9 +85,41 @@ function createLevelState(selectedLevel) {
     answered: 0,
     firstTryCorrect: 0,
     attempts: 0,
-    message: selectedLevel.spiritLines.welcome,
+    guideMessage: initialGuideMessage,
+    message: initialGuideMessage.text,
     feedback: ""
   };
+}
+
+function guideLineForLevel(selectedLevel, key, fallbackText, fallbackSpeaker = "minnie") {
+  return normalizeGuideMessage(
+    selectedLevel.guideLines?.[key] || fallbackText,
+    fallbackSpeaker
+  );
+}
+
+function normalizeGuideMessage(message, fallbackSpeaker = "minnie") {
+  if (message && typeof message === "object") {
+    return {
+      speaker: ["minnie", "moose"].includes(message.speaker) ? message.speaker : fallbackSpeaker,
+      text: message.text || ""
+    };
+  }
+
+  return {
+    speaker: fallbackSpeaker,
+    text: String(message || "")
+  };
+}
+
+function setGuideMessage(message, fallbackSpeaker = "minnie") {
+  const guideMessage = normalizeGuideMessage(message, fallbackSpeaker);
+  state.guideMessage = guideMessage;
+  state.message = guideMessage.text;
+}
+
+function setGuideLine(key, fallbackText, fallbackSpeaker = "minnie") {
+  setGuideMessage(guideLineForLevel(level, key, fallbackText, fallbackSpeaker), fallbackSpeaker);
 }
 
 function authoredWalkPathPoints(selectedLevel) {
@@ -249,6 +288,7 @@ function preloadLevelAssets(selectedLevel) {
     selectedLevel.world.background,
     selectedLevel.menu?.illustration,
     selectedLevel.companion?.portrait,
+    ...Object.values(selectedLevel.guides || {}).map((guide) => guide.portrait),
     selectedLevel.challengeArt,
     selectedLevel.reward?.art
   ]
@@ -915,7 +955,7 @@ function getAccuracy() {
 
 function continueIntro() {
   state.screen = "scene";
-  state.message = "Tik op het pad om te lopen. Tik op iets bijzonders om het te gebruiken.";
+  setGuideLine("start", "Tik op het pad om te lopen. Tik op iets bijzonders.", "minnie");
   render();
 }
 
@@ -931,9 +971,13 @@ function beginInteraction(target, kind) {
   if (state.moving) return;
 
   const action = actionForTarget(target, kind);
+  const movingLine = guideLineForLevel(level, "moving", level.spiritLines.moving || "Sven loopt erheen.", "moose");
 
   state.justCompletedRuneId = null;
-  state.message = `${level.spiritLines.moving} ${target.name}.`;
+  setGuideMessage({
+    speaker: movingLine.speaker,
+    text: `${movingLine.text} ${target.name}.`
+  }, "moose");
   walkRoute(routeTo(target), () => arriveAtInteraction(target, kind, action));
 }
 
@@ -943,17 +987,19 @@ function arriveAtInteraction(target, kind, action) {
     state.svenFacing = targetCenter.x < state.worldX ? "left" : "right";
   }
   state.svenMood = "arrived";
-  state.message = `${target.name}.`;
+  setGuideMessage({ speaker: "minnie", text: `${target.name}.` });
   render();
 
   window.setTimeout(() => {
     if (!state.moving) return;
     state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
     if (action === "activate" || action === "travel") {
-      state.message =
-        kind === "rune"
+      setGuideMessage({
+        speaker: kind === "rune" ? "minnie" : "moose",
+        text: kind === "rune"
           ? `Sven raakt ${target.name} aan.`
-          : `Sven probeert ${target.name}.`;
+          : `Sven probeert ${target.name}.`
+      });
     }
     render();
 
@@ -968,7 +1014,7 @@ function finishInteraction(target, kind, action) {
   if (kind === "rune" && action === "look") {
     state.moving = false;
     state.svenMood = "idle";
-    state.message = state.completedRunes.has(target.id) ? target.solved : target.intro;
+    setGuideMessage({ speaker: "minnie", text: state.completedRunes.has(target.id) ? target.solved : target.intro });
     render();
     return;
   }
@@ -976,7 +1022,7 @@ function finishInteraction(target, kind, action) {
   if (kind === "rune" && action === "activate" && state.completedRunes.has(target.id)) {
     state.moving = false;
     state.svenMood = "idle";
-    state.message = target.solved;
+    setGuideMessage({ speaker: "minnie", text: target.solved });
     render();
     return;
   }
@@ -989,13 +1035,14 @@ function finishInteraction(target, kind, action) {
 
   if (target.id === "templeGate" && action === "activate" && state.completedRunes.size === level.runes.length) {
     state.moving = false;
+    setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
     showReward();
     return;
   }
 
   state.moving = false;
   state.svenMood = "idle";
-  state.message = target[action] || target.look || "Sven kijkt goed.";
+  setGuideMessage({ speaker: "minnie", text: target[action] || target.look || "Sven kijkt goed." });
   render();
 }
 
@@ -1003,11 +1050,15 @@ function beginFreeWalk(point) {
   if (state.screen !== "scene" || state.moving) return;
 
   state.justCompletedRuneId = null;
-  state.message = "Sven loopt.";
+  setGuideMessage({ speaker: "moose", text: "Sven loopt." });
   walkRoute(routeToPoint(point), () => {
     state.moving = false;
     state.svenMood = "idle";
-    state.message = isInArea("temple") ? "Daar is de tempel. Maak de drie runen wakker." : "Volg het pad naar de tempel.";
+    if (isInArea("temple")) {
+      setGuideLine("temple", "Daar is de tempel. Maak de drie runen wakker.", "moose");
+    } else {
+      setGuideLine("forest", "Volg het pad naar de tempel.", "minnie");
+    }
     render();
   });
 }
@@ -1020,7 +1071,7 @@ function openRuneChallenge(id) {
   state.selectedWrong = false;
   state.questionTracked = false;
   state.svenMood = "activating";
-  state.message = rune.intro;
+  setGuideMessage({ speaker: "minnie", text: rune.intro });
   state.feedback = rune.intro;
   render();
 }
@@ -1079,15 +1130,16 @@ function nextQuestion() {
   state.screen = "scene";
 
   if (state.completedRunes.size === level.runes.length) {
-    state.message = level.spiritLines.allRunes;
+    setGuideLine("allRunes", level.spiritLines.allRunes, "moose");
   } else {
-    state.message = rune.solved;
+    setGuideMessage({ speaker: "minnie", text: rune.solved });
   }
 
   render();
 }
 
 function showReward() {
+  setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
   state.screen = "reward";
   saveCompletion();
   render();
@@ -1112,7 +1164,7 @@ function restart() {
   state.answered = 0;
   state.firstTryCorrect = 0;
   state.attempts = 0;
-  state.message = level.spiritLines.welcome;
+  setGuideLine("welcome", level.spiritLines.welcome, "minnie");
   state.feedback = "";
   render();
 }
@@ -1346,12 +1398,60 @@ function renderDialogue() {
   `;
 }
 
+function guideEntries(activeSpeaker = "minnie") {
+  const guides = level.guides || {};
+  const entries = [
+    ["minnie", guides.minnie || { name: "Minnie", portrait: "assets/guides/minnie.png" }],
+    ["moose", guides.moose || { name: "Moose", portrait: "assets/guides/moose.png" }]
+  ];
+  return entries.sort(([leftId], [rightId]) => {
+    if (leftId === activeSpeaker) return -1;
+    if (rightId === activeSpeaker) return 1;
+    return 0;
+  });
+}
+
+function renderGuidePortrait([id, guide], activeSpeaker) {
+  const active = id === activeSpeaker;
+  return `
+    <figure class="teamPortrait ${active ? "teamPortraitActive" : "teamPortraitInactive"}" data-guide="${id}" data-active="${active}" ${active ? 'aria-current="true"' : ""}>
+      <img src="${guide.portrait}" alt="${guide.name}" />
+      <figcaption>${guide.name}</figcaption>
+    </figure>
+  `;
+}
+
+function renderAdventureTeamBar() {
+  const canOpen = canOpenTempleGate();
+  const done = state.completedRunes.size;
+  const guideMessage = state.guideMessage || normalizeGuideMessage(state.message, "minnie");
+  const activeGuide = (level.guides || {})[guideMessage.speaker] || { name: "Minnie" };
+  return `
+    <section class="adventureTeamBar" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" aria-live="polite">
+      <div class="teamPortraits" aria-label="Avonturenteam">
+        ${guideEntries(guideMessage.speaker).map((entry) => renderGuidePortrait(entry, guideMessage.speaker)).join("")}
+      </div>
+      <div class="teamSpeech">
+        <span class="teamPaw" aria-hidden="true"></span>
+        <p class="teamSpeaker">${activeGuide.name}</p>
+        <p class="teamMessage">${guideMessage.text}</p>
+        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${level.runes.length} runen</p>
+      </div>
+      ${
+        canOpen
+          ? `<button class="primaryButton" type="button" data-action="reward">Ga naar binnen</button>`
+          : ""
+      }
+    </section>
+  `;
+}
+
 function renderScene() {
   return `
-    <main class="gameShell">
+    <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""}">
       ${renderReturnToMenuButton()}
       ${renderWorldStage()}
-      ${renderDialogue()}
+      ${renderAdventureTeamBar()}
     </main>
   `;
 }
@@ -1501,6 +1601,7 @@ function renderReward() {
         <button class="primaryButton" type="button" data-action="restart">Speel nog een keer</button>
         <button class="secondaryButton" type="button" data-action="menu">Menu</button>
       </section>
+      ${renderAdventureTeamBar()}
     </main>
   `;
 }

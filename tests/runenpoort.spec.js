@@ -45,6 +45,23 @@ async function startAdventure(page, url = gameUrl) {
   await expect(page.getByText("Tik in de wereld")).toHaveCount(0);
   await expect(page.locator(".svenBlink")).toHaveCount(0);
   await expect(page.locator("[data-debug-overlay]")).toHaveCount(0);
+  await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
+  await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
+  await expect(page.locator(".teamPortraits")).toHaveAttribute("aria-label", "Avonturenteam");
+  await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
+  await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+  await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Runewachter");
+  await expect(page.locator(".teamMeta")).toContainText("Bos");
+  await expect(page.locator(".teamMeta")).toContainText("0/3 runen");
+  await expect(page.locator('[data-guide="minnie"] img')).toBeVisible();
+  await expect(page.locator('[data-guide="moose"] img')).toBeVisible();
+  await expect(page.locator('[data-guide="minnie"]')).toHaveAttribute("data-active", "true");
+  const activePortrait = await page.locator(".teamPortraitActive").boundingBox();
+  const inactivePortrait = await page.locator(".teamPortraitInactive").boundingBox();
+  const teamCard = await page.locator("[data-adventure-team-bar]").boundingBox();
+  expect(activePortrait.width).toBeGreaterThan(inactivePortrait.width + 20);
+  expect(activePortrait.height).toBeGreaterThan(inactivePortrait.height + 20);
+  expect(teamCard.height).toBeLessThan(activePortrait.height);
   await expect(page.locator(".runeHotspot")).toHaveText(["", "", ""]);
   await expect(page.locator("[data-world-stage]")).toBeVisible();
 }
@@ -54,7 +71,9 @@ async function travelToTemple(page) {
   await expect(page.getByText("Een oude steen. Hij wijst naar de tempel.")).toBeVisible();
 
   await walkTowardTemple(page);
-  await expect(page.getByText("Daar is de tempel. Maak de drie runen wakker.")).toBeVisible();
+  await expect(page.getByText("Daar is de tempel. Die poort gaat niet zomaar open.")).toBeVisible();
+  await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
+  await expect(page.locator('[data-guide="moose"]')).toHaveAttribute("data-active", "true");
   await expect(page.getByRole("button", { name: "Zonrune" })).toBeVisible();
 }
 
@@ -164,10 +183,13 @@ async function playFullAdventure(page) {
     }
   }
 
-  await expect(page.getByText("Alle runen gloeien. De tempel wordt wakker!")).toBeVisible();
+  await expect(page.getByText("Alle runen gloeien. Nu voorzichtig naar de poort.")).toBeVisible();
   await expect(page.locator('[data-object="templeGate"]')).toBeVisible();
   await tap(page.getByRole("button", { name: "Ga naar binnen" }));
   await expect(page.getByText("Bewaker van de Runenpoort")).toBeVisible();
+  await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
+  await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
+  await expect(page.locator("[data-adventure-team-bar]")).toContainText("Goed gedaan, Sven. De poort is open.");
 }
 
 async function expectActorFrameChanges(page, animationName) {
@@ -427,7 +449,7 @@ test.describe("Sven en de Runenpoort", () => {
     expect(Math.max(...pathYSamples) - Math.min(...pathYSamples)).toBeGreaterThan(15);
     await expect(actorShell).toHaveClass(/sven-facing-right/);
 
-    await expect(page.getByText("Daar is de tempel. Maak de drie runen wakker.")).toBeVisible();
+    await expect(page.getByText("Daar is de tempel. Die poort gaat niet zomaar open.")).toBeVisible();
     await expect
       .poll(async () => {
         return page.locator(".worldTrack").evaluate((node) => Number(node.style.getPropertyValue("--camera-percent")));

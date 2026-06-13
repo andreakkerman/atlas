@@ -854,6 +854,161 @@ button {
   font-weight: 900;
 }
 
+.adventureTeamBar {
+  position: absolute;
+  left: 50%;
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 6;
+  width: min(1180px, calc(100% - 32px));
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(16px, 2.4vw, 30px);
+  align-items: center;
+  min-height: clamp(78px, 10dvh, 96px);
+  padding: 10px 20px 10px clamp(242px, 24vw, 320px);
+  border: 1px solid rgba(255, 218, 138, 0.52);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 18% -50%, rgba(255, 204, 108, 0.2), transparent 35%),
+    linear-gradient(180deg, rgba(31, 32, 25, 0.91), rgba(7, 14, 13, 0.93));
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 247, 222, 0.14);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+}
+
+.teamPortraits {
+  position: absolute;
+  left: clamp(12px, 2vw, 24px);
+  bottom: -4px;
+  display: flex;
+  gap: clamp(6px, 1.2vw, 12px);
+  align-items: flex-end;
+  width: clamp(230px, 21vw, 310px);
+}
+
+.teamPortrait {
+  position: relative;
+  width: clamp(58px, 7.4dvh, 76px);
+  height: clamp(70px, 8.6dvh, 88px);
+  margin: 0;
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+  border: 1px solid rgba(255, 231, 166, 0.2);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 231, 166, 0.14), transparent 62%),
+    rgba(255, 247, 222, 0.06);
+  transition: width 180ms ease, height 180ms ease, filter 180ms ease, opacity 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.teamPortrait img {
+  width: 112%;
+  height: 112%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: translateY(8%);
+  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.38));
+}
+
+.teamPortrait figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.teamPortraitActive {
+  width: clamp(154px, 13vw, 210px);
+  height: clamp(178px, 17vw, 250px);
+  overflow: visible;
+  border-color: transparent;
+  background: transparent;
+  opacity: 1;
+  filter: saturate(1.06) brightness(1.06) drop-shadow(0 0 10px rgba(255, 211, 122, 0.2));
+  transform: translateY(-24px);
+  box-shadow: none;
+}
+
+.teamPortraitActive img {
+  width: 100%;
+  height: 100%;
+  transform: translateY(6%);
+  filter:
+    drop-shadow(0 15px 16px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 12px rgba(255, 204, 108, 0.18));
+}
+
+.teamPortraitInactive {
+  opacity: 0.56;
+  filter: saturate(0.72) brightness(0.7);
+}
+
+.teamSpeech {
+  position: relative;
+  min-width: 0;
+  padding: 2px 0 3px clamp(28px, 3vw, 42px);
+  color: #fff7de;
+}
+
+.teamPaw {
+  position: absolute;
+  left: 0;
+  top: 0.3rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 199, 99, 0.82);
+  box-shadow:
+    0 -9px 0 -5px rgba(255, 199, 99, 0.82),
+    -8px -4px 0 -5px rgba(255, 199, 99, 0.82),
+    8px -4px 0 -5px rgba(255, 199, 99, 0.82);
+}
+
+.teamMeta,
+.teamSpeaker,
+.teamMessage {
+  margin: 0;
+}
+
+.teamMeta {
+  margin-top: 5px;
+  color: rgba(255, 247, 222, 0.5);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.teamSpeaker {
+  color: #ffd06d;
+  font-size: clamp(1.18rem, 2.2vw, 1.65rem);
+  font-weight: 900;
+}
+
+.teamMessage {
+  margin-top: 2px;
+  max-width: 48rem;
+  font-size: clamp(1.18rem, 2.45vw, 1.62rem);
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+.debugOverlayActive .adventureTeamBar {
+  opacity: 0.42;
+}
+
+.adventureTeamBar .primaryButton {
+  pointer-events: auto;
+}
+
+.rewardScreen .rewardPanel {
+  margin-bottom: clamp(88px, 13dvh, 112px);
+}
+
 .modalLayer {
   position: fixed;
   inset: 0;
@@ -1223,7 +1378,48 @@ button {
     grid-template-columns: 56px minmax(0, 1fr);
   }
 
+  .adventureTeamBar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    min-height: 92px;
+    padding: 10px 12px 10px 156px;
+  }
+
+  .teamPortrait {
+    width: 46px;
+    height: 58px;
+  }
+
+  .teamPortraitActive {
+    width: 104px;
+    height: 128px;
+    transform: translateY(-12px);
+  }
+
+  .teamPortraits {
+    left: 10px;
+    bottom: -3px;
+    width: 142px;
+    gap: 5px;
+  }
+
+  .teamMeta {
+    margin-top: 4px;
+    font-size: 0.68rem;
+  }
+
+  .teamSpeaker {
+    font-size: 1.03rem;
+  }
+
+  .teamMessage {
+    max-width: 100%;
+    font-size: clamp(1rem, 3.5vw, 1.28rem);
+    line-height: 1.14;
+  }
+
   .dialogue .primaryButton,
+  .adventureTeamBar .primaryButton,
   .miniHint {
     grid-column: 1 / -1;
     justify-self: stretch;
