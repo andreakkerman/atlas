@@ -38,7 +38,7 @@ Current stack:
 * local assets
 * localStorage
 
-Out of scope for the current runtime:
+Out of scope for normal gameplay:
 
 * backend
 * database
@@ -52,7 +52,7 @@ The experience should be deterministic, safe, and easy to run.
 
 ## D005 - AI Generates Before Gameplay
 
-AI may assist with level creation, but generated content is stored locally and reviewed before play.
+AI may assist with level creation, but generated content is stored locally, validated, audited, tested, and approved before play.
 
 Reason:
 
@@ -105,11 +105,11 @@ The object center drives:
 * challenge anchor
 * label anchor
 
-No duplicate solved-marker coordinates are allowed.
+No duplicate solved-marker or challenge-anchor coordinates are allowed.
 
 Reason:
 
-If the rune center changes, every related visual and interaction must move together.
+If the object center changes, every related visual and interaction must move together.
 
 ## D010 - Interaction Circles Are True Circles
 
@@ -124,31 +124,59 @@ Reason:
 
 Oval hit areas are a visible sign that world coordinates are being mixed with responsive CSS sizing.
 
-## D011 - Movement Uses A Data-Driven Walk Graph
+## D011 - Object Center And Approach Node Are Different Concepts
 
-Walk path nodes and edges live in level data.
+Object center means where the object exists in the artwork.
 
-The runtime performs generic routing:
-
-* project free click to nearest walk segment
-* route through graph nodes
-* move Sven along the route
+Approach node means where Sven can believably stand before interacting.
 
 Reason:
 
-Future generated levels need reusable movement behavior without hardcoded per-level movement logic.
+Some objects are high on a wall, hidden in vegetation, or embedded in a gate. Sven should not walk to the visual center of those objects.
 
-## D012 - Sven Follows The Walk Graph
+## D012 - Authored Movement Uses Sparse walkPath
 
-Sven should stay on the painted path or steps.
+The preferred authored movement source is a sparse `walkPath`.
+
+The path should express intent:
+
+* main route
+* meaningful turns
+* elevation changes
+* steps
+* approach points
+
+It should not contain excessive execution-detail points.
+
+Reason:
+
+Sparse paths are easier for Codex to generate, audit, tune, and reason about.
+
+## D013 - Runtime Derives Movement Detail
+
+The runtime derives a denser `walkGraph` from `walkPath`.
+
+Runtime routing:
+
+* projects free clicks to valid path segments
+* routes through graph nodes
+* moves Sven along the route
+
+Reason:
+
+Generated levels should author simple intent while the runtime handles execution detail.
+
+## D014 - Sven Follows The Visible Ground
+
+Sven's feet should stay on the painted path or steps.
 
 Approach nodes should place Sven at believable interaction positions.
 
 Reason:
 
-Floating, walking through rocks, or climbing invisible terrain breaks the adventure illusion.
+Floating, walking through plants, or cutting across rocks breaks the adventure illusion.
 
-## D013 - Contextual Interaction Replaces Verb Buttons
+## D015 - Contextual Interaction Replaces Verb Buttons
 
 The runtime does not show `Kijk`, `Praat`, or `Activeer` command buttons.
 
@@ -158,13 +186,13 @@ Reason:
 
 This is simpler for Sven and keeps the world as the primary interface.
 
-## D014 - Move To -> Arrive -> Action
+## D016 - Move To -> Arrive -> Action
 
 Object interaction follows:
 
 1. click/tap object
 2. Sven walks to the approach node
-3. Sven faces the object
+3. Sven settles and faces the object
 4. Sven performs an action animation
 5. the result happens
 
@@ -172,7 +200,7 @@ Reason:
 
 This makes Sven feel like an actor in the world.
 
-## D015 - Shared Assets Stay Global
+## D017 - Shared Assets Stay Global
 
 Shared Sven character assets stay outside level folders.
 
@@ -186,7 +214,7 @@ Reason:
 
 Sven is reusable across adventures.
 
-## D016 - Level Assets Stay Inside Level Folders
+## D018 - Level Assets Stay Inside Level Folders
 
 Level-specific assets stay inside the owning level folder.
 
@@ -200,7 +228,7 @@ Reason:
 
 Generated levels should be portable, reviewable, and removable as discrete artifacts.
 
-## D017 - Levels Are Registered Through The Manifest
+## D019 - Levels Are Registered Through The Manifest
 
 Available levels are listed in `Levels/manifest.js`.
 
@@ -208,7 +236,7 @@ Reason:
 
 The main menu should discover levels without hardcoding level scripts in `index.html`.
 
-## D018 - Validate Before Play
+## D020 - Validate Before Play
 
 Every level must pass validation before it is considered playable.
 
@@ -217,7 +245,7 @@ Validation must catch:
 * missing level files
 * incorrect world dimensions
 * invalid interactive objects
-* broken walk graph references
+* broken path references
 * invalid approach nodes
 * missing assets
 * invalid challenge/object references
@@ -226,7 +254,17 @@ Reason:
 
 Generated levels must work correctly on the first attempt as often as possible.
 
-## D019 - Browser QA Remains Required
+## D021 - Audit And Report Are Required Gates
+
+Every generated or changed level should run audit and report scripts.
+
+The audit catches suspicious-but-structurally-valid data. The report gives a quick human-readable summary.
+
+Reason:
+
+Validation proves correctness. Audit and report support quality review and Codex repair loops.
+
+## D022 - Browser QA Remains Required
 
 Playwright smoke tests are required for runtime confidence.
 
@@ -234,3 +272,53 @@ Reason:
 
 Static validation catches invalid data. Browser QA catches flow, interaction, persistence, and layout regressions.
 
+## D023 - Debug Overlay Is Required Developer Infrastructure
+
+The runtime includes a developer overlay toggled with `Ctrl+Shift+D`.
+
+It shows:
+
+* authored walk path points
+* derived/reviewable path edges
+* approach nodes
+* interactive object centers
+* object radii
+
+Reason:
+
+Generated levels cannot be trusted without fast visual inspection tools.
+
+## D024 - WalkPath Tuning Is Developer-Only
+
+WalkPath editing is available only through the local developer workflow:
+
+```text
+npm run dev:walkpath
+http://127.0.0.1:4173/?dev=walkpath
+Ctrl+Shift+D
+```
+
+The real level file changes only when `Apply` is pressed.
+
+Reason:
+
+Path tuning must be safe and reversible. Normal gameplay must never expose editing controls.
+
+## D025 - New Background Image Means New Level Area
+
+A connected area such as `Temple Inside` should be a separate level package with its own world image, metadata, walkPath, interactiveObjects, challenges, and start position.
+
+Example:
+
+```text
+LVL-0001: Forest + temple exterior
+LVL-0002: Temple inside
+```
+
+The connection between areas is progression/navigation, not shared world coordinates.
+
+Fade out/in transitions are acceptable between separate level areas.
+
+Reason:
+
+Each background image has its own pixel coordinate system. Keeping areas separate avoids mixing coordinates and makes generated areas easier to validate, audit, tune, and test.

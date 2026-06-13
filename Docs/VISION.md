@@ -66,17 +66,18 @@ Traditional command buttons such as `Kijk`, `Praat`, and `Activeer` are intentio
 
 Movement is part of the game design, not just transportation.
 
-The current runtime uses:
+The runtime direction is:
 
 * one wide world image per level
 * camera-follow movement
-* a data-driven walk graph
+* sparse authored walk paths
+* derived runtime movement graphs
 * object approach nodes
 * Move To -> Arrive -> Action interaction flow
 
 This should remain the default direction for future levels.
 
-### Dutch, Short, Supportive Text
+## Language And Tone
 
 All player-facing text must be Dutch.
 
@@ -145,21 +146,24 @@ For now, browser `localStorage` is sufficient.
 
 The long-term vision is an AI-assisted Adventure Factory.
 
-The Adventure Factory should eventually create personalized adventures from creative briefs. A generated adventure should include:
+The Adventure Factory should create personalized adventures from creative briefs. A generated adventure should include:
 
 * concept and story
 * world background
+* measured image dimensions
+* world metadata
 * interactive objects
-* walk graph
-* characters and companion text
+* sparse walk path
+* approach nodes
 * educational challenges
 * reward state
 * validation results
+* audit results
 * Playwright smoke-test results
 
 The runtime should be reusable. New generated levels should ideally require no runtime code changes.
 
-## Authoring Philosophy
+## Codex-First Authoring Philosophy
 
 Generated content must be created before gameplay, not during gameplay.
 
@@ -171,7 +175,17 @@ Runtime gameplay should be:
 * reviewable
 * testable
 
-AI may help generate worlds, puzzles, dialogue, and level data. Human review and automated validation are required before Sven plays a generated level.
+Codex should generate, validate, audit, fix, and retest level content as much as possible. The human role is final approval before Sven plays a level or before a level becomes a publish candidate.
+
+The target generated level model is:
+
+```text
+world.png
++
+world-metadata.json
+```
+
+The metadata should contain object placement, sparse walk path, approach nodes, challenges, and completion data. Runtime execution details should be derived from that metadata.
 
 ## Technical Direction
 
@@ -180,10 +194,10 @@ The project should stay local-first and intentionally simple:
 * browser based
 * plain HTML/CSS/JavaScript
 * local assets
-* no backend
+* no backend for normal gameplay
 * no database
 * no authentication
 * no cloud dependency during gameplay
+* no runtime AI calls during gameplay
 
 Complexity must earn its place. The Adventure Factory should emerge from validated levels, not speculative abstractions.
-

@@ -450,6 +450,58 @@ button {
   color: #9cf2e9;
 }
 
+.walkPathEditorPanel ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.walkPathEditorPanel li {
+  margin: 2px 0;
+}
+
+.walkPathEditorPanel [class^="walkPathStatus"] {
+  width: fit-content;
+  padding: 4px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 231, 166, 0.24);
+  background: rgba(255, 242, 202, 0.1);
+  font-weight: 900;
+}
+
+.developerToolMode,
+.developerToolUnavailable,
+.developerToolReadOnly {
+  width: fit-content;
+  padding: 4px 7px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 231, 166, 0.24);
+  background: rgba(255, 242, 202, 0.1);
+  font-weight: 900;
+}
+
+.developerToolMode {
+  color: #9cf2e9;
+}
+
+.developerToolUnavailable,
+.developerToolReadOnly {
+  color: #ffe28a;
+}
+
+.walkPathStatusModified {
+  color: #ffe28a;
+}
+
+.walkPathStatusApplied,
+.walkPathStatusClean,
+.walkPathStatusReverted {
+  color: #9cf2e9;
+}
+
+.walkPathStatusError {
+  color: #ffb4a8;
+}
+
 .walkPathEditorActions {
   display: flex;
   flex-wrap: wrap;

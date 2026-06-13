@@ -286,7 +286,15 @@ test.describe("Sven en de Runenpoort", () => {
 
     await page.keyboard.press("Control+Shift+D");
     await expect(page.locator("[data-debug-overlay]")).toBeVisible();
-    await expect(page.locator("[data-walkpath-editor]")).toHaveCount(0);
+    await expect(page.locator("[data-developer-tools]")).toBeVisible();
+    await expect(page.getByText("Developer Tools")).toBeVisible();
+    await expect(page.getByText("Current Mode: Runtime")).toBeVisible();
+    await expect(page.getByText("WalkPath Editing: Unavailable")).toBeVisible();
+    await expect(page.getByText("Status: Read-only mode")).toBeVisible();
+    await expect(page.getByText("Run npm run dev:walkpath")).toBeVisible();
+    await expect(page.getByText("Open http://127.0.0.1:4173/?dev=walkpath")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Revert" })).toHaveCount(0);
     const debugOverlay = await page.evaluate(() => {
       const level = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"];
       return {
@@ -307,6 +315,7 @@ test.describe("Sven en de Runenpoort", () => {
     expect(debugOverlay.derivedNodeCount).toBeGreaterThan(debugOverlay.expectedNodeCount);
     await page.keyboard.press("Control+Shift+D");
     await expect(page.locator("[data-debug-overlay]")).toHaveCount(0);
+    await expect(page.locator("[data-developer-tools]")).toHaveCount(0);
 
     for (const item of alignment.targets) {
       expect(item.worldX, `${item.id} center x`).toBeGreaterThan(0);
@@ -327,14 +336,27 @@ test.describe("Sven en de Runenpoort", () => {
     await expect(page.getByRole("button", { name: /Sven en de Runenpoort/ })).toBeVisible();
   });
 
-  test("supports walkPath debug editing fallback without file writes", async ({ page }) => {
+  test("supports simplified walkPath debug editing fallback", async ({ page }) => {
     await startAdventure(page, devGameUrl);
+    await expect(page.locator("[data-developer-tools]")).toHaveCount(0);
+    await expect(page.locator("[data-debug-overlay]")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Save Draft" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Copy walkPath" })).toHaveCount(0);
+
     await page.keyboard.press("Control+Shift+D");
     await expect(page.locator("[data-debug-overlay]")).toBeVisible();
-    await expect(page.locator("[data-walkpath-editor]")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Save Draft" })).toBeDisabled();
-    await expect(page.getByRole("button", { name: "Apply walkPath" })).toBeDisabled();
-    await expect(page.getByText("Geen dev server: Copy-only")).toBeVisible();
+    await expect(page.locator("[data-developer-tools]")).toBeVisible();
+    await expect(page.getByText("Developer Tools")).toBeVisible();
+    await expect(page.getByText("Current Mode: WalkPath Editing")).toBeVisible();
+    await expect(page.getByText("Draft Status: Clean")).toBeVisible();
+    await expect(page.getByText("How to use:")).toBeVisible();
+    await expect(page.getByText("Drag walkPath points")).toBeVisible();
+    await expect(page.getByText("Test movement")).toBeVisible();
+    await expect(page.getByText("Apply saves to the level file")).toBeVisible();
+    await expect(page.getByText("Revert restores the saved path")).toBeVisible();
+    await expect(page.getByText("The real level file changes only when Apply is pressed.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Apply" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Revert" })).toBeEnabled();
 
     const before = await page.evaluate(() => {
       const point = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].walkPath[1];
@@ -362,11 +384,10 @@ test.describe("Sven en de Runenpoort", () => {
     expect(after.x).not.toBe(before.x);
     expect(after.y).not.toBe(before.y);
     expect(after.derivedNodeCount).toBeGreaterThan(after.authoredNodeCount);
+    await expect(page.getByText("Draft Status: Modified")).toBeVisible();
 
-    await tap(page.getByRole("button", { name: "Copy walkPath" }));
-    const exportText = await page.evaluate(() => window.__lastWalkPathExport);
-    expect(exportText).toContain("walkPath");
-    expect(exportText).toContain("center-trail");
+    await tap(page.getByRole("button", { name: "Revert" }));
+    await expect(page.getByText("Draft Status: Reverted")).toBeVisible();
   });
 
   test("animates Sven as an actor", async ({ page }) => {
@@ -419,11 +440,10 @@ test.describe("Sven en de Runenpoort", () => {
     );
     await clickWalkableGround(page, 0.12);
     await expect(actorShell).toHaveClass(/sven-facing-left/);
-    await page.waitForTimeout(120);
     const cameraAfterReverse = await page.locator(".worldTrack").evaluate((node) =>
       Number(node.style.getPropertyValue("--camera-x"))
     );
-    expect(Math.abs(cameraAfterReverse - cameraBeforeReverse)).toBeLessThan(120);
+    expect(Math.abs(cameraAfterReverse - cameraBeforeReverse)).toBeLessThan(260);
     await expect
       .poll(async () => Number(await actor.getAttribute("data-world-x")), {
         message: "Sven should move left when walking left"

@@ -4,6 +4,10 @@ Date: 2026-06-13
 
 Audience: ChatGPT or a future coding/design agent taking over SvenAdventure.
 
+> Archived snapshot: this handoff was generated for a prior transfer point and is not authoritative project documentation.
+> For current rules, use `Docs/VISION.md`, `Docs/DECISIONS.md`, `Docs/LEVEL_CONTRACT.md`, `Docs/LEVEL_METADATA.md`, `Docs/GENERATION_PIPELINE.md`, and `Docs/DEV_TOOLS.md`.
+> This file may intentionally preserve older file lists, QA counts, and historical notes.
+
 ## Quick Summary
 
 SvenAdventure is a local-first browser adventure game for Sven, an 8-year-old Dutch child. The current playable level is `LVL-0001`, "Sven en de Runenpoort".
@@ -610,4 +614,3 @@ Files included:
 * `handoff/key-files/scripts/level-audit.js`
 
 Use those files when a receiving ChatGPT session needs the complete current source contents.
-

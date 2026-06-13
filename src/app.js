@@ -49,6 +49,8 @@ let walkPathEditor = {
   originalWalkPath: null,
   draggingIndex: null,
   currentPoint: null,
+  status: "Clean",
+  modified: false,
   message: "",
   busy: false
 };
@@ -138,7 +140,9 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
     draggingIndex: null,
     currentPoint: null,
-    message: WALKPATH_DEV_MODE ? "Devmodus: Copy walkPath beschikbaar." : "",
+    status: "Clean",
+    modified: false,
+    message: WALKPATH_DEV_MODE ? "Gebruik Ctrl + Shift + D om punten te slepen." : "",
     busy: false
   };
 
@@ -147,15 +151,17 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
   try {
     await requestWalkPathApi("/__dev/status");
     walkPathEditor.apiAvailable = true;
-    walkPathEditor.message = "Devmodus: draft opslaan staat klaar.";
+    walkPathEditor.message = "Dev server actief.";
     const draft = await requestWalkPathApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/walkpath-draft`);
     if (Array.isArray(draft.walkPath)) {
       selectedLevel.walkPath = cloneWalkPath(draft.walkPath);
+      walkPathEditor.status = "Modified";
+      walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
     }
   } catch (error) {
     walkPathEditor.apiAvailable = false;
-    walkPathEditor.message = "Geen dev server. Gebruik Copy walkPath.";
+    walkPathEditor.message = "Geen dev server. Start npm run dev:walkpath.";
   }
 }
 
@@ -637,43 +643,16 @@ function pointFromViewportEvent(event, viewportElement) {
   };
 }
 
-function formatWalkPathForExport() {
-  const lines = authoredWalkPathPoints(level).map((point) => {
-    const role = point.role ? `, role: "${point.role}"` : "";
-    return `    { id: "${point.id}", x: ${Math.round(point.x)}, y: ${Math.round(point.y)}${role} }`;
-  });
-  return `walkPath: [\n${lines.join(",\n")}\n  ]`;
-}
-
-async function copyWalkPath() {
-  const text = formatWalkPathForExport();
-  window.__lastWalkPathExport = text;
-  try {
-    await navigator.clipboard.writeText(text);
-    walkPathEditor.message = "walkPath gekopieerd.";
-  } catch {
-    walkPathEditor.message = "Kopieren niet toegestaan. walkPath staat in window.__lastWalkPathExport.";
-  }
-  render();
-}
-
-async function saveWalkPathDraft() {
-  if (!walkPathEditor.apiAvailable || walkPathEditor.busy) return;
-  walkPathEditor.busy = true;
-  walkPathEditor.message = "Draft opslaan...";
-  render();
-
+async function persistWalkPathDraft() {
+  if (!walkPathEditor.apiAvailable || !level) return;
   try {
     await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), {
       method: "POST",
       body: JSON.stringify({ walkPath: authoredWalkPathPoints(level) })
     });
-    walkPathEditor.message = "Draft opgeslagen.";
   } catch (error) {
+    walkPathEditor.status = "Error";
     walkPathEditor.message = `Draft opslaan mislukt. ${error.message}`;
-  } finally {
-    walkPathEditor.busy = false;
-    render();
   }
 }
 
@@ -689,8 +668,11 @@ async function applyWalkPathDraft() {
       body: JSON.stringify({ walkPath: authoredWalkPathPoints(level) })
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
-    walkPathEditor.message = "walkPath toegepast in level.js.";
+    walkPathEditor.status = "Applied";
+    walkPathEditor.modified = false;
+    walkPathEditor.message = "Opgeslagen in level.js.";
   } catch (error) {
+    walkPathEditor.status = "Error";
     walkPathEditor.message = `Toepassen mislukt. ${error.message}`;
   } finally {
     walkPathEditor.busy = false;
@@ -698,10 +680,10 @@ async function applyWalkPathDraft() {
   }
 }
 
-async function discardWalkPathDraft() {
+async function revertWalkPathDraft() {
   if (walkPathEditor.busy) return;
   walkPathEditor.busy = true;
-  walkPathEditor.message = "Draft verwijderen...";
+  walkPathEditor.message = "Revert...";
   render();
 
   try {
@@ -709,9 +691,13 @@ async function discardWalkPathDraft() {
       await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), { method: "DELETE" });
     }
     setLevelWalkPath(walkPathEditor.originalWalkPath);
-    walkPathEditor.message = "Draft verwijderd. Origineel pad hersteld.";
+    walkPathEditor.currentPoint = null;
+    walkPathEditor.status = "Reverted";
+    walkPathEditor.modified = false;
+    walkPathEditor.message = "Draft weggegooid. Opgeslagen pad hersteld.";
   } catch (error) {
-    walkPathEditor.message = `Draft verwijderen mislukt. ${error.message}`;
+    walkPathEditor.status = "Error";
+    walkPathEditor.message = `Revert mislukt. ${error.message}`;
   } finally {
     walkPathEditor.busy = false;
     render();
@@ -732,8 +718,11 @@ function updateDraggedWalkPathPoint(event) {
   };
   nextWalkPath[walkPathEditor.draggingIndex] = nextPoint;
   walkPathEditor.currentPoint = nextPoint;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
   walkPathEditor.message = `${nextPoint.id}: x ${nextPoint.x}, y ${nextPoint.y}`;
   setLevelWalkPath(nextWalkPath);
+  persistWalkPathDraft();
   render();
 }
 
@@ -1183,26 +1172,48 @@ function renderDebugOverlay() {
   `;
 }
 
-function renderWalkPathEditorControls() {
-  if (!debugOverlayEnabled || !walkPathEditor.enabled) return "";
+function renderDeveloperToolsPanel() {
+  if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
+
+  if (!WALKPATH_DEV_MODE) {
+    return `
+      <aside class="walkPathEditorPanel" data-developer-tools>
+        <strong>Developer Tools</strong>
+        <span class="developerToolMode">Current Mode: Runtime</span>
+        <span class="developerToolUnavailable">WalkPath Editing: Unavailable</span>
+        <span>To enable WalkPath Editing:</span>
+        <ol>
+          <li>Run npm run dev:walkpath</li>
+          <li>Open http://127.0.0.1:4173/?dev=walkpath</li>
+          <li>Start the level you want to edit</li>
+          <li>Press Ctrl + Shift + D</li>
+        </ol>
+        <span class="developerToolReadOnly">Status: Read-only mode</span>
+      </aside>
+    `;
+  }
 
   const point = walkPathEditor.currentPoint;
-  const status = walkPathEditor.apiAvailable
-    ? "Dev server actief"
-    : "Geen dev server: Copy-only";
-  const disabled = walkPathEditor.busy ? "disabled" : "";
   const serverDisabled = !walkPathEditor.apiAvailable || walkPathEditor.busy ? "disabled" : "";
+  const statusClass = `walkPathStatus${walkPathEditor.status}`;
 
   return `
-    <aside class="walkPathEditorPanel" data-walkpath-editor>
-      <strong>WalkPath tuning</strong>
-      <span>${status}</span>
-      <span>${point ? `${point.id}: ${point.x}, ${point.y}` : "Sleep een punt."}</span>
+    <aside class="walkPathEditorPanel" data-developer-tools>
+      <strong>Developer Tools</strong>
+      <span class="developerToolMode">Current Mode: WalkPath Editing</span>
+      <span class="${statusClass}">Draft Status: ${walkPathEditor.status}</span>
+      <span>How to use:</span>
+      <ol>
+        <li>Drag walkPath points</li>
+        <li>Test movement</li>
+        <li>Apply saves to the level file</li>
+        <li>Revert restores the saved path</li>
+      </ol>
+      <p>The real level file changes only when Apply is pressed.</p>
+      <span>${point ? `${point.id}: ${point.x}, ${point.y}` : "Drag a point."}</span>
       <div class="walkPathEditorActions">
-        <button type="button" data-debug-action="save-draft" ${serverDisabled}>Save Draft</button>
-        <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply walkPath</button>
-        <button type="button" data-debug-action="discard-draft" ${disabled}>Discard Draft</button>
-        <button type="button" data-debug-action="copy-walkpath" ${disabled}>Copy walkPath</button>
+        <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
+        <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
       </div>
       <p>${walkPathEditor.message}</p>
     </aside>
@@ -1245,7 +1256,7 @@ function renderWorldStage() {
           />
         </span>
       </div>
-      ${renderWalkPathEditorControls()}
+      ${renderDeveloperToolsPanel()}
     </section>
   `;
 }
@@ -1307,8 +1318,15 @@ function renderReturnToMenuButton() {
   `;
 }
 
+function canOpenTempleGate() {
+  if (state.screen !== "scene" || state.completedRunes.size !== level.runes.length) return false;
+  const gate = hotspotById("templeGate");
+  if (!gate) return false;
+  return distanceBetween({ x: state.worldX, y: state.worldY }, getApproachPoint(gate)) < 180;
+}
+
 function renderDialogue() {
-  const canOpen = state.screen === "scene" && state.completedRunes.size === level.runes.length && state.worldX > 1900;
+  const canOpen = canOpenTempleGate();
   const done = state.completedRunes.size;
   const companionName = level.companion?.name || level.spiritName;
   const companionPortrait = level.companion?.portrait || "assets/sven-stage.png";
@@ -1529,10 +1547,8 @@ app.addEventListener("click", (event) => {
   if (debugActionTarget) {
     event.preventDefault();
     const action = debugActionTarget.dataset.debugAction;
-    if (action === "save-draft") saveWalkPathDraft();
     if (action === "apply-walkpath") applyWalkPathDraft();
-    if (action === "discard-draft") discardWalkPathDraft();
-    if (action === "copy-walkpath") copyWalkPath();
+    if (action === "revert-walkpath") revertWalkPathDraft();
     return;
   }
 

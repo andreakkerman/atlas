@@ -1,20 +1,47 @@
 # Generation Pipeline
 
-This document defines the correct order for creating a SvenAdventure level.
+This document defines the Codex-first workflow for creating future SvenAdventure levels.
 
-The order matters. Many bugs in adventure levels come from creating data before the image exists, guessing image dimensions, or placing objects in a different coordinate system from the background.
+The pipeline exists to prevent the problems learned from LVL-0001:
 
-## Required Generation Sequence
+* incorrect world dimensions
+* hotspot misalignment
+* solved-marker misalignment
+* duplicated coordinate systems
+* over-authored path data
+* broken approach positions
+* runtime fixes for content-data problems
 
-### 1. Create Level Concept
+## Principle
 
-Define the adventure idea before generating assets.
+Codex should generate, validate, audit, fix, and retest as much as possible.
 
-The concept should include:
+Human approval is the final gate before Sven plays a level or before a level becomes a publish candidate. Human approval should not mean manual object placement, manual path authoring, or manual bug chasing unless the tooling cannot solve the problem yet.
+
+## Required Workflow
+
+### Optional Preproduction: Generate Mockups
+
+Before committing to a generated level or connected area, Codex may create several visual mockups.
+
+Mockups can explore:
+
+* a new adventure level
+* a connected area such as `Temple Inside`
+* an extension path for an existing adventure
+* different visual moods or compositions
+
+Mockups are not playable levels. They should not be added to `Levels/manifest.js`, validation, audit, report, or Playwright until one is approved for promotion.
+
+Use `PREPRODUCTION.md` for mockup folder structure and approval rules.
+
+### 1. Generate Level Concept
+
+Codex creates:
 
 * setting
-* player goal
-* main mystery or obstacle
+* adventure goal
+* main obstacle
 * companion role
 * educational focus
 * reward moment
@@ -25,11 +52,22 @@ Example:
 Sven enters a Viking forest and opens a rune gate by waking three multiplication runes.
 ```
 
-Why this comes first:
+The goal must be concrete and adventurous, not abstract scoring.
 
-The concept guides the world image, object placement, path design, and math challenges.
+Good:
 
-### 2. Generate World Background
+* open the gate
+* repair the ship
+* unlock the map
+* wake the ancient machine
+
+Bad:
+
+* earn points
+* finish quiz
+* complete worksheet
+
+### 2. Generate World Image
 
 Generate one wide background image for the level.
 
@@ -41,9 +79,7 @@ The image should include:
 * enough horizontal space for camera movement
 * no hidden essential objects behind foreground clutter
 
-Why this comes before level data:
-
-The background image is the world. Every coordinate depends on the final image pixels.
+The image is the world. Do not create final coordinate data before the final image exists.
 
 ### 3. Measure Actual Image Dimensions
 
@@ -65,11 +101,23 @@ world.width = 2172
 world.height = 724
 ```
 
-Why this is critical:
+If this step is wrong, every object, path node, glow, challenge anchor, and camera position can drift.
 
-If the world size is wrong, every hotspot, path node, glow, challenge anchor, and camera position can drift.
+### 4. Generate World Metadata
 
-### 4. Register Interactive Objects
+Create the source metadata described in `LEVEL_METADATA.md`.
+
+The target model is:
+
+```text
+world.png
++
+world-metadata.json
+```
+
+Metadata should contain the generated source data. Runtime execution details should be derived.
+
+### 5. Define interactiveObjects
 
 Create `interactiveObjects` entries for every object Sven can interact with.
 
@@ -82,54 +130,53 @@ For each object, define:
 * approach node
 * label
 
-Example:
+The object center becomes the shared anchor for click, hover, focus, solved glow, label, and challenge panel.
 
-```js
-{
-  id: "zon",
-  type: "rune",
-  center: { x: 1384, y: 172 },
-  radius: 46,
-  approachNode: "sun-rune-approach",
-  label: "Zonrune"
-}
-```
+Do not create separate solved or challenge coordinates.
 
-Why this comes before challenges:
+### 6. Define Sparse walkPath
 
-Challenges must attach to real world objects. The object center becomes the shared anchor for click, hover, solved glow, label, and challenge panel.
+Create a sparse `walkPath` that follows the visible painted path.
 
-### 5. Define Walk Graph
+The path should include:
 
-Create path nodes and edges that follow the painted path.
+* main route
+* meaningful turns
+* elevation changes
+* steps
+* approach positions
+
+The path should not include excessive near-duplicate execution points.
+
+Sven's feet are the reference point, not his body center.
+
+### 7. Define Approach Nodes
+
+Approach nodes place Sven where he can believably stand before an action.
 
 Rules:
 
-* nodes use background image pixel coordinates
-* nodes should sit on the visible ground
-* edges connect walkable segments
-* stairs need several nodes
-* each interactive object needs a believable approach node
+* approach nodes must be on walkable ground
+* approach nodes may be far from object centers
+* approach nodes should not enter plants, rocks, or walls
+* object centers should not be moved to fix approach problems
 
-Example:
+### 8. Derive Runtime Graph
 
-```js
-nodes: [
-  { id: "forest-start", x: 170, y: 610 },
-  { id: "forest-rune-approach", x: 285, y: 600 }
-],
-edges: [
-  ["forest-start", "forest-rune-approach"]
-]
-```
+Derive `walkGraph` from sparse `walkPath`.
 
-Why this follows object registration:
+The derived graph handles:
 
-Approach nodes must be placed relative to interactive objects.
+* denser movement detail
+* free click projection
+* routing
+* debug overlay review
 
-### 6. Attach Challenges To Objects
+If movement looks wrong, fix the source `walkPath` or approach node. Do not compensate with unrelated runtime code.
 
-Attach educational content to interactive objects using `objectId`.
+### 9. Attach Challenges To Objects
+
+Attach educational content to objects using `objectId`.
 
 Example:
 
@@ -144,11 +191,9 @@ Example:
 }
 ```
 
-Why this comes after object registration:
+Challenge presentation uses the referenced interactive object center.
 
-The runtime should never need separate challenge coordinates. Challenge presentation uses the referenced interactive object center.
-
-### 7. Validate Level
+### 10. Validate
 
 Run:
 
@@ -156,27 +201,61 @@ Run:
 npm run validate:levels
 ```
 
+On Windows PowerShell, use this if script execution policy blocks `npm`:
+
+```bash
+npm.cmd run validate:levels
+```
+
 Validation must pass before browser QA.
 
-The validator checks:
-
-* manifest entries
-* level scripts
-* actual image dimensions
-* interactive object structure
-* object bounds
-* walk graph references
-* approach node references
-* challenge object references
-* local asset paths
-
-Why this comes before Playwright:
-
-Static validation catches content defects quickly and explains them directly.
-
-### 8. Run Playwright Smoke Tests
+### 11. Audit
 
 Run:
+
+```bash
+npm run audit:levels
+```
+
+Audit warnings are not automatically fatal, but Codex should treat them as repair prompts.
+
+Examples:
+
+* objects extremely close together
+* object radius suspiciously large or small
+* approach node far from object center
+* long graph edge
+* steep sudden y jumps
+* isolated or disconnected path nodes
+* unreachable objects
+
+### 12. Report
+
+Run:
+
+```bash
+npm run report:levels
+```
+
+The report should help Codex and the human approver quickly understand:
+
+* world dimensions
+* object count
+* path size
+* longest edge
+* y-range
+* challenge count
+* warnings
+
+### 13. Browser Test
+
+Run:
+
+```bash
+npx playwright test
+```
+
+or:
 
 ```bash
 npm run test:e2e
@@ -193,37 +272,93 @@ Smoke tests should verify:
 * reward screen appears
 * progress persists
 
-Why this is still needed:
+Future generated levels should receive generated smoke tests.
 
-Validation proves data is structurally valid. Browser tests prove the runtime experience still works.
+### 14. Use Debug Overlay And WalkPath Tuning If Needed
 
-### 9. Mark Level Playable
+Use the developer tools described in `DEV_TOOLS.md`.
 
-A generated level may be marked playable only after:
-
-* level data passes validation
-* Playwright smoke tests pass
-* human review confirms the adventure makes sense
-* Dutch text is appropriate for Sven
-* visual alignment is acceptable
-
-## Why This Order Exists
-
-The background image coordinate system is the source of truth.
-
-If a generator writes objects, paths, or challenges before the final image exists, it is guessing. Guessing creates alignment bugs.
-
-Correct order:
+Debug overlay:
 
 ```text
-image first -> measure image -> place objects -> place paths -> attach challenges -> validate -> test
+Ctrl+Shift+D
 ```
 
-Incorrect order:
+WalkPath tuning:
+
+```text
+npm run dev:walkpath
+http://127.0.0.1:4173/?dev=walkpath
+Ctrl+Shift+D
+```
+
+Codex should tune source path/object data and rerun gates.
+
+### 15. Re-run Gates
+
+After fixes, rerun:
+
+```bash
+npm run validate:levels
+npm run audit:levels
+npm run report:levels
+npx playwright test
+```
+
+The level is not ready while any required gate fails.
+
+### 16. Human Approval Gate
+
+Human approval happens after Codex has already generated, validated, audited, fixed, and retested the level.
+
+The human approver checks:
+
+* adventure appeal
+* visual charm
+* Dutch tone
+* child appropriateness
+* whether Sven would understand what to do
+* whether the level is good enough for Sven to play
+
+### 17. Publish Candidate
+
+A level can become a publish candidate only after:
+
+* validation passes
+* audit has no unresolved serious warnings
+* report looks sensible
+* Playwright passes
+* debug overlay issues are fixed or accepted
+* human approval is given
+
+## Repair Loop
+
+The normal loop is:
+
+```text
+generate -> validate -> audit -> report -> browser test -> fix -> rerun gates -> approval
+```
+
+Do not skip directly from generation to human approval.
+
+Do not ask the human to manually place objects or paths when Codex can inspect, adjust, and retest the data.
+
+## Incorrect Workflow
+
+Do not do this:
 
 ```text
 invent coordinates -> generate image later -> hope alignment works
 ```
 
-The incorrect order is not allowed for Adventure Factory output.
+Do not do this:
 
+```text
+generate level -> ask human to find all broken coordinates -> patch visually by guessing
+```
+
+The correct order is:
+
+```text
+image first -> measure image -> generate metadata -> validate -> audit -> test -> fix -> approve
+```
