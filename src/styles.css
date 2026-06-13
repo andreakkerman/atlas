@@ -380,6 +380,15 @@ button {
   font: 700 18px/1 system-ui, sans-serif;
 }
 
+.pathDebugEditable .debugDraggableNode circle {
+  pointer-events: auto;
+  cursor: grab;
+}
+
+.pathDebugEditable .debugDraggableNode:active circle {
+  cursor: grabbing;
+}
+
 .debugPathEdge {
   stroke: rgba(255, 236, 153, 0.95);
   stroke-width: 6;
@@ -417,6 +426,54 @@ button {
   stroke: rgba(10, 18, 16, 0.92);
   stroke-width: 5;
   fill: #fff7de;
+}
+
+.walkPathEditorPanel {
+  position: absolute;
+  left: 82px;
+  top: 12px;
+  z-index: 7;
+  display: grid;
+  gap: 6px;
+  width: min(420px, calc(100vw - 104px));
+  padding: 10px;
+  border: 1px solid rgba(156, 242, 233, 0.46);
+  border-radius: 8px;
+  color: #fff7de;
+  background: rgba(10, 18, 16, 0.88);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.32);
+  font-size: 0.82rem;
+  pointer-events: auto;
+}
+
+.walkPathEditorPanel strong {
+  color: #9cf2e9;
+}
+
+.walkPathEditorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.walkPathEditorActions button {
+  min-height: 32px;
+  border: 1px solid rgba(255, 231, 166, 0.34);
+  border-radius: 6px;
+  color: #fff7de;
+  background: rgba(255, 242, 202, 0.12);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.walkPathEditorActions button:disabled {
+  opacity: 0.48;
+  cursor: default;
+}
+
+.walkPathEditorPanel p {
+  margin: 0;
+  color: rgba(255, 247, 222, 0.82);
 }
 
 .verbBar {

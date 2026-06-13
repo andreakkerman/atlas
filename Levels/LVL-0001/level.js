@@ -74,16 +74,16 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   walkPath: [
     { id: "forest-start", x: 170, y: 626 },
     { id: "forest-rune-approach", x: 285, y: 628, role: "approach" },
-    { id: "center-trail", x: 585, y: 614 },
-    { id: "lower-trail", x: 930, y: 604 },
-    { id: "trail-rise-2", x: 1168, y: 512 },
-    { id: "trail-top", x: 1265, y: 490 },
-    { id: "sun-rune-approach", x: 1365, y: 552, role: "approach" },
+    { id: "center-trail", x: 590, y: 634 },
+    { id: "lower-trail", x: 940, y: 628 },
+    { id: "trail-rise-2", x: 1151, y: 569 },
+    { id: "trail-top", x: 1235, y: 518 },
+    { id: "sun-rune-approach", x: 1308, y: 547, role: "approach" },
     { id: "stone-rune-approach", x: 1452, y: 570, role: "approach" },
     { id: "temple-approach", x: 1620, y: 588 },
-    { id: "gate-step-low", x: 1700, y: 575 },
-    { id: "gate-step-upper", x: 1860, y: 492, role: "approach" },
-    { id: "wind-rune-approach", x: 1950, y: 534, role: "approach" }
+    { id: "gate-step-low", x: 1692, y: 562 },
+    { id: "gate-step-upper", x: 1770, y: 483, role: "approach" },
+    { id: "wind-rune-approach", x: 1888, y: 485, role: "approach" }
   ],
   intro: [
     "Sven komt aan bij een oud bos.",

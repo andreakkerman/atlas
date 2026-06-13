@@ -4,6 +4,7 @@ const path = require("path");
 const { pathToFileURL } = require("url");
 
 const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const devGameUrl = `${gameUrl}?dev=walkpath`;
 
 const runes = [
   { name: "Zonrune", questions: [[3, 4], [5, 6], [2, 8], [4, 7]] },
@@ -23,8 +24,8 @@ async function tap(locator) {
   await locator.click({ force: true });
 }
 
-async function startAdventure(page) {
-  await page.goto(gameUrl);
+async function startAdventure(page, url = gameUrl) {
+  await page.goto(url);
   await page.evaluate(() => localStorage.clear());
   await waitForImages(page);
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
@@ -285,6 +286,7 @@ test.describe("Sven en de Runenpoort", () => {
 
     await page.keyboard.press("Control+Shift+D");
     await expect(page.locator("[data-debug-overlay]")).toBeVisible();
+    await expect(page.locator("[data-walkpath-editor]")).toHaveCount(0);
     const debugOverlay = await page.evaluate(() => {
       const level = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"];
       return {
@@ -323,6 +325,48 @@ test.describe("Sven en de Runenpoort", () => {
     await tap(page.getByRole("button", { name: "Terug naar menu" }));
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Sven en de Runenpoort/ })).toBeVisible();
+  });
+
+  test("supports walkPath debug editing fallback without file writes", async ({ page }) => {
+    await startAdventure(page, devGameUrl);
+    await page.keyboard.press("Control+Shift+D");
+    await expect(page.locator("[data-debug-overlay]")).toBeVisible();
+    await expect(page.locator("[data-walkpath-editor]")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Save Draft" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Apply walkPath" })).toBeDisabled();
+    await expect(page.getByText("Geen dev server: Copy-only")).toBeVisible();
+
+    const before = await page.evaluate(() => {
+      const point = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].walkPath[1];
+      return { x: point.x, y: point.y };
+    });
+    const point = page.locator('[data-walkpath-index="1"] circle');
+    const box = await point.boundingBox();
+    if (!box) throw new Error("walkPath point was not measurable");
+
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width / 2 + 24, box.y + box.height / 2 - 12);
+    await page.mouse.up();
+
+    const after = await page.evaluate(() => {
+      const level = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"];
+      const point = level.walkPath[1];
+      return {
+        x: point.x,
+        y: point.y,
+        derivedNodeCount: level.walkGraph.nodes.length,
+        authoredNodeCount: level.walkPath.length
+      };
+    });
+    expect(after.x).not.toBe(before.x);
+    expect(after.y).not.toBe(before.y);
+    expect(after.derivedNodeCount).toBeGreaterThan(after.authoredNodeCount);
+
+    await tap(page.getByRole("button", { name: "Copy walkPath" }));
+    const exportText = await page.evaluate(() => window.__lastWalkPathExport);
+    expect(exportText).toContain("walkPath");
+    expect(exportText).toContain("center-trail");
   });
 
   test("animates Sven as an actor", async ({ page }) => {

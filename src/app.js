@@ -7,6 +7,7 @@ let debugOverlayEnabled = false;
 
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
+const WALKPATH_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "walkpath";
 const ACTOR_ANIMATIONS = {
   idle: {
     folder: "assets/characters/sven/idle-right",
@@ -40,6 +41,16 @@ const actorPlayback = {
 
 let state = {
   screen: "menu"
+};
+
+let walkPathEditor = {
+  enabled: WALKPATH_DEV_MODE,
+  apiAvailable: false,
+  originalWalkPath: null,
+  draggingIndex: null,
+  currentPoint: null,
+  message: "",
+  busy: false
 };
 
 function createLevelState(selectedLevel) {
@@ -89,6 +100,63 @@ function normalizeWalkPoint(point, index) {
     ...point,
     id: point.id || `path-${String(index + 1).padStart(2, "0")}`
   };
+}
+
+function cloneWalkPath(walkPath) {
+  return walkPath.map((point) => ({ ...point }));
+}
+
+function setLevelWalkPath(walkPath) {
+  level.walkPath = cloneWalkPath(walkPath);
+  level.walkGraph = deriveWalkGraph(level);
+  walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
+}
+
+function walkPathApiUrl(action = "walkpath-draft") {
+  return `/__dev/levels/${encodeURIComponent(level.id)}/${action}`;
+}
+
+async function requestWalkPathApi(url, options = {}) {
+  const response = await fetch(url, {
+    headers: {
+      "content-type": "application/json",
+      ...(options.headers || {})
+    },
+    ...options
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || `Dev endpoint failed: ${response.status}`);
+  }
+  return payload;
+}
+
+async function prepareWalkPathEditorForLevel(selectedLevel) {
+  walkPathEditor = {
+    enabled: WALKPATH_DEV_MODE,
+    apiAvailable: false,
+    originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
+    draggingIndex: null,
+    currentPoint: null,
+    message: WALKPATH_DEV_MODE ? "Devmodus: Copy walkPath beschikbaar." : "",
+    busy: false
+  };
+
+  if (!WALKPATH_DEV_MODE || !window.location.protocol.startsWith("http")) return;
+
+  try {
+    await requestWalkPathApi("/__dev/status");
+    walkPathEditor.apiAvailable = true;
+    walkPathEditor.message = "Devmodus: draft opslaan staat klaar.";
+    const draft = await requestWalkPathApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/walkpath-draft`);
+    if (Array.isArray(draft.walkPath)) {
+      selectedLevel.walkPath = cloneWalkPath(draft.walkPath);
+      walkPathEditor.message = "Draft geladen. Test veilig verder.";
+    }
+  } catch (error) {
+    walkPathEditor.apiAvailable = false;
+    walkPathEditor.message = "Geen dev server. Gebruik Copy walkPath.";
+  }
 }
 
 function deriveWalkGraph(selectedLevel) {
@@ -223,6 +291,7 @@ async function selectLevel(id) {
   }
 
   stopMovement();
+  await prepareWalkPathEditorForLevel(selectedLevel);
   level = normalizeLevel(selectedLevel);
   walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
   state = createLevelState(level);
@@ -566,6 +635,106 @@ function pointFromViewportEvent(event, viewportElement) {
     x: clamp(cameraX + ((event.clientX - viewport.left) / viewport.width) * state.viewportWorldWidth, 0, level.world.width),
     y: clamp(((event.clientY - viewport.top) / viewport.height) * level.world.height, 0, level.world.height)
   };
+}
+
+function formatWalkPathForExport() {
+  const lines = authoredWalkPathPoints(level).map((point) => {
+    const role = point.role ? `, role: "${point.role}"` : "";
+    return `    { id: "${point.id}", x: ${Math.round(point.x)}, y: ${Math.round(point.y)}${role} }`;
+  });
+  return `walkPath: [\n${lines.join(",\n")}\n  ]`;
+}
+
+async function copyWalkPath() {
+  const text = formatWalkPathForExport();
+  window.__lastWalkPathExport = text;
+  try {
+    await navigator.clipboard.writeText(text);
+    walkPathEditor.message = "walkPath gekopieerd.";
+  } catch {
+    walkPathEditor.message = "Kopieren niet toegestaan. walkPath staat in window.__lastWalkPathExport.";
+  }
+  render();
+}
+
+async function saveWalkPathDraft() {
+  if (!walkPathEditor.apiAvailable || walkPathEditor.busy) return;
+  walkPathEditor.busy = true;
+  walkPathEditor.message = "Draft opslaan...";
+  render();
+
+  try {
+    await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), {
+      method: "POST",
+      body: JSON.stringify({ walkPath: authoredWalkPathPoints(level) })
+    });
+    walkPathEditor.message = "Draft opgeslagen.";
+  } catch (error) {
+    walkPathEditor.message = `Draft opslaan mislukt. ${error.message}`;
+  } finally {
+    walkPathEditor.busy = false;
+    render();
+  }
+}
+
+async function applyWalkPathDraft() {
+  if (!walkPathEditor.apiAvailable || walkPathEditor.busy) return;
+  walkPathEditor.busy = true;
+  walkPathEditor.message = "walkPath toepassen...";
+  render();
+
+  try {
+    await requestWalkPathApi(walkPathApiUrl("apply-walkpath"), {
+      method: "POST",
+      body: JSON.stringify({ walkPath: authoredWalkPathPoints(level) })
+    });
+    walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
+    walkPathEditor.message = "walkPath toegepast in level.js.";
+  } catch (error) {
+    walkPathEditor.message = `Toepassen mislukt. ${error.message}`;
+  } finally {
+    walkPathEditor.busy = false;
+    render();
+  }
+}
+
+async function discardWalkPathDraft() {
+  if (walkPathEditor.busy) return;
+  walkPathEditor.busy = true;
+  walkPathEditor.message = "Draft verwijderen...";
+  render();
+
+  try {
+    if (walkPathEditor.apiAvailable) {
+      await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), { method: "DELETE" });
+    }
+    setLevelWalkPath(walkPathEditor.originalWalkPath);
+    walkPathEditor.message = "Draft verwijderd. Origineel pad hersteld.";
+  } catch (error) {
+    walkPathEditor.message = `Draft verwijderen mislukt. ${error.message}`;
+  } finally {
+    walkPathEditor.busy = false;
+    render();
+  }
+}
+
+function updateDraggedWalkPathPoint(event) {
+  if (walkPathEditor.draggingIndex === null || !level) return;
+  const stage = document.querySelector("[data-world-stage]");
+  if (!stage) return;
+
+  const point = pointFromViewportEvent(event, stage);
+  const nextWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
+  const nextPoint = {
+    ...nextWalkPath[walkPathEditor.draggingIndex],
+    x: Math.round(point.x),
+    y: Math.round(point.y)
+  };
+  nextWalkPath[walkPathEditor.draggingIndex] = nextPoint;
+  walkPathEditor.currentPoint = nextPoint;
+  walkPathEditor.message = `${nextPoint.id}: x ${nextPoint.x}, y ${nextPoint.y}`;
+  setLevelWalkPath(nextWalkPath);
+  render();
 }
 
 function stopMovement() {
@@ -960,7 +1129,10 @@ function restart() {
 }
 
 function debugWalkGraph() {
-  const authoredNodes = authoredWalkPathPoints(level).map(normalizeWalkPoint);
+  const authoredNodes = authoredWalkPathPoints(level).map((point, index) => ({
+    ...normalizeWalkPoint(point, index),
+    walkPathIndex: index
+  }));
   if (!authoredNodes.length) return level.walkGraph;
   return {
     nodes: authoredNodes,
@@ -979,7 +1151,11 @@ function renderDebugOverlay() {
     return `<line class="debugPathEdge" x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" />`;
   });
   const nodes = graph.nodes.map((node) => `
-    <g class="${approachIds.has(node.id) ? "debugApproachNode" : "debugWalkNode"}" data-debug-node="${node.id}">
+    <g
+      class="${approachIds.has(node.id) ? "debugApproachNode" : "debugWalkNode"} ${walkPathEditor.enabled ? "debugDraggableNode" : ""}"
+      data-debug-node="${node.id}"
+      ${Number.isInteger(node.walkPathIndex) ? `data-walkpath-index="${node.walkPathIndex}"` : ""}
+    >
       <circle cx="${node.x}" cy="${node.y}" r="${approachIds.has(node.id) ? 10 : 7}" />
       <text x="${node.x + 11}" y="${node.y - 10}">${node.id}</text>
     </g>
@@ -994,7 +1170,7 @@ function renderDebugOverlay() {
 
   return `
     <svg
-      class="pathDebugOverlay"
+      class="pathDebugOverlay ${walkPathEditor.enabled ? "pathDebugEditable" : ""}"
       data-debug-overlay
       viewBox="0 0 ${level.world.width} ${level.world.height}"
       preserveAspectRatio="none"
@@ -1004,6 +1180,32 @@ function renderDebugOverlay() {
       ${nodes.join("")}
       ${objects.join("")}
     </svg>
+  `;
+}
+
+function renderWalkPathEditorControls() {
+  if (!debugOverlayEnabled || !walkPathEditor.enabled) return "";
+
+  const point = walkPathEditor.currentPoint;
+  const status = walkPathEditor.apiAvailable
+    ? "Dev server actief"
+    : "Geen dev server: Copy-only";
+  const disabled = walkPathEditor.busy ? "disabled" : "";
+  const serverDisabled = !walkPathEditor.apiAvailable || walkPathEditor.busy ? "disabled" : "";
+
+  return `
+    <aside class="walkPathEditorPanel" data-walkpath-editor>
+      <strong>WalkPath tuning</strong>
+      <span>${status}</span>
+      <span>${point ? `${point.id}: ${point.x}, ${point.y}` : "Sleep een punt."}</span>
+      <div class="walkPathEditorActions">
+        <button type="button" data-debug-action="save-draft" ${serverDisabled}>Save Draft</button>
+        <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply walkPath</button>
+        <button type="button" data-debug-action="discard-draft" ${disabled}>Discard Draft</button>
+        <button type="button" data-debug-action="copy-walkpath" ${disabled}>Copy walkPath</button>
+      </div>
+      <p>${walkPathEditor.message}</p>
+    </aside>
   `;
 }
 
@@ -1043,6 +1245,7 @@ function renderWorldStage() {
           />
         </span>
       </div>
+      ${renderWalkPathEditorControls()}
     </section>
   `;
 }
@@ -1317,6 +1520,22 @@ function render() {
 }
 
 app.addEventListener("click", (event) => {
+  if (event.target.closest("[data-walkpath-index]")) {
+    event.preventDefault();
+    return;
+  }
+
+  const debugActionTarget = event.target.closest("[data-debug-action]");
+  if (debugActionTarget) {
+    event.preventDefault();
+    const action = debugActionTarget.dataset.debugAction;
+    if (action === "save-draft") saveWalkPathDraft();
+    if (action === "apply-walkpath") applyWalkPathDraft();
+    if (action === "discard-draft") discardWalkPathDraft();
+    if (action === "copy-walkpath") copyWalkPath();
+    return;
+  }
+
   const levelTarget = event.target.closest("[data-level]");
   if (levelTarget) {
     selectLevel(levelTarget.dataset.level);
@@ -1356,6 +1575,24 @@ app.addEventListener("click", (event) => {
   if (stageTarget) {
     beginFreeWalk(pointFromViewportEvent(event, stageTarget));
   }
+});
+
+app.addEventListener("pointerdown", (event) => {
+  const pointTarget = event.target.closest("[data-walkpath-index]");
+  if (!pointTarget || !walkPathEditor.enabled || !debugOverlayEnabled) return;
+  event.preventDefault();
+  walkPathEditor.draggingIndex = Number(pointTarget.dataset.walkpathIndex);
+  updateDraggedWalkPathPoint(event);
+});
+
+window.addEventListener("pointermove", (event) => {
+  if (walkPathEditor.draggingIndex === null) return;
+  event.preventDefault();
+  updateDraggedWalkPathPoint(event);
+});
+
+window.addEventListener("pointerup", () => {
+  walkPathEditor.draggingIndex = null;
 });
 
 window.addEventListener("resize", updateWorldDom);
