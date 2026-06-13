@@ -40,7 +40,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     {
       id: "zon",
       type: "rune",
-      center: { x: 1384, y: 160 },
+      center: { x: 1384, y: 172 },
       radius: 46,
       approachNode: "sun-rune-approach",
       label: "Zonrune"
@@ -48,9 +48,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     {
       id: "steen",
       type: "rune",
-      center: { x: 1465, y: 318 },
-      radius: 44,
-      approachNode: "temple-entry",
+      center: { x: 1849, y: 343 },
+      radius: 70,
+      approachNode: "gate-step-upper",
       label: "Steenrune"
     },
     {
@@ -73,23 +73,23 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   ],
   walkGraph: {
     nodes: [
-      { id: "forest-start", x: 170, y: 618 },
-      { id: "forest-rune-approach", x: 285, y: 610 },
-      { id: "forest-path-low", x: 430, y: 604 },
-      { id: "forest-bend", x: 610, y: 602 },
-      { id: "forest-lower-stones", x: 780, y: 616 },
-      { id: "forest-exit", x: 940, y: 604 },
-      { id: "trail-rise-1", x: 1080, y: 568 },
-      { id: "trail-rise-2", x: 1210, y: 520 },
-      { id: "sun-rune-approach", x: 1365, y: 482 },
-      { id: "temple-entry", x: 1490, y: 476 },
-      { id: "temple-path-left", x: 1588, y: 514 },
-      { id: "gate-step-low", x: 1680, y: 558 },
-      { id: "gate-step-mid-1", x: 1765, y: 538 },
-      { id: "gate-step-mid-2", x: 1838, y: 516 },
-      { id: "gate-step-upper", x: 1860, y: 490 },
-      { id: "gate-step-center", x: 1935, y: 522 },
-      { id: "wind-rune-approach", x: 2070, y: 558 }
+      { id: "forest-start", x: 170, y: 610 },
+      { id: "forest-rune-approach", x: 285, y: 600 },
+      { id: "forest-path-low", x: 430, y: 594 },
+      { id: "forest-bend", x: 610, y: 590 },
+      { id: "forest-lower-stones", x: 780, y: 608 },
+      { id: "forest-exit", x: 940, y: 596 },
+      { id: "trail-rise-1", x: 1080, y: 560 },
+      { id: "trail-rise-2", x: 1210, y: 510 },
+      { id: "sun-rune-approach", x: 1365, y: 468 },
+      { id: "temple-entry", x: 1490, y: 462 },
+      { id: "temple-path-left", x: 1588, y: 500 },
+      { id: "gate-step-low", x: 1680, y: 548 },
+      { id: "gate-step-mid-1", x: 1765, y: 526 },
+      { id: "gate-step-mid-2", x: 1838, y: 503 },
+      { id: "gate-step-upper", x: 1860, y: 476 },
+      { id: "gate-step-center", x: 1935, y: 510 },
+      { id: "wind-rune-approach", x: 2070, y: 548 }
     ],
     edges: [
       ["forest-start", "forest-rune-approach"],

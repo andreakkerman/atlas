@@ -154,10 +154,10 @@ async function playFullAdventure(page) {
           top: parseFloat(node.style.top)
         }));
         expect(coordinates.worldX).toBe(1384);
-        expect(coordinates.worldY).toBe(160);
+        expect(coordinates.worldY).toBe(172);
         expect(coordinates.radius).toBe(46);
         expect(coordinates.left).toBeCloseTo((1384 / 2172) * 100, 3);
-        expect(coordinates.top).toBeCloseTo((160 / 724) * 100, 3);
+        expect(coordinates.top).toBeCloseTo((172 / 724) * 100, 3);
       }
     }
   }

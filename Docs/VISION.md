@@ -2,335 +2,188 @@
 
 ## Mission
 
-Create magical, personalized adventure games that help Sven practice multiplication naturally through play.
+SvenAdventure is a personalized educational adventure game for Sven.
 
-The game should feel like a real adventure first and a learning experience second.
+The product goal is simple:
 
-The player should never feel like they are completing worksheets disguised as a game.
+1. Sven wants to play because the adventure is exciting.
+2. Sven practices multiplication because the adventure needs it.
 
-Mathematics should be embedded into exploration, puzzles, discoveries, obstacles, rituals, machines, navigation, and story progression.
+The game must feel like an adventure first and a learning app second. Multiplication should never feel like a worksheet placed on top of a pretty background.
 
-Success is measured by two things:
+## Core Product Principles
 
-1. Sven voluntarily wants to keep playing.
-2. Sven becomes better at multiplication.
+### Adventure First, Learning Second
 
----
+The adventure is the motivation. Learning is embedded inside the adventure.
 
-## Product Principles
+Good multiplication moments:
 
-### Adventure First
+* open a sealed rune gate
+* power an ancient machine
+* decode a map
+* repair a vehicle
+* unlock treasure
+* answer a spirit's challenge to continue
 
-The game must feel like an adventure game.
+Bad multiplication moments:
 
-The player should explore locations, meet characters, solve problems, discover secrets, and progress through a world.
+* a generic quiz screen with adventure art around it
+* repeated questions with no world consequence
+* scoring systems that feel separate from the story
 
-Mathematics exists inside the adventure.
+The player should understand why the math matters in the world.
 
-The adventure does not exist around mathematics.
+### Sven Is An Actor In A World
 
----
+Sven is not a portrait, cursor, token, menu choice, or detached UI element.
 
-### Sven Is The Hero
+Sven is the protagonist inside the world. He should:
 
-Sven is not a spectator.
+* stand on the ground
+* walk through locations
+* approach objects before acting
+* face the thing he interacts with
+* react to success and mistakes
+* feel present even when idle
 
-Sven is the protagonist.
+The player should feel like they are guiding Sven, not operating a quiz interface.
 
-He should feel like a real character inside the world.
+### The World Is The Primary Interface
 
-The player should experience:
+The playable world is the main UI.
 
-* Sven walking
-* Sven discovering things
-* Sven talking to characters
-* Sven solving problems
-* Sven opening paths
-* Sven earning rewards
+Players interact by tapping or clicking things in the world:
 
----
+* walkable ground makes Sven walk
+* a rune makes Sven walk to it and activate it
+* a character makes Sven walk to it and talk
+* a door makes Sven walk to it and try to open it
 
-### Personalized Worlds
+Traditional command buttons such as `Kijk`, `Praat`, and `Activeer` are intentionally removed. Interaction is contextual. The object decides what happens.
 
-The game should be highly personalized for Sven.
+### Movement Creates Adventure Feeling
 
-Future adventures may include:
+Movement is part of the game design, not just transportation.
 
-* Vikings
-* Pirates
-* Ancient civilizations
-* Space exploration
-* Fantasy worlds
-* DutchTubers
-* Animals
-* Historical adventures
-* Family references
-* Moose and Minnie
-* Custom stories created specifically for Sven
+The current runtime uses:
 
-Personalization is a competitive advantage.
+* one wide world image per level
+* camera-follow movement
+* a data-driven walk graph
+* object approach nodes
+* Move To -> Arrive -> Action interaction flow
 
----
+This should remain the default direction for future levels.
 
-### Variety Over Repetition
+### Dutch, Short, Supportive Text
 
-Future adventures should not follow a fixed formula.
+All player-facing text must be Dutch.
 
-The player should not experience:
+Text should be suitable for a Dutch child of about 8-9 years old:
 
-Guide → Challenge → Reward → Guide → Challenge → Reward
+* short sentences
+* clear words
+* playful but not childish
+* no long dialogue
+* no complex educational vocabulary
 
-repeated forever.
+Good:
 
-Different adventures should use different structures, pacing, goals, mechanics and narrative styles.
+* `Goed zo! De rune begint te gloeien.`
+* `Bijna. Denk aan 6 groepjes van 4.`
+* `De poort gaat open!`
 
-Some adventures may focus on:
+Bad:
 
-* exploration
-* mystery
-* navigation
-* conversation
-* treasure hunting
-* problem solving
-* vehicle control
-* environmental puzzles
-
-Mathematics should appear naturally in many forms.
-
----
+* `Excellent, you activated the ancient rune mechanism.`
+* `Multiplication represents repeated addition across equivalent sets.`
 
 ## Learning Philosophy
 
 ### Practice Through Purpose
 
-Mathematics should have meaning inside the world.
+Multiplication should be tied to progression. A correct answer should help Sven do something in the world.
+
+### No Timers
+
+The learning tone should be supportive. Timers, pressure, and punishment are not appropriate for the current product.
+
+### Useful Mistakes
+
+Wrong answers should teach.
+
+Feedback should:
+
+* be short
+* stay friendly
+* explain one useful idea
+* use concrete Dutch wording
 
 Examples:
 
-* Unlocking a gate
-* Navigating a ship
-* Activating ancient machinery
-* Following clues
-* Opening treasure chests
-* Solving rune puzzles
-* Steering a vehicle
-* Repairing equipment
+* `Bijna. Denk aan 6 groepjes van 4.`
+* `Bijna. 8 x 6 is hetzelfde als 4 x 6, en dan dubbel.`
+* `Bijna. 9 x 7 is 10 x 7 min 7.`
 
-The player should understand why the mathematics matters.
+### Persistent Progress
 
----
+The game should remember multiplication practice locally.
 
-### Supportive Feedback
+Useful progress data:
 
-Mistakes are learning opportunities.
+* questions asked
+* attempts
+* mistakes
+* first-try correct
+* per multiplication table
+* adventure completion
 
-The game should:
+For now, browser `localStorage` is sufficient.
 
-* encourage retries
-* provide hints
-* explain reasoning
-* avoid punishment
-* avoid frustration
+## Long-Term Vision: Adventure Factory
 
-Feedback should be short, friendly and useful.
+The long-term vision is an AI-assisted Adventure Factory.
 
----
+The Adventure Factory should eventually create personalized adventures from creative briefs. A generated adventure should include:
 
-### Mastery Over Scores
-
-Long-term mastery is more important than points.
-
-The game should gradually learn:
-
-* which tables are strong
-* which tables need practice
-* which facts are difficult
-
-Progress should persist across adventures.
-
----
-
-## Gameplay Direction
-
-### Modern Adventure Runtime
-
-The game should evolve toward a modern adventure runtime inspired by classic adventure games such as Indiana Jones and the Fate of Atlantis.
-
-The goal is not to recreate SCUMM.
-
-The goal is to capture the feeling of being a real character inside an adventure world.
-
----
-
-### Sven As An Actor
-
-Sven should behave as an actor inside the world.
-
-Examples:
-
-* walk to locations
-* look at objects
-* talk to characters
-* activate mechanisms
-* use items
-* react to success
-* react to mistakes
-
-The world should respond to Sven's actions.
-
----
-
-### Move To → Action
-
-Most interactions should follow:
-
-Move To → Action
-
-Examples:
-
-Click Rune
-→ Sven walks to Rune
-→ Sven activates Rune
-
-Click Character
-→ Sven walks to Character
-→ Sven talks
-
-Click Machine
-→ Sven walks to Machine
-→ Sven uses Machine
-
----
-
-### Multiple Connected Scenes
-
-The world should eventually consist of connected locations.
-
-Examples:
-
-Forest
-→ Temple Entrance
-→ Temple Interior
-
-Village
-→ Harbor
-→ Pirate Ship
-
-Locations should feel connected.
-
----
-
-### Modern Transitions
-
-When locations are physically connected, transitions should prefer movement through space.
-
-Examples:
-
-* camera follows Sven
-* side-scrolling movement
-* walking into adjacent areas
-
-Fades are acceptable for:
-
-* major location changes
-* interior/exterior transitions
-* travel sequences
-
----
-
-### Puzzle Presentation Modes
-
-Different puzzles may use different presentations.
-
-Examples:
-
-* directly in the world
-* close-up puzzle views
-* full-screen puzzle experiences
-
-The runtime should eventually support all three.
-
----
-
-## Technical Philosophy
-
-### Simplicity First
-
-The project should remain understandable.
-
-Avoid unnecessary complexity.
-
-Avoid building systems before they are needed.
-
----
-
-### Content Before Engine
-
-The first goal is creating great adventures.
-
-The engine should emerge from repeated successful adventures.
-
-The project should not become an engine-building exercise.
-
----
-
-### AI-Assisted Content Creation
-
-AI should eventually help create:
-
-* stories
-* characters
-* puzzles
-* locations
-* dialogue
+* concept and story
+* world background
+* interactive objects
+* walk graph
+* characters and companion text
 * educational challenges
+* reward state
+* validation results
+* Playwright smoke-test results
 
-Human review remains required.
+The runtime should be reusable. New generated levels should ideally require no runtime code changes.
 
----
-### Character Performance
+## Authoring Philosophy
 
-Characters should communicate intent through movement.
+Generated content must be created before gameplay, not during gameplay.
 
-Movement is not merely transportation.
+Runtime gameplay should be:
 
-Movement helps tell the story.
+* local
+* deterministic
+* safe
+* reviewable
+* testable
 
-Players should be able to understand what Sven is doing, what he is looking at, and what he intends to do next through body language and animation.
+AI may help generate worlds, puzzles, dialogue, and level data. Human review and automated validation are required before Sven plays a generated level.
 
-Subtle believable movement is preferred over flashy visual effects.
+## Technical Direction
 
----
-### Static Architecture
+The project should stay local-first and intentionally simple:
 
-Prefer:
+* browser based
+* plain HTML/CSS/JavaScript
+* local assets
+* no backend
+* no database
+* no authentication
+* no cloud dependency during gameplay
 
-* HTML
-* CSS
-* JavaScript
-* Local assets
-* LocalStorage
+Complexity must earn its place. The Adventure Factory should emerge from validated levels, not speculative abstractions.
 
-Avoid:
-
-* databases
-* accounts
-* cloud dependencies
-* unnecessary frameworks
-
-unless there is a proven reason to introduce them.
-
----
-
-## Long-Term Vision
-
-A growing library of personalized adventures where Sven can:
-
-* explore different worlds
-* meet unique characters
-* solve meaningful problems
-* improve multiplication skills
-* build confidence
-* experience wonder
-
-The ultimate goal is that Sven asks to play because he wants the adventure, while quietly becoming better at mathematics.

@@ -287,6 +287,31 @@ button {
   background: #0b1513;
 }
 
+.menuReturnButton {
+  position: fixed;
+  left: max(12px, env(safe-area-inset-left));
+  top: max(12px, env(safe-area-inset-top));
+  z-index: 8;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 231, 166, 0.34);
+  border-radius: 8px;
+  color: #fff7de;
+  background: rgba(10, 18, 16, 0.62);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 900;
+  backdrop-filter: blur(8px);
+}
+
+.menuReturnButton:hover,
+.menuReturnButton:focus-visible {
+  outline: 2px solid rgba(46, 230, 220, 0.72);
+  outline-offset: 2px;
+  background: rgba(12, 28, 26, 0.82);
+}
+
 .topbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
@@ -448,8 +473,6 @@ button {
 
 .runeHotspot {
   position: absolute;
-  width: clamp(92px, 8vw, 132px);
-  aspect-ratio: 1;
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
@@ -493,8 +516,6 @@ button {
 
 .worldHotspot {
   position: absolute;
-  width: clamp(96px, 9vw, 144px);
-  aspect-ratio: 1;
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
@@ -524,7 +545,6 @@ button {
 }
 
 .hotspot-path {
-  width: clamp(58px, 6vw, 92px);
   border-radius: 999px;
 }
 
@@ -535,9 +555,7 @@ button {
 }
 
 .hotspot-gate {
-  width: clamp(170px, 14vw, 240px);
-  height: clamp(190px, 18vw, 280px);
-  border-radius: 42% 42% 50% 50%;
+  border-radius: 50%;
 }
 
 .worldHotspot:disabled,
@@ -562,12 +580,24 @@ button {
 }
 
 .runeDone {
+  background: transparent;
+  box-shadow: none;
+}
+
+.runeDone::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 72%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
   background:
-    radial-gradient(circle, rgba(255, 236, 153, 0.82), rgba(46, 230, 220, 0.55) 55%, rgba(25, 84, 69, 0.38)),
-    rgba(28, 65, 48, 0.7);
+    radial-gradient(circle, rgba(255, 236, 153, 0.86), rgba(46, 230, 220, 0.58) 56%, rgba(25, 84, 69, 0.18) 72%, transparent 76%);
   box-shadow:
-    0 0 0 8px rgba(255, 228, 140, 0.14),
-    0 0 42px rgba(255, 228, 140, 0.75);
+    0 0 0 8px rgba(255, 228, 140, 0.1),
+    0 0 38px rgba(255, 228, 140, 0.7);
 }
 
 .runeJustCompleted {
@@ -1059,11 +1089,11 @@ button {
   }
 
   .runeHotspot {
-    width: 62px;
+    min-width: 0;
   }
 
   .worldHotspot {
-    width: 58px;
+    min-width: 0;
   }
 
   .choices {
@@ -1089,6 +1119,6 @@ button {
   }
 
   .runeHotspot {
-    width: 58px;
+    min-width: 0;
   }
 }

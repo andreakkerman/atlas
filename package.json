@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "validate:levels": "node scripts/validate-levels.js",
+    "report:levels": "node scripts/level-report.js",
+    "audit:levels": "node scripts/level-audit.js"
   },
   "keywords": [],
   "author": "",
