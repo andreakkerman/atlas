@@ -36,6 +36,56 @@ window.SVEN_LEVEL_MANIFEST = {
         badge: "Verbonden gebied",
         detail: "Haven, kompas en vertrek naar zee"
       }
+    },
+    {
+      id: "LVL-0004",
+      title: "De Nautilus",
+      subtitle: "Een Jules Verne avontuur onder zee.",
+      script: "Levels/LVL-0004/level.js",
+      menu: {
+        illustration: "Levels/LVL-0004/assets/nautilus-harbor.png",
+        badge: "Nieuw avontuur",
+        detail: "Haven, duikboot en een geheim vertrek"
+      }
+    },
+    {
+      id: "LVL-0005",
+      title: "Aan boord",
+      subtitle: "In de salon van de Nautilus liggen oude kaarten en raadsels.",
+      script: "Levels/LVL-0005/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0004",
+      menu: {
+        illustration: "Levels/LVL-0005/assets/nautilus-salon.png",
+        badge: "Verbonden gebied",
+        detail: "Salon, patrijspoorten en kapiteinskaarten"
+      }
+    },
+    {
+      id: "LVL-0006",
+      title: "De Minisub",
+      subtitle: "Diep in de Nautilus wacht de kleine onderzeeer.",
+      script: "Levels/LVL-0006/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0005",
+      menu: {
+        illustration: "Levels/LVL-0006/assets/nautilus-mini-sub.png",
+        badge: "Verbonden gebied",
+        detail: "Hangar, drukmeters en ontsnappingsluik"
+      }
+    },
+    {
+      id: "LVL-0007",
+      title: "Het Tropische Eiland",
+      subtitle: "De ontsnapping eindigt bij licht, water en palmen.",
+      script: "Levels/LVL-0007/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0006",
+      menu: {
+        illustration: "Levels/LVL-0007/assets/tropical-island-escape.png",
+        badge: "Verbonden gebied",
+        detail: "Grot, sloep en de weg naar buiten"
+      }
     }
   ]
 };

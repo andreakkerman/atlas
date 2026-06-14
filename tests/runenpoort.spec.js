@@ -26,6 +26,30 @@ const harborChallenges = [
   { name: "Poortschild", questions: [[6, 9], [7, 8], [9, 5]] }
 ];
 
+const nautilusHarborChallenges = [
+  { name: "Havenkaart", questions: [[4, 6], [7, 3]] },
+  { name: "Koperen kijker", questions: [[5, 8], [6, 7]] },
+  { name: "Nautiluslamp", questions: [[9, 4], [8, 6]] }
+];
+
+const nautilusSalonChallenges = [
+  { name: "Kapiteinskaart", questions: [[6, 4], [8, 3]] },
+  { name: "Groot raam", questions: [[7, 5], [9, 2]] },
+  { name: "Logboektafel", questions: [[5, 9], [8, 7]] }
+];
+
+const nautilusMiniSubChallenges = [
+  { name: "Duikpak", questions: [[3, 7], [4, 9]] },
+  { name: "Minisub", questions: [[6, 6], [8, 4]] },
+  { name: "Drukpaneel", questions: [[7, 8], [9, 5]] }
+];
+
+const nautilusIslandChallenges = [
+  { name: "Sloep", questions: [[4, 7], [6, 8]] },
+  { name: "Stuurwiel", questions: [[5, 6], [9, 3]] },
+  { name: "Eilandkaart", questions: [[8, 8], [10, 6]] }
+];
+
 async function waitForImages(page) {
   await page.waitForFunction(() => {
     return [...document.images].every((image) => image.complete && image.naturalWidth > 0);
@@ -112,6 +136,13 @@ async function waitForIdle(page) {
       message: "Sven should finish walking and return to idle"
     })
     .toBe("idle");
+}
+
+async function triggerWorldExit(page, objectName, expectedRewardHeading) {
+  const target = page.getByRole("button", { name: objectName, exact: true });
+  await expect(target).toHaveCount(1);
+  await target.dispatchEvent("click");
+  await expect(page.getByRole("heading", { name: expectedRewardHeading })).toBeVisible({ timeout: 22000 });
 }
 
 async function walkTowardTemple(page, ySamples = []) {
@@ -284,9 +315,13 @@ test.describe("Sven en de Runenpoort", () => {
     await expect(page).toHaveTitle("SvenAdventure");
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Sven en de Runenpoort/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /De Nautilus/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
-    await expect(page.locator(".levelTile")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /De Minisub/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Het Tropische Eiland/ })).toHaveCount(0);
+    await expect(page.locator(".levelTile")).toHaveCount(2);
   });
 
   test("plays through the full adventure and persists progress", async ({ page }) => {
@@ -338,8 +373,7 @@ test.describe("Sven en de Runenpoort", () => {
     }
 
     await expect(page.getByText("Alle tempelproeven kloppen. De havendeur kan open.")).toBeVisible();
-    await walkRightUntil(page, 1850);
-    await tap(page.getByRole("button", { name: "Naar de haven" }));
+    await triggerWorldExit(page, "Havendeur", "De havendeur opent!");
     await expect(page.getByRole("heading", { name: "De havendeur opent!" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Naar de haven" }));
 
@@ -354,15 +388,79 @@ test.describe("Sven en de Runenpoort", () => {
     }
 
     await expect(page.getByText("Alles is klaar. Sven mag naar de vertrekpoort.")).toBeVisible();
-    await walkRightUntil(page, 1850);
-    await expect(page.getByText("Alles is klaar. Sven mag naar de vertrekpoort.")).toBeVisible();
-    await tap(page.getByRole("button", { name: "Vertrek", exact: true }));
+    await triggerWorldExit(page, "Vertrekpoort", "Het schip vertrekt!");
     await expect(page.getByRole("heading", { name: "Het schip vertrekt!" })).toBeVisible();
     await expect(page.getByText("Vikinghaven Helper")).toBeVisible();
     await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
     await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Menu" })).toHaveClass(/primaryButton/);
     await expect(page.getByRole("button", { name: "Speel nog een keer" })).toHaveClass(/secondaryButton/);
+  });
+
+  test("plays through the connected Nautilus adventure", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium", "The full Nautilus chain is covered once on desktop.");
+
+    await page.goto(gameUrl);
+    await page.evaluate(() => localStorage.clear());
+    await waitForImages(page);
+    await tap(page.getByRole("button", { name: /De Nautilus/ }));
+    await expect(page.getByRole("heading", { name: "De Nautilus" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+    await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Kapitein Nemo");
+
+    for (const challenge of nautilusHarborChallenges) {
+      await solveChallengeSet(page, challenge, "Maak de toegang klaar", "Kapitein Nemo");
+    }
+
+    await expect(page.getByText("Alles klopt. Sven mag naar de Nautilus.")).toBeVisible();
+    await triggerWorldExit(page, "Steigerpoort", "De poort naar de Nautilus opent!");
+    await expect(page.getByRole("heading", { name: "De poort naar de Nautilus opent!" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Aan boord" }));
+
+    await expect(page.getByRole("heading", { name: "Aan boord" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    for (const challenge of nautilusSalonChallenges) {
+      await solveChallengeSet(page, challenge, "Rond de salonproef af", "Kapitein Nemo");
+    }
+
+    await expect(page.getByText("De salon is klaar. De ronde deur kan open.")).toBeVisible();
+    await triggerWorldExit(page, "Ronde deur", "De ronde deur opent!");
+    await expect(page.getByRole("heading", { name: "De ronde deur opent!" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Naar de minisub" }));
+
+    await expect(page.getByRole("heading", { name: "De Minisub" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    for (const challenge of nautilusMiniSubChallenges) {
+      await solveChallengeSet(page, challenge, "Maak het luik klaar", "Kapitein Nemo");
+    }
+
+    await expect(page.getByText("De druk klopt. Het luik kan veilig open.")).toBeVisible();
+    await triggerWorldExit(page, "Ontsnappingsluik", "Het luik opent!");
+    await expect(page.getByRole("heading", { name: "Het luik opent!" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Naar het eiland" }));
+
+    await expect(page.getByRole("heading", { name: "Het Tropische Eiland" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    for (const challenge of nautilusIslandChallenges) {
+      await solveChallengeSet(page, challenge, "Maak de route klaar", "Kapitein Nemo");
+    }
+
+    await expect(page.getByText("De route klopt. Sven kan naar buiten.")).toBeVisible();
+    await triggerWorldExit(page, "Eilandpoort", "Sven bereikt het eiland!");
+    await expect(page.getByRole("heading", { name: "Sven bereikt het eiland!" })).toBeVisible();
+    await expect(page.getByText("Nautilus Ontsnapper")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menu" })).toHaveClass(/primaryButton/);
+    await expect(page.getByRole("button", { name: "Speel nog een keer" })).toHaveClass(/secondaryButton/);
+
+    const completion = await page.evaluate(() => JSON.parse(localStorage.getItem("svenadventure-tropisch-eiland-v1")));
+    expect(completion).toMatchObject({
+      levelId: "LVL-0007",
+      answered: 6,
+      firstTryCorrect: 6,
+      attempts: 6
+    });
   });
 
   test("uses the interactive object registry for round world-aligned circles", async ({ page }) => {
