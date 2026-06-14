@@ -384,8 +384,8 @@ function validateReferences(level, objects, nodeIds, label) {
       fail(`${runeLabel}.objectId should reference an interactive object with type "rune".`);
     }
 
-    if (!Array.isArray(rune.questions) || rune.questions.length === 0) {
-      fail(`${runeLabel}.questions must be a non-empty array.`);
+    if (!Array.isArray(rune.questions) || rune.questions.length < 4) {
+      fail(`${runeLabel}.questions must contain at least 4 questions.`);
     }
     (rune.questions || []).forEach((question, questionIndex) => {
       const questionLabel = `${runeLabel}.questions[${questionIndex}]`;

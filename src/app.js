@@ -77,12 +77,13 @@ function createLevelState(selectedLevel) {
     moving: false,
     movement: null,
     activeRuneId: null,
+    activeQuestions: [],
     questionIndex: 0,
     selectedWrong: false,
     questionTracked: false,
     completedRunes: new Set(),
     justCompletedRuneId: null,
-    totalQuestions: selectedLevel.runes.reduce((sum, rune) => sum + rune.questions.length, 0),
+    totalQuestions: selectedLevel.runes.reduce((sum) => sum + 4, 0),
     answered: 0,
     firstTryCorrect: 0,
     attempts: 0,
@@ -916,6 +917,23 @@ function answerFor(question) {
   return question.a * question.b;
 }
 
+function shuffleQuestions(questions) {
+  const shuffled = [...questions];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
+function selectChallengeQuestions(rune) {
+  return shuffleQuestions(rune.questions).slice(0, 4);
+}
+
+function currentChallengeQuestions() {
+  return state.activeQuestions?.length ? state.activeQuestions : runeById(state.activeRuneId).questions;
+}
+
 function getStoredTableProgress() {
   try {
     return JSON.parse(localStorage.getItem(level.progressKey)) || { version: 1, tables: {} };
@@ -1136,6 +1154,7 @@ function openRuneChallenge(id) {
   const rune = runeById(id);
   state.screen = "challenge";
   state.activeRuneId = id;
+  state.activeQuestions = selectChallengeQuestions(rune);
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
@@ -1146,8 +1165,7 @@ function openRuneChallenge(id) {
 }
 
 function answerQuestion(choice) {
-  const rune = runeById(state.activeRuneId);
-  const question = rune.questions[state.questionIndex];
+  const question = currentChallengeQuestions()[state.questionIndex];
   const correct = answerFor(question);
   state.attempts += 1;
 
@@ -1176,8 +1194,9 @@ function answerQuestion(choice) {
 
 function nextQuestion() {
   const rune = runeById(state.activeRuneId);
+  const questions = currentChallengeQuestions();
 
-  if (state.questionIndex < rune.questions.length - 1) {
+  if (state.questionIndex < questions.length - 1) {
     state.questionIndex += 1;
     state.selectedWrong = false;
     state.questionTracked = false;
@@ -1191,6 +1210,7 @@ function nextQuestion() {
   state.completedRunes.add(rune.id);
   state.justCompletedRuneId = rune.id;
   state.activeRuneId = null;
+  state.activeQuestions = [];
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
@@ -1241,6 +1261,7 @@ function restart() {
   state.moving = false;
   stopMovement();
   state.activeRuneId = null;
+  state.activeQuestions = [];
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
@@ -1629,10 +1650,11 @@ function renderIntro() {
 
 function renderChallenge() {
   const rune = runeById(state.activeRuneId);
-  const question = rune.questions[state.questionIndex];
+  const questions = currentChallengeQuestions();
+  const question = questions[state.questionIndex];
   const choices = makeChoices(question);
   const number = state.questionIndex + 1;
-  const total = rune.questions.length;
+  const total = questions.length;
   const object = interactiveObjectForTarget(rune);
   const anchor = objectScreenAnchor(object);
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
@@ -1685,7 +1707,7 @@ function challengePromptForRune(rune) {
 
 function renderCorrect() {
   const rune = runeById(state.activeRuneId);
-  const lastQuestion = state.questionIndex === rune.questions.length - 1;
+  const lastQuestion = state.questionIndex === currentChallengeQuestions().length - 1;
   const object = interactiveObjectForTarget(rune);
   const anchor = objectScreenAnchor(object);
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";

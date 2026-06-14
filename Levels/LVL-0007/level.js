@@ -133,7 +133,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       solved: "Goed zo! De sloep ligt klaar.",
       questions: [
         { a: 4, b: 7 },
-        { a: 6, b: 8 }
+        { a: 6, b: 8 },
+        { a: 5, b: 5 },
+        { a: 3, b: 9 }
       ]
     },
     {
@@ -147,7 +149,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       solved: "Mooi! Het wiel draait naar buiten.",
       questions: [
         { a: 5, b: 6 },
-        { a: 9, b: 3 }
+        { a: 9, b: 3 },
+        { a: 8, b: 4 },
+        { a: 7, b: 2 }
       ]
     },
     {
@@ -161,7 +165,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       solved: "Sterk! De eilandroute is vrij.",
       questions: [
         { a: 8, b: 8 },
-        { a: 10, b: 6 }
+        { a: 10, b: 6 },
+        { a: 7, b: 6 },
+        { a: 9, b: 4 }
       ]
     }
   ],

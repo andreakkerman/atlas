@@ -133,7 +133,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       solved: "Mooi! De route is duidelijk.",
       questions: [
         { a: 6, b: 4 },
-        { a: 8, b: 3 }
+        { a: 8, b: 3 },
+        { a: 5, b: 7 },
+        { a: 9, b: 2 }
       ]
     },
     {
@@ -147,7 +149,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       solved: "Goed zo! Het raam licht blauw op.",
       questions: [
         { a: 7, b: 5 },
-        { a: 9, b: 2 }
+        { a: 9, b: 2 },
+        { a: 4, b: 8 },
+        { a: 6, b: 3 }
       ]
     },
     {
@@ -161,7 +165,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       solved: "Sterk! Het logboek klapt dicht.",
       questions: [
         { a: 5, b: 9 },
-        { a: 8, b: 7 }
+        { a: 8, b: 7 },
+        { a: 6, b: 6 },
+        { a: 10, b: 3 }
       ]
     }
   ],

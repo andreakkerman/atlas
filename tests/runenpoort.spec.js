@@ -7,47 +7,47 @@ const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString
 const devGameUrl = `${gameUrl}?dev=walkpath`;
 
 const runes = [
-  { name: "Zonrune", questions: [[3, 4], [5, 6], [2, 8], [4, 7]] },
-  { name: "Steenrune", questions: [[6, 4], [8, 3], [7, 5], [9, 2]] },
-  { name: "Windrune", questions: [[4, 9], [6, 8], [10, 7], [8, 5]] }
+  { name: "Zonrune" },
+  { name: "Steenrune" },
+  { name: "Windrune" }
 ];
 
 const templeChallenges = [
-  { name: "Schildenmuur", questions: [[3, 8], [4, 6], [5, 4]] },
-  { name: "Kaarttafel", questions: [[4, 7], [6, 5], [8, 2]] },
-  { name: "Vuurschaal", questions: [[7, 3], [5, 9], [6, 6]] },
-  { name: "Scheepsmodel", questions: [[4, 8], [6, 7], [9, 4]] }
+  { name: "Schildenmuur" },
+  { name: "Kaarttafel" },
+  { name: "Vuurschaal" },
+  { name: "Scheepsmodel" }
 ];
 
 const harborChallenges = [
-  { name: "Havenkaart", questions: [[3, 9], [6, 4], [8, 5]] },
-  { name: "Scheepskompas", questions: [[4, 8], [7, 6], [9, 3]] },
-  { name: "Ladingskist", questions: [[5, 7], [8, 6], [10, 4]] },
-  { name: "Poortschild", questions: [[6, 9], [7, 8], [9, 5]] }
+  { name: "Havenkaart" },
+  { name: "Scheepskompas" },
+  { name: "Ladingskist" },
+  { name: "Poortschild" }
 ];
 
 const nautilusHarborChallenges = [
-  { name: "Havenkaart", questions: [[4, 6], [7, 3]] },
-  { name: "Koperen kijker", questions: [[5, 8], [6, 7]] },
-  { name: "Nautiluslamp", questions: [[9, 4], [8, 6]] }
+  { name: "Havenkaart" },
+  { name: "Koperen kijker" },
+  { name: "Nautiluslamp" }
 ];
 
 const nautilusSalonChallenges = [
-  { name: "Kapiteinskaart", questions: [[6, 4], [8, 3]] },
-  { name: "Groot raam", questions: [[7, 5], [9, 2]] },
-  { name: "Logboektafel", questions: [[5, 9], [8, 7]] }
+  { name: "Kapiteinskaart" },
+  { name: "Groot raam" },
+  { name: "Logboektafel" }
 ];
 
 const nautilusMiniSubChallenges = [
-  { name: "Duikpak", questions: [[3, 7], [4, 9]] },
-  { name: "Minisub", questions: [[6, 6], [8, 4]] },
-  { name: "Drukpaneel", questions: [[7, 8], [9, 5]] }
+  { name: "Duikpak" },
+  { name: "Minisub" },
+  { name: "Drukpaneel" }
 ];
 
 const nautilusIslandChallenges = [
-  { name: "Sloep", questions: [[4, 7], [6, 8]] },
-  { name: "Stuurwiel", questions: [[5, 6], [9, 3]] },
-  { name: "Eilandkaart", questions: [[8, 8], [10, 6]] }
+  { name: "Sloep" },
+  { name: "Stuurwiel" },
+  { name: "Eilandkaart" }
 ];
 
 async function waitForImages(page) {
@@ -196,8 +196,17 @@ async function walkRightUntil(page, threshold) {
     .toBeGreaterThan(threshold);
 }
 
-async function answerQuestion(page, a, b, options = {}) {
-  const correct = a * b;
+async function getCurrentQuestion(page) {
+  const sumText = await page.locator(".sum").textContent();
+  const match = sumText?.match(/Hoeveel is (\d+) x (\d+)\?/);
+  if (!match) throw new Error(`Could not parse question from "${sumText}"`);
+  const a = Number(match[1]);
+  const b = Number(match[2]);
+  return { a, b, correct: a * b };
+}
+
+async function answerCurrentQuestion(page, options = {}) {
+  const { a, b, correct } = await getCurrentQuestion(page);
   await expect(page.getByText(`Hoeveel is ${a} x ${b}?`)).toBeVisible();
 
   if (options.answerWrongFirst) {
@@ -206,23 +215,25 @@ async function answerQuestion(page, a, b, options = {}) {
     }, correct);
 
     await tap(page.locator(`button[data-choice="${wrongChoice}"]`));
-    await expect(page.getByText("Bijna. 4 groepjes van 3 mag ook. Dat is dezelfde som.")).toBeVisible();
+    await expect(page.locator(".feedback")).toContainText("Bijna.");
   }
 
   await tap(page.locator(`button[data-choice="${correct}"]`));
   await expect(page.getByText(`Ja! ${a} x ${b} = ${correct}.`)).toBeVisible();
-  await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
+  await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
 }
 
-async function solveChallengeSet(page, challenge, finalButtonName, challengerName) {
+async function solveChallengeSet(page, challenge, finalButtonName, challengerName, options = {}) {
   await tap(page.getByRole("button", { name: challenge.name }));
   await expect(page.getByRole("heading", { name: challenge.name })).toBeVisible();
   await expect(page.locator("[data-challenge-character]")).toContainText(challengerName);
 
-  for (const [questionIndex, [a, b]] of challenge.questions.entries()) {
-    await answerQuestion(page, a, b);
+  for (let questionIndex = 0; questionIndex < 4; questionIndex += 1) {
+    await answerCurrentQuestion(page, {
+      answerWrongFirst: options.answerWrongFirst && questionIndex === 0
+    });
 
-    const isLastQuestion = questionIndex === challenge.questions.length - 1;
+    const isLastQuestion = questionIndex === 3;
     const nextButton = page.getByRole("button", { name: isLastQuestion ? finalButtonName : "Volgende som" });
     await nextButton.scrollIntoViewIfNeeded();
     await tap(nextButton);
@@ -242,12 +253,12 @@ async function playFullAdventure(page) {
     await expect(page.getByText(`Laat de ${rune.name} ontwaken.`)).toBeVisible();
     await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Runewachter");
 
-    for (const [questionIndex, [a, b]] of rune.questions.entries()) {
-      await answerQuestion(page, a, b, {
+    for (let questionIndex = 0; questionIndex < 4; questionIndex += 1) {
+      await answerCurrentQuestion(page, {
         answerWrongFirst: runeIndex === 0 && questionIndex === 0
       });
 
-      const isLastQuestion = questionIndex === rune.questions.length - 1;
+      const isLastQuestion = questionIndex === 3;
       const nextButton = page.getByRole("button", { name: isLastQuestion ? "Maak de rune wakker" : "Volgende som" });
       await nextButton.scrollIntoViewIfNeeded();
       await tap(nextButton);
@@ -309,7 +320,7 @@ async function expectStableActorAnchor(page) {
 }
 
 test.describe("SvenAdventure", () => {
-  test.setTimeout(90000);
+  test.setTimeout(180000);
 
   test("loads the adventure", async ({ page }) => {
     await page.goto(gameUrl);
@@ -351,17 +362,20 @@ test.describe("SvenAdventure", () => {
     });
 
     const tableProgress = await page.evaluate(() => JSON.parse(localStorage.getItem("svenadventure-table-progress-v1")));
-    expect(tableProgress.tables["3"]).toMatchObject({
-      questionsAsked: 1,
-      attempts: 2,
+    const progressTotals = Object.values(tableProgress.tables).reduce(
+      (totals, table) => ({
+        questionsAsked: totals.questionsAsked + table.questionsAsked,
+        attempts: totals.attempts + table.attempts,
+        mistakes: totals.mistakes + table.mistakes,
+        firstTryCorrect: totals.firstTryCorrect + table.firstTryCorrect
+      }),
+      { questionsAsked: 0, attempts: 0, mistakes: 0, firstTryCorrect: 0 }
+    );
+    expect(progressTotals).toMatchObject({
+      questionsAsked: 12,
+      attempts: 13,
       mistakes: 1,
-      firstTryCorrect: 0
-    });
-    expect(tableProgress.tables["5"]).toMatchObject({
-      questionsAsked: 1,
-      attempts: 1,
-      mistakes: 0,
-      firstTryCorrect: 1
+      firstTryCorrect: 11
     });
 
     await page.reload();
@@ -472,10 +486,76 @@ test.describe("SvenAdventure", () => {
     const completion = await page.evaluate(() => JSON.parse(localStorage.getItem("svenadventure-tropisch-eiland-v1")));
     expect(completion).toMatchObject({
       levelId: "LVL-0007",
-      answered: 6,
-      firstTryCorrect: 6,
-      attempts: 6
+      answered: 12,
+      firstTryCorrect: 12,
+      attempts: 12
     });
+  });
+
+  test("all challenge sources contain at least four available questions", async ({ page }) => {
+    await page.goto(gameUrl);
+    await waitForImages(page);
+    const levels = await page.evaluate(async () => {
+      for (const entry of window.SVEN_LEVEL_MANIFEST.levels) {
+        if (!window.SVEN_LEVEL_DEFINITIONS[entry.id]) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = entry.script;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.append(script);
+          });
+        }
+      }
+      return Object.values(window.SVEN_LEVEL_DEFINITIONS).map((level) => ({
+        id: level.id,
+        runes: level.runes.map((rune) => ({ id: rune.id, count: rune.questions.length }))
+      }));
+    });
+
+    for (const loadedLevel of levels) {
+      for (const rune of loadedLevel.runes) {
+        expect(rune.count, `${loadedLevel.id}.${rune.id}`).toBeGreaterThanOrEqual(4);
+      }
+    }
+  });
+
+  test("requires four correct answers before a challenge completes", async ({ page }) => {
+    await startAdventure(page);
+    await travelToTemple(page);
+
+    await tap(page.getByRole("button", { name: "Zonrune" }));
+    await expect(page.getByText(/Runewachter - Rune 1\/4/)).toBeVisible();
+
+    for (let index = 1; index <= 3; index += 1) {
+      await answerCurrentQuestion(page);
+      await expect(page.getByRole("button", { name: "Volgende som" })).toBeVisible();
+      await tap(page.getByRole("button", { name: "Volgende som" }));
+      await expect(page.getByText(new RegExp(`Runewachter - Rune ${index + 1}/4`))).toBeVisible();
+    }
+
+    await answerCurrentQuestion(page);
+    await expect(page.getByRole("button", { name: "Maak de rune wakker" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Volgende som" })).toHaveCount(0);
+  });
+
+  test("randomizes question order between fresh challenge sessions", async ({ page }) => {
+    async function openFirstZonQuestion(randomValue) {
+      await startAdventure(page);
+      await travelToTemple(page);
+      await page.evaluate((value) => {
+        Math.random = () => value;
+      }, randomValue);
+      await tap(page.getByRole("button", { name: "Zonrune" }));
+      const question = await getCurrentQuestion(page);
+      return `${question.a}x${question.b}`;
+    }
+
+    const lowRandomFirstQuestion = await openFirstZonQuestion(0);
+    await page.reload();
+    const highRandomFirstQuestion = await openFirstZonQuestion(0.99);
+
+    expect(lowRandomFirstQuestion).not.toBe(highRandomFirstQuestion);
   });
 
   test("uses the interactive object registry for round world-aligned circles", async ({ page }) => {

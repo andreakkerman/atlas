@@ -170,7 +170,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       questions: [
         { a: 3, b: 9 },
         { a: 6, b: 4 },
-        { a: 8, b: 5 }
+        { a: 8, b: 5 },
+        { a: 7, b: 3 }
       ]
     },
     {
@@ -185,7 +186,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       questions: [
         { a: 4, b: 8 },
         { a: 7, b: 6 },
-        { a: 9, b: 3 }
+        { a: 9, b: 3 },
+        { a: 5, b: 7 }
       ]
     },
     {
@@ -200,7 +202,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       questions: [
         { a: 5, b: 7 },
         { a: 8, b: 6 },
-        { a: 10, b: 4 }
+        { a: 10, b: 4 },
+        { a: 6, b: 5 }
       ]
     },
     {
@@ -215,7 +218,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       questions: [
         { a: 6, b: 9 },
         { a: 7, b: 8 },
-        { a: 9, b: 5 }
+        { a: 9, b: 5 },
+        { a: 4, b: 7 }
       ]
     }
   ],
