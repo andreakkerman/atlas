@@ -47,7 +47,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   },
   challengeArt: "Levels/LVL-0004/assets/captain-nemo.png",
   player: {
-    start: { x: 190, y: 610 }
+    startNode: "harbor-start",
+    start: { x: 259, y: 564 }
   },
   interactiveObjects: [
     {
@@ -135,6 +136,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       text: "Aan boord gaan, maar voorzichtig."
     }
   },
+  levelSemantics: {
+    setting: "een tropische haven met de Nautilus aan de steiger",
+    mood: "zonnig, geheimzinnig en technisch",
+    companionFocus: {
+      minnie: "blauw licht, koper, kaarten en de duikboot",
+      moose: "oude steigers, diep water en veilige toegang"
+    }
+  },
+  companionMoments: [
+    {
+      id: "nautilus-harbor-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Oeh, daar ligt een echte duikboot."
+    },
+    {
+      id: "nautilus-harbor-object",
+      event: "OBJECT_FIRST_LOOK",
+      speaker: "minnie",
+      text: "Koper, blauw licht en zeezout. Verdacht mooi."
+    },
+    {
+      id: "nautilus-harbor-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Nemo lijkt iemand die precies telt.",
+      bridge: "Even opletten."
+    },
+    {
+      id: "nautilus-harbor-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "moose",
+      text: "Bijna. Een duikboot vergeeft slordigheid niet graag."
+    },
+    {
+      id: "nautilus-harbor-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "moose",
+      text: "De steiger is veilig. Aan boord nu."
+    },
+    {
+      id: "nautilus-harbor-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "Alles klopt. Sven mag naar de Nautilus."
+    }
+  ],
   areas: [
     { id: "harbor", name: "Nautilushaven", start: 0, end: 2172, guideLine: "harbor" }
   ],
@@ -163,7 +211,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
         { a: 4, b: 6 },
         { a: 7, b: 3 },
         { a: 5, b: 5 },
-        { a: 8, b: 2 }
+        { a: 8, b: 2 },
+        { a: 9, b: 5 },
+        { a: 6, b: 4 }
       ]
     },
     {
@@ -179,7 +229,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
         { a: 5, b: 8 },
         { a: 6, b: 7 },
         { a: 3, b: 9 },
-        { a: 4, b: 4 }
+        { a: 4, b: 4 },
+        { a: 8, b: 3 },
+        { a: 10, b: 2 }
       ]
     },
     {
@@ -195,7 +247,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
         { a: 9, b: 4 },
         { a: 8, b: 6 },
         { a: 7, b: 5 },
-        { a: 6, b: 6 }
+        { a: 6, b: 6 },
+        { a: 10, b: 7 },
+        { a: 5, b: 9 }
       ]
     }
   ],

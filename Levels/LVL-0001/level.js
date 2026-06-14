@@ -41,7 +41,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   },
   challengeArt: "Levels/LVL-0001/assets/rune-stones.png",
   player: {
-    start: { x: 210, y: 610 }
+    startNode: "forest-start",
+    start: { x: 170, y: 626 }
   },
   interactiveObjects: [
     {
@@ -152,6 +153,55 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       text: "Goed gedaan, Sven. De poort is open."
     }
   },
+  levelSemantics: {
+    setting: "een vergeten Vikingbos met een tempelpoort",
+    mood: "mysterieus, warm en verwachtingsvol",
+    companionFocus: {
+      minnie: "glimmende runen, mos en verborgen tekens",
+      moose: "oude stenen, veilige stappen en de zware poort"
+    }
+  },
+  companionMoments: [
+    {
+      id: "runenpoort-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Oeh, dit bos bewaart duidelijk een geheim."
+    },
+    {
+      id: "runenpoort-forest-look",
+      event: "OBJECT_FIRST_LOOK",
+      objectId: "forestRune",
+      speaker: "minnie",
+      text: "Die steen lijkt ouder dan alle bomen hier."
+    },
+    {
+      id: "runenpoort-challenge-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Rustig kijken. Runen houden niet van haast.",
+      bridge: "Even opletten."
+    },
+    {
+      id: "runenpoort-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "minnie",
+      text: "Bijna. Ik zie het patroon al beter."
+    },
+    {
+      id: "runenpoort-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "moose",
+      text: "Goed gedaan, Sven. De poort is open."
+    },
+    {
+      id: "runenpoort-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "Alle runen gloeien. Nu voorzichtig naar de poort.",
+      bridge: "O, wacht..."
+    }
+  ],
   areas: [
     { id: "forest", name: "Bos", start: 0, end: 1120 },
     { id: "temple", name: "Tempel", start: 1120, end: 2172 }
@@ -189,7 +239,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
         { a: 3, b: 4 },
         { a: 5, b: 6 },
         { a: 2, b: 8 },
-        { a: 4, b: 7 }
+        { a: 4, b: 7 },
+        { a: 9, b: 3 },
+        { a: 6, b: 2 }
       ]
     },
     {
@@ -204,7 +256,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
         { a: 6, b: 4 },
         { a: 8, b: 3 },
         { a: 7, b: 5 },
-        { a: 9, b: 2 }
+        { a: 9, b: 2 },
+        { a: 10, b: 4 },
+        { a: 3, b: 7 }
       ]
     },
     {
@@ -219,7 +273,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
         { a: 4, b: 9 },
         { a: 6, b: 8 },
         { a: 10, b: 7 },
-        { a: 8, b: 5 }
+        { a: 8, b: 5 },
+        { a: 7, b: 6 },
+        { a: 5, b: 9 }
       ]
     }
   ],

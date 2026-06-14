@@ -13,6 +13,8 @@ const APPROACH_DISTANCE_WARN = 430;
 const LONG_EDGE_WARN = 185;
 const STEEP_EDGE_WARN = 70;
 const LOCAL_Y_SPIKE_WARN = 70;
+const ANSWER_REPEAT_WARN = 3;
+const COMMUTATIVE_PAIR_WARN = 2;
 
 function addWarning(warnings, levelId, message) {
   warnings.push(`[${levelId}] ${message}`);
@@ -143,6 +145,36 @@ function auditLevel({ level }) {
     }
     if (!object.approachNode) {
       addWarning(warnings, level.id, `challenge object "${object.id}" has no approachNode.`);
+    }
+  });
+
+  const exactQuestions = new Set();
+  const answerCounts = new Map();
+  const commutativeCounts = new Map();
+  (level.runes || []).forEach((rune) => {
+    (rune.questions || []).forEach((question) => {
+      if (!Number.isInteger(question.a) || !Number.isInteger(question.b)) return;
+
+      const exactKey = `${question.a}x${question.b}`;
+      const commutativeKey = `${Math.min(question.a, question.b)}x${Math.max(question.a, question.b)}`;
+      const answer = question.a * question.b;
+      if (exactQuestions.has(exactKey)) {
+        addWarning(warnings, level.id, `duplicate exact multiplication question "${exactKey}".`);
+      }
+      exactQuestions.add(exactKey);
+      answerCounts.set(answer, (answerCounts.get(answer) || 0) + 1);
+      commutativeCounts.set(commutativeKey, (commutativeCounts.get(commutativeKey) || 0) + 1);
+    });
+  });
+
+  answerCounts.forEach((count, answer) => {
+    if (count > ANSWER_REPEAT_WARN) {
+      addWarning(warnings, level.id, `answer "${answer}" appears ${count} times across challenges.`);
+    }
+  });
+  commutativeCounts.forEach((count, pair) => {
+    if (count > COMMUTATIVE_PAIR_WARN) {
+      addWarning(warnings, level.id, `commutative pair "${pair}" appears ${count} times across challenges.`);
     }
   });
 

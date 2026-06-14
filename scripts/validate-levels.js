@@ -14,6 +14,23 @@ const requiredSfxKeys = [
   "unlock",
   "adventureComplete"
 ];
+const allowedCompanionEvents = new Set([
+  "LEVEL_ENTER",
+  "OBJECT_FIRST_LOOK",
+  "CHALLENGE_OPEN",
+  "CHALLENGE_FAIL_1",
+  "CHALLENGE_FAIL_2",
+  "CHALLENGE_SUCCESS",
+  "PATH_UNLOCKED",
+  "ADVENTURE_COMPLETE",
+  "COMPANION_CONVERSATION"
+]);
+const allowedCompanionSpeakers = new Set(["minnie", "moose"]);
+const forbiddenCompanionTextPatterns = [
+  /Sven loopt/i,
+  /Klik op/i,
+  /Je moet/i
+];
 
 const errors = [];
 
@@ -483,6 +500,7 @@ function validateReferences(level, objects, nodeIds, label) {
     }
   });
 
+  const exactQuestions = new Set();
   (level.runes || []).forEach((rune, index) => {
     const runeLabel = `${label}.runes[${index}]`;
     validateRequiredString(rune.id, `${runeLabel}.id`);
@@ -508,14 +526,72 @@ function validateReferences(level, objects, nodeIds, label) {
         fail(`${questionLabel} must be an object.`);
         return;
       }
-      if (!isPositiveNumber(question.a)) fail(`${questionLabel}.a must be greater than zero.`);
-      if (!isPositiveNumber(question.b)) fail(`${questionLabel}.b must be greater than zero.`);
+      if (!Number.isInteger(question.a) || question.a < 1 || question.a > 10) {
+        fail(`${questionLabel}.a must be an integer from 1 to 10.`);
+      }
+      if (!Number.isInteger(question.b) || question.b < 1 || question.b > 10) {
+        fail(`${questionLabel}.b must be an integer from 1 to 10.`);
+      }
+      const key = `${question.a}x${question.b}`;
+      if (exactQuestions.has(key)) {
+        fail(`${label} contains duplicate multiplication question ${key}.`);
+      }
+      exactQuestions.add(key);
     });
   });
 
   [...objects.values()].forEach((object) => {
     if (object.approachNode && !nodeIds.has(object.approachNode)) {
       fail(`${label}.interactiveObjects.${object.id}.approachNode references missing node: ${object.approachNode}`);
+    }
+  });
+}
+
+function validateCompanionAuthoring(level, objects, label) {
+  if (!isObject(level.levelSemantics)) {
+    fail(`${label}.levelSemantics must be an object.`);
+  } else {
+    validateRequiredString(level.levelSemantics.setting, `${label}.levelSemantics.setting`);
+    validateRequiredString(level.levelSemantics.mood, `${label}.levelSemantics.mood`);
+    validateRequiredString(level.levelSemantics.companionFocus?.minnie, `${label}.levelSemantics.companionFocus.minnie`);
+    validateRequiredString(level.levelSemantics.companionFocus?.moose, `${label}.levelSemantics.companionFocus.moose`);
+  }
+
+  if (!Array.isArray(level.companionMoments) || level.companionMoments.length < 4 || level.companionMoments.length > 6) {
+    fail(`${label}.companionMoments must contain 4 to 6 moments.`);
+    return;
+  }
+
+  const challengeIds = new Set((level.runes || []).map((rune) => rune.id));
+  const momentIds = new Set();
+  level.companionMoments.forEach((moment, index) => {
+    const momentLabel = `${label}.companionMoments[${index}]`;
+    if (!isObject(moment)) {
+      fail(`${momentLabel} must be an object.`);
+      return;
+    }
+    validateRequiredString(moment.id, `${momentLabel}.id`);
+    if (momentIds.has(moment.id)) fail(`${momentLabel}.id is duplicated: ${moment.id}`);
+    momentIds.add(moment.id);
+    validateRequiredString(moment.event, `${momentLabel}.event`);
+    if (isNonEmptyString(moment.event) && !allowedCompanionEvents.has(moment.event)) {
+      fail(`${momentLabel}.event is not allowed: ${moment.event}`);
+    }
+    validateRequiredString(moment.speaker, `${momentLabel}.speaker`);
+    if (isNonEmptyString(moment.speaker) && !allowedCompanionSpeakers.has(moment.speaker)) {
+      fail(`${momentLabel}.speaker must be minnie or moose.`);
+    }
+    validateRequiredString(moment.text, `${momentLabel}.text`);
+    forbiddenCompanionTextPatterns.forEach((pattern) => {
+      if (isNonEmptyString(moment.text) && pattern.test(moment.text)) {
+        fail(`${momentLabel}.text uses forbidden companion wording: "${moment.text}"`);
+      }
+    });
+    if (moment.objectId && !objects.has(moment.objectId)) {
+      fail(`${momentLabel}.objectId references missing object: ${moment.objectId}`);
+    }
+    if (moment.challengeId && !challengeIds.has(moment.challengeId)) {
+      fail(`${momentLabel}.challengeId references missing challenge: ${moment.challengeId}`);
     }
   });
 }
@@ -542,12 +618,22 @@ function validateTopLevel(level, entry, label) {
   validateRequiredString(level.spiritLines?.reward, `${label}.spiritLines.reward`);
 }
 
-function validatePlayer(level, world, label) {
+function validatePlayer(level, world, nodeIds, label) {
   if (!isObject(level.player)) {
     fail(`${label}.player must be an object.`);
     return;
   }
+  validateRequiredString(level.player.startNode, `${label}.player.startNode`);
+  if (isNonEmptyString(level.player.startNode) && !nodeIds.has(level.player.startNode)) {
+    fail(`${label}.player.startNode references missing node: ${level.player.startNode}`);
+  }
   validatePoint(level.player.start, `${label}.player.start`, world);
+  const startNode = authoredWalkPathPoints(level)
+    .map(normalizeWalkPathPoint)
+    .find((point) => point.id === level.player.startNode);
+  if (startNode && (startNode.x !== level.player.start.x || startNode.y !== level.player.start.y)) {
+    fail(`${label}.player.start must match player.startNode coordinates (${startNode.x}, ${startNode.y}).`);
+  }
 }
 
 function validateLevel(entry) {
@@ -561,8 +647,9 @@ function validateLevel(entry) {
   const world = validateWorld(level, levelFolder, label) || { width: 0, height: 0 };
   const { nodeIds } = validateWalkGraph(level, world, label);
   const objects = validateInteractiveObjects(level, world, nodeIds, label);
-  validatePlayer(level, world, label);
+  validatePlayer(level, world, nodeIds, label);
   validateReferences(level, objects, nodeIds, label);
+  validateCompanionAuthoring(level, objects, label);
   validateAssets(level, entry, levelFolder, label);
 }
 

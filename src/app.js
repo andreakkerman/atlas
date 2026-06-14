@@ -18,6 +18,17 @@ const SFX_LABELS = {
   unlock: "Unlock",
   adventureComplete: "Adventure complete"
 };
+const COMPANION_EVENT_PRIORITY = {
+  LEVEL_ENTER: 10,
+  OBJECT_FIRST_LOOK: 20,
+  COMPANION_CONVERSATION: 30,
+  CHALLENGE_OPEN: 40,
+  CHALLENGE_SUCCESS: 60,
+  CHALLENGE_FAIL_1: 70,
+  CHALLENGE_FAIL_2: 80,
+  PATH_UNLOCKED: 90,
+  ADVENTURE_COMPLETE: 100
+};
 const ACTOR_ANIMATIONS = {
   idle: {
     folder: "assets/characters/sven/idle-right",
@@ -50,7 +61,7 @@ const actorPlayback = {
 };
 
 let state = {
-  screen: "menu"
+  screen: "launch"
 };
 
 let audioConfig = cloneAudioConfig(window.SVEN_AUDIO_CONFIG || {});
@@ -76,6 +87,7 @@ let walkPathEditor = {
 };
 
 function createLevelState(selectedLevel) {
+  const startPoint = getPlayerStartPoint(selectedLevel);
   const initialGuideMessage = guideLineForLevel(
     selectedLevel,
     "welcome",
@@ -86,8 +98,8 @@ function createLevelState(selectedLevel) {
   return {
     screen: "intro",
     introIndex: 0,
-    worldX: selectedLevel.player.start.x,
-    worldY: selectedLevel.player.start.y,
+    worldX: startPoint.x,
+    worldY: startPoint.y,
     viewportWorldWidth: selectedLevel.world.viewportWidth,
     worldScale: selectedLevel.world.width / selectedLevel.world.viewportWidth,
     cameraX: 0,
@@ -107,8 +119,33 @@ function createLevelState(selectedLevel) {
     firstTryCorrect: 0,
     attempts: 0,
     guideMessage: initialGuideMessage,
+    guidePriority: 0,
+    companionQueue: [],
+    seenObjects: new Set(),
+    challengeFailureCounts: {},
     message: initialGuideMessage.text,
     feedback: ""
+  };
+}
+
+function walkPathNodeById(selectedLevel, nodeId) {
+  return authoredWalkPathPoints(selectedLevel)
+    .map(normalizeWalkPoint)
+    .find((point) => point.id === nodeId);
+}
+
+function getPlayerStartPoint(selectedLevel) {
+  const startNodeId = selectedLevel.player?.startNode;
+  if (startNodeId) {
+    const startNode = walkPathNodeById(selectedLevel, startNodeId);
+    if (startNode) {
+      return { x: startNode.x, y: startNode.y };
+    }
+  }
+
+  return {
+    x: selectedLevel.player.start.x,
+    y: selectedLevel.player.start.y
   };
 }
 
@@ -141,6 +178,68 @@ function setGuideMessage(message, fallbackSpeaker = "minnie") {
 
 function setGuideLine(key, fallbackText, fallbackSpeaker = "minnie") {
   setGuideMessage(guideLineForLevel(level, key, fallbackText, fallbackSpeaker), fallbackSpeaker);
+}
+
+function momentMatchesContext(moment, context) {
+  if (moment.objectId && moment.objectId !== context.objectId) return false;
+  if (moment.challengeId && moment.challengeId !== context.challengeId) return false;
+  return true;
+}
+
+function authoredCompanionMoments(eventName, context = {}) {
+  return (level.companionMoments || [])
+    .filter((moment) => moment.event === eventName && momentMatchesContext(moment, context))
+    .map((moment) => ({
+      ...moment,
+      priority: moment.priority ?? COMPANION_EVENT_PRIORITY[eventName] ?? 0
+    }));
+}
+
+function playQueuedCompanionMoment() {
+  if (state.moving || !state.companionQueue?.length) return;
+  const next = state.companionQueue.shift();
+  setGuideMessage(next, next.speaker);
+  state.guidePriority = next.priority ?? 0;
+}
+
+function queueCompanionMoment(moment) {
+  state.companionQueue ||= [];
+  state.companionQueue.push(moment);
+}
+
+function emitCompanionEvent(eventName, context = {}) {
+  const moments = authoredCompanionMoments(eventName, context);
+  if (!moments.length) return;
+
+  const priority = COMPANION_EVENT_PRIORITY[eventName] ?? 0;
+  const queuedMoments = moments.map((moment) => ({ ...moment, priority }));
+
+  if (state.moving) {
+    queuedMoments.forEach(queueCompanionMoment);
+    return;
+  }
+
+  if ((state.guidePriority || 0) < priority) {
+    state.companionQueue = (state.companionQueue || []).filter((moment) => (moment.priority ?? 0) >= priority);
+    const [first, ...rest] = queuedMoments;
+    if (first.bridge && state.guideMessage?.text) {
+      setGuideMessage({ speaker: first.speaker, text: first.bridge }, first.speaker);
+      state.guidePriority = priority;
+      queueCompanionMoment(first);
+    } else {
+      setGuideMessage(first, first.speaker);
+      state.guidePriority = priority;
+    }
+    rest.forEach(queueCompanionMoment);
+    return;
+  }
+
+  queuedMoments.forEach(queueCompanionMoment);
+}
+
+function advanceCompanionDialogue() {
+  playQueuedCompanionMoment();
+  render();
 }
 
 function authoredWalkPathPoints(selectedLevel) {
@@ -322,6 +421,7 @@ function densifyWalkGraph(authoredNodes) {
 }
 
 function normalizeLevel(selectedLevel) {
+  selectedLevel.player.start = getPlayerStartPoint(selectedLevel);
   selectedLevel.walkGraph = deriveWalkGraph(selectedLevel);
   return selectedLevel;
 }
@@ -348,8 +448,10 @@ function preloadActorAnimations() {
 }
 
 function preloadMenuAssets() {
-  visibleLevelCatalog()
-    .map((item) => item.menu?.illustration)
+  [
+    "assets/branding/launch-hero.png",
+    ...visibleLevelCatalog().map((item) => item.menu?.illustration)
+  ]
     .filter(Boolean)
     .forEach((src) => {
       const image = new Image();
@@ -419,6 +521,10 @@ function syncAudioForState() {
   if (!audioState.unlocked) return;
 
   const master = audioMasterVolume();
+  if (state.screen === "launch") {
+    stopAmbience();
+    return;
+  }
   if (state.screen === "menu" || !level) {
     const menuMusicKey = audioConfig.menu?.music || "menu";
     setLoopAudio("music", menuMusicKey, audioTrackPath("music", menuMusicKey), master * clampVolume(audioConfig.menu?.musicVolume ?? 0.65));
@@ -440,6 +546,16 @@ function ensureAudioUnlocked() {
   if (audioState.unlocked) return;
   audioState.unlocked = true;
   syncAudioForState();
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  if (!window.location.protocol.startsWith("http")) return;
+  if (EDITOR_DEV_MODE) return;
+
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  }, { once: true });
 }
 
 function playSfx(key) {
@@ -1195,7 +1311,9 @@ function getAccuracy() {
 
 function continueIntro() {
   state.screen = "scene";
-  setGuideLine("start", "Tik op het pad om te lopen. Tik op iets bijzonders.", "minnie");
+  state.guidePriority = 0;
+  state.companionQueue = [];
+  emitCompanionEvent("LEVEL_ENTER");
   render();
 }
 
@@ -1211,13 +1329,8 @@ function beginInteraction(target, kind) {
   if (state.moving) return;
 
   const action = actionForTarget(target, kind);
-  const movingLine = guideLineForLevel(level, "moving", level.spiritLines.moving || "Ik houd het pad in de gaten.", "moose");
 
   state.justCompletedRuneId = null;
-  setGuideMessage({
-    speaker: movingLine.speaker,
-    text: `${movingLine.text} ${target.name}.`
-  }, "moose");
   walkRoute(routeTo(target), () => arriveAtInteraction(target, kind, action));
 }
 
@@ -1227,20 +1340,11 @@ function arriveAtInteraction(target, kind, action) {
     state.svenFacing = targetCenter.x < state.worldX ? "left" : "right";
   }
   state.svenMood = "arrived";
-  setGuideMessage({ speaker: "minnie", text: `${target.name}.` });
   render();
 
   window.setTimeout(() => {
     if (!state.moving) return;
     state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
-    if (action === "activate" || action === "travel") {
-      setGuideMessage({
-        speaker: kind === "rune" ? "minnie" : "moose",
-        text: kind === "rune"
-          ? `Sven raakt ${target.name} aan.`
-          : `Sven probeert ${target.name}.`
-      });
-    }
     render();
 
     window.setTimeout(() => {
@@ -1256,7 +1360,15 @@ function finishInteraction(target, kind, action) {
   if (kind === "rune" && action === "look") {
     state.moving = false;
     state.svenMood = "idle";
-    setGuideMessage({ speaker: "minnie", text: state.completedRunes.has(target.id) ? target.solved : target.intro });
+    if (!state.seenObjects.has(target.objectId || target.id)) {
+      state.seenObjects.add(target.objectId || target.id);
+      emitCompanionEvent("OBJECT_FIRST_LOOK", {
+        objectId: target.objectId || target.id,
+        challengeId: target.id
+      });
+    } else {
+      playQueuedCompanionMoment();
+    }
     render();
     return;
   }
@@ -1264,7 +1376,10 @@ function finishInteraction(target, kind, action) {
   if (kind === "rune" && action === "activate" && state.completedRunes.has(target.id)) {
     state.moving = false;
     state.svenMood = "idle";
-    setGuideMessage({ speaker: "minnie", text: target.solved });
+    emitCompanionEvent("CHALLENGE_SUCCESS", {
+      objectId: target.objectId || target.id,
+      challengeId: target.id
+    });
     render();
     return;
   }
@@ -1278,14 +1393,18 @@ function finishInteraction(target, kind, action) {
   if (target.id === exitHotspotId && action === "activate" && state.completedRunes.size === level.runes.length) {
     state.moving = false;
     playSfx("unlock");
-    setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
     showReward();
     return;
   }
 
   state.moving = false;
   state.svenMood = "idle";
-  setGuideMessage({ speaker: "minnie", text: target[action] || target.look || "Sven kijkt goed." });
+  if (!state.seenObjects.has(target.objectId || target.id)) {
+    state.seenObjects.add(target.objectId || target.id);
+    emitCompanionEvent("OBJECT_FIRST_LOOK", { objectId: target.objectId || target.id });
+  } else {
+    playQueuedCompanionMoment();
+  }
   render();
 }
 
@@ -1293,17 +1412,10 @@ function beginFreeWalk(point) {
   if (state.screen !== "scene" || state.moving) return;
 
   state.justCompletedRuneId = null;
-  setGuideLine("moving", "Ik houd het pad in de gaten.", "moose");
   walkRoute(routeToPoint(point), () => {
     state.moving = false;
     state.svenMood = "idle";
-    if (state.completedRunes.size === level.runes.length) {
-      setGuideLine("allRunes", level.spiritLines.allRunes || level.reward?.title, "moose");
-    } else {
-      const area = currentArea();
-      const guideKey = area?.guideLine || area?.id || "forest";
-      setGuideLine(guideKey, area ? `${area.name}.` : "Sven kijkt rond.", area?.id === "forest" ? "minnie" : "moose");
-    }
+    playQueuedCompanionMoment();
     render();
   });
 }
@@ -1318,7 +1430,11 @@ function openRuneChallenge(id) {
   state.selectedWrong = false;
   state.questionTracked = false;
   state.svenMood = "activating";
-  setGuideMessage({ speaker: "minnie", text: rune.intro });
+  state.challengeFailureCounts[id] = 0;
+  emitCompanionEvent("CHALLENGE_OPEN", {
+    objectId: rune.objectId,
+    challengeId: rune.id
+  });
   state.feedback = rune.intro;
   render();
 }
@@ -1333,6 +1449,11 @@ function answerQuestion(choice) {
     updateTableProgress(question, "mistake");
     state.selectedWrong = true;
     state.svenMood = "thinking";
+    state.challengeFailureCounts[state.activeRuneId] = (state.challengeFailureCounts[state.activeRuneId] || 0) + 1;
+    emitCompanionEvent(state.challengeFailureCounts[state.activeRuneId] > 1 ? "CHALLENGE_FAIL_2" : "CHALLENGE_FAIL_1", {
+      objectId: runeById(state.activeRuneId).objectId,
+      challengeId: state.activeRuneId
+    });
     state.feedback = getLearningHint(question);
     render();
     return;
@@ -1381,9 +1502,12 @@ function nextQuestion() {
   state.screen = "scene";
 
   if (state.completedRunes.size === level.runes.length) {
-    setGuideLine("allRunes", level.spiritLines.allRunes, "moose");
+    emitCompanionEvent("PATH_UNLOCKED");
   } else {
-    setGuideMessage({ speaker: "minnie", text: rune.solved });
+    emitCompanionEvent("CHALLENGE_SUCCESS", {
+      objectId: rune.objectId,
+      challengeId: rune.id
+    });
   }
 
   render();
@@ -1391,7 +1515,7 @@ function nextQuestion() {
 
 function showReward() {
   playSfx("adventureComplete");
-  setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
+  emitCompanionEvent("ADVENTURE_COMPLETE");
   state.screen = "reward";
   saveCompletion();
   render();
@@ -1414,10 +1538,11 @@ function continueToNextLevel() {
 }
 
 function restart() {
+  const startPoint = getPlayerStartPoint(level);
   state.screen = "intro";
   state.introIndex = 0;
-  state.worldX = level.player.start.x;
-  state.worldY = level.player.start.y;
+  state.worldX = startPoint.x;
+  state.worldY = startPoint.y;
   state.cameraX = 0;
   state.svenMood = "idle";
   state.svenFacing = "right";
@@ -1429,6 +1554,10 @@ function restart() {
   state.selectedWrong = false;
   state.questionTracked = false;
   state.completedRunes = new Set();
+  state.seenObjects = new Set();
+  state.challengeFailureCounts = {};
+  state.companionQueue = [];
+  state.guidePriority = 0;
   state.justCompletedRuneId = null;
   state.answered = 0;
   state.firstTryCorrect = 0;
@@ -1767,7 +1896,7 @@ function renderAdventureTeamBar() {
   const guideMessage = state.guideMessage || normalizeGuideMessage(state.message, "minnie");
   const activeGuide = (level.guides || {})[guideMessage.speaker] || { name: "Minnie" };
   return `
-    <section class="adventureTeamBar" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" aria-live="polite">
+    <section class="adventureTeamBar" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" data-action="companion-next" aria-live="polite">
       <div class="teamPortraits" aria-label="Avonturenteam">
         ${guideEntries(guideMessage.speaker).map((entry) => renderGuidePortrait(entry, guideMessage.speaker)).join("")}
       </div>
@@ -1792,6 +1921,20 @@ function renderScene() {
       ${renderReturnToMenuButton()}
       ${renderWorldStage()}
       ${renderAdventureTeamBar()}
+    </main>
+  `;
+}
+
+function renderLaunch() {
+  return `
+    <main class="launchScreen">
+      <img class="launchBackdrop" src="assets/branding/launch-hero.png" alt="" />
+      <section class="launchPanel">
+        <p class="eyebrow">Welkom</p>
+        <h1>SvenAdventure</h1>
+        <p>Wat ga je vandaag ontdekken?</p>
+        <button class="primaryButton" type="button" data-action="launch-enter">Start avontuur</button>
+      </section>
     </main>
   `;
 }
@@ -1982,7 +2125,9 @@ function renderTransition() {
 }
 
 function render() {
-  if (state.screen === "menu") {
+  if (state.screen === "launch") {
+    app.innerHTML = renderLaunch();
+  } else if (state.screen === "menu") {
     app.innerHTML = renderMenu();
   } else if (state.screen === "loading") {
     app.innerHTML = renderLoading();
@@ -2051,7 +2196,13 @@ app.addEventListener("click", (event) => {
   if (actionTarget) {
     playSfx("uiClick");
     const action = actionTarget.dataset.action;
+    if (action === "launch-enter") {
+      state = { screen: "menu" };
+      render();
+      return;
+    }
     if (action === "intro-next") continueIntro();
+    if (action === "companion-next") advanceCompanionDialogue();
     if (action === "menu") returnToMenu();
     if (action === "next-question") nextQuestion();
     if (action === "reward") showReward();
@@ -2145,4 +2296,5 @@ window.addEventListener("keydown", (event) => {
 
 preloadActorAnimations();
 preloadMenuAssets();
+registerServiceWorker();
 render();

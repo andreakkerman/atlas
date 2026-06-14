@@ -47,7 +47,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
   },
   challengeArt: "Levels/LVL-0002/assets/steenpriester.png",
   player: {
-    start: { x: 170, y: 575 }
+    startNode: "left-door-start",
+    start: { x: 160, y: 580 }
   },
   interactiveObjects: [
     {
@@ -143,6 +144,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       text: "Goed gedaan. De tempel laat ons naar buiten."
     }
   },
+  levelSemantics: {
+    setting: "een warme Vikingtempelzaal vol vuur, schilden en kaarten",
+    mood: "oud, plechtig en onderzoekend",
+    companionFocus: {
+      minnie: "glans op metaal, geheime voorwerpen en kleine details",
+      moose: "zware deuren, vuur en wat veilig aan te raken is"
+    }
+  },
+  companionMoments: [
+    {
+      id: "temple-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Oeh... het ruikt naar rook en geheimen."
+    },
+    {
+      id: "temple-object",
+      event: "OBJECT_FIRST_LOOK",
+      speaker: "minnie",
+      text: "Alles hier lijkt expres neergezet. Zelfs het stof."
+    },
+    {
+      id: "temple-challenge-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Oude tempels testen liever rustig dan snel.",
+      bridge: "Even opletten."
+    },
+    {
+      id: "temple-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "moose",
+      text: "Bijna. De tempel wacht wel even."
+    },
+    {
+      id: "temple-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "moose",
+      text: "De tempel laat Sven verder gaan."
+    },
+    {
+      id: "temple-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "Alle tempelproeven kloppen. De havendeur kan open."
+    }
+  ],
   areas: [
     { id: "interior", name: "Tempelzaal", start: 0, end: 2172, guideLine: "interior" }
   ],
@@ -171,7 +219,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
         { a: 3, b: 8 },
         { a: 4, b: 6 },
         { a: 5, b: 4 },
-        { a: 2, b: 9 }
+        { a: 2, b: 9 },
+        { a: 7, b: 2 },
+        { a: 6, b: 3 }
       ]
     },
     {
@@ -187,7 +237,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
         { a: 4, b: 7 },
         { a: 6, b: 5 },
         { a: 8, b: 2 },
-        { a: 3, b: 9 }
+        { a: 3, b: 9 },
+        { a: 10, b: 3 },
+        { a: 9, b: 4 }
       ]
     },
     {
@@ -203,7 +255,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
         { a: 7, b: 3 },
         { a: 5, b: 9 },
         { a: 6, b: 6 },
-        { a: 4, b: 8 }
+        { a: 4, b: 8 },
+        { a: 8, b: 7 },
+        { a: 2, b: 10 }
       ]
     },
     {
@@ -216,10 +270,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       prompt: "Tel de riemen van het schip.",
       solved: "Goed zo! Het schip wijst naar buiten.",
       questions: [
-        { a: 4, b: 8 },
+        { a: 8, b: 4 },
         { a: 6, b: 7 },
-        { a: 9, b: 4 },
-        { a: 5, b: 5 }
+        { a: 8, b: 9 },
+        { a: 5, b: 5 },
+        { a: 10, b: 6 },
+        { a: 7, b: 9 }
       ]
     }
   ],

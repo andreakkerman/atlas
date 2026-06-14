@@ -41,7 +41,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
   },
   challengeArt: "Levels/LVL-0007/assets/captain-nemo.png",
   player: {
-    start: { x: 180, y: 590 }
+    startNode: "left-hatch-start",
+    start: { x: 252, y: 539 }
   },
   interactiveObjects: [
     {
@@ -107,6 +108,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
     allRunes: { speaker: "moose", text: "De route klopt. Sven kan naar buiten." },
     reward: { speaker: "minnie", text: "We zijn buiten! Wat een avontuur." }
   },
+  levelSemantics: {
+    setting: "een verborgen grot met water, zonlicht en een uitgang naar een tropisch eiland",
+    mood: "opluchting, avontuur en frisse lucht",
+    companionFocus: {
+      minnie: "zonlicht, water en het eiland buiten",
+      moose: "natte stenen, routekeuzes en de veilige uitgang"
+    }
+  },
+  companionMoments: [
+    {
+      id: "island-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Oeh, ik zie zonlicht!"
+    },
+    {
+      id: "island-object",
+      event: "OBJECT_FIRST_LOOK",
+      speaker: "minnie",
+      text: "Dat hoort bij buiten. Ik weet het bijna zeker."
+    },
+    {
+      id: "island-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Natte stenen en haast zijn geen vrienden.",
+      bridge: "Even opletten."
+    },
+    {
+      id: "island-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "minnie",
+      text: "Bijna. Ik zie de zon nog steeds."
+    },
+    {
+      id: "island-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "minnie",
+      text: "We zijn buiten! Wat een avontuur."
+    },
+    {
+      id: "island-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "De route klopt. Sven kan naar buiten."
+    }
+  ],
   areas: [
     { id: "grotto", name: "Eilandgrot", start: 0, end: 2172, guideLine: "grotto" }
   ],
@@ -135,7 +183,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
         { a: 4, b: 7 },
         { a: 6, b: 8 },
         { a: 5, b: 5 },
-        { a: 3, b: 9 }
+        { a: 3, b: 9 },
+        { a: 8, b: 3 },
+        { a: 10, b: 2 }
       ]
     },
     {
@@ -151,7 +201,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
         { a: 5, b: 6 },
         { a: 9, b: 3 },
         { a: 8, b: 4 },
-        { a: 7, b: 2 }
+        { a: 7, b: 2 },
+        { a: 6, b: 7 },
+        { a: 4, b: 9 }
       ]
     },
     {
@@ -167,7 +219,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
         { a: 8, b: 8 },
         { a: 10, b: 6 },
         { a: 7, b: 6 },
-        { a: 9, b: 4 }
+        { a: 9, b: 4 },
+        { a: 6, b: 10 },
+        { a: 5, b: 8 }
       ]
     }
   ],

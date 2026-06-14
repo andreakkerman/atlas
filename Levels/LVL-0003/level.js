@@ -47,7 +47,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   },
   challengeArt: "Levels/LVL-0003/assets/havenmeester-eivar.png",
   player: {
-    start: { x: 170, y: 585 }
+    startNode: "harbor-start",
+    start: { x: 165, y: 586 }
   },
   interactiveObjects: [
     {
@@ -143,6 +144,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       text: "Het schip is klaar. Tijd om te varen."
     }
   },
+  levelSemantics: {
+    setting: "een Vikinghaven met touwen, kranen, kompassen en een gesloten vertrekpoort",
+    mood: "frisse zeewind, klaar voor vertrek",
+    companionFocus: {
+      minnie: "glimmende kompassen, kaarten en het schip",
+      moose: "natte stenen, lading, touwen en veilige afvaart"
+    }
+  },
+  companionMoments: [
+    {
+      id: "harbor-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Oeh, hoor je het water tegen de kade?"
+    },
+    {
+      id: "harbor-object",
+      event: "OBJECT_FIRST_LOOK",
+      speaker: "minnie",
+      text: "Daar zit zeelucht in. En misschien een geheim."
+    },
+    {
+      id: "harbor-challenge-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Een schip vertrekt pas als alles klopt.",
+      bridge: "Even opletten."
+    },
+    {
+      id: "harbor-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "moose",
+      text: "Bijna. Beter nu twijfelen dan op zee."
+    },
+    {
+      id: "harbor-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "moose",
+      text: "De wind staat goed. Nu kan Sven uitvaren."
+    },
+    {
+      id: "harbor-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "Alles is klaar. Sven mag naar de vertrekpoort."
+    }
+  ],
   areas: [
     { id: "harbor", name: "Vikinghaven", start: 0, end: 2172, guideLine: "harbor" }
   ],
@@ -171,7 +219,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
         { a: 3, b: 9 },
         { a: 6, b: 4 },
         { a: 8, b: 5 },
-        { a: 7, b: 3 }
+        { a: 7, b: 3 },
+        { a: 2, b: 8 },
+        { a: 10, b: 5 }
       ]
     },
     {
@@ -187,7 +237,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
         { a: 4, b: 8 },
         { a: 7, b: 6 },
         { a: 9, b: 3 },
-        { a: 5, b: 7 }
+        { a: 5, b: 7 },
+        { a: 6, b: 9 },
+        { a: 3, b: 6 }
       ]
     },
     {
@@ -200,10 +252,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       prompt: "Tel de voorraad voor het schip.",
       solved: "Sterk! De kist staat klaar.",
       questions: [
-        { a: 5, b: 7 },
+        { a: 7, b: 5 },
         { a: 8, b: 6 },
         { a: 10, b: 4 },
-        { a: 6, b: 5 }
+        { a: 6, b: 5 },
+        { a: 9, b: 4 },
+        { a: 4, b: 10 }
       ]
     },
     {
@@ -216,10 +270,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       prompt: "Tel de tekens op het poortschild.",
       solved: "Goed zo! Het poortschild gaat open.",
       questions: [
-        { a: 6, b: 9 },
+        { a: 9, b: 6 },
         { a: 7, b: 8 },
         { a: 9, b: 5 },
-        { a: 4, b: 7 }
+        { a: 4, b: 7 },
+        { a: 8, b: 9 },
+        { a: 10, b: 6 }
       ]
     }
   ],

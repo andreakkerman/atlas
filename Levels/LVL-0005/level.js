@@ -41,7 +41,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
   },
   challengeArt: "Levels/LVL-0005/assets/captain-nemo.png",
   player: {
-    start: { x: 180, y: 590 }
+    startNode: "left-door-start",
+    start: { x: 327, y: 612 }
   },
   interactiveObjects: [
     {
@@ -107,6 +108,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
     allRunes: { speaker: "moose", text: "De salon is klaar. De ronde deur kan open." },
     reward: { speaker: "moose", text: "Verder de Nautilus in. Blijf bij het pad." }
   },
+  levelSemantics: {
+    setting: "de salon van de Nautilus met ramen, kaarten en instrumenten",
+    mood: "stil, diepzeeachtig en wonderlijk",
+    companionFocus: {
+      minnie: "vissen achter het glas en glimmende instrumenten",
+      moose: "druk, glad metaal en Nemo's precieze orde"
+    }
+  },
+  companionMoments: [
+    {
+      id: "salon-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Wauw. We zijn echt onder zee."
+    },
+    {
+      id: "salon-object",
+      event: "OBJECT_FIRST_LOOK",
+      speaker: "minnie",
+      text: "Dit glimt alsof de zee erdoor fluistert."
+    },
+    {
+      id: "salon-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Nemo bewaart niets zomaar op tafel.",
+      bridge: "O, wacht..."
+    },
+    {
+      id: "salon-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "moose",
+      text: "Bijna. De Nautilus bromt nog rustig."
+    },
+    {
+      id: "salon-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "moose",
+      text: "Verder de Nautilus in. Blijf bij het pad."
+    },
+    {
+      id: "salon-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "De salon is klaar. De ronde deur kan open."
+    }
+  ],
   areas: [
     { id: "salon", name: "Salon", start: 0, end: 2172, guideLine: "salon" }
   ],
@@ -134,8 +182,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       questions: [
         { a: 6, b: 4 },
         { a: 8, b: 3 },
-        { a: 5, b: 7 },
-        { a: 9, b: 2 }
+        { a: 7, b: 2 },
+        { a: 9, b: 2 },
+        { a: 3, b: 8 },
+        { a: 10, b: 4 }
       ]
     },
     {
@@ -148,10 +198,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       prompt: "Tel de vissen achter het glas.",
       solved: "Goed zo! Het raam licht blauw op.",
       questions: [
-        { a: 7, b: 5 },
-        { a: 9, b: 2 },
+        { a: 5, b: 7 },
+        { a: 2, b: 9 },
         { a: 4, b: 8 },
-        { a: 6, b: 3 }
+        { a: 6, b: 3 },
+        { a: 8, b: 5 },
+        { a: 7, b: 4 }
       ]
     },
     {
@@ -167,7 +219,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
         { a: 5, b: 9 },
         { a: 8, b: 7 },
         { a: 6, b: 6 },
-        { a: 10, b: 3 }
+        { a: 10, b: 3 },
+        { a: 9, b: 6 },
+        { a: 4, b: 10 }
       ]
     }
   ],

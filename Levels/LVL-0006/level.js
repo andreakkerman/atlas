@@ -41,7 +41,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
   },
   challengeArt: "Levels/LVL-0006/assets/captain-nemo.png",
   player: {
-    start: { x: 180, y: 590 }
+    startNode: "left-door-start",
+    start: { x: 219, y: 522 }
   },
   interactiveObjects: [
     {
@@ -108,6 +109,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
     allRunes: { speaker: "moose", text: "De druk klopt. Het luik kan veilig open." },
     reward: { speaker: "moose", text: "Naar buiten. Rustig en precies." }
   },
+  levelSemantics: {
+    setting: "de hangar van de Nautilus met een minisub, drukmeters en een ontsnappingsluik",
+    mood: "gespannen, technisch en avontuurlijk",
+    companionFocus: {
+      minnie: "de kleine onderzeeer, koperen meters en geheime ontsnappingen",
+      moose: "druk, luiken, machines en veilige volgorde"
+    }
+  },
+  companionMoments: [
+    {
+      id: "minisub-enter",
+      event: "LEVEL_ENTER",
+      speaker: "minnie",
+      text: "Oeh, een kleine duikboot in een grote duikboot."
+    },
+    {
+      id: "minisub-object",
+      event: "OBJECT_FIRST_LOOK",
+      speaker: "minnie",
+      text: "Dit ruikt naar koper, olie en ontsnapping."
+    },
+    {
+      id: "minisub-open",
+      event: "CHALLENGE_OPEN",
+      speaker: "moose",
+      text: "Bij drukmeters wil ik liever zeker zijn.",
+      bridge: "Even opletten."
+    },
+    {
+      id: "minisub-fail",
+      event: "CHALLENGE_FAIL_1",
+      speaker: "moose",
+      text: "Bijna. Geen haast met een luik onder water."
+    },
+    {
+      id: "minisub-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "moose",
+      text: "Naar buiten. Rustig en precies."
+    },
+    {
+      id: "minisub-unlocked",
+      event: "PATH_UNLOCKED",
+      speaker: "moose",
+      text: "De druk klopt. Het luik kan veilig open."
+    }
+  ],
   areas: [
     { id: "hangar", name: "Minisubhangar", start: 0, end: 2172, guideLine: "hangar" }
   ],
@@ -136,7 +184,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
         { a: 3, b: 7 },
         { a: 4, b: 9 },
         { a: 5, b: 6 },
-        { a: 8, b: 2 }
+        { a: 8, b: 2 },
+        { a: 6, b: 5 },
+        { a: 9, b: 3 }
       ]
     },
     {
@@ -152,7 +202,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
         { a: 6, b: 6 },
         { a: 8, b: 4 },
         { a: 7, b: 3 },
-        { a: 5, b: 8 }
+        { a: 5, b: 8 },
+        { a: 10, b: 5 },
+        { a: 4, b: 6 }
       ]
     },
     {
@@ -168,7 +220,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
         { a: 7, b: 8 },
         { a: 9, b: 5 },
         { a: 6, b: 7 },
-        { a: 10, b: 4 }
+        { a: 10, b: 4 },
+        { a: 8, b: 9 },
+        { a: 5, b: 10 }
       ]
     }
   ],
