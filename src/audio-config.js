@@ -3,7 +3,8 @@ window.SVEN_AUDIO_CONFIG = {
     "music": {
       "menu": "assets/audio/music/menu.mp3",
       "runeCompass": "assets/audio/music/rune-compass.mp3",
-      "nautilus": "assets/audio/music/nautilus.mp3"
+      "nautilus": "assets/audio/music/nautilus.mp3",
+      "minecraft": "assets/audio/music/minecraft.mp3"
     },
     "ambience": {
       "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
@@ -11,7 +12,12 @@ window.SVEN_AUDIO_CONFIG = {
       "vikingHarborWater": "assets/audio/ambience/viking-harbor-water.mp3",
       "nautilusHarbor": "assets/audio/ambience/nautilus-harbor.mp3",
       "nautilusEngineHum": "assets/audio/ambience/nautilus-engine-hum.mp3",
-      "nautilusCave": "assets/audio/ambience/nautilus-cave.mp3"
+      "nautilusCave": "assets/audio/ambience/nautilus-cave.mp3",
+      "minecraftTunnelWind1": "assets/audio/ambience/minecraft-scene-1-tunnel-wind.mp3",
+      "minecraftTunnelWind2": "assets/audio/ambience/minecraft-scene-2-tunnel-wind.mp3",
+      "minecraftBeach": "assets/audio/ambience/minecraft-scene-3-beach.mp3",
+      "minecraftLava": "assets/audio/ambience/minecraft-scene-4-lava.mp3",
+      "minecraftBirds": "assets/audio/ambience/minecraft-scene-5-birds.mp3"
     },
     "sfx": {
       "uiClick": "assets/audio/sfx/ui-click.mp3",
@@ -69,6 +75,36 @@ window.SVEN_AUDIO_CONFIG = {
       "ambience": "nautilusCave",
       "musicVolume": 0.29,
       "ambienceVolume": 0.22
+    },
+    "LVL-0008": {
+      "music": "minecraft",
+      "ambience": "minecraftTunnelWind1",
+      "musicVolume": 0.26,
+      "ambienceVolume": 0.24
+    },
+    "LVL-0009": {
+      "music": "minecraft",
+      "ambience": "minecraftTunnelWind2",
+      "musicVolume": 0.26,
+      "ambienceVolume": 0.22
+    },
+    "LVL-0010": {
+      "music": "minecraft",
+      "ambience": "minecraftBeach",
+      "musicVolume": 0.26,
+      "ambienceVolume": 0.32
+    },
+    "LVL-0011": {
+      "music": "minecraft",
+      "ambience": "minecraftLava",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.26
+    },
+    "LVL-0012": {
+      "music": "minecraft",
+      "ambience": "minecraftBirds",
+      "musicVolume": 0.27,
+      "ambienceVolume": 0.34
     }
   },
   "volumes": {

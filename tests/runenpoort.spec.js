@@ -51,6 +51,70 @@ const nautilusIslandChallenges = [
   { name: "Eilandkaart" }
 ];
 
+const blokkenpoortScenes = [
+  {
+    levelId: "LVL-0008",
+    title: "De Blokkenpoort",
+    startButton: /De Blokkenpoort/,
+    challenges: ["Diamantzwaard", "Creepermasker", "Donkere poort"],
+    finalButton: "Maak het teken wakker",
+    unlockLine: "De rechterpoort reageert. Nu netjes verder.",
+    exitName: "Rechterpoort",
+    rewardHeading: "De kamer ontwaakt!",
+    nextButton: "Verder",
+    expectedMusic: "minecraft",
+    expectedAmbience: "minecraftTunnelWind1"
+  },
+  {
+    levelId: "LVL-0009",
+    title: "De Ontwaakte Kamer",
+    challenges: ["Wereldkaart", "Open boek", "Kristalkast"],
+    finalButton: "Maak het teken wakker",
+    unlockLine: "De deur geeft mee. Voorzichtig door.",
+    exitName: "IJzeren deur",
+    rewardHeading: "De ijzeren deur opent!",
+    nextButton: "Naar het strand",
+    expectedMusic: "minecraft",
+    expectedAmbience: "minecraftTunnelWind2"
+  },
+  {
+    levelId: "LVL-0010",
+    title: "De Strandkamer",
+    challenges: ["Schatkaart", "Zandkasteel", "Houten boot"],
+    finalButton: "Maak het strandteken wakker",
+    unlockLine: "De stenen deur is klaar. Warm wordt het wel.",
+    exitName: "Stenen deur",
+    rewardHeading: "De stranddeur opent!",
+    nextButton: "Naar de Nether",
+    expectedMusic: "minecraft",
+    expectedAmbience: "minecraftBeach"
+  },
+  {
+    levelId: "LVL-0011",
+    title: "De Netherproef",
+    challenges: ["Brouwtafel", "Netherbol", "Lavakaart"],
+    finalButton: "Maak het teken wakker",
+    unlockLine: "De deur naar boven opent. Mooi moment om te gaan.",
+    exitName: "Oppervlaktedeur",
+    rewardHeading: "De deur naar boven opent!",
+    nextButton: "Naar boven",
+    expectedMusic: "minecraft",
+    expectedAmbience: "minecraftLava"
+  },
+  {
+    levelId: "LVL-0012",
+    title: "De Weg Naar Huis",
+    challenges: ["Thuiskaart", "Betovertafel", "Paars portaal"],
+    finalButton: "Maak het laatste teken wakker",
+    unlockLine: "De uitgang is klaar. Tijd om naar huis te gaan.",
+    exitName: "Uitgang naar huis",
+    rewardHeading: "Sven is terug!",
+    nextButton: null,
+    expectedMusic: "minecraft",
+    expectedAmbience: "minecraftBirds"
+  }
+];
+
 async function waitForImages(page) {
   await page.waitForFunction(() => {
     return [...document.images].every((image) => image.complete && image.naturalWidth > 0);
@@ -295,6 +359,19 @@ async function solveChallengeSet(page, challenge, finalButtonName, challengerNam
   }
 }
 
+async function expectAudioState(page, expectedMusic, expectedAmbience) {
+  const audioStatus = await page.evaluate(() => ({
+    unlocked: window.eval("audioState.unlocked"),
+    musicKey: window.eval("audioState.currentMusicKey"),
+    ambienceKey: window.eval("audioState.currentAmbienceKey")
+  }));
+  expect(audioStatus).toEqual({
+    unlocked: true,
+    musicKey: expectedMusic,
+    ambienceKey: expectedAmbience
+  });
+}
+
 async function playFullAdventure(page) {
   await startAdventure(page);
   await travelToTemple(page);
@@ -397,22 +474,31 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /Verken een vergeten Vikingtempel/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Nautilus/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Duik in een geheim avontuur/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /De Blokkenpoort/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Ontdek vijf blokkenkamers/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Minisub/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Het Tropische Eiland/ })).toHaveCount(0);
-    await expect(page.locator(".levelTile")).toHaveCount(2);
+    await expect(page.getByRole("button", { name: /De Ontwaakte Kamer/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /De Strandkamer/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /De Netherproef/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /De Weg Naar Huis/ })).toHaveCount(0);
+    await expect(page.locator(".levelTile")).toHaveCount(3);
     const tiles = await page.locator(".levelTile").evaluateAll((nodes) =>
       nodes.map((node) => {
         const box = node.getBoundingClientRect();
         return { x: box.x, y: box.y, width: box.width, height: box.height };
       })
     );
-    expect(tiles[0].width).toBeGreaterThan(tiles[0].height * 2);
-    expect(tiles[1].width).toBeGreaterThan(tiles[1].height * 2);
+    for (const tile of tiles) {
+      expect(tile.width).toBeGreaterThan(tile.height * 2);
+    }
     expect(tiles[1].y).toBeGreaterThan(tiles[0].y + tiles[0].height);
+    expect(tiles[2].y).toBeGreaterThan(tiles[1].y + tiles[1].height);
     expect(Math.abs(tiles[0].x - tiles[1].x)).toBeLessThan(2);
+    expect(Math.abs(tiles[1].x - tiles[2].x)).toBeLessThan(2);
   });
 
   test("unlocks audio on the launch screen and does not show launch again on menu return", async ({ page }) => {
@@ -622,6 +708,56 @@ test.describe("SvenAdventure", () => {
     const completion = await page.evaluate(() => JSON.parse(localStorage.getItem("svenadventure-tropisch-eiland-v1")));
     expect(completion).toMatchObject({
       levelId: "LVL-0007",
+      answered: 12,
+      firstTryCorrect: 12,
+      attempts: 12
+    });
+  });
+
+  test("plays through the connected Blokkenpoort adventure", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium", "The full Blokkenpoort chain is covered once on desktop.");
+
+    await page.goto(gameUrl);
+    await page.evaluate(() => localStorage.clear());
+    await waitForImages(page);
+    await enterFromLaunch(page);
+    await tap(page.getByRole("button", { name: blokkenpoortScenes[0].startButton }));
+
+    for (const [sceneIndex, scene] of blokkenpoortScenes.entries()) {
+      await expect(page.getByRole("heading", { name: scene.title })).toBeVisible();
+      await tap(page.getByRole("button", { name: "Start avontuur" }));
+      await expectSpawnAtStartNode(page, scene.levelId);
+      await expectAudioState(page, scene.expectedMusic, scene.expectedAmbience);
+      await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
+      await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+      await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Dutchtuber Job");
+
+      for (const challengeName of scene.challenges) {
+        await solveChallengeSet(page, { name: challengeName }, scene.finalButton, "Dutchtuber Job");
+      }
+
+      await expect(page.getByText(scene.unlockLine)).toBeVisible();
+      await triggerWorldExit(page, scene.exitName, scene.rewardHeading);
+      await expect(page.getByRole("heading", { name: scene.rewardHeading })).toBeVisible();
+
+      if (sceneIndex < blokkenpoortScenes.length - 1) {
+        await expect(page.getByRole("button", { name: scene.nextButton })).toBeVisible();
+        const musicBeforeNext = await page.evaluate(() => window.eval("audioState.currentMusicKey"));
+        expect(musicBeforeNext).toBe("minecraft");
+        await tap(page.getByRole("button", { name: scene.nextButton }));
+        const nextScene = blokkenpoortScenes[sceneIndex + 1];
+        await expect(page.getByRole("heading", { name: nextScene.title })).toBeVisible();
+        await expectAudioState(page, "minecraft", nextScene.expectedAmbience);
+      }
+    }
+
+    await expect(page.getByText("Blokkenpoort Held")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Menu" })).toHaveClass(/primaryButton/);
+    await expect(page.getByRole("button", { name: "Speel nog een keer" })).toHaveClass(/secondaryButton/);
+
+    const completion = await page.evaluate(() => JSON.parse(localStorage.getItem("atlas-blokkenpoort-weg-naar-huis-v1")));
+    expect(completion).toMatchObject({
+      levelId: "LVL-0012",
       answered: 12,
       firstTryCorrect: 12,
       attempts: 12

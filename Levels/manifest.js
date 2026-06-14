@@ -86,6 +86,69 @@ window.SVEN_LEVEL_MANIFEST = {
         badge: "Verbonden gebied",
         detail: "Grot, sloep en de weg naar buiten"
       }
+    },
+    {
+      id: "LVL-0008",
+      title: "De Blokkenpoort",
+      subtitle: "Ontdek vijf blokkenkamers en vind de weg terug naar huis.",
+      script: "Levels/LVL-0008/level.js",
+      menu: {
+        illustration: "Levels/LVL-0008/assets/blokkenpoort-sealed-room.png",
+        badge: "Nieuw avontuur",
+        detail: "Blokkenkamers, portalen en Dutchtuber Job"
+      }
+    },
+    {
+      id: "LVL-0009",
+      title: "De Ontwaakte Kamer",
+      subtitle: "De Blokkenpoort begint te gloeien.",
+      script: "Levels/LVL-0009/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0008",
+      menu: {
+        illustration: "Levels/LVL-0009/assets/blokkenpoort-awakened-room.png",
+        badge: "Verbonden gebied",
+        detail: "Kaarten, boeken en een wakker portaal"
+      }
+    },
+    {
+      id: "LVL-0010",
+      title: "De Strandkamer",
+      subtitle: "Een kamer vol zand, water en geheime blokken.",
+      script: "Levels/LVL-0010/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0009",
+      menu: {
+        illustration: "Levels/LVL-0010/assets/blokkenpoort-beach-room.png",
+        badge: "Verbonden gebied",
+        detail: "Strand, schatten en een houten boot"
+      }
+    },
+    {
+      id: "LVL-0011",
+      title: "De Netherproef",
+      subtitle: "Lava en paarse gloed blokkeren de weg.",
+      script: "Levels/LVL-0011/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0010",
+      menu: {
+        illustration: "Levels/LVL-0011/assets/blokkenpoort-nether-trial.png",
+        badge: "Verbonden gebied",
+        detail: "Nethersteen, lava en een gevaarlijke poort"
+      }
+    },
+    {
+      id: "LVL-0012",
+      title: "De Weg Naar Huis",
+      subtitle: "Achter de laatste poort wacht de echte wereld.",
+      script: "Levels/LVL-0012/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0011",
+      menu: {
+        illustration: "Levels/LVL-0012/assets/blokkenpoort-way-home.png",
+        badge: "Finale",
+        detail: "Zonlicht, portalen en de uitgang naar huis"
+      }
     }
   ]
 };
