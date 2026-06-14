@@ -48,7 +48,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
     {
       id: "diamondSword",
       type: "rune",
-      center: { x: 625, y: 190 },
+      center: { x: 622, y: 203 },
       radius: 70,
       approachNode: "sword-approach",
       label: "Diamantzwaard"
@@ -64,7 +64,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
     {
       id: "enderPortal",
       type: "rune",
-      center: { x: 1015, y: 365 },
+      center: { x: 1113, y: 356 },
       radius: 112,
       approachNode: "portal-approach",
       label: "Donkere poort"
@@ -79,12 +79,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
     }
   ],
   walkPath: [
-    { id: "left-door-start", x: 260, y: 575 },
+    { id: "left-door-start", x: 272, y: 470 },
     { id: "sword-approach", x: 595, y: 566, role: "approach" },
-    { id: "mask-approach", x: 760, y: 562, role: "approach" },
-    { id: "portal-approach", x: 1015, y: 548, role: "approach" },
+    { id: "mask-approach", x: 791, y: 528, role: "approach" },
+    { id: "portal-approach", x: 1104, y: 523, role: "approach" },
     { id: "room-center", x: 1285, y: 560 },
-    { id: "right-gate-approach", x: 1872, y: 575, role: "approach" }
+    { id: "right-gate-approach", x: 1917, y: 447, role: "approach" }
   ],
   intro: [
     "Sven staat in een verzegelde blokkenkamer.",

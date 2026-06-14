@@ -48,42 +48,42 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
     {
       id: "homeMap",
       type: "rune",
-      center: { x: 605, y: 350 },
-      radius: 92,
+      center: { x: 713, y: 321 },
+      radius: 66,
       approachNode: "map-approach",
       label: "Thuiskaart"
     },
     {
       id: "enchantTable",
       type: "rune",
-      center: { x: 880, y: 425 },
-      radius: 92,
+      center: { x: 936, y: 432 },
+      radius: 50,
       approachNode: "table-approach",
       label: "Betovertafel"
     },
     {
       id: "purplePortal",
       type: "rune",
-      center: { x: 1360, y: 318 },
-      radius: 112,
+      center: { x: 1339, y: 301 },
+      radius: 49,
       approachNode: "portal-approach",
       label: "Paars portaal"
     },
     {
       id: "homeExit",
       type: "gate",
-      center: { x: 1990, y: 330 },
-      radius: 120,
+      center: { x: 1911, y: 418 },
+      radius: 97,
       approachNode: "home-exit-approach",
       label: "Uitgang naar huis"
     }
   ],
   walkPath: [
-    { id: "left-door-start", x: 238, y: 540 },
-    { id: "map-approach", x: 610, y: 520, role: "approach" },
-    { id: "table-approach", x: 880, y: 530, role: "approach" },
-    { id: "portal-approach", x: 1360, y: 514, role: "approach" },
-    { id: "garden-path", x: 1600, y: 520 },
+    { id: "left-door-start", x: 247, y: 577 },
+    { id: "map-approach", x: 602, y: 601, role: "approach" },
+    { id: "table-approach", x: 911, y: 558, role: "approach" },
+    { id: "portal-approach", x: 1294, y: 528, role: "approach" },
+    { id: "garden-path", x: 1606, y: 587 },
     { id: "home-exit-approach", x: 1908, y: 532, role: "approach" }
   ],
   intro: [

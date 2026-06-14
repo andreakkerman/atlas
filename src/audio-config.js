@@ -80,13 +80,13 @@ window.SVEN_AUDIO_CONFIG = {
       "music": "minecraft",
       "ambience": "minecraftTunnelWind1",
       "musicVolume": 0.26,
-      "ambienceVolume": 0.24
+      "ambienceVolume": 0.76
     },
     "LVL-0009": {
       "music": "minecraft",
       "ambience": "minecraftTunnelWind2",
       "musicVolume": 0.26,
-      "ambienceVolume": 0.22
+      "ambienceVolume": 0.76
     },
     "LVL-0010": {
       "music": "minecraft",
@@ -97,8 +97,8 @@ window.SVEN_AUDIO_CONFIG = {
     "LVL-0011": {
       "music": "minecraft",
       "ambience": "minecraftLava",
-      "musicVolume": 0.24,
-      "ambienceVolume": 0.26
+      "musicVolume": 0.3,
+      "ambienceVolume": 0.9
     },
     "LVL-0012": {
       "music": "minecraft",

@@ -48,7 +48,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
     {
       id: "potionTable",
       type: "rune",
-      center: { x: 640, y: 410 },
+      center: { x: 673, y: 412 },
       radius: 94,
       approachNode: "potion-approach",
       label: "Brouwtafel"
@@ -56,23 +56,23 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
     {
       id: "netherOrb",
       type: "rune",
-      center: { x: 1035, y: 272 },
-      radius: 90,
+      center: { x: 1077, y: 237 },
+      radius: 45,
       approachNode: "orb-approach",
       label: "Netherbol"
     },
     {
       id: "netherMap",
       type: "rune",
-      center: { x: 1460, y: 325 },
-      radius: 96,
+      center: { x: 1471, y: 295 },
+      radius: 74,
       approachNode: "map-approach",
       label: "Lavakaart"
     },
     {
       id: "surfaceDoor",
       type: "gate",
-      center: { x: 1945, y: 315 },
+      center: { x: 1958, y: 402 },
       radius: 116,
       approachNode: "right-door-approach",
       label: "Oppervlaktedeur"
@@ -80,11 +80,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
   ],
   walkPath: [
     { id: "left-door-start", x: 245, y: 535 },
-    { id: "potion-approach", x: 645, y: 525, role: "approach" },
-    { id: "orb-approach", x: 1038, y: 506, role: "approach" },
-    { id: "nether-center", x: 1260, y: 515 },
-    { id: "map-approach", x: 1450, y: 520, role: "approach" },
-    { id: "right-door-approach", x: 1872, y: 535, role: "approach" }
+    { id: "potion-approach", x: 633, y: 598, role: "approach" },
+    { id: "orb-approach", x: 1064, y: 589, role: "approach" },
+    { id: "nether-center", x: 1279, y: 566 },
+    { id: "map-approach", x: 1450, y: 561, role: "approach" },
+    { id: "right-door-approach", x: 1928, y: 559, role: "approach" }
   ],
   intro: [
     "De kamer wordt rood en warm.",

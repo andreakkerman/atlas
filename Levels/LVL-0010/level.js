@@ -48,7 +48,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
     {
       id: "treasureMap",
       type: "rune",
-      center: { x: 575, y: 285 },
+      center: { x: 636, y: 260 },
       radius: 92,
       approachNode: "map-approach",
       label: "Schatkaart"
@@ -56,7 +56,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
     {
       id: "sandCastle",
       type: "rune",
-      center: { x: 1062, y: 350 },
+      center: { x: 1135, y: 343 },
       radius: 100,
       approachNode: "castle-approach",
       label: "Zandkasteel"
@@ -64,7 +64,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
     {
       id: "woodenBoat",
       type: "rune",
-      center: { x: 1532, y: 290 },
+      center: { x: 1562, y: 287 },
       radius: 118,
       approachNode: "boat-approach",
       label: "Houten boot"
@@ -72,19 +72,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
     {
       id: "stoneDoor",
       type: "gate",
-      center: { x: 2008, y: 360 },
+      center: { x: 2041, y: 369 },
       radius: 108,
       approachNode: "right-door-approach",
       label: "Stenen deur"
     }
   ],
   walkPath: [
-    { id: "left-door-start", x: 245, y: 488 },
-    { id: "map-approach", x: 575, y: 485, role: "approach" },
-    { id: "castle-approach", x: 1060, y: 486, role: "approach" },
-    { id: "beach-center", x: 1330, y: 488 },
-    { id: "boat-approach", x: 1510, y: 485, role: "approach" },
-    { id: "right-door-approach", x: 1900, y: 488, role: "approach" }
+    { id: "left-door-start", x: 243, y: 456 },
+    { id: "map-approach", x: 634, y: 426, role: "approach" },
+    { id: "castle-approach", x: 1125, y: 452, role: "approach" },
+    { id: "beach-center", x: 1360, y: 454 },
+    { id: "boat-approach", x: 1559, y: 445, role: "approach" },
+    { id: "right-door-approach", x: 1965, y: 475, role: "approach" }
   ],
   intro: [
     "Achter de deur ligt een strand in een kamer.",

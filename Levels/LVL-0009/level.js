@@ -48,7 +48,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
     {
       id: "worldMap",
       type: "rune",
-      center: { x: 585, y: 260 },
+      center: { x: 638, y: 265 },
       radius: 92,
       approachNode: "map-approach",
       label: "Wereldkaart"
@@ -64,7 +64,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
     {
       id: "crystalCase",
       type: "rune",
-      center: { x: 1340, y: 285 },
+      center: { x: 1388, y: 223 },
       radius: 94,
       approachNode: "crystal-approach",
       label: "Kristalkast"
@@ -72,19 +72,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
     {
       id: "ironDoor",
       type: "gate",
-      center: { x: 2012, y: 368 },
+      center: { x: 2043, y: 389 },
       radius: 108,
       approachNode: "right-door-approach",
       label: "IJzeren deur"
     }
   ],
   walkPath: [
-    { id: "left-gate-start", x: 245, y: 545 },
-    { id: "map-approach", x: 565, y: 535, role: "approach" },
-    { id: "book-approach", x: 855, y: 525, role: "approach" },
+    { id: "left-gate-start", x: 208, y: 497 },
+    { id: "map-approach", x: 593, y: 476, role: "approach" },
+    { id: "book-approach", x: 829, y: 481, role: "approach" },
     { id: "portal-front", x: 1085, y: 512 },
-    { id: "crystal-approach", x: 1350, y: 528, role: "approach" },
-    { id: "right-door-approach", x: 1900, y: 545, role: "approach" }
+    { id: "crystal-approach", x: 1390, y: 481, role: "approach" },
+    { id: "right-door-approach", x: 1967, y: 492, role: "approach" }
   ],
   intro: [
     "De volgende kamer is wakker.",
