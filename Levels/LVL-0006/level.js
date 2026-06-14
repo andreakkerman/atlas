@@ -95,16 +95,16 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
   spiritLines: {
     welcome: "De minisub wacht.",
     chooseRune: "Maak de hangar klaar.",
-    moving: "Sven loopt langs de machines...",
+    moving: "De machines tikken en sissen.",
     allRunes: "Het ontsnappingsluik is veilig.",
     reward: "De minisub kan vertrekken."
   },
   guideLines: {
     welcome: { speaker: "minnie", text: "Oeh, een kleine duikboot in een grote duikboot." },
     start: { speaker: "minnie", text: "Daar staan meters, pakken en hendels." },
-    moving: { speaker: "moose", text: "Niet rennen. Hier is alles glad." },
-    hangar: { speaker: "moose", text: "Controleer eerst de druk. Dan pas naar buiten." },
-    object: { speaker: "minnie", text: "Dit ziet eruit als een echte ontsnapping." },
+    moving: { speaker: "moose", text: "Niet rennen. Ik hoor druk in de leidingen." },
+    hangar: { speaker: "moose", text: "Eerst druk, luik en minisub. Dan pas naar buiten." },
+    object: { speaker: "minnie", text: "Oeh, dit lijkt op een geheime ontsnapping." },
     allRunes: { speaker: "moose", text: "De druk klopt. Het luik kan veilig open." },
     reward: { speaker: "moose", text: "Naar buiten. Rustig en precies." }
   },

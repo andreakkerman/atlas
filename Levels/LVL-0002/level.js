@@ -109,7 +109,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
   spiritLines: {
     welcome: "Welkom in de tempelzaal.",
     chooseRune: "Kies een proef.",
-    moving: "Sven loopt erheen...",
+    moving: "De stenen vloer kraakt zacht.",
     allRunes: "Alle tempelproeven kloppen. De havendeur kan open.",
     reward: "De tempel laat Sven verder gaan."
   },
@@ -124,15 +124,15 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
     },
     moving: {
       speaker: "moose",
-      text: "Stap rustig over de stenen."
+      text: "Stap rustig. Oude zalen houden niet van haast."
     },
     interior: {
       speaker: "moose",
-      text: "Kijk goed. Deze zaal test je stap voor stap."
+      text: "Vuur, schilden en kaarten. Alles heeft hier een doel."
     },
     object: {
       speaker: "minnie",
-      text: "Daar zit vast een teken in verstopt."
+      text: "Oeh, dit lijkt ouder dan de hele tempel."
     },
     allRunes: {
       speaker: "moose",

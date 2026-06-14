@@ -94,16 +94,16 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
   spiritLines: {
     welcome: "Welkom aan boord.",
     chooseRune: "Onderzoek de salon.",
-    moving: "Sven loopt door de Nautilus...",
+    moving: "De Nautilus bromt diep onder ons.",
     allRunes: "De deur naar de minisub is klaar.",
     reward: "De ronde deur schuift open."
   },
   guideLines: {
     welcome: { speaker: "minnie", text: "Wauw. We zijn echt onder zee." },
     start: { speaker: "minnie", text: "Kijk, vissen achter het raam." },
-    moving: { speaker: "moose", text: "Rustig lopen. Alles is van metaal." },
-    salon: { speaker: "moose", text: "Nemo houdt van orde. Tel nauwkeurig." },
-    object: { speaker: "minnie", text: "Dit glimt alsof het iets weet." },
+    moving: { speaker: "moose", text: "Voorzichtig. Metaal kan glad zijn." },
+    salon: { speaker: "moose", text: "Kaarten, meters en ramen. Nemo mist niets." },
+    object: { speaker: "minnie", text: "Dit glimt alsof de zee erdoor fluistert." },
     allRunes: { speaker: "moose", text: "De salon is klaar. De ronde deur kan open." },
     reward: { speaker: "moose", text: "Verder de Nautilus in. Blijf bij het pad." }
   },

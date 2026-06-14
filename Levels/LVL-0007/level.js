@@ -94,16 +94,16 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
   spiritLines: {
     welcome: "De grot brengt jullie naar boven.",
     chooseRune: "Maak de eilandroute klaar.",
-    moving: "Sven loopt door de grot...",
+    moving: "Water drupt tussen de stenen.",
     allRunes: "De weg naar het eiland is vrij.",
     reward: "Sven bereikt het tropische eiland."
   },
   guideLines: {
     welcome: { speaker: "minnie", text: "Oeh, ik zie zonlicht!" },
     start: { speaker: "minnie", text: "Daar is een sloep. En een weg naar buiten." },
-    moving: { speaker: "moose", text: "Let op de natte stenen." },
-    grotto: { speaker: "moose", text: "Eerst de route klaarmaken. Dan naar het licht." },
-    object: { speaker: "minnie", text: "Dit hoort vast bij de uitgang." },
+    moving: { speaker: "moose", text: "Let op de natte stenen. Het licht is dichtbij." },
+    grotto: { speaker: "moose", text: "Water links, rotsen rechts. Kies rustig je route." },
+    object: { speaker: "minnie", text: "Ik voel zonlicht. Dit hoort bij de uitgang." },
     allRunes: { speaker: "moose", text: "De route klopt. Sven kan naar buiten." },
     reward: { speaker: "minnie", text: "We zijn buiten! Wat een avontuur." }
   },

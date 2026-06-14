@@ -109,7 +109,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   spiritLines: {
     welcome: "Welkom in de haven.",
     chooseRune: "Maak het schip klaar.",
-    moving: "Sven loopt over de kade...",
+    moving: "De kade kraakt onder de wind.",
     allRunes: "Het schip is klaar voor vertrek.",
     reward: "Sven mag uitvaren."
   },
@@ -124,15 +124,15 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     },
     moving: {
       speaker: "moose",
-      text: "Rustig over de natte stenen."
+      text: "Rustig over de natte stenen. De haven luistert mee."
     },
     harbor: {
       speaker: "moose",
-      text: "Maak de haven klaar. Dan kan Sven veilig vertrekken."
+      text: "Touwen, wind en poorten. Eerst alles stevig maken."
     },
     object: {
       speaker: "minnie",
-      text: "Daar glimt iets. Dat hoort vast bij het schip."
+      text: "Daar glimt iets. Misschien wil het schip antwoord."
     },
     allRunes: {
       speaker: "moose",

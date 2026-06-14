@@ -67,9 +67,9 @@ async function startAdventure(page, url = gameUrl) {
   await page.evaluate(() => localStorage.clear());
   await waitForImages(page);
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-  await tap(page.getByRole("button", { name: /Sven en de Runenpoort/ }));
+  await tap(page.getByRole("button", { name: /De Runenpoort/ }));
   await waitForImages(page);
-  await expect(page.getByRole("heading", { name: "Sven en de Runenpoort" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
   await tap(page.getByRole("button", { name: "Start avontuur" }));
   await waitForImages(page);
   await expect(page.getByRole("button", { name: "Bosrune" })).toBeVisible();
@@ -89,6 +89,7 @@ async function startAdventure(page, url = gameUrl) {
   await expect(page.locator(".teamPortraits")).toHaveAttribute("aria-label", "Avonturenteam");
   await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
   await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+  await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Sven loopt");
   await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Runewachter");
   await expect(page.locator(".teamMeta")).toContainText("Bos");
   await expect(page.locator(".teamMeta")).toContainText("0/3 runen");
@@ -307,21 +308,35 @@ async function expectStableActorAnchor(page) {
   expect(Math.max(...lefts) - Math.min(...lefts)).toBeLessThan(1);
 }
 
-test.describe("Sven en de Runenpoort", () => {
+test.describe("SvenAdventure", () => {
   test.setTimeout(90000);
 
   test("loads the adventure", async ({ page }) => {
     await page.goto(gameUrl);
     await expect(page).toHaveTitle("SvenAdventure");
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Sven en de Runenpoort/ })).toBeVisible();
+    await expect(page.getByText("SVENADVENTURE")).toHaveCount(0);
+    await expect(page.getByText("Wat ga je vandaag ontdekken?")).toBeVisible();
+    await expect(page.getByRole("button", { name: /De Runenpoort/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Verken een vergeten Vikingtempel/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Nautilus/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Duik in een geheim avontuur/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Minisub/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Het Tropische Eiland/ })).toHaveCount(0);
     await expect(page.locator(".levelTile")).toHaveCount(2);
+    const tiles = await page.locator(".levelTile").evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const box = node.getBoundingClientRect();
+        return { x: box.x, y: box.y, width: box.width, height: box.height };
+      })
+    );
+    expect(tiles[0].width).toBeGreaterThan(tiles[0].height * 2);
+    expect(tiles[1].width).toBeGreaterThan(tiles[1].height * 2);
+    expect(tiles[1].y).toBeGreaterThan(tiles[0].y + tiles[0].height);
+    expect(Math.abs(tiles[0].x - tiles[1].x)).toBeLessThan(2);
   });
 
   test("plays through the full adventure and persists progress", async ({ page }) => {
@@ -557,7 +572,7 @@ test.describe("Sven en de Runenpoort", () => {
     await startAdventure(page);
     await tap(page.getByRole("button", { name: "Terug naar menu" }));
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Sven en de Runenpoort/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /De Runenpoort/ })).toBeVisible();
   });
 
   test("supports simplified walkPath debug editing fallback", async ({ page }) => {
@@ -686,6 +701,7 @@ test.describe("Sven en de Runenpoort", () => {
 
     await clickStageAt(page, 0.5, 0.2);
     await expect(actor).toHaveAttribute("data-animation", "walk");
+    await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Sven loopt");
     await waitForIdle(page);
     await expect
       .poll(async () => Number(await actor.getAttribute("data-world-y")), {

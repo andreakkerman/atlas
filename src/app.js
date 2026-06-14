@@ -1036,7 +1036,7 @@ function beginInteraction(target, kind) {
   if (state.moving) return;
 
   const action = actionForTarget(target, kind);
-  const movingLine = guideLineForLevel(level, "moving", level.spiritLines.moving || "Sven loopt erheen.", "moose");
+  const movingLine = guideLineForLevel(level, "moving", level.spiritLines.moving || "Ik houd het pad in de gaten.", "moose");
 
   state.justCompletedRuneId = null;
   setGuideMessage({
@@ -1117,7 +1117,7 @@ function beginFreeWalk(point) {
   if (state.screen !== "scene" || state.moving) return;
 
   state.justCompletedRuneId = null;
-  setGuideMessage({ speaker: "moose", text: "Sven loopt." });
+  setGuideLine("moving", "Ik houd het pad in de gaten.", "moose");
   walkRoute(routeToPoint(point), () => {
     state.moving = false;
     state.svenMood = "idle";
@@ -1221,7 +1221,7 @@ function continueToNextLevel() {
   stopMovement();
   state = {
     screen: "transition",
-    message: level.reward?.nextTransition || "Sven loopt verder..."
+    message: level.reward?.nextTransition || "Even verder..."
   };
   render();
 
@@ -1572,9 +1572,8 @@ function renderMenu() {
   return `
     <main class="menuScreen">
       <section class="menuHeader">
-        <p class="eyebrow">SvenAdventure</p>
         <h1>Kies een avontuur</h1>
-        <p>Welke plek gaat Sven vandaag ontdekken?</p>
+        <p>Wat ga je vandaag ontdekken?</p>
       </section>
       <section class="levelGrid" aria-label="Beschikbare avonturen">
         ${state.error ? `<p class="menuError">${state.error}</p>` : ""}

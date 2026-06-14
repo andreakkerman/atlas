@@ -2,15 +2,15 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
 window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   id: "LVL-0001",
-  title: "Sven en de Runenpoort",
-  subtitle: "Een Vikingtempel vol runen en keersommen.",
-  description: "Sven reist door een oud bos naar een Vikingtempel en opent de Runenpoort met drie magische keersom-runen.",
+  title: "De Runenpoort",
+  subtitle: "Verken een vergeten Vikingtempel en ontdek het geheim van de oude runen.",
+  description: "Sven reist door een oud bos naar een vergeten Vikingtempel en ontdekt het geheim van de oude runen.",
   storageKey: "svenadventure-runenpoort-v1",
   progressKey: "svenadventure-table-progress-v1",
   menu: {
     illustration: "Levels/LVL-0001/assets/level-1-wide-world.png",
     badge: "Eerste avontuur",
-    detail: "Bos, tempel en drie magische runen"
+    detail: "Een vergeten Vikingtempel en oude runen"
   },
   companion: {
     name: "Runewachter",
@@ -110,7 +110,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   spiritLines: {
     welcome: "Welkom, Sven. Volg het pad naar de tempel.",
     chooseRune: "Kies een rune en activeer hem.",
-    moving: "Sven loopt erheen...",
+    moving: "Let op het pad tussen de wortels.",
     allRunes: "Alle runen gloeien. De tempel wordt wakker!",
     reward: "Goed gedaan, Sven. Jij hebt de Runenpoort geopend."
   },
@@ -125,11 +125,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     },
     moving: {
       speaker: "moose",
-      text: "Rustig. Sven loopt erheen."
+      text: "Rustig langs de stenen. Ik zie de poort al."
     },
     forest: {
       speaker: "minnie",
-      text: "Ik wed dat hier ergens iets glimt."
+      text: "Tussen die bomen zit vast iets verstopt."
     },
     temple: {
       speaker: "moose",
@@ -137,7 +137,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     },
     object: {
       speaker: "minnie",
-      text: "Kijk! Daar is iets bijzonders."
+      text: "Kijk! Een steen met een geheim teken."
     },
     runeSolved: {
       speaker: "minnie",

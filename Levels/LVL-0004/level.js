@@ -3,8 +3,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   id: "LVL-0004",
   title: "De Nautilus",
-  subtitle: "Een Jules Verne avontuur onder zee.",
-  description: "Sven vindt de Nautilus in een tropische haven en lost drie proeven op om aan boord te mogen.",
+  subtitle: "Duik in een geheim avontuur met de Nautilus.",
+  description: "Sven vindt de Nautilus in een tropische haven en zoekt een weg aan boord.",
   storageKey: "svenadventure-nautilus-haven-v1",
   progressKey: "svenadventure-table-progress-v1",
   exitHotspotId: "boardingGate",
@@ -16,7 +16,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   menu: {
     illustration: "Levels/LVL-0004/assets/nautilus-harbor.png",
     badge: "Nieuw avontuur",
-    detail: "Haven, duikboot en een geheim vertrek"
+    detail: "Een tropische haven en een mysterieuze duikboot"
   },
   companion: {
     name: "Kapitein Nemo",
@@ -101,7 +101,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   spiritLines: {
     welcome: "Welkom bij de Nautilus.",
     chooseRune: "Onderzoek de havenproeven.",
-    moving: "Sven loopt over de kade...",
+    moving: "Het water klotst tegen de steiger.",
     allRunes: "De Nautilus is klaar om Sven aan boord te laten.",
     reward: "De steigerpoort gaat open."
   },
@@ -116,15 +116,15 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
     },
     moving: {
       speaker: "moose",
-      text: "Rustig langs het water, Sven."
+      text: "Rustig langs het water. Die steiger is oud."
     },
     harbor: {
       speaker: "moose",
-      text: "Eerst de haven begrijpen. Dan pas aan boord."
+      text: "Die duikboot wacht niet op slordige stappen."
     },
     object: {
       speaker: "minnie",
-      text: "Dat lijkt belangrijk. Zullen we kijken?"
+      text: "Oeh, koper en blauw licht. Dat moet iets doen."
     },
     allRunes: {
       speaker: "moose",
