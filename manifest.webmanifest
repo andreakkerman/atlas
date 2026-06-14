@@ -1,0 +1,29 @@
+{
+  "name": "SvenAdventure",
+  "short_name": "SvenAdventure",
+  "description": "Een lokaal speelbaar avontuur vol ontdekking, mysterie en slimme sommen.",
+  "lang": "nl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#10201d",
+  "theme_color": "#10201d",
+  "icons": [
+    {
+      "src": "assets/branding/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/branding/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/branding/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}
