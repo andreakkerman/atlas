@@ -55,7 +55,7 @@ window.SVEN_AUDIO_CONFIG = {
     "LVL-0005": {
       "music": "nautilus",
       "ambience": "nautilusEngineHum",
-      "musicVolume": 0.25,
+      "musicVolume": 0.23,
       "ambienceVolume": 0.27
     },
     "LVL-0006": {
