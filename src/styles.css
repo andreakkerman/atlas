@@ -1008,7 +1008,7 @@ button {
     0 18px 48px rgba(0, 0, 0, 0.44),
     inset 0 1px 0 rgba(255, 247, 222, 0.14);
   backdrop-filter: blur(12px);
-  cursor: pointer;
+  cursor: default;
   pointer-events: auto;
 }
 
@@ -1020,6 +1020,8 @@ button {
   gap: clamp(6px, 1.2vw, 12px);
   align-items: flex-end;
   width: clamp(230px, 21vw, 310px);
+  cursor: default;
+  pointer-events: none;
 }
 
 .teamPortrait {
@@ -1087,6 +1089,7 @@ button {
   min-width: 0;
   padding: 2px 0 3px clamp(28px, 3vw, 42px);
   color: #fff7de;
+  cursor: pointer;
 }
 
 .teamPaw {

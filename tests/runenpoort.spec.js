@@ -1,5 +1,6 @@
 // @ts-check
 const { test, expect } = require("@playwright/test");
+const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
@@ -63,7 +64,7 @@ async function tap(locator) {
 }
 
 async function enterFromLaunch(page) {
-  await expect(page.getByRole("heading", { name: "SvenAdventure" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Atlas" })).toBeVisible();
   await expect(page.getByText("Wat ga je vandaag ontdekken?")).toBeVisible();
   await tap(page.getByRole("button", { name: "Start avontuur" }));
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
@@ -385,8 +386,8 @@ test.describe("SvenAdventure", () => {
 
   test("loads the adventure", async ({ page }) => {
     await page.goto(gameUrl);
-    await expect(page).toHaveTitle("SvenAdventure");
-    await expect(page.getByRole("heading", { name: "SvenAdventure" })).toBeVisible();
+    await expect(page).toHaveTitle("Atlas");
+    await expect(page.getByRole("heading", { name: "Atlas" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Start avontuur" })).toBeVisible();
     await enterFromLaunch(page);
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
@@ -416,12 +417,12 @@ test.describe("SvenAdventure", () => {
 
   test("unlocks audio on the launch screen and does not show launch again on menu return", async ({ page }) => {
     await page.goto(gameUrl);
-    await expect(page.getByRole("heading", { name: "SvenAdventure" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Atlas" })).toBeVisible();
 
     await tap(page.getByRole("button", { name: "Start avontuur" }));
 
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "SvenAdventure" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Atlas" })).toHaveCount(0);
 
     const audioStatus = await page.evaluate(() => ({
       unlocked: window.eval("audioState.unlocked"),
@@ -436,7 +437,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Terug" }));
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "SvenAdventure" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Atlas" })).toHaveCount(0);
   });
 
   test("includes the core PWA shell metadata", async ({ page }) => {
@@ -444,8 +445,38 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "manifest.webmanifest");
     await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#10201d");
     await expect(page.locator('meta[name="apple-mobile-web-app-capable"]')).toHaveAttribute("content", "yes");
-    await expect(page.locator('meta[name="apple-mobile-web-app-title"]')).toHaveAttribute("content", "SvenAdventure");
+    await expect(page.locator('meta[name="apple-mobile-web-app-title"]')).toHaveAttribute("content", "Atlas");
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "assets/branding/icon-180.png");
+    const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "manifest.webmanifest"), "utf8"));
+    expect(manifest.name).toBe("Atlas");
+    expect(manifest.short_name).toBe("Atlas");
+  });
+
+  test("companion portrait space does not advertise dialogue clickability", async ({ page }) => {
+    await startAdventure(page);
+    const cursorState = await page.evaluate(() => {
+      const portraits = document.querySelector(".teamPortraits");
+      const speech = document.querySelector(".teamSpeech");
+      const bar = document.querySelector("[data-adventure-team-bar]");
+      return {
+        portraitsCursor: getComputedStyle(portraits).cursor,
+        portraitsPointerEvents: getComputedStyle(portraits).pointerEvents,
+        speechCursor: getComputedStyle(speech).cursor,
+        barCursor: getComputedStyle(bar).cursor
+      };
+    });
+    expect(cursorState).toEqual({
+      portraitsCursor: "default",
+      portraitsPointerEvents: "none",
+      speechCursor: "pointer",
+      barCursor: "default"
+    });
+
+    await page.evaluate(() => {
+      window.eval("queueCompanionMoment")({ speaker: "moose", text: "Even opletten.", priority: 99 });
+    });
+    await page.locator(".teamSpeech").click();
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Even opletten.");
   });
 
   test("plays through the full adventure and persists progress", async ({ page }) => {

@@ -631,7 +631,7 @@ function returnToMenu() {
   level = null;
   walkNodesById = new Map();
   state = { screen: "menu" };
-  document.title = "SvenAdventure";
+  document.title = "Atlas";
   render();
 }
 
@@ -1931,7 +1931,7 @@ function renderLaunch() {
       <img class="launchBackdrop" src="assets/branding/launch-hero.png" alt="" />
       <section class="launchPanel">
         <p class="eyebrow">Welkom</p>
-        <h1>SvenAdventure</h1>
+        <h1>Atlas</h1>
         <p>Wat ga je vandaag ontdekken?</p>
         <button class="primaryButton" type="button" data-action="launch-enter">Start avontuur</button>
       </section>
@@ -1963,7 +1963,7 @@ function renderLoading() {
   return `
     <main class="menuScreen loadingScreen">
       <section class="menuHeader">
-        <p class="eyebrow">SvenAdventure</p>
+        <p class="eyebrow">Atlas</p>
         <h1>${state.message || "Laden..."}</h1>
       </section>
     </main>
@@ -2117,7 +2117,7 @@ function renderTransition() {
     <main class="transitionScreen" aria-live="polite">
       <div class="transitionMist"></div>
       <section class="transitionPanel">
-        <p class="eyebrow">SvenAdventure</p>
+        <p class="eyebrow">Atlas</p>
         <h1>${state.message || "Even verder..."}</h1>
       </section>
     </main>
