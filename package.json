@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test:e2e": "playwright test",
+    "dev:editor": "node scripts/dev-server.js",
     "dev:walkpath": "node scripts/dev-server.js",
     "validate:levels": "node scripts/validate-levels.js",
     "report:levels": "node scripts/level-report.js",

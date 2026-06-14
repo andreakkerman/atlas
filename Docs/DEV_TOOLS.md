@@ -40,7 +40,7 @@ This is the quickest way to inspect whether the level data matches the visible w
 
 ## Runtime Mode
 
-When the game is not opened with `?dev=walkpath`, the Developer Tools panel is read-only.
+When the game is not opened with `?dev=editor`, the Developer Tools panel is read-only.
 
 It should show:
 
@@ -64,19 +64,19 @@ There must be:
 Start the local developer server:
 
 ```bash
-npm run dev:walkpath
+npm run dev:editor
 ```
 
 On Windows PowerShell, use this if script execution policy blocks `npm`:
 
 ```bash
-npm.cmd run dev:walkpath
+npm.cmd run dev:editor
 ```
 
 Open:
 
 ```text
-http://127.0.0.1:4173/?dev=walkpath
+http://127.0.0.1:4173/?dev=editor
 ```
 
 Start the level, then press:

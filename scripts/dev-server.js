@@ -40,11 +40,15 @@ function levelDir(levelId) {
 }
 
 function draftPath(levelId) {
-  return path.join(levelDir(levelId), "walkpath.draft.json");
+  return path.join(levelDir(levelId), "editor.draft.json");
 }
 
 function levelPath(levelId) {
   return path.join(levelDir(levelId), "level.js");
+}
+
+function audioConfigPath() {
+  return path.join(rootDir, "src", "audio-config.js");
 }
 
 function validateWalkPath(value) {
@@ -112,6 +116,87 @@ function validateInteractiveObjects(value) {
     }
     return next;
   });
+}
+
+function validateVolume(value, label) {
+  if (!Number.isFinite(value) || value < 0 || value > 1) {
+    throw new Error(`${label} must be a number between 0 and 1.`);
+  }
+  return Math.round(value * 100) / 100;
+}
+
+function assertProjectAsset(relativePath, label) {
+  if (typeof relativePath !== "string" || !relativePath.trim()) {
+    throw new Error(`${label} must be a non-empty asset path.`);
+  }
+
+  const resolved = path.resolve(rootDir, relativePath);
+  if (!resolved.startsWith(rootDir + path.sep)) {
+    throw new Error(`${label} escapes the project root: ${relativePath}`);
+  }
+  if (!fs.existsSync(resolved)) {
+    throw new Error(`${label} asset does not exist: ${relativePath}`);
+  }
+  return relativePath;
+}
+
+function validateTrackGroup(group, label) {
+  if (!group || typeof group !== "object" || Array.isArray(group)) {
+    throw new Error(`${label} must be an object.`);
+  }
+
+  return Object.fromEntries(Object.entries(group).map(([key, asset]) => {
+    return [key, assertProjectAsset(asset, `${label}.${key}`)];
+  }));
+}
+
+function validateAudioConfig(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("audioConfig must be an object.");
+  }
+
+  const tracks = value.tracks || {};
+  const music = validateTrackGroup(tracks.music, "audioConfig.tracks.music");
+  const ambience = validateTrackGroup(tracks.ambience, "audioConfig.tracks.ambience");
+  const sfx = validateTrackGroup(tracks.sfx, "audioConfig.tracks.sfx");
+
+  const menuMusic = String(value.menu?.music || "");
+  if (!music[menuMusic]) throw new Error(`audioConfig.menu.music references missing music track: ${menuMusic}`);
+
+  const levels = {};
+  Object.entries(value.levels || {}).forEach(([levelId, config]) => {
+    if (!config || typeof config !== "object" || Array.isArray(config)) {
+      throw new Error(`audioConfig.levels.${levelId} must be an object.`);
+    }
+    if (!music[config.music]) throw new Error(`audioConfig.levels.${levelId}.music references missing track: ${config.music}`);
+    if (!ambience[config.ambience]) {
+      throw new Error(`audioConfig.levels.${levelId}.ambience references missing track: ${config.ambience}`);
+    }
+    levels[levelId] = {
+      music: String(config.music),
+      ambience: String(config.ambience),
+      musicVolume: validateVolume(config.musicVolume, `audioConfig.levels.${levelId}.musicVolume`),
+      ambienceVolume: validateVolume(config.ambienceVolume, `audioConfig.levels.${levelId}.ambienceVolume`)
+    };
+  });
+
+  const sfxVolumes = {};
+  Object.keys(sfx).forEach((key) => {
+    sfxVolumes[key] = validateVolume(value.volumes?.sfx?.[key] ?? 0.7, `audioConfig.volumes.sfx.${key}`);
+  });
+
+  return {
+    tracks: { music, ambience, sfx },
+    menu: {
+      music: menuMusic,
+      musicVolume: validateVolume(value.menu?.musicVolume, "audioConfig.menu.musicVolume")
+    },
+    levels,
+    volumes: {
+      master: validateVolume(value.volumes?.master, "audioConfig.volumes.master"),
+      sfx: sfxVolumes
+    }
+  };
 }
 
 function escapeString(value) {
@@ -206,13 +291,18 @@ function applyLevelDraft(levelId, draft) {
   fs.writeFileSync(filePath, updated);
 }
 
+function applyAudioConfigDraft(audioConfig) {
+  const source = `window.SVEN_AUDIO_CONFIG = ${JSON.stringify(audioConfig, null, 2)};\n`;
+  fs.writeFileSync(audioConfigPath(), source);
+}
+
 async function handleDevRequest(request, response, url) {
   if (url.pathname === "/__dev/status") {
-    sendJson(response, 200, { ok: true, feature: "walkpath-editor" });
+    sendJson(response, 200, { ok: true, feature: "level-editor" });
     return true;
   }
 
-  const match = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/(walkpath-draft|apply-walkpath)$/);
+  const match = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/(editor-draft|apply-editor)$/);
   if (!match) return false;
 
   const [, levelId, action] = match;
@@ -223,17 +313,17 @@ async function handleDevRequest(request, response, url) {
   }
 
   try {
-    if (request.method === "GET" && action === "walkpath-draft") {
+    if (request.method === "GET" && action === "editor-draft") {
       const filePath = draftPath(levelId);
       if (!fs.existsSync(filePath)) {
-        sendJson(response, 200, { walkPath: null });
+        sendJson(response, 200, { walkPath: null, interactiveObjects: null, audioConfig: null });
         return true;
       }
       sendJson(response, 200, JSON.parse(fs.readFileSync(filePath, "utf8")));
       return true;
     }
 
-    if (request.method === "DELETE" && action === "walkpath-draft") {
+    if (request.method === "DELETE" && action === "editor-draft") {
       const filePath = draftPath(levelId);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       sendJson(response, 200, { ok: true });
@@ -247,11 +337,12 @@ async function handleDevRequest(request, response, url) {
       if (body.interactiveObjects !== undefined) {
         draft.interactiveObjects = validateInteractiveObjects(body.interactiveObjects);
       }
-      if (!draft.walkPath && !draft.interactiveObjects) {
-        throw new Error("Request must include walkPath or interactiveObjects.");
+      if (body.audioConfig !== undefined) draft.audioConfig = validateAudioConfig(body.audioConfig);
+      if (!draft.walkPath && !draft.interactiveObjects && !draft.audioConfig) {
+        throw new Error("Request must include walkPath, interactiveObjects or audioConfig.");
       }
 
-      if (action === "walkpath-draft") {
+      if (action === "editor-draft") {
         fs.writeFileSync(draftPath(levelId), JSON.stringify({
           levelId,
           updatedAt: new Date().toISOString(),
@@ -261,8 +352,9 @@ async function handleDevRequest(request, response, url) {
         return true;
       }
 
-      if (action === "apply-walkpath") {
-        applyLevelDraft(levelId, draft);
+      if (action === "apply-editor") {
+        if (draft.walkPath || draft.interactiveObjects) applyLevelDraft(levelId, draft);
+        if (draft.audioConfig) applyAudioConfigDraft(draft.audioConfig);
         const filePath = draftPath(levelId);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         sendJson(response, 200, { ok: true, applied: true });
@@ -283,6 +375,7 @@ function contentType(filePath) {
   if (ext === ".js") return "text/javascript; charset=utf-8";
   if (ext === ".css") return "text/css; charset=utf-8";
   if (ext === ".json") return "application/json; charset=utf-8";
+  if (ext === ".mp3") return "audio/mpeg";
   if (ext === ".png") return "image/png";
   if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
   return "application/octet-stream";
@@ -318,5 +411,5 @@ const server = http.createServer(async (request, response) => {
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`SvenAdventure dev server: http://127.0.0.1:${port}/?dev=walkpath`);
+  console.log(`SvenAdventure dev server: http://127.0.0.1:${port}/?dev=editor`);
 });

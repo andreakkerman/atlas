@@ -55,7 +55,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
     {
       id: "mainPorthole",
       type: "rune",
-      center: { x: 1080, y: 314 },
+      center: { x: 1079, y: 312 },
       radius: 104,
       approachNode: "porthole-approach",
       label: "Groot raam"

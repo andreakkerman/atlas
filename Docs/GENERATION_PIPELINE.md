@@ -287,8 +287,8 @@ Ctrl+Shift+D
 WalkPath tuning:
 
 ```text
-npm run dev:walkpath
-http://127.0.0.1:4173/?dev=walkpath
+npm run dev:editor
+http://127.0.0.1:4173/?dev=editor
 Ctrl+Shift+D
 ```
 

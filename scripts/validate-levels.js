@@ -4,6 +4,16 @@ const vm = require("vm");
 
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
+const audioConfigPath = path.join(rootDir, "src", "audio-config.js");
+const requiredSfxKeys = [
+  "uiClick",
+  "challengeOpen",
+  "correct",
+  "incorrect",
+  "challengeComplete",
+  "unlock",
+  "adventureComplete"
+];
 
 const errors = [];
 
@@ -81,6 +91,23 @@ function assertAssetExists(relativePath, ownerLabel, levelFolder) {
   }
 
   return resolved;
+}
+
+function assertProjectAssetExists(relativePath, ownerLabel) {
+  const resolved = resolveProjectPath(relativePath, ownerLabel);
+  if (!resolved) return null;
+
+  if (!fs.existsSync(resolved)) {
+    fail(`${ownerLabel} asset does not exist: ${relativePath}`);
+  }
+
+  return resolved;
+}
+
+function validateVolumeValue(value, label) {
+  if (!isFiniteNumber(value) || value < 0 || value > 1) {
+    fail(`${label} must be a number between 0 and 1.`);
+  }
 }
 
 function readImageDimensions(filePath) {
@@ -209,6 +236,94 @@ function validateManifest() {
   });
 
   return manifest;
+}
+
+function loadAudioConfig() {
+  const context = { window: {} };
+  if (!runScript(audioConfigPath, context, "Audio config")) return null;
+
+  const config = context.window.SVEN_AUDIO_CONFIG;
+  if (!isObject(config)) {
+    fail("src/audio-config.js must define window.SVEN_AUDIO_CONFIG.");
+    return null;
+  }
+
+  return config;
+}
+
+function validateTrackRegistry(group, label) {
+  if (!isObject(group)) {
+    fail(`${label} must be an object.`);
+    return new Set();
+  }
+
+  Object.entries(group).forEach(([key, asset]) => {
+    validateRequiredString(key, `${label} key`);
+    validateRequiredString(asset, `${label}.${key}`);
+    if (isNonEmptyString(asset)) assertProjectAssetExists(asset, `${label}.${key}`);
+  });
+
+  return new Set(Object.keys(group));
+}
+
+function validateAudioConfig(manifest) {
+  const config = loadAudioConfig();
+  if (!config) return;
+
+  if (!isObject(config.tracks)) fail("audioConfig.tracks must be an object.");
+  const musicKeys = validateTrackRegistry(config.tracks?.music, "audioConfig.tracks.music");
+  const ambienceKeys = validateTrackRegistry(config.tracks?.ambience, "audioConfig.tracks.ambience");
+  const sfxKeys = validateTrackRegistry(config.tracks?.sfx, "audioConfig.tracks.sfx");
+
+  requiredSfxKeys.forEach((key) => {
+    if (!sfxKeys.has(key)) fail(`audioConfig.tracks.sfx is missing required SFX: ${key}`);
+  });
+
+  if (!isObject(config.menu)) {
+    fail("audioConfig.menu must be an object.");
+  } else {
+    validateRequiredString(config.menu.music, "audioConfig.menu.music");
+    if (isNonEmptyString(config.menu.music) && !musicKeys.has(config.menu.music)) {
+      fail(`audioConfig.menu.music references missing music track: ${config.menu.music}`);
+    }
+    validateVolumeValue(config.menu.musicVolume, "audioConfig.menu.musicVolume");
+  }
+
+  if (!isObject(config.volumes)) {
+    fail("audioConfig.volumes must be an object.");
+  } else {
+    validateVolumeValue(config.volumes.master, "audioConfig.volumes.master");
+    if (!isObject(config.volumes.sfx)) {
+      fail("audioConfig.volumes.sfx must be an object.");
+    } else {
+      requiredSfxKeys.forEach((key) => {
+        validateVolumeValue(config.volumes.sfx[key], `audioConfig.volumes.sfx.${key}`);
+      });
+    }
+  }
+
+  if (!isObject(config.levels)) {
+    fail("audioConfig.levels must be an object.");
+    return;
+  }
+
+  manifest.levels.forEach((entry) => {
+    const levelAudio = config.levels[entry.id];
+    if (!isObject(levelAudio)) {
+      fail(`audioConfig.levels.${entry.id} must exist.`);
+      return;
+    }
+    validateRequiredString(levelAudio.music, `audioConfig.levels.${entry.id}.music`);
+    validateRequiredString(levelAudio.ambience, `audioConfig.levels.${entry.id}.ambience`);
+    if (isNonEmptyString(levelAudio.music) && !musicKeys.has(levelAudio.music)) {
+      fail(`audioConfig.levels.${entry.id}.music references missing music track: ${levelAudio.music}`);
+    }
+    if (isNonEmptyString(levelAudio.ambience) && !ambienceKeys.has(levelAudio.ambience)) {
+      fail(`audioConfig.levels.${entry.id}.ambience references missing ambience track: ${levelAudio.ambience}`);
+    }
+    validateVolumeValue(levelAudio.musicVolume, `audioConfig.levels.${entry.id}.musicVolume`);
+    validateVolumeValue(levelAudio.ambienceVolume, `audioConfig.levels.${entry.id}.ambienceVolume`);
+  });
 }
 
 function loadLevel(entry) {
@@ -454,6 +569,7 @@ function validateLevel(entry) {
 function main() {
   const manifest = validateManifest();
   if (manifest) {
+    validateAudioConfig(manifest);
     manifest.levels.forEach(validateLevel);
   }
 

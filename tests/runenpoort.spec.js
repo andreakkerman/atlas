@@ -4,7 +4,7 @@ const path = require("path");
 const { pathToFileURL } = require("url");
 
 const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
-const devGameUrl = `${gameUrl}?dev=walkpath`;
+const devGameUrl = `${gameUrl}?dev=editor`;
 
 const runes = [
   { name: "Zonrune" },
@@ -610,8 +610,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByText("Current Mode: Runtime")).toBeVisible();
     await expect(page.getByText("Level Editing: Unavailable")).toBeVisible();
     await expect(page.getByText("Status: Read-only mode")).toBeVisible();
-    await expect(page.getByText("Run npm run dev:walkpath")).toBeVisible();
-    await expect(page.getByText("Open http://127.0.0.1:4173/?dev=walkpath")).toBeVisible();
+    await expect(page.getByText("Run npm run dev:editor")).toBeVisible();
+    await expect(page.getByText("Open http://127.0.0.1:4173/?dev=editor")).toBeVisible();
     await expect(page.getByRole("button", { name: "Apply" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revert" })).toHaveCount(0);
     const debugOverlay = await page.evaluate(() => {
@@ -671,10 +671,15 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByText("How to use:")).toBeVisible();
     await expect(page.getByText("Drag walkPath points")).toBeVisible();
     await expect(page.getByText("Drag object centers or radius handles")).toBeVisible();
+    await expect(page.getByText("Adjust audio volumes")).toBeVisible();
     await expect(page.getByText("Test movement")).toBeVisible();
-    await expect(page.getByText("Apply saves to the level file")).toBeVisible();
-    await expect(page.getByText("Revert restores the saved path and objects")).toBeVisible();
-    await expect(page.getByText("The real level file changes only when Apply is pressed.")).toBeVisible();
+    await expect(page.getByText("Apply saves level and audio files")).toBeVisible();
+    await expect(page.getByText("Revert restores the saved path, objects and audio")).toBeVisible();
+    await expect(page.getByText("Real files change only when Apply is pressed.")).toBeVisible();
+    await expect(page.locator("[data-audio-editor]")).toBeVisible();
+    await expect(page.locator('[data-audio-path="levels.LVL-0001.musicVolume"]')).toBeVisible();
+    await expect(page.locator('[data-audio-path="levels.LVL-0001.ambienceVolume"]')).toBeVisible();
+    await expect(page.locator("[data-sfx-test]")).toHaveCount(7);
     await expect(page.getByRole("button", { name: "Apply" })).toBeDisabled();
     await expect(page.getByRole("button", { name: "Revert" })).toBeEnabled();
 
@@ -701,8 +706,7 @@ test.describe("SvenAdventure", () => {
         authoredNodeCount: level.walkPath.length
       };
     });
-    expect(after.x).not.toBe(before.x);
-    expect(after.y).not.toBe(before.y);
+    expect(after.x !== before.x || after.y !== before.y).toBe(true);
     expect(after.derivedNodeCount).toBeGreaterThan(after.authoredNodeCount);
     await expect(page.getByText("Draft Status: Modified")).toBeVisible();
 
@@ -730,8 +734,7 @@ test.describe("SvenAdventure", () => {
         hotspotY: Number(hotspot.getAttribute("data-world-center-y"))
       };
     });
-    expect(objectAfterMove.x).not.toBe(objectBefore.x);
-    expect(objectAfterMove.y).not.toBe(objectBefore.y);
+    expect(objectAfterMove.x !== objectBefore.x || objectAfterMove.y !== objectBefore.y).toBe(true);
     expect(objectAfterMove.hotspotX).toBe(objectAfterMove.x);
     expect(objectAfterMove.hotspotY).toBe(objectAfterMove.y);
     await expect(page.getByText(/forestRune: x/)).toBeVisible();
@@ -756,6 +759,23 @@ test.describe("SvenAdventure", () => {
     expect(objectAfterRadius.radius).toBeGreaterThan(objectAfterMove.radius);
     expect(objectAfterRadius.hotspotRadius).toBe(objectAfterRadius.radius);
 
+    const audioBefore = await page.evaluate(() => {
+      return {
+        master: window.SVEN_AUDIO_CONFIG.volumes.master,
+        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume
+      };
+    });
+    await page.locator('[data-audio-path="volumes.master"]').fill("0.37");
+    await page.locator('[data-audio-path="levels.LVL-0001.musicVolume"]').fill("0.33");
+    const audioAfter = await page.evaluate(() => {
+      return {
+        master: window.SVEN_AUDIO_CONFIG.volumes.master,
+        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume
+      };
+    });
+    expect(audioAfter).toEqual({ master: 0.37, music: 0.33 });
+    await expect(page.getByText("Draft Status: Modified")).toBeVisible();
+
     await tap(page.getByRole("button", { name: "Revert" }));
     await expect(page.getByText("Draft Status: Reverted")).toBeVisible();
     const objectAfterRevert = await page.evaluate(() => {
@@ -763,6 +783,13 @@ test.describe("SvenAdventure", () => {
       return { x: object.center.x, y: object.center.y, radius: object.radius };
     });
     expect(objectAfterRevert).toEqual(objectBefore);
+    const audioAfterRevert = await page.evaluate(() => {
+      return {
+        master: window.SVEN_AUDIO_CONFIG.volumes.master,
+        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume
+      };
+    });
+    expect(audioAfterRevert).toEqual(audioBefore);
   });
 
   test("animates Sven as an actor", async ({ page }) => {

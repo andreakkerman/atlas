@@ -8,7 +8,16 @@ let debugOverlayEnabled = false;
 
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
-const WALKPATH_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "walkpath";
+const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "editor";
+const SFX_LABELS = {
+  uiClick: "UI click",
+  challengeOpen: "Challenge open",
+  correct: "Correct",
+  incorrect: "Incorrect",
+  challengeComplete: "Challenge complete",
+  unlock: "Unlock",
+  adventureComplete: "Adventure complete"
+};
 const ACTOR_ANIMATIONS = {
   idle: {
     folder: "assets/characters/sven/idle-right",
@@ -44,8 +53,18 @@ let state = {
   screen: "menu"
 };
 
+let audioConfig = cloneAudioConfig(window.SVEN_AUDIO_CONFIG || {});
+const audioState = {
+  unlocked: false,
+  music: null,
+  ambience: null,
+  currentMusicKey: null,
+  currentAmbienceKey: null,
+  sfx: new Map()
+};
+
 let walkPathEditor = {
-  enabled: WALKPATH_DEV_MODE,
+  enabled: EDITOR_DEV_MODE,
   apiAvailable: false,
   originalWalkPath: null,
   draggingIndex: null,
@@ -157,6 +176,34 @@ function cloneInteractiveObjects(objects) {
   }));
 }
 
+function cloneAudioConfig(config) {
+  return JSON.parse(JSON.stringify(config || {}));
+}
+
+function clampVolume(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return 0;
+  return Math.min(1, Math.max(0, number));
+}
+
+function getLevelAudioConfig(levelId = level?.id) {
+  return audioConfig.levels?.[levelId] || {};
+}
+
+function sfxKeys() {
+  return Object.keys(audioConfig.tracks?.sfx || {});
+}
+
+function getSfxVolume(key) {
+  return clampVolume(audioConfig.volumes?.sfx?.[key] ?? 0.7);
+}
+
+function setAudioConfig(nextConfig) {
+  audioConfig = cloneAudioConfig(nextConfig);
+  window.SVEN_AUDIO_CONFIG = cloneAudioConfig(nextConfig);
+  syncAudioForState();
+}
+
 function setLevelWalkPath(walkPath) {
   level.walkPath = cloneWalkPath(walkPath);
   level.walkGraph = deriveWalkGraph(level);
@@ -167,11 +214,11 @@ function setLevelInteractiveObjects(objects) {
   level.interactiveObjects = cloneInteractiveObjects(objects);
 }
 
-function walkPathApiUrl(action = "walkpath-draft") {
+function editorApiUrl(action = "editor-draft") {
   return `/__dev/levels/${encodeURIComponent(level.id)}/${action}`;
 }
 
-async function requestWalkPathApi(url, options = {}) {
+async function requestEditorApi(url, options = {}) {
   const response = await fetch(url, {
     headers: {
       "content-type": "application/json",
@@ -188,10 +235,11 @@ async function requestWalkPathApi(url, options = {}) {
 
 async function prepareWalkPathEditorForLevel(selectedLevel) {
   walkPathEditor = {
-    enabled: WALKPATH_DEV_MODE,
+    enabled: EDITOR_DEV_MODE,
     apiAvailable: false,
     originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
     originalInteractiveObjects: cloneInteractiveObjects(selectedLevel.interactiveObjects || []),
+    originalAudioConfig: cloneAudioConfig(audioConfig),
     draggingIndex: null,
     draggingObjectId: null,
     draggingObjectMode: null,
@@ -199,31 +247,34 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     currentObject: null,
     status: "Clean",
     modified: false,
-    message: WALKPATH_DEV_MODE ? "Gebruik Ctrl + Shift + D om punten of objecten te slepen." : "",
+    message: EDITOR_DEV_MODE ? "Gebruik Ctrl + Shift + D om levelpunten, objecten of audio te bewerken." : "",
     busy: false
   };
 
-  if (!WALKPATH_DEV_MODE || !window.location.protocol.startsWith("http")) return;
+  if (!EDITOR_DEV_MODE || !window.location.protocol.startsWith("http")) return;
 
   try {
-    await requestWalkPathApi("/__dev/status");
+    await requestEditorApi("/__dev/status");
     walkPathEditor.apiAvailable = true;
     walkPathEditor.message = "Dev server actief.";
-    const draft = await requestWalkPathApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/walkpath-draft`);
+    const draft = await requestEditorApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/editor-draft`);
     if (Array.isArray(draft.walkPath)) {
       selectedLevel.walkPath = cloneWalkPath(draft.walkPath);
     }
     if (Array.isArray(draft.interactiveObjects)) {
       selectedLevel.interactiveObjects = cloneInteractiveObjects(draft.interactiveObjects);
     }
-    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects)) {
+    if (draft.audioConfig) {
+      setAudioConfig(draft.audioConfig);
+    }
+    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || draft.audioConfig) {
       walkPathEditor.status = "Modified";
       walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
     }
   } catch (error) {
     walkPathEditor.apiAvailable = false;
-    walkPathEditor.message = "Geen dev server. Start npm run dev:walkpath.";
+    walkPathEditor.message = "Geen dev server. Start npm run dev:editor.";
   }
 }
 
@@ -321,6 +372,95 @@ function preloadLevelAssets(selectedLevel) {
       const image = new Image();
       image.src = src;
     });
+}
+
+function audioTrackPath(type, key) {
+  return audioConfig.tracks?.[type]?.[key] || "";
+}
+
+function audioMasterVolume() {
+  return clampVolume(audioConfig.volumes?.master ?? 1);
+}
+
+function setLoopAudio(kind, key, src, volume) {
+  const elementKey = kind === "music" ? "music" : "ambience";
+  const currentKey = kind === "music" ? "currentMusicKey" : "currentAmbienceKey";
+  const previous = audioState[elementKey];
+
+  if (!src || volume <= 0) {
+    if (previous) previous.pause();
+    audioState[elementKey] = null;
+    audioState[currentKey] = null;
+    return;
+  }
+
+  if (previous && audioState[currentKey] === key) {
+    previous.volume = volume;
+    if (previous.paused) previous.play().catch(() => {});
+    return;
+  }
+
+  if (previous) previous.pause();
+  const audio = new Audio(src);
+  audio.loop = true;
+  audio.volume = volume;
+  audioState[elementKey] = audio;
+  audioState[currentKey] = key;
+  audio.play().catch(() => {});
+}
+
+function stopAmbience() {
+  if (audioState.ambience) audioState.ambience.pause();
+  audioState.ambience = null;
+  audioState.currentAmbienceKey = null;
+}
+
+function syncAudioForState() {
+  if (!audioState.unlocked) return;
+
+  const master = audioMasterVolume();
+  if (state.screen === "menu" || !level) {
+    const menuMusicKey = audioConfig.menu?.music || "menu";
+    setLoopAudio("music", menuMusicKey, audioTrackPath("music", menuMusicKey), master * clampVolume(audioConfig.menu?.musicVolume ?? 0.65));
+    stopAmbience();
+    return;
+  }
+
+  const levelAudio = getLevelAudioConfig(level.id);
+  setLoopAudio("music", levelAudio.music, audioTrackPath("music", levelAudio.music), master * clampVolume(levelAudio.musicVolume ?? 0.55));
+  setLoopAudio(
+    "ambience",
+    levelAudio.ambience,
+    audioTrackPath("ambience", levelAudio.ambience),
+    master * clampVolume(levelAudio.ambienceVolume ?? 0.5)
+  );
+}
+
+function ensureAudioUnlocked() {
+  if (audioState.unlocked) return;
+  audioState.unlocked = true;
+  syncAudioForState();
+}
+
+function playSfx(key) {
+  if (!audioState.unlocked) return;
+  const src = audioTrackPath("sfx", key);
+  if (!src) return;
+  const audio = new Audio(src);
+  audio.volume = audioMasterVolume() * getSfxVolume(key);
+  audioState.sfx.set(key, audio);
+  audio.addEventListener("ended", () => audioState.sfx.delete(key), { once: true });
+  audio.play().catch(() => {});
+}
+
+function setNestedAudioValue(config, path, value) {
+  const parts = path.split(".");
+  let target = config;
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    target[parts[index]] ||= {};
+    target = target[parts[index]];
+  }
+  target[parts[parts.length - 1]] = clampVolume(value);
 }
 
 function loadLevelDefinition(entry) {
@@ -714,11 +854,12 @@ function pointFromViewportEvent(event, viewportElement) {
 async function persistWalkPathDraft() {
   if (!walkPathEditor.apiAvailable || !level) return;
   try {
-    await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), {
+    await requestEditorApi(editorApiUrl("editor-draft"), {
       method: "POST",
       body: JSON.stringify({
         walkPath: authoredWalkPathPoints(level),
-        interactiveObjects: level.interactiveObjects
+        interactiveObjects: level.interactiveObjects,
+        audioConfig
       })
     });
   } catch (error) {
@@ -730,22 +871,24 @@ async function persistWalkPathDraft() {
 async function applyWalkPathDraft() {
   if (!walkPathEditor.apiAvailable || walkPathEditor.busy) return;
   walkPathEditor.busy = true;
-  walkPathEditor.message = "Levelpunten toepassen...";
+  walkPathEditor.message = "Editorwijzigingen toepassen...";
   render();
 
   try {
-    await requestWalkPathApi(walkPathApiUrl("apply-walkpath"), {
+    await requestEditorApi(editorApiUrl("apply-editor"), {
       method: "POST",
       body: JSON.stringify({
         walkPath: authoredWalkPathPoints(level),
-        interactiveObjects: level.interactiveObjects
+        interactiveObjects: level.interactiveObjects,
+        audioConfig
       })
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
+    walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
-    walkPathEditor.message = "Opgeslagen in level.js.";
+    walkPathEditor.message = "Opgeslagen in level.js en audio-config.js.";
   } catch (error) {
     walkPathEditor.status = "Error";
     walkPathEditor.message = `Toepassen mislukt. ${error.message}`;
@@ -763,15 +906,16 @@ async function revertWalkPathDraft() {
 
   try {
     if (walkPathEditor.apiAvailable) {
-      await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), { method: "DELETE" });
+      await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
     }
     setLevelWalkPath(walkPathEditor.originalWalkPath);
     setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
+    setAudioConfig(walkPathEditor.originalAudioConfig);
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
     walkPathEditor.status = "Reverted";
     walkPathEditor.modified = false;
-    walkPathEditor.message = "Draft weggegooid. Opgeslagen punten hersteld.";
+    walkPathEditor.message = "Draft weggegooid. Opgeslagen punten, objecten en audio hersteld.";
   } catch (error) {
     walkPathEditor.status = "Error";
     walkPathEditor.message = `Revert mislukt. ${error.message}`;
@@ -828,6 +972,19 @@ function updateDraggedInteractiveObject(event) {
   walkPathEditor.modified = true;
   walkPathEditor.message = `${object.id}: x ${object.center.x}, y ${object.center.y}, radius ${object.radius}`;
   setLevelInteractiveObjects(nextObjects);
+  persistWalkPathDraft();
+  render();
+}
+
+function updateAudioDraft(path, value) {
+  if (!walkPathEditor.enabled || !path) return;
+
+  const nextConfig = cloneAudioConfig(audioConfig);
+  setNestedAudioValue(nextConfig, path, value);
+  setAudioConfig(nextConfig);
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = "Audio aangepast.";
   persistWalkPathDraft();
   render();
 }
@@ -1120,6 +1277,7 @@ function finishInteraction(target, kind, action) {
 
   if (target.id === exitHotspotId && action === "activate" && state.completedRunes.size === level.runes.length) {
     state.moving = false;
+    playSfx("unlock");
     setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
     showReward();
     return;
@@ -1152,6 +1310,7 @@ function beginFreeWalk(point) {
 
 function openRuneChallenge(id) {
   const rune = runeById(id);
+  playSfx("challengeOpen");
   state.screen = "challenge";
   state.activeRuneId = id;
   state.activeQuestions = selectChallengeQuestions(rune);
@@ -1170,6 +1329,7 @@ function answerQuestion(choice) {
   state.attempts += 1;
 
   if (choice !== correct) {
+    playSfx("incorrect");
     updateTableProgress(question, "mistake");
     state.selectedWrong = true;
     state.svenMood = "thinking";
@@ -1186,6 +1346,7 @@ function answerQuestion(choice) {
   }
 
   state.answered += 1;
+  playSfx("correct");
   state.svenMood = "celebrating";
   state.feedback = `Ja! ${question.a} x ${question.b} = ${correct}.`;
   state.screen = "correct";
@@ -1208,6 +1369,7 @@ function nextQuestion() {
   }
 
   state.completedRunes.add(rune.id);
+  playSfx("challengeComplete");
   state.justCompletedRuneId = rune.id;
   state.activeRuneId = null;
   state.activeQuestions = [];
@@ -1228,6 +1390,7 @@ function nextQuestion() {
 }
 
 function showReward() {
+  playSfx("adventureComplete");
   setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
   state.screen = "reward";
   saveCompletion();
@@ -1348,10 +1511,53 @@ function renderDebugOverlay() {
   `;
 }
 
+function renderVolumeSlider(label, path, value, options = {}) {
+  const numericValue = clampVolume(value);
+  return `
+    <label class="audioEditorRow">
+      <span>${label}</span>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value="${numericValue}"
+        data-audio-path="${path}"
+      />
+      <output>${numericValue.toFixed(2)}</output>
+      ${
+        options.sfxKey
+          ? `<button type="button" class="audioTestButton" data-sfx-test="${options.sfxKey}">Test</button>`
+          : ""
+      }
+    </label>
+  `;
+}
+
+function renderAudioEditorControls() {
+  const levelAudio = getLevelAudioConfig(level.id);
+  const sfxRows = sfxKeys().map((key) => {
+    return renderVolumeSlider(SFX_LABELS[key] || key, `volumes.sfx.${key}`, getSfxVolume(key), { sfxKey: key });
+  }).join("");
+
+  return `
+    <section class="audioEditorSection" data-audio-editor>
+      <strong>Audio</strong>
+      ${renderVolumeSlider("Master", "volumes.master", audioConfig.volumes?.master ?? 1)}
+      ${renderVolumeSlider("Music", `levels.${level.id}.musicVolume`, levelAudio.musicVolume ?? 0.55)}
+      ${renderVolumeSlider("Ambience", `levels.${level.id}.ambienceVolume`, levelAudio.ambienceVolume ?? 0.5)}
+      <div class="audioEditorSfx">
+        <span>SFX</span>
+        ${sfxRows}
+      </div>
+    </section>
+  `;
+}
+
 function renderDeveloperToolsPanel() {
   if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
 
-  if (!WALKPATH_DEV_MODE) {
+  if (!EDITOR_DEV_MODE) {
     return `
       <aside class="walkPathEditorPanel" data-developer-tools>
         <strong>Developer Tools</strong>
@@ -1359,8 +1565,8 @@ function renderDeveloperToolsPanel() {
         <span class="developerToolUnavailable">Level Editing: Unavailable</span>
         <span>To enable Level Editing:</span>
         <ol>
-          <li>Run npm run dev:walkpath</li>
-          <li>Open http://127.0.0.1:4173/?dev=walkpath</li>
+          <li>Run npm run dev:editor</li>
+          <li>Open http://127.0.0.1:4173/?dev=editor</li>
           <li>Start the level you want to edit</li>
           <li>Press Ctrl + Shift + D</li>
         </ol>
@@ -1383,11 +1589,12 @@ function renderDeveloperToolsPanel() {
       <ol>
         <li>Drag walkPath points</li>
         <li>Drag object centers or radius handles</li>
+        <li>Adjust audio volumes</li>
         <li>Test movement</li>
-        <li>Apply saves to the level file</li>
-        <li>Revert restores the saved path and objects</li>
+        <li>Apply saves level and audio files</li>
+        <li>Revert restores the saved path, objects and audio</li>
       </ol>
-      <p>The real level file changes only when Apply is pressed.</p>
+      <p>Real files change only when Apply is pressed.</p>
       <span>${
         object
           ? `${object.id}: ${object.center.x}, ${object.center.y}, radius ${object.radius}`
@@ -1395,6 +1602,7 @@ function renderDeveloperToolsPanel() {
             ? `${point.id}: ${point.x}, ${point.y}`
             : "Drag a path point or object."
       }</span>
+      ${renderAudioEditorControls()}
       <div class="walkPathEditorActions">
         <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
         <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
@@ -1805,17 +2013,27 @@ function render() {
   }
 
   updateWorldDom();
+  syncAudioForState();
 }
 
 app.addEventListener("click", (event) => {
+  ensureAudioUnlocked();
   if (event.target.closest("[data-walkpath-index]") || event.target.closest("[data-object-drag]")) {
     event.preventDefault();
+    return;
+  }
+
+  const sfxTestTarget = event.target.closest("[data-sfx-test]");
+  if (sfxTestTarget) {
+    event.preventDefault();
+    playSfx(sfxTestTarget.dataset.sfxTest);
     return;
   }
 
   const debugActionTarget = event.target.closest("[data-debug-action]");
   if (debugActionTarget) {
     event.preventDefault();
+    playSfx("uiClick");
     const action = debugActionTarget.dataset.debugAction;
     if (action === "apply-walkpath") applyWalkPathDraft();
     if (action === "revert-walkpath") revertWalkPathDraft();
@@ -1824,12 +2042,14 @@ app.addEventListener("click", (event) => {
 
   const levelTarget = event.target.closest("[data-level]");
   if (levelTarget) {
+    playSfx("uiClick");
     selectLevel(levelTarget.dataset.level);
     return;
   }
 
   const actionTarget = event.target.closest("[data-action]");
   if (actionTarget) {
+    playSfx("uiClick");
     const action = actionTarget.dataset.action;
     if (action === "intro-next") continueIntro();
     if (action === "menu") returnToMenu();
@@ -1842,12 +2062,14 @@ app.addEventListener("click", (event) => {
 
   const hotspotTarget = event.target.closest("[data-hotspot]");
   if (hotspotTarget) {
+    playSfx("uiClick");
     beginInteraction(hotspotById(hotspotTarget.dataset.hotspot), "hotspot");
     return;
   }
 
   const runeTarget = event.target.closest("[data-rune]");
   if (runeTarget) {
+    playSfx("uiClick");
     beginInteraction(runeById(runeTarget.dataset.rune), "rune");
     return;
   }
@@ -1864,7 +2086,14 @@ app.addEventListener("click", (event) => {
   }
 });
 
+app.addEventListener("input", (event) => {
+  const input = event.target.closest("[data-audio-path]");
+  if (!input) return;
+  updateAudioDraft(input.dataset.audioPath, input.value);
+});
+
 app.addEventListener("pointerdown", (event) => {
+  ensureAudioUnlocked();
   const objectTarget = event.target.closest("[data-object-drag]");
   if (objectTarget && walkPathEditor.enabled && debugOverlayEnabled) {
     event.preventDefault();
@@ -1905,6 +2134,7 @@ window.addEventListener("pointerup", () => {
 window.addEventListener("resize", updateWorldDom);
 
 window.addEventListener("keydown", (event) => {
+  ensureAudioUnlocked();
   if (!(event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d")) return;
   event.preventDefault();
   debugOverlayEnabled = !debugOverlayEnabled;

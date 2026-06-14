@@ -1,0 +1,189 @@
+{
+  "levelId": "LVL-0002",
+  "updatedAt": "2026-06-14T09:51:35.358Z",
+  "walkPath": [
+    {
+      "id": "left-door-start",
+      "x": 160,
+      "y": 580
+    },
+    {
+      "id": "shield-approach",
+      "x": 442,
+      "y": 588,
+      "role": "approach"
+    },
+    {
+      "id": "map-approach",
+      "x": 688,
+      "y": 535,
+      "role": "approach"
+    },
+    {
+      "id": "fire-approach",
+      "x": 1086,
+      "y": 511,
+      "role": "approach"
+    },
+    {
+      "id": "right-floor",
+      "x": 1344,
+      "y": 521
+    },
+    {
+      "id": "ship-model-approach",
+      "x": 1461,
+      "y": 529,
+      "role": "approach"
+    },
+    {
+      "id": "right-door-approach",
+      "x": 1970,
+      "y": 613,
+      "role": "approach"
+    }
+  ],
+  "interactiveObjects": [
+    {
+      "id": "shieldWall",
+      "type": "rune",
+      "center": {
+        "x": 475,
+        "y": 312
+      },
+      "radius": 68,
+      "approachNode": "shield-approach",
+      "label": "Schildenmuur"
+    },
+    {
+      "id": "mapTable",
+      "type": "rune",
+      "center": {
+        "x": 715,
+        "y": 410
+      },
+      "radius": 74,
+      "approachNode": "map-approach",
+      "label": "Kaarttafel"
+    },
+    {
+      "id": "fireBowl",
+      "type": "rune",
+      "center": {
+        "x": 1094,
+        "y": 376
+      },
+      "radius": 84,
+      "approachNode": "fire-approach",
+      "label": "Vuurschaal"
+    },
+    {
+      "id": "shipModel",
+      "type": "rune",
+      "center": {
+        "x": 1453,
+        "y": 352
+      },
+      "radius": 86,
+      "approachNode": "ship-model-approach",
+      "label": "Scheepsmodel"
+    },
+    {
+      "id": "harborDoor",
+      "type": "gate",
+      "center": {
+        "x": 1999,
+        "y": 477
+      },
+      "radius": 104,
+      "approachNode": "right-door-approach",
+      "label": "Havendeur"
+    }
+  ],
+  "audioConfig": {
+    "tracks": {
+      "music": {
+        "menu": "assets/audio/music/menu.mp3",
+        "runeCompass": "assets/audio/music/rune-compass.mp3",
+        "nautilus": "assets/audio/music/nautilus.mp3"
+      },
+      "ambience": {
+        "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
+        "vikingFire": "assets/audio/ambience/viking-fire.mp3",
+        "vikingHarborWater": "assets/audio/ambience/viking-harbor-water.mp3",
+        "nautilusHarbor": "assets/audio/ambience/nautilus-harbor.mp3",
+        "nautilusEngineHum": "assets/audio/ambience/nautilus-engine-hum.mp3",
+        "nautilusCave": "assets/audio/ambience/nautilus-cave.mp3"
+      },
+      "sfx": {
+        "uiClick": "assets/audio/sfx/ui-click.mp3",
+        "challengeOpen": "assets/audio/sfx/challenge-open.mp3",
+        "correct": "assets/audio/sfx/correct.mp3",
+        "incorrect": "assets/audio/sfx/incorrect.mp3",
+        "challengeComplete": "assets/audio/sfx/challenge-complete.mp3",
+        "unlock": "assets/audio/sfx/unlock.mp3",
+        "adventureComplete": "assets/audio/sfx/adventure-complete.mp3"
+      }
+    },
+    "menu": {
+      "music": "menu",
+      "musicVolume": 0.62
+    },
+    "levels": {
+      "LVL-0001": {
+        "music": "runeCompass",
+        "ambience": "vikingForestBirds",
+        "musicVolume": 0.31,
+        "ambienceVolume": 0.17
+      },
+      "LVL-0002": {
+        "music": "runeCompass",
+        "ambience": "vikingFire",
+        "musicVolume": 0.27,
+        "ambienceVolume": 0.09
+      },
+      "LVL-0003": {
+        "music": "runeCompass",
+        "ambience": "vikingHarborWater",
+        "musicVolume": 0.52,
+        "ambienceVolume": 0.52
+      },
+      "LVL-0004": {
+        "music": "nautilus",
+        "ambience": "nautilusHarbor",
+        "musicVolume": 0.2,
+        "ambienceVolume": 0.09
+      },
+      "LVL-0005": {
+        "music": "nautilus",
+        "ambience": "nautilusEngineHum",
+        "musicVolume": 0.25,
+        "ambienceVolume": 0.27
+      },
+      "LVL-0006": {
+        "music": "nautilus",
+        "ambience": "nautilusEngineHum",
+        "musicVolume": 0.28,
+        "ambienceVolume": 0.33
+      },
+      "LVL-0007": {
+        "music": "nautilus",
+        "ambience": "nautilusCave",
+        "musicVolume": 0.29,
+        "ambienceVolume": 0.22
+      }
+    },
+    "volumes": {
+      "master": 0.82,
+      "sfx": {
+        "uiClick": 0.75,
+        "challengeOpen": 0.58,
+        "correct": 0.66,
+        "incorrect": 0.55,
+        "challengeComplete": 0.68,
+        "unlock": 0.7,
+        "adventureComplete": 0.74
+      }
+    }
+  }
+}

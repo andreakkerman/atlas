@@ -486,12 +486,14 @@ button {
 
 .walkPathEditorPanel {
   position: absolute;
-  left: 82px;
+  right: 12px;
   top: 12px;
   z-index: 7;
   display: grid;
   gap: 6px;
-  width: min(420px, calc(100vw - 104px));
+  width: min(540px, calc(100vw - 24px));
+  max-height: min(560px, calc(58dvh - 12px));
+  overflow: auto;
   padding: 10px;
   border: 1px solid rgba(156, 242, 233, 0.46);
   border-radius: 8px;
@@ -556,6 +558,55 @@ button {
 
 .walkPathStatusError {
   color: #ffb4a8;
+}
+
+.audioEditorSection {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.audioEditorSection strong,
+.audioEditorSfx > span {
+  color: #ffd06d;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.audioEditorSfx {
+  display: grid;
+  gap: 7px;
+}
+
+.audioEditorRow {
+  display: grid;
+  grid-template-columns: minmax(96px, 0.9fr) minmax(110px, 1.2fr) 42px auto;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.audioEditorRow input {
+  min-width: 0;
+  accent-color: #ffd06d;
+}
+
+.audioEditorRow output {
+  color: rgba(255, 247, 222, 0.78);
+  font-variant-numeric: tabular-nums;
+}
+
+.audioTestButton {
+  min-width: 48px;
+  border: 1px solid rgba(255, 231, 166, 0.38);
+  border-radius: 6px;
+  padding: 5px 8px;
+  color: #fff7de;
+  background: rgba(255, 255, 255, 0.08);
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .walkPathEditorActions {

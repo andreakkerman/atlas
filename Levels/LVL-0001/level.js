@@ -48,7 +48,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       id: "forestRune",
       objectId: "forestRune",
       type: "object",
-      center: { x: 273, y: 469 },
+      center: { x: 273, y: 468 },
       radius: 48,
       approachNode: "forest-rune-approach",
       label: "Bosrune"
@@ -56,7 +56,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     {
       id: "zon",
       type: "rune",
-      center: { x: 1384, y: 160 },
+      center: { x: 1384, y: 153 },
       radius: 46,
       approachNode: "sun-rune-approach",
       label: "Zonrune"
@@ -64,7 +64,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     {
       id: "steen",
       type: "rune",
-      center: { x: 1465, y: 318 },
+      center: { x: 1467, y: 317 },
       radius: 44,
       approachNode: "stone-rune-approach",
       label: "Steenrune"
@@ -81,7 +81,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       id: "templeGate",
       objectId: "templeGate",
       type: "gate",
-      center: { x: 1849, y: 343 },
+      center: { x: 1849, y: 354 },
       radius: 104,
       approachNode: "gate-step-upper",
       label: "Runenpoort"
