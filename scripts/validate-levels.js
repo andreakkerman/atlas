@@ -346,6 +346,9 @@ function validateAssets(level, entry, levelFolder, label) {
   assertAssetExists(level.menu?.illustration, `${label}.menu.illustration`, levelFolder);
   assertAssetExists(level.challengeArt, `${label}.challengeArt`, levelFolder);
   assertAssetExists(level.companion?.portrait, `${label}.companion.portrait`, levelFolder);
+  if (level.challengeCharacter?.portrait) {
+    assertAssetExists(level.challengeCharacter.portrait, `${label}.challengeCharacter.portrait`, levelFolder);
+  }
   assertAssetExists(level.reward?.art, `${label}.reward.art`, levelFolder);
 }
 

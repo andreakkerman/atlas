@@ -1,5 +1,6 @@
 const app = document.querySelector("#app");
 const levelCatalog = window.SVEN_LEVEL_MANIFEST?.levels || [];
+const visibleLevelCatalog = () => levelCatalog.filter((item) => !item.hiddenFromMenu);
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 let level = null;
 let walkNodesById = new Map();
@@ -147,10 +148,22 @@ function cloneWalkPath(walkPath) {
   return walkPath.map((point) => ({ ...point }));
 }
 
+function cloneInteractiveObjects(objects) {
+  return objects.map((object) => ({
+    ...object,
+    center: { ...object.center },
+    allowOverlapWith: object.allowOverlapWith ? [...object.allowOverlapWith] : undefined
+  }));
+}
+
 function setLevelWalkPath(walkPath) {
   level.walkPath = cloneWalkPath(walkPath);
   level.walkGraph = deriveWalkGraph(level);
   walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
+}
+
+function setLevelInteractiveObjects(objects) {
+  level.interactiveObjects = cloneInteractiveObjects(objects);
 }
 
 function walkPathApiUrl(action = "walkpath-draft") {
@@ -177,11 +190,15 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     enabled: WALKPATH_DEV_MODE,
     apiAvailable: false,
     originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
+    originalInteractiveObjects: cloneInteractiveObjects(selectedLevel.interactiveObjects || []),
     draggingIndex: null,
+    draggingObjectId: null,
+    draggingObjectMode: null,
     currentPoint: null,
+    currentObject: null,
     status: "Clean",
     modified: false,
-    message: WALKPATH_DEV_MODE ? "Gebruik Ctrl + Shift + D om punten te slepen." : "",
+    message: WALKPATH_DEV_MODE ? "Gebruik Ctrl + Shift + D om punten of objecten te slepen." : "",
     busy: false
   };
 
@@ -194,6 +211,11 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     const draft = await requestWalkPathApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/walkpath-draft`);
     if (Array.isArray(draft.walkPath)) {
       selectedLevel.walkPath = cloneWalkPath(draft.walkPath);
+    }
+    if (Array.isArray(draft.interactiveObjects)) {
+      selectedLevel.interactiveObjects = cloneInteractiveObjects(draft.interactiveObjects);
+    }
+    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects)) {
       walkPathEditor.status = "Modified";
       walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
@@ -274,7 +296,7 @@ function preloadActorAnimations() {
 }
 
 function preloadMenuAssets() {
-  levelCatalog
+  visibleLevelCatalog()
     .map((item) => item.menu?.illustration)
     .filter(Boolean)
     .forEach((src) => {
@@ -288,6 +310,7 @@ function preloadLevelAssets(selectedLevel) {
     selectedLevel.world.background,
     selectedLevel.menu?.illustration,
     selectedLevel.companion?.portrait,
+    selectedLevel.challengeCharacter?.portrait,
     ...Object.values(selectedLevel.guides || {}).map((guide) => guide.portrait),
     selectedLevel.challengeArt,
     selectedLevel.reward?.art
@@ -445,8 +468,12 @@ function worldDiameterToTrackSize(diameter) {
 }
 
 function getAreaName() {
-  const area = level.areas.find((item) => state.worldX >= item.start && state.worldX <= item.end);
+  const area = currentArea();
   return area?.name || "Avontuur";
+}
+
+function currentArea() {
+  return level.areas.find((item) => state.worldX >= item.start && state.worldX <= item.end);
 }
 
 function isInArea(id) {
@@ -688,7 +715,10 @@ async function persistWalkPathDraft() {
   try {
     await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), {
       method: "POST",
-      body: JSON.stringify({ walkPath: authoredWalkPathPoints(level) })
+      body: JSON.stringify({
+        walkPath: authoredWalkPathPoints(level),
+        interactiveObjects: level.interactiveObjects
+      })
     });
   } catch (error) {
     walkPathEditor.status = "Error";
@@ -699,15 +729,19 @@ async function persistWalkPathDraft() {
 async function applyWalkPathDraft() {
   if (!walkPathEditor.apiAvailable || walkPathEditor.busy) return;
   walkPathEditor.busy = true;
-  walkPathEditor.message = "walkPath toepassen...";
+  walkPathEditor.message = "Levelpunten toepassen...";
   render();
 
   try {
     await requestWalkPathApi(walkPathApiUrl("apply-walkpath"), {
       method: "POST",
-      body: JSON.stringify({ walkPath: authoredWalkPathPoints(level) })
+      body: JSON.stringify({
+        walkPath: authoredWalkPathPoints(level),
+        interactiveObjects: level.interactiveObjects
+      })
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
+    walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
     walkPathEditor.message = "Opgeslagen in level.js.";
@@ -731,10 +765,12 @@ async function revertWalkPathDraft() {
       await requestWalkPathApi(walkPathApiUrl("walkpath-draft"), { method: "DELETE" });
     }
     setLevelWalkPath(walkPathEditor.originalWalkPath);
+    setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
     walkPathEditor.currentPoint = null;
+    walkPathEditor.currentObject = null;
     walkPathEditor.status = "Reverted";
     walkPathEditor.modified = false;
-    walkPathEditor.message = "Draft weggegooid. Opgeslagen pad hersteld.";
+    walkPathEditor.message = "Draft weggegooid. Opgeslagen punten hersteld.";
   } catch (error) {
     walkPathEditor.status = "Error";
     walkPathEditor.message = `Revert mislukt. ${error.message}`;
@@ -762,6 +798,35 @@ function updateDraggedWalkPathPoint(event) {
   walkPathEditor.modified = true;
   walkPathEditor.message = `${nextPoint.id}: x ${nextPoint.x}, y ${nextPoint.y}`;
   setLevelWalkPath(nextWalkPath);
+  persistWalkPathDraft();
+  render();
+}
+
+function updateDraggedInteractiveObject(event) {
+  if (!walkPathEditor.draggingObjectId || !walkPathEditor.draggingObjectMode || !level) return;
+  const stage = document.querySelector("[data-world-stage]");
+  if (!stage) return;
+
+  const point = pointFromViewportEvent(event, stage);
+  const nextObjects = cloneInteractiveObjects(level.interactiveObjects);
+  const object = nextObjects.find((item) => item.id === walkPathEditor.draggingObjectId);
+  if (!object) return;
+
+  if (walkPathEditor.draggingObjectMode === "center") {
+    object.center = {
+      x: Math.round(point.x),
+      y: Math.round(point.y)
+    };
+  } else if (walkPathEditor.draggingObjectMode === "radius") {
+    object.radius = Math.max(12, Math.round(distanceBetween(object.center, point)));
+  }
+
+  walkPathEditor.currentObject = object;
+  walkPathEditor.currentPoint = null;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = `${object.id}: x ${object.center.x}, y ${object.center.y}, radius ${object.radius}`;
+  setLevelInteractiveObjects(nextObjects);
   persistWalkPathDraft();
   render();
 }
@@ -1011,6 +1076,8 @@ function arriveAtInteraction(target, kind, action) {
 }
 
 function finishInteraction(target, kind, action) {
+  const exitHotspotId = level.exitHotspotId || "templeGate";
+
   if (kind === "rune" && action === "look") {
     state.moving = false;
     state.svenMood = "idle";
@@ -1033,7 +1100,7 @@ function finishInteraction(target, kind, action) {
     return;
   }
 
-  if (target.id === "templeGate" && action === "activate" && state.completedRunes.size === level.runes.length) {
+  if (target.id === exitHotspotId && action === "activate" && state.completedRunes.size === level.runes.length) {
     state.moving = false;
     setGuideLine("reward", level.spiritLines.reward || level.reward.title, "moose");
     showReward();
@@ -1054,10 +1121,12 @@ function beginFreeWalk(point) {
   walkRoute(routeToPoint(point), () => {
     state.moving = false;
     state.svenMood = "idle";
-    if (isInArea("temple")) {
-      setGuideLine("temple", "Daar is de tempel. Maak de drie runen wakker.", "moose");
+    if (state.completedRunes.size === level.runes.length) {
+      setGuideLine("allRunes", level.spiritLines.allRunes || level.reward?.title, "moose");
     } else {
-      setGuideLine("forest", "Volg het pad naar de tempel.", "minnie");
+      const area = currentArea();
+      const guideKey = area?.guideLine || area?.id || "forest";
+      setGuideLine(guideKey, area ? `${area.name}.` : "Sven kijkt rond.", area?.id === "forest" ? "minnie" : "moose");
     }
     render();
   });
@@ -1145,6 +1214,22 @@ function showReward() {
   render();
 }
 
+function continueToNextLevel() {
+  const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
+  if (!nextLevelId) return;
+
+  stopMovement();
+  state = {
+    screen: "transition",
+    message: level.reward?.nextTransition || "Sven loopt verder..."
+  };
+  render();
+
+  window.setTimeout(() => {
+    selectLevel(nextLevelId);
+  }, 520);
+}
+
 function restart() {
   state.screen = "intro";
   state.introIndex = 0;
@@ -1202,10 +1287,28 @@ function renderDebugOverlay() {
     </g>
   `);
   const objects = level.interactiveObjects.map((object) => `
-    <g class="debugObject" data-debug-object="${object.id}">
-      <circle cx="${object.center.x}" cy="${object.center.y}" r="${object.radius}" />
-      <circle cx="${object.center.x}" cy="${object.center.y}" r="6" />
-      <text x="${object.center.x + object.radius + 8}" y="${object.center.y + 4}">${object.id}</text>
+    <g class="debugObject ${walkPathEditor.enabled ? "debugDraggableObject" : ""}" data-debug-object="${object.id}">
+      <circle class="debugObjectRadius" cx="${object.center.x}" cy="${object.center.y}" r="${object.radius}" />
+      <circle
+        class="debugObjectCenter"
+        cx="${object.center.x}"
+        cy="${object.center.y}"
+        r="8"
+        ${walkPathEditor.enabled ? `data-object-drag="center" data-object-id="${object.id}"` : ""}
+      />
+      ${
+        walkPathEditor.enabled
+          ? `<circle
+              class="debugObjectRadiusHandle"
+              cx="${object.center.x + object.radius}"
+              cy="${object.center.y}"
+              r="8"
+              data-object-drag="radius"
+              data-object-id="${object.id}"
+            />`
+          : ""
+      }
+      <text x="${object.center.x + object.radius + 12}" y="${object.center.y + 4}">${object.id}</text>
     </g>
   `);
 
@@ -1232,8 +1335,8 @@ function renderDeveloperToolsPanel() {
       <aside class="walkPathEditorPanel" data-developer-tools>
         <strong>Developer Tools</strong>
         <span class="developerToolMode">Current Mode: Runtime</span>
-        <span class="developerToolUnavailable">WalkPath Editing: Unavailable</span>
-        <span>To enable WalkPath Editing:</span>
+        <span class="developerToolUnavailable">Level Editing: Unavailable</span>
+        <span>To enable Level Editing:</span>
         <ol>
           <li>Run npm run dev:walkpath</li>
           <li>Open http://127.0.0.1:4173/?dev=walkpath</li>
@@ -1246,23 +1349,31 @@ function renderDeveloperToolsPanel() {
   }
 
   const point = walkPathEditor.currentPoint;
+  const object = walkPathEditor.currentObject;
   const serverDisabled = !walkPathEditor.apiAvailable || walkPathEditor.busy ? "disabled" : "";
   const statusClass = `walkPathStatus${walkPathEditor.status}`;
 
   return `
     <aside class="walkPathEditorPanel" data-developer-tools>
       <strong>Developer Tools</strong>
-      <span class="developerToolMode">Current Mode: WalkPath Editing</span>
+      <span class="developerToolMode">Current Mode: Level Editing</span>
       <span class="${statusClass}">Draft Status: ${walkPathEditor.status}</span>
       <span>How to use:</span>
       <ol>
         <li>Drag walkPath points</li>
+        <li>Drag object centers or radius handles</li>
         <li>Test movement</li>
         <li>Apply saves to the level file</li>
-        <li>Revert restores the saved path</li>
+        <li>Revert restores the saved path and objects</li>
       </ol>
       <p>The real level file changes only when Apply is pressed.</p>
-      <span>${point ? `${point.id}: ${point.x}, ${point.y}` : "Drag a point."}</span>
+      <span>${
+        object
+          ? `${object.id}: ${object.center.x}, ${object.center.y}, radius ${object.radius}`
+          : point
+            ? `${point.id}: ${point.x}, ${point.y}`
+            : "Drag a path point or object."
+      }</span>
       <div class="walkPathEditorActions">
         <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
         <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
@@ -1314,7 +1425,7 @@ function renderWorldStage() {
 }
 
 function isTargetVisible(target) {
-  if (target.id === "templeGate") {
+  if (target.id === (level.exitHotspotId || "templeGate")) {
     return state.completedRunes.size === level.runes.length;
   }
   return true;
@@ -1372,7 +1483,7 @@ function renderReturnToMenuButton() {
 
 function canOpenTempleGate() {
   if (state.screen !== "scene" || state.completedRunes.size !== level.runes.length) return false;
-  const gate = hotspotById("templeGate");
+  const gate = hotspotById(level.exitHotspotId || "templeGate");
   if (!gate) return false;
   return distanceBetween({ x: state.worldX, y: state.worldY }, getApproachPoint(gate)) < 180;
 }
@@ -1435,11 +1546,11 @@ function renderAdventureTeamBar() {
         <span class="teamPaw" aria-hidden="true"></span>
         <p class="teamSpeaker">${activeGuide.name}</p>
         <p class="teamMessage">${guideMessage.text}</p>
-        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${level.runes.length} runen</p>
+        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${level.runes.length} ${level.progressLabelPlural || "runen"}</p>
       </div>
       ${
         canOpen
-          ? `<button class="primaryButton" type="button" data-action="reward">Ga naar binnen</button>`
+          ? `<button class="primaryButton" type="button" data-action="reward">${level.exitActionLabel || "Ga naar binnen"}</button>`
           : ""
       }
     </section>
@@ -1457,6 +1568,7 @@ function renderScene() {
 }
 
 function renderMenu() {
+  const menuLevels = visibleLevelCatalog();
   return `
     <main class="menuScreen">
       <section class="menuHeader">
@@ -1467,8 +1579,8 @@ function renderMenu() {
       <section class="levelGrid" aria-label="Beschikbare avonturen">
         ${state.error ? `<p class="menuError">${state.error}</p>` : ""}
         ${
-          levelCatalog.length
-            ? levelCatalog.map(renderLevelTile).join("")
+          menuLevels.length
+            ? menuLevels.map(renderLevelTile).join("")
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
         }
       </section>
@@ -1504,7 +1616,7 @@ function renderLevelTile(item) {
 function renderIntro() {
   return `
     <main class="introScreen">
-      <img class="introBackdrop" src="${level.world.background}" alt="Een oud bos met een pad naar de tempel" />
+      <img class="introBackdrop" src="${level.world.background}" alt="${level.title}" />
       <section class="introPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.title}</h1>
@@ -1527,6 +1639,8 @@ function renderChallenge() {
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
   const challengeCharacter = getChallengeCharacter();
   const challengeLine = challengePromptForRune(rune);
+  const challengeLabel = level.challengeLabel || "Rune";
+  const choiceHint = level.choiceHint || "Raak de juiste steen aan.";
 
   return `
     ${renderScene()}
@@ -1542,14 +1656,14 @@ function renderChallenge() {
         <div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
           <img class="challengeCharacterPortrait" src="${challengeCharacter.portrait}" alt="${challengeCharacter.name}" />
           <div class="challengeCharacterSpeech">
-            <p class="eyebrow">${challengeCharacter.name} - Rune ${number}/${total}</p>
+            <p class="eyebrow">${challengeCharacter.name} - ${challengeLabel} ${number}/${total}</p>
             <h2 id="challenge-title">${rune.name}</h2>
             <p>${challengeLine}</p>
           </div>
         </div>
         <p class="feedback">${state.feedback}</p>
         <p class="sum">Hoeveel is ${question.a} x ${question.b}?</p>
-        <p class="runeWhisper">Raak de juiste steen aan.</p>
+        <p class="runeWhisper">${choiceHint}</p>
         <div class="choices">
           ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
         </div>
@@ -1567,7 +1681,7 @@ function getChallengeCharacter() {
 }
 
 function challengePromptForRune(rune) {
-  return `Laat de ${rune.name} ontwaken.`;
+  return rune.prompt || `Laat de ${rune.name} ontwaken.`;
 }
 
 function renderCorrect() {
@@ -1592,7 +1706,7 @@ function renderCorrect() {
         <h2 id="correct-title">Goed zo!</h2>
         <p class="feedback">${state.feedback}</p>
         <button class="primaryButton" type="button" data-action="next-question">
-          ${lastQuestion ? "Maak de rune wakker" : "Volgende som"}
+          ${lastQuestion ? level.challengeCompleteLabel || "Maak de rune wakker" : level.nextQuestionLabel || "Volgende som"}
         </button>
       </div>
     </section>
@@ -1600,6 +1714,7 @@ function renderCorrect() {
 }
 
 function renderReward() {
+  const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
   return `
     <main class="rewardScreen">
       <img class="rewardArt" src="${level.reward.art}" alt="Sven voor de geopende tempelpoort" />
@@ -1613,10 +1728,26 @@ function renderReward() {
           <span>${getAccuracy()}% in een keer goed</span>
           <span>${state.attempts} pogingen</span>
         </div>
-        <button class="primaryButton" type="button" data-action="restart">Speel nog een keer</button>
-        <button class="secondaryButton" type="button" data-action="menu">Menu</button>
+        ${
+          nextLevelId
+            ? `<button class="primaryButton" type="button" data-action="next-level">${level.reward.nextLabel || "Verder"}</button>`
+            : `<button class="primaryButton" type="button" data-action="menu">Menu</button>`
+        }
+        <button class="secondaryButton" type="button" data-action="${nextLevelId ? "menu" : "restart"}">${nextLevelId ? "Menu" : "Speel nog een keer"}</button>
       </section>
       ${renderAdventureTeamBar()}
+    </main>
+  `;
+}
+
+function renderTransition() {
+  return `
+    <main class="transitionScreen" aria-live="polite">
+      <div class="transitionMist"></div>
+      <section class="transitionPanel">
+        <p class="eyebrow">SvenAdventure</p>
+        <h1>${state.message || "Even verder..."}</h1>
+      </section>
     </main>
   `;
 }
@@ -1626,6 +1757,8 @@ function render() {
     app.innerHTML = renderMenu();
   } else if (state.screen === "loading") {
     app.innerHTML = renderLoading();
+  } else if (state.screen === "transition") {
+    app.innerHTML = renderTransition();
   } else if (state.screen === "intro") {
     app.innerHTML = renderIntro();
   } else if (state.screen === "challenge") {
@@ -1654,7 +1787,7 @@ function render() {
 }
 
 app.addEventListener("click", (event) => {
-  if (event.target.closest("[data-walkpath-index]")) {
+  if (event.target.closest("[data-walkpath-index]") || event.target.closest("[data-object-drag]")) {
     event.preventDefault();
     return;
   }
@@ -1681,6 +1814,7 @@ app.addEventListener("click", (event) => {
     if (action === "menu") returnToMenu();
     if (action === "next-question") nextQuestion();
     if (action === "reward") showReward();
+    if (action === "next-level") continueToNextLevel();
     if (action === "restart") restart();
     return;
   }
@@ -1710,14 +1844,32 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("pointerdown", (event) => {
+  const objectTarget = event.target.closest("[data-object-drag]");
+  if (objectTarget && walkPathEditor.enabled && debugOverlayEnabled) {
+    event.preventDefault();
+    walkPathEditor.draggingObjectId = objectTarget.dataset.objectId;
+    walkPathEditor.draggingObjectMode = objectTarget.dataset.objectDrag;
+    walkPathEditor.draggingIndex = null;
+    updateDraggedInteractiveObject(event);
+    return;
+  }
+
   const pointTarget = event.target.closest("[data-walkpath-index]");
   if (!pointTarget || !walkPathEditor.enabled || !debugOverlayEnabled) return;
   event.preventDefault();
   walkPathEditor.draggingIndex = Number(pointTarget.dataset.walkpathIndex);
+  walkPathEditor.draggingObjectId = null;
+  walkPathEditor.draggingObjectMode = null;
   updateDraggedWalkPathPoint(event);
 });
 
 window.addEventListener("pointermove", (event) => {
+  if (walkPathEditor.draggingObjectId) {
+    event.preventDefault();
+    updateDraggedInteractiveObject(event);
+    return;
+  }
+
   if (walkPathEditor.draggingIndex === null) return;
   event.preventDefault();
   updateDraggedWalkPathPoint(event);
@@ -1725,6 +1877,8 @@ window.addEventListener("pointermove", (event) => {
 
 window.addEventListener("pointerup", () => {
   walkPathEditor.draggingIndex = null;
+  walkPathEditor.draggingObjectId = null;
+  walkPathEditor.draggingObjectMode = null;
 });
 
 window.addEventListener("resize", updateWorldDom);

@@ -12,6 +12,20 @@ const runes = [
   { name: "Windrune", questions: [[4, 9], [6, 8], [10, 7], [8, 5]] }
 ];
 
+const templeChallenges = [
+  { name: "Schildenmuur", questions: [[3, 8], [4, 6], [5, 4]] },
+  { name: "Kaarttafel", questions: [[4, 7], [6, 5], [8, 2]] },
+  { name: "Vuurschaal", questions: [[7, 3], [5, 9], [6, 6]] },
+  { name: "Scheepsmodel", questions: [[4, 8], [6, 7], [9, 4]] }
+];
+
+const harborChallenges = [
+  { name: "Havenkaart", questions: [[3, 9], [6, 4], [8, 5]] },
+  { name: "Scheepskompas", questions: [[4, 8], [7, 6], [9, 3]] },
+  { name: "Ladingskist", questions: [[5, 7], [8, 6], [10, 4]] },
+  { name: "Poortschild", questions: [[6, 9], [7, 8], [9, 5]] }
+];
+
 async function waitForImages(page) {
   await page.waitForFunction(() => {
     return [...document.images].every((image) => image.complete && image.naturalWidth > 0);
@@ -130,6 +144,26 @@ async function walkTowardTemple(page, ySamples = []) {
     .toBeGreaterThan(1120);
 }
 
+async function walkRightUntil(page, threshold) {
+  const actor = page.locator("[data-actor='sven']");
+
+  for (let step = 0; step < 8; step += 1) {
+    const beforeX = Number(await actor.getAttribute("data-world-x"));
+    if (beforeX >= threshold) return;
+
+    await clickWalkableGround(page, 0.9);
+    await expect(actor).toHaveAttribute("data-animation", "walk");
+    await waitForIdle(page);
+  }
+
+  await expect
+    .poll(async () => Number(await actor.getAttribute("data-world-x")), {
+      timeout: 18000,
+      message: `Sven should walk right to at least ${threshold}`
+    })
+    .toBeGreaterThan(threshold);
+}
+
 async function answerQuestion(page, a, b, options = {}) {
   const correct = a * b;
   await expect(page.getByText(`Hoeveel is ${a} x ${b}?`)).toBeVisible();
@@ -146,6 +180,21 @@ async function answerQuestion(page, a, b, options = {}) {
   await tap(page.locator(`button[data-choice="${correct}"]`));
   await expect(page.getByText(`Ja! ${a} x ${b} = ${correct}.`)).toBeVisible();
   await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
+}
+
+async function solveChallengeSet(page, challenge, finalButtonName, challengerName) {
+  await tap(page.getByRole("button", { name: challenge.name }));
+  await expect(page.getByRole("heading", { name: challenge.name })).toBeVisible();
+  await expect(page.locator("[data-challenge-character]")).toContainText(challengerName);
+
+  for (const [questionIndex, [a, b]] of challenge.questions.entries()) {
+    await answerQuestion(page, a, b);
+
+    const isLastQuestion = questionIndex === challenge.questions.length - 1;
+    const nextButton = page.getByRole("button", { name: isLastQuestion ? finalButtonName : "Volgende som" });
+    await nextButton.scrollIntoViewIfNeeded();
+    await tap(nextButton);
+  }
 }
 
 async function playFullAdventure(page) {
@@ -235,6 +284,9 @@ test.describe("Sven en de Runenpoort", () => {
     await expect(page).toHaveTitle("SvenAdventure");
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
     await expect(page.getByRole("button", { name: /Sven en de Runenpoort/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
+    await expect(page.locator(".levelTile")).toHaveCount(1);
   });
 
   test("plays through the full adventure and persists progress", async ({ page }) => {
@@ -267,6 +319,50 @@ test.describe("Sven en de Runenpoort", () => {
     const progressAfterReload = await page.evaluate(() => localStorage.getItem("svenadventure-table-progress-v1"));
     expect(completionAfterReload).toBeTruthy();
     expect(progressAfterReload).toBeTruthy();
+  });
+
+  test("continues through the temple interior and Viking harbor", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium", "The full connected-area chain is covered once on desktop.");
+
+    await playFullAdventure(page);
+    await tap(page.getByRole("button", { name: "De tempel in" }));
+
+    await expect(page.getByRole("heading", { name: "De Tempelzaal" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+    await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Steenpriester");
+
+    for (const challenge of templeChallenges) {
+      await solveChallengeSet(page, challenge, "Rond de proef af", "Steenpriester");
+    }
+
+    await expect(page.getByText("Alle tempelproeven kloppen. De havendeur kan open.")).toBeVisible();
+    await walkRightUntil(page, 1850);
+    await tap(page.getByRole("button", { name: "Naar de haven" }));
+    await expect(page.getByRole("heading", { name: "De havendeur opent!" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Naar de haven" }));
+
+    await expect(page.getByRole("heading", { name: "De Vikinghaven" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+    await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Havenmeester Eivar");
+
+    for (const challenge of harborChallenges) {
+      await solveChallengeSet(page, challenge, "Maak de haven klaar", "Havenmeester Eivar");
+    }
+
+    await expect(page.getByText("Alles is klaar. Sven mag naar de vertrekpoort.")).toBeVisible();
+    await walkRightUntil(page, 1850);
+    await expect(page.getByText("Alles is klaar. Sven mag naar de vertrekpoort.")).toBeVisible();
+    await tap(page.getByRole("button", { name: "Vertrek", exact: true }));
+    await expect(page.getByRole("heading", { name: "Het schip vertrekt!" })).toBeVisible();
+    await expect(page.getByText("Vikinghaven Helper")).toBeVisible();
+    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+    await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Menu" })).toHaveClass(/primaryButton/);
+    await expect(page.getByRole("button", { name: "Speel nog een keer" })).toHaveClass(/secondaryButton/);
   });
 
   test("uses the interactive object registry for round world-aligned circles", async ({ page }) => {
@@ -319,7 +415,7 @@ test.describe("Sven en de Runenpoort", () => {
     await expect(page.locator("[data-developer-tools]")).toBeVisible();
     await expect(page.getByText("Developer Tools")).toBeVisible();
     await expect(page.getByText("Current Mode: Runtime")).toBeVisible();
-    await expect(page.getByText("WalkPath Editing: Unavailable")).toBeVisible();
+    await expect(page.getByText("Level Editing: Unavailable")).toBeVisible();
     await expect(page.getByText("Status: Read-only mode")).toBeVisible();
     await expect(page.getByText("Run npm run dev:walkpath")).toBeVisible();
     await expect(page.getByText("Open http://127.0.0.1:4173/?dev=walkpath")).toBeVisible();
@@ -377,13 +473,14 @@ test.describe("Sven en de Runenpoort", () => {
     await expect(page.locator("[data-debug-overlay]")).toBeVisible();
     await expect(page.locator("[data-developer-tools]")).toBeVisible();
     await expect(page.getByText("Developer Tools")).toBeVisible();
-    await expect(page.getByText("Current Mode: WalkPath Editing")).toBeVisible();
+    await expect(page.getByText("Current Mode: Level Editing")).toBeVisible();
     await expect(page.getByText("Draft Status: Clean")).toBeVisible();
     await expect(page.getByText("How to use:")).toBeVisible();
     await expect(page.getByText("Drag walkPath points")).toBeVisible();
+    await expect(page.getByText("Drag object centers or radius handles")).toBeVisible();
     await expect(page.getByText("Test movement")).toBeVisible();
     await expect(page.getByText("Apply saves to the level file")).toBeVisible();
-    await expect(page.getByText("Revert restores the saved path")).toBeVisible();
+    await expect(page.getByText("Revert restores the saved path and objects")).toBeVisible();
     await expect(page.getByText("The real level file changes only when Apply is pressed.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Apply" })).toBeDisabled();
     await expect(page.getByRole("button", { name: "Revert" })).toBeEnabled();
@@ -416,8 +513,63 @@ test.describe("Sven en de Runenpoort", () => {
     expect(after.derivedNodeCount).toBeGreaterThan(after.authoredNodeCount);
     await expect(page.getByText("Draft Status: Modified")).toBeVisible();
 
+    const objectBefore = await page.evaluate(() => {
+      const object = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].interactiveObjects.find((item) => item.id === "forestRune");
+      return { x: object.center.x, y: object.center.y, radius: object.radius };
+    });
+    const objectCenter = page.locator('[data-object-id="forestRune"][data-object-drag="center"]');
+    const objectCenterBox = await objectCenter.boundingBox();
+    if (!objectCenterBox) throw new Error("interactive object center was not measurable");
+
+    await page.mouse.move(objectCenterBox.x + objectCenterBox.width / 2, objectCenterBox.y + objectCenterBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(objectCenterBox.x + objectCenterBox.width / 2 + 18, objectCenterBox.y + objectCenterBox.height / 2 + 10);
+    await page.mouse.up();
+
+    const objectAfterMove = await page.evaluate(() => {
+      const object = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].interactiveObjects.find((item) => item.id === "forestRune");
+      const hotspot = document.querySelector('[data-object="forestRune"]');
+      return {
+        x: object.center.x,
+        y: object.center.y,
+        radius: object.radius,
+        hotspotX: Number(hotspot.getAttribute("data-world-center-x")),
+        hotspotY: Number(hotspot.getAttribute("data-world-center-y"))
+      };
+    });
+    expect(objectAfterMove.x).not.toBe(objectBefore.x);
+    expect(objectAfterMove.y).not.toBe(objectBefore.y);
+    expect(objectAfterMove.hotspotX).toBe(objectAfterMove.x);
+    expect(objectAfterMove.hotspotY).toBe(objectAfterMove.y);
+    await expect(page.getByText(/forestRune: x/)).toBeVisible();
+
+    const radiusHandle = page.locator('[data-object-id="forestRune"][data-object-drag="radius"]');
+    const radiusBox = await radiusHandle.boundingBox();
+    if (!radiusBox) throw new Error("interactive object radius handle was not measurable");
+
+    await page.mouse.move(radiusBox.x + radiusBox.width / 2, radiusBox.y + radiusBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(radiusBox.x + radiusBox.width / 2 + 22, radiusBox.y + radiusBox.height / 2);
+    await page.mouse.up();
+
+    const objectAfterRadius = await page.evaluate(() => {
+      const object = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].interactiveObjects.find((item) => item.id === "forestRune");
+      const hotspot = document.querySelector('[data-object="forestRune"]');
+      return {
+        radius: object.radius,
+        hotspotRadius: Number(hotspot.getAttribute("data-radius"))
+      };
+    });
+    expect(objectAfterRadius.radius).toBeGreaterThan(objectAfterMove.radius);
+    expect(objectAfterRadius.hotspotRadius).toBe(objectAfterRadius.radius);
+
     await tap(page.getByRole("button", { name: "Revert" }));
     await expect(page.getByText("Draft Status: Reverted")).toBeVisible();
+    const objectAfterRevert = await page.evaluate(() => {
+      const object = window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].interactiveObjects.find((item) => item.id === "forestRune");
+      return { x: object.center.x, y: object.center.y, radius: object.radius };
+    });
+    expect(objectAfterRevert).toEqual(objectBefore);
   });
 
   test("animates Sven as an actor", async ({ page }) => {

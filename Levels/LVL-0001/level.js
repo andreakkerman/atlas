@@ -227,6 +227,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     title: "De poort gaat open!",
     badge: "Bewaker van de Runenpoort",
     line: "Sven reisde door het bos en opende de oude Vikingpoort.",
-    art: "Levels/LVL-0001/assets/reward.png"
+    art: "Levels/LVL-0001/assets/reward.png",
+    nextLevelId: "LVL-0002",
+    nextLabel: "De tempel in"
   }
 };

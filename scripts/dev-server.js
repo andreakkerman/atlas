@@ -73,6 +73,47 @@ function validateWalkPath(value) {
   });
 }
 
+function validateInteractiveObjects(value) {
+  if (!Array.isArray(value) || value.length === 0) {
+    throw new Error("interactiveObjects must be a non-empty array.");
+  }
+
+  return value.map((object, index) => {
+    if (!object || typeof object !== "object" || Array.isArray(object)) {
+      throw new Error(`interactiveObjects[${index}] must be an object.`);
+    }
+    if (typeof object.id !== "string" || !object.id.trim()) {
+      throw new Error(`interactiveObjects[${index}].id must be a non-empty string.`);
+    }
+    if (typeof object.type !== "string" || !object.type.trim()) {
+      throw new Error(`interactiveObjects[${index}].type must be a non-empty string.`);
+    }
+    if (!object.center || !Number.isFinite(object.center.x) || !Number.isFinite(object.center.y)) {
+      throw new Error(`interactiveObjects[${index}].center must have numeric x and y.`);
+    }
+    if (!Number.isFinite(object.radius) || object.radius <= 0) {
+      throw new Error(`interactiveObjects[${index}].radius must be greater than zero.`);
+    }
+
+    const next = {
+      id: object.id,
+      type: object.type,
+      center: {
+        x: Math.round(object.center.x),
+        y: Math.round(object.center.y)
+      },
+      radius: Math.round(object.radius)
+    };
+    if (object.objectId) next.objectId = String(object.objectId);
+    if (object.approachNode) next.approachNode = String(object.approachNode);
+    if (object.label) next.label = String(object.label);
+    if (Array.isArray(object.allowOverlapWith)) {
+      next.allowOverlapWith = object.allowOverlapWith.map(String);
+    }
+    return next;
+  });
+}
+
 function escapeString(value) {
   return String(value).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
 }
@@ -85,12 +126,34 @@ function formatWalkPath(walkPath) {
   return `walkPath: [\n${lines.join(",\n")}\n  ]`;
 }
 
-function findWalkPathRange(source) {
-  const keyIndex = source.indexOf("walkPath:");
-  if (keyIndex === -1) throw new Error("level.js does not contain walkPath.");
+function formatValue(value) {
+  return JSON.stringify(value, null, 6)
+    .replace(/"([^"]+)":/g, "$1:")
+    .replace(/\n/g, "\n  ");
+}
+
+function formatInteractiveObjects(interactiveObjects) {
+  const lines = interactiveObjects.map((object) => {
+    const fields = [];
+    fields.push(`      id: "${escapeString(object.id)}"`);
+    if (object.objectId) fields.push(`      objectId: "${escapeString(object.objectId)}"`);
+    fields.push(`      type: "${escapeString(object.type)}"`);
+    fields.push(`      center: { x: ${object.center.x}, y: ${object.center.y} }`);
+    fields.push(`      radius: ${object.radius}`);
+    if (object.approachNode) fields.push(`      approachNode: "${escapeString(object.approachNode)}"`);
+    if (object.label) fields.push(`      label: "${escapeString(object.label)}"`);
+    if (object.allowOverlapWith) fields.push(`      allowOverlapWith: ${formatValue(object.allowOverlapWith)}`);
+    return `    {\n${fields.join(",\n")}\n    }`;
+  });
+  return `interactiveObjects: [\n${lines.join(",\n")}\n  ]`;
+}
+
+function findArrayPropertyRange(source, propertyName) {
+  const keyIndex = source.indexOf(`${propertyName}:`);
+  if (keyIndex === -1) throw new Error(`level.js does not contain ${propertyName}.`);
 
   const start = source.indexOf("[", keyIndex);
-  if (start === -1) throw new Error("walkPath does not contain an array.");
+  if (start === -1) throw new Error(`${propertyName} does not contain an array.`);
 
   let depth = 0;
   let inString = false;
@@ -125,14 +188,21 @@ function findWalkPathRange(source) {
     }
   }
 
-  throw new Error("walkPath array was not closed.");
+  throw new Error(`${propertyName} array was not closed.`);
 }
 
-function applyWalkPathToLevel(levelId, walkPath) {
+function applyLevelDraft(levelId, draft) {
   const filePath = levelPath(levelId);
-  const source = fs.readFileSync(filePath, "utf8");
-  const range = findWalkPathRange(source);
-  const updated = `${source.slice(0, range.start)}${formatWalkPath(walkPath)}${source.slice(range.end)}`;
+  let source = fs.readFileSync(filePath, "utf8");
+  if (draft.interactiveObjects) {
+    const range = findArrayPropertyRange(source, "interactiveObjects");
+    source = `${source.slice(0, range.start)}${formatInteractiveObjects(draft.interactiveObjects)}${source.slice(range.end)}`;
+  }
+  if (draft.walkPath) {
+    const range = findArrayPropertyRange(source, "walkPath");
+    source = `${source.slice(0, range.start)}${formatWalkPath(draft.walkPath)}${source.slice(range.end)}`;
+  }
+  const updated = source;
   fs.writeFileSync(filePath, updated);
 }
 
@@ -172,20 +242,27 @@ async function handleDevRequest(request, response, url) {
 
     if (request.method === "POST") {
       const body = JSON.parse(await readBody(request) || "{}");
-      const walkPath = validateWalkPath(body.walkPath);
+      const draft = {};
+      if (body.walkPath !== undefined) draft.walkPath = validateWalkPath(body.walkPath);
+      if (body.interactiveObjects !== undefined) {
+        draft.interactiveObjects = validateInteractiveObjects(body.interactiveObjects);
+      }
+      if (!draft.walkPath && !draft.interactiveObjects) {
+        throw new Error("Request must include walkPath or interactiveObjects.");
+      }
 
       if (action === "walkpath-draft") {
         fs.writeFileSync(draftPath(levelId), JSON.stringify({
           levelId,
           updatedAt: new Date().toISOString(),
-          walkPath
+          ...draft
         }, null, 2));
         sendJson(response, 200, { ok: true, draft: true });
         return true;
       }
 
       if (action === "apply-walkpath") {
-        applyWalkPathToLevel(levelId, walkPath);
+        applyLevelDraft(levelId, draft);
         const filePath = draftPath(levelId);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         sendJson(response, 200, { ok: true, applied: true });
