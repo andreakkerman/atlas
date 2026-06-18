@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v1";
+const CACHE_NAME = "svenadventure-static-v2";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -13,6 +13,10 @@ const CORE_ASSETS = [
   "assets/branding/icon-512.png",
   "assets/guides/minnie.png",
   "assets/guides/moose.png",
+  "assets/audio/guides/cat_purr_minnie1.mp3",
+  "assets/audio/guides/cat_purr_minnie2.mp3",
+  "assets/audio/guides/cat_purr_moose1.mp3",
+  "assets/audio/guides/cat_purr_moose2.mp3",
   "assets/sven-stage.png",
   "assets/audio/music/menu.mp3",
   "Levels/LVL-0001/assets/level-1-wide-world.png",

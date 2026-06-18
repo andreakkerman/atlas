@@ -68,12 +68,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       label: "Scheepskompas"
     },
     {
-      id: "cargoCrate",
+      id: "mooringRope",
       type: "rune",
-      center: { x: 1493, y: 243 },
+      center: { x: 1190, y: 430 },
       radius: 78,
-      approachNode: "crate-approach",
-      label: "Ladingskist"
+      approachNode: "dock-center",
+      label: "Touwrol"
     },
     {
       id: "gateShield",
@@ -157,38 +157,59 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       id: "harbor-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh, hoor je het water tegen de kade?"
+      text: "Ik hoor water, touwen en een schip dat wil vertrekken."
     },
     {
-      id: "harbor-object",
-      event: "OBJECT_FIRST_LOOK",
+      id: "harbor-rope",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "mooringRope",
+      speaker: "moose",
+      text: "Een nette rol touw. In een haven is dat bijna verdacht netjes."
+    },
+    {
+      id: "harbor-map",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "harborMap",
       speaker: "minnie",
-      text: "Daar zit zeelucht in. En misschien een geheim."
+      text: "De havenkaart staat vol steigers. Welke som maakt de route duidelijk?"
     },
     {
-      id: "harbor-challenge-open",
-      event: "CHALLENGE_OPEN",
-      speaker: "moose",
-      text: "Een schip vertrekt pas als alles klopt.",
-      bridge: "Even opletten."
+      id: "harbor-compass",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "shipCompass",
+      speaker: "minnie",
+      text: "Het kompas draait langs lichtjes. Ik wil ze allemaal tellen."
     },
     {
-      id: "harbor-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "harbor-shield",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "gateShield",
+      speaker: "minnie",
+      text: "Het poortschild gloeit blauw. De tekens lijken op een telpatroon."
+    },
+    {
+      id: "harbor-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
       speaker: "moose",
-      text: "Bijna. Beter nu twijfelen dan op zee."
+      text: "{completed} van de {total} havenproeven klaar. Nog {remaining}."
+    },
+    {
+      id: "harbor-exit-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De vertrekpoort blijft dicht. Eerst nog {remaining} havenproeven."
     },
     {
       id: "harbor-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "moose",
-      text: "De wind staat goed. Nu kan Sven uitvaren."
+      text: "De haven is klaar. Tijd om te varen."
     },
     {
       id: "harbor-unlocked",
       event: "PATH_UNLOCKED",
-      speaker: "moose",
-      text: "Alles is klaar. Sven mag naar de vertrekpoort."
+      speaker: "minnie",
+      text: "Alles staat klaar! De vertrekpoort kan nu open."
     }
   ],
   areas: [
@@ -243,14 +264,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       ]
     },
     {
-      id: "cargoCrate",
-      objectId: "cargoCrate",
-      name: "Ladingskist",
-      shortName: "Kist",
+      id: "mooringRope",
+      objectId: "mooringRope",
+      name: "Touwrol",
+      shortName: "Touw",
       defaultAction: "activate",
-      intro: "De kist hangt aan de kraan.",
-      prompt: "Tel de voorraad voor het schip.",
-      solved: "Sterk! De kist staat klaar.",
+      intro: "Het meertouw ligt in nette lussen.",
+      prompt: "Tel de lussen van het touw.",
+      solved: "Sterk! Het touw ligt klaar.",
       questions: [
         { a: 7, b: 5 },
         { a: 8, b: 6 },

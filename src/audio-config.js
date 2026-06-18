@@ -27,6 +27,12 @@ window.SVEN_AUDIO_CONFIG = {
       "challengeComplete": "assets/audio/sfx/challenge-complete.mp3",
       "unlock": "assets/audio/sfx/unlock.mp3",
       "adventureComplete": "assets/audio/sfx/adventure-complete.mp3"
+    },
+    "guides": {
+      "minnie1": "assets/audio/guides/cat_purr_minnie1.mp3",
+      "minnie2": "assets/audio/guides/cat_purr_minnie2.mp3",
+      "moose1": "assets/audio/guides/cat_purr_moose1.mp3",
+      "moose2": "assets/audio/guides/cat_purr_moose2.mp3"
     }
   },
   "menu": {
@@ -109,6 +115,7 @@ window.SVEN_AUDIO_CONFIG = {
   },
   "volumes": {
     "master": 0.82,
+    "companionPurr": 0.55,
     "sfx": {
       "uiClick": 0.75,
       "challengeOpen": 0.58,

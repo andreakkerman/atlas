@@ -48,7 +48,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     {
       id: "forestRune",
       objectId: "forestRune",
-      type: "object",
+      type: "ambient",
       center: { x: 273, y: 468 },
       radius: 48,
       approachNode: "forest-rune-approach",
@@ -166,40 +166,59 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       id: "runenpoort-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh, dit bos bewaart duidelijk een geheim."
+      text: "Kijk, blauwe tekens tussen de oude bomen."
     },
     {
-      id: "runenpoort-forest-look",
-      event: "OBJECT_FIRST_LOOK",
+      id: "runenpoort-forest-rune",
+      event: "AMBIENT_ATTENTION",
       objectId: "forestRune",
       speaker: "minnie",
-      text: "Die steen lijkt ouder dan alle bomen hier."
+      text: "Deze bossteen wijst naar de tempel. Handig, zo'n stenen wegwijzer."
     },
     {
-      id: "runenpoort-challenge-open",
-      event: "CHALLENGE_OPEN",
-      speaker: "moose",
-      text: "Rustig kijken. Runen houden niet van haast.",
-      bridge: "Even opletten."
-    },
-    {
-      id: "runenpoort-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "runenpoort-zon",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "zon",
       speaker: "minnie",
-      text: "Bijna. Ik zie het patroon al beter."
+      text: "De Zonrune voelt warm. Welke som laat haar feller gloeien?"
+    },
+    {
+      id: "runenpoort-steen",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "steen",
+      speaker: "moose",
+      text: "De Steenrune is zwaar en stil. Net als een steen, verrassend genoeg."
+    },
+    {
+      id: "runenpoort-wind",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "wind",
+      speaker: "minnie",
+      text: "De Windrune suist zacht. Ik denk dat ze op een antwoord wacht."
+    },
+    {
+      id: "runenpoort-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "moose",
+      text: "{completed} van de {total} runen klaar. Nog {remaining} te gaan."
+    },
+    {
+      id: "runenpoort-exit-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De poort zit dicht. Eerst nog {remaining} runen."
     },
     {
       id: "runenpoort-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "moose",
-      text: "Goed gedaan, Sven. De poort is open."
+      text: "De Runenpoort is open. Mooi werk, Sven."
     },
     {
       id: "runenpoort-unlocked",
       event: "PATH_UNLOCKED",
-      speaker: "moose",
-      text: "Alle runen gloeien. Nu voorzichtig naar de poort.",
-      bridge: "O, wacht..."
+      speaker: "minnie",
+      text: "Alle drie de runen gloeien! De poort kan nu open."
     }
   ],
   areas: [
@@ -210,7 +229,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     {
       id: "forestRune",
       objectId: "forestRune",
-      type: "object",
+      type: "ambient",
       name: "Bosrune",
       defaultAction: "look",
       look: "Een oude steen. Hij wijst naar de tempel.",

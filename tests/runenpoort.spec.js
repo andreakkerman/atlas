@@ -23,7 +23,7 @@ const templeChallenges = [
 const harborChallenges = [
   { name: "Havenkaart" },
   { name: "Scheepskompas" },
-  { name: "Ladingskist" },
+  { name: "Touwrol" },
   { name: "Poortschild" }
 ];
 
@@ -189,16 +189,17 @@ async function startAdventure(page, url = gameUrl) {
   const activePortrait = await page.locator(".teamPortraitActive").boundingBox();
   const inactivePortrait = await page.locator(".teamPortraitInactive").boundingBox();
   const teamCard = await page.locator("[data-adventure-team-bar]").boundingBox();
-  expect(activePortrait.width).toBeGreaterThan(inactivePortrait.width + 20);
-  expect(activePortrait.height).toBeGreaterThan(inactivePortrait.height + 20);
-  expect(teamCard.height).toBeLessThan(activePortrait.height);
+  expect(Math.abs(activePortrait.width - inactivePortrait.width)).toBeLessThan(8);
+  expect(Math.abs(activePortrait.height - inactivePortrait.height)).toBeLessThan(8);
+  expect(activePortrait.x).toBeLessThan(inactivePortrait.x);
+  expect(teamCard.height).toBeLessThan(100);
   await expect(page.locator(".runeHotspot")).toHaveText(["", "", ""]);
   await expect(page.locator("[data-world-stage]")).toBeVisible();
 }
 
 async function travelToTemple(page) {
   await tap(page.getByRole("button", { name: "Bosrune" }));
-  await expect(page.getByText("Die steen lijkt ouder dan alle bomen hier.")).toBeVisible();
+  await expect(page.getByText("Deze bossteen wijst naar de tempel. Handig, zo'n stenen wegwijzer.")).toBeVisible();
 
   await walkTowardTemple(page);
   await expect(page.getByText("Sven loopt")).toHaveCount(0);
@@ -334,7 +335,8 @@ async function answerCurrentQuestion(page, options = {}) {
     }, correct);
 
     await tap(page.locator(`button[data-choice="${wrongChoice}"]`));
-    await expect(page.locator(".feedback")).toContainText("Bijna.");
+    await expect(page.getByText(`Hoeveel is ${a} x ${b}?`)).toBeVisible();
+    await expect(page.locator(".feedback")).toHaveCount(0);
   }
 
   await tap(page.locator(`button[data-choice="${correct}"]`));
@@ -342,8 +344,14 @@ async function answerCurrentQuestion(page, options = {}) {
   await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
 }
 
+async function openChallengePoint(page, challengeName) {
+  const target = page.getByRole("button", { name: challengeName });
+  await tap(target);
+  await expect(page.getByRole("heading", { name: challengeName })).toBeVisible({ timeout: 22000 });
+}
+
 async function solveChallengeSet(page, challenge, finalButtonName, challengerName, options = {}) {
-  await tap(page.getByRole("button", { name: challenge.name }));
+  await openChallengePoint(page, challenge.name);
   await expect(page.getByRole("heading", { name: challenge.name })).toBeVisible();
   await expect(page.locator("[data-challenge-character]")).toContainText(challengerName);
 
@@ -377,13 +385,13 @@ async function playFullAdventure(page) {
   await travelToTemple(page);
 
   for (const [runeIndex, rune] of runes.entries()) {
-    await tap(page.getByRole("button", { name: rune.name }));
+    await openChallengePoint(page, rune.name);
     await expect(page.getByRole("heading", { name: rune.name })).toBeVisible();
     await expect(page.locator("[data-challenge-character='runewachter']")).toBeVisible();
     await expect(page.locator("[data-challenge-character='runewachter']")).toContainText("Runewachter");
     await expect(page.locator("[data-challenge-character='runewachter'] img")).toHaveAttribute("src", /viking-spirit\.png/);
-    await expect(page.getByText(`Laat de ${rune.name} ontwaken.`)).toBeVisible();
-    await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Runewachter");
+    await expect(page.getByText(`Laat de ${rune.name} ontwaken.`)).toHaveCount(0);
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
 
     for (let questionIndex = 0; questionIndex < 4; questionIndex += 1) {
       await answerCurrentQuestion(page, {
@@ -418,16 +426,13 @@ async function playFullAdventure(page) {
     }
   }
 
-  if (await page.getByText("O, wacht...").isVisible().catch(() => false)) {
-    await page.locator("[data-adventure-team-bar]").click({ force: true });
-  }
-  await expect(page.getByText("Alle runen gloeien. Nu voorzichtig naar de poort.")).toBeVisible();
+  await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
   await expect(page.locator('[data-object="templeGate"]')).toBeVisible();
   await tap(page.getByRole("button", { name: "Ga naar binnen" }));
   await expect(page.getByText("Bewaker van de Runenpoort")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
-  await expect(page.locator("[data-adventure-team-bar]")).toContainText("Goed gedaan, Sven. De poort is open.");
+  await expect(page.locator("[data-adventure-team-bar]")).toContainText("De Runenpoort is open. Mooi werk, Sven.");
   await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
 }
 
@@ -553,7 +558,7 @@ test.describe("SvenAdventure", () => {
     });
     expect(cursorState).toEqual({
       portraitsCursor: "default",
-      portraitsPointerEvents: "none",
+      portraitsPointerEvents: "auto",
       speechCursor: "pointer",
       barCursor: "default"
     });
@@ -617,7 +622,7 @@ test.describe("SvenAdventure", () => {
       await solveChallengeSet(page, challenge, "Rond de proef af", "Steenpriester");
     }
 
-    await expect(page.getByText("Alle tempelproeven kloppen. De havendeur kan open.")).toBeVisible();
+    await expect(page.getByText("Alle proeven zijn klaar! De havendeur kan nu open.")).toBeVisible();
     await triggerWorldExit(page, "Havendeur", "De havendeur opent!");
     await expect(page.getByRole("heading", { name: "De havendeur opent!" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Naar de haven" }));
@@ -633,7 +638,7 @@ test.describe("SvenAdventure", () => {
       await solveChallengeSet(page, challenge, "Maak de haven klaar", "Havenmeester Eivar");
     }
 
-    await expect(page.getByText("Alles is klaar. Sven mag naar de vertrekpoort.")).toBeVisible();
+    await expect(page.getByText("Alles staat klaar! De vertrekpoort kan nu open.")).toBeVisible();
     await triggerWorldExit(page, "Vertrekpoort", "Het schip vertrekt!");
     await expect(page.getByRole("heading", { name: "Het schip vertrekt!" })).toBeVisible();
     await expect(page.getByText("Vikinghaven Helper")).toBeVisible();
@@ -824,6 +829,7 @@ test.describe("SvenAdventure", () => {
         levelSemantics: level.levelSemantics,
         companionMoments: level.companionMoments,
         objectIds: level.interactiveObjects.map((object) => object.id),
+        ambientIds: level.interactiveObjects.filter((object) => object.type === "ambient").map((object) => object.id),
         challengeIds: level.runes.map((rune) => rune.id)
       }));
     });
@@ -831,7 +837,11 @@ test.describe("SvenAdventure", () => {
     const allowedEvents = new Set([
       "LEVEL_ENTER",
       "OBJECT_FIRST_LOOK",
+      "AMBIENT_ATTENTION",
+      "HOTSPOT_ATTENTION_FIRST",
       "CHALLENGE_OPEN",
+      "LEVEL_PROGRESS_MILESTONE",
+      "EXIT_BLOCKED",
       "CHALLENGE_FAIL_1",
       "CHALLENGE_FAIL_2",
       "CHALLENGE_SUCCESS",
@@ -845,7 +855,7 @@ test.describe("SvenAdventure", () => {
       expect(loadedLevel.levelSemantics?.companionFocus?.minnie, `${loadedLevel.id} Minnie focus`).toBeTruthy();
       expect(loadedLevel.levelSemantics?.companionFocus?.moose, `${loadedLevel.id} Moose focus`).toBeTruthy();
       expect(loadedLevel.companionMoments.length, `${loadedLevel.id} moments`).toBeGreaterThanOrEqual(4);
-      expect(loadedLevel.companionMoments.length, `${loadedLevel.id} moments`).toBeLessThanOrEqual(6);
+      expect(loadedLevel.companionMoments.length, `${loadedLevel.id} moments`).toBeLessThanOrEqual(12);
 
       for (const moment of loadedLevel.companionMoments) {
         expect(allowedEvents.has(moment.event), `${loadedLevel.id}.${moment.id} event`).toBe(true);
@@ -854,14 +864,182 @@ test.describe("SvenAdventure", () => {
         if (moment.objectId) expect(loadedLevel.objectIds).toContain(moment.objectId);
         if (moment.challengeId) expect(loadedLevel.challengeIds).toContain(moment.challengeId);
       }
+
+      if (["LVL-0001", "LVL-0002", "LVL-0003"].includes(loadedLevel.id)) {
+        for (const challengeId of loadedLevel.challengeIds) {
+          expect(
+            loadedLevel.companionMoments.some(
+              (moment) => moment.event === "HOTSPOT_ATTENTION_FIRST" && moment.challengeId === challengeId
+            ),
+            `${loadedLevel.id}.${challengeId} challenge attention`
+          ).toBe(true);
+        }
+        for (const ambientId of loadedLevel.ambientIds) {
+          expect(
+            loadedLevel.companionMoments.some(
+              (moment) => moment.event === "AMBIENT_ATTENTION" && moment.objectId === ambientId
+            ),
+            `${loadedLevel.id}.${ambientId} ambient attention`
+          ).toBe(true);
+        }
+      }
     }
+  });
+
+  test("shows challenge attention while walking and opens on one tap", async ({ page }) => {
+    await startAdventure(page);
+    await travelToTemple(page);
+
+    const sun = page.getByRole("button", { name: "Zonrune" });
+    await tap(sun);
+    await expect(sun).toHaveClass(/runeSelected/);
+    await expect(page.getByText("De Zonrune voelt warm. Welke som laat haar feller gloeien?")).toBeVisible();
+    await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
+    await expect(page.locator(".teamMessage")).toHaveText("De Zonrune voelt warm. Welke som laat haar feller gloeien?");
+    await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible({ timeout: 22000 });
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+  });
+
+  test("keeps ambient points separate from challenges", async ({ page }) => {
+    await startAdventure(page);
+
+    await tap(page.getByRole("button", { name: "Bosrune" }));
+    await expect(page.getByText("Deze bossteen wijst naar de tempel. Handig, zo'n stenen wegwijzer.")).toBeVisible();
+    await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
+    expect(await page.evaluate(() => window.eval("state.selectedChallengeId"))).toBeNull();
+    expect(await page.evaluate(() => window.eval("state.activeRuneId"))).toBeNull();
+  });
+
+  test("opens the Viking harbour rope challenge on one tap", async ({ page }) => {
+    await startAdventure(page);
+    await travelToTemple(page);
+
+    for (const challenge of runes) {
+      await solveChallengeSet(page, challenge, "Maak de rune wakker", "Runewachter");
+    }
+    await triggerWorldExit(page, "Runenpoort", "De poort gaat open!");
+    await tap(page.getByRole("button", { name: "De tempel in" }));
+    await waitForImages(page);
+    await expect(page.getByRole("heading", { name: "De Tempelzaal" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+
+    for (const challenge of templeChallenges) {
+      await solveChallengeSet(page, challenge, "Rond de proef af", "Steenpriester");
+    }
+    await triggerWorldExit(page, "Havendeur", "De havendeur opent!");
+    await tap(page.getByRole("button", { name: "Naar de haven" }));
+    await waitForImages(page);
+    await expect(page.getByRole("heading", { name: "De Vikinghaven" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+
+    const rope = page.getByRole("button", { name: "Touwrol" });
+    await tap(rope);
+    await expect(rope).toHaveClass(/runeSelected/);
+    await expect(page.getByText("Een nette rol touw. In een haven is dat bijna verdacht netjes.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Touwrol" })).toBeVisible({ timeout: 22000 });
+    await expect(page.locator("[data-challenge-character='havenmeester-eivar']")).toBeVisible();
+  });
+
+  test("cancels a pending challenge when the player walks elsewhere", async ({ page }) => {
+    await startAdventure(page);
+    await travelToTemple(page);
+
+    await tap(page.getByRole("button", { name: "Windrune" }));
+    await expect(page.getByText("De Windrune suist zacht. Ik denk dat ze op een antwoord wacht.")).toBeVisible();
+    await clickWalkableGround(page, 0.35);
+    await waitForIdle(page);
+    await expect(page.getByRole("heading", { name: "Windrune" })).toHaveCount(0);
+    expect(await page.evaluate(() => window.eval("state.selectedChallengeId"))).toBeNull();
+  });
+
+  test("guide portraits play non-overlapping purr audio without changing dialogue", async ({ page }) => {
+    await startAdventure(page);
+    await page.evaluate(() => {
+      Math.random = () => 0;
+    });
+
+    const before = await page.locator(".teamMessage").textContent();
+    await tap(page.locator('[data-purr-guide="minnie"]'));
+    await expect(page.locator('[data-purr-guide="minnie"]')).toHaveClass(/teamPortraitPurring/);
+    const first = await page.evaluate(() => ({
+      guide: window.eval("audioState.purringGuide"),
+      key: window.eval("audioState.lastPurrByGuide.minnie"),
+      message: window.eval("state.guideMessage.text")
+    }));
+    expect(first).toEqual({ guide: "minnie", key: "minnie1", message: before });
+
+    await tap(page.locator('[data-purr-guide="moose"]'));
+    expect(await page.evaluate(() => window.eval("audioState.purringGuide"))).toBe("minnie");
+    await expect(page.locator(".teamMessage")).toHaveText(before);
+
+    await page.evaluate(() => window.eval("audioState.purr").dispatchEvent(new Event("ended")));
+    await tap(page.locator('[data-purr-guide="minnie"]'));
+    expect(await page.evaluate(() => window.eval("audioState.lastPurrByGuide.minnie"))).toBe("minnie2");
+  });
+
+  test("keeps Minnie left and Moose right when the active speaker changes", async ({ page }) => {
+    await startAdventure(page);
+
+    const positionsBefore = await page.evaluate(() => ({
+      minnie: document.querySelector('[data-guide="minnie"]').getBoundingClientRect().x,
+      moose: document.querySelector('[data-guide="moose"]').getBoundingClientRect().x,
+      height: document.querySelector("[data-adventure-team-bar]").getBoundingClientRect().height
+    }));
+    expect(positionsBefore.minnie).toBeLessThan(positionsBefore.moose);
+    expect(positionsBefore.height).toBeLessThan(100);
+
+    await page.evaluate(() => {
+      window.eval("setGuideMessage")({ speaker: "moose", text: "Touw vast, dan varen." }, "moose");
+      window.eval("render")();
+    });
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
+    await expect(page.locator('[data-guide="moose"]')).toHaveClass(/teamPortraitActive/);
+    await expect(page.locator('[data-guide="minnie"]')).toHaveClass(/teamPortraitInactive/);
+
+    const positionsAfter = await page.evaluate(() => ({
+      minnie: document.querySelector('[data-guide="minnie"]').getBoundingClientRect().x,
+      moose: document.querySelector('[data-guide="moose"]').getBoundingClientRect().x
+    }));
+    expect(positionsAfter.minnie).toBeLessThan(positionsAfter.moose);
+  });
+
+  test("shows reliable locked exit, progress and unlocked feedback", async ({ page }) => {
+    await startAdventure(page);
+
+    await page.getByRole("button", { name: "Runenpoort" }).dispatchEvent("click");
+    await expect(page.getByText("De poort zit dicht. Eerst nog 3 runen.")).toBeVisible({ timeout: 22000 });
+
+    await startAdventure(page);
+    await travelToTemple(page);
+    await solveChallengeSet(page, { name: "Zonrune" }, "Maak de rune wakker", "Runewachter");
+    await expect(page.getByText("1 van de 3 runen klaar. Nog 2 te gaan.")).toBeVisible();
+
+    await solveChallengeSet(page, { name: "Steenrune" }, "Maak de rune wakker", "Runewachter");
+    await solveChallengeSet(page, { name: "Windrune" }, "Maak de rune wakker", "Runewachter");
+    await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
+  });
+
+  test("challenge overlay only keeps challenger, title, question and answers", async ({ page }) => {
+    await startAdventure(page);
+    await travelToTemple(page);
+    await openChallengePoint(page, "Zonrune");
+
+    await expect(page.locator("[data-challenge-character='runewachter'] img")).toBeVisible();
+    await expect(page.getByText(/Runewachter - Rune 1\/4/)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible();
+    await expect(page.locator(".sum")).toBeVisible();
+    await expect(page.locator(".choices button")).toHaveCount(4);
+    await expect(page.locator(".feedback")).toHaveCount(0);
+    await expect(page.locator(".runeWhisper")).toHaveCount(0);
+    await expect(page.getByText("Laat de Zonrune ontwaken.")).toHaveCount(0);
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
   });
 
   test("requires four correct answers before a challenge completes", async ({ page }) => {
     await startAdventure(page);
     await travelToTemple(page);
 
-    await tap(page.getByRole("button", { name: "Zonrune" }));
+    await openChallengePoint(page, "Zonrune");
     await expect(page.getByText(/Runewachter - Rune 1\/4/)).toBeVisible();
 
     for (let index = 1; index <= 3; index += 1) {
@@ -883,7 +1061,7 @@ test.describe("SvenAdventure", () => {
       await page.evaluate((value) => {
         Math.random = () => value;
       }, randomValue);
-      await tap(page.getByRole("button", { name: "Zonrune" }));
+      await openChallengePoint(page, "Zonrune");
       const question = await getCurrentQuestion(page);
       return `${question.a}x${question.b}`;
     }
@@ -937,7 +1115,7 @@ test.describe("SvenAdventure", () => {
 
     expect(alignment.objectIds).toEqual(["forestRune", "zon", "steen", "wind", "templeGate"]);
     expect(alignment.pathRange).toBeGreaterThan(120);
-    expect(alignment.targets.length).toBe(4);
+    expect(alignment.targets.length).toBe(5);
     expect(alignment.stepRange).toBeGreaterThan(70);
 
     await page.keyboard.press("Control+Shift+D");
@@ -1016,6 +1194,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator("[data-audio-editor]")).toBeVisible();
     await expect(page.locator('[data-audio-path="levels.LVL-0001.musicVolume"]')).toBeVisible();
     await expect(page.locator('[data-audio-path="levels.LVL-0001.ambienceVolume"]')).toBeVisible();
+    await expect(page.locator('[data-audio-path="volumes.companionPurr"]')).toBeVisible();
+    await expect(page.getByText("Companion purr volume")).toBeVisible();
     await expect(page.locator("[data-sfx-test]")).toHaveCount(7);
     await expect(page.getByRole("button", { name: "Apply" })).toBeDisabled();
     await expect(page.getByRole("button", { name: "Revert" })).toBeEnabled();
@@ -1118,18 +1298,21 @@ test.describe("SvenAdventure", () => {
     const audioBefore = await page.evaluate(() => {
       return {
         master: window.SVEN_AUDIO_CONFIG.volumes.master,
-        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume
+        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume,
+        companionPurr: window.SVEN_AUDIO_CONFIG.volumes.companionPurr
       };
     });
     await page.locator('[data-audio-path="volumes.master"]').fill("0.37");
     await page.locator('[data-audio-path="levels.LVL-0001.musicVolume"]').fill("0.33");
+    await page.locator('[data-audio-path="volumes.companionPurr"]').fill("0.44");
     const audioAfter = await page.evaluate(() => {
       return {
         master: window.SVEN_AUDIO_CONFIG.volumes.master,
-        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume
+        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume,
+        companionPurr: window.SVEN_AUDIO_CONFIG.volumes.companionPurr
       };
     });
-    expect(audioAfter).toEqual({ master: 0.37, music: 0.33 });
+    expect(audioAfter).toEqual({ master: 0.37, music: 0.33, companionPurr: 0.44 });
     await expect(page.getByText("Draft Status: Modified")).toBeVisible();
 
     await tap(page.getByRole("button", { name: "Revert" }));
@@ -1142,7 +1325,8 @@ test.describe("SvenAdventure", () => {
     const audioAfterRevert = await page.evaluate(() => {
       return {
         master: window.SVEN_AUDIO_CONFIG.volumes.master,
-        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume
+        music: window.SVEN_AUDIO_CONFIG.levels["LVL-0001"].musicVolume,
+        companionPurr: window.SVEN_AUDIO_CONFIG.volumes.companionPurr
       };
     });
     expect(audioAfterRevert).toEqual(audioBefore);
@@ -1218,7 +1402,7 @@ test.describe("SvenAdventure", () => {
     await waitForIdle(page);
     await expect(actorShell).toHaveClass(/sven-facing-right/);
 
-    await tap(page.getByRole("button", { name: "Steenrune" }));
+    await openChallengePoint(page, "Steenrune");
     await expect
       .poll(async () => Number(await actor.getAttribute("data-world-y")), {
         message: "Sven should climb the temple steps toward the stone rune"
@@ -1240,7 +1424,7 @@ test.describe("SvenAdventure", () => {
       .toBe("interact");
     await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible();
     await expect(page.locator("[data-challenge-character='runewachter']")).toBeVisible();
-    await expect(page.getByText("Laat de Zonrune ontwaken.")).toBeVisible();
+    await expect(page.getByText("Laat de Zonrune ontwaken.")).toHaveCount(0);
 
     const anchorAlignment = await page.evaluate(() => {
       const rune = document.querySelector('[data-rune="zon"]');

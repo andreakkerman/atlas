@@ -84,6 +84,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       label: "Scheepsmodel"
     },
     {
+      id: "templeTorch",
+      type: "ambient",
+      center: { x: 1735, y: 285 },
+      radius: 54,
+      approachNode: "ship-model-approach",
+      label: "Wandfakkel"
+    },
+    {
       id: "harborDoor",
       type: "gate",
       center: { x: 1999, y: 477 },
@@ -157,44 +165,80 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       id: "temple-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh... het ruikt naar rook en geheimen."
+      text: "Wat een zaal. Ik zie schilden, vuur en een klein schip."
     },
     {
-      id: "temple-object",
-      event: "OBJECT_FIRST_LOOK",
+      id: "temple-torch",
+      event: "AMBIENT_ATTENTION",
+      objectId: "templeTorch",
       speaker: "minnie",
-      text: "Alles hier lijkt expres neergezet. Zelfs het stof."
+      text: "Deze fakkel brandt zonder hout. Dat is een knap tempeltrucje."
     },
     {
-      id: "temple-challenge-open",
-      event: "CHALLENGE_OPEN",
+      id: "temple-shields",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "shieldWall",
       speaker: "moose",
-      text: "Oude tempels testen liever rustig dan snel.",
-      bridge: "Even opletten."
+      text: "De schilden hangen in rijen. Tellen is veiliger dan ermee zwaaien."
     },
     {
-      id: "temple-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "temple-map",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "mapTable",
+      speaker: "minnie",
+      text: "Op de kaart lopen routes door elkaar. Welke som vindt de goede weg?"
+    },
+    {
+      id: "temple-fire",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "fireBowl",
       speaker: "moose",
-      text: "Bijna. De tempel wacht wel even."
+      text: "De vuurschaal springt in groepjes. Handen thuis, hoofd aan."
+    },
+    {
+      id: "temple-ship",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "shipModel",
+      speaker: "minnie",
+      text: "Het kleine schip heeft veel riemen. Ik wil weten hoeveel precies."
+    },
+    {
+      id: "temple-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "moose",
+      text: "{completed} van de {total} tempelproeven klaar. Nog {remaining}."
+    },
+    {
+      id: "temple-exit-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De havendeur blijft dicht. Eerst nog {remaining} proeven."
     },
     {
       id: "temple-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "moose",
-      text: "De tempel laat Sven verder gaan."
+      text: "De tempelproeven zijn klaar. Op naar de haven."
     },
     {
       id: "temple-unlocked",
       event: "PATH_UNLOCKED",
-      speaker: "moose",
-      text: "Alle tempelproeven kloppen. De havendeur kan open."
+      speaker: "minnie",
+      text: "Alle proeven zijn klaar! De havendeur kan nu open."
     }
   ],
   areas: [
     { id: "interior", name: "Tempelzaal", start: 0, end: 2172, guideLine: "interior" }
   ],
   hotspots: [
+    {
+      id: "templeTorch",
+      objectId: "templeTorch",
+      type: "ambient",
+      name: "Wandfakkel",
+      defaultAction: "look",
+      look: "Een oude fakkel die helder blijft branden."
+    },
     {
       id: "harborDoor",
       objectId: "harborDoor",

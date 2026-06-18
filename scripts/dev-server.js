@@ -159,6 +159,7 @@ function validateAudioConfig(value) {
   const music = validateTrackGroup(tracks.music, "audioConfig.tracks.music");
   const ambience = validateTrackGroup(tracks.ambience, "audioConfig.tracks.ambience");
   const sfx = validateTrackGroup(tracks.sfx, "audioConfig.tracks.sfx");
+  const guides = validateTrackGroup(tracks.guides, "audioConfig.tracks.guides");
 
   const menuMusic = String(value.menu?.music || "");
   if (!music[menuMusic]) throw new Error(`audioConfig.menu.music references missing music track: ${menuMusic}`);
@@ -186,7 +187,7 @@ function validateAudioConfig(value) {
   });
 
   return {
-    tracks: { music, ambience, sfx },
+    tracks: { music, ambience, sfx, guides },
     menu: {
       music: menuMusic,
       musicVolume: validateVolume(value.menu?.musicVolume, "audioConfig.menu.musicVolume")
@@ -194,6 +195,7 @@ function validateAudioConfig(value) {
     levels,
     volumes: {
       master: validateVolume(value.volumes?.master, "audioConfig.volumes.master"),
+      companionPurr: validateVolume(value.volumes?.companionPurr ?? 0.55, "audioConfig.volumes.companionPurr"),
       sfx: sfxVolumes
     }
   };

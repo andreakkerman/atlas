@@ -9,6 +9,11 @@ let debugOverlayEnabled = false;
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
 const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "editor";
+const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
+const GUIDE_PURR_KEYS = {
+  minnie: ["minnie1", "minnie2"],
+  moose: ["moose1", "moose2"]
+};
 const SFX_LABELS = {
   uiClick: "UI click",
   challengeOpen: "Challenge open",
@@ -21,14 +26,25 @@ const SFX_LABELS = {
 const COMPANION_EVENT_PRIORITY = {
   LEVEL_ENTER: 10,
   OBJECT_FIRST_LOOK: 20,
+  AMBIENT_ATTENTION: 25,
+  HOTSPOT_ATTENTION_FIRST: 30,
   COMPANION_CONVERSATION: 30,
   CHALLENGE_OPEN: 40,
+  LEVEL_PROGRESS_MILESTONE: 50,
+  EXIT_BLOCKED: 60,
   CHALLENGE_SUCCESS: 60,
   CHALLENGE_FAIL_1: 70,
   CHALLENGE_FAIL_2: 80,
   PATH_UNLOCKED: 90,
   ADVENTURE_COMPLETE: 100
 };
+const IMMEDIATE_COMPANION_EVENTS = new Set([
+  "AMBIENT_ATTENTION",
+  "HOTSPOT_ATTENTION_FIRST",
+  "LEVEL_PROGRESS_MILESTONE",
+  "EXIT_BLOCKED",
+  "PATH_UNLOCKED"
+]);
 const ACTOR_ANIMATIONS = {
   idle: {
     folder: "assets/characters/sven/idle-right",
@@ -71,7 +87,10 @@ const audioState = {
   ambience: null,
   currentMusicKey: null,
   currentAmbienceKey: null,
-  sfx: new Map()
+  sfx: new Map(),
+  purr: null,
+  purringGuide: null,
+  lastPurrByGuide: {}
 };
 
 let walkPathEditor = {
@@ -107,7 +126,9 @@ function createLevelState(selectedLevel) {
     svenFacing: "right",
     moving: false,
     movement: null,
+    interactionToken: 0,
     activeRuneId: null,
+    selectedChallengeId: null,
     activeQuestions: [],
     questionIndex: 0,
     selectedWrong: false,
@@ -186,11 +207,22 @@ function momentMatchesContext(moment, context) {
   return true;
 }
 
+function formatCompanionText(text, context = {}) {
+  const completed = Number(context.completedCount ?? state.completedRunes?.size ?? 0);
+  const total = Number(context.totalCount ?? level?.runes?.length ?? 0);
+  const remaining = Math.max(0, total - completed);
+  return String(text || "")
+    .replaceAll("{completed}", String(completed))
+    .replaceAll("{total}", String(total))
+    .replaceAll("{remaining}", String(remaining));
+}
+
 function authoredCompanionMoments(eventName, context = {}) {
   return (level.companionMoments || [])
     .filter((moment) => moment.event === eventName && momentMatchesContext(moment, context))
     .map((moment) => ({
       ...moment,
+      text: formatCompanionText(moment.text, context),
       priority: moment.priority ?? COMPANION_EVENT_PRIORITY[eventName] ?? 0
     }));
 }
@@ -213,6 +245,14 @@ function emitCompanionEvent(eventName, context = {}) {
 
   const priority = COMPANION_EVENT_PRIORITY[eventName] ?? 0;
   const queuedMoments = moments.map((moment) => ({ ...moment, priority }));
+
+  if (IMMEDIATE_COMPANION_EVENTS.has(eventName)) {
+    const [first, ...rest] = queuedMoments;
+    state.companionQueue = rest;
+    setGuideMessage(first, first.speaker);
+    state.guidePriority = priority;
+    return;
+  }
 
   if (state.moving) {
     queuedMoments.forEach(queueCompanionMoment);
@@ -300,6 +340,9 @@ function getSfxVolume(key) {
 function setAudioConfig(nextConfig) {
   audioConfig = cloneAudioConfig(nextConfig);
   window.SVEN_AUDIO_CONFIG = cloneAudioConfig(nextConfig);
+  if (audioState.purr) {
+    audioState.purr.volume = audioMasterVolume() * clampVolume(audioConfig.volumes?.companionPurr ?? 0.55);
+  }
   syncAudioForState();
 }
 
@@ -567,6 +610,34 @@ function playSfx(key) {
   audioState.sfx.set(key, audio);
   audio.addEventListener("ended", () => audioState.sfx.delete(key), { once: true });
   audio.play().catch(() => {});
+}
+
+function playGuidePurr(guideId) {
+  const keys = GUIDE_PURR_KEYS[guideId];
+  if (!audioState.unlocked || audioState.purr || !keys?.length) return;
+
+  const previousKey = audioState.lastPurrByGuide[guideId];
+  const availableKeys = keys.length > 1 ? keys.filter((key) => key !== previousKey) : keys;
+  const key = availableKeys[Math.floor(Math.random() * availableKeys.length)];
+  const src = audioTrackPath("guides", key);
+  if (!src) return;
+
+  const audio = new Audio(src);
+  audio.volume = audioMasterVolume() * clampVolume(audioConfig.volumes?.companionPurr ?? 0.55);
+  audioState.purr = audio;
+  audioState.purringGuide = guideId;
+  audioState.lastPurrByGuide[guideId] = key;
+  document.querySelector(`[data-purr-guide="${guideId}"]`)?.classList.add("teamPortraitPurring");
+
+  const finish = () => {
+    if (audioState.purr !== audio) return;
+    audioState.purr = null;
+    audioState.purringGuide = null;
+    document.querySelector(`[data-purr-guide="${guideId}"]`)?.classList.remove("teamPortraitPurring");
+  };
+  audio.addEventListener("ended", finish, { once: true });
+  audio.addEventListener("error", finish, { once: true });
+  audio.play().catch(finish);
 }
 
 function setNestedAudioValue(config, path, value) {
@@ -1326,15 +1397,50 @@ function actionForTarget(target, kind) {
 }
 
 function beginInteraction(target, kind) {
-  if (state.moving) return;
-
   const action = actionForTarget(target, kind);
+  const interactionToken = ++state.interactionToken;
 
   state.justCompletedRuneId = null;
-  walkRoute(routeTo(target), () => arriveAtInteraction(target, kind, action));
+  walkRoute(routeTo(target), () => {
+    if (state.interactionToken !== interactionToken) return;
+    arriveAtInteraction(target, kind, action, interactionToken);
+  });
 }
 
-function arriveAtInteraction(target, kind, action) {
+function selectChallenge(target) {
+  if (!target || state.screen !== "scene") return;
+  if (!VIKING_LEVEL_IDS.has(level.id)) {
+    beginInteraction(target, "rune");
+    return;
+  }
+
+  if (state.completedRunes.has(target.id)) {
+    emitCompanionEvent("CHALLENGE_SUCCESS", {
+      objectId: target.objectId || target.id,
+      challengeId: target.id
+    });
+    render();
+    return;
+  }
+
+  state.selectedChallengeId = target.id;
+  emitCompanionEvent("HOTSPOT_ATTENTION_FIRST", {
+    objectId: target.objectId || target.id,
+    challengeId: target.id
+  });
+  beginInteraction(target, "rune");
+}
+
+function inspectAmbientTarget(target) {
+  if (!target || state.moving || state.screen !== "scene") return;
+  state.selectedChallengeId = null;
+  emitCompanionEvent("AMBIENT_ATTENTION", {
+    objectId: target.objectId || target.id
+  });
+  render();
+}
+
+function arriveAtInteraction(target, kind, action, interactionToken = state.interactionToken) {
   const targetCenter = centerForTarget(target);
   if (Math.abs(targetCenter.x - state.worldX) > 2) {
     state.svenFacing = targetCenter.x < state.worldX ? "left" : "right";
@@ -1343,12 +1449,12 @@ function arriveAtInteraction(target, kind, action) {
   render();
 
   window.setTimeout(() => {
-    if (!state.moving) return;
+    if (!state.moving || state.interactionToken !== interactionToken) return;
     state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
     render();
 
     window.setTimeout(() => {
-      if (!state.moving) return;
+      if (!state.moving || state.interactionToken !== interactionToken) return;
       finishInteraction(target, kind, action);
     }, action === "activate" || action === "travel" ? 820 : 560);
   }, 180);
@@ -1386,6 +1492,7 @@ function finishInteraction(target, kind, action) {
 
   if (kind === "rune" && action === "activate") {
     state.moving = false;
+    state.selectedChallengeId = null;
     openRuneChallenge(target.id);
     return;
   }
@@ -1394,6 +1501,18 @@ function finishInteraction(target, kind, action) {
     state.moving = false;
     playSfx("unlock");
     showReward();
+    return;
+  }
+
+  if (target.id === exitHotspotId && action === "activate") {
+    state.moving = false;
+    state.svenMood = "idle";
+    emitCompanionEvent("EXIT_BLOCKED", {
+      objectId: target.objectId || target.id,
+      completedCount: state.completedRunes.size,
+      totalCount: level.runes.length
+    });
+    render();
     return;
   }
 
@@ -1409,9 +1528,11 @@ function finishInteraction(target, kind, action) {
 }
 
 function beginFreeWalk(point) {
-  if (state.screen !== "scene" || state.moving) return;
+  if (state.screen !== "scene") return;
 
+  state.interactionToken += 1;
   state.justCompletedRuneId = null;
+  state.selectedChallengeId = null;
   walkRoute(routeToPoint(point), () => {
     state.moving = false;
     state.svenMood = "idle";
@@ -1502,11 +1623,16 @@ function nextQuestion() {
   state.screen = "scene";
 
   if (state.completedRunes.size === level.runes.length) {
-    emitCompanionEvent("PATH_UNLOCKED");
+    emitCompanionEvent("PATH_UNLOCKED", {
+      completedCount: state.completedRunes.size,
+      totalCount: level.runes.length
+    });
   } else {
-    emitCompanionEvent("CHALLENGE_SUCCESS", {
+    emitCompanionEvent("LEVEL_PROGRESS_MILESTONE", {
       objectId: rune.objectId,
-      challengeId: rune.id
+      challengeId: rune.id,
+      completedCount: state.completedRunes.size,
+      totalCount: level.runes.length
     });
   }
 
@@ -1549,6 +1675,7 @@ function restart() {
   state.moving = false;
   stopMovement();
   state.activeRuneId = null;
+  state.selectedChallengeId = null;
   state.activeQuestions = [];
   state.questionIndex = 0;
   state.selectedWrong = false;
@@ -1673,6 +1800,7 @@ function renderAudioEditorControls() {
     <section class="audioEditorSection" data-audio-editor>
       <strong>Audio</strong>
       ${renderVolumeSlider("Master", "volumes.master", audioConfig.volumes?.master ?? 1)}
+      ${renderVolumeSlider("Companion purr volume", "volumes.companionPurr", audioConfig.volumes?.companionPurr ?? 0.55)}
       ${renderVolumeSlider("Music", `levels.${level.id}.musicVolume`, levelAudio.musicVolume ?? 0.55)}
       ${renderVolumeSlider("Ambience", `levels.${level.id}.ambienceVolume`, levelAudio.ambienceVolume ?? 0.5)}
       <div class="audioEditorSfx">
@@ -1783,7 +1911,10 @@ function renderWorldStage() {
 }
 
 function isTargetVisible(target) {
-  if (target.id === (level.exitHotspotId || "templeGate")) {
+  if (
+    target.id === (level.exitHotspotId || "templeGate") &&
+    !VIKING_LEVEL_IDS.has(level.id)
+  ) {
     return state.completedRunes.size === level.runes.length;
   }
   return true;
@@ -1812,11 +1943,12 @@ function renderHotspot(hotspot) {
 function renderRuneHotspot(rune) {
   const done = state.completedRunes.has(rune.id);
   const justCompleted = state.justCompletedRuneId === rune.id;
-  const disabled = state.moving || state.screen !== "scene";
+  const selected = state.selectedChallengeId === rune.id;
+  const disabled = state.screen !== "scene" || (state.moving && !VIKING_LEVEL_IDS.has(level.id));
   const object = interactiveObjectForTarget(rune);
   return `
     <button
-      class="runeHotspot ${done ? "runeDone" : ""} ${justCompleted ? "runeJustCompleted" : ""}"
+      class="runeHotspot ${done ? "runeDone" : ""} ${selected ? "runeSelected" : ""} ${justCompleted ? "runeJustCompleted" : ""}"
       style="${objectTrackStyle(object)}"
       type="button"
       data-rune="${rune.id}"
@@ -1869,21 +2001,25 @@ function renderDialogue() {
 
 function guideEntries(activeSpeaker = "minnie") {
   const guides = level.guides || {};
-  const entries = [
+  return [
     ["minnie", guides.minnie || { name: "Minnie", portrait: "assets/guides/minnie.png" }],
     ["moose", guides.moose || { name: "Moose", portrait: "assets/guides/moose.png" }]
   ];
-  return entries.sort(([leftId], [rightId]) => {
-    if (leftId === activeSpeaker) return -1;
-    if (rightId === activeSpeaker) return 1;
-    return 0;
-  });
 }
 
 function renderGuidePortrait([id, guide], activeSpeaker) {
   const active = id === activeSpeaker;
   return `
-    <figure class="teamPortrait ${active ? "teamPortraitActive" : "teamPortraitInactive"}" data-guide="${id}" data-active="${active}" ${active ? 'aria-current="true"' : ""}>
+    <figure
+      class="teamPortrait ${active ? "teamPortraitActive" : "teamPortraitInactive"} ${audioState.purringGuide === id ? "teamPortraitPurring" : ""}"
+      data-guide="${id}"
+      data-purr-guide="${id}"
+      data-active="${active}"
+      role="button"
+      tabindex="0"
+      aria-label="${guide.name} laten spinnen"
+      ${active ? 'aria-current="true"' : ""}
+    >
       <img src="${guide.portrait}" alt="${guide.name}" />
       <figcaption>${guide.name}</figcaption>
     </figure>
@@ -1896,12 +2032,11 @@ function renderAdventureTeamBar() {
   const guideMessage = state.guideMessage || normalizeGuideMessage(state.message, "minnie");
   const activeGuide = (level.guides || {})[guideMessage.speaker] || { name: "Minnie" };
   return `
-    <section class="adventureTeamBar" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" data-action="companion-next" aria-live="polite">
+    <section class="adventureTeamBar" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" aria-live="polite">
       <div class="teamPortraits" aria-label="Avonturenteam">
         ${guideEntries(guideMessage.speaker).map((entry) => renderGuidePortrait(entry, guideMessage.speaker)).join("")}
       </div>
       <div class="teamSpeech">
-        <span class="teamPaw" aria-hidden="true"></span>
         <p class="teamSpeaker">${activeGuide.name}</p>
         <p class="teamMessage">${guideMessage.text}</p>
         <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${level.runes.length} ${level.progressLabelPlural || "runen"}</p>
@@ -1915,12 +2050,12 @@ function renderAdventureTeamBar() {
   `;
 }
 
-function renderScene() {
+function renderScene(options = {}) {
   return `
     <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""}">
       ${renderReturnToMenuButton()}
       ${renderWorldStage()}
-      ${renderAdventureTeamBar()}
+      ${options.hideTeamBar ? "" : renderAdventureTeamBar()}
     </main>
   `;
 }
@@ -2010,12 +2145,10 @@ function renderChallenge() {
   const anchor = objectScreenAnchor(object);
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
   const challengeCharacter = getChallengeCharacter();
-  const challengeLine = challengePromptForRune(rune);
   const challengeLabel = level.challengeLabel || "Rune";
-  const choiceHint = level.choiceHint || "Raak de juiste steen aan.";
 
   return `
-    ${renderScene()}
+    ${renderScene({ hideTeamBar: true })}
     <section
       class="modalLayer runeLayer ${panelClass}"
       style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
@@ -2030,12 +2163,9 @@ function renderChallenge() {
           <div class="challengeCharacterSpeech">
             <p class="eyebrow">${challengeCharacter.name} - ${challengeLabel} ${number}/${total}</p>
             <h2 id="challenge-title">${rune.name}</h2>
-            <p>${challengeLine}</p>
           </div>
         </div>
-        <p class="feedback">${state.feedback}</p>
         <p class="sum">Hoeveel is ${question.a} x ${question.b}?</p>
-        <p class="runeWhisper">${choiceHint}</p>
         <div class="choices">
           ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
         </div>
@@ -2052,10 +2182,6 @@ function getChallengeCharacter() {
   };
 }
 
-function challengePromptForRune(rune) {
-  return rune.prompt || `Laat de ${rune.name} ontwaken.`;
-}
-
 function renderCorrect() {
   const rune = runeById(state.activeRuneId);
   const lastQuestion = state.questionIndex === currentChallengeQuestions().length - 1;
@@ -2064,7 +2190,7 @@ function renderCorrect() {
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
 
   return `
-    ${renderScene()}
+    ${renderScene({ hideTeamBar: true })}
     <section
       class="modalLayer runeLayer ${panelClass}"
       style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
@@ -2185,6 +2311,14 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  const purrTarget = event.target.closest("[data-purr-guide]");
+  if (purrTarget) {
+    event.preventDefault();
+    event.stopPropagation();
+    playGuidePurr(purrTarget.dataset.purrGuide);
+    return;
+  }
+
   const levelTarget = event.target.closest("[data-level]");
   if (levelTarget) {
     playSfx("uiClick");
@@ -2214,14 +2348,20 @@ app.addEventListener("click", (event) => {
   const hotspotTarget = event.target.closest("[data-hotspot]");
   if (hotspotTarget) {
     playSfx("uiClick");
-    beginInteraction(hotspotById(hotspotTarget.dataset.hotspot), "hotspot");
+    const target = hotspotById(hotspotTarget.dataset.hotspot);
+    if (target.type === "ambient") {
+      inspectAmbientTarget(target);
+    } else {
+      state.selectedChallengeId = null;
+      beginInteraction(target, "hotspot");
+    }
     return;
   }
 
   const runeTarget = event.target.closest("[data-rune]");
   if (runeTarget) {
     playSfx("uiClick");
-    beginInteraction(runeById(runeTarget.dataset.rune), "rune");
+    selectChallenge(runeById(runeTarget.dataset.rune));
     return;
   }
 

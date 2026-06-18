@@ -17,7 +17,11 @@ const requiredSfxKeys = [
 const allowedCompanionEvents = new Set([
   "LEVEL_ENTER",
   "OBJECT_FIRST_LOOK",
+  "AMBIENT_ATTENTION",
+  "HOTSPOT_ATTENTION_FIRST",
   "CHALLENGE_OPEN",
+  "LEVEL_PROGRESS_MILESTONE",
+  "EXIT_BLOCKED",
   "CHALLENGE_FAIL_1",
   "CHALLENGE_FAIL_2",
   "CHALLENGE_SUCCESS",
@@ -291,9 +295,13 @@ function validateAudioConfig(manifest) {
   const musicKeys = validateTrackRegistry(config.tracks?.music, "audioConfig.tracks.music");
   const ambienceKeys = validateTrackRegistry(config.tracks?.ambience, "audioConfig.tracks.ambience");
   const sfxKeys = validateTrackRegistry(config.tracks?.sfx, "audioConfig.tracks.sfx");
+  const guideKeys = validateTrackRegistry(config.tracks?.guides, "audioConfig.tracks.guides");
 
   requiredSfxKeys.forEach((key) => {
     if (!sfxKeys.has(key)) fail(`audioConfig.tracks.sfx is missing required SFX: ${key}`);
+  });
+  ["minnie1", "minnie2", "moose1", "moose2"].forEach((key) => {
+    if (!guideKeys.has(key)) fail(`audioConfig.tracks.guides is missing required guide audio: ${key}`);
   });
 
   if (!isObject(config.menu)) {
@@ -310,6 +318,7 @@ function validateAudioConfig(manifest) {
     fail("audioConfig.volumes must be an object.");
   } else {
     validateVolumeValue(config.volumes.master, "audioConfig.volumes.master");
+    validateVolumeValue(config.volumes.companionPurr, "audioConfig.volumes.companionPurr");
     if (!isObject(config.volumes.sfx)) {
       fail("audioConfig.volumes.sfx must be an object.");
     } else {
@@ -557,8 +566,8 @@ function validateCompanionAuthoring(level, objects, label) {
     validateRequiredString(level.levelSemantics.companionFocus?.moose, `${label}.levelSemantics.companionFocus.moose`);
   }
 
-  if (!Array.isArray(level.companionMoments) || level.companionMoments.length < 4 || level.companionMoments.length > 6) {
-    fail(`${label}.companionMoments must contain 4 to 6 moments.`);
+  if (!Array.isArray(level.companionMoments) || level.companionMoments.length < 4 || level.companionMoments.length > 12) {
+    fail(`${label}.companionMoments must contain 4 to 12 moments.`);
     return;
   }
 
