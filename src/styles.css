@@ -35,6 +35,15 @@ body {
   touch-action: manipulation;
 }
 
+#app.sceneChainFadeOut {
+  opacity: 0;
+  transition: opacity 220ms ease-in;
+}
+
+#app.sceneChainFadeIn {
+  animation: sceneChainFadeIn 280ms ease-out both;
+}
+
 button {
   font: inherit;
 }
@@ -1458,6 +1467,16 @@ button {
   to {
     opacity: 1;
     transform: scale(1.03);
+  }
+}
+
+@keyframes sceneChainFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 

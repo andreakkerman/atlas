@@ -428,7 +428,8 @@ async function playFullAdventure(page) {
 
   await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
   await expect(page.locator('[data-object="templeGate"]')).toBeVisible();
-  await tap(page.getByRole("button", { name: "Ga naar binnen" }));
+  await expect(page.locator('[data-adventure-team-bar] [data-action="reward"]')).toHaveCount(0);
+  await triggerWorldExit(page, "Runenpoort", "De poort gaat open!");
   await expect(page.getByText("Bewaker van de Runenpoort")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
@@ -609,11 +610,14 @@ test.describe("SvenAdventure", () => {
     test.skip(testInfo.project.name !== "desktop-chromium", "The full connected-area chain is covered once on desktop.");
 
     await playFullAdventure(page);
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const transitionStartedAt = Date.now();
     await tap(page.getByRole("button", { name: "De tempel in" }));
 
-    await expect(page.getByRole("heading", { name: "De Tempelzaal" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Schildenmuur" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0002");
+    expect(Date.now() - transitionStartedAt).toBeLessThan(800);
     await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
     await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
     await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Steenpriester");
@@ -627,8 +631,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("heading", { name: "De havendeur opent!" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Naar de haven" }));
 
-    await expect(page.getByRole("heading", { name: "De Vikinghaven" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Touwrol" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0003");
     await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
     await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
@@ -672,8 +676,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("heading", { name: "De poort naar de Nautilus opent!" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Aan boord" }));
 
-    await expect(page.getByRole("heading", { name: "Aan boord" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Kapiteinskaart" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0005");
     for (const challenge of nautilusSalonChallenges) {
       await solveChallengeSet(page, challenge, "Rond de salonproef af", "Kapitein Nemo");
@@ -684,8 +688,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("heading", { name: "De ronde deur opent!" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Naar de minisub" }));
 
-    await expect(page.getByRole("heading", { name: "De Minisub" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Duikpak" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0006");
     for (const challenge of nautilusMiniSubChallenges) {
       await solveChallengeSet(page, challenge, "Maak het luik klaar", "Kapitein Nemo");
@@ -696,8 +700,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("heading", { name: "Het luik opent!" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Naar het eiland" }));
 
-    await expect(page.getByRole("heading", { name: "Het Tropische Eiland" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Sloep" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0007");
     for (const challenge of nautilusIslandChallenges) {
       await solveChallengeSet(page, challenge, "Maak de route klaar", "Kapitein Nemo");
@@ -729,8 +733,12 @@ test.describe("SvenAdventure", () => {
     await tap(page.getByRole("button", { name: blokkenpoortScenes[0].startButton }));
 
     for (const [sceneIndex, scene] of blokkenpoortScenes.entries()) {
-      await expect(page.getByRole("heading", { name: scene.title })).toBeVisible();
-      await tap(page.getByRole("button", { name: "Start avontuur" }));
+      if (sceneIndex === 0) {
+        await expect(page.getByRole("heading", { name: scene.title })).toBeVisible();
+        await tap(page.getByRole("button", { name: "Start avontuur" }));
+      } else {
+        await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+      }
       await expectSpawnAtStartNode(page, scene.levelId);
       await expectAudioState(page, scene.expectedMusic, scene.expectedAmbience);
       await expect(page.locator("[data-adventure-team-bar]")).toContainText("Minnie");
@@ -751,7 +759,8 @@ test.describe("SvenAdventure", () => {
         expect(musicBeforeNext).toBe("minecraft");
         await tap(page.getByRole("button", { name: scene.nextButton }));
         const nextScene = blokkenpoortScenes[sceneIndex + 1];
-        await expect(page.getByRole("heading", { name: nextScene.title })).toBeVisible();
+        await expect(page.getByRole("button", { name: nextScene.challenges[0] })).toBeVisible();
+        await expectSpawnAtStartNode(page, nextScene.levelId);
         await expectAudioState(page, "minecraft", nextScene.expectedAmbience);
       }
     }
@@ -920,8 +929,9 @@ test.describe("SvenAdventure", () => {
     await triggerWorldExit(page, "Runenpoort", "De poort gaat open!");
     await tap(page.getByRole("button", { name: "De tempel in" }));
     await waitForImages(page);
-    await expect(page.getByRole("heading", { name: "De Tempelzaal" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Schildenmuur" })).toBeVisible();
+    await expectSpawnAtStartNode(page, "LVL-0002");
 
     for (const challenge of templeChallenges) {
       await solveChallengeSet(page, challenge, "Rond de proef af", "Steenpriester");
@@ -929,8 +939,9 @@ test.describe("SvenAdventure", () => {
     await triggerWorldExit(page, "Havendeur", "De havendeur opent!");
     await tap(page.getByRole("button", { name: "Naar de haven" }));
     await waitForImages(page);
-    await expect(page.getByRole("heading", { name: "De Vikinghaven" })).toBeVisible();
-    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Touwrol" })).toBeVisible();
+    await expectSpawnAtStartNode(page, "LVL-0003");
 
     const rope = page.getByRole("button", { name: "Touwrol" });
     await tap(rope);

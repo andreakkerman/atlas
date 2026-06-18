@@ -671,12 +671,14 @@ function loadLevelDefinition(entry) {
   });
 }
 
-async function selectLevel(id) {
+async function selectLevel(id, options = {}) {
   const entry = levelCatalog.find((item) => item.id === id) || levelCatalog[0];
-  if (!entry) return;
+  if (!entry) return false;
 
-  state = { screen: "loading", message: "Avontuur laden..." };
-  render();
+  if (!options.deferRender) {
+    state = { screen: "loading", message: "Avontuur laden..." };
+    render();
+  }
 
   let selectedLevel;
   try {
@@ -684,7 +686,7 @@ async function selectLevel(id) {
   } catch (error) {
     state = { screen: "menu", error: error.message };
     render();
-    return;
+    return false;
   }
 
   stopMovement();
@@ -692,9 +694,14 @@ async function selectLevel(id) {
   level = normalizeLevel(selectedLevel);
   walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
   state = createLevelState(level);
+  if (options.startImmediately) {
+    state.screen = "scene";
+    emitCompanionEvent("LEVEL_ENTER");
+  }
   document.title = level.title;
   preloadLevelAssets(level);
-  render();
+  if (!options.deferRender) render();
+  return true;
 }
 
 function returnToMenu() {
@@ -1647,20 +1654,31 @@ function showReward() {
   render();
 }
 
-function continueToNextLevel() {
+async function continueToNextLevel() {
   const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
-  if (!nextLevelId) return;
+  if (!nextLevelId || state.sceneTransitionPending) return;
 
   stopMovement();
-  state = {
-    screen: "transition",
-    message: level.reward?.nextTransition || "Even verder..."
-  };
-  render();
+  state.sceneTransitionPending = true;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const fadeOutMs = reduceMotion ? 0 : 220;
+  app.classList.add("sceneChainFadeOut");
 
-  window.setTimeout(() => {
-    selectLevel(nextLevelId);
-  }, 520);
+  const [loaded] = await Promise.all([
+    selectLevel(nextLevelId, { startImmediately: true, deferRender: true }),
+    new Promise((resolve) => window.setTimeout(resolve, fadeOutMs))
+  ]);
+  if (!loaded) {
+    app.classList.remove("sceneChainFadeOut");
+    return;
+  }
+
+  render();
+  app.classList.remove("sceneChainFadeOut");
+  if (!reduceMotion) {
+    app.classList.add("sceneChainFadeIn");
+    window.setTimeout(() => app.classList.remove("sceneChainFadeIn"), 280);
+  }
 }
 
 function restart() {
@@ -1979,7 +1997,6 @@ function canOpenTempleGate() {
 }
 
 function renderDialogue() {
-  const canOpen = canOpenTempleGate();
   const done = state.completedRunes.size;
   const companionName = level.companion?.name || level.spiritName;
   const companionPortrait = level.companion?.portrait || "assets/sven-stage.png";
@@ -1990,11 +2007,6 @@ function renderDialogue() {
         <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${level.runes.length} runen</p>
         <p>${state.message}</p>
       </div>
-      ${
-        canOpen
-          ? `<button class="primaryButton" type="button" data-action="reward">Ga naar binnen</button>`
-          : ""
-      }
     </section>
   `;
 }
@@ -2027,7 +2039,6 @@ function renderGuidePortrait([id, guide], activeSpeaker) {
 }
 
 function renderAdventureTeamBar() {
-  const canOpen = canOpenTempleGate();
   const done = state.completedRunes.size;
   const guideMessage = state.guideMessage || normalizeGuideMessage(state.message, "minnie");
   const activeGuide = (level.guides || {})[guideMessage.speaker] || { name: "Minnie" };
@@ -2041,11 +2052,6 @@ function renderAdventureTeamBar() {
         <p class="teamMessage">${guideMessage.text}</p>
         <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${level.runes.length} ${level.progressLabelPlural || "runen"}</p>
       </div>
-      ${
-        canOpen
-          ? `<button class="primaryButton" type="button" data-action="reward">${level.exitActionLabel || "Ga naar binnen"}</button>`
-          : ""
-      }
     </section>
   `;
 }
