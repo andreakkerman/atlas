@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       id: "sealed-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De rechterpoort geeft geen millimeter mee."
+      text: "De rechterpoort blijft dicht. Eerst nog {remaining} bloktekens."
     },
     {
       id: "sealed-unlocked",

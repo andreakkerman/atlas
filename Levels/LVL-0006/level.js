@@ -161,7 +161,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       id: "minisub-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "Het luik blijft dicht. Onder water vind ik dat voorlopig prima."
+      text: "Het luik blijft dicht. Eerst nog {remaining} controles."
     },
     {
       id: "minisub-unlocked",

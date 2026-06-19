@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       id: "island-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De eilandpoort wacht nog. Koppige rots."
+      text: "De eilandpoort wacht nog. Eerst nog {remaining} routeproeven."
     },
     {
       id: "island-unlocked",

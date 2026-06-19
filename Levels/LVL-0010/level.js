@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       id: "beach-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De stenen deur blijft dicht. En warm."
+      text: "De stenen deur blijft dicht. Eerst nog {remaining} strandtekens."
     },
     {
       id: "beach-unlocked",

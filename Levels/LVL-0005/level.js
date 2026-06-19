@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       id: "salon-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De ronde deur blijft rond én dicht."
+      text: "De ronde deur blijft dicht. Eerst nog {remaining} salonproeven."
     },
     {
       id: "salon-unlocked",

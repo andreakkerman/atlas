@@ -188,7 +188,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       id: "nautilus-harbor-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De steigerpoort blijft dicht. Er mist nog iets."
+      text: "De steigerpoort blijft dicht. Eerst nog {remaining} havenproeven."
     },
     {
       id: "nautilus-harbor-unlocked",

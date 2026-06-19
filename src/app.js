@@ -1976,12 +1976,6 @@ function renderWorldStage() {
 }
 
 function isTargetVisible(target) {
-  if (
-    target.id === (level.exitHotspotId || "templeGate") &&
-    !VIKING_LEVEL_IDS.has(level.id)
-  ) {
-    return state.completedRunes.size === level.runes.length;
-  }
   return true;
 }
 
@@ -2286,7 +2280,6 @@ function renderReward() {
         }
         <button class="secondaryButton" type="button" data-action="${nextLevelId ? "menu" : "restart"}">${nextLevelId ? "Menu" : "Speel nog een keer"}</button>
       </section>
-      ${renderAdventureTeamBar()}
     </main>
   `;
 }

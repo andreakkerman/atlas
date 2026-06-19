@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       id: "awakened-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De ijzeren deur blijft dicht. IJzer doet graag moeilijk."
+      text: "De ijzeren deur blijft dicht. Eerst nog {remaining} bloktekens."
     },
     {
       id: "awakened-unlocked",

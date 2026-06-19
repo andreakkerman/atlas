@@ -305,6 +305,36 @@ async function triggerWorldExit(page, objectName, expectedRewardHeading, options
   await expect(page.getByRole("heading", { name: expectedRewardHeading })).toBeVisible({ timeout: 22000 });
 }
 
+async function expectBlockedWorldExit(page, { exitName, exitId, blockedText }) {
+  const target = page.getByRole("button", { name: exitName, exact: true });
+  const actor = page.locator("[data-actor='sven']");
+  await expect(target).toBeVisible();
+
+  await target.dispatchEvent("click");
+  await expect(actor).toHaveAttribute("data-animation", "walk");
+  await expect(page.getByText(blockedText)).toHaveCount(0);
+
+  await expect(page.getByText(blockedText)).toBeVisible({ timeout: 22000 });
+  const arrival = await page.evaluate((id) => {
+    const currentLevel = window.eval("level");
+    const currentState = window.eval("state");
+    const object = currentLevel.interactiveObjects.find((item) => item.id === id);
+    const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+    return {
+      actorX: currentState.worldX,
+      actorY: currentState.worldY,
+      approachX: approach.x,
+      approachY: approach.y,
+      screen: currentState.screen
+    };
+  }, exitId);
+
+  expect(arrival.actorX).toBeCloseTo(arrival.approachX, 0);
+  expect(arrival.actorY).toBeCloseTo(arrival.approachY, 0);
+  expect(arrival.screen).toBe("scene");
+  await expect(page.locator(".exitIrisOverlay")).toHaveCount(0);
+}
+
 async function walkTowardTemple(page, ySamples = []) {
   const actor = page.locator("[data-actor='sven']");
 
@@ -474,9 +504,7 @@ async function playFullAdventure(page) {
     exitId: "templeGate"
   });
   await expect(page.getByText("Bewaker van de Runenpoort")).toBeVisible();
-  await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
-  await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
-  await expect(page.locator("[data-adventure-team-bar]")).toContainText("De Runenpoort is open. Mooi werk, Sven.");
+  await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
   await expect(page.locator("[data-challenge-character='runewachter']")).toHaveCount(0);
 }
 
@@ -689,7 +717,7 @@ test.describe("SvenAdventure", () => {
     await triggerWorldExit(page, "Vertrekpoort", "Het schip vertrekt!");
     await expect(page.getByRole("heading", { name: "Het schip vertrekt!" })).toBeVisible();
     await expect(page.getByText("Vikinghaven Helper")).toBeVisible();
-    await expect(page.locator("[data-adventure-team-bar]")).toContainText("Moose");
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
     await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Menu" })).toHaveClass(/primaryButton/);
     await expect(page.getByRole("button", { name: "Speel nog een keer" })).toHaveClass(/secondaryButton/);
@@ -754,6 +782,7 @@ test.describe("SvenAdventure", () => {
     await triggerWorldExit(page, "Eilandpoort", "Sven bereikt het eiland!");
     await expect(page.getByRole("heading", { name: "Sven bereikt het eiland!" })).toBeVisible();
     await expect(page.getByText("Nautilus Ontsnapper")).toBeVisible();
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Menu" })).toHaveClass(/primaryButton/);
     await expect(page.getByRole("button", { name: "Speel nog een keer" })).toHaveClass(/secondaryButton/);
 
@@ -795,6 +824,7 @@ test.describe("SvenAdventure", () => {
       await expect(page.getByText(scene.unlockLine)).toBeVisible();
       await triggerWorldExit(page, scene.exitName, scene.rewardHeading);
       await expect(page.getByRole("heading", { name: scene.rewardHeading })).toBeVisible();
+      await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
 
       if (sceneIndex < blokkenpoortScenes.length - 1) {
         await expect(page.getByRole("button", { name: scene.nextButton })).toBeVisible();
@@ -1103,8 +1133,11 @@ test.describe("SvenAdventure", () => {
   test("shows reliable locked exit, progress and unlocked feedback", async ({ page }) => {
     await startAdventure(page);
 
-    await page.getByRole("button", { name: "Runenpoort" }).dispatchEvent("click");
-    await expect(page.getByText("De poort zit dicht. Eerst nog 3 runen.")).toBeVisible({ timeout: 22000 });
+    await expectBlockedWorldExit(page, {
+      exitName: "Runenpoort",
+      exitId: "templeGate",
+      blockedText: "De poort zit dicht. Eerst nog 3 runen."
+    });
 
     await startAdventure(page);
     await travelToTemple(page);
@@ -1114,6 +1147,30 @@ test.describe("SvenAdventure", () => {
     await solveChallengeSet(page, { name: "Steenrune" }, "Maak de rune wakker", "Runewachter");
     await solveChallengeSet(page, { name: "Windrune" }, "Maak de rune wakker", "Runewachter");
     await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
+  });
+
+  test("keeps Nautilus and Blokkenpoort exits visible and blocks them on arrival", async ({ page }) => {
+    await page.goto(gameUrl);
+    await waitForImages(page);
+    await enterFromLaunch(page);
+    await tap(page.getByRole("button", { name: /De Nautilus/ }));
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expectBlockedWorldExit(page, {
+      exitName: "Steigerpoort",
+      exitId: "boardingGate",
+      blockedText: "De steigerpoort blijft dicht. Eerst nog 3 havenproeven."
+    });
+
+    await page.goto(gameUrl);
+    await waitForImages(page);
+    await enterFromLaunch(page);
+    await tap(page.getByRole("button", { name: /De Blokkenpoort/ }));
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await expectBlockedWorldExit(page, {
+      exitName: "Rechterpoort",
+      exitId: "rightGate",
+      blockedText: "De rechterpoort blijft dicht. Eerst nog 3 bloktekens."
+    });
   });
 
   test("challenge overlay only keeps challenger, title, question and answers", async ({ page }) => {

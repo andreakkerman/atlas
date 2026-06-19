@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       id: "nether-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De deur naar boven blijft dicht. Hier wachten is warm."
+      text: "De deur naar boven blijft dicht. Eerst nog {remaining} nethertokens."
     },
     {
       id: "nether-unlocked",

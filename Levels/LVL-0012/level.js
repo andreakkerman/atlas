@@ -160,7 +160,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       id: "home-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De uitgang wacht nog. De voordeur loopt niet weg."
+      text: "De uitgang wacht nog. Eerst nog {remaining} bloktekens."
     },
     {
       id: "home-unlocked",
