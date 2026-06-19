@@ -122,38 +122,58 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       id: "minisub-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh, een kleine duikboot in een grote duikboot."
+      text: "Een kleine duikboot in een grote duikboot. Perfect."
     },
     {
-      id: "minisub-object",
-      event: "OBJECT_FIRST_LOOK",
+      id: "minisub-suit-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "divingSuit",
+      speaker: "moose",
+      text: "Dat duikpak ziet er zwaar uit. Gelukkig hoeft Minnie er niet in."
+    },
+    {
+      id: "minisub-craft-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "miniSub",
       speaker: "minnie",
-      text: "Dit ruikt naar koper, olie en ontsnapping."
+      text: "De minisub wacht echt op ons. Kijk naar die koperen buik!"
     },
     {
-      id: "minisub-open",
-      event: "CHALLENGE_OPEN",
+      id: "minisub-panel-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "controlPanel",
       speaker: "moose",
-      text: "Bij drukmeters wil ik liever zeker zijn.",
-      bridge: "Even opletten."
+      text: "Veel meters. Eén nette oplossing. Dat scheelt gedoe."
     },
     {
-      id: "minisub-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "minisub-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. Geen haast met een luik onder water."
+      text: "Die staat goed. De druk blijft waar hij hoort."
     },
     {
-      id: "minisub-complete",
-      event: "ADVENTURE_COMPLETE",
+      id: "minisub-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "We komen dichter bij het luik. Ik voel het."
+    },
+    {
+      id: "minisub-blocked",
+      event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "Naar buiten. Rustig en precies."
+      text: "Het luik blijft dicht. Onder water vind ik dat voorlopig prima."
     },
     {
       id: "minisub-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "moose",
       text: "De druk klopt. Het luik kan veilig open."
+    },
+    {
+      id: "minisub-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "minnie",
+      text: "Naar buiten! Nou ja, naar het water buiten."
     }
   ],
   areas: [

@@ -1427,11 +1427,6 @@ function beginInteraction(target, kind) {
 
 function selectChallenge(target) {
   if (!target || state.screen !== "scene") return;
-  if (!VIKING_LEVEL_IDS.has(level.id)) {
-    beginInteraction(target, "rune");
-    return;
-  }
-
   if (state.completedRunes.has(target.id)) {
     emitCompanionEvent("CHALLENGE_SUCCESS", {
       objectId: target.objectId || target.id,
@@ -1684,7 +1679,7 @@ async function transitionToReward(target) {
   const focus = objectViewportPoint(object);
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const settleMs = reduceMotion ? 40 : 100;
-  const fadeOutMs = reduceMotion ? 160 : 650;
+  const fadeOutMs = reduceMotion ? 160 : 750;
 
   await new Promise((resolve) => window.setTimeout(resolve, settleMs));
 

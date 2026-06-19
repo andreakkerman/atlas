@@ -121,26 +121,46 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       id: "home-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Zon! Ik wist dat we eruit kwamen."
+      text: "Zon, bloemen en de straat! We zijn bijna echt thuis."
     },
     {
-      id: "home-look",
-      event: "OBJECT_FIRST_LOOK",
+      id: "home-map-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "homeMap",
       speaker: "minnie",
-      text: "Dit teken ruikt bijna naar buitenlucht."
+      text: "De thuiskaart kent de laatste bocht. Kijk hoe hij glanst."
     },
     {
-      id: "home-open",
-      event: "CHALLENGE_OPEN",
+      id: "home-table-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "enchantTable",
       speaker: "moose",
-      text: "Job bewaart de laatste sleutel netjes.",
-      bridge: "Even opletten."
+      text: "Die betovertafel fluistert. Ik doe alsof ik niets hoor."
     },
     {
-      id: "home-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "home-portal-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "purplePortal",
+      speaker: "minnie",
+      text: "Het paarse portaal laat de buitenlucht al schitteren."
+    },
+    {
+      id: "home-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. De voordeur loopt niet weg."
+      text: "Klaar. Nog één stap dichter bij gewone stoeptegels."
+    },
+    {
+      id: "home-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "De uitgang wordt helderder. Ik zie de straat al!"
+    },
+    {
+      id: "home-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De uitgang wacht nog. De voordeur loopt niet weg."
     },
     {
       id: "home-unlocked",
@@ -152,7 +172,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       id: "home-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "minnie",
-      text: "We zijn terug! Wat een reis."
+      text: "We zijn terug! Zelfs de straat ziet er feestelijk uit."
     }
   ],
   areas: [

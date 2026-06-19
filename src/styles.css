@@ -64,7 +64,7 @@ body {
     transparent var(--exit-iris-radius),
     rgba(5, 10, 9, 0.985) calc(var(--exit-iris-radius) + 1px)
   );
-  animation: exitIrisClose 650ms cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
+  animation: exitIrisClose 750ms cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
 }
 
 button {

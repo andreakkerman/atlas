@@ -121,26 +121,46 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       id: "sealed-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh, deze kamer houdt zijn adem in."
+      text: "Deze blokkenkamer houdt zijn adem in. Ik hoor het bijna."
     },
     {
-      id: "sealed-look",
-      event: "OBJECT_FIRST_LOOK",
+      id: "sealed-sword-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "diamondSword",
       speaker: "minnie",
-      text: "Dat blokteken glimt alsof het iets weet."
+      text: "Dat diamantzwaard glimt veel te trots. Er zit vast een patroon in."
     },
     {
-      id: "sealed-open",
-      event: "CHALLENGE_OPEN",
+      id: "sealed-mask-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "creeperMask",
       speaker: "moose",
-      text: "Job kijkt alsof dit precies moet kloppen.",
-      bridge: "Even opletten."
+      text: "Een Creepermasker. Ik blijf voor de zekerheid hier."
     },
     {
-      id: "sealed-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "sealed-portal-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "enderPortal",
+      speaker: "minnie",
+      text: "Die donkere poort heeft paarse randjes. Heel normaal. Vast."
+    },
+    {
+      id: "sealed-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. De poort wacht nog even."
+      text: "Dat teken is klaar. De kamer kraakt goedkeurend."
+    },
+    {
+      id: "sealed-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "Nog een teken wakker. Het paarse licht groeit."
+    },
+    {
+      id: "sealed-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De rechterpoort geeft geen millimeter mee."
     },
     {
       id: "sealed-unlocked",
@@ -152,7 +172,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       id: "sealed-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "minnie",
-      text: "De kamer wordt wakker!"
+      text: "De kamer wordt wakker. En wij mogen door!"
     }
   ],
   areas: [

@@ -917,21 +917,34 @@ test.describe("SvenAdventure", () => {
         if (moment.challengeId) expect(loadedLevel.challengeIds).toContain(moment.challengeId);
       }
 
-      if (["LVL-0001", "LVL-0002", "LVL-0003"].includes(loadedLevel.id)) {
-        for (const challengeId of loadedLevel.challengeIds) {
+      for (const challengeId of loadedLevel.challengeIds) {
+        expect(
+          loadedLevel.companionMoments.some(
+            (moment) => moment.event === "HOTSPOT_ATTENTION_FIRST" && moment.challengeId === challengeId
+          ),
+          `${loadedLevel.id}.${challengeId} challenge attention`
+        ).toBe(true);
+      }
+      for (const ambientId of loadedLevel.ambientIds) {
+        expect(
+          loadedLevel.companionMoments.some(
+            (moment) => moment.event === "AMBIENT_ATTENTION" && moment.objectId === ambientId
+          ),
+          `${loadedLevel.id}.${ambientId} ambient attention`
+        ).toBe(true);
+      }
+      if (Number(loadedLevel.id.slice(-4)) >= 4) {
+        for (const event of [
+          "LEVEL_ENTER",
+          "CHALLENGE_SUCCESS",
+          "LEVEL_PROGRESS_MILESTONE",
+          "EXIT_BLOCKED",
+          "PATH_UNLOCKED",
+          "ADVENTURE_COMPLETE"
+        ]) {
           expect(
-            loadedLevel.companionMoments.some(
-              (moment) => moment.event === "HOTSPOT_ATTENTION_FIRST" && moment.challengeId === challengeId
-            ),
-            `${loadedLevel.id}.${challengeId} challenge attention`
-          ).toBe(true);
-        }
-        for (const ambientId of loadedLevel.ambientIds) {
-          expect(
-            loadedLevel.companionMoments.some(
-              (moment) => moment.event === "AMBIENT_ATTENTION" && moment.objectId === ambientId
-            ),
-            `${loadedLevel.id}.${ambientId} ambient attention`
+            loadedLevel.companionMoments.some((moment) => moment.event === event),
+            `${loadedLevel.id}.${event}`
           ).toBe(true);
         }
       }
@@ -950,6 +963,36 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator(".teamMessage")).toHaveText("De Zonrune voelt warm. Welke som laat haar feller gloeien?");
     await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible({ timeout: 22000 });
     await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+  });
+
+  test("shows authored first attention in Nautilus and Blokkenpoort scenes", async ({ page }) => {
+    await page.goto(gameUrl);
+    await waitForImages(page);
+    await enterFromLaunch(page);
+    await tap(page.getByRole("button", { name: /De Nautilus/ }));
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+
+    const harborMap = page.getByRole("button", { name: "Havenkaart" });
+    await tap(harborMap);
+    await expect(page.locator(".teamMessage")).toHaveText(
+      "Die havenkaart zit vol lijnen. Welke route hoort bij de Nautilus?"
+    );
+    await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
+    await expect(page.getByRole("heading", { name: "Havenkaart" })).toBeVisible({ timeout: 22000 });
+
+    await page.reload();
+    await waitForImages(page);
+    await enterFromLaunch(page);
+    await tap(page.getByRole("button", { name: /De Blokkenpoort/ }));
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+
+    const sword = page.getByRole("button", { name: "Diamantzwaard" });
+    await tap(sword);
+    await expect(page.locator(".teamMessage")).toHaveText(
+      "Dat diamantzwaard glimt veel te trots. Er zit vast een patroon in."
+    );
+    await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
+    await expect(page.getByRole("heading", { name: "Diamantzwaard" })).toBeVisible({ timeout: 22000 });
   });
 
   test("keeps ambient points separate from challenges", async ({ page }) => {

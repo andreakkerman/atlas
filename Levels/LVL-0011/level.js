@@ -121,26 +121,46 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       id: "nether-enter",
       event: "LEVEL_ENTER",
       speaker: "moose",
-      text: "Warm. Heel warm. Geen rare sprongen."
+      text: "Warm. Heel warm. Vandaag geen heldhaftige sprongen."
     },
     {
-      id: "nether-look",
-      event: "OBJECT_FIRST_LOOK",
+      id: "nether-potion-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "potionTable",
       speaker: "minnie",
-      text: "Dat blok pulseert alsof het ademt."
+      text: "Die brouwtafel borrelt zonder pan. Dat wil ik begrijpen."
     },
     {
-      id: "nether-open",
-      event: "CHALLENGE_OPEN",
+      id: "nether-orb-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "netherOrb",
       speaker: "moose",
-      text: "Job blijft kalm. Dat is waarschijnlijk verstandig.",
-      bridge: "Even opletten."
+      text: "Die bol gloeit. Niet aanklikken met je neus."
     },
     {
-      id: "nether-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "nether-map-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "netherMap",
+      speaker: "minnie",
+      text: "De lavakaart heeft koele lijnen. Gelukkig maar."
+    },
+    {
+      id: "nether-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. Lava houdt niet van gokken."
+      text: "Dat teken is klaar. De lava mag rustig blijven."
+    },
+    {
+      id: "nether-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "De paarse gloed wijst steeds duidelijker omhoog."
+    },
+    {
+      id: "nether-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De deur naar boven blijft dicht. Hier wachten is warm."
     },
     {
       id: "nether-unlocked",
@@ -152,7 +172,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       id: "nether-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "moose",
-      text: "Weg uit de hitte. Prima plan."
+      text: "Weg uit de hitte. Uitstekend avontuurbeleid."
     }
   ],
   areas: [

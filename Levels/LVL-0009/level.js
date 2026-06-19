@@ -121,26 +121,46 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       id: "awakened-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Hier leeft de kamer echt."
+      text: "Deze kamer leeft echt. De kristallen knipperen naar ons."
     },
     {
-      id: "awakened-look",
-      event: "OBJECT_FIRST_LOOK",
+      id: "awakened-map-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "worldMap",
       speaker: "minnie",
-      text: "Dat teken lijkt net wakker geworden."
+      text: "Die wereldkaart heeft blokken én geheimen. Goede combinatie."
     },
     {
-      id: "awakened-open",
-      event: "CHALLENGE_OPEN",
+      id: "awakened-book-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "openBook",
       speaker: "moose",
-      text: "Job wacht op een nette oplossing.",
-      bridge: "Even opletten."
+      text: "Een open boek. Scheelt weer één stap."
     },
     {
-      id: "awakened-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "awakened-crystal-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "crystalCase",
+      speaker: "minnie",
+      text: "De kristalkast gloeit van binnen. Alsof hij een antwoord bewaart."
+    },
+    {
+      id: "awakened-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. De deur blijft nog koppig."
+      text: "Opgelost. De kettingen klinken al minder koppig."
+    },
+    {
+      id: "awakened-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "De kamer wordt helderder. We zitten goed."
+    },
+    {
+      id: "awakened-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De ijzeren deur blijft dicht. IJzer doet graag moeilijk."
     },
     {
       id: "awakened-unlocked",
@@ -152,7 +172,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       id: "awakened-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "minnie",
-      text: "Ik ruik bijna frisse lucht."
+      text: "Door de deur! Ik ben benieuwd wat erachter ligt."
     }
   ],
   areas: [

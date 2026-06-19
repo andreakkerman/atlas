@@ -149,38 +149,58 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       id: "nautilus-harbor-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh, daar ligt een echte duikboot."
+      text: "Oeh, de Nautilus glanst alsof hij ons al ziet."
     },
     {
-      id: "nautilus-harbor-object",
-      event: "OBJECT_FIRST_LOOK",
+      id: "nautilus-harbor-map-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "harborMap",
       speaker: "minnie",
-      text: "Koper, blauw licht en zeezout. Verdacht mooi."
+      text: "Die havenkaart zit vol lijnen. Welke route hoort bij de Nautilus?"
     },
     {
-      id: "nautilus-harbor-open",
-      event: "CHALLENGE_OPEN",
+      id: "nautilus-telescope-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "brassTelescope",
       speaker: "moose",
-      text: "Nemo lijkt iemand die precies telt.",
-      bridge: "Even opletten."
+      text: "Een koperen kijker. Handig, zolang niemand naar meeuwen telt."
     },
     {
-      id: "nautilus-harbor-fail",
-      event: "CHALLENGE_FAIL_1",
-      speaker: "moose",
-      text: "Bijna. Een duikboot vergeeft slordigheid niet graag."
+      id: "nautilus-light-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "nautilusLight",
+      speaker: "minnie",
+      text: "Dat blauwe licht knippert in een patroon. Ik wil het weten."
     },
     {
-      id: "nautilus-harbor-complete",
-      event: "ADVENTURE_COMPLETE",
+      id: "nautilus-harbor-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "De steiger is veilig. Aan boord nu."
+      text: "Die is geregeld. Nemo houdt van netjes."
+    },
+    {
+      id: "nautilus-harbor-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "Mooi! De Nautilus geeft steeds meer licht."
+    },
+    {
+      id: "nautilus-harbor-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De steigerpoort blijft dicht. Er mist nog iets."
     },
     {
       id: "nautilus-harbor-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "moose",
       text: "Alles klopt. Sven mag naar de Nautilus."
+    },
+    {
+      id: "nautilus-harbor-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "minnie",
+      text: "Aan boord! Ik wil elk raam zien."
     }
   ],
   areas: [

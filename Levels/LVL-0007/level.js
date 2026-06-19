@@ -121,38 +121,58 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       id: "island-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Oeh, ik zie zonlicht!"
+      text: "Zonlicht! Deze grot heeft eindelijk goede manieren."
     },
     {
-      id: "island-object",
-      event: "OBJECT_FIRST_LOOK",
-      speaker: "minnie",
-      text: "Dat hoort bij buiten. Ik weet het bijna zeker."
-    },
-    {
-      id: "island-open",
-      event: "CHALLENGE_OPEN",
+      id: "island-boat-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "escapeBoat",
       speaker: "moose",
-      text: "Natte stenen en haast zijn geen vrienden.",
-      bridge: "Even opletten."
+      text: "Die sloep drijft nog. Dat is alvast één goed teken."
     },
     {
-      id: "island-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "island-wheel-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "islandWheel",
       speaker: "minnie",
-      text: "Bijna. Ik zie de zon nog steeds."
+      text: "Een stuurwiel in een grot. Daar zit een route achter."
     },
     {
-      id: "island-complete",
-      event: "ADVENTURE_COMPLETE",
+      id: "island-map-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "islandMap",
+      speaker: "moose",
+      text: "De eilandkaart is droog. Iemand dacht vooruit."
+    },
+    {
+      id: "island-solved",
+      event: "CHALLENGE_SUCCESS",
+      speaker: "moose",
+      text: "Die route staat vast. Niet uitglijden bij het vieren."
+    },
+    {
+      id: "island-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
       speaker: "minnie",
-      text: "We zijn buiten! Wat een avontuur."
+      text: "Het zonlicht komt dichterbij. Bijna buiten!"
+    },
+    {
+      id: "island-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De eilandpoort wacht nog. Koppige rots."
     },
     {
       id: "island-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "moose",
       text: "De route klopt. Sven kan naar buiten."
+    },
+    {
+      id: "island-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "minnie",
+      text: "Frisse lucht! En een heel eiland om te bekijken."
     }
   ],
   areas: [

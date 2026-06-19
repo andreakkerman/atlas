@@ -121,38 +121,58 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       id: "salon-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Wauw. We zijn echt onder zee."
+      text: "Wauw, zelfs de muren klinken alsof we onder zee zijn."
     },
     {
-      id: "salon-object",
-      event: "OBJECT_FIRST_LOOK",
+      id: "salon-chart-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "captainChart",
+      speaker: "moose",
+      text: "De kapiteinskaart ligt precies recht. Natuurlijk."
+    },
+    {
+      id: "salon-porthole-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "mainPorthole",
       speaker: "minnie",
-      text: "Dit glimt alsof de zee erdoor fluistert."
+      text: "Dat grote raam zit vol blauw licht en voorbijzwemmende schaduwen."
     },
     {
-      id: "salon-open",
-      event: "CHALLENGE_OPEN",
+      id: "salon-logbook-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "logbookDesk",
       speaker: "moose",
-      text: "Nemo bewaart niets zomaar op tafel.",
-      bridge: "O, wacht..."
+      text: "Een logboek op een vaste plek. Nemo verrast niemand."
     },
     {
-      id: "salon-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "salon-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. De Nautilus bromt nog rustig."
+      text: "Afgerond. Het schip bromt tevreden."
     },
     {
-      id: "salon-complete",
-      event: "ADVENTURE_COMPLETE",
+      id: "salon-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "Nog eentje wakker. De salon voelt minder geheimzinnig."
+    },
+    {
+      id: "salon-blocked",
+      event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "Verder de Nautilus in. Blijf bij het pad."
+      text: "De ronde deur blijft rond én dicht."
     },
     {
       id: "salon-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "moose",
       text: "De salon is klaar. De ronde deur kan open."
+    },
+    {
+      id: "salon-complete",
+      event: "ADVENTURE_COMPLETE",
+      speaker: "minnie",
+      text: "Verder naar binnen. Dit schip zit vol geheimen."
     }
   ],
   areas: [

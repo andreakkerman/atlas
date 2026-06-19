@@ -121,26 +121,46 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       id: "beach-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Een strand binnen een kamer. Dat is handig."
+      text: "Een strand in een blokkenkamer. Iemand kon niet kiezen."
     },
     {
-      id: "beach-look",
-      event: "OBJECT_FIRST_LOOK",
+      id: "beach-map-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "treasureMap",
       speaker: "minnie",
-      text: "Dit strandding bewaart duidelijk een geheim."
+      text: "Een schatkaart! Zelfs de vouwen lijken iets te vertellen."
     },
     {
-      id: "beach-open",
-      event: "CHALLENGE_OPEN",
+      id: "beach-castle-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "sandCastle",
       speaker: "moose",
-      text: "Job lijkt zand serieus te nemen.",
-      bridge: "Even opletten."
+      text: "Net zandkasteel. Verdacht net, eerlijk gezegd."
     },
     {
-      id: "beach-fail",
-      event: "CHALLENGE_FAIL_1",
+      id: "beach-boat-attention",
+      event: "HOTSPOT_ATTENTION_FIRST",
+      challengeId: "woodenBoat",
+      speaker: "minnie",
+      text: "Dat houten bootje wijst precies naar de stenen deur."
+    },
+    {
+      id: "beach-solved",
+      event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Bijna. Geen zand in je hoofd laten waaien."
+      text: "Klaar. Geen zand tussen de tandwielen."
+    },
+    {
+      id: "beach-progress",
+      event: "LEVEL_PROGRESS_MILESTONE",
+      speaker: "minnie",
+      text: "Het strandteken gloeit. De deur merkt het ook."
+    },
+    {
+      id: "beach-blocked",
+      event: "EXIT_BLOCKED",
+      speaker: "moose",
+      text: "De stenen deur blijft dicht. En warm."
     },
     {
       id: "beach-unlocked",
@@ -152,7 +172,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       id: "beach-complete",
       event: "ADVENTURE_COMPLETE",
       speaker: "moose",
-      text: "Doorlopen. Ik ruik rook."
+      text: "Doorlopen. Het zand was leuker dan de rook."
     }
   ],
   areas: [
