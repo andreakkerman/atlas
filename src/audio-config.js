@@ -4,7 +4,8 @@ window.SVEN_AUDIO_CONFIG = {
       "menu": "assets/audio/music/menu.mp3",
       "runeCompass": "assets/audio/music/rune-compass.mp3",
       "nautilus": "assets/audio/music/nautilus.mp3",
-      "minecraft": "assets/audio/music/minecraft.mp3"
+      "minecraft": "assets/audio/music/minecraft.mp3",
+      "europeGrandTour": "assets/audio/music/europe_grand_tour.mp3"
     },
     "ambience": {
       "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
@@ -17,7 +18,15 @@ window.SVEN_AUDIO_CONFIG = {
       "minecraftTunnelWind2": "assets/audio/ambience/minecraft-scene-2-tunnel-wind.mp3",
       "minecraftBeach": "assets/audio/ambience/minecraft-scene-3-beach.mp3",
       "minecraftLava": "assets/audio/ambience/minecraft-scene-4-lava.mp3",
-      "minecraftBirds": "assets/audio/ambience/minecraft-scene-5-birds.mp3"
+      "minecraftBirds": "assets/audio/ambience/minecraft-scene-5-birds.mp3",
+      "europeNederland": "assets/audio/ambience/europe/nederland.mp3",
+      "europeEngeland": "assets/audio/ambience/europe/engeland.mp3",
+      "europeFrankrijk": "assets/audio/ambience/europe/frankrijk.mp3",
+      "europeItalie": "assets/audio/ambience/europe/italie.mp3",
+      "europeOostenrijk": "assets/audio/ambience/europe/oostenrijk.mp3",
+      "europeNoorwegen": "assets/audio/ambience/europe/noorwegen.mp3",
+      "europeZweden": "assets/audio/ambience/europe/zweden.mp3",
+      "europeRheden": "assets/audio/ambience/europe/rheden.mp3"
     },
     "sfx": {
       "uiClick": "assets/audio/sfx/ui-click.mp3",
@@ -111,11 +120,59 @@ window.SVEN_AUDIO_CONFIG = {
       "ambience": "minecraftBirds",
       "musicVolume": 0.27,
       "ambienceVolume": 0.34
+    },
+    "LVL-0013": {
+      "music": "europeGrandTour",
+      "ambience": "europeNederland",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.28
+    },
+    "LVL-0014": {
+      "music": "europeGrandTour",
+      "ambience": "europeEngeland",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.47
+    },
+    "LVL-0015": {
+      "music": "europeGrandTour",
+      "ambience": "europeFrankrijk",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.33
+    },
+    "LVL-0016": {
+      "music": "europeGrandTour",
+      "ambience": "europeItalie",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.18
+    },
+    "LVL-0017": {
+      "music": "europeGrandTour",
+      "ambience": "europeOostenrijk",
+      "musicVolume": 0.23,
+      "ambienceVolume": 0.2
+    },
+    "LVL-0018": {
+      "music": "europeGrandTour",
+      "ambience": "europeNoorwegen",
+      "musicVolume": 0.23,
+      "ambienceVolume": 0.42
+    },
+    "LVL-0019": {
+      "music": "europeGrandTour",
+      "ambience": "europeZweden",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.34
+    },
+    "LVL-0020": {
+      "music": "europeGrandTour",
+      "ambience": "europeRheden",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.3
     }
   },
   "volumes": {
     "master": 0.82,
-    "companionPurr": 0.55,
+    "companionPurr": 0.7,
     "sfx": {
       "uiClick": 0.75,
       "challengeOpen": 0.58,
