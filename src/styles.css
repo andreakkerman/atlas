@@ -44,6 +44,29 @@ body {
   animation: sceneChainFadeIn 280ms ease-out both;
 }
 
+#app.exitReducedFadeOut {
+  opacity: 0;
+  transition: opacity 160ms ease-in;
+}
+
+#app.exitRewardFadeIn {
+  animation: exitRewardFadeIn 300ms ease-out both;
+}
+
+.exitIrisOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--exit-focus-x) var(--exit-focus-y),
+    transparent 0,
+    transparent var(--exit-iris-radius),
+    rgba(5, 10, 9, 0.985) calc(var(--exit-iris-radius) + 1px)
+  );
+  animation: exitIrisClose 650ms cubic-bezier(0.55, 0.06, 0.68, 0.19) both;
+}
+
 button {
   font: inherit;
 }
@@ -1471,6 +1494,32 @@ button {
 }
 
 @keyframes sceneChainFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@property --exit-iris-radius {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 150vmax;
+}
+
+@keyframes exitIrisClose {
+  from {
+    --exit-iris-radius: 150vmax;
+  }
+
+  to {
+    --exit-iris-radius: 0px;
+  }
+}
+
+@keyframes exitRewardFadeIn {
   from {
     opacity: 0;
   }

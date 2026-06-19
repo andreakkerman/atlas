@@ -915,6 +915,17 @@ function objectScreenAnchor(object) {
   return worldToScreen(object.center, "viewport");
 }
 
+function objectViewportPoint(object) {
+  const stage = document.querySelector(".stageViewport");
+  const appRect = app.getBoundingClientRect();
+  const stageRect = stage?.getBoundingClientRect() || appRect;
+  const anchor = objectScreenAnchor(object);
+  return {
+    x: stageRect.left - appRect.left + (anchor.x / 100) * stageRect.width,
+    y: stageRect.top - appRect.top + (anchor.y / 100) * stageRect.height
+  };
+}
+
 function distanceBetween(a, b) {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
@@ -1455,6 +1466,15 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
   state.svenMood = "arrived";
   render();
 
+  const isCompletedExit =
+    target.id === (level.exitHotspotId || "templeGate") &&
+    action === "activate" &&
+    state.completedRunes.size === level.runes.length;
+  if (isCompletedExit) {
+    finishInteraction(target, kind, action);
+    return;
+  }
+
   window.setTimeout(() => {
     if (!state.moving || state.interactionToken !== interactionToken) return;
     state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
@@ -1506,8 +1526,9 @@ function finishInteraction(target, kind, action) {
 
   if (target.id === exitHotspotId && action === "activate" && state.completedRunes.size === level.runes.length) {
     state.moving = false;
+    state.svenMood = "idle";
     playSfx("unlock");
-    showReward();
+    transitionToReward(target);
     return;
   }
 
@@ -1652,6 +1673,37 @@ function showReward() {
   state.screen = "reward";
   saveCompletion();
   render();
+}
+
+async function transitionToReward(target) {
+  if (state.exitTransitionPending) return;
+  state.exitTransitionPending = true;
+  render();
+
+  const object = interactiveObjectForTarget(target);
+  const focus = objectViewportPoint(object);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const settleMs = reduceMotion ? 40 : 100;
+  const fadeOutMs = reduceMotion ? 160 : 650;
+
+  await new Promise((resolve) => window.setTimeout(resolve, settleMs));
+
+  if (reduceMotion) {
+    app.classList.add("exitReducedFadeOut");
+  } else {
+    const overlay = document.createElement("div");
+    overlay.className = "exitIrisOverlay";
+    overlay.dataset.exitTransition = target.id;
+    overlay.style.setProperty("--exit-focus-x", `${focus.x}px`);
+    overlay.style.setProperty("--exit-focus-y", `${focus.y}px`);
+    app.append(overlay);
+  }
+
+  await new Promise((resolve) => window.setTimeout(resolve, fadeOutMs));
+  showReward();
+  app.classList.remove("exitReducedFadeOut");
+  app.classList.add("exitRewardFadeIn");
+  window.setTimeout(() => app.classList.remove("exitRewardFadeIn"), reduceMotion ? 180 : 300);
 }
 
 async function continueToNextLevel() {

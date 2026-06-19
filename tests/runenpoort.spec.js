@@ -259,10 +259,49 @@ async function waitForIdle(page) {
     .toBe("idle");
 }
 
-async function triggerWorldExit(page, objectName, expectedRewardHeading) {
+async function triggerWorldExit(page, objectName, expectedRewardHeading, options = {}) {
   const target = page.getByRole("button", { name: objectName, exact: true });
   await expect(target).toHaveCount(1);
   await target.dispatchEvent("click");
+  await expect(page.getByRole("heading", { name: expectedRewardHeading })).toHaveCount(0);
+
+  if (options.verifyIris) {
+    const overlay = page.locator(".exitIrisOverlay");
+    await expect(overlay).toBeVisible({ timeout: 22000 });
+    await expect(overlay).toHaveAttribute("data-exit-transition", options.exitId);
+
+    const transitionGeometry = await page.evaluate((exitId) => {
+      const currentLevel = window.eval("level");
+      const currentState = window.eval("state");
+      const object = currentLevel.interactiveObjects.find((item) => item.id === exitId);
+      const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+      const stageRect = document.querySelector(".stageViewport").getBoundingClientRect();
+      const appRect = document.querySelector("#app").getBoundingClientRect();
+      const overlayNode = document.querySelector(".exitIrisOverlay");
+      const expectedX =
+        stageRect.left - appRect.left +
+        ((object.center.x - currentState.cameraX) / currentState.viewportWorldWidth) * stageRect.width;
+      const expectedY =
+        stageRect.top - appRect.top +
+        (object.center.y / currentLevel.world.height) * stageRect.height;
+      return {
+        actorX: currentState.worldX,
+        actorY: currentState.worldY,
+        approachX: approach.x,
+        approachY: approach.y,
+        focusX: parseFloat(overlayNode.style.getPropertyValue("--exit-focus-x")),
+        focusY: parseFloat(overlayNode.style.getPropertyValue("--exit-focus-y")),
+        expectedX,
+        expectedY
+      };
+    }, options.exitId);
+
+    expect(transitionGeometry.actorX).toBeCloseTo(transitionGeometry.approachX, 0);
+    expect(transitionGeometry.actorY).toBeCloseTo(transitionGeometry.approachY, 0);
+    expect(transitionGeometry.focusX).toBeCloseTo(transitionGeometry.expectedX, 1);
+    expect(transitionGeometry.focusY).toBeCloseTo(transitionGeometry.expectedY, 1);
+  }
+
   await expect(page.getByRole("heading", { name: expectedRewardHeading })).toBeVisible({ timeout: 22000 });
 }
 
@@ -429,7 +468,11 @@ async function playFullAdventure(page) {
   await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
   await expect(page.locator('[data-object="templeGate"]')).toBeVisible();
   await expect(page.locator('[data-adventure-team-bar] [data-action="reward"]')).toHaveCount(0);
-  await triggerWorldExit(page, "Runenpoort", "De poort gaat open!");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await triggerWorldExit(page, "Runenpoort", "De poort gaat open!", {
+    verifyIris: true,
+    exitId: "templeGate"
+  });
   await expect(page.getByText("Bewaker van de Runenpoort")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
   await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
