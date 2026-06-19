@@ -27,6 +27,7 @@ const COMPANION_EVENT_PRIORITY = {
   LEVEL_ENTER: 10,
   OBJECT_FIRST_LOOK: 20,
   AMBIENT_ATTENTION: 25,
+  AMBIENT_ATTENTION_FIRST: 25,
   HOTSPOT_ATTENTION_FIRST: 30,
   COMPANION_CONVERSATION: 30,
   CHALLENGE_OPEN: 40,
@@ -40,6 +41,7 @@ const COMPANION_EVENT_PRIORITY = {
 };
 const IMMEDIATE_COMPANION_EVENTS = new Set([
   "AMBIENT_ATTENTION",
+  "AMBIENT_ATTENTION_FIRST",
   "HOTSPOT_ATTENTION_FIRST",
   "LEVEL_PROGRESS_MILESTONE",
   "EXIT_BLOCKED",
@@ -1447,8 +1449,31 @@ function selectChallenge(target) {
 function inspectAmbientTarget(target) {
   if (!target || state.moving || state.screen !== "scene") return;
   state.selectedChallengeId = null;
-  emitCompanionEvent("AMBIENT_ATTENTION", {
-    objectId: target.objectId || target.id
+  const objectId = target.objectId || target.id;
+  const firstLook = !state.seenObjects.has(objectId);
+  if (firstLook) state.seenObjects.add(objectId);
+  const firstAttention = firstLook && authoredCompanionMoments("AMBIENT_ATTENTION_FIRST", { objectId }).length > 0;
+  emitCompanionEvent(firstAttention ? "AMBIENT_ATTENTION_FIRST" : "AMBIENT_ATTENTION", { objectId });
+  render();
+}
+
+function completeCurrentSceneChallenges() {
+  if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return;
+  stopMovement();
+  state.completedRunes = new Set(level.runes.map((rune) => rune.id));
+  state.screen = "scene";
+  state.activeRuneId = null;
+  state.selectedChallengeId = null;
+  state.activeQuestions = [];
+  state.questionIndex = 0;
+  state.selectedWrong = false;
+  state.questionTracked = false;
+  state.justCompletedRuneId = null;
+  state.feedback = "";
+  state.svenMood = "idle";
+  emitCompanionEvent("PATH_UNLOCKED", {
+    completedCount: state.completedRunes.size,
+    totalCount: level.runes.length
   });
   render();
 }
@@ -2472,11 +2497,17 @@ window.addEventListener("resize", updateWorldDom);
 
 window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();
-  if (!(event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d")) return;
-  event.preventDefault();
-  debugOverlayEnabled = !debugOverlayEnabled;
-  if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
-    render();
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "c") {
+    event.preventDefault();
+    completeCurrentSceneChallenges();
+    return;
+  }
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d") {
+    event.preventDefault();
+    debugOverlayEnabled = !debugOverlayEnabled;
+    if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
+      render();
+    }
   }
 });
 

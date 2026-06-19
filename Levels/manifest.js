@@ -149,6 +149,108 @@ window.SVEN_LEVEL_MANIFEST = {
         badge: "Finale",
         detail: "Zonlicht, portalen en de uitgang naar huis"
       }
+    },
+    {
+      id: "LVL-0013",
+      title: "De Reis door Europa",
+      subtitle: "Reis door zeven Europese landen",
+      script: "Levels/LVL-0013/level.js",
+      menu: {
+        illustration: "Levels/LVL-0013/assets/nederland.png",
+        badge: "Nieuw avontuur",
+        detail: "Molens, wereldsteden, fjorden en de Posbank"
+      }
+    },
+    {
+      id: "LVL-0014",
+      title: "Engeland — De Oude Klokkenstad",
+      subtitle: "Klokken, een telescoop en een rode brievenbus.",
+      script: "Levels/LVL-0014/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0013",
+      menu: {
+        illustration: "Levels/LVL-0014/assets/engeland.png",
+        badge: "Verbonden gebied",
+        detail: "Een oude klokkenstad aan het water"
+      }
+    },
+    {
+      id: "LVL-0015",
+      title: "Frankrijk — Het Zonnige Dorpsplein",
+      subtitle: "Een fontein, markt en klokkentoren in de zon.",
+      script: "Levels/LVL-0015/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0014",
+      menu: {
+        illustration: "Levels/LVL-0015/assets/frankrijk.png",
+        badge: "Verbonden gebied",
+        detail: "Een zonnig plein tussen bloemen en marktkramen"
+      }
+    },
+    {
+      id: "LVL-0016",
+      title: "Italië — De Romeinse Route",
+      subtitle: "Langs het Colosseum, een fontein en heerlijk ijs.",
+      script: "Levels/LVL-0016/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0015",
+      menu: {
+        illustration: "Levels/LVL-0016/assets/italie.png",
+        badge: "Verbonden gebied",
+        detail: "Romeinse stenen, druiven en gelato"
+      }
+    },
+    {
+      id: "LVL-0017",
+      title: "Oostenrijk — De Alpenpoort",
+      subtitle: "Een bergdorp met een klokhuis en kabelbaan.",
+      script: "Levels/LVL-0017/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0016",
+      menu: {
+        illustration: "Levels/LVL-0017/assets/oostenrijk.png",
+        badge: "Verbonden gebied",
+        detail: "Alpen, kabelbaan en een pretzelkraam"
+      }
+    },
+    {
+      id: "LVL-0018",
+      title: "Noorwegen — Het Fjordlicht",
+      subtitle: "Vind de route tussen vuurtoren, vikingschip en fjord.",
+      script: "Levels/LVL-0018/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0017",
+      menu: {
+        illustration: "Levels/LVL-0018/assets/noorwegen.png",
+        badge: "Verbonden gebied",
+        detail: "Een fjordhaven onder het avondlicht"
+      }
+    },
+    {
+      id: "LVL-0019",
+      title: "Zweden — Het Dorp aan het Water",
+      subtitle: "Een kleurig havendorp met een Dalapaard en meiboom.",
+      script: "Levels/LVL-0019/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0018",
+      menu: {
+        illustration: "Levels/LVL-0019/assets/zweden.png",
+        badge: "Verbonden gebied",
+        detail: "Vlaggen, bloemen en boten aan de kade"
+      }
+    },
+    {
+      id: "LVL-0020",
+      title: "Rheden — Terug naar de Posbank",
+      subtitle: "De reis eindigt tussen heide, bos en vertrouwde paden.",
+      script: "Levels/LVL-0020/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0019",
+      menu: {
+        illustration: "Levels/LVL-0020/assets/rheden.png",
+        badge: "Finale",
+        detail: "Heide, uitzicht en thuiskomen op de Posbank"
+      }
     }
   ]
 };

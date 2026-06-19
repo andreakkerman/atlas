@@ -553,6 +553,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /Duik in een geheim avontuur/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Blokkenpoort/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Ontdek vijf blokkenkamers/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /De Reis door Europa/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Reis door zeven Europese landen/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
@@ -562,7 +564,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /De Strandkamer/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Netherproef/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Weg Naar Huis/ })).toHaveCount(0);
-    await expect(page.locator(".levelTile")).toHaveCount(3);
+    await expect(page.locator(".levelTile")).toHaveCount(4);
     const tiles = await page.locator(".levelTile").evaluateAll((nodes) =>
       nodes.map((node) => {
         const box = node.getBoundingClientRect();
@@ -574,8 +576,10 @@ test.describe("SvenAdventure", () => {
     }
     expect(tiles[1].y).toBeGreaterThan(tiles[0].y + tiles[0].height);
     expect(tiles[2].y).toBeGreaterThan(tiles[1].y + tiles[1].height);
+    expect(tiles[3].y).toBeGreaterThan(tiles[2].y + tiles[2].height);
     expect(Math.abs(tiles[0].x - tiles[1].x)).toBeLessThan(2);
     expect(Math.abs(tiles[1].x - tiles[2].x)).toBeLessThan(2);
+    expect(Math.abs(tiles[2].x - tiles[3].x)).toBeLessThan(2);
   });
 
   test("unlocks audio on the launch screen and does not show launch again on menu return", async ({ page }) => {
@@ -920,6 +924,7 @@ test.describe("SvenAdventure", () => {
       "LEVEL_ENTER",
       "OBJECT_FIRST_LOOK",
       "AMBIENT_ATTENTION",
+      "AMBIENT_ATTENTION_FIRST",
       "HOTSPOT_ATTENTION_FIRST",
       "CHALLENGE_OPEN",
       "LEVEL_PROGRESS_MILESTONE",
@@ -958,7 +963,9 @@ test.describe("SvenAdventure", () => {
       for (const ambientId of loadedLevel.ambientIds) {
         expect(
           loadedLevel.companionMoments.some(
-            (moment) => moment.event === "AMBIENT_ATTENTION" && moment.objectId === ambientId
+            (moment) =>
+              ["AMBIENT_ATTENTION", "AMBIENT_ATTENTION_FIRST"].includes(moment.event) &&
+              moment.objectId === ambientId
           ),
           `${loadedLevel.id}.${ambientId} ambient attention`
         ).toBe(true);

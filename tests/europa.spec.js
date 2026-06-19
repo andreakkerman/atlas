@@ -1,0 +1,257 @@
+// @ts-check
+const { test, expect } = require("@playwright/test");
+const path = require("path");
+const { pathToFileURL } = require("url");
+
+const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const devGameUrl = `${gameUrl}?dev=editor`;
+
+async function tap(locator) {
+  await expect(locator).toBeVisible();
+  await expect(locator).toBeEnabled();
+  await locator.click({ force: true });
+}
+
+async function waitForImages(page) {
+  await page.waitForFunction(() => [...document.images].every((image) => image.complete && image.naturalWidth > 0));
+}
+
+async function startEuropeAdventure(page) {
+  await page.goto(gameUrl);
+  await page.evaluate(() => localStorage.clear());
+  await waitForImages(page);
+  await tap(page.getByRole("button", { name: "Start avontuur" }));
+  await expect(page.getByRole("button", { name: /De Reis door Europa/ })).toBeVisible();
+  await expect(page.getByText("Reis door zeven Europese landen")).toBeVisible();
+  await tap(page.getByRole("button", { name: /De Reis door Europa/ }));
+  await expect(page.getByRole("heading", { name: "Nederland — Het Begin van de Reis" })).toBeVisible();
+  await tap(page.getByRole("button", { name: "Start avontuur" }));
+  await waitForImages(page);
+  await expect(page.getByRole("button", { name: "Windmolen" })).toBeVisible();
+}
+
+async function expectAudioState(page, expectedMusic, expectedAmbience) {
+  const audioState = await page.evaluate(() => ({
+    musicKey: window.eval("audioState.currentMusicKey"),
+    ambienceKey: window.eval("audioState.currentAmbienceKey")
+  }));
+  expect(audioState).toEqual({
+    musicKey: expectedMusic,
+    ambienceKey: expectedAmbience
+  });
+}
+
+test.describe("De Grote Reis door Europa", () => {
+  test.setTimeout(90000);
+
+  test("shows the menu tile, starts in Nederland, authors attention, and blocks the early exit", async ({ page }) => {
+    await startEuropeAdventure(page);
+    await expectAudioState(page, "europeGrandTour", "europeNederland");
+
+    await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
+    await expect(page.locator(".teamMessage")).toHaveText(
+      "Die molen zwaait met vier grote armen. Volgens mij telt hij mee."
+    );
+    await expect(page.getByRole("heading", { name: "Windmolen" })).toBeVisible({ timeout: 30000 });
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+
+    await startEuropeAdventure(page);
+    const exit = page.getByRole("button", { name: "Reispoort", exact: true });
+    const actor = page.locator("[data-actor='sven']");
+    await exit.dispatchEvent("click");
+    await expect(actor).toHaveAttribute("data-animation", "walk");
+    await expect(page.getByText("De reispoort wacht nog op 3 reistekens. De poort is geduldig. Ik ook.")).toBeVisible({
+      timeout: 30000
+    });
+
+    const arrival = await page.evaluate(() => {
+      const currentLevel = window.eval("level");
+      const currentState = window.eval("state");
+      const object = currentLevel.interactiveObjects.find((item) => item.id === "travelGate");
+      const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+      return {
+        levelId: currentLevel.id,
+        actorX: currentState.worldX,
+        actorY: currentState.worldY,
+        approachX: approach.x,
+        approachY: approach.y,
+        screen: currentState.screen
+      };
+    });
+    expect(arrival).toMatchObject({ levelId: "LVL-0013", screen: "scene" });
+    expect(arrival.actorX).toBeCloseTo(arrival.approachX, 0);
+    expect(arrival.actorY).toBeCloseTo(arrival.approachY, 0);
+    await expect(page.locator(".exitIrisOverlay")).toHaveCount(0);
+  });
+
+  test("continues from Nederland to Engeland through the existing reward transition", async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop-chromium", "The scene-chain smoke runs once on desktop.");
+    await startEuropeAdventure(page);
+
+    await page.keyboard.press("Control+Shift+C");
+    await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
+
+    await page.getByRole("button", { name: "Reispoort", exact: true }).dispatchEvent("click");
+    await expect(page.getByRole("heading", { name: "De reis is begonnen!" })).toBeVisible({ timeout: 30000 });
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+    await tap(page.getByRole("button", { name: "Naar Engeland" }));
+
+    await expect(page.getByRole("button", { name: "Oude klokkentoren" })).toBeVisible({ timeout: 30000 });
+    await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
+    const levelId = await page.evaluate(() => window.eval("level.id"));
+    expect(levelId).toBe("LVL-0014");
+    await expectAudioState(page, "europeGrandTour", "europeEngeland");
+  });
+
+  test("adds flavor-only ambient objects and uses one shared challenger", async ({ page }) => {
+    await page.goto(gameUrl);
+    await waitForImages(page);
+    const europe = await page.evaluate(async () => {
+      for (const entry of window.SVEN_LEVEL_MANIFEST.levels.filter((item) => {
+        const number = Number(item.id.slice(-4));
+        return number >= 13 && number <= 20;
+      })) {
+        if (!window.SVEN_LEVEL_DEFINITIONS[entry.id]) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = entry.script;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.append(script);
+          });
+        }
+      }
+      return Object.values(window.SVEN_LEVEL_DEFINITIONS)
+        .filter((item) => Number(item.id.slice(-4)) >= 13)
+        .map((item) => ({
+          id: item.id,
+          runeCount: item.runes.length,
+          ambientIds: item.interactiveObjects.filter((object) => object.type === "ambient").map((object) => object.id),
+          challenger: item.challengeCharacter,
+          challengeArt: item.challengeArt
+        }));
+    });
+
+    expect(europe).toHaveLength(8);
+    expect(europe.find((item) => item.id === "LVL-0014")).toMatchObject({
+      runeCount: 3,
+      ambientIds: ["travelCrystal"]
+    });
+    expect(europe.find((item) => item.id === "LVL-0016")).toMatchObject({
+      runeCount: 3,
+      ambientIds: ["grapePress"]
+    });
+    for (const scene of europe) {
+      expect(scene.challenger.id).toBe("atlas-de-reiziger");
+      expect(scene.challenger.name).toBe("Atlas de Reiziger");
+      expect(scene.challenger.portrait).toMatch(/atlas-de-reiziger\.png$/);
+      expect(scene.challengeArt).toBe(scene.challenger.portrait);
+    }
+  });
+
+  test("shows authored first ambient attention without changing England progress", async ({ page }) => {
+    await startEuropeAdventure(page);
+    await page.keyboard.press("Control+Shift+C");
+    await page.getByRole("button", { name: "Reispoort", exact: true }).dispatchEvent("click");
+    await expect(page.getByRole("heading", { name: "De reis is begonnen!" })).toBeVisible({ timeout: 30000 });
+    await tap(page.getByRole("button", { name: "Naar Engeland" }));
+
+    const before = await page.evaluate(() => window.eval("state.completedRunes.size"));
+    await page.getByRole("button", { name: "Reiskristal" }).dispatchEvent("click");
+    await expect(page.locator(".teamMessage")).toHaveText(
+      "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen."
+    );
+    const after = await page.evaluate(() => window.eval("state.completedRunes.size"));
+    expect({ before, after }).toEqual({ before: 0, after: 0 });
+  });
+
+  test("challenge-complete shortcut unlocks a scene without changing score or persistence", async ({ page }) => {
+    await startEuropeAdventure(page);
+    const before = await page.evaluate(() => ({
+      answered: window.eval("state.answered"),
+      attempts: window.eval("state.attempts"),
+      completion: localStorage.getItem("atlas-europa-nederland-v1")
+    }));
+
+    await page.keyboard.press("Control+Shift+C");
+    await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
+    const after = await page.evaluate(() => ({
+      completed: window.eval("state.completedRunes.size"),
+      total: window.eval("level.runes.length"),
+      answered: window.eval("state.answered"),
+      attempts: window.eval("state.attempts"),
+      screen: window.eval("state.screen"),
+      completion: localStorage.getItem("atlas-europa-nederland-v1")
+    }));
+    expect(after).toEqual({
+      completed: 3,
+      total: 3,
+      answered: before.answered,
+      attempts: before.attempts,
+      screen: "scene",
+      completion: before.completion
+    });
+  });
+
+  test("Rheden starts left and completes toward the right", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0020", { startImmediately: true });
+      window.eval("render")();
+    });
+    await expect(page.getByRole("button", { name: "Bospad naar huis" })).toBeVisible();
+    const geometry = await page.evaluate(() => {
+      const currentLevel = window.eval("level");
+      const currentState = window.eval("state");
+      const exit = currentLevel.interactiveObjects.find((object) => object.id === currentLevel.exitHotspotId);
+      return {
+        startX: currentState.worldX,
+        declaredStartX: currentLevel.player.start.x,
+        exitX: exit.center.x,
+        challengeCount: currentLevel.runes.length
+      };
+    });
+    expect(geometry.startX).toBe(geometry.declaredStartX);
+    expect(geometry.startX).toBeLessThan(400);
+    expect(geometry.exitX).toBeGreaterThan(1800);
+    expect(geometry.challengeCount).toBe(3);
+  });
+
+  test("shows the standard per-level music and ambience controls in editor mode", async ({ page }) => {
+    await page.goto(devGameUrl);
+    await page.evaluate(() => localStorage.clear());
+    await waitForImages(page);
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await tap(page.getByRole("button", { name: /De Reis door Europa/ }));
+    await tap(page.getByRole("button", { name: "Start avontuur" }));
+    await page.keyboard.press("Control+Shift+D");
+
+    await expect(page.locator("[data-audio-editor]")).toBeVisible();
+    await expect(page.locator('[data-audio-path="volumes.master"]')).toBeVisible();
+    await expect(page.locator('[data-audio-path="levels.LVL-0013.musicVolume"]')).toBeVisible();
+    await expect(page.locator('[data-audio-path="levels.LVL-0013.ambienceVolume"]')).toBeVisible();
+    await page.keyboard.press("Control+Shift+C");
+    await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
+
+    const mapping = await page.evaluate(() => ({
+      music: window.SVEN_AUDIO_CONFIG.levels["LVL-0013"].music,
+      ambience: window.SVEN_AUDIO_CONFIG.levels["LVL-0013"].ambience,
+      musicPath: window.SVEN_AUDIO_CONFIG.tracks.music.europeGrandTour,
+      ambiencePath: window.SVEN_AUDIO_CONFIG.tracks.ambience.europeNederland
+    }));
+    expect(mapping).toEqual({
+      music: "europeGrandTour",
+      ambience: "europeNederland",
+      musicPath: "assets/audio/music/europe_grand_tour.mp3",
+      ambiencePath: "assets/audio/ambience/europe/nederland.mp3"
+    });
+
+    await page.locator('[data-audio-path="levels.LVL-0013.musicVolume"]').fill("0.41");
+    await page.locator('[data-audio-path="levels.LVL-0013.ambienceVolume"]').fill("0.37");
+    const volumes = await page.evaluate(() => ({
+      music: window.SVEN_AUDIO_CONFIG.levels["LVL-0013"].musicVolume,
+      ambience: window.SVEN_AUDIO_CONFIG.levels["LVL-0013"].ambienceVolume
+    }));
+    expect(volumes).toEqual({ music: 0.41, ambience: 0.37 });
+  });
+});
