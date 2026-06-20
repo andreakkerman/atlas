@@ -872,7 +872,11 @@ test.describe("SvenAdventure", () => {
       }
       return Object.values(window.SVEN_LEVEL_DEFINITIONS).map((level) => ({
         id: level.id,
-        runes: level.runes.map((rune) => ({ id: rune.id, count: rune.questions.length, questions: rune.questions }))
+        runes: level.runes.map((rune) => ({
+          id: rune.id,
+          count: rune.challengeIds?.length || rune.questions?.length || 0,
+          questions: rune.questions || null
+        }))
       }));
     });
 
@@ -880,7 +884,7 @@ test.describe("SvenAdventure", () => {
       const exactQuestions = new Set();
       for (const rune of loadedLevel.runes) {
         expect(rune.count, `${loadedLevel.id}.${rune.id}`).toBeGreaterThanOrEqual(4);
-        for (const question of rune.questions) {
+        for (const question of rune.questions || []) {
           expect(Number.isInteger(question.a), `${loadedLevel.id}.${rune.id} a`).toBe(true);
           expect(Number.isInteger(question.b), `${loadedLevel.id}.${rune.id} b`).toBe(true);
           expect(question.a, `${loadedLevel.id}.${rune.id} a range`).toBeGreaterThanOrEqual(1);

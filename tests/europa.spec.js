@@ -53,7 +53,7 @@ test.describe("De Grote Reis door Europa", () => {
       "Die molen zwaait met vier grote armen. Volgens mij telt hij mee."
     );
     await expect(page.getByRole("heading", { name: "Windmolen" })).toBeVisible({ timeout: 30000 });
-    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+    await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
 
     await startEuropeAdventure(page);
     const exit = page.getByRole("button", { name: "Reispoort", exact: true });
@@ -155,6 +155,7 @@ test.describe("De Grote Reis door Europa", () => {
     await page.getByRole("button", { name: "Reispoort", exact: true }).dispatchEvent("click");
     await expect(page.getByRole("heading", { name: "De reis is begonnen!" })).toBeVisible({ timeout: 30000 });
     await tap(page.getByRole("button", { name: "Naar Engeland" }));
+    await expect(page.getByRole("button", { name: "Oude klokkentoren" })).toBeVisible({ timeout: 30000 });
 
     const before = await page.evaluate(() => window.eval("state.completedRunes.size"));
     await page.getByRole("button", { name: "Reiskristal" }).dispatchEvent("click");
@@ -163,6 +164,132 @@ test.describe("De Grote Reis door Europa", () => {
     );
     const after = await page.evaluate(() => window.eval("state.completedRunes.size"));
     expect({ before, after }).toEqual({ before: 0, after: 0 });
+  });
+
+  test("uses authored Atlas Learning challenge schema for the three pilot scenes", async ({ page }) => {
+    await page.goto(gameUrl);
+    await waitForImages(page);
+    const pilot = await page.evaluate(async () => {
+      const ids = ["LVL-0013", "LVL-0014", "LVL-0015"];
+      for (const id of ids) {
+        const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === id);
+        if (!window.SVEN_LEVEL_DEFINITIONS[id]) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = entry.script;
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.append(script);
+          });
+        }
+      }
+      return ids.map((id) => {
+        const selected = window.SVEN_LEVEL_DEFINITIONS[id];
+        return {
+          id,
+          challenges: selected.learningChallenges,
+          runeChallengeIds: selected.runes.map((rune) => rune.challengeIds)
+        };
+      });
+    });
+
+    const required = [
+      "id", "anchorId", "challengeCharacterId", "domain", "schoolBand", "family",
+      "presentation", "answerMode", "prompt", "answer", "hintMinnie", "hintMoose", "explanation"
+    ];
+    const allChallenges = pilot.flatMap((scene) => scene.challenges);
+    expect(allChallenges).toHaveLength(36);
+    expect(allChallenges.filter((challenge) => challenge.presentation === "story")).toHaveLength(27);
+    expect(allChallenges.filter((challenge) => challenge.presentation === "bare")).toHaveLength(9);
+    expect(allChallenges.filter((challenge) => challenge.answerMode === "open")).toHaveLength(18);
+    expect(allChallenges.filter((challenge) => challenge.answerMode === "multipleChoice")).toHaveLength(18);
+
+    for (const scene of pilot) {
+      expect(scene.challenges).toHaveLength(12);
+      expect(scene.runeChallengeIds).toEqual(expect.arrayContaining([
+        expect.arrayContaining([expect.any(String), expect.any(String), expect.any(String), expect.any(String)])
+      ]));
+      for (const challenge of scene.challenges) {
+        for (const field of required) expect(challenge[field], `${scene.id}.${challenge.id}.${field}`).toBeDefined();
+        expect(challenge.challengeCharacterId).toBe("atlas-de-reiziger");
+        expect(challenge.domain).toBe("math");
+        expect(challenge.schoolBand).toBe("E5-intended");
+        if (challenge.answerMode === "multipleChoice") expect(challenge.choices).toContain(challenge.answer);
+      }
+    }
+  });
+
+  test("plays an open story problem through Minnie, Moose, and assisted completion", async ({ page }) => {
+    await startEuropeAdventure(page);
+    await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
+
+    await expect(page.locator("[data-challenge-character='atlas-de-reiziger']")).toContainText("Atlas de Reiziger");
+    await expect(page.getByText("Aan elke van de 4 wieken hangen 8 linten. Hoeveel linten zijn dat samen?")).toBeVisible();
+    await expect(page.locator("[data-open-answer]")).toBeVisible();
+    await expect(page.locator("[data-open-answer]")).toHaveAttribute("type", "text");
+    await expect(page.locator("[data-open-answer]")).toHaveAttribute("inputmode", "numeric");
+    await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
+    await expect(page.locator(".teamMessage")).toHaveText("");
+    await expect(page.getByText("De wieken draaien boven de tulpen.")).toHaveCount(0);
+    await expect(page.getByText("De rune wil nog een som.")).toHaveCount(0);
+    await expect(page.getByText(/Reisproef 1\/4/)).toHaveCount(0);
+    await expect(page.getByText("E5-intended")).toHaveCount(0);
+    await expect(page.getByText("schoolBand")).toHaveCount(0);
+    await expect(page.getByText("domain")).toHaveCount(0);
+
+    const layout = await page.evaluate(() => {
+      const panel = document.querySelector(".runeChallengeBox").getBoundingClientRect();
+      const bar = document.querySelector("[data-adventure-team-bar]").getBoundingClientRect();
+      const portraitTops = [...document.querySelectorAll(".teamPortrait")].map((node) => node.getBoundingClientRect().top);
+      return { panelBottom: panel.bottom, companionTop: Math.min(bar.top, ...portraitTops) };
+    });
+    expect(layout.panelBottom).toBeLessThanOrEqual(layout.companionTop);
+
+    await page.locator("[data-open-answer]").fill("30");
+    await tap(page.getByRole("button", { name: "Controleer" }));
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
+    await expect(page.locator(".teamMessage")).toHaveText("Kijk naar 4 gelijke groepjes van 8 linten.");
+    await expect(page.locator(".runeChallengeBox").getByText("Kijk naar 4 gelijke groepjes van 8 linten.")).toHaveCount(0);
+
+    await page.locator("[data-open-answer]").fill("31");
+    await tap(page.getByRole("button", { name: "Controleer" }));
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
+    await expect(page.locator(".teamMessage")).toHaveText("Reken 4 × 8 als 2 × 8 en nog eens 2 × 8.");
+    await expect(page.locator(".runeChallengeBox").getByText("Reken 4 × 8 als 2 × 8 en nog eens 2 × 8.")).toHaveCount(0);
+
+    await page.locator("[data-open-answer]").fill("33");
+    await tap(page.getByRole("button", { name: "Controleer" }));
+    await expect(page.locator(".runeChallengeBox").getByText("4 × 8 = 32, dus er hangen 32 linten.")).toBeVisible();
+    await tap(page.getByRole("button", { name: "Samen afronden" }));
+    await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
+    await expect(page.getByText(/Het antwoord is 32/)).toBeVisible();
+  });
+
+  test("clears hotspot attention when an authored challenge starts", async ({ page }) => {
+    await startEuropeAdventure(page);
+    await page.getByRole("button", { name: "Kaaswagen" }).dispatchEvent("click");
+
+    await expect(page.getByRole("heading", { name: "Kaaswagen" })).toBeVisible({ timeout: 30000 });
+    await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
+    await expect(page.locator(".teamMessage")).toHaveText("");
+    await expect(page.getByText("Al die kazen staan in keurige stapels. Daar verstopt zich vast een som.")).toHaveCount(0);
+  });
+
+  test("plays a multiple-choice story problem in England", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("render")();
+    });
+    await page.getByRole("button", { name: "Oude klokkentoren" }).dispatchEvent("click");
+
+    await expect(page.getByText("De klokkentoren heeft 8 rijen met 6 stenen versieringen. Hoeveel versieringen zijn dat?")).toBeVisible();
+    await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
+    await expect(page.locator("[data-open-answer]")).toHaveCount(0);
+    await expect(page.locator("[data-choice]")).toHaveCount(4);
+    await tap(page.locator('[data-choice="48"]'));
+    await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
+    await expect(page.getByText("Ja! Het antwoord is 48.")).toBeVisible();
   });
 
   test("challenge-complete shortcut unlocks a scene without changing score or persistence", async ({ page }) => {

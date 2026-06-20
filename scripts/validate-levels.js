@@ -510,6 +510,46 @@ function validateReferences(level, objects, nodeIds, label) {
     }
   });
 
+  const authoredChallenges = new Map();
+  if (level.learningChallenges !== undefined) {
+    if (!Array.isArray(level.learningChallenges) || level.learningChallenges.length === 0) {
+      fail(`${label}.learningChallenges must be a non-empty array when provided.`);
+    }
+    (level.learningChallenges || []).forEach((challenge, index) => {
+      const challengeLabel = `${label}.learningChallenges[${index}]`;
+      if (!isObject(challenge)) {
+        fail(`${challengeLabel} must be an object.`);
+        return;
+      }
+      [
+        "id", "anchorId", "challengeCharacterId", "domain", "schoolBand", "family",
+        "presentation", "answerMode", "prompt", "hintMinnie", "hintMoose", "explanation"
+      ].forEach((field) => validateRequiredString(challenge[field], `${challengeLabel}.${field}`));
+      if (authoredChallenges.has(challenge.id)) fail(`${challengeLabel}.id is duplicated: ${challenge.id}`);
+      authoredChallenges.set(challenge.id, challenge);
+      if (!objects.has(challenge.anchorId)) fail(`${challengeLabel}.anchorId references missing object: ${challenge.anchorId}`);
+      if (challenge.challengeCharacterId !== level.challengeCharacter?.id) {
+        fail(`${challengeLabel}.challengeCharacterId must match level.challengeCharacter.id.`);
+      }
+      if (challenge.domain !== "math") fail(`${challengeLabel}.domain must be "math".`);
+      if (challenge.schoolBand !== "E5-intended") fail(`${challengeLabel}.schoolBand must be "E5-intended".`);
+      if (!["story", "bare"].includes(challenge.presentation)) {
+        fail(`${challengeLabel}.presentation must be "story" or "bare".`);
+      }
+      if (!["open", "multipleChoice"].includes(challenge.answerMode)) {
+        fail(`${challengeLabel}.answerMode must be "open" or "multipleChoice".`);
+      }
+      if (!Number.isFinite(challenge.answer)) fail(`${challengeLabel}.answer must be a finite number.`);
+      if (challenge.answerMode === "multipleChoice") {
+        if (!Array.isArray(challenge.choices) || challenge.choices.length < 2) {
+          fail(`${challengeLabel}.choices must contain at least 2 choices.`);
+        } else if (!challenge.choices.includes(challenge.answer)) {
+          fail(`${challengeLabel}.choices must include the answer.`);
+        }
+      }
+    });
+  }
+
   const exactQuestions = new Set();
   (level.runes || []).forEach((rune, index) => {
     const runeLabel = `${label}.runes[${index}]`;
@@ -525,6 +565,19 @@ function validateReferences(level, objects, nodeIds, label) {
       fail(`${runeLabel}.objectId references missing interactive object: ${rune.objectId}`);
     } else if (object.type !== "rune") {
       fail(`${runeLabel}.objectId should reference an interactive object with type "rune".`);
+    }
+
+    if (Array.isArray(rune.challengeIds)) {
+      if (rune.challengeIds.length < 4) fail(`${runeLabel}.challengeIds must contain at least 4 challenges.`);
+      rune.challengeIds.forEach((challengeId, challengeIndex) => {
+        const challenge = authoredChallenges.get(challengeId);
+        if (!challenge) {
+          fail(`${runeLabel}.challengeIds[${challengeIndex}] references missing challenge: ${challengeId}`);
+        } else if (challenge.anchorId !== rune.objectId) {
+          fail(`${runeLabel}.challengeIds[${challengeIndex}] anchorId must match rune.objectId.`);
+        }
+      });
+      return;
     }
 
     if (!Array.isArray(rune.questions) || rune.questions.length < 4) {

@@ -3,10 +3,127 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 (() => {
   const asset = "Levels/LVL-0015/assets/frankrijk.png";
   const challengerAsset = "Levels/LVL-0015/assets/atlas-de-reiziger.png";
-  const questions = [
-    [{ a: 2, b: 2 }, { a: 3, b: 3 }, { a: 4, b: 4 }, { a: 5, b: 5 }, { a: 6, b: 6 }, { a: 7, b: 7 }],
-    [{ a: 2, b: 3 }, { a: 3, b: 4 }, { a: 4, b: 5 }, { a: 5, b: 6 }, { a: 6, b: 7 }, { a: 7, b: 8 }],
-    [{ a: 2, b: 4 }, { a: 3, b: 5 }, { a: 4, b: 6 }, { a: 5, b: 7 }, { a: 6, b: 8 }, { a: 7, b: 9 }]
+  const learningChallenges = [
+    {
+      id: "fr-market-01", anchorId: "marketStall", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "open",
+      prompt: "De marktkoopman zet 8 kratten neer met elk 7 appels. Hoeveel appels zijn dat?",
+      answer: 56,
+      hintMinnie: "Het zijn 8 gelijke groepjes van 7.",
+      hintMoose: "Reken 8 × 7.",
+      explanation: "8 × 7 = 56 appels."
+    },
+    {
+      id: "fr-market-02", anchorId: "marketStall", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "Er worden 54 peren verdeeld over 6 manden. Hoeveel peren gaan in elke mand?",
+      answer: 9, choices: [7, 8, 9, 10],
+      hintMinnie: "Alle 6 manden krijgen evenveel.",
+      hintMoose: "Welke tafel van 6 geeft 54?",
+      explanation: "54 ÷ 6 = 9 peren per mand."
+    },
+    {
+      id: "fr-market-03", anchorId: "marketStall", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "optellen",
+      presentation: "bare", answerMode: "open",
+      prompt: "58 + 27 = ?",
+      answer: 85,
+      hintMinnie: "Tel eerst 20 bij 58.",
+      hintMoose: "58 + 20 = 78; tel daarna 7.",
+      explanation: "58 + 27 = 85."
+    },
+    {
+      id: "fr-market-04", anchorId: "marketStall", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "aftrekken",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De kraam heeft 96 sinaasappels. Er worden 38 verkocht. Hoeveel zijn er nog?",
+      answer: 58, choices: [48, 56, 58, 68],
+      hintMinnie: "Haal eerst 30 van 96 af.",
+      hintMoose: "96 − 30 = 66; haal daarna nog 8 weg.",
+      explanation: "96 − 38 = 58 sinaasappels."
+    },
+    {
+      id: "fr-clock-01", anchorId: "villageClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De dorpsklok luidt 8 keer per dag, 7 dagen lang. Hoe vaak luidt hij?",
+      answer: 56, choices: [48, 54, 56, 64],
+      hintMinnie: "Elke dag klinkt hetzelfde aantal slagen.",
+      hintMoose: "Gebruik 7 × 8.",
+      explanation: "7 × 8 = 56 klokslagen."
+    },
+    {
+      id: "fr-clock-02", anchorId: "villageClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "open",
+      prompt: "Een feest duurt 72 minuten en heeft 8 gelijke rondes. Hoeveel minuten duurt elke ronde?",
+      answer: 9,
+      hintMinnie: "Verdeel 72 in 8 gelijke stukken.",
+      hintMoose: "Draai de som om: 8 × ? = 72.",
+      explanation: "72 ÷ 8 = 9 minuten per ronde."
+    },
+    {
+      id: "fr-clock-03", anchorId: "villageClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "7 × 9 = ?",
+      answer: 63, choices: [56, 61, 63, 72],
+      hintMinnie: "Denk aan 7 × 10 en haal 7 weg.",
+      hintMoose: "70 − 7.",
+      explanation: "7 × 9 = 63."
+    },
+    {
+      id: "fr-clock-04", anchorId: "villageClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "optellen",
+      presentation: "story", answerMode: "open",
+      prompt: "Voor de ochtendmarkt komen 29 mensen. Later komen er 36 bij. Hoeveel mensen zijn er?",
+      answer: 65,
+      hintMinnie: "Tel eerst 30 bij 29 en daarna nog 6.",
+      hintMoose: "29 + 36 is bijna 30 + 36; haal daarna 1 weg.",
+      explanation: "29 + 36 = 65 mensen."
+    },
+    {
+      id: "fr-fountain-01", anchorId: "fountain", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "open",
+      prompt: "De fontein spuit uit 6 openingen, 9 keer per minuut. Hoeveel waterbogen zijn dat?",
+      answer: 54,
+      hintMinnie: "Het zijn 6 gelijke groepjes van 9.",
+      hintMoose: "Reken 6 × 9 als 60 − 6.",
+      explanation: "6 × 9 = 54 waterbogen."
+    },
+    {
+      id: "fr-fountain-02", anchorId: "fountain", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "Rond de fontein staan 48 bloemen in 8 gelijke bakken. Hoeveel bloemen staan in elke bak?",
+      answer: 6, choices: [5, 6, 7, 8],
+      hintMinnie: "Verdeel 48 eerlijk over 8 bakken.",
+      hintMoose: "Welke keer-som met 8 geeft 48?",
+      explanation: "48 ÷ 8 = 6 bloemen per bak."
+    },
+    {
+      id: "fr-fountain-03", anchorId: "fountain", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "aftrekken",
+      presentation: "bare", answerMode: "open",
+      prompt: "91 − 47 = ?",
+      answer: 44,
+      hintMinnie: "Haal eerst 40 van 91 af.",
+      hintMoose: "91 − 40 = 51; haal daarna nog 7 weg.",
+      explanation: "91 − 47 = 44."
+    },
+    {
+      id: "fr-fountain-04", anchorId: "fountain", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "optellen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "Bij de fontein staan 34 rode en 28 gele bloemen. Hoeveel bloemen zijn dat samen?",
+      answer: 62, choices: [52, 60, 62, 72],
+      hintMinnie: "Tel eerst de tientallen en dan de losse bloemen.",
+      hintMoose: "34 + 20 = 54; tel daarna 8.",
+      explanation: "34 + 28 = 62 bloemen."
+    }
   ];
   const challenges = [
     {
@@ -58,7 +175,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     },
     world: { width: 2172, height: 724, aspectRatio: 3, viewportWidth: 1000, background: asset },
     challengeArt: challengerAsset,
-    player: { startNode: "left-start", start: { x: 215, y: 600 } },
+    learningChallenges,
+    player: { startNode: "left-start", start: { x: 151, y: 615 } },
     interactiveObjects: [
     {
       id: "marketStall",
@@ -145,10 +263,11 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       id: exit.id, objectId: exit.id, type: "gate", name: "Dorpspoort",
       defaultAction: "activate", look: "De poort leidt naar Italië.", activate: "De route naar Italië opent."
     }],
-    runes: challenges.map((item, index) => ({
+    runes: challenges.map((item) => ({
       id: item.id, objectId: item.id, name: item.name, shortName: item.shortName,
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
-      solved: item.solved, questions: questions[index]
+      solved: item.solved,
+      challengeIds: learningChallenges.filter((challenge) => challenge.anchorId === item.id).map((challenge) => challenge.id)
     })),
     reward: {
       title: "Het plein geeft de route prijs!",

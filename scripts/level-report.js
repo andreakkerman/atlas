@@ -70,7 +70,10 @@ function reportLevel(loaded) {
     counts[object.type] = (counts[object.type] || 0) + 1;
     return counts;
   }, {});
-  const challengeCount = (level.runes || []).reduce((sum, rune) => sum + (rune.questions?.length || 0), 0);
+  const challengeCount = (level.runes || []).reduce(
+    (sum, rune) => sum + (rune.challengeIds?.length || rune.questions?.length || 0),
+    0
+  );
   const warnings = collectWarnings(level, imageDimensions);
   const walkSummary = summarizeWalkGraph(level);
 

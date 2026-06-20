@@ -135,6 +135,8 @@ function createLevelState(selectedLevel) {
     questionIndex: 0,
     selectedWrong: false,
     questionTracked: false,
+    assistedCompletionAvailable: false,
+    challengeGuideMessage: null,
     completedRunes: new Set(),
     justCompletedRuneId: null,
     totalQuestions: selectedLevel.runes.reduce((sum) => sum + 4, 0),
@@ -1278,7 +1280,7 @@ function hotspotById(id) {
 }
 
 function answerFor(question) {
-  return question.a * question.b;
+  return question.answer ?? question.a * question.b;
 }
 
 function shuffleQuestions(questions) {
@@ -1291,6 +1293,11 @@ function shuffleQuestions(questions) {
 }
 
 function selectChallengeQuestions(rune) {
+  if (Array.isArray(rune.challengeIds)) {
+    return rune.challengeIds
+      .map((id) => level.learningChallenges?.find((challenge) => challenge.id === id))
+      .filter(Boolean);
+  }
   return shuffleQuestions(rune.questions).slice(0, 4);
 }
 
@@ -1312,6 +1319,7 @@ function saveStoredTableProgress(progress) {
 }
 
 function updateTableProgress(question, result) {
+  if (!Number.isInteger(question.a)) return;
   const table = String(question.a);
   const progress = getStoredTableProgress();
   progress.tables[table] ||= {
@@ -1364,6 +1372,7 @@ function getLearningHint(question) {
 }
 
 function makeChoices(question) {
+  if (question.answerMode === "multipleChoice") return [...question.choices];
   const answer = answerFor(question);
   const raw = [
     answer,
@@ -1468,6 +1477,8 @@ function completeCurrentSceneChallenges() {
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
+  state.assistedCompletionAvailable = false;
+  state.challengeGuideMessage = null;
   state.justCompletedRuneId = null;
   state.feedback = "";
   state.svenMood = "idle";
@@ -1591,6 +1602,7 @@ function beginFreeWalk(point) {
 
 function openRuneChallenge(id) {
   const rune = runeById(id);
+  const authored = Array.isArray(rune.challengeIds);
   playSfx("challengeOpen");
   state.screen = "challenge";
   state.activeRuneId = id;
@@ -1600,30 +1612,54 @@ function openRuneChallenge(id) {
   state.questionTracked = false;
   state.svenMood = "activating";
   state.challengeFailureCounts[id] = 0;
+  state.challengeGuideMessage = authored ? { speaker: "minnie", text: "" } : null;
+  if (authored) {
+    setGuideMessage(state.challengeGuideMessage, "minnie");
+    state.guidePriority = 0;
+  }
   emitCompanionEvent("CHALLENGE_OPEN", {
     objectId: rune.objectId,
     challengeId: rune.id
   });
-  state.feedback = rune.intro;
+  state.feedback = authored ? "" : rune.intro;
   render();
 }
 
 function answerQuestion(choice) {
   const question = currentChallengeQuestions()[state.questionIndex];
   const correct = answerFor(question);
+  const authored = Boolean(question.answerMode);
+  const submitted = typeof correct === "number" ? Number(choice) : String(choice).trim();
+  if (submitted === "" || (typeof correct === "number" && !Number.isFinite(submitted))) {
+    state.feedback = "Vul eerst een antwoord in.";
+    render();
+    return;
+  }
   state.attempts += 1;
 
-  if (choice !== correct) {
+  if (submitted !== correct) {
     playSfx("incorrect");
     updateTableProgress(question, "mistake");
     state.selectedWrong = true;
     state.svenMood = "thinking";
     state.challengeFailureCounts[state.activeRuneId] = (state.challengeFailureCounts[state.activeRuneId] || 0) + 1;
-    emitCompanionEvent(state.challengeFailureCounts[state.activeRuneId] > 1 ? "CHALLENGE_FAIL_2" : "CHALLENGE_FAIL_1", {
+    const failureCount = state.challengeFailureCounts[state.activeRuneId];
+    emitCompanionEvent(failureCount > 1 ? "CHALLENGE_FAIL_2" : "CHALLENGE_FAIL_1", {
       objectId: runeById(state.activeRuneId).objectId,
       challengeId: state.activeRuneId
     });
-    state.feedback = getLearningHint(question);
+    if (authored && failureCount === 1) {
+      setGuideMessage({ speaker: "minnie", text: question.hintMinnie }, "minnie");
+      state.feedback = "";
+    } else if (authored && failureCount === 2) {
+      setGuideMessage({ speaker: "moose", text: question.hintMoose }, "moose");
+      state.feedback = "";
+    } else if (authored) {
+      state.feedback = question.explanation;
+      state.assistedCompletionAvailable = true;
+    } else {
+      state.feedback = getLearningHint(question);
+    }
     render();
     return;
   }
@@ -1638,8 +1674,21 @@ function answerQuestion(choice) {
   state.answered += 1;
   playSfx("correct");
   state.svenMood = "celebrating";
-  state.feedback = `Ja! ${question.a} x ${question.b} = ${correct}.`;
+  state.assistedCompletionAvailable = false;
+  state.feedback = authored ? `Ja! Het antwoord is ${correct}.` : `Ja! ${question.a} x ${question.b} = ${correct}.`;
   state.screen = "correct";
+  render();
+}
+
+function completeQuestionWithHelp() {
+  if (!state.assistedCompletionAvailable || state.screen !== "challenge") return;
+  const question = currentChallengeQuestions()[state.questionIndex];
+  state.answered += 1;
+  state.assistedCompletionAvailable = false;
+  state.svenMood = "celebrating";
+  state.feedback = `${question.explanation} Het antwoord is ${answerFor(question)}.`;
+  state.screen = "correct";
+  playSfx("correct");
   render();
 }
 
@@ -1651,8 +1700,15 @@ function nextQuestion() {
     state.questionIndex += 1;
     state.selectedWrong = false;
     state.questionTracked = false;
+    state.assistedCompletionAvailable = false;
+    state.challengeFailureCounts[state.activeRuneId] = 0;
     state.svenMood = "idle";
-    state.feedback = "De rune wil nog een som.";
+    if (questions[state.questionIndex].answerMode) {
+      if (state.challengeGuideMessage) setGuideMessage(state.challengeGuideMessage, state.challengeGuideMessage.speaker);
+      state.feedback = "";
+    } else {
+      state.feedback = "De rune wil nog een som.";
+    }
     state.screen = "challenge";
     render();
     return;
@@ -1666,8 +1722,10 @@ function nextQuestion() {
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
+  state.assistedCompletionAvailable = false;
   state.svenMood = "celebrating";
   state.feedback = "";
+  state.challengeGuideMessage = null;
   state.screen = "scene";
 
   if (state.completedRunes.size === level.runes.length) {
@@ -1770,9 +1828,11 @@ function restart() {
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
+  state.assistedCompletionAvailable = false;
   state.completedRunes = new Set();
   state.seenObjects = new Set();
   state.challengeFailureCounts = {};
+  state.challengeGuideMessage = null;
   state.companionQueue = [];
   state.guidePriority = 0;
   state.justCompletedRuneId = null;
@@ -2211,6 +2271,7 @@ function renderChallenge() {
   const questions = currentChallengeQuestions();
   const question = questions[state.questionIndex];
   const choices = makeChoices(question);
+  const authored = Boolean(question.answerMode);
   const number = state.questionIndex + 1;
   const total = questions.length;
   const object = interactiveObjectForTarget(rune);
@@ -2218,11 +2279,10 @@ function renderChallenge() {
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
   const challengeCharacter = getChallengeCharacter();
   const challengeLabel = level.challengeLabel || "Rune";
-
   return `
-    ${renderScene({ hideTeamBar: true })}
+    ${renderScene({ hideTeamBar: !authored })}
     <section
-      class="modalLayer runeLayer ${panelClass}"
+      class="modalLayer runeLayer ${panelClass} ${authored ? "authoredChallengeLayer" : ""}"
       style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
       role="dialog"
       aria-modal="true"
@@ -2233,14 +2293,36 @@ function renderChallenge() {
         <div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
           <img class="challengeCharacterPortrait" src="${challengeCharacter.portrait}" alt="${challengeCharacter.name}" />
           <div class="challengeCharacterSpeech">
-            <p class="eyebrow">${challengeCharacter.name} - ${challengeLabel} ${number}/${total}</p>
+            <p class="eyebrow">${
+              authored
+                ? challengeCharacter.name
+                : `${challengeCharacter.name} - ${challengeLabel} ${number}/${total}`
+            }</p>
             <h2 id="challenge-title">${rune.name}</h2>
           </div>
         </div>
-        <p class="sum">Hoeveel is ${question.a} x ${question.b}?</p>
-        <div class="choices">
-          ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
-        </div>
+        <p class="sum ${authored && question.presentation === "story" ? "storyPrompt" : ""}">
+          ${authored ? question.prompt : `Hoeveel is ${question.a} x ${question.b}?`}
+        </p>
+        ${
+          question.answerMode === "open"
+            ? `<form class="openAnswerForm" data-open-answer-form>
+                <label for="open-answer">Jouw antwoord</label>
+                <div class="openAnswerControls">
+                  <input id="open-answer" name="answer" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-open-answer />
+                  <button class="primaryButton" type="submit">Controleer</button>
+                </div>
+              </form>`
+            : `<div class="choices">
+                ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
+              </div>`
+        }
+        ${authored && state.feedback ? `<p class="feedback challengeFeedback" aria-live="polite">${state.feedback}</p>` : ""}
+        ${
+          state.assistedCompletionAvailable
+            ? `<button class="secondaryButton assistedCompletionButton" type="button" data-action="assisted-complete">Samen afronden</button>`
+            : ""
+        }
       </div>
     </section>
   `;
@@ -2410,6 +2492,7 @@ app.addEventListener("click", (event) => {
     if (action === "companion-next") advanceCompanionDialogue();
     if (action === "menu") returnToMenu();
     if (action === "next-question") nextQuestion();
+    if (action === "assisted-complete") completeQuestionWithHelp();
     if (action === "reward") showReward();
     if (action === "next-level") continueToNextLevel();
     if (action === "restart") restart();
@@ -2509,6 +2592,13 @@ window.addEventListener("keydown", (event) => {
       render();
     }
   }
+});
+
+app.addEventListener("submit", (event) => {
+  const form = event.target.closest("[data-open-answer-form]");
+  if (!form) return;
+  event.preventDefault();
+  answerQuestion(form.querySelector("[data-open-answer]")?.value ?? "");
 });
 
 preloadActorAnimations();

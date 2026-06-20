@@ -3,10 +3,127 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 (() => {
   const asset = "Levels/LVL-0013/assets/nederland.png";
   const challengerAsset = "Levels/LVL-0013/assets/atlas-de-reiziger.png";
-  const questions = [
-    [{ a: 1, b: 6 }, { a: 2, b: 7 }, { a: 3, b: 8 }, { a: 4, b: 9 }, { a: 5, b: 10 }, { a: 6, b: 6 }],
-    [{ a: 1, b: 7 }, { a: 2, b: 8 }, { a: 3, b: 9 }, { a: 4, b: 10 }, { a: 5, b: 5 }, { a: 6, b: 7 }],
-    [{ a: 1, b: 8 }, { a: 2, b: 9 }, { a: 3, b: 10 }, { a: 4, b: 4 }, { a: 5, b: 6 }, { a: 6, b: 8 }]
+  const learningChallenges = [
+    {
+      id: "nl-wind-01", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "open",
+      prompt: "Aan elke van de 4 wieken hangen 8 linten. Hoeveel linten zijn dat samen?",
+      answer: 32,
+      hintMinnie: "Kijk naar 4 gelijke groepjes van 8 linten.",
+      hintMoose: "Reken 4 × 8 als 2 × 8 en nog eens 2 × 8.",
+      explanation: "4 × 8 = 32, dus er hangen 32 linten."
+    },
+    {
+      id: "nl-wind-02", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De molenaar vult 8 zakken met elk 4 kilo meel. Hoeveel kilo meel is dat?",
+      answer: 32, choices: [24, 28, 32, 36],
+      hintMinnie: "Elke zak bevat 4 kilo meel.",
+      hintMoose: "Gebruik 8 × 4.",
+      explanation: "8 × 4 = 32, dus er is 32 kilo meel."
+    },
+    {
+      id: "nl-wind-03", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "bare", answerMode: "open",
+      prompt: "9 × 6 = ?",
+      answer: 54,
+      hintMinnie: "Denk aan 10 groepjes van 6, maar dan eentje minder.",
+      hintMoose: "60 − 6 geeft hetzelfde antwoord.",
+      explanation: "9 × 6 = 54."
+    },
+    {
+      id: "nl-wind-04", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De molenaar verdeelt 48 zakken meel over 6 karren. Hoeveel zakken krijgt elke kar?",
+      answer: 8, choices: [6, 7, 8, 9],
+      hintMinnie: "Verdeel 48 in 6 gelijke groepjes.",
+      hintMoose: "Welke keer-som met 6 geeft 48?",
+      explanation: "48 ÷ 6 = 8, dus elke kar krijgt 8 zakken."
+    },
+    {
+      id: "nl-cheese-01", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "Op de kaaswagen staan 5 planken met elk 8 kazen. Hoeveel kazen zijn dat?",
+      answer: 40, choices: [35, 40, 45, 48],
+      hintMinnie: "Elke plank heeft evenveel kazen.",
+      hintMoose: "Reken 5 × 8.",
+      explanation: "5 × 8 = 40, dus er liggen 40 kazen."
+    },
+    {
+      id: "nl-cheese-02", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "open",
+      prompt: "Er gaan 63 kazen in 7 gelijke kratten. Hoeveel kazen gaan in elk krat?",
+      answer: 9,
+      hintMinnie: "Zoek 7 gelijke groepjes die samen 63 zijn.",
+      hintMoose: "Welke tafel van 7 eindigt bij 63?",
+      explanation: "63 ÷ 7 = 9, dus elk krat krijgt 9 kazen."
+    },
+    {
+      id: "nl-cheese-03", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "7 × 7 = ?",
+      answer: 49, choices: [42, 47, 49, 56],
+      hintMinnie: "Tel zeven sprongen van 7.",
+      hintMoose: "7 × 5 is 35; tel nog 14 erbij.",
+      explanation: "7 × 7 = 49."
+    },
+    {
+      id: "nl-cheese-04", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "open",
+      prompt: "Zes grote kazen wegen elk 9 kilo. Hoeveel kilo wegen ze samen?",
+      answer: 54,
+      hintMinnie: "Het zijn 6 gelijke gewichten van 9 kilo.",
+      hintMoose: "Reken 6 × 9 als 6 × 10 min 6.",
+      explanation: "6 × 9 = 54, dus de kazen wegen samen 54 kilo."
+    },
+    {
+      id: "nl-clock-01", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "open",
+      prompt: "De grachtenklok slaat 4 keer per uur, 6 uur lang. Hoeveel slagen zijn dat?",
+      answer: 24,
+      hintMinnie: "Elk uur hoor je 4 slagen.",
+      hintMoose: "Gebruik 6 × 4.",
+      explanation: "6 × 4 = 24, dus de klok slaat 24 keer."
+    },
+    {
+      id: "nl-clock-02", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "Een rondvaart duurt 8 stukken van 5 minuten. Hoeveel minuten duurt de tocht?",
+      answer: 40, choices: [35, 40, 45, 50],
+      hintMinnie: "Er zijn 8 gelijke stukken van 5 minuten.",
+      hintMoose: "Reken 8 × 5.",
+      explanation: "8 × 5 = 40, dus de tocht duurt 40 minuten."
+    },
+    {
+      id: "nl-clock-03", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "bare", answerMode: "open",
+      prompt: "72 ÷ 8 = ?",
+      answer: 9,
+      hintMinnie: "Zoek hoeveel groepjes van 8 in 72 passen.",
+      hintMoose: "Draai de som om: 8 × ? = 72.",
+      explanation: "72 ÷ 8 = 9."
+    },
+    {
+      id: "nl-clock-04", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De klok luidt 7 keer per avond, 6 avonden lang. Hoe vaak luidt hij in totaal?",
+      answer: 42, choices: [36, 40, 42, 49],
+      hintMinnie: "Elke avond klinkt hetzelfde aantal slagen.",
+      hintMoose: "Gebruik 6 × 7.",
+      explanation: "6 × 7 = 42, dus de klok luidt 42 keer."
+    }
   ];
   const challenges = [
     {
@@ -62,6 +179,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     },
     world: { width: 2172, height: 724, aspectRatio: 3, viewportWidth: 1000, background: asset },
     challengeArt: challengerAsset,
+    learningChallenges,
     player: { startNode: "left-start", start: { x: 225, y: 600 } },
     interactiveObjects: [
     {
@@ -153,10 +271,11 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       id: exit.id, objectId: exit.id, type: "gate", name: "Reispoort",
       defaultAction: "activate", look: "De poort leidt naar Engeland.", activate: "De reis naar Engeland begint."
     }],
-    runes: challenges.map((item, index) => ({
+    runes: challenges.map((item) => ({
       id: item.id, objectId: item.id, name: item.name, shortName: item.shortName,
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
-      solved: item.solved, questions: questions[index]
+      solved: item.solved,
+      challengeIds: learningChallenges.filter((challenge) => challenge.anchorId === item.id).map((challenge) => challenge.id)
     })),
     reward: {
       title: "De reis is begonnen!",

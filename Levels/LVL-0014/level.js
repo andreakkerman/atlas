@@ -3,10 +3,127 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 (() => {
   const asset = "Levels/LVL-0014/assets/engeland.png";
   const challengerAsset = "Levels/LVL-0014/assets/atlas-de-reiziger.png";
-  const questions = [
-    [{ a: 1, b: 3 }, { a: 2, b: 4 }, { a: 3, b: 5 }, { a: 4, b: 6 }, { a: 5, b: 7 }, { a: 6, b: 8 }],
-    [{ a: 1, b: 4 }, { a: 2, b: 5 }, { a: 3, b: 6 }, { a: 4, b: 7 }, { a: 5, b: 8 }, { a: 6, b: 9 }],
-    [{ a: 1, b: 5 }, { a: 2, b: 6 }, { a: 3, b: 7 }, { a: 4, b: 8 }, { a: 5, b: 9 }, { a: 6, b: 10 }]
+  const learningChallenges = [
+    {
+      id: "uk-clock-01", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De klokkentoren heeft 8 rijen met 6 stenen versieringen. Hoeveel versieringen zijn dat?",
+      answer: 48, choices: [42, 46, 48, 54],
+      hintMinnie: "Elke rij heeft 6 versieringen.",
+      hintMoose: "Reken 8 × 6.",
+      explanation: "8 × 6 = 48, dus er zijn 48 versieringen."
+    },
+    {
+      id: "uk-clock-02", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "open",
+      prompt: "De klok verdeelt 56 slagen over 7 rondes. Hoeveel slagen horen bij elke ronde?",
+      answer: 8,
+      hintMinnie: "Verdeel 56 in 7 gelijke groepjes.",
+      hintMoose: "Welke tafel van 7 geeft 56?",
+      explanation: "56 ÷ 7 = 8 slagen per ronde."
+    },
+    {
+      id: "uk-clock-03", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "9 × 8 = ?",
+      answer: 72, choices: [63, 70, 72, 81],
+      hintMinnie: "Denk aan 10 × 8 en haal één keer 8 weg.",
+      hintMoose: "80 − 8.",
+      explanation: "9 × 8 = 72."
+    },
+    {
+      id: "uk-clock-04", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "optellen",
+      presentation: "story", answerMode: "open",
+      prompt: "Om 10 uur komen 37 bezoekers. Later komen er nog 28. Hoeveel bezoekers zijn er samen?",
+      answer: 65,
+      hintMinnie: "Tel eerst de tientallen en daarna de eenheden.",
+      hintMoose: "37 + 20 = 57; tel dan nog 8.",
+      explanation: "37 + 28 = 65 bezoekers."
+    },
+    {
+      id: "uk-scope-01", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "open",
+      prompt: "Door de telescoop ziet Atlas 7 torens met elk 5 vlaggen. Hoeveel vlaggen zijn dat?",
+      answer: 35,
+      hintMinnie: "Het zijn 7 gelijke groepjes van 5.",
+      hintMoose: "Reken 7 × 5.",
+      explanation: "7 × 5 = 35 vlaggen."
+    },
+    {
+      id: "uk-scope-02", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "Atlas verdeelt 64 sterrenkaartjes over 8 vakken. Hoeveel kaartjes komen in elk vak?",
+      answer: 8, choices: [6, 7, 8, 9],
+      hintMinnie: "Alle 8 vakken krijgen evenveel.",
+      hintMoose: "Welke keer-som met 8 geeft 64?",
+      explanation: "64 ÷ 8 = 8 kaartjes per vak."
+    },
+    {
+      id: "uk-scope-03", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "bare", answerMode: "open",
+      prompt: "6 × 9 = ?",
+      answer: 54,
+      hintMinnie: "Denk aan 6 × 10, maar haal 6 weg.",
+      hintMoose: "60 − 6.",
+      explanation: "6 × 9 = 54."
+    },
+    {
+      id: "uk-scope-04", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "aftrekken",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De kijker kan 90 kilometer ver kijken. Mist bedekt de laatste 27 kilometer. Hoeveel kilometer blijft zichtbaar?",
+      answer: 63, choices: [53, 63, 67, 73],
+      hintMinnie: "Haal het bedekte stuk van 90 af.",
+      hintMoose: "90 − 20 = 70; haal daarna nog 7 weg.",
+      explanation: "90 − 27 = 63 kilometer."
+    },
+    {
+      id: "uk-post-01", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      presentation: "story", answerMode: "multipleChoice",
+      prompt: "De postbode vult 6 tassen met elk 8 brieven. Hoeveel brieven draagt hij?",
+      answer: 48, choices: [42, 46, 48, 54],
+      hintMinnie: "Elke tas bevat 8 brieven.",
+      hintMoose: "Gebruik 6 × 8.",
+      explanation: "6 × 8 = 48 brieven."
+    },
+    {
+      id: "uk-post-02", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "delen",
+      presentation: "story", answerMode: "open",
+      prompt: "Er zijn 45 kaarten voor 5 straten. Elke straat krijgt evenveel. Hoeveel kaarten zijn dat per straat?",
+      answer: 9,
+      hintMinnie: "Verdeel 45 in 5 gelijke groepen.",
+      hintMoose: "Welke tafel van 5 geeft 45?",
+      explanation: "45 ÷ 5 = 9 kaarten per straat."
+    },
+    {
+      id: "uk-post-03", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "optellen",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "46 + 37 = ?",
+      answer: 83, choices: [73, 81, 83, 93],
+      hintMinnie: "Tel eerst 30 bij 46.",
+      hintMoose: "46 + 30 = 76; tel daarna 7.",
+      explanation: "46 + 37 = 83."
+    },
+    {
+      id: "uk-post-04", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
+      domain: "math", schoolBand: "E5-intended", family: "aftrekken",
+      presentation: "story", answerMode: "open",
+      prompt: "In de brievenbus zitten 82 brieven. De postbode haalt er 36 uit. Hoeveel blijven er over?",
+      answer: 46,
+      hintMinnie: "Haal eerst 30 van 82 af.",
+      hintMoose: "82 − 30 = 52; haal daarna nog 6 weg.",
+      explanation: "82 − 36 = 46 brieven."
+    }
   ];
   const challenges = [
     {
@@ -62,7 +179,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     },
     world: { width: 2172, height: 724, aspectRatio: 3, viewportWidth: 1000, background: asset },
     challengeArt: challengerAsset,
-    player: { startNode: "left-start", start: { x: 220, y: 590 } },
+    learningChallenges,
+    player: { startNode: "left-start", start: { x: 221, y: 637 } },
     interactiveObjects: [
     {
       id: "clockTower",
@@ -169,10 +287,11 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         defaultAction: "activate", look: "De poort leidt verder naar Frankrijk.", activate: "De route naar Frankrijk opent."
       }
     ],
-    runes: challenges.map((item, index) => ({
+    runes: challenges.map((item) => ({
       id: item.id, objectId: item.id, name: item.name, shortName: item.shortName,
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
-      solved: item.solved, questions: questions[index]
+      solved: item.solved,
+      challengeIds: learningChallenges.filter((challenge) => challenge.anchorId === item.id).map((challenge) => challenge.id)
     })),
     reward: {
       title: "De klokkenstad wijst de weg!",

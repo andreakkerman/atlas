@@ -1270,6 +1270,15 @@ button {
   background: rgba(8, 15, 14, 0.62);
 }
 
+.authoredChallengeLayer {
+  bottom: clamp(140px, 19dvh, 168px);
+  padding-bottom: 8px;
+}
+
+.authoredChallengeLayer .runeChallengeBox {
+  max-height: calc(100dvh - clamp(180px, 24dvh, 216px));
+}
+
 .runeLayer {
   place-items: end center;
   padding-bottom: clamp(96px, 17vh, 150px);
@@ -1411,6 +1420,47 @@ button {
   font-size: clamp(1.55rem, 7vw, 3rem);
   font-weight: 1000;
   line-height: 1.05;
+}
+
+.sum.storyPrompt {
+  font-size: clamp(1.25rem, 3.5vw, 1.9rem);
+  line-height: 1.25;
+}
+
+.openAnswerForm {
+  display: grid;
+  gap: 8px;
+}
+
+.openAnswerForm label {
+  color: #9cf2e9;
+  font-weight: 900;
+}
+
+.openAnswerControls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.openAnswerControls input {
+  min-width: 0;
+  padding: 12px 14px;
+  border: 2px solid rgba(156, 242, 233, 0.72);
+  border-radius: 8px;
+  background: rgba(6, 26, 24, 0.82);
+  color: #fff7de;
+  font: inherit;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  font-weight: 900;
+}
+
+.challengeFeedback {
+  margin-bottom: 12px;
+}
+
+.assistedCompletionButton {
+  width: 100%;
 }
 
 .runeWhisper {
