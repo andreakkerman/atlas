@@ -70,8 +70,16 @@ function reportLevel(loaded) {
     counts[object.type] = (counts[object.type] || 0) + 1;
     return counts;
   }, {});
-  const challengeCount = (level.runes || []).reduce(
-    (sum, rune) => sum + (rune.challengeIds?.length || rune.questions?.length || 0),
+  const authoredById = new Map((level.learningChallenges || []).map((challenge) => [challenge.id, challenge]));
+  const challengeCount = (level.runes || []).reduce((sum, rune) => {
+    if (rune.challengeId) return sum + (authoredById.get(rune.challengeId)?.questions?.length || 0);
+    return sum + (rune.challengeIds?.length || rune.questions?.length || 0);
+  }, 0);
+  const variantCount = (level.learningChallenges || []).reduce(
+    (sum, challenge) => sum + (challenge.questions || []).reduce(
+      (slotSum, slot) => slotSum + (slot.variants?.length || 0),
+      0
+    ),
     0
   );
   const warnings = collectWarnings(level, imageDimensions);
@@ -104,6 +112,7 @@ function reportLevel(loaded) {
   console.log("Challenges:");
   console.log(`* rune count: ${level.runes?.length || 0}`);
   console.log(`* question count: ${challengeCount}`);
+  if (variantCount) console.log(`* authored variant count: ${variantCount}`);
   console.log("");
   console.log("Warnings:");
   if (warnings.length) {

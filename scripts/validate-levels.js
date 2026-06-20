@@ -511,6 +511,71 @@ function validateReferences(level, objects, nodeIds, label) {
   });
 
   const authoredChallenges = new Map();
+  const validateAuthoredVariant = (variant, variantLabel) => {
+    if (!isObject(variant)) {
+      fail(`${variantLabel} must be an object.`);
+      return;
+    }
+    [
+      "id", "domain", "schoolBand", "family", "presentation", "answerMode",
+      "prompt", "hintMinnie", "hintMoose", "explanation"
+    ].forEach((field) => validateRequiredString(variant[field], `${variantLabel}.${field}`));
+    if (variant.domain !== "math") fail(`${variantLabel}.domain must be "math".`);
+    if (variant.schoolBand !== "E5-intended") fail(`${variantLabel}.schoolBand must be "E5-intended".`);
+    if (!["story", "bare"].includes(variant.presentation)) {
+      fail(`${variantLabel}.presentation must be "story" or "bare".`);
+    }
+    if (!["open", "multipleChoice"].includes(variant.answerMode)) {
+      fail(`${variantLabel}.answerMode must be "open" or "multipleChoice".`);
+    }
+    if (!(Number.isFinite(variant.answer) || isNonEmptyString(variant.answer))) {
+      fail(`${variantLabel}.answer must be a finite number or non-empty string.`);
+    }
+    if (variant.answerMode === "multipleChoice") {
+      if (!Array.isArray(variant.choices) || variant.choices.length < 2) {
+        fail(`${variantLabel}.choices must contain at least 2 choices.`);
+      } else {
+        if (!variant.choices.includes(variant.answer)) {
+          fail(`${variantLabel}.choices must include the answer exactly.`);
+        }
+        const normalizedChoices = variant.choices.map((choice) => String(choice).toLocaleLowerCase("nl"));
+        if (new Set(normalizedChoices).size !== normalizedChoices.length) {
+          fail(`${variantLabel}.choices must not contain duplicates.`);
+        }
+      }
+    }
+    if (variant.visual !== undefined) {
+      if (!isObject(variant.visual)) {
+        fail(`${variantLabel}.visual must be an object.`);
+      } else if (variant.visual.type !== "clock") {
+        fail(`${variantLabel}.visual.type must be "clock".`);
+      } else {
+        if (!Number.isInteger(variant.visual.hour) || variant.visual.hour < 1 || variant.visual.hour > 12) {
+          fail(`${variantLabel}.visual.hour must be an integer from 1 to 12.`);
+        }
+        if (!Number.isInteger(variant.visual.minute) || variant.visual.minute < 0 || variant.visual.minute > 59) {
+          fail(`${variantLabel}.visual.minute must be an integer from 0 to 59.`);
+        }
+        if (variant.answerMode !== "multipleChoice") {
+          fail(`${variantLabel} clock visuals must use multipleChoice.`);
+        }
+        if (typeof variant.answer !== "string" || !/^[A-ZÀ-Ý]/u.test(variant.answer)) {
+          fail(`${variantLabel} clock answers must start with a capital letter.`);
+        }
+        if ((variant.choices || []).some((choice) => typeof choice !== "string" || !/^[A-ZÀ-Ý]/u.test(choice))) {
+          fail(`${variantLabel} clock choices must start with a capital letter.`);
+        }
+        if (/^\d{1,2}[:.]\d{2}$/.test(variant.answer)) {
+          fail(`${variantLabel} clock answers must use Dutch time language, not digital notation.`);
+        }
+      }
+    }
+    if (/rune|runenpoort/i.test([
+      variant.prompt, variant.hintMinnie, variant.hintMoose, variant.explanation
+    ].join(" "))) {
+      fail(`${variantLabel} must not use rune or Runenpoort wording in Europe content.`);
+    }
+  };
   if (level.learningChallenges !== undefined) {
     if (!Array.isArray(level.learningChallenges) || level.learningChallenges.length === 0) {
       fail(`${label}.learningChallenges must be a non-empty array when provided.`);
@@ -521,49 +586,42 @@ function validateReferences(level, objects, nodeIds, label) {
         fail(`${challengeLabel} must be an object.`);
         return;
       }
-      [
-        "id", "anchorId", "challengeCharacterId", "domain", "schoolBand", "family",
-        "presentation", "answerMode", "prompt", "hintMinnie", "hintMoose", "explanation"
-      ].forEach((field) => validateRequiredString(challenge[field], `${challengeLabel}.${field}`));
+      ["id", "anchorId", "challengeCharacterId"]
+        .forEach((field) => validateRequiredString(challenge[field], `${challengeLabel}.${field}`));
       if (authoredChallenges.has(challenge.id)) fail(`${challengeLabel}.id is duplicated: ${challenge.id}`);
       authoredChallenges.set(challenge.id, challenge);
       if (!objects.has(challenge.anchorId)) fail(`${challengeLabel}.anchorId references missing object: ${challenge.anchorId}`);
       if (challenge.challengeCharacterId !== level.challengeCharacter?.id) {
         fail(`${challengeLabel}.challengeCharacterId must match level.challengeCharacter.id.`);
       }
-      if (challenge.domain !== "math") fail(`${challengeLabel}.domain must be "math".`);
-      if (challenge.schoolBand !== "E5-intended") fail(`${challengeLabel}.schoolBand must be "E5-intended".`);
-      if (!["story", "bare"].includes(challenge.presentation)) {
-        fail(`${challengeLabel}.presentation must be "story" or "bare".`);
+      if (!Array.isArray(challenge.questions) || challenge.questions.length !== 4) {
+        fail(`${challengeLabel}.questions must contain exactly 4 question slots.`);
       }
-      if (!["open", "multipleChoice"].includes(challenge.answerMode)) {
-        fail(`${challengeLabel}.answerMode must be "open" or "multipleChoice".`);
-      }
-      if (!(Number.isFinite(challenge.answer) || isNonEmptyString(challenge.answer))) {
-        fail(`${challengeLabel}.answer must be a finite number or non-empty string.`);
-      }
-      if (challenge.answerMode === "multipleChoice") {
-        if (!Array.isArray(challenge.choices) || challenge.choices.length < 2) {
-          fail(`${challengeLabel}.choices must contain at least 2 choices.`);
-        } else if (!challenge.choices.includes(challenge.answer)) {
-          fail(`${challengeLabel}.choices must include the answer.`);
+      const slotIds = new Set();
+      const variantIds = new Set();
+      (challenge.questions || []).forEach((slot, slotIndex) => {
+        const slotLabel = `${challengeLabel}.questions[${slotIndex}]`;
+        if (!isObject(slot)) {
+          fail(`${slotLabel} must be an object.`);
+          return;
         }
-      }
-      if (challenge.visual !== undefined) {
-        if (!isObject(challenge.visual)) {
-          fail(`${challengeLabel}.visual must be an object.`);
-        } else if (challenge.visual.type !== "clock") {
-          fail(`${challengeLabel}.visual.type must be "clock".`);
-        } else {
-          if (!Number.isInteger(challenge.visual.hour) || challenge.visual.hour < 1 || challenge.visual.hour > 12) {
-            fail(`${challengeLabel}.visual.hour must be an integer from 1 to 12.`);
-          }
-          if (!Number.isInteger(challenge.visual.minute) || challenge.visual.minute < 0 || challenge.visual.minute > 59) {
-            fail(`${challengeLabel}.visual.minute must be an integer from 0 to 59.`);
-          }
-          if (challenge.answerMode !== "multipleChoice") {
-            fail(`${challengeLabel} clock visuals must use multipleChoice.`);
-          }
+        validateRequiredString(slot.id, `${slotLabel}.id`);
+        if (slotIds.has(slot.id)) fail(`${slotLabel}.id is duplicated: ${slot.id}`);
+        slotIds.add(slot.id);
+        if (!Array.isArray(slot.variants) || slot.variants.length !== 2) {
+          fail(`${slotLabel}.variants must contain exactly 2 authored variants.`);
+        }
+        (slot.variants || []).forEach((variant, variantIndex) => {
+          const variantLabel = `${slotLabel}.variants[${variantIndex}]`;
+          validateAuthoredVariant(variant, variantLabel);
+          if (variantIds.has(variant?.id)) fail(`${variantLabel}.id is duplicated: ${variant?.id}`);
+          variantIds.add(variant?.id);
+        });
+      });
+      if (level.id >= "LVL-0013" && level.id <= "LVL-0020") {
+        const fillerText = JSON.stringify(challenge.questions || []);
+        if (/de wieken draaien boven de tulpen|de groene klok tikt naast het water|de rune wil nog een som/i.test(fillerText)) {
+          fail(`${challengeLabel} contains forbidden filler text.`);
         }
       }
     });
@@ -586,6 +644,15 @@ function validateReferences(level, objects, nodeIds, label) {
       fail(`${runeLabel}.objectId should reference an interactive object with type "rune".`);
     }
 
+    if (rune.challengeId) {
+      const challenge = authoredChallenges.get(rune.challengeId);
+      if (!challenge) {
+        fail(`${runeLabel}.challengeId references missing challenge: ${rune.challengeId}`);
+      } else if (challenge.anchorId !== rune.objectId) {
+        fail(`${runeLabel}.challengeId anchorId must match rune.objectId.`);
+      }
+      return;
+    }
     if (Array.isArray(rune.challengeIds)) {
       if (rune.challengeIds.length < 4) fail(`${runeLabel}.challengeIds must contain at least 4 challenges.`);
       rune.challengeIds.forEach((challengeId, challengeIndex) => {

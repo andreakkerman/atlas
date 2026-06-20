@@ -5,132 +5,533 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const challengerAsset = "Levels/LVL-0013/assets/atlas-de-reiziger.png";
   const learningChallenges = [
     {
-      id: "nl-wind-01", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "open",
-      prompt: "Aan elke van de 4 wieken hangen 8 linten. Hoeveel linten zijn dat samen?",
-      answer: 32,
-      hintMinnie: "Kijk naar 4 gelijke groepjes van 8 linten.",
-      hintMoose: "Reken 4 × 8 als 2 × 8 en nog eens 2 × 8.",
-      explanation: "4 × 8 = 32, dus er hangen 32 linten."
+      "id": "windmill",
+      "anchorId": "windmill",
+      "challengeCharacterId": "atlas-de-reiziger",
+      "questions": [
+        {
+          "id": "windmill-slot-1",
+          "variants": [
+            {
+              "id": "windmill-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "4 wieken hebben elk 8 linten. Hoeveel linten zijn dat samen?",
+              "answer": 32,
+              "hintMinnie": "Zoek 4 gelijke groepjes van 8.",
+              "hintMoose": "Reken 4 × 8 stap voor stap.",
+              "explanation": "4 × 8 = 32."
+            },
+            {
+              "id": "windmill-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Atlas ziet 6 rijen met telkens 5 linten. Hoeveel linten zijn dat?",
+              "answer": 30,
+              "choices": [
+                26,
+                30,
+                34,
+                38
+              ],
+              "hintMinnie": "Denk aan 6 groepjes van 5.",
+              "hintMoose": "Vermenigvuldig 6 met 5.",
+              "explanation": "6 × 5 = 30."
+            }
+          ]
+        },
+        {
+          "id": "windmill-slot-2",
+          "variants": [
+            {
+              "id": "windmill-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "48 linten worden eerlijk verdeeld over 6 wieken. Hoeveel krijgt elke groep?",
+              "answer": 8,
+              "choices": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "hintMinnie": "Verdeel 48 in 6 gelijke groepjes.",
+              "hintMoose": "Zoek welk getal keer 6 precies 48 is.",
+              "explanation": "48 : 6 = 8."
+            },
+            {
+              "id": "windmill-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Er zijn 56 linten. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
+              "answer": 8,
+              "hintMinnie": "Maak groepjes van 7.",
+              "hintMoose": "Reken 56 gedeeld door 7.",
+              "explanation": "56 : 7 = 8."
+            }
+          ]
+        },
+        {
+          "id": "windmill-slot-3",
+          "variants": [
+            {
+              "id": "windmill-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "money",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Atlas koopt 5 zakjes tulpenbollen voor €4 per stuk. Hoeveel euro betaalt hij?",
+              "answer": 20,
+              "hintMinnie": "Elk stuk kost €4.",
+              "hintMoose": "Reken 5 × 4.",
+              "explanation": "5 × €4 = €20."
+            },
+            {
+              "id": "windmill-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "route_division",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "De route langs de Windmolen is 72 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
+              "hintMoose": "Reken 72 : 8.",
+              "explanation": "72 : 8 = 9 meter."
+            }
+          ]
+        },
+        {
+          "id": "windmill-slot-4",
+          "variants": [
+            {
+              "id": "windmill-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "7 × 8 = ?",
+              "answer": 56,
+              "hintMinnie": "Splits 7 in handige delen.",
+              "hintMoose": "Reken 7 groepjes van 8.",
+              "explanation": "7 × 8 = 56."
+            },
+            {
+              "id": "windmill-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_division",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "54 : 6 = ?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Zoek welk getal keer 6 gelijk is aan 54.",
+              "hintMoose": "Verdeel 54 in groepjes van 6.",
+              "explanation": "54 : 6 = 9."
+            }
+          ]
+        }
+      ]
     },
     {
-      id: "nl-wind-02", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "De molenaar vult 8 zakken met elk 4 kilo meel. Hoeveel kilo meel is dat?",
-      answer: 32, choices: [24, 28, 32, 36],
-      hintMinnie: "Elke zak bevat 4 kilo meel.",
-      hintMoose: "Gebruik 8 × 4.",
-      explanation: "8 × 4 = 32, dus er is 32 kilo meel."
+      "id": "cheeseCart",
+      "anchorId": "cheeseCart",
+      "challengeCharacterId": "atlas-de-reiziger",
+      "questions": [
+        {
+          "id": "cheese-cart-slot-1",
+          "variants": [
+            {
+              "id": "cheese-cart-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "6 planken hebben elk 9 kazen. Hoeveel kazen zijn dat samen?",
+              "answer": 54,
+              "hintMinnie": "Zoek 6 gelijke groepjes van 9.",
+              "hintMoose": "Reken 6 × 9 stap voor stap.",
+              "explanation": "6 × 9 = 54."
+            },
+            {
+              "id": "cheese-cart-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Atlas ziet 7 rijen met telkens 6 kazen. Hoeveel kazen zijn dat?",
+              "answer": 42,
+              "choices": [
+                38,
+                42,
+                46,
+                50
+              ],
+              "hintMinnie": "Denk aan 7 groepjes van 6.",
+              "hintMoose": "Vermenigvuldig 7 met 6.",
+              "explanation": "7 × 6 = 42."
+            }
+          ]
+        },
+        {
+          "id": "cheese-cart-slot-2",
+          "variants": [
+            {
+              "id": "cheese-cart-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "48 kazen worden eerlijk verdeeld over 6 planken. Hoeveel krijgt elke groep?",
+              "answer": 8,
+              "choices": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "hintMinnie": "Verdeel 48 in 6 gelijke groepjes.",
+              "hintMoose": "Zoek welk getal keer 6 precies 48 is.",
+              "explanation": "48 : 6 = 8."
+            },
+            {
+              "id": "cheese-cart-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Er zijn 63 kazen. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
+              "answer": 9,
+              "hintMinnie": "Maak groepjes van 7.",
+              "hintMoose": "Reken 63 gedeeld door 7.",
+              "explanation": "63 : 7 = 9."
+            }
+          ]
+        },
+        {
+          "id": "cheese-cart-slot-3",
+          "variants": [
+            {
+              "id": "cheese-cart-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "money",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Atlas koopt 4 stukken kaas voor €6 per stuk. Hoeveel euro betaalt hij?",
+              "answer": 24,
+              "hintMinnie": "Elk stuk kost €6.",
+              "hintMoose": "Reken 4 × 6.",
+              "explanation": "4 × €6 = €24."
+            },
+            {
+              "id": "cheese-cart-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "route_division",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "De route langs de Kaaswagen is 64 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
+              "answer": 8,
+              "choices": [
+                5,
+                8,
+                11,
+                14
+              ],
+              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
+              "hintMoose": "Reken 64 : 8.",
+              "explanation": "64 : 8 = 8 meter."
+            }
+          ]
+        },
+        {
+          "id": "cheese-cart-slot-4",
+          "variants": [
+            {
+              "id": "cheese-cart-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "8 × 7 = ?",
+              "answer": 56,
+              "hintMinnie": "Splits 8 in handige delen.",
+              "hintMoose": "Reken 8 groepjes van 7.",
+              "explanation": "8 × 7 = 56."
+            },
+            {
+              "id": "cheese-cart-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_division",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "72 : 8 = ?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Zoek welk getal keer 8 gelijk is aan 72.",
+              "hintMoose": "Verdeel 72 in groepjes van 8.",
+              "explanation": "72 : 8 = 9."
+            }
+          ]
+        }
+      ]
     },
     {
-      id: "nl-wind-03", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "bare", answerMode: "open",
-      prompt: "9 × 6 = ?",
-      answer: 54,
-      hintMinnie: "Denk aan 10 groepjes van 6, maar dan eentje minder.",
-      hintMoose: "60 − 6 geeft hetzelfde antwoord.",
-      explanation: "9 × 6 = 54."
-    },
-    {
-      id: "nl-wind-04", anchorId: "windmill", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "delen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "De molenaar verdeelt 48 zakken meel over 6 karren. Hoeveel zakken krijgt elke kar?",
-      answer: 8, choices: [6, 7, 8, 9],
-      hintMinnie: "Verdeel 48 in 6 gelijke groepjes.",
-      hintMoose: "Welke keer-som met 6 geeft 48?",
-      explanation: "48 ÷ 6 = 8, dus elke kar krijgt 8 zakken."
-    },
-    {
-      id: "nl-cheese-01", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "Op de kaaswagen staan 5 planken met elk 8 kazen. Hoeveel kazen zijn dat?",
-      answer: 40, choices: [35, 40, 45, 48],
-      hintMinnie: "Elke plank heeft evenveel kazen.",
-      hintMoose: "Reken 5 × 8.",
-      explanation: "5 × 8 = 40, dus er liggen 40 kazen."
-    },
-    {
-      id: "nl-cheese-02", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "delen",
-      presentation: "story", answerMode: "open",
-      prompt: "Er gaan 63 kazen in 7 gelijke kratten. Hoeveel kazen gaan in elk krat?",
-      answer: 9,
-      hintMinnie: "Zoek 7 gelijke groepjes die samen 63 zijn.",
-      hintMoose: "Welke tafel van 7 eindigt bij 63?",
-      explanation: "63 ÷ 7 = 9, dus elk krat krijgt 9 kazen."
-    },
-    {
-      id: "nl-cheese-03", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "7 × 7 = ?",
-      answer: 49, choices: [42, 47, 49, 56],
-      hintMinnie: "Tel zeven sprongen van 7.",
-      hintMoose: "7 × 5 is 35; tel nog 14 erbij.",
-      explanation: "7 × 7 = 49."
-    },
-    {
-      id: "nl-cheese-04", anchorId: "cheeseCart", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "open",
-      prompt: "Zes grote kazen wegen elk 9 kilo. Hoeveel kilo wegen ze samen?",
-      answer: 54,
-      hintMinnie: "Het zijn 6 gelijke gewichten van 9 kilo.",
-      hintMoose: "Reken 6 × 9 als 6 × 10 min 6.",
-      explanation: "6 × 9 = 54, dus de kazen wegen samen 54 kilo."
-    },
-    {
-      id: "nl-clock-01", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "kwart over vier",
-      choices: ["kwart voor vier", "kwart over vier", "half vijf", "vier uur"],
-      visual: { type: "clock", hour: 4, minute: 15 },
-      hintMinnie: "Kijk eerst naar de grote wijzer.",
-      hintMoose: "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 4.",
-      explanation: "De grote wijzer staat op de 3 en de kleine wijzer net na de 4. Het is kwart over vier."
-    },
-    {
-      id: "nl-clock-02", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "kwart voor tien",
-      choices: ["kwart over negen", "half tien", "kwart voor tien", "tien uur"],
-      visual: { type: "clock", hour: 9, minute: 45 },
-      hintMinnie: "De grote wijzer staat op de 9.",
-      hintMoose: "De grote wijzer op de 9 betekent kwart voor. De kleine wijzer staat bijna bij de 10.",
-      explanation: "De grote wijzer staat op de 9 en de kleine wijzer bijna op de 10. Het is kwart voor tien."
-    },
-    {
-      id: "nl-clock-03", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "kwart over twee",
-      choices: ["twee uur", "kwart over twee", "half drie", "kwart voor drie"],
-      visual: { type: "clock", hour: 2, minute: 15 },
-      hintMinnie: "Kijk waar de grote wijzer staat.",
-      hintMoose: "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 2.",
-      explanation: "De grote wijzer staat op de 3 en de kleine wijzer net na de 2. Het is kwart over twee."
-    },
-    {
-      id: "nl-clock-04", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "kwart voor zeven",
-      choices: ["kwart over zes", "half zeven", "kwart voor zeven", "zeven uur"],
-      visual: { type: "clock", hour: 6, minute: 45 },
-      hintMinnie: "De grote wijzer wijst naar de 9.",
-      hintMoose: "De grote wijzer op de 9 betekent kwart voor. De kleine wijzer staat bijna bij de 7.",
-      explanation: "De grote wijzer staat op de 9 en de kleine wijzer bijna op de 7. Het is kwart voor zeven."
+      "id": "canalClock",
+      "anchorId": "canalClock",
+      "challengeCharacterId": "atlas-de-reiziger",
+      "questions": [
+        {
+          "id": "canal-clock-slot-1",
+          "variants": [
+            {
+              "id": "nl-clock-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart over vier",
+              "choices": [
+                "Kwart voor vier",
+                "Kwart over vier",
+                "Half vijf",
+                "Vier uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 4,
+                "minute": 15
+              },
+              "hintMinnie": "Kijk eerst naar de grote wijzer.",
+              "hintMoose": "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 4.",
+              "explanation": "De grote wijzer staat op de 3 en de kleine wijzer net na de 4. Het is kwart over vier."
+            },
+            {
+              "id": "nl-clock-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart voor negen",
+              "choices": [
+                "Kwart over acht",
+                "Half negen",
+                "Kwart voor negen",
+                "Negen uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 8,
+                "minute": 45
+              },
+              "hintMinnie": "De grote wijzer wijst naar de 9.",
+              "hintMoose": "Op de 9 betekent de grote wijzer kwart voor. De kleine wijzer staat bijna op de 9.",
+              "explanation": "Het is kwart voor negen."
+            }
+          ]
+        },
+        {
+          "id": "canal-clock-slot-2",
+          "variants": [
+            {
+              "id": "nl-clock-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart voor tien",
+              "choices": [
+                "Kwart over negen",
+                "Half tien",
+                "Kwart voor tien",
+                "Tien uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 9,
+                "minute": 45
+              },
+              "hintMinnie": "De grote wijzer staat op de 9.",
+              "hintMoose": "Op de 9 betekent de grote wijzer kwart voor. Kijk daarna naar het volgende uur.",
+              "explanation": "Het is kwart voor tien."
+            },
+            {
+              "id": "nl-clock-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart over één",
+              "choices": [
+                "Eén uur",
+                "Kwart over één",
+                "Half twee",
+                "Kwart voor twee"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 1,
+                "minute": 15
+              },
+              "hintMinnie": "De grote wijzer staat op de 3.",
+              "hintMoose": "Op de 3 betekent de grote wijzer kwart over. De kleine wijzer staat net na de 1.",
+              "explanation": "Het is kwart over één."
+            }
+          ]
+        },
+        {
+          "id": "canal-clock-slot-3",
+          "variants": [
+            {
+              "id": "nl-clock-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart over twee",
+              "choices": [
+                "Twee uur",
+                "Kwart over twee",
+                "Half drie",
+                "Kwart voor drie"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 2,
+                "minute": 15
+              },
+              "hintMinnie": "Kijk waar de grote wijzer staat.",
+              "hintMoose": "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 2.",
+              "explanation": "Het is kwart over twee."
+            },
+            {
+              "id": "nl-clock-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart voor twaalf",
+              "choices": [
+                "Kwart over elf",
+                "Half twaalf",
+                "Kwart voor twaalf",
+                "Twaalf uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 11,
+                "minute": 45
+              },
+              "hintMinnie": "De grote wijzer wijst naar de 9.",
+              "hintMoose": "Kwart voor kijkt naar het uur dat bijna begint.",
+              "explanation": "Het is kwart voor twaalf."
+            }
+          ]
+        },
+        {
+          "id": "canal-clock-slot-4",
+          "variants": [
+            {
+              "id": "nl-clock-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart voor zeven",
+              "choices": [
+                "Kwart over zes",
+                "Half zeven",
+                "Kwart voor zeven",
+                "Zeven uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 6,
+                "minute": 45
+              },
+              "hintMinnie": "De grote wijzer wijst naar de 9.",
+              "hintMoose": "De kleine wijzer staat bijna bij de 7, dus het is kwart voor zeven.",
+              "explanation": "Het is kwart voor zeven."
+            },
+            {
+              "id": "nl-clock-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_quarter",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Kwart over vijf",
+              "choices": [
+                "Vijf uur",
+                "Kwart over vijf",
+                "Half zes",
+                "Kwart voor zes"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 5,
+                "minute": 15
+              },
+              "hintMinnie": "Zoek de grote wijzer op de 3.",
+              "hintMoose": "De kleine wijzer staat net na de 5.",
+              "explanation": "Het is kwart over vijf."
+            }
+          ]
+        }
+      ]
     }
   ];
   const challenges = [
@@ -282,8 +683,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     runes: challenges.map((item) => ({
       id: item.id, objectId: item.id, name: item.name, shortName: item.shortName,
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
-      solved: item.solved,
-      challengeIds: learningChallenges.filter((challenge) => challenge.anchorId === item.id).map((challenge) => challenge.id)
+      solved: item.solved, challengeId: item.id
     })),
     reward: {
       title: "De reis is begonnen!",

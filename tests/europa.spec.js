@@ -166,11 +166,14 @@ test.describe("De Grote Reis door Europa", () => {
     expect({ before, after }).toEqual({ before: 0, after: 0 });
   });
 
-  test("uses authored Atlas Learning challenge schema for the three pilot scenes", async ({ page }) => {
+  test("uses authored two-variant question slots across all Europe scenes", async ({ page }) => {
     await page.goto(gameUrl);
     await waitForImages(page);
     const pilot = await page.evaluate(async () => {
-      const ids = ["LVL-0013", "LVL-0014", "LVL-0015"];
+      const ids = [
+        "LVL-0013", "LVL-0014", "LVL-0015", "LVL-0016",
+        "LVL-0017", "LVL-0018", "LVL-0019", "LVL-0020"
+      ];
       for (const id of ids) {
         const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === id);
         if (!window.SVEN_LEVEL_DEFINITIONS[id]) {
@@ -188,43 +191,58 @@ test.describe("De Grote Reis door Europa", () => {
         return {
           id,
           challenges: selected.learningChallenges,
-          runeChallengeIds: selected.runes.map((rune) => rune.challengeIds)
+          runeChallengeIds: selected.runes.map((rune) => rune.challengeId)
         };
       });
     });
 
     const required = [
-      "id", "anchorId", "challengeCharacterId", "domain", "schoolBand", "family",
+      "id", "domain", "schoolBand", "family",
       "presentation", "answerMode", "prompt", "answer", "hintMinnie", "hintMoose", "explanation"
     ];
     const allChallenges = pilot.flatMap((scene) => scene.challenges);
-    expect(allChallenges).toHaveLength(36);
-    expect(allChallenges.filter((challenge) => challenge.presentation === "story")).toHaveLength(18);
-    expect(allChallenges.filter((challenge) => challenge.presentation === "bare")).toHaveLength(18);
-    expect(allChallenges.filter((challenge) => challenge.answerMode === "open")).toHaveLength(12);
-    expect(allChallenges.filter((challenge) => challenge.answerMode === "multipleChoice")).toHaveLength(24);
+    const allSlots = allChallenges.flatMap((challenge) => challenge.questions);
+    const allVariants = allSlots.flatMap((slot) => slot.variants);
+    expect(allChallenges).toHaveLength(24);
+    expect(allSlots).toHaveLength(96);
+    expect(allVariants).toHaveLength(192);
+    expect(allVariants.filter((variant) => variant.presentation === "story")).toHaveLength(114);
+    expect(allVariants.filter((variant) => variant.presentation === "bare")).toHaveLength(78);
+    expect(allVariants.filter((variant) => variant.answerMode === "open")).toHaveLength(76);
+    expect(allVariants.filter((variant) => variant.answerMode === "multipleChoice")).toHaveLength(116);
 
     for (const scene of pilot) {
-      expect(scene.challenges).toHaveLength(12);
-      expect(scene.runeChallengeIds).toEqual(expect.arrayContaining([
-        expect.arrayContaining([expect.any(String), expect.any(String), expect.any(String), expect.any(String)])
-      ]));
+      expect(scene.challenges).toHaveLength(3);
+      expect(scene.runeChallengeIds).toHaveLength(3);
       for (const challenge of scene.challenges) {
-        for (const field of required) expect(challenge[field], `${scene.id}.${challenge.id}.${field}`).toBeDefined();
         expect(challenge.challengeCharacterId).toBe("atlas-de-reiziger");
-        expect(challenge.domain).toBe("math");
-        expect(challenge.schoolBand).toBe("E5-intended");
-        if (challenge.answerMode === "multipleChoice") expect(challenge.choices).toContain(challenge.answer);
+        expect(challenge.questions).toHaveLength(4);
+        for (const slot of challenge.questions) {
+          expect(slot.variants).toHaveLength(2);
+          for (const variant of slot.variants) {
+            for (const field of required) expect(variant[field], `${scene.id}.${variant.id}.${field}`).toBeDefined();
+            expect(variant.domain).toBe("math");
+            expect(variant.schoolBand).toBe("E5-intended");
+            expect(`${variant.prompt} ${variant.hintMinnie} ${variant.hintMoose} ${variant.explanation}`)
+              .not.toMatch(/rune|runenpoort|de rune wil nog een som/i);
+            if (variant.answerMode === "multipleChoice") {
+              expect(variant.choices).toContain(variant.answer);
+              expect(new Set(variant.choices.map((choice) => String(choice).toLocaleLowerCase("nl"))).size)
+                .toBe(variant.choices.length);
+            }
+          }
+        }
       }
     }
   });
 
   test("plays an open story problem through Minnie, Moose, and assisted completion", async ({ page }) => {
     await startEuropeAdventure(page);
+    await page.evaluate(() => { Math.random = () => 0; });
     await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
 
     await expect(page.locator("[data-challenge-character='atlas-de-reiziger']")).toContainText("Atlas de Reiziger");
-    await expect(page.getByText("Aan elke van de 4 wieken hangen 8 linten. Hoeveel linten zijn dat samen?")).toBeVisible();
+    await expect(page.getByText("4 wieken hebben elk 8 linten. Hoeveel linten zijn dat samen?")).toBeVisible();
     await expect(page.locator("[data-open-answer]")).toBeVisible();
     await expect(page.locator("[data-open-answer]")).toHaveAttribute("type", "text");
     await expect(page.locator("[data-open-answer]")).toHaveAttribute("inputmode", "numeric");
@@ -248,18 +266,18 @@ test.describe("De Grote Reis door Europa", () => {
     await page.locator("[data-open-answer]").fill("30");
     await tap(page.getByRole("button", { name: "Controleer" }));
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
-    await expect(page.locator(".teamMessage")).toHaveText("Kijk naar 4 gelijke groepjes van 8 linten.");
-    await expect(page.locator(".runeChallengeBox").getByText("Kijk naar 4 gelijke groepjes van 8 linten.")).toHaveCount(0);
+    await expect(page.locator(".teamMessage")).toHaveText("Zoek 4 gelijke groepjes van 8.");
+    await expect(page.locator(".runeChallengeBox").getByText("Zoek 4 gelijke groepjes van 8.")).toHaveCount(0);
 
     await page.locator("[data-open-answer]").fill("31");
     await tap(page.getByRole("button", { name: "Controleer" }));
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
-    await expect(page.locator(".teamMessage")).toHaveText("Reken 4 × 8 als 2 × 8 en nog eens 2 × 8.");
-    await expect(page.locator(".runeChallengeBox").getByText("Reken 4 × 8 als 2 × 8 en nog eens 2 × 8.")).toHaveCount(0);
+    await expect(page.locator(".teamMessage")).toHaveText("Reken 4 × 8 stap voor stap.");
+    await expect(page.locator(".runeChallengeBox").getByText("Reken 4 × 8 stap voor stap.")).toHaveCount(0);
 
     await page.locator("[data-open-answer]").fill("33");
     await tap(page.getByRole("button", { name: "Controleer" }));
-    await expect(page.locator(".runeChallengeBox").getByText("4 × 8 = 32, dus er hangen 32 linten.")).toBeVisible();
+    await expect(page.locator(".runeChallengeBox").getByText("4 × 8 = 32.")).toBeVisible();
     await tap(page.getByRole("button", { name: "Samen afronden" }));
     await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
     await expect(page.getByText(/Het antwoord is 32/)).toBeVisible();
@@ -278,6 +296,7 @@ test.describe("De Grote Reis door Europa", () => {
   test("plays a multiple-choice story problem in England", async ({ page }) => {
     await page.goto(gameUrl);
     await page.evaluate(async () => {
+      Math.random = () => 0;
       await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
       window.eval("render")();
     });
@@ -289,12 +308,25 @@ test.describe("De Grote Reis door Europa", () => {
     await expect(page.locator("[data-choice]")).toHaveCount(4);
     await expect(page.locator("[data-clock-visual]")).toHaveAttribute("data-clock-hour", "7");
     await expect(page.locator("[data-clock-visual]")).toHaveAttribute("data-clock-minute", "30");
-    await tap(page.getByRole("button", { name: "half acht", exact: true }));
+    await tap(page.getByRole("button", { name: "Half acht", exact: true }));
     await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
-    await expect(page.getByText("Ja! Het antwoord is half acht.")).toBeVisible();
+    await expect(page.getByText("Ja! Het antwoord is Half acht.")).toBeVisible();
   });
 
-  test("renders the three authored clock-reading pilots correctly", async ({ page }) => {
+  test("matches authored text answers without case sensitivity", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      Math.random = () => 0;
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("render")();
+    });
+    await page.getByRole("button", { name: "Oude klokkentoren" }).dispatchEvent("click");
+    await expect(page.getByRole("button", { name: "Half acht", exact: true })).toBeVisible({ timeout: 30000 });
+    await page.evaluate(() => window.eval("answerQuestion")("half acht"));
+    await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
+  });
+
+  test("renders the five authored clock-reading challenges correctly", async ({ page }) => {
     await page.goto(gameUrl);
     const cases = [
       {
@@ -304,7 +336,7 @@ test.describe("De Grote Reis door Europa", () => {
         minute: 15,
         hourAngle: 127.5,
         minuteAngle: 90,
-        answer: "kwart over vier",
+        answer: "Kwart over vier",
         family: "clock_reading_quarter"
       },
       {
@@ -314,7 +346,7 @@ test.describe("De Grote Reis door Europa", () => {
         minute: 30,
         hourAngle: 225,
         minuteAngle: 180,
-        answer: "half acht",
+        answer: "Half acht",
         family: "clock_reading_half_hour"
       },
       {
@@ -324,13 +356,34 @@ test.describe("De Grote Reis door Europa", () => {
         minute: 10,
         hourAngle: 95,
         minuteAngle: 60,
-        answer: "tien over drie",
+        answer: "Tien over drie",
+        family: "clock_reading_five_minutes"
+      },
+      {
+        levelId: "LVL-0017",
+        objectName: "Alpenklokhuis",
+        hour: 8,
+        minute: 10,
+        hourAngle: 245,
+        minuteAngle: 60,
+        answer: "Tien over acht",
+        family: "clock_reading_five_minutes"
+      },
+      {
+        levelId: "LVL-0019",
+        objectName: "Havenklok",
+        hour: 9,
+        minute: 10,
+        hourAngle: 275,
+        minuteAngle: 60,
+        answer: "Tien over negen",
         family: "clock_reading_five_minutes"
       }
     ];
 
     for (const item of cases) {
       await page.evaluate(async (levelId) => {
+        Math.random = () => 0;
         await window.eval("selectLevel")(levelId, { startImmediately: true });
         window.eval("render")();
       }, item.levelId);
@@ -363,29 +416,54 @@ test.describe("De Grote Reis door Europa", () => {
       expect(geometry.hourAngle).toBeCloseTo(item.hourAngle, 4);
       expect(geometry.minuteAngle).toBeCloseTo(item.minuteAngle, 4);
       expect(geometry.width).toBeGreaterThanOrEqual(190);
-      expect(geometry.minuteTransform).toContain(`rotate(${item.minuteAngle}`);
-      expect(geometry.hourTransform).toContain(`rotate(${item.hourAngle}`);
+      expect(Number(geometry.minuteTransform.match(/rotate\(([-\d.]+)/)?.[1])).toBeCloseTo(item.minuteAngle, 4);
+      expect(Number(geometry.hourTransform.match(/rotate\(([-\d.]+)/)?.[1])).toBeCloseTo(item.hourAngle, 4);
     }
   });
 
   test("uses authored clock hints in the companion bar", async ({ page }) => {
     await startEuropeAdventure(page);
     await page.evaluate(async () => {
+      Math.random = () => 0;
       await window.eval("selectLevel")("LVL-0013", { startImmediately: true });
       window.eval("render")();
     });
     await page.getByRole("button", { name: "Grachtenklok", exact: true }).dispatchEvent("click");
     await expect(page.getByText("Hoe laat is het?")).toBeVisible({ timeout: 30000 });
 
-    await tap(page.getByRole("button", { name: "vier uur", exact: true }));
+    await tap(page.getByRole("button", { name: "Vier uur", exact: true }));
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
     await expect(page.locator(".teamMessage")).toHaveText("Kijk eerst naar de grote wijzer.");
 
-    await tap(page.getByRole("button", { name: "half vijf", exact: true }));
+    await tap(page.getByRole("button", { name: "Half vijf", exact: true }));
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
     await expect(page.locator(".teamMessage")).toHaveText(
       "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 4."
     );
+  });
+
+  test("keeps the chosen authored variant stable through retries and rerenders", async ({ page }) => {
+    await startEuropeAdventure(page);
+    await page.evaluate(() => { Math.random = () => 0; });
+    await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
+    await expect(page.getByText("4 wieken hebben elk 8 linten. Hoeveel linten zijn dat samen?"))
+      .toBeVisible({ timeout: 30000 });
+    const before = await page.evaluate(() => ({
+      ids: window.eval("state.activeQuestions.map((question) => question.id)"),
+      prompt: window.eval("state.activeQuestions[0].prompt")
+    }));
+
+    await page.evaluate(() => {
+      Math.random = () => 0.999;
+      window.eval("render")();
+    });
+    await page.locator("[data-open-answer]").fill("1");
+    await tap(page.getByRole("button", { name: "Controleer" }));
+    const after = await page.evaluate(() => ({
+      ids: window.eval("state.activeQuestions.map((question) => question.id)"),
+      prompt: window.eval("state.activeQuestions[0].prompt")
+    }));
+    expect(after).toEqual(before);
   });
 
   test("challenge-complete shortcut unlocks a scene without changing score or persistence", async ({ page }) => {

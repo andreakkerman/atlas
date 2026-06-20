@@ -5,132 +5,533 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const challengerAsset = "Levels/LVL-0014/assets/atlas-de-reiziger.png";
   const learningChallenges = [
     {
-      id: "uk-clock-01", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "half acht",
-      choices: ["half zeven", "zeven uur", "half acht", "acht uur"],
-      visual: { type: "clock", hour: 7, minute: 30 },
-      hintMinnie: "Kijk eerst naar de grote wijzer.",
-      hintMoose: "De grote wijzer op de 6 betekent half. De kleine wijzer staat tussen de 7 en de 8.",
-      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 7 en de 8. Het is half acht."
+      "id": "clockTower",
+      "anchorId": "clockTower",
+      "challengeCharacterId": "atlas-de-reiziger",
+      "questions": [
+        {
+          "id": "clock-tower-slot-1",
+          "variants": [
+            {
+              "id": "uk-clock-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half acht",
+              "choices": [
+                "Half zeven",
+                "Zeven uur",
+                "Half acht",
+                "Acht uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 7,
+                "minute": 30
+              },
+              "hintMinnie": "Kijk eerst naar de grote wijzer.",
+              "hintMoose": "De grote wijzer op de 6 betekent half. De kleine wijzer staat tussen de 7 en de 8.",
+              "explanation": "Het is half acht."
+            },
+            {
+              "id": "uk-clock-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half vijf",
+              "choices": [
+                "Vier uur",
+                "Half vier",
+                "Half vijf",
+                "Vijf uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 4,
+                "minute": 30
+              },
+              "hintMinnie": "De grote wijzer staat op de 6.",
+              "hintMoose": "De kleine wijzer staat tussen de 4 en de 5. In het Nederlands kijk je vooruit.",
+              "explanation": "Het is half vijf."
+            }
+          ]
+        },
+        {
+          "id": "clock-tower-slot-2",
+          "variants": [
+            {
+              "id": "uk-clock-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half vier",
+              "choices": [
+                "Drie uur",
+                "Half drie",
+                "Half vier",
+                "Vier uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 3,
+                "minute": 30
+              },
+              "hintMinnie": "Zoek de grote wijzer op de 6.",
+              "hintMoose": "De kleine wijzer staat tussen de 3 en de 4.",
+              "explanation": "Het is half vier."
+            },
+            {
+              "id": "uk-clock-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half negen",
+              "choices": [
+                "Acht uur",
+                "Half acht",
+                "Half negen",
+                "Negen uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 8,
+                "minute": 30
+              },
+              "hintMinnie": "Bij een half uur wijst de grote wijzer omlaag.",
+              "hintMoose": "Kijk naar het uur waar de kleine wijzer naartoe gaat.",
+              "explanation": "Het is half negen."
+            }
+          ]
+        },
+        {
+          "id": "clock-tower-slot-3",
+          "variants": [
+            {
+              "id": "uk-clock-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half elf",
+              "choices": [
+                "Tien uur",
+                "Half tien",
+                "Half elf",
+                "Elf uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 10,
+                "minute": 30
+              },
+              "hintMinnie": "De grote wijzer staat op de 6.",
+              "hintMoose": "De kleine wijzer staat tussen de 10 en de 11.",
+              "explanation": "Het is half elf."
+            },
+            {
+              "id": "uk-clock-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half één",
+              "choices": [
+                "Twaalf uur",
+                "Half twaalf",
+                "Half één",
+                "Eén uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 12,
+                "minute": 30
+              },
+              "hintMinnie": "De kleine wijzer staat tussen 12 en 1.",
+              "hintMoose": "Bij half noem je het uur dat eraan komt.",
+              "explanation": "Het is half één."
+            }
+          ]
+        },
+        {
+          "id": "clock-tower-slot-4",
+          "variants": [
+            {
+              "id": "uk-clock-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half twee",
+              "choices": [
+                "Eén uur",
+                "Half één",
+                "Half twee",
+                "Twee uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 1,
+                "minute": 30
+              },
+              "hintMinnie": "De grote wijzer staat recht naar beneden.",
+              "hintMoose": "De kleine wijzer staat tussen de 1 en de 2.",
+              "explanation": "Het is half twee."
+            },
+            {
+              "id": "uk-clock-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "clock_reading_half_hour",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "Hoe laat is het?",
+              "answer": "Half zeven",
+              "choices": [
+                "Zes uur",
+                "Half zes",
+                "Half zeven",
+                "Zeven uur"
+              ],
+              "visual": {
+                "type": "clock",
+                "hour": 6,
+                "minute": 30
+              },
+              "hintMinnie": "Kijk naar het volgende hele uur.",
+              "hintMoose": "De kleine wijzer staat tussen de 6 en de 7.",
+              "explanation": "Het is half zeven."
+            }
+          ]
+        }
+      ]
     },
     {
-      id: "uk-clock-02", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "half vier",
-      choices: ["drie uur", "half drie", "half vier", "vier uur"],
-      visual: { type: "clock", hour: 3, minute: 30 },
-      hintMinnie: "De grote wijzer staat op de 6.",
-      hintMoose: "Bij half staat de kleine wijzer tussen twee uren. Hij staat hier tussen de 3 en de 4.",
-      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 3 en de 4. Het is half vier."
+      "id": "telescope",
+      "anchorId": "telescope",
+      "challengeCharacterId": "atlas-de-reiziger",
+      "questions": [
+        {
+          "id": "telescope-slot-1",
+          "variants": [
+            {
+              "id": "telescope-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "5 sterrenkaarten hebben elk 8 sterren. Hoeveel sterren zijn dat samen?",
+              "answer": 40,
+              "hintMinnie": "Zoek 5 gelijke groepjes van 8.",
+              "hintMoose": "Reken 5 × 8 stap voor stap.",
+              "explanation": "5 × 8 = 40."
+            },
+            {
+              "id": "telescope-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Atlas ziet 6 rijen met telkens 7 sterren. Hoeveel sterren zijn dat?",
+              "answer": 42,
+              "choices": [
+                38,
+                42,
+                46,
+                50
+              ],
+              "hintMinnie": "Denk aan 6 groepjes van 7.",
+              "hintMoose": "Vermenigvuldig 6 met 7.",
+              "explanation": "6 × 7 = 42."
+            }
+          ]
+        },
+        {
+          "id": "telescope-slot-2",
+          "variants": [
+            {
+              "id": "telescope-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "54 sterren worden eerlijk verdeeld over 6 sterrenkaarten. Hoeveel krijgt elke groep?",
+              "answer": 9,
+              "choices": [
+                7,
+                9,
+                11,
+                13
+              ],
+              "hintMinnie": "Verdeel 54 in 6 gelijke groepjes.",
+              "hintMoose": "Zoek welk getal keer 6 precies 54 is.",
+              "explanation": "54 : 6 = 9."
+            },
+            {
+              "id": "telescope-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Er zijn 56 sterren. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
+              "answer": 8,
+              "hintMinnie": "Maak groepjes van 7.",
+              "hintMoose": "Reken 56 gedeeld door 7.",
+              "explanation": "56 : 7 = 8."
+            }
+          ]
+        },
+        {
+          "id": "telescope-slot-3",
+          "variants": [
+            {
+              "id": "telescope-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "money",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Atlas koopt 4 kijkkaarten voor €5 per stuk. Hoeveel euro betaalt hij?",
+              "answer": 20,
+              "hintMinnie": "Elk stuk kost €5.",
+              "hintMoose": "Reken 4 × 5.",
+              "explanation": "4 × €5 = €20."
+            },
+            {
+              "id": "telescope-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "route_division",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "De route langs de Koperen telescoop is 72 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
+              "hintMoose": "Reken 72 : 8.",
+              "explanation": "72 : 8 = 9 meter."
+            }
+          ]
+        },
+        {
+          "id": "telescope-slot-4",
+          "variants": [
+            {
+              "id": "telescope-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "9 × 6 = ?",
+              "answer": 54,
+              "hintMinnie": "Splits 9 in handige delen.",
+              "hintMoose": "Reken 9 groepjes van 6.",
+              "explanation": "9 × 6 = 54."
+            },
+            {
+              "id": "telescope-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_division",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "63 : 7 = ?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Zoek welk getal keer 7 gelijk is aan 63.",
+              "hintMoose": "Verdeel 63 in groepjes van 7.",
+              "explanation": "63 : 7 = 9."
+            }
+          ]
+        }
+      ]
     },
     {
-      id: "uk-clock-03", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "half elf",
-      choices: ["tien uur", "half tien", "half elf", "elf uur"],
-      visual: { type: "clock", hour: 10, minute: 30 },
-      hintMinnie: "Zoek de grote wijzer op de 6.",
-      hintMoose: "De kleine wijzer staat tussen de 10 en de 11. Daarom zeg je half elf.",
-      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 10 en de 11. Het is half elf."
-    },
-    {
-      id: "uk-clock-04", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "Hoe laat is het?",
-      answer: "half twee",
-      choices: ["één uur", "half één", "half twee", "twee uur"],
-      visual: { type: "clock", hour: 1, minute: 30 },
-      hintMinnie: "De grote wijzer staat recht naar beneden.",
-      hintMoose: "De kleine wijzer staat tussen de 1 en de 2. Dat heet half twee.",
-      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 1 en de 2. Het is half twee."
-    },
-    {
-      id: "uk-scope-01", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "open",
-      prompt: "Door de telescoop ziet Atlas 7 torens met elk 5 vlaggen. Hoeveel vlaggen zijn dat?",
-      answer: 35,
-      hintMinnie: "Het zijn 7 gelijke groepjes van 5.",
-      hintMoose: "Reken 7 × 5.",
-      explanation: "7 × 5 = 35 vlaggen."
-    },
-    {
-      id: "uk-scope-02", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "delen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "Atlas verdeelt 64 sterrenkaartjes over 8 vakken. Hoeveel kaartjes komen in elk vak?",
-      answer: 8, choices: [6, 7, 8, 9],
-      hintMinnie: "Alle 8 vakken krijgen evenveel.",
-      hintMoose: "Welke keer-som met 8 geeft 64?",
-      explanation: "64 ÷ 8 = 8 kaartjes per vak."
-    },
-    {
-      id: "uk-scope-03", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "bare", answerMode: "open",
-      prompt: "6 × 9 = ?",
-      answer: 54,
-      hintMinnie: "Denk aan 6 × 10, maar haal 6 weg.",
-      hintMoose: "60 − 6.",
-      explanation: "6 × 9 = 54."
-    },
-    {
-      id: "uk-scope-04", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "aftrekken",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "De kijker kan 90 kilometer ver kijken. Mist bedekt de laatste 27 kilometer. Hoeveel kilometer blijft zichtbaar?",
-      answer: 63, choices: [53, 63, 67, 73],
-      hintMinnie: "Haal het bedekte stuk van 90 af.",
-      hintMoose: "90 − 20 = 70; haal daarna nog 7 weg.",
-      explanation: "90 − 27 = 63 kilometer."
-    },
-    {
-      id: "uk-post-01", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "De postbode vult 6 tassen met elk 8 brieven. Hoeveel brieven draagt hij?",
-      answer: 48, choices: [42, 46, 48, 54],
-      hintMinnie: "Elke tas bevat 8 brieven.",
-      hintMoose: "Gebruik 6 × 8.",
-      explanation: "6 × 8 = 48 brieven."
-    },
-    {
-      id: "uk-post-02", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "delen",
-      presentation: "story", answerMode: "open",
-      prompt: "Er zijn 45 kaarten voor 5 straten. Elke straat krijgt evenveel. Hoeveel kaarten zijn dat per straat?",
-      answer: 9,
-      hintMinnie: "Verdeel 45 in 5 gelijke groepen.",
-      hintMoose: "Welke tafel van 5 geeft 45?",
-      explanation: "45 ÷ 5 = 9 kaarten per straat."
-    },
-    {
-      id: "uk-post-03", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "optellen",
-      presentation: "bare", answerMode: "multipleChoice",
-      prompt: "46 + 37 = ?",
-      answer: 83, choices: [73, 81, 83, 93],
-      hintMinnie: "Tel eerst 30 bij 46.",
-      hintMoose: "46 + 30 = 76; tel daarna 7.",
-      explanation: "46 + 37 = 83."
-    },
-    {
-      id: "uk-post-04", anchorId: "postbox", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "aftrekken",
-      presentation: "story", answerMode: "open",
-      prompt: "In de brievenbus zitten 82 brieven. De postbode haalt er 36 uit. Hoeveel blijven er over?",
-      answer: 46,
-      hintMinnie: "Haal eerst 30 van 82 af.",
-      hintMoose: "82 − 30 = 52; haal daarna nog 6 weg.",
-      explanation: "82 − 36 = 46 brieven."
+      "id": "postbox",
+      "anchorId": "postbox",
+      "challengeCharacterId": "atlas-de-reiziger",
+      "questions": [
+        {
+          "id": "postbox-slot-1",
+          "variants": [
+            {
+              "id": "postbox-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "7 postzakken hebben elk 8 brieven. Hoeveel brieven zijn dat samen?",
+              "answer": 56,
+              "hintMinnie": "Zoek 7 gelijke groepjes van 8.",
+              "hintMoose": "Reken 7 × 8 stap voor stap.",
+              "explanation": "7 × 8 = 56."
+            },
+            {
+              "id": "postbox-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Atlas ziet 6 rijen met telkens 9 brieven. Hoeveel brieven zijn dat?",
+              "answer": 54,
+              "choices": [
+                50,
+                54,
+                58,
+                62
+              ],
+              "hintMinnie": "Denk aan 6 groepjes van 9.",
+              "hintMoose": "Vermenigvuldig 6 met 9.",
+              "explanation": "6 × 9 = 54."
+            }
+          ]
+        },
+        {
+          "id": "postbox-slot-2",
+          "variants": [
+            {
+              "id": "postbox-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "64 brieven worden eerlijk verdeeld over 8 postzakken. Hoeveel krijgt elke groep?",
+              "answer": 8,
+              "choices": [
+                6,
+                8,
+                10,
+                12
+              ],
+              "hintMinnie": "Verdeel 64 in 8 gelijke groepjes.",
+              "hintMoose": "Zoek welk getal keer 8 precies 64 is.",
+              "explanation": "64 : 8 = 8."
+            },
+            {
+              "id": "postbox-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "division_grouping",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Er zijn 54 brieven. In elke groep passen er 6. Hoeveel groepen zijn nodig?",
+              "answer": 9,
+              "hintMinnie": "Maak groepjes van 6.",
+              "hintMoose": "Reken 54 gedeeld door 6.",
+              "explanation": "54 : 6 = 9."
+            }
+          ]
+        },
+        {
+          "id": "postbox-slot-3",
+          "variants": [
+            {
+              "id": "postbox-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "money",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Atlas koopt 6 postzegels voor €3 per stuk. Hoeveel euro betaalt hij?",
+              "answer": 18,
+              "hintMinnie": "Elk stuk kost €3.",
+              "hintMoose": "Reken 6 × 3.",
+              "explanation": "6 × €3 = €18."
+            },
+            {
+              "id": "postbox-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "route_division",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "De route langs de Rode brievenbus is 63 meter en heeft 7 gelijke stukken. Hoe lang is elk stuk?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Verdeel de hele route in 7 gelijke delen.",
+              "hintMoose": "Reken 63 : 7.",
+              "explanation": "63 : 7 = 9 meter."
+            }
+          ]
+        },
+        {
+          "id": "postbox-slot-4",
+          "variants": [
+            {
+              "id": "postbox-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "8 × 9 = ?",
+              "answer": 72,
+              "hintMinnie": "Splits 8 in handige delen.",
+              "hintMoose": "Reken 8 groepjes van 9.",
+              "explanation": "8 × 9 = 72."
+            },
+            {
+              "id": "postbox-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_division",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "72 : 8 = ?",
+              "answer": 9,
+              "choices": [
+                6,
+                9,
+                12,
+                15
+              ],
+              "hintMinnie": "Zoek welk getal keer 8 gelijk is aan 72.",
+              "hintMoose": "Verdeel 72 in groepjes van 8.",
+              "explanation": "72 : 8 = 9."
+            }
+          ]
+        }
+      ]
     }
   ];
   const challenges = [
@@ -298,8 +699,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     runes: challenges.map((item) => ({
       id: item.id, objectId: item.id, name: item.name, shortName: item.shortName,
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
-      solved: item.solved,
-      challengeIds: learningChallenges.filter((challenge) => challenge.anchorId === item.id).map((challenge) => challenge.id)
+      solved: item.solved, challengeId: item.id
     })),
     reward: {
       title: "De klokkenstad wijst de weg!",

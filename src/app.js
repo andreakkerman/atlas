@@ -1293,6 +1293,13 @@ function shuffleQuestions(questions) {
 }
 
 function selectChallengeQuestions(rune) {
+  if (rune.challengeId) {
+    const challenge = level.learningChallenges?.find((item) => item.id === rune.challengeId);
+    return (challenge?.questions || []).map((slot) => ({
+      ...slot,
+      variants: [...(slot.variants || [])]
+    }));
+  }
   if (Array.isArray(rune.challengeIds)) {
     return rune.challengeIds
       .map((id) => level.learningChallenges?.find((challenge) => challenge.id === id))
@@ -1302,7 +1309,12 @@ function selectChallengeQuestions(rune) {
 }
 
 function currentChallengeQuestions() {
-  return state.activeQuestions?.length ? state.activeQuestions : runeById(state.activeRuneId).questions;
+  const questions = state.activeQuestions?.length ? state.activeQuestions : runeById(state.activeRuneId).questions;
+  const current = questions?.[state.questionIndex];
+  if (current?.variants) {
+    questions[state.questionIndex] = current.variants[Math.floor(Math.random() * current.variants.length)];
+  }
+  return questions;
 }
 
 function getStoredTableProgress() {
@@ -1638,7 +1650,7 @@ function beginFreeWalk(point) {
 
 function openRuneChallenge(id) {
   const rune = runeById(id);
-  const authored = Array.isArray(rune.challengeIds);
+  const authored = Boolean(rune.challengeId) || Array.isArray(rune.challengeIds);
   playSfx("challengeOpen");
   state.screen = "challenge";
   state.activeRuneId = id;
@@ -1673,7 +1685,10 @@ function answerQuestion(choice) {
   }
   state.attempts += 1;
 
-  if (submitted !== correct) {
+  const isCorrect = typeof correct === "string"
+    ? submitted.localeCompare(correct, "nl", { sensitivity: "base" }) === 0
+    : submitted === correct;
+  if (!isCorrect) {
     playSfx("incorrect");
     updateTableProgress(question, "mistake");
     state.selectedWrong = true;
@@ -1739,7 +1754,8 @@ function nextQuestion() {
     state.assistedCompletionAvailable = false;
     state.challengeFailureCounts[state.activeRuneId] = 0;
     state.svenMood = "idle";
-    if (questions[state.questionIndex].answerMode) {
+    const next = currentChallengeQuestions()[state.questionIndex];
+    if (next.answerMode) {
       if (state.challengeGuideMessage) setGuideMessage(state.challengeGuideMessage, state.challengeGuideMessage.speaker);
       state.feedback = "";
     } else {

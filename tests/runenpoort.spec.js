@@ -870,14 +870,19 @@ test.describe("SvenAdventure", () => {
           });
         }
       }
-      return Object.values(window.SVEN_LEVEL_DEFINITIONS).map((level) => ({
-        id: level.id,
-        runes: level.runes.map((rune) => ({
-          id: rune.id,
-          count: rune.challengeIds?.length || rune.questions?.length || 0,
-          questions: rune.questions || null
-        }))
-      }));
+      return Object.values(window.SVEN_LEVEL_DEFINITIONS).map((level) => {
+        const authoredById = new Map((level.learningChallenges || []).map((challenge) => [challenge.id, challenge]));
+        return {
+          id: level.id,
+          runes: level.runes.map((rune) => ({
+            id: rune.id,
+            count: rune.challengeId
+              ? authoredById.get(rune.challengeId)?.questions?.length || 0
+              : rune.challengeIds?.length || rune.questions?.length || 0,
+            questions: rune.questions || null
+          }))
+        };
+      });
     });
 
     for (const loadedLevel of levels) {
