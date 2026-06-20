@@ -1393,6 +1393,42 @@ function makeChoices(question) {
   });
 }
 
+function renderClockVisual(visual) {
+  if (visual?.type !== "clock") return "";
+  const hour = Number(visual.hour);
+  const minute = Number(visual.minute);
+  const minuteAngle = minute * 6;
+  const hourAngle = ((hour % 12) + minute / 60) * 30;
+  const numerals = Array.from({ length: 12 }, (_, index) => {
+    const value = index + 1;
+    const angle = (value * 30 * Math.PI) / 180;
+    const x = 120 + Math.sin(angle) * 88;
+    const y = 120 - Math.cos(angle) * 88;
+    return `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}">${value}</text>`;
+  }).join("");
+
+  return `
+    <div
+      class="authoredClock"
+      data-clock-visual
+      data-clock-hour="${hour}"
+      data-clock-minute="${minute}"
+      data-hour-angle="${hourAngle}"
+      data-minute-angle="${minuteAngle}"
+      role="img"
+      aria-label="Analoge klok"
+    >
+      <svg viewBox="0 0 240 240" aria-hidden="true">
+        <circle class="clockFace" cx="120" cy="120" r="112"></circle>
+        <g class="clockNumerals">${numerals}</g>
+        <line class="clockHand clockHourHand" x1="120" y1="120" x2="120" y2="64" transform="rotate(${hourAngle} 120 120)"></line>
+        <line class="clockHand clockMinuteHand" x1="120" y1="120" x2="120" y2="34" transform="rotate(${minuteAngle} 120 120)"></line>
+        <circle class="clockPin" cx="120" cy="120" r="7"></circle>
+      </svg>
+    </div>
+  `;
+}
+
 function saveCompletion() {
   const payload = {
     levelId: level.id,
@@ -2289,7 +2325,7 @@ function renderChallenge() {
       aria-labelledby="challenge-title"
     >
       <div class="runeFocusSpark" aria-hidden="true"></div>
-      <div class="challengeBox runeChallengeBox">
+      <div class="challengeBox runeChallengeBox ${question.visual?.type === "clock" ? "clockChallengeBox" : ""}">
         <div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
           <img class="challengeCharacterPortrait" src="${challengeCharacter.portrait}" alt="${challengeCharacter.name}" />
           <div class="challengeCharacterSpeech">
@@ -2304,6 +2340,7 @@ function renderChallenge() {
         <p class="sum ${authored && question.presentation === "story" ? "storyPrompt" : ""}">
           ${authored ? question.prompt : `Hoeveel is ${question.a} x ${question.b}?`}
         </p>
+        ${renderClockVisual(question.visual)}
         ${
           question.answerMode === "open"
             ? `<form class="openAnswerForm" data-open-answer-form>
@@ -2521,7 +2558,7 @@ app.addEventListener("click", (event) => {
 
   const choiceTarget = event.target.closest("[data-choice]");
   if (choiceTarget) {
-    answerQuestion(Number(choiceTarget.dataset.choice));
+    answerQuestion(choiceTarget.dataset.choice);
     return;
   }
 

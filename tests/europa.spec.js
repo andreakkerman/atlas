@@ -199,10 +199,10 @@ test.describe("De Grote Reis door Europa", () => {
     ];
     const allChallenges = pilot.flatMap((scene) => scene.challenges);
     expect(allChallenges).toHaveLength(36);
-    expect(allChallenges.filter((challenge) => challenge.presentation === "story")).toHaveLength(27);
-    expect(allChallenges.filter((challenge) => challenge.presentation === "bare")).toHaveLength(9);
-    expect(allChallenges.filter((challenge) => challenge.answerMode === "open")).toHaveLength(18);
-    expect(allChallenges.filter((challenge) => challenge.answerMode === "multipleChoice")).toHaveLength(18);
+    expect(allChallenges.filter((challenge) => challenge.presentation === "story")).toHaveLength(18);
+    expect(allChallenges.filter((challenge) => challenge.presentation === "bare")).toHaveLength(18);
+    expect(allChallenges.filter((challenge) => challenge.answerMode === "open")).toHaveLength(12);
+    expect(allChallenges.filter((challenge) => challenge.answerMode === "multipleChoice")).toHaveLength(24);
 
     for (const scene of pilot) {
       expect(scene.challenges).toHaveLength(12);
@@ -283,13 +283,109 @@ test.describe("De Grote Reis door Europa", () => {
     });
     await page.getByRole("button", { name: "Oude klokkentoren" }).dispatchEvent("click");
 
-    await expect(page.getByText("De klokkentoren heeft 8 rijen met 6 stenen versieringen. Hoeveel versieringen zijn dat?")).toBeVisible();
+    await expect(page.getByText("Hoe laat is het?")).toBeVisible();
     await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
     await expect(page.locator("[data-open-answer]")).toHaveCount(0);
     await expect(page.locator("[data-choice]")).toHaveCount(4);
-    await tap(page.locator('[data-choice="48"]'));
+    await expect(page.locator("[data-clock-visual]")).toHaveAttribute("data-clock-hour", "7");
+    await expect(page.locator("[data-clock-visual]")).toHaveAttribute("data-clock-minute", "30");
+    await tap(page.getByRole("button", { name: "half acht", exact: true }));
     await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
-    await expect(page.getByText("Ja! Het antwoord is 48.")).toBeVisible();
+    await expect(page.getByText("Ja! Het antwoord is half acht.")).toBeVisible();
+  });
+
+  test("renders the three authored clock-reading pilots correctly", async ({ page }) => {
+    await page.goto(gameUrl);
+    const cases = [
+      {
+        levelId: "LVL-0013",
+        objectName: "Grachtenklok",
+        hour: 4,
+        minute: 15,
+        hourAngle: 127.5,
+        minuteAngle: 90,
+        answer: "kwart over vier",
+        family: "clock_reading_quarter"
+      },
+      {
+        levelId: "LVL-0014",
+        objectName: "Oude klokkentoren",
+        hour: 7,
+        minute: 30,
+        hourAngle: 225,
+        minuteAngle: 180,
+        answer: "half acht",
+        family: "clock_reading_half_hour"
+      },
+      {
+        levelId: "LVL-0015",
+        objectName: "Dorpsklok",
+        hour: 3,
+        minute: 10,
+        hourAngle: 95,
+        minuteAngle: 60,
+        answer: "tien over drie",
+        family: "clock_reading_five_minutes"
+      }
+    ];
+
+    for (const item of cases) {
+      await page.evaluate(async (levelId) => {
+        await window.eval("selectLevel")(levelId, { startImmediately: true });
+        window.eval("render")();
+      }, item.levelId);
+      await page.getByRole("button", { name: item.objectName, exact: true }).dispatchEvent("click");
+      await expect(page.getByText("Hoe laat is het?")).toBeVisible({ timeout: 30000 });
+
+      const clock = page.locator("[data-clock-visual]");
+      await expect(clock).toHaveAttribute("data-clock-hour", String(item.hour));
+      await expect(clock).toHaveAttribute("data-clock-minute", String(item.minute));
+      await expect(page.getByRole("button", { name: item.answer, exact: true })).toBeVisible();
+      await expect(page.locator("[data-open-answer]")).toHaveCount(0);
+      await expect(page.getByText(item.family)).toHaveCount(0);
+      await expect(page.getByText("E5-intended")).toHaveCount(0);
+
+      const geometry = await clock.evaluate((node) => {
+        const numerals = [...node.querySelectorAll(".clockNumerals text")].map((text) => text.textContent);
+        const rect = node.getBoundingClientRect();
+        return {
+          numerals,
+          lineCount: node.querySelectorAll("line").length,
+          hourAngle: Number(node.dataset.hourAngle),
+          minuteAngle: Number(node.dataset.minuteAngle),
+          width: rect.width,
+          minuteTransform: node.querySelector(".clockMinuteHand").getAttribute("transform"),
+          hourTransform: node.querySelector(".clockHourHand").getAttribute("transform")
+        };
+      });
+      expect(geometry.numerals).toEqual(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]);
+      expect(geometry.lineCount).toBe(2);
+      expect(geometry.hourAngle).toBeCloseTo(item.hourAngle, 4);
+      expect(geometry.minuteAngle).toBeCloseTo(item.minuteAngle, 4);
+      expect(geometry.width).toBeGreaterThanOrEqual(190);
+      expect(geometry.minuteTransform).toContain(`rotate(${item.minuteAngle}`);
+      expect(geometry.hourTransform).toContain(`rotate(${item.hourAngle}`);
+    }
+  });
+
+  test("uses authored clock hints in the companion bar", async ({ page }) => {
+    await startEuropeAdventure(page);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0013", { startImmediately: true });
+      window.eval("render")();
+    });
+    await page.getByRole("button", { name: "Grachtenklok", exact: true }).dispatchEvent("click");
+    await expect(page.getByText("Hoe laat is het?")).toBeVisible({ timeout: 30000 });
+
+    await tap(page.getByRole("button", { name: "vier uur", exact: true }));
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
+    await expect(page.locator(".teamMessage")).toHaveText("Kijk eerst naar de grote wijzer.");
+
+    await tap(page.getByRole("button", { name: "half vijf", exact: true }));
+    await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
+    await expect(page.locator(".teamMessage")).toHaveText(
+      "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 4."
+    );
   });
 
   test("challenge-complete shortcut unlocks a scene without changing score or persistence", async ({ page }) => {

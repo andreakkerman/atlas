@@ -6,43 +6,51 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const learningChallenges = [
     {
       id: "uk-clock-01", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "De klokkentoren heeft 8 rijen met 6 stenen versieringen. Hoeveel versieringen zijn dat?",
-      answer: 48, choices: [42, 46, 48, 54],
-      hintMinnie: "Elke rij heeft 6 versieringen.",
-      hintMoose: "Reken 8 × 6.",
-      explanation: "8 × 6 = 48, dus er zijn 48 versieringen."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "half acht",
+      choices: ["half zeven", "zeven uur", "half acht", "acht uur"],
+      visual: { type: "clock", hour: 7, minute: 30 },
+      hintMinnie: "Kijk eerst naar de grote wijzer.",
+      hintMoose: "De grote wijzer op de 6 betekent half. De kleine wijzer staat tussen de 7 en de 8.",
+      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 7 en de 8. Het is half acht."
     },
     {
       id: "uk-clock-02", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "delen",
-      presentation: "story", answerMode: "open",
-      prompt: "De klok verdeelt 56 slagen over 7 rondes. Hoeveel slagen horen bij elke ronde?",
-      answer: 8,
-      hintMinnie: "Verdeel 56 in 7 gelijke groepjes.",
-      hintMoose: "Welke tafel van 7 geeft 56?",
-      explanation: "56 ÷ 7 = 8 slagen per ronde."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "half vier",
+      choices: ["drie uur", "half drie", "half vier", "vier uur"],
+      visual: { type: "clock", hour: 3, minute: 30 },
+      hintMinnie: "De grote wijzer staat op de 6.",
+      hintMoose: "Bij half staat de kleine wijzer tussen twee uren. Hij staat hier tussen de 3 en de 4.",
+      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 3 en de 4. Het is half vier."
     },
     {
       id: "uk-clock-03", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
       presentation: "bare", answerMode: "multipleChoice",
-      prompt: "9 × 8 = ?",
-      answer: 72, choices: [63, 70, 72, 81],
-      hintMinnie: "Denk aan 10 × 8 en haal één keer 8 weg.",
-      hintMoose: "80 − 8.",
-      explanation: "9 × 8 = 72."
+      prompt: "Hoe laat is het?",
+      answer: "half elf",
+      choices: ["tien uur", "half tien", "half elf", "elf uur"],
+      visual: { type: "clock", hour: 10, minute: 30 },
+      hintMinnie: "Zoek de grote wijzer op de 6.",
+      hintMoose: "De kleine wijzer staat tussen de 10 en de 11. Daarom zeg je half elf.",
+      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 10 en de 11. Het is half elf."
     },
     {
       id: "uk-clock-04", anchorId: "clockTower", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "optellen",
-      presentation: "story", answerMode: "open",
-      prompt: "Om 10 uur komen 37 bezoekers. Later komen er nog 28. Hoeveel bezoekers zijn er samen?",
-      answer: 65,
-      hintMinnie: "Tel eerst de tientallen en daarna de eenheden.",
-      hintMoose: "37 + 20 = 57; tel dan nog 8.",
-      explanation: "37 + 28 = 65 bezoekers."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_half_hour",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "half twee",
+      choices: ["één uur", "half één", "half twee", "twee uur"],
+      visual: { type: "clock", hour: 1, minute: 30 },
+      hintMinnie: "De grote wijzer staat recht naar beneden.",
+      hintMoose: "De kleine wijzer staat tussen de 1 en de 2. Dat heet half twee.",
+      explanation: "De grote wijzer staat op de 6 en de kleine wijzer tussen de 1 en de 2. Het is half twee."
     },
     {
       id: "uk-scope-01", anchorId: "telescope", challengeCharacterId: "atlas-de-reiziger",

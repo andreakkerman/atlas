@@ -86,43 +86,51 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     },
     {
       id: "nl-clock-01", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "open",
-      prompt: "De grachtenklok slaat 4 keer per uur, 6 uur lang. Hoeveel slagen zijn dat?",
-      answer: 24,
-      hintMinnie: "Elk uur hoor je 4 slagen.",
-      hintMoose: "Gebruik 6 × 4.",
-      explanation: "6 × 4 = 24, dus de klok slaat 24 keer."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "kwart over vier",
+      choices: ["kwart voor vier", "kwart over vier", "half vijf", "vier uur"],
+      visual: { type: "clock", hour: 4, minute: 15 },
+      hintMinnie: "Kijk eerst naar de grote wijzer.",
+      hintMoose: "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 4.",
+      explanation: "De grote wijzer staat op de 3 en de kleine wijzer net na de 4. Het is kwart over vier."
     },
     {
       id: "nl-clock-02", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "Een rondvaart duurt 8 stukken van 5 minuten. Hoeveel minuten duurt de tocht?",
-      answer: 40, choices: [35, 40, 45, 50],
-      hintMinnie: "Er zijn 8 gelijke stukken van 5 minuten.",
-      hintMoose: "Reken 8 × 5.",
-      explanation: "8 × 5 = 40, dus de tocht duurt 40 minuten."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "kwart voor tien",
+      choices: ["kwart over negen", "half tien", "kwart voor tien", "tien uur"],
+      visual: { type: "clock", hour: 9, minute: 45 },
+      hintMinnie: "De grote wijzer staat op de 9.",
+      hintMoose: "De grote wijzer op de 9 betekent kwart voor. De kleine wijzer staat bijna bij de 10.",
+      explanation: "De grote wijzer staat op de 9 en de kleine wijzer bijna op de 10. Het is kwart voor tien."
     },
     {
       id: "nl-clock-03", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "delen",
-      presentation: "bare", answerMode: "open",
-      prompt: "72 ÷ 8 = ?",
-      answer: 9,
-      hintMinnie: "Zoek hoeveel groepjes van 8 in 72 passen.",
-      hintMoose: "Draai de som om: 8 × ? = 72.",
-      explanation: "72 ÷ 8 = 9."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "kwart over twee",
+      choices: ["twee uur", "kwart over twee", "half drie", "kwart voor drie"],
+      visual: { type: "clock", hour: 2, minute: 15 },
+      hintMinnie: "Kijk waar de grote wijzer staat.",
+      hintMoose: "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 2.",
+      explanation: "De grote wijzer staat op de 3 en de kleine wijzer net na de 2. Het is kwart over twee."
     },
     {
       id: "nl-clock-04", anchorId: "canalClock", challengeCharacterId: "atlas-de-reiziger",
-      domain: "math", schoolBand: "E5-intended", family: "vermenigvuldigen",
-      presentation: "story", answerMode: "multipleChoice",
-      prompt: "De klok luidt 7 keer per avond, 6 avonden lang. Hoe vaak luidt hij in totaal?",
-      answer: 42, choices: [36, 40, 42, 49],
-      hintMinnie: "Elke avond klinkt hetzelfde aantal slagen.",
-      hintMoose: "Gebruik 6 × 7.",
-      explanation: "6 × 7 = 42, dus de klok luidt 42 keer."
+      domain: "math", schoolBand: "E5-intended", family: "clock_reading_quarter",
+      presentation: "bare", answerMode: "multipleChoice",
+      prompt: "Hoe laat is het?",
+      answer: "kwart voor zeven",
+      choices: ["kwart over zes", "half zeven", "kwart voor zeven", "zeven uur"],
+      visual: { type: "clock", hour: 6, minute: 45 },
+      hintMinnie: "De grote wijzer wijst naar de 9.",
+      hintMoose: "De grote wijzer op de 9 betekent kwart voor. De kleine wijzer staat bijna bij de 7.",
+      explanation: "De grote wijzer staat op de 9 en de kleine wijzer bijna op de 7. Het is kwart voor zeven."
     }
   ];
   const challenges = [

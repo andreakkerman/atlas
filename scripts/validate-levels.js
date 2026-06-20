@@ -539,12 +539,31 @@ function validateReferences(level, objects, nodeIds, label) {
       if (!["open", "multipleChoice"].includes(challenge.answerMode)) {
         fail(`${challengeLabel}.answerMode must be "open" or "multipleChoice".`);
       }
-      if (!Number.isFinite(challenge.answer)) fail(`${challengeLabel}.answer must be a finite number.`);
+      if (!(Number.isFinite(challenge.answer) || isNonEmptyString(challenge.answer))) {
+        fail(`${challengeLabel}.answer must be a finite number or non-empty string.`);
+      }
       if (challenge.answerMode === "multipleChoice") {
         if (!Array.isArray(challenge.choices) || challenge.choices.length < 2) {
           fail(`${challengeLabel}.choices must contain at least 2 choices.`);
         } else if (!challenge.choices.includes(challenge.answer)) {
           fail(`${challengeLabel}.choices must include the answer.`);
+        }
+      }
+      if (challenge.visual !== undefined) {
+        if (!isObject(challenge.visual)) {
+          fail(`${challengeLabel}.visual must be an object.`);
+        } else if (challenge.visual.type !== "clock") {
+          fail(`${challengeLabel}.visual.type must be "clock".`);
+        } else {
+          if (!Number.isInteger(challenge.visual.hour) || challenge.visual.hour < 1 || challenge.visual.hour > 12) {
+            fail(`${challengeLabel}.visual.hour must be an integer from 1 to 12.`);
+          }
+          if (!Number.isInteger(challenge.visual.minute) || challenge.visual.minute < 0 || challenge.visual.minute > 59) {
+            fail(`${challengeLabel}.visual.minute must be an integer from 0 to 59.`);
+          }
+          if (challenge.answerMode !== "multipleChoice") {
+            fail(`${challengeLabel} clock visuals must use multipleChoice.`);
+          }
         }
       }
     });

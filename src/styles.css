@@ -1427,6 +1427,62 @@ button {
   line-height: 1.25;
 }
 
+.authoredClock {
+  width: clamp(190px, 27dvh, 250px);
+  margin: 4px auto 18px;
+}
+
+.authoredClock svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.clockChallengeBox {
+  width: min(700px, calc(100% - 24px));
+}
+
+.clockChallengeBox .choices button {
+  padding-inline: 10px;
+  font-size: clamp(1rem, 3.2vw, 1.55rem);
+  line-height: 1.1;
+}
+
+.clockFace {
+  fill: #fff8df;
+  stroke: #8edbd3;
+  stroke-width: 5;
+}
+
+.clockNumerals {
+  fill: #102b28;
+  font-family: inherit;
+  font-size: 23px;
+  font-weight: 1000;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+.clockHand {
+  stroke: #173d39;
+  stroke-linecap: round;
+}
+
+.clockHourHand {
+  stroke-width: 10;
+}
+
+.clockMinuteHand {
+  stroke: #c56f2c;
+  stroke-width: 7;
+}
+
+.clockPin {
+  fill: #173d39;
+  stroke: #fff8df;
+  stroke-width: 2;
+}
+
 .openAnswerForm {
   display: grid;
   gap: 8px;
