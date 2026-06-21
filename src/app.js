@@ -1504,14 +1504,9 @@ function selectChallenge(target) {
 }
 
 function inspectAmbientTarget(target) {
-  if (!target || state.moving || state.screen !== "scene") return;
+  if (!target || state.screen !== "scene") return;
   state.selectedChallengeId = null;
-  const objectId = target.objectId || target.id;
-  const firstLook = !state.seenObjects.has(objectId);
-  if (firstLook) state.seenObjects.add(objectId);
-  const firstAttention = firstLook && authoredCompanionMoments("AMBIENT_ATTENTION_FIRST", { objectId }).length > 0;
-  emitCompanionEvent(firstAttention ? "AMBIENT_ATTENTION_FIRST" : "AMBIENT_ATTENTION", { objectId });
-  render();
+  beginInteraction(target, "hotspot");
 }
 
 function completeCurrentSceneChallenges() {
@@ -1568,6 +1563,19 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
 
 function finishInteraction(target, kind, action) {
   const exitHotspotId = level.exitHotspotId || "templeGate";
+  const objectId = target.objectId || target.id;
+
+  if (kind === "hotspot" && target.type === "ambient") {
+    state.moving = false;
+    state.svenMood = "idle";
+    const firstLook = !state.seenObjects.has(objectId);
+    if (firstLook) state.seenObjects.add(objectId);
+    const firstAttention =
+      firstLook && authoredCompanionMoments("AMBIENT_ATTENTION_FIRST", { objectId }).length > 0;
+    emitCompanionEvent(firstAttention ? "AMBIENT_ATTENTION_FIRST" : "AMBIENT_ATTENTION", { objectId });
+    render();
+    return;
+  }
 
   if (kind === "rune" && action === "look") {
     state.moving = false;
@@ -2117,7 +2125,7 @@ function isTargetVisible(target) {
 }
 
 function renderHotspot(hotspot) {
-  const disabled = state.moving || state.screen !== "scene";
+  const disabled = state.screen !== "scene" || (state.moving && hotspot.type !== "ambient");
   const object = interactiveObjectForTarget(hotspot);
   return `
     <button
@@ -2140,7 +2148,7 @@ function renderRuneHotspot(rune) {
   const done = state.completedRunes.has(rune.id);
   const justCompleted = state.justCompletedRuneId === rune.id;
   const selected = state.selectedChallengeId === rune.id;
-  const disabled = state.screen !== "scene" || (state.moving && !VIKING_LEVEL_IDS.has(level.id));
+  const disabled = state.screen !== "scene";
   const object = interactiveObjectForTarget(rune);
   return `
     <button
@@ -2633,7 +2641,7 @@ window.addEventListener("resize", updateWorldDom);
 
 window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();
-  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "c") {
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
     event.preventDefault();
     completeCurrentSceneChallenges();
     return;

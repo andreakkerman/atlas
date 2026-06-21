@@ -38,6 +38,16 @@ The overlay should show:
 
 This is the quickest way to inspect whether the level data matches the visible world image.
 
+## Scene Completion Shortcut
+
+Shortcut:
+
+```text
+Ctrl+Shift+L
+```
+
+This marks the current scene's challenges complete for testing without adding answers, attempts, or learning evidence.
+
 ## Runtime Mode
 
 When the game is not opened with `?dev=editor`, the Developer Tools panel is read-only.

@@ -1112,7 +1112,7 @@ test.describe("SvenAdventure", () => {
       attempts: window.eval("state.attempts"),
       completion: localStorage.getItem("svenadventure-vikinghaven-v1")
     }));
-    await page.keyboard.press("Control+Shift+C");
+    await page.keyboard.press("Control+Shift+L");
     const after = await page.evaluate(() => ({
       completed: window.eval("state.completedRunes.size"),
       total: window.eval("level.runes.length"),

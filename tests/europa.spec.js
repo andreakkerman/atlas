@@ -88,7 +88,7 @@ test.describe("De Grote Reis door Europa", () => {
     test.skip(testInfo.project.name !== "desktop-chromium", "The scene-chain smoke runs once on desktop.");
     await startEuropeAdventure(page);
 
-    await page.keyboard.press("Control+Shift+C");
+    await page.keyboard.press("Control+Shift+L");
     await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
 
     await page.getByRole("button", { name: "Reispoort", exact: true }).dispatchEvent("click");
@@ -151,7 +151,7 @@ test.describe("De Grote Reis door Europa", () => {
 
   test("shows authored first ambient attention without changing England progress", async ({ page }) => {
     await startEuropeAdventure(page);
-    await page.keyboard.press("Control+Shift+C");
+    await page.keyboard.press("Control+Shift+L");
     await page.getByRole("button", { name: "Reispoort", exact: true }).dispatchEvent("click");
     await expect(page.getByRole("heading", { name: "De reis is begonnen!" })).toBeVisible({ timeout: 30000 });
     await tap(page.getByRole("button", { name: "Naar Engeland" }));
@@ -160,10 +160,93 @@ test.describe("De Grote Reis door Europa", () => {
     const before = await page.evaluate(() => window.eval("state.completedRunes.size"));
     await page.getByRole("button", { name: "Reiskristal" }).dispatchEvent("click");
     await expect(page.locator(".teamMessage")).toHaveText(
-      "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen."
+      "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen.",
+      { timeout: 15000 }
     );
     const after = await page.evaluate(() => window.eval("state.completedRunes.size"));
     expect({ before, after }).toEqual({ before: 0, after: 0 });
+  });
+
+  test("redirects an active walk to a newly clicked challenge", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("beginFreeWalk")({ x: 1900, y: 640 });
+    });
+    const actor = page.locator("[data-actor='sven']");
+    await expect(actor).toHaveAttribute("data-animation", "walk");
+
+    await page.getByRole("button", { name: "Koperen telescoop", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "Koperen telescoop", exact: true })).toBeVisible({
+      timeout: 30000
+    });
+    const arrival = await page.evaluate(() => {
+      const currentLevel = window.eval("level");
+      const currentState = window.eval("state");
+      const object = currentLevel.interactiveObjects.find((item) => item.id === "telescope");
+      const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+      return {
+        actor: { x: currentState.worldX, y: currentState.worldY },
+        approach: { x: approach.x, y: approach.y }
+      };
+    });
+    expect(arrival.actor).toEqual(arrival.approach);
+  });
+
+  test("redirects an active walk to a newly clicked ambient object", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("beginFreeWalk")({ x: 1900, y: 640 });
+    });
+    const actor = page.locator("[data-actor='sven']");
+    await expect(actor).toHaveAttribute("data-animation", "walk");
+
+    await page.getByRole("button", { name: "Reiskristal", exact: true }).click();
+    await expect(actor).toHaveAttribute("data-animation", "walk");
+    await expect(page.locator(".teamMessage")).not.toHaveText(
+      "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen."
+    );
+    await expect(page.locator(".teamMessage")).toHaveText(
+      "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen.",
+      { timeout: 15000 }
+    );
+    await expect.poll(
+      () => page.evaluate(() => window.eval("state.moving")),
+      { timeout: 15000 }
+    ).toBe(false);
+    const arrival = await page.evaluate(() => {
+      const currentLevel = window.eval("level");
+      const currentState = window.eval("state");
+      const object = currentLevel.interactiveObjects.find((item) => item.id === "travelCrystal");
+      const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+      return {
+        actor: { x: currentState.worldX, y: currentState.worldY },
+        approach: { x: approach.x, y: approach.y },
+        activeRuneId: currentState.activeRuneId
+      };
+    });
+    expect(arrival.actor).toEqual(arrival.approach);
+    expect(arrival.activeRuneId).toBeNull();
+  });
+
+  test("only opens the latest object clicked during movement", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("beginFreeWalk")({ x: 1900, y: 640 });
+    });
+
+    await page.getByRole("button", { name: "Oude klokkentoren", exact: true }).click();
+    await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
+    await page.getByRole("button", { name: "Rode brievenbus", exact: true }).click();
+
+    await expect(page.getByRole("heading", { name: "Rode brievenbus", exact: true })).toBeVisible({
+      timeout: 30000
+    });
+    await page.waitForTimeout(1200);
+    await expect(page.getByRole("heading", { name: "Oude klokkentoren", exact: true })).toHaveCount(0);
+    expect(await page.evaluate(() => window.eval("state.activeRuneId"))).toBe("postbox");
   });
 
   test("uses authored two-variant question slots across all Europe scenes", async ({ page }) => {
@@ -466,7 +549,7 @@ test.describe("De Grote Reis door Europa", () => {
     expect(after).toEqual(before);
   });
 
-  test("challenge-complete shortcut unlocks a scene without changing score or persistence", async ({ page }) => {
+  test("Ctrl+Shift+L completes without evidence and Ctrl+Shift+C does nothing", async ({ page }) => {
     await startEuropeAdventure(page);
     const before = await page.evaluate(() => ({
       answered: window.eval("state.answered"),
@@ -475,6 +558,20 @@ test.describe("De Grote Reis door Europa", () => {
     }));
 
     await page.keyboard.press("Control+Shift+C");
+    const afterOldShortcut = await page.evaluate(() => ({
+      completed: window.eval("state.completedRunes.size"),
+      answered: window.eval("state.answered"),
+      attempts: window.eval("state.attempts"),
+      completion: localStorage.getItem("atlas-europa-nederland-v1")
+    }));
+    expect(afterOldShortcut).toEqual({
+      completed: 0,
+      answered: before.answered,
+      attempts: before.attempts,
+      completion: before.completion
+    });
+
+    await page.keyboard.press("Control+Shift+L");
     await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
     const after = await page.evaluate(() => ({
       completed: window.eval("state.completedRunes.size"),
@@ -601,7 +698,7 @@ test.describe("De Grote Reis door Europa", () => {
     await expect(page.locator('[data-audio-path="volumes.master"]')).toBeVisible();
     await expect(page.locator('[data-audio-path="levels.LVL-0013.musicVolume"]')).toBeVisible();
     await expect(page.locator('[data-audio-path="levels.LVL-0013.ambienceVolume"]')).toBeVisible();
-    await page.keyboard.press("Control+Shift+C");
+    await page.keyboard.press("Control+Shift+L");
     await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
 
     const mapping = await page.evaluate(() => ({
