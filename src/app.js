@@ -1,6 +1,7 @@
 const app = document.querySelector("#app");
 const levelCatalog = window.SVEN_LEVEL_MANIFEST?.levels || [];
 const visibleLevelCatalog = () => levelCatalog.filter((item) => !item.hiddenFromMenu);
+const sessionReport = window.AtlasSessionReport;
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 let level = null;
 let walkNodesById = new Map();
@@ -696,6 +697,13 @@ async function selectLevel(id, options = {}) {
   stopMovement();
   await prepareWalkPathEditorForLevel(selectedLevel);
   level = normalizeLevel(selectedLevel);
+  const adventure = adventureEntryFor(entry);
+  sessionReport?.startOrVisitLevel({
+    adventureId: adventure.id,
+    adventureTitle: adventure.title,
+    levelId: entry.id,
+    levelTitle: level.title
+  });
   walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
   state = createLevelState(level);
   if (options.startImmediately) {
@@ -708,8 +716,19 @@ async function selectLevel(id, options = {}) {
   return true;
 }
 
+function adventureEntryFor(entry) {
+  let current = entry;
+  const seen = new Set();
+  while (current?.connectedFrom && !seen.has(current.id)) {
+    seen.add(current.id);
+    current = levelCatalog.find((item) => item.id === current.connectedFrom) || current;
+  }
+  return current || entry;
+}
+
 function returnToMenu() {
   stopMovement();
+  sessionReport?.end("menu");
   level = null;
   walkNodesById = new Map();
   state = { screen: "menu" };
@@ -1312,9 +1331,25 @@ function currentChallengeQuestions() {
   const questions = state.activeQuestions?.length ? state.activeQuestions : runeById(state.activeRuneId).questions;
   const current = questions?.[state.questionIndex];
   if (current?.variants) {
-    questions[state.questionIndex] = current.variants[Math.floor(Math.random() * current.variants.length)];
+    const selected = current.variants[Math.floor(Math.random() * current.variants.length)];
+    questions[state.questionIndex] = { ...selected, atlasSlotId: current.id };
   }
   return questions;
+}
+
+function trackCurrentSessionQuestion() {
+  if (!level || state.screen !== "challenge") return;
+  const rune = runeById(state.activeRuneId);
+  const question = currentChallengeQuestions()?.[state.questionIndex];
+  if (!rune || !question?.id) return;
+  sessionReport?.beginQuestion(question, {
+    levelId: level.id,
+    levelTitle: level.title,
+    challengeId: rune.id,
+    challengeTitle: rune.name,
+    slotId: question.atlasSlotId || question.id,
+    variantId: question.id
+  });
 }
 
 function getStoredTableProgress() {
@@ -1678,6 +1713,7 @@ function openRuneChallenge(id) {
     challengeId: rune.id
   });
   state.feedback = authored ? "" : rune.intro;
+  trackCurrentSessionQuestion();
   render();
 }
 
@@ -1696,6 +1732,7 @@ function answerQuestion(choice) {
   const isCorrect = typeof correct === "string"
     ? submitted.localeCompare(correct, "nl", { sensitivity: "base" }) === 0
     : submitted === correct;
+  sessionReport?.recordAttempt(isCorrect);
   if (!isCorrect) {
     playSfx("incorrect");
     updateTableProgress(question, "mistake");
@@ -1708,9 +1745,11 @@ function answerQuestion(choice) {
       challengeId: state.activeRuneId
     });
     if (authored && failureCount === 1) {
+      sessionReport?.recordHint("minnie");
       setGuideMessage({ speaker: "minnie", text: question.hintMinnie }, "minnie");
       state.feedback = "";
     } else if (authored && failureCount === 2) {
+      sessionReport?.recordHint("moose");
       setGuideMessage({ speaker: "moose", text: question.hintMoose }, "moose");
       state.feedback = "";
     } else if (authored) {
@@ -1742,6 +1781,7 @@ function answerQuestion(choice) {
 function completeQuestionWithHelp() {
   if (!state.assistedCompletionAvailable || state.screen !== "challenge") return;
   const question = currentChallengeQuestions()[state.questionIndex];
+  sessionReport?.recordAssisted();
   state.answered += 1;
   state.assistedCompletionAvailable = false;
   state.svenMood = "celebrating";
@@ -1770,6 +1810,7 @@ function nextQuestion() {
       state.feedback = "De rune wil nog een som.";
     }
     state.screen = "challenge";
+    trackCurrentSessionQuestion();
     render();
     return;
   }
@@ -1809,6 +1850,7 @@ function showReward() {
   playSfx("adventureComplete");
   emitCompanionEvent("ADVENTURE_COMPLETE");
   state.screen = "reward";
+  sessionReport?.completeLevel(level.id);
   saveCompletion();
   render();
 }
@@ -2270,6 +2312,7 @@ function renderMenu() {
   const menuLevels = visibleLevelCatalog();
   return `
     <main class="menuScreen">
+      <button class="progressMenuButton" type="button" data-action="progress">Voortgang</button>
       <section class="menuHeader">
         <h1>Kies een avontuur</h1>
         <p>Wat ga je vandaag ontdekken?</p>
@@ -2280,6 +2323,146 @@ function renderMenu() {
           menuLevels.length
             ? menuLevels.map(renderLevelTile).join("")
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
+        }
+      </section>
+    </main>
+  `;
+}
+
+function formatSessionDuration(milliseconds) {
+  const totalSeconds = Math.max(0, Math.round(Number(milliseconds || 0) / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes ? `${minutes} min ${seconds.toString().padStart(2, "0")} sec` : `${seconds} sec`;
+}
+
+function sessionSummary(session) {
+  const completedQuestions = session.questions.filter((question) => question.completedAt);
+  const direct = completedQuestions.filter((question) => question.outcome === "direct").length;
+  return {
+    completedQuestions,
+    direct,
+    firstTryPercentage: completedQuestions.length ? Math.round((direct / completedQuestions.length) * 100) : 0,
+    completedLevels: session.levels.filter((entry) => entry.completedAt).length,
+    attempts: session.questions.reduce((sum, question) => sum + question.attempts, 0)
+  };
+}
+
+function renderOutcomeSplit(summary) {
+  return [
+    ["direct", "Direct goed"],
+    ["afterMinnie", "Na Minnie"],
+    ["afterMoose", "Na Moose"],
+    ["assisted", "Samen afgerond"]
+  ].map(([outcome, label]) => `
+    <div class="sessionOutcome">
+      <strong>${summary.completedQuestions.filter((question) => question.outcome === outcome).length}</strong>
+      <span>${label}</span>
+    </div>
+  `).join("");
+}
+
+function renderCategoryDetails(session) {
+  return ["Tafels", "Delen", "Verhaalsommen", "Klokkijken"].map((category) => {
+    const questions = session.questions.filter((question) => question.completedAt && question.category === category);
+    const details = new Map();
+    questions.forEach((question) => details.set(question.detail, (details.get(question.detail) || 0) + 1));
+    return `
+      <details class="sessionCategory">
+        <summary><span>${category}</span><strong>${questions.length}</strong></summary>
+        ${
+          questions.length
+            ? `<ul>${[...details.entries()].map(([detail, count]) => `<li><span>${detail}</span><strong>${count}</strong></li>`).join("")}</ul>`
+            : `<p>Nog geen afgeronde vragen.</p>`
+        }
+      </details>
+    `;
+  }).join("");
+}
+
+function renderHelpNeeded(session) {
+  const questions = session.questions.filter((question) =>
+    question.completedAt &&
+    (!question.firstTryCorrect || question.minnieHint || question.mooseHint || question.assisted)
+  );
+  if (!questions.length) return `<p class="sessionEmptyNote">Deze keer was nergens extra hulp nodig.</p>`;
+  return `
+    <ul class="sessionHelpList">
+      ${questions.map((question) => `
+        <li>
+          <div><strong>${question.challengeTitle}</strong><span>${question.prompt}</span></div>
+          <span>${question.outcome === "assisted" ? "Samen afgerond" : question.mooseHint ? "Na Moose" : "Na Minnie"}</span>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+}
+
+function renderSessionCard(session, index) {
+  const summary = sessionSummary(session);
+  const ended = new Intl.DateTimeFormat("nl-NL", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(session.endedAt));
+  return `
+    <article class="sessionReportCard" data-session-id="${session.id}">
+      <header class="sessionReportHeader">
+        <div>
+          <p class="eyebrow">${index === 0 ? "Nieuwste sessie" : "Eerdere sessie"} · ${ended}</p>
+          <h2>${session.adventureTitle}</h2>
+        </div>
+        <span class="sessionStatus">Nog te controleren</span>
+      </header>
+      <section class="sessionHeroStats" aria-label="Sessiesamenvatting">
+        <div><strong>${formatSessionDuration(session.activeMs)}</strong><span>Actieve tijd</span></div>
+        <div><strong>${formatSessionDuration(session.elapsedMs)}</strong><span>Verstreken tijd</span></div>
+        <div><strong>${summary.completedLevels}/${session.levels.length}</strong><span>Plekken afgerond</span></div>
+        <div><strong>${summary.completedQuestions.length}</strong><span>Vragen · ${summary.attempts} pogingen</span></div>
+        <div><strong>${summary.firstTryPercentage}%</strong><span>Direct goed</span></div>
+      </section>
+      <section class="sessionSection">
+        <h3>Uitkomst</h3>
+        <div class="sessionOutcomeGrid">${renderOutcomeSplit(summary)}</div>
+      </section>
+      <section class="sessionSection">
+        <h3>Leergebieden</h3>
+        <div class="sessionCategoryGrid">${renderCategoryDetails(session)}</div>
+      </section>
+      <section class="sessionSection">
+        <h3>Hier was wat hulp nodig</h3>
+        ${renderHelpNeeded(session)}
+      </section>
+      <footer class="sessionCardActions">
+        <button class="dangerButton" type="button" data-delete-session="${session.id}">Gecontroleerd en wissen</button>
+      </footer>
+    </article>
+  `;
+}
+
+function renderProgress() {
+  const sessions = sessionReport?.getSessions() || [];
+  return `
+    <main class="progressScreen">
+      <header class="progressHeader">
+        <div>
+          <p class="eyebrow">Atlas Session Report v0.1</p>
+          <h1>Voortgang</h1>
+          <p>Een lokaal overzicht van de laatste avontuursessies.</p>
+        </div>
+        <button class="secondaryButton" type="button" data-action="menu">Terug naar menu</button>
+      </header>
+      <section class="sessionReports" aria-label="Sessierapporten">
+        ${
+          sessions.length
+            ? sessions.map(renderSessionCard).join("")
+            : `<div class="emptySessionReport">
+                <p class="eyebrow">Nog rustig hier</p>
+                <h2>Nog geen sessies om te bekijken</h2>
+                <p>Na een avontuur verschijnt hier een compact overzicht.</p>
+              </div>`
         }
       </section>
     </main>
@@ -2469,6 +2652,8 @@ function render() {
     app.innerHTML = renderLaunch();
   } else if (state.screen === "menu") {
     app.innerHTML = renderMenu();
+  } else if (state.screen === "progress") {
+    app.innerHTML = renderProgress();
   } else if (state.screen === "loading") {
     app.innerHTML = renderLoading();
   } else if (state.screen === "transition") {
@@ -2540,12 +2725,27 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  const deleteSessionTarget = event.target.closest("[data-delete-session]");
+  if (deleteSessionTarget) {
+    const confirmed = window.confirm("Deze gecontroleerde sessie definitief wissen?");
+    if (confirmed) {
+      sessionReport?.deleteSession(deleteSessionTarget.dataset.deleteSession);
+      render();
+    }
+    return;
+  }
+
   const actionTarget = event.target.closest("[data-action]");
   if (actionTarget) {
     playSfx("uiClick");
     const action = actionTarget.dataset.action;
     if (action === "launch-enter") {
       state = { screen: "menu" };
+      render();
+      return;
+    }
+    if (action === "progress") {
+      state = { screen: "progress" };
       render();
       return;
     }
@@ -2643,6 +2843,7 @@ window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
     event.preventDefault();
+    sessionReport?.discard();
     completeCurrentSceneChallenges();
     return;
   }

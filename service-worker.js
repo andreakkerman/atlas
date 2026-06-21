@@ -1,9 +1,10 @@
-const CACHE_NAME = "svenadventure-static-v2";
+const CACHE_NAME = "svenadventure-static-v3";
 const CORE_ASSETS = [
   "./",
   "index.html",
   "manifest.webmanifest",
   "src/styles.css",
+  "src/session-report.js",
   "src/app.js",
   "src/audio-config.js",
   "Levels/manifest.js",
