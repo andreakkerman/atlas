@@ -95,6 +95,12 @@ const audioState = {
   purringGuide: null,
   lastPurrByGuide: {}
 };
+const ambientAnimalRuntime = {
+  levelId: null,
+  loaded: new Set(),
+  animals: new Map(),
+  sounds: new Map()
+};
 
 let walkPathEditor = {
   enabled: EDITOR_DEV_MODE,
@@ -361,6 +367,11 @@ function setLevelInteractiveObjects(objects) {
   level.interactiveObjects = cloneInteractiveObjects(objects);
 }
 
+function setLevelAmbientAnimals(animals) {
+  level.ambientAnimals = cloneAmbientAnimals(animals);
+  resetAmbientAnimalTimers();
+}
+
 function editorApiUrl(action = "editor-draft") {
   return `/__dev/levels/${encodeURIComponent(level.id)}/${action}`;
 }
@@ -386,12 +397,15 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     apiAvailable: false,
     originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
     originalInteractiveObjects: cloneInteractiveObjects(selectedLevel.interactiveObjects || []),
+    originalAmbientAnimals: cloneAmbientAnimals(selectedLevel.ambientAnimals || []),
     originalAudioConfig: cloneAudioConfig(audioConfig),
     draggingIndex: null,
     draggingObjectId: null,
     draggingObjectMode: null,
+    draggingAnimalId: null,
     currentPoint: null,
     currentObject: null,
+    currentAnimal: null,
     status: "Clean",
     modified: false,
     message: EDITOR_DEV_MODE ? "Gebruik Ctrl + Shift + D om levelpunten, objecten of audio te bewerken." : "",
@@ -411,10 +425,13 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     if (Array.isArray(draft.interactiveObjects)) {
       selectedLevel.interactiveObjects = cloneInteractiveObjects(draft.interactiveObjects);
     }
+    if (Array.isArray(draft.ambientAnimals)) {
+      selectedLevel.ambientAnimals = cloneAmbientAnimals(draft.ambientAnimals);
+    }
     if (draft.audioConfig) {
       setAudioConfig(draft.audioConfig);
     }
-    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || draft.audioConfig) {
+    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.ambientAnimals) || draft.audioConfig) {
       walkPathEditor.status = "Modified";
       walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
@@ -514,6 +531,7 @@ function preloadLevelAssets(selectedLevel) {
     selectedLevel.companion?.portrait,
     selectedLevel.challengeCharacter?.portrait,
     ...Object.values(selectedLevel.guides || {}).map((guide) => guide.portrait),
+    ...(selectedLevel.ambientAnimals || []).flatMap((animal) => [animal.openFrame, animal.closedFrame]),
     selectedLevel.challengeArt,
     selectedLevel.reward?.art
   ]
@@ -522,6 +540,147 @@ function preloadLevelAssets(selectedLevel) {
       const image = new Image();
       image.src = src;
     });
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve(src), { once: true });
+    image.addEventListener("error", reject, { once: true });
+    image.src = src;
+    if (image.complete && image.naturalWidth) resolve(src);
+  });
+}
+
+async function preloadAmbientAnimals(selectedLevel) {
+  const animals = selectedLevel.ambientAnimals || [];
+  await Promise.all(animals.flatMap((animal) => [
+    loadImage(animal.openFrame),
+    loadImage(animal.closedFrame)
+  ]));
+  animals.forEach((animal) => ambientAnimalRuntime.loaded.add(`${selectedLevel.id}:${animal.id}`));
+}
+
+function animalRuntimeState(animal) {
+  if (!ambientAnimalRuntime.animals.has(animal.id)) {
+    ambientAnimalRuntime.animals.set(animal.id, {
+      timer: null,
+      sequenceTimers: new Set(),
+      blinking: false,
+      frame: "open",
+      sequenceCount: 0
+    });
+  }
+  return ambientAnimalRuntime.animals.get(animal.id);
+}
+
+function clearAnimalTimer(runtime) {
+  window.clearTimeout(runtime.timer);
+  runtime.timer = null;
+  runtime.sequenceTimers.forEach((timer) => window.clearTimeout(timer));
+  runtime.sequenceTimers.clear();
+  runtime.blinking = false;
+  runtime.frame = "open";
+}
+
+function resetAmbientAnimalTimers() {
+  ambientAnimalRuntime.animals.forEach(clearAnimalTimer);
+  ambientAnimalRuntime.animals.clear();
+}
+
+function setAmbientAnimalFrame(animalId, frame) {
+  const runtime = ambientAnimalRuntime.animals.get(animalId);
+  if (runtime) runtime.frame = frame;
+  const shell = document.querySelector(`[data-ambient-animal="${animalId}"]`);
+  if (shell) shell.dataset.frame = frame;
+}
+
+function animalDelay(callback, delay, runtime) {
+  const timer = window.setTimeout(() => {
+    runtime.sequenceTimers.delete(timer);
+    callback();
+  }, delay);
+  runtime.sequenceTimers.add(timer);
+}
+
+function runAmbientAnimalBlink(animal, options = {}) {
+  const runtime = animalRuntimeState(animal);
+  if (runtime.blinking || document.hidden) return false;
+  window.clearTimeout(runtime.timer);
+  runtime.timer = null;
+  runtime.blinking = true;
+  runtime.sequenceCount += 1;
+  const doubleBlink = options.doubleBlink ?? Math.random() < animal.doubleBlinkChance;
+  const firstClosedMs = doubleBlink ? 80 + Math.round(Math.random() * 10) : animal.blinkDurationMs;
+
+  setAmbientAnimalFrame(animal.id, "closed");
+  animalDelay(() => {
+    setAmbientAnimalFrame(animal.id, "open");
+    if (!doubleBlink) {
+      runtime.blinking = false;
+      scheduleAmbientAnimalBlink(animal);
+      return;
+    }
+    const openGapMs = 90 + Math.round(Math.random() * 30);
+    animalDelay(() => {
+      setAmbientAnimalFrame(animal.id, "closed");
+      animalDelay(() => {
+        setAmbientAnimalFrame(animal.id, "open");
+        runtime.blinking = false;
+        scheduleAmbientAnimalBlink(animal);
+      }, 80 + Math.round(Math.random() * 10), runtime);
+    }, openGapMs, runtime);
+  }, firstClosedMs, runtime);
+  return true;
+}
+
+function scheduleAmbientAnimalBlink(animal) {
+  const runtime = animalRuntimeState(animal);
+  if (runtime.timer || runtime.blinking || document.hidden || level?.id !== ambientAnimalRuntime.levelId) return;
+  const min = Number(animal.blinkMinMs);
+  const max = Number(animal.blinkMaxMs);
+  const delay = min + Math.round(Math.random() * Math.max(0, max - min));
+  runtime.timer = window.setTimeout(() => {
+    runtime.timer = null;
+    runAmbientAnimalBlink(animal);
+  }, delay);
+}
+
+function syncAmbientAnimalTimers() {
+  if (!level) return;
+  if (!["scene", "challenge", "correct"].includes(state.screen)) {
+    pauseAmbientAnimalTimers();
+    return;
+  }
+  ambientAnimalRuntime.levelId = level.id;
+  (level.ambientAnimals || []).forEach(scheduleAmbientAnimalBlink);
+}
+
+function pauseAmbientAnimalTimers() {
+  ambientAnimalRuntime.animals.forEach(clearAnimalTimer);
+  document.querySelectorAll("[data-ambient-animal]").forEach((shell) => {
+    shell.dataset.frame = "open";
+  });
+}
+
+function playAmbientAnimalSound(animal) {
+  if (!audioState.unlocked || !animal.sound) return false;
+  const existing = ambientAnimalRuntime.sounds.get(animal.id);
+  const timestamp = Date.now();
+  if (existing?.playing || timestamp < (existing?.cooldownUntil || 0)) return false;
+  const audio = new Audio(animal.sound);
+  audio.volume = clampVolume(animal.soundVolume ?? 1);
+  const soundState = { audio, playing: true, cooldownUntil: 0 };
+  ambientAnimalRuntime.sounds.set(animal.id, soundState);
+  const finish = () => {
+    if (!soundState.playing) return;
+    soundState.playing = false;
+    soundState.cooldownUntil = Date.now() + Number(animal.soundCooldownMs || 0);
+  };
+  audio.addEventListener("ended", finish, { once: true });
+  audio.addEventListener("error", finish, { once: true });
+  audio.play().catch(finish);
+  return true;
 }
 
 function audioTrackPath(type, key) {
@@ -617,6 +776,10 @@ function playSfx(key) {
   audio.play().catch(() => {});
 }
 
+function cloneAmbientAnimals(animals) {
+  return JSON.parse(JSON.stringify(animals || []));
+}
+
 function playGuidePurr(guideId) {
   const keys = GUIDE_PURR_KEYS[guideId];
   if (!audioState.unlocked || audioState.purr || !keys?.length) return;
@@ -688,6 +851,7 @@ async function selectLevel(id, options = {}) {
   let selectedLevel;
   try {
     selectedLevel = await loadLevelDefinition(entry);
+    await preloadAmbientAnimals(selectedLevel);
   } catch (error) {
     state = { screen: "menu", error: error.message };
     render();
@@ -695,6 +859,7 @@ async function selectLevel(id, options = {}) {
   }
 
   stopMovement();
+  resetAmbientAnimalTimers();
   await prepareWalkPathEditorForLevel(selectedLevel);
   level = normalizeLevel(selectedLevel);
   const adventure = adventureEntryFor(entry);
@@ -728,6 +893,8 @@ function adventureEntryFor(entry) {
 
 function returnToMenu() {
   stopMovement();
+  resetAmbientAnimalTimers();
+  ambientAnimalRuntime.levelId = null;
   sessionReport?.end("menu");
   level = null;
   walkNodesById = new Map();
@@ -1087,6 +1254,7 @@ async function persistWalkPathDraft() {
       body: JSON.stringify({
         walkPath: authoredWalkPathPoints(level),
         interactiveObjects: level.interactiveObjects,
+        ambientAnimals: level.ambientAnimals || [],
         audioConfig
       })
     });
@@ -1108,11 +1276,13 @@ async function applyWalkPathDraft() {
       body: JSON.stringify({
         walkPath: authoredWalkPathPoints(level),
         interactiveObjects: level.interactiveObjects,
+        ambientAnimals: level.ambientAnimals || [],
         audioConfig
       })
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
+    walkPathEditor.originalAmbientAnimals = cloneAmbientAnimals(level.ambientAnimals || []);
     walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
@@ -1138,9 +1308,11 @@ async function revertWalkPathDraft() {
     }
     setLevelWalkPath(walkPathEditor.originalWalkPath);
     setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
+    setLevelAmbientAnimals(walkPathEditor.originalAmbientAnimals);
     setAudioConfig(walkPathEditor.originalAudioConfig);
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
+    walkPathEditor.currentAnimal = null;
     walkPathEditor.status = "Reverted";
     walkPathEditor.modified = false;
     walkPathEditor.message = "Draft weggegooid. Opgeslagen punten, objecten en audio hersteld.";
@@ -1200,6 +1372,71 @@ function updateDraggedInteractiveObject(event) {
   walkPathEditor.modified = true;
   walkPathEditor.message = `${object.id}: x ${object.center.x}, y ${object.center.y}, radius ${object.radius}`;
   setLevelInteractiveObjects(nextObjects);
+  persistWalkPathDraft();
+  render();
+}
+
+function updateDraggedAmbientAnimal(event) {
+  if (!walkPathEditor.draggingAnimalId || !level) return;
+  const stage = document.querySelector("[data-world-stage]");
+  if (!stage) return;
+  const point = pointFromViewportEvent(event, stage);
+  const animals = cloneAmbientAnimals(level.ambientAnimals || []);
+  const animal = animals.find((item) => item.id === walkPathEditor.draggingAnimalId);
+  if (!animal) return;
+  animal.x = Math.round(point.x);
+  animal.y = Math.round(point.y);
+  walkPathEditor.currentAnimal = animal;
+  walkPathEditor.currentObject = null;
+  walkPathEditor.currentPoint = null;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = `${animal.id}: x ${animal.x}, y ${animal.y}, schaal ${animal.scale}`;
+  setLevelAmbientAnimals(animals);
+  persistWalkPathDraft();
+  render();
+}
+
+function updateAmbientAnimalScale(animalId, value) {
+  if (!walkPathEditor.enabled || !level) return;
+  const animals = cloneAmbientAnimals(level.ambientAnimals || []);
+  const animal = animals.find((item) => item.id === animalId);
+  if (!animal) return;
+  animal.scale = Math.max(0.05, Math.min(2, Number(value)));
+  walkPathEditor.currentAnimal = animal;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = `${animal.id}: x ${animal.x}, y ${animal.y}, schaal ${animal.scale.toFixed(2)}`;
+  setLevelAmbientAnimals(animals);
+  persistWalkPathDraft();
+  render();
+}
+
+function updateAmbientAnimalSetting(animalId, field, value) {
+  if (!walkPathEditor.enabled || !level || !["softness", "soundVolume"].includes(field)) return;
+  const animals = cloneAmbientAnimals(level.ambientAnimals || []);
+  const animal = animals.find((item) => item.id === animalId);
+  if (!animal) return;
+  const numericValue = Number(value);
+  animal[field] = field === "softness"
+    ? Math.max(0, Math.min(1, numericValue))
+    : clampVolume(numericValue);
+  walkPathEditor.currentAnimal = animal;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = `${animal.id}: ${field} ${animal[field]}`;
+  setLevelAmbientAnimals(animals);
+  persistWalkPathDraft();
+  render();
+}
+
+function deleteAmbientAnimal(animalId) {
+  if (!walkPathEditor.enabled || !level) return;
+  setLevelAmbientAnimals((level.ambientAnimals || []).filter((animal) => animal.id !== animalId));
+  walkPathEditor.currentAnimal = null;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = `${animalId} verwijderd uit de draft.`;
   persistWalkPathDraft();
   render();
 }
@@ -2063,6 +2300,47 @@ function renderAudioEditorControls() {
   `;
 }
 
+function renderAmbientAnimalEditorControls() {
+  const animals = level.ambientAnimals || [];
+  if (!animals.length) return `
+    <section class="animalEditorSection" data-animal-editor>
+      <strong>Ambient animals</strong>
+      <span>Geen dieren in deze scene.</span>
+    </section>
+  `;
+  return `
+    <section class="animalEditorSection" data-animal-editor>
+      <strong>Ambient animals</strong>
+      ${animals.map((animal) => `
+        <div class="animalEditorCard" data-animal-editor-id="${animal.id}">
+          <div><strong>${animal.id}</strong><span>${animal.type}</span></div>
+          <label>
+            <span>Schaal</span>
+            <input type="range" min="0.05" max="1" step="0.01" value="${animal.scale}" data-animal-scale="${animal.id}" />
+            <output>${Number(animal.scale).toFixed(2)}</output>
+          </label>
+          <label>
+            <span>Softness</span>
+            <input type="range" min="0" max="1" step="0.05" value="${Number(animal.softness ?? 0)}" data-animal-setting="softness" data-animal-id="${animal.id}" />
+            <output>${Number(animal.softness ?? 0).toFixed(2)}px</output>
+          </label>
+          <label>
+            <span>Animal sound volume</span>
+            <input type="range" min="0" max="1" step="0.05" value="${clampVolume(animal.soundVolume ?? 1)}" data-animal-setting="soundVolume" data-animal-id="${animal.id}" />
+            <output>${Math.round(clampVolume(animal.soundVolume ?? 1) * 100)}%</output>
+          </label>
+          <span>x ${animal.x}, y ${animal.y} · bottom-center</span>
+          <div class="animalEditorActions">
+            <button type="button" data-debug-action="preview-animal-blink" data-animal-id="${animal.id}">Preview blink</button>
+            <button type="button" data-debug-action="preview-animal-sound" data-animal-id="${animal.id}">Preview sound</button>
+            <button type="button" data-debug-action="delete-animal" data-animal-id="${animal.id}">Delete animal</button>
+          </div>
+        </div>
+      `).join("")}
+    </section>
+  `;
+}
+
 function renderDeveloperToolsPanel() {
   if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
 
@@ -2086,6 +2364,7 @@ function renderDeveloperToolsPanel() {
 
   const point = walkPathEditor.currentPoint;
   const object = walkPathEditor.currentObject;
+  const animal = walkPathEditor.currentAnimal;
   const serverDisabled = !walkPathEditor.apiAvailable || walkPathEditor.busy ? "disabled" : "";
   const statusClass = `walkPathStatus${walkPathEditor.status}`;
 
@@ -2098,6 +2377,8 @@ function renderDeveloperToolsPanel() {
       <ol>
         <li>Drag walkPath points</li>
         <li>Drag object centers or radius handles</li>
+        <li>Drag animals; adjust their shared scale</li>
+        <li>Preview animal blink or sound</li>
         <li>Adjust audio volumes</li>
         <li>Test movement</li>
         <li>Apply saves level and audio files</li>
@@ -2105,12 +2386,15 @@ function renderDeveloperToolsPanel() {
       </ol>
       <p>Real files change only when Apply is pressed.</p>
       <span>${
-        object
+        animal
+          ? `${animal.id}: ${animal.x}, ${animal.y}, schaal ${Number(animal.scale).toFixed(2)}`
+          : object
           ? `${object.id}: ${object.center.x}, ${object.center.y}, radius ${object.radius}`
           : point
             ? `${point.id}: ${point.x}, ${point.y}`
             : "Drag a path point or object."
       }</span>
+      ${renderAmbientAnimalEditorControls()}
       ${renderAudioEditorControls()}
       <div class="walkPathEditorActions">
         <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
@@ -2137,6 +2421,7 @@ function renderWorldStage() {
       >
         <img class="worldArt" src="${level.world.background}" alt="Een doorlopend bospad naar de Vikingtempel" />
         <div class="forestMist"></div>
+        ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
         ${debugOverlayEnabled ? renderDebugOverlay() : ""}
         ${level.hotspots.filter(isTargetVisible).map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
@@ -2159,6 +2444,44 @@ function renderWorldStage() {
       </div>
       ${renderDeveloperToolsPanel()}
     </section>
+  `;
+}
+
+function ambientAnimalTrackStyle(animal) {
+  const width = (512 * animal.scale / level.world.width) * 100;
+  const height = (512 * animal.scale / level.world.height) * 100;
+  const softness = Math.max(0, Math.min(1, Number(animal.softness ?? 0)));
+  const saturation = Math.max(0, Number(animal.saturation ?? 1));
+  return `left:${(animal.x / level.world.width) * 100}%; top:${(animal.y / level.world.height) * 100}%; width:${width}%; height:${height}%; --animal-softness:${softness}px; --animal-saturation:${saturation};`;
+}
+
+function renderAmbientAnimal(animal) {
+  const ready = ambientAnimalRuntime.loaded.has(`${level.id}:${animal.id}`);
+  const runtime = animalRuntimeState(animal);
+  return `
+    <button
+      class="ambientAnimal ${debugOverlayEnabled && walkPathEditor.enabled ? "ambientAnimalEditable" : ""}"
+      style="${ambientAnimalTrackStyle(animal)}"
+      type="button"
+      data-ambient-animal="${animal.id}"
+      data-animal-type="${animal.type}"
+      data-frame="${runtime.frame}"
+      data-ready="${ready}"
+      data-world-x="${animal.x}"
+      data-world-y="${animal.y}"
+      data-scale="${animal.scale}"
+      data-softness="${Number(animal.softness ?? 0)}"
+      data-saturation="${Number(animal.saturation ?? 1)}"
+      data-sound-volume="${clampVolume(animal.soundVolume ?? 1)}"
+      data-anchor="bottom-center"
+      aria-label="${animal.type === "seagull" ? "Meeuw" : "Dier"}"
+    >
+      <span class="ambientAnimalFrames" ${debugOverlayEnabled && walkPathEditor.enabled ? `data-animal-drag="${animal.id}"` : ""}>
+        <img class="ambientAnimalFrame ambientAnimalOpen" src="${animal.openFrame}" alt="" draggable="false" />
+        <img class="ambientAnimalFrame ambientAnimalClosed" src="${animal.closedFrame}" alt="" draggable="false" />
+      </span>
+      ${debugOverlayEnabled && walkPathEditor.enabled ? `<span class="ambientAnimalAnchor" aria-hidden="true"></span>` : ""}
+    </button>
   `;
 }
 
@@ -2684,10 +3007,19 @@ function render() {
 
   updateWorldDom();
   syncAudioForState();
+  syncAmbientAnimalTimers();
 }
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const animalTarget = event.target.closest("[data-ambient-animal]");
+  if (animalTarget) {
+    event.preventDefault();
+    event.stopPropagation();
+    const animal = level?.ambientAnimals?.find((item) => item.id === animalTarget.dataset.ambientAnimal);
+    if (animal) playAmbientAnimalSound(animal);
+    return;
+  }
   if (event.target.closest("[data-walkpath-index]") || event.target.closest("[data-object-drag]")) {
     event.preventDefault();
     return;
@@ -2707,6 +3039,15 @@ app.addEventListener("click", (event) => {
     const action = debugActionTarget.dataset.debugAction;
     if (action === "apply-walkpath") applyWalkPathDraft();
     if (action === "revert-walkpath") revertWalkPathDraft();
+    if (action === "preview-animal-blink") {
+      const animal = level?.ambientAnimals?.find((item) => item.id === debugActionTarget.dataset.animalId);
+      if (animal) runAmbientAnimalBlink(animal, { doubleBlink: false });
+    }
+    if (action === "preview-animal-sound") {
+      const animal = level?.ambientAnimals?.find((item) => item.id === debugActionTarget.dataset.animalId);
+      if (animal) playAmbientAnimalSound(animal);
+    }
+    if (action === "delete-animal") deleteAmbientAnimal(debugActionTarget.dataset.animalId);
     return;
   }
 
@@ -2793,6 +3134,20 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const animalSetting = event.target.closest("[data-animal-setting]");
+  if (animalSetting) {
+    updateAmbientAnimalSetting(
+      animalSetting.dataset.animalId,
+      animalSetting.dataset.animalSetting,
+      animalSetting.value
+    );
+    return;
+  }
+  const animalScale = event.target.closest("[data-animal-scale]");
+  if (animalScale) {
+    updateAmbientAnimalScale(animalScale.dataset.animalScale, animalScale.value);
+    return;
+  }
   const input = event.target.closest("[data-audio-path]");
   if (!input) return;
   updateAudioDraft(input.dataset.audioPath, input.value);
@@ -2800,11 +3155,22 @@ app.addEventListener("input", (event) => {
 
 app.addEventListener("pointerdown", (event) => {
   ensureAudioUnlocked();
+  const animalTarget = event.target.closest("[data-animal-drag]");
+  if (animalTarget && walkPathEditor.enabled && debugOverlayEnabled) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.draggingAnimalId = animalTarget.dataset.animalDrag;
+    walkPathEditor.draggingObjectId = null;
+    walkPathEditor.draggingIndex = null;
+    updateDraggedAmbientAnimal(event);
+    return;
+  }
   const objectTarget = event.target.closest("[data-object-drag]");
   if (objectTarget && walkPathEditor.enabled && debugOverlayEnabled) {
     event.preventDefault();
     walkPathEditor.draggingObjectId = objectTarget.dataset.objectId;
     walkPathEditor.draggingObjectMode = objectTarget.dataset.objectDrag;
+    walkPathEditor.draggingAnimalId = null;
     walkPathEditor.draggingIndex = null;
     updateDraggedInteractiveObject(event);
     return;
@@ -2814,12 +3180,18 @@ app.addEventListener("pointerdown", (event) => {
   if (!pointTarget || !walkPathEditor.enabled || !debugOverlayEnabled) return;
   event.preventDefault();
   walkPathEditor.draggingIndex = Number(pointTarget.dataset.walkpathIndex);
+  walkPathEditor.draggingAnimalId = null;
   walkPathEditor.draggingObjectId = null;
   walkPathEditor.draggingObjectMode = null;
   updateDraggedWalkPathPoint(event);
 });
 
 window.addEventListener("pointermove", (event) => {
+  if (walkPathEditor.draggingAnimalId) {
+    event.preventDefault();
+    updateDraggedAmbientAnimal(event);
+    return;
+  }
   if (walkPathEditor.draggingObjectId) {
     event.preventDefault();
     updateDraggedInteractiveObject(event);
@@ -2835,6 +3207,15 @@ window.addEventListener("pointerup", () => {
   walkPathEditor.draggingIndex = null;
   walkPathEditor.draggingObjectId = null;
   walkPathEditor.draggingObjectMode = null;
+  walkPathEditor.draggingAnimalId = null;
+});
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    pauseAmbientAnimalTimers();
+  } else {
+    syncAmbientAnimalTimers();
+  }
 });
 
 window.addEventListener("resize", updateWorldDom);

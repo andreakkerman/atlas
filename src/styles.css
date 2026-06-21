@@ -627,6 +627,64 @@ button {
   border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
 
+.animalEditorSection {
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.animalEditorSection > strong {
+  color: #ffd06d;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.animalEditorCard {
+  display: grid;
+  gap: 7px;
+  padding: 8px;
+  border: 1px solid rgba(255, 213, 105, 0.28);
+  border-radius: 7px;
+  background: rgba(255, 213, 105, 0.06);
+}
+
+.animalEditorCard > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.animalEditorCard label {
+  display: grid;
+  grid-template-columns: 52px minmax(100px, 1fr) 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+.animalEditorCard input {
+  min-width: 0;
+  accent-color: #ffd06d;
+}
+
+.animalEditorActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.animalEditorActions button {
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 231, 166, 0.34);
+  border-radius: 6px;
+  color: #fff7de;
+  background: rgba(255, 242, 202, 0.1);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
 .audioEditorSection strong,
 .audioEditorSfx > span {
   color: #ffd06d;
@@ -1330,6 +1388,79 @@ button {
   bottom: 7px;
   width: 1px;
   background: linear-gradient(transparent, rgba(255, 218, 138, 0.42), transparent);
+  pointer-events: none;
+}
+
+.ambientAnimal {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  padding: 0;
+  border: 0;
+  transform: translate(-50%, -100%);
+  transform-origin: 50% 100%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  touch-action: none;
+}
+
+.ambientAnimal[data-ready="true"] {
+  opacity: 1;
+}
+
+.ambientAnimalFrames,
+.ambientAnimalFrame {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ambientAnimalFrames {
+  filter: blur(var(--animal-softness, 0px)) saturate(var(--animal-saturation, 1));
+}
+
+.ambientAnimalFrame {
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ambientAnimalClosed {
+  visibility: hidden;
+}
+
+.ambientAnimal[data-frame="closed"] .ambientAnimalOpen {
+  visibility: hidden;
+}
+
+.ambientAnimal[data-frame="closed"] .ambientAnimalClosed {
+  visibility: visible;
+}
+
+.ambientAnimalEditable {
+  z-index: 6;
+  outline: 4px solid rgba(255, 213, 105, 0.92);
+  outline-offset: 2px;
+  cursor: grab;
+}
+
+.ambientAnimalEditable:active {
+  cursor: grabbing;
+}
+
+.ambientAnimalAnchor {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 14px;
+  height: 14px;
+  border: 3px solid #fff7de;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+  background: #ff5757;
   pointer-events: none;
 }
 

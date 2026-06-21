@@ -512,6 +512,23 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
     startNode: "harbor-start",
     start: { x: 259, y: 564 }
   },
+  ambientAnimals: [
+        {
+              id: "harborSeagull",
+              type: "seagull",
+              openFrame: "Levels/LVL-0004/assets/ambient/meeuw-open.png",
+              closedFrame: "Levels/LVL-0004/assets/ambient/meeuw-closed.png",
+              sound: "Levels/LVL-0004/assets/ambient/meeuw.mp3",
+              x: 787,
+              y: 374,
+              scale: 0.15,
+              blinkMinMs: 4000,
+              blinkMaxMs: 9000,
+              blinkDurationMs: 90,
+              doubleBlinkChance: 0.15,
+              soundCooldownMs: 750
+        }
+  ],
   interactiveObjects: [
     {
       id: "harborMap",

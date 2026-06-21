@@ -491,7 +491,52 @@ function validateAssets(level, entry, levelFolder, label) {
   if (level.challengeCharacter?.portrait) {
     assertAssetExists(level.challengeCharacter.portrait, `${label}.challengeCharacter.portrait`, levelFolder);
   }
+  (level.ambientAnimals || []).forEach((animal, index) => {
+    assertAssetExists(animal.openFrame, `${label}.ambientAnimals[${index}].openFrame`, levelFolder);
+    assertAssetExists(animal.closedFrame, `${label}.ambientAnimals[${index}].closedFrame`, levelFolder);
+    assertAssetExists(animal.sound, `${label}.ambientAnimals[${index}].sound`, levelFolder);
+  });
   assertAssetExists(level.reward?.art, `${label}.reward.art`, levelFolder);
+}
+
+function validateAmbientAnimals(level, world, label) {
+  if (level.ambientAnimals === undefined) return;
+  if (!Array.isArray(level.ambientAnimals)) {
+    fail(`${label}.ambientAnimals must be an array.`);
+    return;
+  }
+  const ids = new Set();
+  level.ambientAnimals.forEach((animal, index) => {
+    const animalLabel = `${label}.ambientAnimals[${index}]`;
+    if (!isObject(animal)) {
+      fail(`${animalLabel} must be an object.`);
+      return;
+    }
+    ["id", "type", "openFrame", "closedFrame", "sound"]
+      .forEach((field) => validateRequiredString(animal[field], `${animalLabel}.${field}`));
+    if (ids.has(animal.id)) fail(`${animalLabel}.id is duplicated: ${animal.id}`);
+    ids.add(animal.id);
+    validatePoint({ x: animal.x, y: animal.y }, animalLabel, world);
+    if (!isPositiveNumber(animal.scale)) fail(`${animalLabel}.scale must be greater than zero.`);
+    ["blinkMinMs", "blinkMaxMs", "blinkDurationMs", "soundCooldownMs"].forEach((field) => {
+      if (!isPositiveNumber(animal[field])) fail(`${animalLabel}.${field} must be greater than zero.`);
+    });
+    if (Number(animal.blinkMinMs) > Number(animal.blinkMaxMs)) {
+      fail(`${animalLabel}.blinkMinMs must not exceed blinkMaxMs.`);
+    }
+    if (!Number.isFinite(animal.doubleBlinkChance) || animal.doubleBlinkChance < 0 || animal.doubleBlinkChance > 1) {
+      fail(`${animalLabel}.doubleBlinkChance must be between 0 and 1.`);
+    }
+    if (animal.softness !== undefined && (!Number.isFinite(animal.softness) || animal.softness < 0 || animal.softness > 1)) {
+      fail(`${animalLabel}.softness must be between 0 and 1.`);
+    }
+    if (animal.saturation !== undefined && (!Number.isFinite(animal.saturation) || animal.saturation < 0)) {
+      fail(`${animalLabel}.saturation must be zero or greater.`);
+    }
+    if (animal.soundVolume !== undefined && (!Number.isFinite(animal.soundVolume) || animal.soundVolume < 0 || animal.soundVolume > 1)) {
+      fail(`${animalLabel}.soundVolume must be between 0 and 1.`);
+    }
+  });
 }
 
 function validateReferences(level, objects, nodeIds, label) {
@@ -796,6 +841,7 @@ function validateLevel(entry) {
   const world = validateWorld(level, levelFolder, label) || { width: 0, height: 0 };
   const { nodeIds } = validateWalkGraph(level, world, label);
   const objects = validateInteractiveObjects(level, world, nodeIds, label);
+  validateAmbientAnimals(level, world, label);
   validatePlayer(level, world, nodeIds, label);
   validateReferences(level, objects, nodeIds, label);
   validateCompanionAuthoring(level, objects, label);

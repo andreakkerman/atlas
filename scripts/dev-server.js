@@ -118,6 +118,65 @@ function validateInteractiveObjects(value) {
   });
 }
 
+function validateAmbientAnimals(value) {
+  if (!Array.isArray(value)) throw new Error("ambientAnimals must be an array.");
+  const requiredStrings = ["id", "type", "openFrame", "closedFrame", "sound"];
+  const requiredNumbers = [
+    "x", "y", "scale", "blinkMinMs", "blinkMaxMs", "blinkDurationMs",
+    "doubleBlinkChance", "soundCooldownMs"
+  ];
+  return value.map((animal, index) => {
+    if (!animal || typeof animal !== "object" || Array.isArray(animal)) {
+      throw new Error(`ambientAnimals[${index}] must be an object.`);
+    }
+    requiredStrings.forEach((field) => {
+      if (typeof animal[field] !== "string" || !animal[field].trim()) {
+        throw new Error(`ambientAnimals[${index}].${field} must be a non-empty string.`);
+      }
+    });
+    requiredNumbers.forEach((field) => {
+      if (!Number.isFinite(animal[field])) {
+        throw new Error(`ambientAnimals[${index}].${field} must be numeric.`);
+      }
+    });
+    if (animal.scale <= 0) throw new Error(`ambientAnimals[${index}].scale must be greater than zero.`);
+    if (animal.blinkMinMs > animal.blinkMaxMs) {
+      throw new Error(`ambientAnimals[${index}] blinkMinMs must not exceed blinkMaxMs.`);
+    }
+    if (animal.doubleBlinkChance < 0 || animal.doubleBlinkChance > 1) {
+      throw new Error(`ambientAnimals[${index}].doubleBlinkChance must be between 0 and 1.`);
+    }
+    if (animal.softness !== undefined && (!Number.isFinite(animal.softness) || animal.softness < 0 || animal.softness > 1)) {
+      throw new Error(`ambientAnimals[${index}].softness must be between 0 and 1.`);
+    }
+    if (animal.saturation !== undefined && (!Number.isFinite(animal.saturation) || animal.saturation < 0)) {
+      throw new Error(`ambientAnimals[${index}].saturation must be zero or greater.`);
+    }
+    if (animal.soundVolume !== undefined && (!Number.isFinite(animal.soundVolume) || animal.soundVolume < 0 || animal.soundVolume > 1)) {
+      throw new Error(`ambientAnimals[${index}].soundVolume must be between 0 and 1.`);
+    }
+    const next = {
+      id: animal.id,
+      type: animal.type,
+      openFrame: animal.openFrame,
+      closedFrame: animal.closedFrame,
+      sound: animal.sound,
+      x: Math.round(animal.x),
+      y: Math.round(animal.y),
+      scale: Number(animal.scale),
+      blinkMinMs: Math.round(animal.blinkMinMs),
+      blinkMaxMs: Math.round(animal.blinkMaxMs),
+      blinkDurationMs: Math.round(animal.blinkDurationMs),
+      doubleBlinkChance: Number(animal.doubleBlinkChance),
+      soundCooldownMs: Math.round(animal.soundCooldownMs)
+    };
+    if (animal.softness !== undefined) next.softness = Number(animal.softness);
+    if (animal.saturation !== undefined) next.saturation = Number(animal.saturation);
+    if (animal.soundVolume !== undefined) next.soundVolume = Number(animal.soundVolume);
+    return next;
+  });
+}
+
 function validateVolume(value, label) {
   if (!Number.isFinite(value) || value < 0 || value > 1) {
     throw new Error(`${label} must be a number between 0 and 1.`);
@@ -235,6 +294,10 @@ function formatInteractiveObjects(interactiveObjects) {
   return `interactiveObjects: [\n${lines.join(",\n")}\n  ]`;
 }
 
+function formatAmbientAnimals(ambientAnimals) {
+  return `ambientAnimals: ${formatValue(ambientAnimals)}`;
+}
+
 function findArrayPropertyRange(source, propertyName) {
   const keyIndex = source.indexOf(`${propertyName}:`);
   if (keyIndex === -1) throw new Error(`level.js does not contain ${propertyName}.`);
@@ -285,6 +348,10 @@ function applyLevelDraft(levelId, draft) {
     const range = findArrayPropertyRange(source, "interactiveObjects");
     source = `${source.slice(0, range.start)}${formatInteractiveObjects(draft.interactiveObjects)}${source.slice(range.end)}`;
   }
+  if (draft.ambientAnimals) {
+    const range = findArrayPropertyRange(source, "ambientAnimals");
+    source = `${source.slice(0, range.start)}${formatAmbientAnimals(draft.ambientAnimals)}${source.slice(range.end)}`;
+  }
   if (draft.walkPath) {
     const range = findArrayPropertyRange(source, "walkPath");
     source = `${source.slice(0, range.start)}${formatWalkPath(draft.walkPath)}${source.slice(range.end)}`;
@@ -318,7 +385,7 @@ async function handleDevRequest(request, response, url) {
     if (request.method === "GET" && action === "editor-draft") {
       const filePath = draftPath(levelId);
       if (!fs.existsSync(filePath)) {
-        sendJson(response, 200, { walkPath: null, interactiveObjects: null, audioConfig: null });
+        sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, audioConfig: null });
         return true;
       }
       sendJson(response, 200, JSON.parse(fs.readFileSync(filePath, "utf8")));
@@ -339,9 +406,12 @@ async function handleDevRequest(request, response, url) {
       if (body.interactiveObjects !== undefined) {
         draft.interactiveObjects = validateInteractiveObjects(body.interactiveObjects);
       }
+      if (body.ambientAnimals !== undefined) {
+        draft.ambientAnimals = validateAmbientAnimals(body.ambientAnimals);
+      }
       if (body.audioConfig !== undefined) draft.audioConfig = validateAudioConfig(body.audioConfig);
-      if (!draft.walkPath && !draft.interactiveObjects && !draft.audioConfig) {
-        throw new Error("Request must include walkPath, interactiveObjects or audioConfig.");
+      if (!draft.walkPath && !draft.interactiveObjects && !draft.ambientAnimals && !draft.audioConfig) {
+        throw new Error("Request must include walkPath, interactiveObjects, ambientAnimals or audioConfig.");
       }
 
       if (action === "editor-draft") {
@@ -355,7 +425,7 @@ async function handleDevRequest(request, response, url) {
       }
 
       if (action === "apply-editor") {
-        if (draft.walkPath || draft.interactiveObjects) applyLevelDraft(levelId, draft);
+        if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals) applyLevelDraft(levelId, draft);
         if (draft.audioConfig) applyAudioConfigDraft(draft.audioConfig);
         const filePath = draftPath(levelId);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
