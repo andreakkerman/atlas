@@ -56,10 +56,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Windmolen 9 groepjes van 9 molenfiches. Hoeveel molenfiches zijn dat samen?",
+            "prompt": "De molenaar vult 9 zakken met elk 9 scheppen graan. Hoeveel scheppen graan zijn dat samen?",
             "answer": 81,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 9 en haal 9 eraf.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 9 × 10 en haal er daarna 9 af.",
             "explanation": "9 × 9 = 81."
           },
           {
@@ -69,7 +69,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Windmolen 6 groepjes van 5 molenfiches. Hoeveel molenfiches zijn dat samen?",
+            "prompt": "De molenaar vult 6 zakken met elk 5 scheppen graan. Hoeveel scheppen graan zijn dat samen?",
             "answer": 30,
             "choices": [
               25,
@@ -77,7 +77,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               35,
               40
             ],
-            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 5.",
             "hintMoose": "Tel 6 sprongen van 5.",
             "explanation": "6 × 5 = 30."
           }
@@ -93,10 +93,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas koopt 3 routekaarten voor 9 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Atlas koopt 3 zakjes meel voor 9 euro per stuk. Hoeveel euro betaalt hij?",
             "answer": 27,
-            "hintMinnie": "Elk kaartje kost 9 euro.",
-            "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+            "hintMinnie": "Er zijn 3 gelijke bedragen van 9 euro.",
+            "hintMoose": "Reken 3 × 10 en haal er daarna 3 af.",
             "explanation": "3 × 9 = 27 euro."
           },
           {
@@ -199,10 +199,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Kaaswagen 16 kaasjes over 4 gelijke groepen. Hoeveel kaasjes krijgt elke groep?",
+            "prompt": "De kaasboer verdeelt 16 kaasjes eerlijk over 4 planken. Hoeveel kaasjes liggen op iedere plank?",
             "answer": 4,
-            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-            "hintMoose": "Omdat 4 × 4 = 16, is 16 : 4 = 4.",
+            "hintMinnie": "Verdeel 16 eerlijk over 4 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 16.",
             "explanation": "16 : 4 = 4."
           },
           {
@@ -212,7 +212,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Kaaswagen 2 groepjes van 9 kaasjes. Hoeveel kaasjes zijn dat samen?",
+            "prompt": "Op 2 planken liggen elk 9 kaasjes. Hoeveel kaasjes zijn dat samen?",
             "answer": 18,
             "choices": [
               9,
@@ -220,8 +220,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               27,
               36
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 2 × 10 en haal er daarna 2 af.",
             "explanation": "2 × 9 = 18."
           }
         ]
@@ -249,7 +249,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Kaaswagen 14 kaasjes over 7 gelijke groepen. Hoeveel kaasjes krijgt elke groep?",
+            "prompt": "De kaasboer verdeelt 14 kaasjes eerlijk over 7 planken. Hoeveel kaasjes liggen op iedere plank?",
             "answer": 2,
             "choices": [
               1,
@@ -257,8 +257,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               3,
               4
             ],
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 2 = 14, is 14 : 7 = 2.",
+            "hintMinnie": "Verdeel 14 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 14.",
             "explanation": "14 : 7 = 2."
           }
         ]

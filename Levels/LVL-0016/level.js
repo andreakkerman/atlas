@@ -38,7 +38,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Colosseum 2 groepjes van 3 boogfiches. Hoeveel boogfiches zijn dat samen?",
+            "prompt": "Het Colosseum heeft 2 rijen met elk 3 bogen. Hoeveel bogen zijn dat samen?",
             "answer": 6,
             "choices": [
               3,
@@ -46,8 +46,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               9,
               12
             ],
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 3.",
+            "hintMoose": "Verdubbel 2 en tel er nog 2 bij op.",
             "explanation": "2 × 3 = 6."
           }
         ]
@@ -62,10 +62,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Colosseum 81 boogfiches over 9 gelijke groepen. Hoeveel boogfiches krijgt elke groep?",
+            "prompt": "In het Colosseum zijn 81 zitplaatsen verdeeld over 9 rijen. Hoeveel zitplaatsen zijn er per rij?",
             "answer": 9,
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 9 = 81, is 81 : 9 = 9.",
+            "hintMinnie": "Verdeel 81 eerlijk over 9 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 81.",
             "explanation": "81 : 9 = 9."
           },
           {
@@ -124,10 +124,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Colosseum 5 groepjes van 9 boogfiches. Hoeveel boogfiches zijn dat samen?",
+            "prompt": "Het Colosseum heeft 5 rijen met elk 9 bogen. Hoeveel bogen zijn dat samen?",
             "answer": 45,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
             "explanation": "5 × 9 = 45."
           },
           {
@@ -181,10 +181,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas koopt 3 routekaarten voor 4 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Atlas koopt 3 ansichtkaarten van de fontein voor 4 euro per stuk. Hoeveel euro betaalt hij?",
             "answer": 12,
-            "hintMinnie": "Elk kaartje kost 4 euro.",
-            "hintMoose": "Verdubbel 3 twee keer.",
+            "hintMinnie": "Er zijn 3 gelijke bedragen van 4 euro.",
+            "hintMoose": "Verdubbel 3 en verdubbel de uitkomst nog eens.",
             "explanation": "3 × 4 = 12 euro."
           }
         ]
@@ -218,10 +218,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Romeinse fontein 7 groepjes van 6 waterfiches. Hoeveel waterfiches zijn dat samen?",
+            "prompt": "Rond de Romeinse fontein liggen 7 mozaïekstroken met elk 6 tegels. Hoeveel tegels zijn dat samen?",
             "answer": 42,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 7 × 5 en tel er nog 7 bij op.",
             "explanation": "7 × 6 = 42."
           }
         ]
@@ -249,10 +249,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Romeinse fontein is 14 meter lang en heeft 7 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "De rand van de Romeinse fontein is 14 meter lang en verdeeld in 7 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 2,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 7 × 2 = 14, is 14 : 7 = 2.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 7 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 14.",
             "explanation": "14 : 7 = 2 meter."
           }
         ]
@@ -280,10 +280,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Romeinse fontein 5 groepjes van 8 waterfiches. Hoeveel waterfiches zijn dat samen?",
+            "prompt": "Rond de Romeinse fontein liggen 5 mozaïekstroken met elk 8 tegels. Hoeveel tegels zijn dat samen?",
             "answer": 40,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 5 drie keer.",
             "explanation": "5 × 8 = 40."
           }
         ]
@@ -404,7 +404,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Gelatokar 54 ijsbekers over 6 gelijke groepen. Hoeveel ijsbekers krijgt elke groep?",
+            "prompt": "De ijsverkoper verdeelt 54 ijsbekers over 6 dienbladen. Op ieder blad komen er evenveel. Hoeveel bekers per dienblad?",
             "answer": 9,
             "choices": [
               8,
@@ -412,8 +412,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 9 = 54, is 54 : 6 = 9.",
+            "hintMinnie": "Verdeel 54 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 54.",
             "explanation": "54 : 6 = 9."
           }
         ]
@@ -428,10 +428,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Gelatokar 5 groepjes van 9 ijsbekers. Hoeveel ijsbekers zijn dat samen?",
+            "prompt": "De ijsverkoper zet 5 dienbladen klaar met elk 9 ijsbekers. Hoeveel bekers zijn dat samen?",
             "answer": 45,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
             "explanation": "5 × 9 = 45."
           },
           {

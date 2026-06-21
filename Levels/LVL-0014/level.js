@@ -257,10 +257,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Koperen telescoop 30 kijkpunten over 6 gelijke groepen. Hoeveel kijkpunten krijgt elke groep?",
+            "prompt": "Atlas verdeelt 30 sterrenstickers over 6 sterrenkaarten. Op iedere kaart komen er evenveel. Hoeveel stickers per kaart?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 5 = 30, is 30 : 6 = 5.",
+            "hintMinnie": "Verdeel 30 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 30.",
             "explanation": "30 : 6 = 5."
           }
         ]
@@ -361,10 +361,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Koperen telescoop 2 groepjes van 6 kijkpunten. Hoeveel kijkpunten zijn dat samen?",
+            "prompt": "Op 2 sterrenkaarten staan elk 6 sterren. Hoeveel sterren zijn dat samen?",
             "answer": 12,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 2 en tel nog 2 erbij.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 2 × 5 en tel er nog 2 bij op.",
             "explanation": "2 × 6 = 12."
           },
           {
@@ -374,10 +374,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Koperen telescoop 5 groepjes van 8 kijkpunten. Hoeveel kijkpunten zijn dat samen?",
+            "prompt": "Op 5 sterrenkaarten staan elk 8 sterren. Hoeveel sterren zijn dat samen?",
             "answer": 40,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 5 drie keer.",
             "explanation": "5 × 8 = 40."
           }
         ]
@@ -418,7 +418,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Rode brievenbus 72 postkaarten over 9 gelijke groepen. Hoeveel postkaarten krijgt elke groep?",
+            "prompt": "De postbode verdeelt 72 postkaarten eerlijk over 9 postzakken. Hoeveel kaarten gaan in iedere zak?",
             "answer": 8,
             "choices": [
               7,
@@ -426,8 +426,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               9,
               10
             ],
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 8 = 72, is 72 : 9 = 8.",
+            "hintMinnie": "Verdeel 72 eerlijk over 9 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 72.",
             "explanation": "72 : 9 = 8."
           }
         ]
@@ -516,7 +516,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Rode brievenbus 6 groepjes van 2 postkaarten. Hoeveel postkaarten zijn dat samen?",
+            "prompt": "In 6 postzakken zitten elk 2 postkaarten. Hoeveel postkaarten zijn dat samen?",
             "answer": 12,
             "choices": [
               10,
@@ -524,7 +524,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               14,
               16
             ],
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 6.",
             "explanation": "6 × 2 = 12."
           },

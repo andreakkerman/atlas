@@ -53,10 +53,10 @@ const learningChallengesLVL0001 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij zonneteken 4 groepjes van 7 gouden schijfjes. Hoeveel gouden schijfjes zijn dat samen?",
+            "prompt": "Rond het zonneteken liggen 4 kringen met elk 7 gouden schijfjes. Hoeveel schijfjes zijn dat samen?",
             "answer": 28,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
             "explanation": "4 × 7 = 28."
           },
           {
@@ -171,10 +171,10 @@ const learningChallengesLVL0001 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij steenteken 3 groepjes van 8 steenblokken. Hoeveel steenblokken zijn dat samen?",
+            "prompt": "Voor het steenteken bouwt de Viking 3 stapels van 8 stenen. Hoeveel stenen gebruikt hij?",
             "answer": 24,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 3 en verdubbel dat.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 3 drie keer.",
             "explanation": "3 × 8 = 24."
           },
           {
@@ -301,7 +301,7 @@ const learningChallengesLVL0001 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking verdeelt bij steenteken 63 steenblokken over 7 gelijke groepen. Hoeveel steenblokken krijgt elke groep?",
+            "prompt": "De Viking verdeelt 63 stenen eerlijk over 7 bouwers. Hoeveel stenen krijgt iedere bouwer?",
             "answer": 9,
             "choices": [
               8,
@@ -309,8 +309,8 @@ const learningChallengesLVL0001 = [
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+            "hintMinnie": "Verdeel 63 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 63.",
             "explanation": "63 : 7 = 9."
           }
         ]
@@ -412,11 +412,11 @@ const learningChallengesLVL0001 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking koopt 5 Vikingkaarten voor 6 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Op de havenmarkt koopt de Viking 5 vlaggen voor 6 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 30,
-            "hintMinnie": "Elk kaartje kost 6 euro.",
-            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
-            "explanation": "5 × 6 = 30 euro."
+            "hintMinnie": "Er zijn 5 gelijke bedragen van 6 munten.",
+            "hintMoose": "Reken 5 × 5 en tel er nog 5 bij op.",
+            "explanation": "5 × 6 = 30 munten."
           },
           {
             "id": "wind-3b",
@@ -425,7 +425,7 @@ const learningChallengesLVL0001 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking verdeelt bij windteken 25 Vikinglinten over 5 gelijke groepen. Hoeveel Vikinglinten krijgt elke groep?",
+            "prompt": "De Viking verdeelt 25 gekleurde linten eerlijk over 5 vlaggenmasten. Hoeveel linten komen aan iedere mast?",
             "answer": 5,
             "choices": [
               4,
@@ -433,8 +433,8 @@ const learningChallengesLVL0001 = [
               6,
               7
             ],
-            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-            "hintMoose": "Omdat 5 × 5 = 25, is 25 : 5 = 5.",
+            "hintMinnie": "Verdeel 25 eerlijk over 5 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 5 welk getal uitkomt op 25.",
             "explanation": "25 : 5 = 5."
           }
         ]
@@ -449,7 +449,7 @@ const learningChallengesLVL0001 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij windteken 8 groepjes van 7 Vikinglinten. Hoeveel Vikinglinten zijn dat samen?",
+            "prompt": "Aan 8 vlaggenmasten hangen elk 7 linten. Hoeveel linten hangen er in totaal?",
             "answer": 56,
             "choices": [
               49,
@@ -457,8 +457,8 @@ const learningChallengesLVL0001 = [
               63,
               70
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
             "explanation": "8 × 7 = 56."
           },
           {
@@ -468,10 +468,10 @@ const learningChallengesLVL0001 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij windteken 6 groepjes van 4 Vikinglinten. Hoeveel Vikinglinten zijn dat samen?",
+            "prompt": "Aan 6 vlaggenmasten hangen elk 4 linten. Hoeveel linten hangen er in totaal?",
             "answer": 24,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 6 twee keer.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 6 en verdubbel de uitkomst nog eens.",
             "explanation": "6 × 4 = 24."
           }
         ]

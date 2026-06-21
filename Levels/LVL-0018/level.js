@@ -105,10 +105,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Houten staafkerk 15 houten plankjes over 3 gelijke groepen. Hoeveel houten plankjes krijgt elke groep?",
+            "prompt": "De timmerman verdeelt 15 houten plankjes eerlijk over 3 deuren. Hoeveel plankjes gebruikt hij per deur?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-            "hintMoose": "Omdat 3 × 5 = 15, is 15 : 3 = 5.",
+            "hintMinnie": "Verdeel 15 eerlijk over 3 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 15.",
             "explanation": "15 : 3 = 5."
           },
           {
@@ -180,7 +180,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Fjordvuurtoren 48 lichtfiches over 8 gelijke groepen. Hoeveel lichtfiches krijgt elke groep?",
+            "prompt": "De vuurtoren heeft 8 ramen met samen 48 lichtjes. In ieder raam branden er evenveel. Hoeveel lichtjes per raam?",
             "answer": 6,
             "choices": [
               5,
@@ -188,8 +188,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-            "hintMoose": "Omdat 8 × 6 = 48, is 48 : 8 = 6.",
+            "hintMinnie": "Verdeel 48 eerlijk over 8 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 48.",
             "explanation": "48 : 8 = 6."
           },
           {
@@ -273,7 +273,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Fjordvuurtoren 7 groepjes van 4 lichtfiches. Hoeveel lichtfiches zijn dat samen?",
+            "prompt": "De vuurtoren heeft 7 ringen met elk 4 lampen. Hoeveel lampen zijn dat samen?",
             "answer": 28,
             "choices": [
               24,
@@ -281,8 +281,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               32,
               36
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 7 twee keer.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 7 en verdubbel de uitkomst nog eens.",
             "explanation": "7 × 4 = 28."
           }
         ]
@@ -379,7 +379,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Vikingschip 8 groepjes van 7 scheepskisten. Hoeveel scheepskisten zijn dat samen?",
+            "prompt": "Op het Vikingschip staan 8 rijen met elk 7 scheepskisten. Hoeveel kisten zijn dat samen?",
             "answer": 56,
             "choices": [
               49,
@@ -387,8 +387,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               63,
               70
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
             "explanation": "8 × 7 = 56."
           }
         ]

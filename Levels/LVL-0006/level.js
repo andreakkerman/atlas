@@ -66,10 +66,10 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Duikpak 5 groepjes van 4 koperen sluitingen. Hoeveel koperen sluitingen zijn dat samen?",
+            "prompt": "Aan 5 duikpakken zitten elk 4 koperen sluitingen. Hoeveel sluitingen zijn dat samen?",
             "answer": 20,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 5 twee keer.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 5 en verdubbel de uitkomst nog eens.",
             "explanation": "5 × 4 = 20."
           }
         ]
@@ -84,10 +84,10 @@ const learningChallengesLVL0006 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo verdeelt bij Duikpak 15 koperen sluitingen over 3 gelijke groepen. Hoeveel koperen sluitingen krijgt elke groep?",
+            "prompt": "Nemo verdeelt 15 koperen sluitingen eerlijk over 3 duikpakken. Hoeveel sluitingen krijgt ieder pak?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-            "hintMoose": "Omdat 3 × 5 = 15, is 15 : 3 = 5.",
+            "hintMinnie": "Verdeel 15 eerlijk over 3 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 15.",
             "explanation": "15 : 3 = 5."
           },
           {
@@ -97,10 +97,10 @@ const learningChallengesLVL0006 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo verdeelt bij Duikpak 10 koperen sluitingen over 2 gelijke groepen. Hoeveel koperen sluitingen krijgt elke groep?",
+            "prompt": "Nemo verdeelt 10 koperen sluitingen eerlijk over 2 duikpakken. Hoeveel sluitingen krijgt ieder pak?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 2 helpt?",
-            "hintMoose": "Omdat 2 × 5 = 10, is 10 : 2 = 5.",
+            "hintMinnie": "Verdeel 10 eerlijk over 2 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 10.",
             "explanation": "10 : 2 = 5."
           }
         ]
@@ -128,7 +128,7 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Duikpak 6 groepjes van 9 koperen sluitingen. Hoeveel koperen sluitingen zijn dat samen?",
+            "prompt": "Aan 6 duikpakken zitten elk 9 koperen sluitingen. Hoeveel sluitingen zijn dat samen?",
             "answer": 54,
             "choices": [
               45,
@@ -136,8 +136,8 @@ const learningChallengesLVL0006 = [
               63,
               72
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 6 × 10 en haal er daarna 6 af.",
             "explanation": "6 × 9 = 54."
           }
         ]
@@ -270,11 +270,11 @@ const learningChallengesLVL0006 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo koopt 2 havenkaarten voor 6 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Nemo koopt 2 reserveonderdelen voor de minisub. Elk onderdeel kost 6 munten. Hoeveel munten betaalt hij?",
             "answer": 12,
-            "hintMinnie": "Elk kaartje kost 6 euro.",
-            "hintMoose": "Reken 5 × 2 en tel nog 2 erbij.",
-            "explanation": "2 × 6 = 12 euro."
+            "hintMinnie": "Er zijn 2 gelijke bedragen van 6 munten.",
+            "hintMoose": "Reken 2 × 5 en tel er nog 2 bij op.",
+            "explanation": "2 × 6 = 12 munten."
           },
           {
             "id": "miniSub-4b",
@@ -345,7 +345,7 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Drukpaneel 4 groepjes van 4 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "prompt": "Het bedieningspaneel heeft 4 rijen met elk 4 schakelaars. Hoeveel schakelaars zijn dat samen?",
             "answer": 16,
             "choices": [
               12,
@@ -353,8 +353,8 @@ const learningChallengesLVL0006 = [
               20,
               24
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 4 twee keer.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 4 en verdubbel de uitkomst nog eens.",
             "explanation": "4 × 4 = 16."
           },
           {
@@ -388,10 +388,10 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Drukpaneel 9 groepjes van 7 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "prompt": "Het bedieningspaneel heeft 9 rijen met elk 7 schakelaars. Hoeveel schakelaars zijn dat samen?",
             "answer": 63,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 9 × 5 en 9 × 2 en tel de uitkomsten op.",
             "explanation": "9 × 7 = 63."
           },
           {
@@ -401,9 +401,9 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Drukpaneel 5 groepjes van 2 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "prompt": "Het bedieningspaneel heeft 5 rijen met elk 2 schakelaars. Hoeveel schakelaars zijn dat samen?",
             "answer": 10,
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 5.",
             "explanation": "5 × 2 = 10."
           }
@@ -419,7 +419,7 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Drukpaneel 5 groepjes van 9 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "prompt": "Het bedieningspaneel heeft 5 rijen met elk 9 schakelaars. Hoeveel schakelaars zijn dat samen?",
             "answer": 45,
             "choices": [
               36,
@@ -427,8 +427,8 @@ const learningChallengesLVL0006 = [
               54,
               63
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
             "explanation": "5 × 9 = 45."
           },
           {
@@ -438,7 +438,7 @@ const learningChallengesLVL0006 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Drukpaneel 9 groepjes van 4 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "prompt": "Het bedieningspaneel heeft 9 rijen met elk 4 schakelaars. Hoeveel schakelaars zijn dat samen?",
             "answer": 36,
             "choices": [
               32,
@@ -446,8 +446,8 @@ const learningChallengesLVL0006 = [
               40,
               44
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 9 twee keer.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 9 en verdubbel de uitkomst nog eens.",
             "explanation": "9 × 4 = 36."
           }
         ]

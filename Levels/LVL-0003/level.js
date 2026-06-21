@@ -47,11 +47,11 @@ const learningChallengesLVL0003 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking koopt 4 Vikingkaarten voor 7 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "In de haven koopt de Viking 4 zeekaarten voor 7 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 28,
-            "hintMinnie": "Elk kaartje kost 7 euro.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
-            "explanation": "4 × 7 = 28 euro."
+            "hintMinnie": "Er zijn 4 gelijke bedragen van 7 munten.",
+            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+            "explanation": "4 × 7 = 28 munten."
           },
           {
             "id": "harborMap-2b",
@@ -91,10 +91,10 @@ const learningChallengesLVL0003 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking verdeelt bij Havenkaart 49 routefiches over 7 gelijke groepen. Hoeveel routefiches krijgt elke groep?",
+            "prompt": "De havenmeester verdeelt 49 houten routepionnen eerlijk over 7 zeekaarten. Hoeveel pionnen komen op iedere kaart?",
             "answer": 7,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 7 = 49, is 49 : 7 = 7.",
+            "hintMinnie": "Verdeel 49 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 49.",
             "explanation": "49 : 7 = 7."
           }
         ]
@@ -167,7 +167,7 @@ const learningChallengesLVL0003 = [
               "minute": 10
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien over acht.",
+            "hintMoose": "De grote wijzer staat op de 2. Dat betekent tien minuten na het hele uur. Kijk welk uur net begonnen is.",
             "explanation": "Het is tien over acht."
           },
           {
@@ -191,7 +191,7 @@ const learningChallengesLVL0003 = [
               "minute": 20
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien voor half vijf.",
+            "hintMoose": "De grote wijzer staat op de 4. Dat is twintig minuten na vier, oftewel tien minuten voor half vijf.",
             "explanation": "Het is tien voor half vijf."
           }
         ]
@@ -220,7 +220,7 @@ const learningChallengesLVL0003 = [
               "minute": 25
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf voor half zeven.",
+            "hintMoose": "De grote wijzer staat op de 5. Dat is vijf minuten voor het halve uur dat eraan komt.",
             "explanation": "Het is vijf voor half zeven."
           },
           {
@@ -244,7 +244,7 @@ const learningChallengesLVL0003 = [
               "minute": 35
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf over half elf.",
+            "hintMoose": "De grote wijzer staat op de 7. Dat is vijf minuten na het halve uur.",
             "explanation": "Het is vijf over half elf."
           }
         ]
@@ -273,7 +273,7 @@ const learningChallengesLVL0003 = [
               "minute": 40
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien over half drie.",
+            "hintMoose": "De grote wijzer staat op de 8. Dat is tien minuten na het halve uur.",
             "explanation": "Het is tien over half drie."
           },
           {
@@ -297,7 +297,7 @@ const learningChallengesLVL0003 = [
               "minute": 50
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien voor acht.",
+            "hintMoose": "De grote wijzer staat op de 10. Vanaf daar zijn het nog tien minuten tot het volgende uur.",
             "explanation": "Het is tien voor acht."
           }
         ]
@@ -326,7 +326,7 @@ const learningChallengesLVL0003 = [
               "minute": 5
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf over elf.",
+            "hintMoose": "De grote wijzer staat op de 1. Elk cijfer is vijf minuten, dus er zijn vijf minuten voorbij.",
             "explanation": "Het is vijf over elf."
           },
           {
@@ -350,7 +350,7 @@ const learningChallengesLVL0003 = [
               "minute": 55
             },
             "hintMinnie": "Kijk eerst naar de grote wijzer.",
-            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf voor twee.",
+            "hintMoose": "De grote wijzer staat op de 11. Vanaf daar duurt het nog vijf minuten tot het volgende uur.",
             "explanation": "Het is vijf voor twee."
           }
         ]
@@ -409,10 +409,10 @@ const learningChallengesLVL0003 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij Touwrol 3 groepjes van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
+            "prompt": "De Viking maakt 3 bundels van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
             "answer": 18,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 3 × 5 en tel er nog 3 bij op.",
             "explanation": "3 × 6 = 18."
           },
           {
@@ -446,10 +446,10 @@ const learningChallengesLVL0003 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Touwrol is 18 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Een meertouw is 18 meter lang. De Viking snijdt het in 2 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 9,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 2 × 9 = 18, is 18 : 2 = 9.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 18.",
             "explanation": "18 : 2 = 9 meter."
           },
           {
@@ -459,10 +459,10 @@ const learningChallengesLVL0003 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking verdeelt bij Touwrol 49 touwlussen over 7 gelijke groepen. Hoeveel touwlussen krijgt elke groep?",
+            "prompt": "De Viking verdeelt 49 touwlussen eerlijk over 7 boten. Hoeveel touwlussen krijgt iedere boot?",
             "answer": 7,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 7 = 49, is 49 : 7 = 7.",
+            "hintMinnie": "Verdeel 49 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 49.",
             "explanation": "49 : 7 = 7."
           }
         ]
@@ -477,7 +477,7 @@ const learningChallengesLVL0003 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking verdeelt bij Touwrol 42 touwlussen over 6 gelijke groepen. Hoeveel touwlussen krijgt elke groep?",
+            "prompt": "De Viking verdeelt 42 touwlussen eerlijk over 6 boten. Hoeveel touwlussen krijgt iedere boot?",
             "answer": 7,
             "choices": [
               6,
@@ -485,8 +485,8 @@ const learningChallengesLVL0003 = [
               8,
               9
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+            "hintMinnie": "Verdeel 42 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 42.",
             "explanation": "42 : 6 = 7."
           },
           {
@@ -496,7 +496,7 @@ const learningChallengesLVL0003 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Touwrol 8 groepjes van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
+            "prompt": "De Viking maakt 8 bundels van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
             "answer": 48,
             "choices": [
               42,
@@ -504,8 +504,8 @@ const learningChallengesLVL0003 = [
               54,
               60
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 8 en tel nog 8 erbij.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 8 × 5 en tel er nog 8 bij op.",
             "explanation": "8 × 6 = 48."
           }
         ]
@@ -527,7 +527,7 @@ const learningChallengesLVL0003 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Poortschild 4 groepjes van 9 schildtekens. Hoeveel schildtekens zijn dat samen?",
+            "prompt": "Op 4 poortschilden staan elk 9 runentekens. Hoeveel runentekens zijn dat samen?",
             "answer": 36,
             "choices": [
               27,
@@ -535,8 +535,8 @@ const learningChallengesLVL0003 = [
               45,
               54
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 4 en haal 4 eraf.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 4 × 10 en haal er daarna 4 af.",
             "explanation": "4 × 9 = 36."
           },
           {
@@ -607,7 +607,7 @@ const learningChallengesLVL0003 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Poortschild 7 groepjes van 8 schildtekens. Hoeveel schildtekens zijn dat samen?",
+            "prompt": "Op 7 poortschilden staan elk 8 runentekens. Hoeveel runentekens zijn dat samen?",
             "answer": 56,
             "choices": [
               48,
@@ -615,8 +615,8 @@ const learningChallengesLVL0003 = [
               64,
               72
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 7 drie keer.",
             "explanation": "7 × 8 = 56."
           },
           {
@@ -657,7 +657,7 @@ const learningChallengesLVL0003 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Poortschild 4 groepjes van 2 schildtekens. Hoeveel schildtekens zijn dat samen?",
+            "prompt": "Op 4 poortschilden staan elk 2 runentekens. Hoeveel runentekens zijn dat samen?",
             "answer": 8,
             "choices": [
               6,
@@ -665,7 +665,7 @@ const learningChallengesLVL0003 = [
               10,
               12
             ],
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 4.",
             "explanation": "4 × 2 = 8."
           }

@@ -35,10 +35,10 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij Schildenmuur 7 groepjes van 3 ronde schilden. Hoeveel ronde schilden zijn dat samen?",
+            "prompt": "Aan de schildenmuur hangen 7 rijen met elk 3 schilden. Hoeveel schilden hangen er?",
             "answer": 21,
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 7 en tel nog 7 erbij.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 3.",
+            "hintMoose": "Verdubbel 7 en tel er nog 7 bij op.",
             "explanation": "7 × 3 = 21."
           }
         ]
@@ -90,10 +90,10 @@ const learningChallengesLVL0002 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking verdeelt bij Schildenmuur 30 ronde schilden over 6 gelijke groepen. Hoeveel ronde schilden krijgt elke groep?",
+            "prompt": "De Viking verdeelt 30 schilden eerlijk over 6 wachters. Hoeveel schilden krijgt iedere wachter?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 5 = 30, is 30 : 6 = 5.",
+            "hintMinnie": "Verdeel 30 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 30.",
             "explanation": "30 : 6 = 5."
           },
           {
@@ -103,7 +103,7 @@ const learningChallengesLVL0002 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking verdeelt bij Schildenmuur 36 ronde schilden over 6 gelijke groepen. Hoeveel ronde schilden krijgt elke groep?",
+            "prompt": "De Viking verdeelt 36 schilden eerlijk over 6 wachters. Hoeveel schilden krijgt iedere wachter?",
             "answer": 6,
             "choices": [
               5,
@@ -111,8 +111,8 @@ const learningChallengesLVL0002 = [
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "hintMinnie": "Verdeel 36 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 36.",
             "explanation": "36 : 6 = 6."
           }
         ]
@@ -140,7 +140,7 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Schildenmuur 2 groepjes van 8 ronde schilden. Hoeveel ronde schilden zijn dat samen?",
+            "prompt": "Tegen de schildenmuur staan 2 rekken met elk 8 schilden. Hoeveel schilden zijn dat samen?",
             "answer": 16,
             "choices": [
               8,
@@ -148,8 +148,8 @@ const learningChallengesLVL0002 = [
               24,
               32
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 2 drie keer.",
             "explanation": "2 × 8 = 16."
           }
         ]
@@ -171,7 +171,7 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Kaarttafel 3 groepjes van 8 routefiches. Hoeveel routefiches zijn dat samen?",
+            "prompt": "Op de kaarttafel liggen 3 rijen met elk 8 houten pionnen. Hoeveel pionnen liggen er?",
             "answer": 24,
             "choices": [
               16,
@@ -179,8 +179,8 @@ const learningChallengesLVL0002 = [
               32,
               40
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 3 en verdubbel dat.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 3 drie keer.",
             "explanation": "3 × 8 = 24."
           },
           {
@@ -214,10 +214,10 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij Kaarttafel 9 groepjes van 4 routefiches. Hoeveel routefiches zijn dat samen?",
+            "prompt": "Op de kaarttafel liggen 9 rijen met elk 4 houten pionnen. Hoeveel pionnen liggen er?",
             "answer": 36,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 9 twee keer.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 9 en verdubbel de uitkomst nog eens.",
             "explanation": "9 × 4 = 36."
           },
           {
@@ -270,7 +270,7 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "De Viking legt bij Kaarttafel 7 groepjes van 7 routefiches. Hoeveel routefiches zijn dat samen?",
+            "prompt": "Op de kaarttafel liggen 7 rijen met elk 7 houten pionnen. Hoeveel pionnen liggen er?",
             "answer": 49,
             "choices": [
               42,
@@ -278,8 +278,8 @@ const learningChallengesLVL0002 = [
               56,
               63
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 7 en 2 × 7.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 7 × 5 en 7 × 2 en tel de uitkomsten op.",
             "explanation": "7 × 7 = 49."
           }
         ]
@@ -351,10 +351,10 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij Vuurschaal 6 groepjes van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
+            "prompt": "Naast de vuurschaal liggen 6 stapels van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
             "answer": 60,
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "6 groepjes van 10 eindigen op nul.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 10.",
+            "hintMoose": "Vermenigvuldig 6 met 10: zet een nul achter 6.",
             "explanation": "6 × 10 = 60."
           }
         ]
@@ -369,10 +369,10 @@ const learningChallengesLVL0002 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking legt bij Vuurschaal 7 groepjes van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
+            "prompt": "Naast de vuurschaal liggen 7 stapels van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
             "answer": 70,
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "7 groepjes van 10 eindigen op nul.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 10.",
+            "hintMoose": "Vermenigvuldig 7 met 10: zet een nul achter 7.",
             "explanation": "7 × 10 = 70."
           },
           {
@@ -531,10 +531,10 @@ const learningChallengesLVL0002 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De Viking verdeelt bij Scheepsmodel 35 scheepsplanken over 7 gelijke groepen. Hoeveel scheepsplanken krijgt elke groep?",
+            "prompt": "De Viking verdeelt 35 planken eerlijk over 7 scheepsbouwers. Hoeveel planken krijgt iedere scheepsbouwer?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 5 = 35, is 35 : 7 = 5.",
+            "hintMinnie": "Verdeel 35 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 35.",
             "explanation": "35 : 7 = 5."
           }
         ]
@@ -568,10 +568,10 @@ const learningChallengesLVL0002 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Scheepsmodel is 9 meter lang en heeft 3 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Een touw van 9 meter wordt in 3 gelijke stukken geknipt. Hoe lang is ieder stuk?",
             "answer": 3,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 3 × 3 = 9, is 9 : 3 = 3.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 3 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 9.",
             "explanation": "9 : 3 = 3 meter."
           }
         ]

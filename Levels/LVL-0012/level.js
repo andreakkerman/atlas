@@ -109,11 +109,11 @@ const learningChallengesLVL0012 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job koopt 7 bouwkaarten voor 8 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Job koopt 7 bouwkaarten voor 8 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 56,
-            "hintMinnie": "Elk kaartje kost 8 euro.",
-            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
-            "explanation": "7 × 8 = 56 euro."
+            "hintMinnie": "Er zijn 7 gelijke bedragen van 8 munten.",
+            "hintMoose": "Verdubbel 7 drie keer.",
+            "explanation": "7 × 8 = 56 munten."
           }
         ]
       },
@@ -127,10 +127,10 @@ const learningChallengesLVL0012 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Thuiskaart 8 groepjes van 8 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+            "prompt": "Op de thuiskaart staan 8 routes met elk 8 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
             "answer": 64,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 8 drie keer.",
             "explanation": "8 × 8 = 64."
           },
           {
@@ -184,7 +184,7 @@ const learningChallengesLVL0012 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job verdeelt bij Betovertafel 54 betoverboeken over 6 gelijke groepen. Hoeveel betoverboeken krijgt elke groep?",
+            "prompt": "Job verdeelt 54 betoverboeken eerlijk over 6 boekenkisten. Hoeveel boeken gaan in iedere kist?",
             "answer": 9,
             "choices": [
               8,
@@ -192,8 +192,8 @@ const learningChallengesLVL0012 = [
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 9 = 54, is 54 : 6 = 9.",
+            "hintMinnie": "Verdeel 54 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 54.",
             "explanation": "54 : 6 = 9."
           }
         ]
@@ -406,10 +406,10 @@ const learningChallengesLVL0012 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Paars portaal is 80 meter lang en heeft 10 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "De tunnel door het paarse portaal is 80 meter lang en bestaat uit 10 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 8,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 10 × 8 = 80, is 80 : 10 = 8.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 10 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 10 welk getal uitkomt op 80.",
             "explanation": "80 : 10 = 8 meter."
           },
           {
@@ -450,7 +450,7 @@ const learningChallengesLVL0012 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Paars portaal 3 groepjes van 2 portaalblokken. Hoeveel portaalblokken zijn dat samen?",
+            "prompt": "Job bouwt 3 ringen met elk 2 portaalblokken. Hoeveel blokken gebruikt hij?",
             "answer": 6,
             "choices": [
               4,
@@ -458,7 +458,7 @@ const learningChallengesLVL0012 = [
               8,
               10
             ],
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 3.",
             "explanation": "3 × 2 = 6."
           }

@@ -16,10 +16,10 @@ const learningChallengesLVL0010 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Schatkaart is 8 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "De schatroute is 8 meter lang en bestaat uit 2 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 4,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 2 × 4 = 8, is 8 : 2 = 4.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 8.",
             "explanation": "8 : 2 = 4 meter."
           },
           {
@@ -66,7 +66,7 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Schatkaart 4 groepjes van 7 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+            "prompt": "Op de schatkaart staan 4 routes met elk 7 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
             "answer": 28,
             "choices": [
               21,
@@ -74,8 +74,8 @@ const learningChallengesLVL0010 = [
               35,
               42
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
             "explanation": "4 × 7 = 28."
           }
         ]
@@ -90,10 +90,10 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Schatkaart 7 groepjes van 9 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+            "prompt": "Op de schatkaart staan 7 routes met elk 9 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
             "answer": 63,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 7 × 10 en haal er daarna 7 af.",
             "explanation": "7 × 9 = 63."
           },
           {
@@ -214,11 +214,11 @@ const learningChallengesLVL0010 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job koopt 2 bouwkaarten voor 6 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Job koopt 2 bouwscheppen voor 6 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 12,
-            "hintMinnie": "Elk kaartje kost 6 euro.",
-            "hintMoose": "Reken 5 × 2 en tel nog 2 erbij.",
-            "explanation": "2 × 6 = 12 euro."
+            "hintMinnie": "Er zijn 2 gelijke bedragen van 6 munten.",
+            "hintMoose": "Reken 2 × 5 en tel er nog 2 bij op.",
+            "explanation": "2 × 6 = 12 munten."
           },
           {
             "id": "sandCastle-2b",
@@ -227,7 +227,7 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Zandkasteel 9 groepjes van 4 zandblokken. Hoeveel zandblokken zijn dat samen?",
+            "prompt": "Het zandkasteel heeft 9 torens met elk 4 zandblokken. Hoeveel blokken zijn dat samen?",
             "answer": 36,
             "choices": [
               32,
@@ -235,8 +235,8 @@ const learningChallengesLVL0010 = [
               40,
               44
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 9 twee keer.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 9 en verdubbel de uitkomst nog eens.",
             "explanation": "9 × 4 = 36."
           }
         ]
@@ -270,10 +270,10 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Zandkasteel 7 groepjes van 8 zandblokken. Hoeveel zandblokken zijn dat samen?",
+            "prompt": "Het zandkasteel heeft 7 torens met elk 8 zandblokken. Hoeveel blokken zijn dat samen?",
             "answer": 56,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 7 drie keer.",
             "explanation": "7 × 8 = 56."
           }
         ]
@@ -307,7 +307,7 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Zandkasteel 2 groepjes van 9 zandblokken. Hoeveel zandblokken zijn dat samen?",
+            "prompt": "Het zandkasteel heeft 2 torens met elk 9 zandblokken. Hoeveel blokken zijn dat samen?",
             "answer": 18,
             "choices": [
               9,
@@ -315,8 +315,8 @@ const learningChallengesLVL0010 = [
               27,
               36
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 2 × 10 en haal er daarna 2 af.",
             "explanation": "2 × 9 = 18."
           }
         ]
@@ -338,7 +338,7 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Houten boot 9 groepjes van 7 bouwplanken. Hoeveel bouwplanken zijn dat samen?",
+            "prompt": "Voor de houten boot maakt Job 9 stapels van 7 bouwplanken. Hoeveel planken zijn dat samen?",
             "answer": 63,
             "choices": [
               56,
@@ -346,8 +346,8 @@ const learningChallengesLVL0010 = [
               70,
               77
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 9 × 5 en 9 × 2 en tel de uitkomsten op.",
             "explanation": "9 × 7 = 63."
           },
           {
@@ -394,7 +394,7 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Houten boot 8 groepjes van 3 bouwplanken. Hoeveel bouwplanken zijn dat samen?",
+            "prompt": "Voor de houten boot maakt Job 8 stapels van 3 bouwplanken. Hoeveel planken zijn dat samen?",
             "answer": 24,
             "choices": [
               21,
@@ -402,8 +402,8 @@ const learningChallengesLVL0010 = [
               27,
               30
             ],
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 8 en tel nog 8 erbij.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 3.",
+            "hintMoose": "Verdubbel 8 en tel er nog 8 bij op.",
             "explanation": "8 × 3 = 24."
           }
         ]
@@ -437,10 +437,10 @@ const learningChallengesLVL0010 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Houten boot 7 groepjes van 8 bouwplanken. Hoeveel bouwplanken zijn dat samen?",
+            "prompt": "Voor de houten boot maakt Job 7 stapels van 8 bouwplanken. Hoeveel planken zijn dat samen?",
             "answer": 56,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 7 drie keer.",
             "explanation": "7 × 8 = 56."
           }
         ]
@@ -455,10 +455,10 @@ const learningChallengesLVL0010 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job verdeelt bij Houten boot 25 bouwplanken over 5 gelijke groepen. Hoeveel bouwplanken krijgt elke groep?",
+            "prompt": "Job verdeelt 25 bouwplanken eerlijk over 5 bouwers. Hoeveel planken krijgt iedere bouwer?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-            "hintMoose": "Omdat 5 × 5 = 25, is 25 : 5 = 5.",
+            "hintMinnie": "Verdeel 25 eerlijk over 5 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 5 welk getal uitkomt op 25.",
             "explanation": "25 : 5 = 5."
           },
           {

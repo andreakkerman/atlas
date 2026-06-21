@@ -16,10 +16,10 @@ const learningChallengesLVL0009 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Wereldkaart 8 groepjes van 6 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+            "prompt": "Op de wereldkaart markeert Job 8 routes met elk 6 routeblokjes. Hoeveel routeblokjes gebruikt hij?",
             "answer": 48,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 8 en tel nog 8 erbij.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 8 × 5 en tel er nog 8 bij op.",
             "explanation": "8 × 6 = 48."
           },
           {
@@ -97,7 +97,7 @@ const learningChallengesLVL0009 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job verdeelt bij Wereldkaart 72 routeblokjes over 9 gelijke groepen. Hoeveel routeblokjes krijgt elke groep?",
+            "prompt": "Job verdeelt 72 routeblokjes eerlijk over 9 routes. Hoeveel blokjes krijgt iedere route?",
             "answer": 8,
             "choices": [
               7,
@@ -105,8 +105,8 @@ const learningChallengesLVL0009 = [
               9,
               10
             ],
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 8 = 72, is 72 : 9 = 8.",
+            "hintMinnie": "Verdeel 72 eerlijk over 9 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 72.",
             "explanation": "72 : 9 = 8."
           }
         ]
@@ -203,7 +203,7 @@ const learningChallengesLVL0009 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job verdeelt bij Open boek 36 betovertekens over 4 gelijke groepen. Hoeveel betovertekens krijgt elke groep?",
+            "prompt": "Job verdeelt 36 betovertekens over 4 pagina's. Op iedere pagina komen er evenveel. Hoeveel tekens per pagina?",
             "answer": 9,
             "choices": [
               8,
@@ -211,8 +211,8 @@ const learningChallengesLVL0009 = [
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-            "hintMoose": "Omdat 4 × 9 = 36, is 36 : 4 = 9.",
+            "hintMinnie": "Verdeel 36 eerlijk over 4 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 36.",
             "explanation": "36 : 4 = 9."
           }
         ]
@@ -246,7 +246,7 @@ const learningChallengesLVL0009 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Open boek 7 groepjes van 8 betovertekens. Hoeveel betovertekens zijn dat samen?",
+            "prompt": "In het open boek staan 7 pagina's met elk 8 betovertekens. Hoeveel tekens zijn dat samen?",
             "answer": 56,
             "choices": [
               48,
@@ -254,8 +254,8 @@ const learningChallengesLVL0009 = [
               64,
               72
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 7 drie keer.",
             "explanation": "7 × 8 = 56."
           }
         ]
@@ -314,11 +314,11 @@ const learningChallengesLVL0009 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job koopt 4 bouwkaarten voor 10 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Job koopt 4 kristaldozen voor 10 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 40,
-            "hintMinnie": "Elk kaartje kost 10 euro.",
-            "hintMoose": "4 groepjes van 10 eindigen op nul.",
-            "explanation": "4 × 10 = 40 euro."
+            "hintMinnie": "Er zijn 4 gelijke bedragen van 10 munten.",
+            "hintMoose": "Vermenigvuldig 4 met 10: zet een nul achter 4.",
+            "explanation": "4 × 10 = 40 munten."
           },
           {
             "id": "crystalCase-1b",
@@ -407,7 +407,7 @@ const learningChallengesLVL0009 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Kristalkast 4 groepjes van 5 kristalscherven. Hoeveel kristalscherven zijn dat samen?",
+            "prompt": "In de kristalkast staan 4 bakjes met elk 5 kristalscherven. Hoeveel scherven zijn dat samen?",
             "answer": 20,
             "choices": [
               15,
@@ -415,7 +415,7 @@ const learningChallengesLVL0009 = [
               25,
               30
             ],
-            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 5.",
             "hintMoose": "Tel 4 sprongen van 5.",
             "explanation": "4 × 5 = 20."
           }
@@ -450,9 +450,9 @@ const learningChallengesLVL0009 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Kristalkast 6 groepjes van 5 kristalscherven. Hoeveel kristalscherven zijn dat samen?",
+            "prompt": "In de kristalkast staan 6 bakjes met elk 5 kristalscherven. Hoeveel scherven zijn dat samen?",
             "answer": 30,
-            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 5.",
             "hintMoose": "Tel 6 sprongen van 5.",
             "explanation": "6 × 5 = 30."
           }

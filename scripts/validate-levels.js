@@ -570,7 +570,7 @@ function validateReferences(level, objects, nodeIds, label) {
         }
       }
     }
-    if (/rune|runenpoort/i.test([
+    if (level.id >= "LVL-0013" && level.id <= "LVL-0020" && /rune|runenpoort/i.test([
       variant.prompt, variant.hintMinnie, variant.hintMoose, variant.explanation
     ].join(" "))) {
       fail(`${variantLabel} must not use rune or Runenpoort wording in Europe content.`);

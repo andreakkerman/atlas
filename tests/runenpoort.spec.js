@@ -1036,8 +1036,8 @@ test.describe("SvenAdventure", () => {
     expect(slots).toHaveLength(152);
     expect(variants).toHaveLength(304);
     expect(variants.filter((variant) => variant.family === "clock_reading_five_minutes")).toHaveLength(8);
-    expect(variants.filter((variant) => variant.family.includes("multiplication"))).toHaveLength(185);
-    expect(variants.filter((variant) => variant.family.includes("division"))).toHaveLength(111);
+    expect(variants.filter((variant) => variant.family.includes("multiplication"))).toHaveLength(208);
+    expect(variants.filter((variant) => variant.family.includes("division"))).toHaveLength(74);
 
     for (const level of levels) {
       expect(level.challenges).toHaveLength(level.runes.length);

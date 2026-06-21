@@ -50,10 +50,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Marktkraam is 4 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Een lint van 4 meter wordt in 2 gelijke stukken geknipt voor de marktkraam. Hoe lang is ieder stuk?",
             "answer": 2,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 2 × 2 = 4, is 4 : 2 = 2.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 4.",
             "explanation": "4 : 2 = 2 meter."
           },
           {
@@ -112,10 +112,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Marktkraam 5 groepjes van 9 marktkistjes. Hoeveel marktkistjes zijn dat samen?",
+            "prompt": "Bij de marktkraam staan 5 kisten met elk 9 appels. Hoeveel appels zijn dat samen?",
             "answer": 45,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
             "explanation": "5 × 9 = 45."
           },
           {
@@ -375,7 +375,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Dorpsfontein 27 waterfiches over 3 gelijke groepen. Hoeveel waterfiches krijgt elke groep?",
+            "prompt": "De dorpsfontein heeft 3 bakken met samen 27 waterlelies. In iedere bak liggen er evenveel. Hoeveel waterlelies liggen in één bak?",
             "answer": 9,
             "choices": [
               8,
@@ -383,8 +383,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-            "hintMoose": "Omdat 3 × 9 = 27, is 27 : 3 = 9.",
+            "hintMinnie": "Verdeel 27 eerlijk over 3 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 27.",
             "explanation": "27 : 3 = 9."
           },
           {
@@ -492,10 +492,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Dorpsfontein 32 waterfiches over 8 gelijke groepen. Hoeveel waterfiches krijgt elke groep?",
+            "prompt": "De dorpsfontein heeft 8 bakken met samen 32 waterlelies. In iedere bak liggen er evenveel. Hoeveel waterlelies liggen in één bak?",
             "answer": 4,
-            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-            "hintMoose": "Omdat 8 × 4 = 32, is 32 : 8 = 4.",
+            "hintMinnie": "Verdeel 32 eerlijk over 8 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 32.",
             "explanation": "32 : 8 = 4."
           },
           {

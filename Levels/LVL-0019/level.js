@@ -19,7 +19,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Dalapaard 24 verfkaartjes over 6 gelijke groepen. Hoeveel verfkaartjes krijgt elke groep?",
+            "prompt": "De schilder verdeelt 24 verfstrepen over 6 banen op het Dalapaard. Op iedere baan komen er evenveel. Hoeveel strepen per baan?",
             "answer": 4,
             "choices": [
               3,
@@ -27,8 +27,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               5,
               6
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 4 = 24, is 24 : 6 = 4.",
+            "hintMinnie": "Verdeel 24 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 24.",
             "explanation": "24 : 6 = 4."
           },
           {
@@ -56,7 +56,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Dalapaard 7 groepjes van 7 verfkaartjes. Hoeveel verfkaartjes zijn dat samen?",
+            "prompt": "Het Dalapaard heeft 7 banen met elk 7 verfstrepen. Hoeveel verfstrepen zijn dat samen?",
             "answer": 49,
             "choices": [
               42,
@@ -64,8 +64,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               56,
               63
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 7 en 2 × 7.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 7 × 5 en 7 × 2 en tel de uitkomsten op.",
             "explanation": "7 × 7 = 49."
           },
           {
@@ -136,9 +136,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Dalapaard 6 groepjes van 2 verfkaartjes. Hoeveel verfkaartjes zijn dat samen?",
+            "prompt": "Het Dalapaard heeft 6 banen met elk 2 verfstrepen. Hoeveel verfstrepen zijn dat samen?",
             "answer": 12,
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 6.",
             "explanation": "6 × 2 = 12."
           },
@@ -149,7 +149,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Dalapaard 18 verfkaartjes over 6 gelijke groepen. Hoeveel verfkaartjes krijgt elke groep?",
+            "prompt": "De schilder verdeelt 18 verfstrepen over 6 banen op het Dalapaard. Op iedere baan komen er evenveel. Hoeveel strepen per baan?",
             "answer": 3,
             "choices": [
               2,
@@ -157,8 +157,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               4,
               5
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 3 = 18, is 18 : 6 = 3.",
+            "hintMinnie": "Verdeel 18 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 18.",
             "explanation": "18 : 6 = 3."
           }
         ]
@@ -236,7 +236,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Zweedse meiboom 8 groepjes van 7 bloemenlinten. Hoeveel bloemenlinten zijn dat samen?",
+            "prompt": "Aan de meiboom hangen 8 bloemenkransen met elk 7 bloemen. Hoeveel bloemen zijn dat samen?",
             "answer": 56,
             "choices": [
               49,
@@ -244,8 +244,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               63,
               70
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
             "explanation": "8 × 7 = 56."
           }
         ]
@@ -260,10 +260,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Zweedse meiboom 9 groepjes van 7 bloemenlinten. Hoeveel bloemenlinten zijn dat samen?",
+            "prompt": "Aan de meiboom hangen 9 bloemenkransen met elk 7 bloemen. Hoeveel bloemen zijn dat samen?",
             "answer": 63,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 9 × 5 en 9 × 2 en tel de uitkomsten op.",
             "explanation": "9 × 7 = 63."
           },
           {
@@ -291,7 +291,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Zweedse meiboom 3 groepjes van 7 bloemenlinten. Hoeveel bloemenlinten zijn dat samen?",
+            "prompt": "Aan de meiboom hangen 3 bloemenkransen met elk 7 bloemen. Hoeveel bloemen zijn dat samen?",
             "answer": 21,
             "choices": [
               14,
@@ -299,8 +299,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               28,
               35
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 3 en 2 × 3.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 3 × 5 en 3 × 2 en tel de uitkomsten op.",
             "explanation": "3 × 7 = 21."
           },
           {

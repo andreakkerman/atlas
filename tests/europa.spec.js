@@ -445,11 +445,11 @@ test.describe("De Grote Reis door Europa", () => {
       {
         levelId: "LVL-0017",
         objectName: "Alpenklokhuis",
-        hour: 8,
-        minute: 10,
-        hourAngle: 245,
-        minuteAngle: 60,
-        answer: "Tien over acht",
+        hour: 3,
+        minute: 0,
+        hourAngle: 90,
+        minuteAngle: 0,
+        answer: "Drie uur",
         family: "clock_reading_five_minutes"
       },
       {

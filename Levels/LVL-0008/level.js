@@ -84,7 +84,7 @@ const learningChallengesLVL0008 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job verdeelt bij Diamantzwaard 35 diamantblokken over 7 gelijke groepen. Hoeveel diamantblokken krijgt elke groep?",
+            "prompt": "Job verdeelt 35 diamantblokken eerlijk over 7 kisten. Hoeveel blokken gaan in iedere kist?",
             "answer": 5,
             "choices": [
               4,
@@ -92,8 +92,8 @@ const learningChallengesLVL0008 = [
               6,
               7
             ],
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 5 = 35, is 35 : 7 = 5.",
+            "hintMinnie": "Verdeel 35 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 35.",
             "explanation": "35 : 7 = 5."
           },
           {
@@ -103,10 +103,10 @@ const learningChallengesLVL0008 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job verdeelt bij Diamantzwaard 30 diamantblokken over 6 gelijke groepen. Hoeveel diamantblokken krijgt elke groep?",
+            "prompt": "Job verdeelt 30 diamantblokken eerlijk over 6 kisten. Hoeveel blokken gaan in iedere kist?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 5 = 30, is 30 : 6 = 5.",
+            "hintMinnie": "Verdeel 30 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 30.",
             "explanation": "30 : 6 = 5."
           }
         ]
@@ -227,10 +227,10 @@ const learningChallengesLVL0008 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Creepermasker 6 groepjes van 9 groene blokken. Hoeveel groene blokken zijn dat samen?",
+            "prompt": "Job bouwt 6 creepermaskers met elk 9 groene blokken. Hoeveel blokken gebruikt hij?",
             "answer": 54,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 6 × 10 en haal er daarna 6 af.",
             "explanation": "6 × 9 = 54."
           }
         ]
@@ -258,10 +258,10 @@ const learningChallengesLVL0008 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Creepermasker 5 groepjes van 6 groene blokken. Hoeveel groene blokken zijn dat samen?",
+            "prompt": "Job bouwt 5 creepermaskers met elk 6 groene blokken. Hoeveel blokken gebruikt hij?",
             "answer": 30,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 5 × 5 en tel er nog 5 bij op.",
             "explanation": "5 × 6 = 30."
           }
         ]
@@ -357,10 +357,10 @@ const learningChallengesLVL0008 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Donkere poort 6 groepjes van 10 portaalstenen. Hoeveel portaalstenen zijn dat samen?",
+            "prompt": "Voor de donkere poort bouwt Job 6 rijen van 10 portaalstenen. Hoeveel portaalstenen gebruikt hij?",
             "answer": 60,
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "6 groepjes van 10 eindigen op nul.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 10.",
+            "hintMoose": "Vermenigvuldig 6 met 10: zet een nul achter 6.",
             "explanation": "6 × 10 = 60."
           },
           {
@@ -370,7 +370,7 @@ const learningChallengesLVL0008 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Donkere poort 3 groepjes van 6 portaalstenen. Hoeveel portaalstenen zijn dat samen?",
+            "prompt": "Voor de donkere poort bouwt Job 3 rijen van 6 portaalstenen. Hoeveel portaalstenen gebruikt hij?",
             "answer": 18,
             "choices": [
               12,
@@ -378,8 +378,8 @@ const learningChallengesLVL0008 = [
               24,
               30
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 3 × 5 en tel er nog 3 bij op.",
             "explanation": "3 × 6 = 18."
           }
         ]
@@ -394,10 +394,10 @@ const learningChallengesLVL0008 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Donkere poort 7 groepjes van 9 portaalstenen. Hoeveel portaalstenen zijn dat samen?",
+            "prompt": "Voor de donkere poort bouwt Job 7 rijen van 9 portaalstenen. Hoeveel portaalstenen gebruikt hij?",
             "answer": 63,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 7 × 10 en haal er daarna 7 af.",
             "explanation": "7 × 9 = 63."
           },
           {
@@ -438,10 +438,10 @@ const learningChallengesLVL0008 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job verdeelt bij Donkere poort 42 portaalstenen over 6 gelijke groepen. Hoeveel portaalstenen krijgt elke groep?",
+            "prompt": "Job verdeelt 42 portaalstenen eerlijk over 6 rijen. Hoeveel stenen komen in iedere rij?",
             "answer": 7,
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+            "hintMinnie": "Verdeel 42 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 42.",
             "explanation": "42 : 6 = 7."
           }
         ]

@@ -20,21 +20,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Tien over acht",
+            "answer": "Drie uur",
             "choices": [
-              "Vijf over acht",
-              "Tien over acht",
-              "Tien voor acht",
-              "Kwart over acht"
+              "Half drie",
+              "Drie uur",
+              "Half vier",
+              "Vier uur"
             ],
             "visual": {
               "type": "clock",
-              "hour": 8,
-              "minute": 10
+              "hour": 3,
+              "minute": 0
             },
-            "hintMinnie": "Kijk naar de grote wijzer.",
-            "hintMoose": "De grote wijzer op de 2 betekent tien minuten over acht.",
-            "explanation": "Het is tien over acht."
+            "hintMinnie": "De grote wijzer staat op de 12.",
+            "hintMoose": "Als de grote wijzer op de 12 staat, kijk je welk uur de kleine wijzer aanwijst.",
+            "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 3. Het is drie uur."
           },
           {
             "id": "at-clock-1b",
@@ -44,21 +44,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Tien voor half vijf",
+            "answer": "Twaalf uur",
             "choices": [
-              "Kwart over vier",
-              "Tien voor half vijf",
-              "Tien over half vier",
-              "Half vijf"
+              "Half twaalf",
+              "Twaalf uur",
+              "Half één",
+              "Eén uur"
             ],
             "visual": {
               "type": "clock",
-              "hour": 4,
-              "minute": 20
+              "hour": 12,
+              "minute": 0
             },
-            "hintMinnie": "De grote wijzer staat op de 4.",
-            "hintMoose": "De grote wijzer op de 4 betekent tien minuten voor half. De kleine wijzer staat tussen vier en vijf.",
-            "explanation": "Het is tien voor half vijf."
+            "hintMinnie": "De grote wijzer staat op de 12.",
+            "hintMoose": "Beide wijzers wijzen naar de 12.",
+            "explanation": "De grote en de kleine wijzer staan op de 12. Het is twaalf uur."
           }
         ]
       },
@@ -73,21 +73,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Vijf voor half zeven",
+            "answer": "Zes uur",
             "choices": [
-              "Vijf over zes",
-              "Vijf voor half zeven",
+              "Half zes",
+              "Zes uur",
               "Half zeven",
-              "Vijf over half zeven"
+              "Zeven uur"
             ],
             "visual": {
               "type": "clock",
               "hour": 6,
-              "minute": 25
+              "minute": 0
             },
-            "hintMinnie": "De grote wijzer staat op de 5.",
-            "hintMoose": "Dat is vijf minuten voor het halve uur.",
-            "explanation": "Het is vijf voor half zeven."
+            "hintMinnie": "De grote wijzer staat op de 12.",
+            "hintMoose": "Kijk nu naar het cijfer dat de kleine wijzer aanwijst.",
+            "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 6. Het is zes uur."
           },
           {
             "id": "at-clock-2b",
@@ -97,21 +97,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Vijf over half elf",
+            "answer": "Negen uur",
             "choices": [
-              "Half elf",
-              "Vijf voor half elf",
-              "Vijf over half elf",
-              "Vijf voor elf"
+              "Half negen",
+              "Negen uur",
+              "Half tien",
+              "Tien uur"
             ],
             "visual": {
               "type": "clock",
-              "hour": 10,
-              "minute": 35
+              "hour": 9,
+              "minute": 0
             },
-            "hintMinnie": "De grote wijzer staat net voorbij de 6.",
-            "hintMoose": "Op de 7 is het vijf minuten na half elf.",
-            "explanation": "Het is vijf over half elf."
+            "hintMinnie": "De grote wijzer staat op de 12.",
+            "hintMoose": "De kleine wijzer wijst precies naar de 9.",
+            "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 9. Het is negen uur."
           }
         ]
       },
@@ -126,21 +126,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Tien over half drie",
+            "answer": "Tien voor half vier",
             "choices": [
-              "Tien voor half drie",
-              "Half drie",
+              "Kwart over drie",
+              "Tien voor half vier",
               "Tien over half drie",
-              "Tien voor drie"
+              "Half vier"
             ],
             "visual": {
               "type": "clock",
-              "hour": 2,
-              "minute": 40
+              "hour": 3,
+              "minute": 20
             },
-            "hintMinnie": "De grote wijzer staat op de 8.",
-            "hintMoose": "De grote wijzer op de 8 betekent tien minuten na half. De kleine wijzer staat tussen twee en drie.",
-            "explanation": "Het is tien over half drie."
+            "hintMinnie": "De grote wijzer staat op de 4.",
+            "hintMoose": "Op de 4 zijn twintig minuten voorbij. Dat is tien minuten voor half vier.",
+            "explanation": "De grote wijzer staat op de 4 en de kleine wijzer tussen de 3 en de 4. Het is tien voor half vier."
           },
           {
             "id": "at-clock-3b",
@@ -150,21 +150,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Tien voor acht",
+            "answer": "Tien over half zes",
             "choices": [
-              "Tien over zeven",
-              "Vijf voor acht",
-              "Tien voor acht",
-              "Acht uur"
+              "Tien voor half zes",
+              "Half zes",
+              "Tien over half zes",
+              "Tien voor zes"
             ],
             "visual": {
               "type": "clock",
-              "hour": 7,
-              "minute": 50
+              "hour": 5,
+              "minute": 40
             },
-            "hintMinnie": "De grote wijzer staat op de 10.",
-            "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot acht.",
-            "explanation": "Het is tien voor acht."
+            "hintMinnie": "De grote wijzer staat op de 8.",
+            "hintMoose": "Op de 8 zijn veertig minuten voorbij. Dat is tien minuten na half zes.",
+            "explanation": "De grote wijzer staat op de 8 en de kleine wijzer tussen de 5 en de 6. Het is tien over half zes."
           }
         ]
       },
@@ -179,21 +179,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Vijf over elf",
+            "answer": "Vijf voor half tien",
             "choices": [
-              "Vijf voor elf",
-              "Vijf over elf",
-              "Tien over elf",
-              "Elf uur"
+              "Vijf over negen",
+              "Vijf voor half tien",
+              "Half tien",
+              "Vijf over half tien"
             ],
             "visual": {
               "type": "clock",
-              "hour": 11,
-              "minute": 5
+              "hour": 9,
+              "minute": 25
             },
-            "hintMinnie": "De grote wijzer staat op de 1.",
-            "hintMoose": "Op de 1 zijn vijf minuten voorbij.",
-            "explanation": "Het is vijf over elf."
+            "hintMinnie": "De grote wijzer staat op de 5.",
+            "hintMoose": "Op de 5 zijn vijfentwintig minuten voorbij. Dat is vijf minuten voor half tien.",
+            "explanation": "De grote wijzer staat op de 5 en de kleine wijzer tussen de 9 en de 10. Het is vijf voor half tien."
           },
           {
             "id": "at-clock-4b",
@@ -203,21 +203,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "presentation": "bare",
             "answerMode": "multipleChoice",
             "prompt": "Hoe laat is het?",
-            "answer": "Vijf voor twee",
+            "answer": "Tien voor één",
             "choices": [
-              "Vijf over één",
-              "Tien voor twee",
-              "Vijf voor twee",
-              "Twee uur"
+              "Tien over twaalf",
+              "Vijf voor één",
+              "Tien voor één",
+              "Eén uur"
             ],
             "visual": {
               "type": "clock",
-              "hour": 1,
-              "minute": 55
+              "hour": 12,
+              "minute": 50
             },
-            "hintMinnie": "De grote wijzer staat op de 11.",
-            "hintMoose": "Vanaf de 11 duurt het nog vijf minuten tot twee.",
-            "explanation": "Het is vijf voor twee."
+            "hintMinnie": "De grote wijzer staat op de 10.",
+            "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot het volgende hele uur.",
+            "explanation": "De grote wijzer staat op de 10 en de kleine wijzer bijna op de 1. Het is tien voor één."
           }
         ]
       }
@@ -300,10 +300,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Alpenfontein 20 waterfiches over 4 gelijke groepen. Hoeveel waterfiches krijgt elke groep?",
+            "prompt": "Rond de Alpenfontein staan 4 bloembakken met samen 20 bloemen. In iedere bak staan er evenveel. Hoeveel bloemen per bak?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-            "hintMoose": "Omdat 4 × 5 = 20, is 20 : 4 = 5.",
+            "hintMinnie": "Verdeel 20 eerlijk over 4 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 20.",
             "explanation": "20 : 4 = 5."
           }
         ]
@@ -355,9 +355,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Alpenfontein 9 groepjes van 5 waterfiches. Hoeveel waterfiches zijn dat samen?",
+            "prompt": "Rond de Alpenfontein staan 9 bloembakken met elk 5 bloemen. Hoeveel bloemen zijn dat samen?",
             "answer": 45,
-            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 5.",
             "hintMoose": "Tel 9 sprongen van 5.",
             "explanation": "9 × 5 = 45."
           },
@@ -412,10 +412,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas koopt 8 routekaarten voor 9 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Atlas koopt 8 kabelbaankaartjes voor 9 euro per stuk. Hoeveel euro betaalt hij?",
             "answer": 72,
-            "hintMinnie": "Elk kaartje kost 9 euro.",
-            "hintMoose": "Reken 10 × 8 en haal 8 eraf.",
+            "hintMinnie": "Er zijn 8 gelijke bedragen van 9 euro.",
+            "hintMoose": "Reken 8 × 10 en haal er daarna 8 af.",
             "explanation": "8 × 9 = 72 euro."
           }
         ]
@@ -449,10 +449,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Rode kabelbaan 4 groepjes van 3 kabelbaankaartjes. Hoeveel kabelbaankaartjes zijn dat samen?",
+            "prompt": "Er rijden 4 kabelbaancabines met elk 3 reizigers. Hoeveel reizigers zijn dat samen?",
             "answer": 12,
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 3.",
+            "hintMoose": "Verdubbel 4 en tel er nog 4 bij op.",
             "explanation": "4 × 3 = 12."
           }
         ]
@@ -467,7 +467,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Rode kabelbaan 6 groepjes van 4 kabelbaankaartjes. Hoeveel kabelbaankaartjes zijn dat samen?",
+            "prompt": "Er rijden 6 kabelbaancabines met elk 4 reizigers. Hoeveel reizigers zijn dat samen?",
             "answer": 24,
             "choices": [
               20,
@@ -475,8 +475,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               28,
               32
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 6 twee keer.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 4.",
+            "hintMoose": "Verdubbel 6 en verdubbel de uitkomst nog eens.",
             "explanation": "6 × 4 = 24."
           },
           {
@@ -523,7 +523,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Rode kabelbaan 4 groepjes van 7 kabelbaankaartjes. Hoeveel kabelbaankaartjes zijn dat samen?",
+            "prompt": "Er rijden 4 kabelbaancabines met elk 7 reizigers. Hoeveel reizigers zijn dat samen?",
             "answer": 28,
             "choices": [
               21,
@@ -531,8 +531,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               35,
               42
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
             "explanation": "4 × 7 = 28."
           }
         ]

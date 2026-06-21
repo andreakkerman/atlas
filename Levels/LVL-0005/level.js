@@ -16,10 +16,10 @@ const learningChallengesLVL0005 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Kapiteinskaart 8 groepjes van 10 koersfiches. Hoeveel koersfiches zijn dat samen?",
+            "prompt": "Op de kapiteinskaart staan 8 routes met elk 10 koerspunten. Hoeveel koerspunten staan er in totaal?",
             "answer": 80,
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "8 groepjes van 10 eindigen op nul.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 10.",
+            "hintMoose": "Vermenigvuldig 8 met 10: zet een nul achter 8.",
             "explanation": "8 × 10 = 80."
           },
           {
@@ -47,7 +47,7 @@ const learningChallengesLVL0005 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo verdeelt bij Kapiteinskaart 36 koersfiches over 6 gelijke groepen. Hoeveel koersfiches krijgt elke groep?",
+            "prompt": "Nemo verdeelt 36 koerspunten eerlijk over 6 routes. Hoeveel koerspunten krijgt iedere route?",
             "answer": 6,
             "choices": [
               5,
@@ -55,8 +55,8 @@ const learningChallengesLVL0005 = [
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "hintMinnie": "Verdeel 36 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 36.",
             "explanation": "36 : 6 = 6."
           },
           {
@@ -66,10 +66,10 @@ const learningChallengesLVL0005 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Kapiteinskaart 4 groepjes van 3 koersfiches. Hoeveel koersfiches zijn dat samen?",
+            "prompt": "Op de kapiteinskaart staan 4 routes met elk 3 koerspunten. Hoeveel koerspunten staan er in totaal?",
             "answer": 12,
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 3.",
+            "hintMoose": "Verdubbel 4 en tel er nog 4 bij op.",
             "explanation": "4 × 3 = 12."
           }
         ]
@@ -165,10 +165,10 @@ const learningChallengesLVL0005 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Groot raam 4 groepjes van 6 raamfiches. Hoeveel raamfiches zijn dat samen?",
+            "prompt": "Door het grote raam zwemmen 4 scholen met elk 6 vissen. Hoeveel vissen zijn dat samen?",
             "answer": 24,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 4 × 5 en tel er nog 4 bij op.",
             "explanation": "4 × 6 = 24."
           },
           {
@@ -178,10 +178,10 @@ const learningChallengesLVL0005 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo verdeelt bij Groot raam 42 raamfiches over 7 gelijke groepen. Hoeveel raamfiches krijgt elke groep?",
+            "prompt": "Door het grote raam zwemmen 42 vissen in 7 even grote scholen. Hoeveel vissen zitten in iedere school?",
             "answer": 6,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 6 = 42, is 42 : 7 = 6.",
+            "hintMinnie": "Verdeel 42 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 42.",
             "explanation": "42 : 7 = 6."
           }
         ]
@@ -215,7 +215,7 @@ const learningChallengesLVL0005 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Groot raam 9 groepjes van 8 raamfiches. Hoeveel raamfiches zijn dat samen?",
+            "prompt": "Door het grote raam zwemmen 9 scholen met elk 8 vissen. Hoeveel vissen zijn dat samen?",
             "answer": 72,
             "choices": [
               64,
@@ -223,8 +223,8 @@ const learningChallengesLVL0005 = [
               80,
               88
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 9 drie keer.",
             "explanation": "9 × 8 = 72."
           }
         ]
@@ -252,10 +252,10 @@ const learningChallengesLVL0005 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo verdeelt bij Groot raam 36 raamfiches over 9 gelijke groepen. Hoeveel raamfiches krijgt elke groep?",
+            "prompt": "Door het grote raam zwemmen 36 vissen in 9 even grote scholen. Hoeveel vissen zitten in iedere school?",
             "answer": 4,
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 4 = 36, is 36 : 9 = 4.",
+            "hintMinnie": "Verdeel 36 eerlijk over 9 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 36.",
             "explanation": "36 : 9 = 4."
           }
         ]
@@ -314,7 +314,7 @@ const learningChallengesLVL0005 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo verdeelt bij Logboektafel 8 logboekkaarten over 4 gelijke groepen. Hoeveel logboekkaarten krijgt elke groep?",
+            "prompt": "Nemo verdeelt 8 aantekeningen over 4 pagina's. Op iedere pagina komen er evenveel. Hoeveel aantekeningen komen op één pagina?",
             "answer": 2,
             "choices": [
               1,
@@ -322,8 +322,8 @@ const learningChallengesLVL0005 = [
               3,
               4
             ],
-            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-            "hintMoose": "Omdat 4 × 2 = 8, is 8 : 4 = 2.",
+            "hintMinnie": "Verdeel 8 eerlijk over 4 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 8.",
             "explanation": "8 : 4 = 2."
           },
           {
@@ -357,7 +357,7 @@ const learningChallengesLVL0005 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo verdeelt bij Logboektafel 36 logboekkaarten over 6 gelijke groepen. Hoeveel logboekkaarten krijgt elke groep?",
+            "prompt": "Nemo verdeelt 36 aantekeningen over 6 pagina's. Op iedere pagina komen er evenveel. Hoeveel aantekeningen komen op één pagina?",
             "answer": 6,
             "choices": [
               5,
@@ -365,8 +365,8 @@ const learningChallengesLVL0005 = [
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "hintMinnie": "Verdeel 36 eerlijk over 6 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 36.",
             "explanation": "36 : 6 = 6."
           },
           {
@@ -400,7 +400,7 @@ const learningChallengesLVL0005 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Logboektafel 2 groepjes van 8 logboekkaarten. Hoeveel logboekkaarten zijn dat samen?",
+            "prompt": "In het logboek staan 2 pagina's met elk 8 aantekeningen. Hoeveel aantekeningen zijn dat samen?",
             "answer": 16,
             "choices": [
               8,
@@ -408,8 +408,8 @@ const learningChallengesLVL0005 = [
               24,
               32
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 2 drie keer.",
             "explanation": "2 × 8 = 16."
           },
           {
@@ -450,10 +450,10 @@ const learningChallengesLVL0005 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Logboektafel 4 groepjes van 7 logboekkaarten. Hoeveel logboekkaarten zijn dat samen?",
+            "prompt": "In het logboek staan 4 pagina's met elk 7 aantekeningen. Hoeveel aantekeningen zijn dat samen?",
             "answer": 28,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
             "explanation": "4 × 7 = 28."
           }
         ]

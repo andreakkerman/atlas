@@ -29,7 +29,7 @@ const learningChallengesLVL0011 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Brouwtafel 2 groepjes van 7 drankflesjes. Hoeveel drankflesjes zijn dat samen?",
+            "prompt": "Op de brouwtafel staan 2 rekken met elk 7 drankflesjes. Hoeveel flesjes zijn dat samen?",
             "answer": 14,
             "choices": [
               7,
@@ -37,8 +37,8 @@ const learningChallengesLVL0011 = [
               21,
               28
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 2 en 2 × 2.",
+            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 2 × 5 en 2 × 2 en tel de uitkomsten op.",
             "explanation": "2 × 7 = 14."
           }
         ]
@@ -90,10 +90,10 @@ const learningChallengesLVL0011 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Brouwtafel is 63 meter lang en heeft 9 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "De veilige route vanaf de brouwtafel is 63 meter lang en bestaat uit 9 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 7,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 9 × 7 = 63, is 63 : 9 = 7.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 9 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 63.",
             "explanation": "63 : 9 = 7 meter."
           },
           {
@@ -127,10 +127,10 @@ const learningChallengesLVL0011 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job verdeelt bij Brouwtafel 25 drankflesjes over 5 gelijke groepen. Hoeveel drankflesjes krijgt elke groep?",
+            "prompt": "Job verdeelt 25 drankflesjes eerlijk over 5 rekken. Hoeveel flesjes komen in ieder rek?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-            "hintMoose": "Omdat 5 × 5 = 25, is 25 : 5 = 5.",
+            "hintMinnie": "Verdeel 25 eerlijk over 5 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 5 welk getal uitkomt op 25.",
             "explanation": "25 : 5 = 5."
           },
           {
@@ -202,10 +202,10 @@ const learningChallengesLVL0011 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Netherbol 3 groepjes van 7 gloeiblokken. Hoeveel gloeiblokken zijn dat samen?",
+            "prompt": "Rond de Netherbol staan 3 ringen met elk 7 gloeiblokken. Hoeveel blokken zijn dat samen?",
             "answer": 21,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 3 en 2 × 3.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 3 × 5 en 3 × 2 en tel de uitkomsten op.",
             "explanation": "3 × 7 = 21."
           },
           {
@@ -215,7 +215,7 @@ const learningChallengesLVL0011 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job verdeelt bij Netherbol 54 gloeiblokken over 9 gelijke groepen. Hoeveel gloeiblokken krijgt elke groep?",
+            "prompt": "Job verdeelt 54 gloeiblokken eerlijk over 9 ringen rond de Netherbol. Hoeveel blokken komen in iedere ring?",
             "answer": 6,
             "choices": [
               5,
@@ -223,8 +223,8 @@ const learningChallengesLVL0011 = [
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 6 = 54, is 54 : 9 = 6.",
+            "hintMinnie": "Verdeel 54 eerlijk over 9 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 54.",
             "explanation": "54 : 9 = 6."
           }
         ]
@@ -239,10 +239,10 @@ const learningChallengesLVL0011 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job legt bij Netherbol 4 groepjes van 6 gloeiblokken. Hoeveel gloeiblokken zijn dat samen?",
+            "prompt": "Rond de Netherbol staan 4 ringen met elk 6 gloeiblokken. Hoeveel blokken zijn dat samen?",
             "answer": 24,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 4 × 5 en tel er nog 4 bij op.",
             "explanation": "4 × 6 = 24."
           },
           {
@@ -339,7 +339,7 @@ const learningChallengesLVL0011 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job verdeelt bij Lavakaart 24 routeblokken over 8 gelijke groepen. Hoeveel routeblokken krijgt elke groep?",
+            "prompt": "Job verdeelt 24 routeblokken eerlijk over 8 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
             "answer": 3,
             "choices": [
               2,
@@ -347,8 +347,8 @@ const learningChallengesLVL0011 = [
               4,
               5
             ],
-            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-            "hintMoose": "Omdat 8 × 3 = 24, is 24 : 8 = 3.",
+            "hintMinnie": "Verdeel 24 eerlijk over 8 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 24.",
             "explanation": "24 : 8 = 3."
           }
         ]
@@ -382,7 +382,7 @@ const learningChallengesLVL0011 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Lavakaart 4 groepjes van 7 routeblokken. Hoeveel routeblokken zijn dat samen?",
+            "prompt": "Op de lavakaart markeert Job 4 routes met elk 7 routeblokken. Hoeveel routeblokken gebruikt hij?",
             "answer": 28,
             "choices": [
               21,
@@ -390,8 +390,8 @@ const learningChallengesLVL0011 = [
               35,
               42
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
             "explanation": "4 × 7 = 28."
           }
         ]
@@ -406,7 +406,7 @@ const learningChallengesLVL0011 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Dutchtuber Job legt bij Lavakaart 6 groepjes van 8 routeblokken. Hoeveel routeblokken zijn dat samen?",
+            "prompt": "Op de lavakaart markeert Job 6 routes met elk 8 routeblokken. Hoeveel routeblokken gebruikt hij?",
             "answer": 48,
             "choices": [
               40,
@@ -414,8 +414,8 @@ const learningChallengesLVL0011 = [
               56,
               64
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 6 drie keer.",
             "explanation": "6 × 8 = 48."
           },
           {
@@ -425,10 +425,10 @@ const learningChallengesLVL0011 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job verdeelt bij Lavakaart 56 routeblokken over 8 gelijke groepen. Hoeveel routeblokken krijgt elke groep?",
+            "prompt": "Job verdeelt 56 routeblokken eerlijk over 8 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
             "answer": 7,
-            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-            "hintMoose": "Omdat 8 × 7 = 56, is 56 : 8 = 7.",
+            "hintMinnie": "Verdeel 56 eerlijk over 8 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 56.",
             "explanation": "56 : 8 = 7."
           }
         ]
@@ -462,10 +462,10 @@ const learningChallengesLVL0011 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Dutchtuber Job verdeelt bij Lavakaart 56 routeblokken over 7 gelijke groepen. Hoeveel routeblokken krijgt elke groep?",
+            "prompt": "Job verdeelt 56 routeblokken eerlijk over 7 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
             "answer": 8,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 8 = 56, is 56 : 7 = 8.",
+            "hintMinnie": "Verdeel 56 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 56.",
             "explanation": "56 : 7 = 8."
           }
         ]

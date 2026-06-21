@@ -19,10 +19,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas verdeelt bij Posbankkaart 35 routepunten over 7 gelijke groepen. Hoeveel routepunten krijgt elke groep?",
+            "prompt": "Op de Posbankkaart zijn 35 routepunten verdeeld over 7 wandelroutes. Hoeveel routepunten staan er per route?",
             "answer": 5,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 5 = 35, is 35 : 7 = 5.",
+            "hintMinnie": "Verdeel 35 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 35.",
             "explanation": "35 : 7 = 5."
           },
           {
@@ -56,10 +56,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Posbankkaart 6 groepjes van 6 routepunten. Hoeveel routepunten zijn dat samen?",
+            "prompt": "Op de Posbankkaart staan 6 wandelroutes met elk 6 routepunten. Hoeveel routepunten zijn dat samen?",
             "answer": 36,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 6 en tel nog 6 erbij.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 6 × 5 en tel er nog 6 bij op.",
             "explanation": "6 × 6 = 36."
           },
           {
@@ -69,10 +69,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Posbankkaart 8 groepjes van 7 routepunten. Hoeveel routepunten zijn dat samen?",
+            "prompt": "Op de Posbankkaart staan 8 wandelroutes met elk 7 routepunten. Hoeveel routepunten zijn dat samen?",
             "answer": 56,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
+            "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
             "explanation": "8 × 7 = 56."
           }
         ]
@@ -130,7 +130,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Posbankkaart 4 groepjes van 8 routepunten. Hoeveel routepunten zijn dat samen?",
+            "prompt": "Op de Posbankkaart staan 4 wandelroutes met elk 8 routepunten. Hoeveel routepunten zijn dat samen?",
             "answer": 32,
             "choices": [
               24,
@@ -138,8 +138,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               40,
               48
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 4 drie keer.",
             "explanation": "4 × 8 = 32."
           },
           {
@@ -180,7 +180,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Heidekijker 6 groepjes van 8 kijkpunten. Hoeveel kijkpunten zijn dat samen?",
+            "prompt": "Door de heidekijker ziet Atlas 6 zwermen met elk 8 vogels. Hoeveel vogels ziet hij?",
             "answer": 48,
             "choices": [
               40,
@@ -188,8 +188,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               56,
               64
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 8.",
+            "hintMoose": "Verdubbel 6 drie keer.",
             "explanation": "6 × 8 = 48."
           },
           {
@@ -236,10 +236,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Heidekijker is 6 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Het pad naar de heidekijker is 6 meter lang en bestaat uit 2 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 3,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 2 × 3 = 6, is 6 : 2 = 3.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 6.",
             "explanation": "6 : 2 = 3 meter."
           }
         ]
@@ -254,10 +254,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas koopt 6 routekaarten voor 4 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Atlas koopt 6 wandelkaarten voor 4 euro per stuk. Hoeveel euro betaalt hij?",
             "answer": 24,
-            "hintMinnie": "Elk kaartje kost 4 euro.",
-            "hintMoose": "Verdubbel 6 twee keer.",
+            "hintMinnie": "Er zijn 6 gelijke bedragen van 4 euro.",
+            "hintMoose": "Verdubbel 6 en verdubbel de uitkomst nog eens.",
             "explanation": "6 × 4 = 24 euro."
           },
           {
@@ -335,7 +335,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Hertenbeeld 7 groepjes van 9 wandelkaartjes. Hoeveel wandelkaartjes zijn dat samen?",
+            "prompt": "Bij het hertenbeeld staan 7 informatieborden met elk 9 wandeltekens. Hoeveel wandeltekens zijn dat samen?",
             "answer": 63,
             "choices": [
               54,
@@ -343,8 +343,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               72,
               81
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 9.",
+            "hintMoose": "Reken 7 × 10 en haal er daarna 7 af.",
             "explanation": "7 × 9 = 63."
           },
           {
@@ -354,7 +354,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas verdeelt bij Hertenbeeld 18 wandelkaartjes over 2 gelijke groepen. Hoeveel wandelkaartjes krijgt elke groep?",
+            "prompt": "Atlas verdeelt 18 wandelkaartjes eerlijk over 2 groepen wandelaars. Hoeveel kaartjes krijgt iedere groep?",
             "answer": 9,
             "choices": [
               8,
@@ -362,8 +362,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 2 helpt?",
-            "hintMoose": "Omdat 2 × 9 = 18, is 18 : 2 = 9.",
+            "hintMinnie": "Verdeel 18 eerlijk over 2 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 18.",
             "explanation": "18 : 2 = 9."
           }
         ]
@@ -391,10 +391,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Atlas legt bij Hertenbeeld 3 groepjes van 10 wandelkaartjes. Hoeveel wandelkaartjes zijn dat samen?",
+            "prompt": "Bij het hertenbeeld staan 3 informatieborden met elk 10 wandeltekens. Hoeveel wandeltekens zijn dat samen?",
             "answer": 30,
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "3 groepjes van 10 eindigen op nul.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 10.",
+            "hintMoose": "Vermenigvuldig 3 met 10: zet een nul achter 3.",
             "explanation": "3 × 10 = 30."
           }
         ]
@@ -409,10 +409,10 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Hertenbeeld is 24 meter lang en heeft 4 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Het pad naar het hertenbeeld is 24 meter lang en verdeeld in 4 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 6,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 4 × 6 = 24, is 24 : 4 = 6.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 4 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 24.",
             "explanation": "24 : 4 = 6 meter."
           },
           {
@@ -459,7 +459,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Atlas legt bij Hertenbeeld 7 groepjes van 2 wandelkaartjes. Hoeveel wandelkaartjes zijn dat samen?",
+            "prompt": "Bij het hertenbeeld staan 7 informatieborden met elk 2 wandeltekens. Hoeveel wandeltekens zijn dat samen?",
             "answer": 14,
             "choices": [
               12,
@@ -467,7 +467,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               16,
               18
             ],
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 7.",
             "explanation": "7 × 2 = 14."
           }

@@ -66,7 +66,7 @@ const learningChallengesLVL0004 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Havenkaart 7 groepjes van 6 routefiches. Hoeveel routefiches zijn dat samen?",
+            "prompt": "Op de havenkaart staan 7 routes met elk 6 meetpunten. Hoeveel meetpunten staan er in totaal?",
             "answer": 42,
             "choices": [
               36,
@@ -74,8 +74,8 @@ const learningChallengesLVL0004 = [
               48,
               54
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 7 × 5 en tel er nog 7 bij op.",
             "explanation": "7 × 6 = 42."
           }
         ]
@@ -133,9 +133,9 @@ const learningChallengesLVL0004 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Havenkaart 9 groepjes van 5 routefiches. Hoeveel routefiches zijn dat samen?",
+            "prompt": "Op de havenkaart staan 9 routes met elk 5 meetpunten. Hoeveel meetpunten staan er in totaal?",
             "answer": 45,
-            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 5.",
             "hintMoose": "Tel 9 sprongen van 5.",
             "explanation": "9 × 5 = 45."
           },
@@ -264,10 +264,10 @@ const learningChallengesLVL0004 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Koperen kijker 5 groepjes van 10 kijkkaarten. Hoeveel kijkkaarten zijn dat samen?",
+            "prompt": "Nemo bekijkt 5 sterrenbeelden met elk 10 heldere sterren. Hoeveel sterren ziet hij?",
             "answer": 50,
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 10.",
+            "hintMoose": "Vermenigvuldig 5 met 10: zet een nul achter 5.",
             "explanation": "5 × 10 = 50."
           }
         ]
@@ -282,7 +282,7 @@ const learningChallengesLVL0004 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Koperen kijker 9 groepjes van 5 kijkkaarten. Hoeveel kijkkaarten zijn dat samen?",
+            "prompt": "Nemo bekijkt 9 sterrenbeelden met elk 5 heldere sterren. Hoeveel sterren ziet hij?",
             "answer": 45,
             "choices": [
               40,
@@ -290,7 +290,7 @@ const learningChallengesLVL0004 = [
               50,
               55
             ],
-            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 5.",
             "hintMoose": "Tel 9 sprongen van 5.",
             "explanation": "9 × 5 = 45."
           },
@@ -301,7 +301,7 @@ const learningChallengesLVL0004 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Koperen kijker 3 groepjes van 6 kijkkaarten. Hoeveel kijkkaarten zijn dat samen?",
+            "prompt": "Nemo bekijkt 3 sterrenbeelden met elk 6 heldere sterren. Hoeveel sterren ziet hij?",
             "answer": 18,
             "choices": [
               12,
@@ -309,8 +309,8 @@ const learningChallengesLVL0004 = [
               24,
               30
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 3 × 5 en tel er nog 3 bij op.",
             "explanation": "3 × 6 = 18."
           }
         ]
@@ -332,11 +332,11 @@ const learningChallengesLVL0004 = [
             "family": "money",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo koopt 8 havenkaarten voor 10 euro per stuk. Hoeveel euro betaalt hij?",
+            "prompt": "Nemo koopt 8 reservelampen voor 10 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 80,
-            "hintMinnie": "Elk kaartje kost 10 euro.",
-            "hintMoose": "8 groepjes van 10 eindigen op nul.",
-            "explanation": "8 × 10 = 80 euro."
+            "hintMinnie": "Er zijn 8 gelijke bedragen van 10 munten.",
+            "hintMoose": "Vermenigvuldig 8 met 10: zet een nul achter 8.",
+            "explanation": "8 × 10 = 80 munten."
           },
           {
             "id": "nautilusLight-1b",
@@ -400,10 +400,10 @@ const learningChallengesLVL0004 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Nautiluslamp is 16 meter lang en heeft 8 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Een kabel naar de Nautiluslamp is 16 meter lang. Hij wordt in 8 gelijke stukken verdeeld. Hoe lang is ieder stuk?",
             "answer": 2,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 8 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 16.",
             "explanation": "16 : 8 = 2 meter."
           },
           {
@@ -413,10 +413,10 @@ const learningChallengesLVL0004 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo legt bij Nautiluslamp 9 groepjes van 6 lichtfiches. Hoeveel lichtfiches zijn dat samen?",
+            "prompt": "De Nautiluslamp heeft 9 ringen met elk 6 lichtpunten. Hoeveel lichtpunten zijn dat samen?",
             "answer": 54,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 6.",
+            "hintMoose": "Reken 9 × 5 en tel er nog 9 bij op.",
             "explanation": "9 × 6 = 54."
           }
         ]

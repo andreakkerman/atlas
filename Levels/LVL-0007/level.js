@@ -233,10 +233,10 @@ const learningChallengesLVL0007 = [
             "family": "route",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "De route bij Stuurwiel is 20 meter lang en heeft 4 gelijke stukken. Hoeveel meter is elk stuk?",
+            "prompt": "Een touw bij het stuurwiel is 20 meter lang. Nemo verdeelt het in 4 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 5,
-            "hintMinnie": "Verdeel de route in gelijke stukken.",
-            "hintMoose": "Omdat 4 × 5 = 20, is 20 : 4 = 5.",
+            "hintMinnie": "Verdeel de totale lengte eerlijk over 4 gelijke stukken.",
+            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 20.",
             "explanation": "20 : 4 = 5 meter."
           }
         ]
@@ -270,7 +270,7 @@ const learningChallengesLVL0007 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo verdeelt bij Stuurwiel 18 koersfiches over 3 gelijke groepen. Hoeveel koersfiches krijgt elke groep?",
+            "prompt": "Nemo verdeelt 18 koerskaarten eerlijk over 3 reddingsboten. Hoeveel kaarten krijgt iedere boot?",
             "answer": 6,
             "choices": [
               5,
@@ -278,8 +278,8 @@ const learningChallengesLVL0007 = [
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-            "hintMoose": "Omdat 3 × 6 = 18, is 18 : 3 = 6.",
+            "hintMinnie": "Verdeel 18 eerlijk over 3 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 18.",
             "explanation": "18 : 3 = 6."
           }
         ]
@@ -294,10 +294,10 @@ const learningChallengesLVL0007 = [
             "family": "story_division",
             "presentation": "story",
             "answerMode": "open",
-            "prompt": "Nemo verdeelt bij Stuurwiel 21 koersfiches over 7 gelijke groepen. Hoeveel koersfiches krijgt elke groep?",
+            "prompt": "Nemo verdeelt 21 koerskaarten eerlijk over 7 reddingsboten. Hoeveel kaarten krijgt iedere boot?",
             "answer": 3,
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 3 = 21, is 21 : 7 = 3.",
+            "hintMinnie": "Verdeel 21 eerlijk over 7 gelijke groepen.",
+            "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 21.",
             "explanation": "21 : 7 = 3."
           },
           {
@@ -474,7 +474,7 @@ const learningChallengesLVL0007 = [
             "family": "story_multiplication",
             "presentation": "story",
             "answerMode": "multipleChoice",
-            "prompt": "Nemo legt bij Eilandkaart 7 groepjes van 2 routefiches. Hoeveel routefiches zijn dat samen?",
+            "prompt": "Op de eilandkaart staan 7 routes met elk 2 herkenningspunten. Hoeveel herkenningspunten zijn dat samen?",
             "answer": 14,
             "choices": [
               12,
@@ -482,7 +482,7 @@ const learningChallengesLVL0007 = [
               16,
               18
             ],
-            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 2.",
             "hintMoose": "Verdubbel 7.",
             "explanation": "7 × 2 = 14."
           }
