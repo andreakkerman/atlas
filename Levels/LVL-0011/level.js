@@ -1,5 +1,479 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0011 = [
+  {
+    "id": "potionTable",
+    "anchorId": "potionTable",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "potionTable-slot-1",
+        "variants": [
+          {
+            "id": "potionTable-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 4 = ?",
+            "answer": 24,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 6 twee keer.",
+            "explanation": "6 × 4 = 24."
+          },
+          {
+            "id": "potionTable-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job legt bij Brouwtafel 2 groepjes van 7 drankflesjes. Hoeveel drankflesjes zijn dat samen?",
+            "answer": 14,
+            "choices": [
+              7,
+              14,
+              21,
+              28
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 2 en 2 × 2.",
+            "explanation": "2 × 7 = 14."
+          }
+        ]
+      },
+      {
+        "id": "potionTable-slot-2",
+        "variants": [
+          {
+            "id": "potionTable-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "8 × 4 = ?",
+            "answer": 32,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 8 twee keer.",
+            "explanation": "8 × 4 = 32."
+          },
+          {
+            "id": "potionTable-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "28 : 7 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 4 = 28, is 28 : 7 = 4.",
+            "explanation": "28 : 7 = 4."
+          }
+        ]
+      },
+      {
+        "id": "potionTable-slot-3",
+        "variants": [
+          {
+            "id": "potionTable-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Brouwtafel is 63 meter lang en heeft 9 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 7,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 9 × 7 = 63, is 63 : 9 = 7.",
+            "explanation": "63 : 9 = 7 meter."
+          },
+          {
+            "id": "potionTable-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 : 3 = ?",
+            "answer": 2,
+            "choices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 2 = 6, is 6 : 3 = 2.",
+            "explanation": "6 : 3 = 2."
+          }
+        ]
+      },
+      {
+        "id": "potionTable-slot-4",
+        "variants": [
+          {
+            "id": "potionTable-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job verdeelt bij Brouwtafel 25 drankflesjes over 5 gelijke groepen. Hoeveel drankflesjes krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 5 = 25, is 25 : 5 = 5.",
+            "explanation": "25 : 5 = 5."
+          },
+          {
+            "id": "potionTable-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "12 : 3 = ?",
+            "answer": 4,
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 4 = 12, is 12 : 3 = 4.",
+            "explanation": "12 : 3 = 4."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "netherOrb",
+    "anchorId": "netherOrb",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "netherOrb-slot-1",
+        "variants": [
+          {
+            "id": "netherOrb-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 8 = ?",
+            "answer": 16,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "explanation": "2 × 8 = 16."
+          },
+          {
+            "id": "netherOrb-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 2 = ?",
+            "answer": 10,
+            "choices": [
+              8,
+              10,
+              12,
+              14
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 5.",
+            "explanation": "5 × 2 = 10."
+          }
+        ]
+      },
+      {
+        "id": "netherOrb-slot-2",
+        "variants": [
+          {
+            "id": "netherOrb-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Netherbol 3 groepjes van 7 gloeiblokken. Hoeveel gloeiblokken zijn dat samen?",
+            "answer": 21,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 3 en 2 × 3.",
+            "explanation": "3 × 7 = 21."
+          },
+          {
+            "id": "netherOrb-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job verdeelt bij Netherbol 54 gloeiblokken over 9 gelijke groepen. Hoeveel gloeiblokken krijgt elke groep?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 6 = 54, is 54 : 9 = 6.",
+            "explanation": "54 : 9 = 6."
+          }
+        ]
+      },
+      {
+        "id": "netherOrb-slot-3",
+        "variants": [
+          {
+            "id": "netherOrb-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Netherbol 4 groepjes van 6 gloeiblokken. Hoeveel gloeiblokken zijn dat samen?",
+            "answer": 24,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 6 = 24."
+          },
+          {
+            "id": "netherOrb-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "choices": [
+              48,
+              56,
+              64,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          }
+        ]
+      },
+      {
+        "id": "netherOrb-slot-4",
+        "variants": [
+          {
+            "id": "netherOrb-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 10 = ?",
+            "answer": 20,
+            "choices": [
+              10,
+              20,
+              30,
+              40
+            ],
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "2 groepjes van 10 eindigen op nul.",
+            "explanation": "2 × 10 = 20."
+          },
+          {
+            "id": "netherOrb-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "56 : 7 = ?",
+            "answer": 8,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 8 = 56, is 56 : 7 = 8.",
+            "explanation": "56 : 7 = 8."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "netherMap",
+    "anchorId": "netherMap",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "netherMap-slot-1",
+        "variants": [
+          {
+            "id": "netherMap-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "27 : 9 = ?",
+            "answer": 3,
+            "choices": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 3 = 27, is 27 : 9 = 3.",
+            "explanation": "27 : 9 = 3."
+          },
+          {
+            "id": "netherMap-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job verdeelt bij Lavakaart 24 routeblokken over 8 gelijke groepen. Hoeveel routeblokken krijgt elke groep?",
+            "answer": 3,
+            "choices": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 3 = 24, is 24 : 8 = 3.",
+            "explanation": "24 : 8 = 3."
+          }
+        ]
+      },
+      {
+        "id": "netherMap-slot-2",
+        "variants": [
+          {
+            "id": "netherMap-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "3 × 7 = ?",
+            "answer": 21,
+            "choices": [
+              14,
+              21,
+              28,
+              35
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 3 en 2 × 3.",
+            "explanation": "3 × 7 = 21."
+          },
+          {
+            "id": "netherMap-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job legt bij Lavakaart 4 groepjes van 7 routeblokken. Hoeveel routeblokken zijn dat samen?",
+            "answer": 28,
+            "choices": [
+              21,
+              28,
+              35,
+              42
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      },
+      {
+        "id": "netherMap-slot-3",
+        "variants": [
+          {
+            "id": "netherMap-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job legt bij Lavakaart 6 groepjes van 8 routeblokken. Hoeveel routeblokken zijn dat samen?",
+            "answer": 48,
+            "choices": [
+              40,
+              48,
+              56,
+              64
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          },
+          {
+            "id": "netherMap-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job verdeelt bij Lavakaart 56 routeblokken over 8 gelijke groepen. Hoeveel routeblokken krijgt elke groep?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 7 = 56, is 56 : 8 = 7.",
+            "explanation": "56 : 8 = 7."
+          }
+        ]
+      },
+      {
+        "id": "netherMap-slot-4",
+        "variants": [
+          {
+            "id": "netherMap-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 5 = ?",
+            "answer": 25,
+            "choices": [
+              20,
+              25,
+              30,
+              35
+            ],
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 5 sprongen van 5.",
+            "explanation": "5 × 5 = 25."
+          },
+          {
+            "id": "netherMap-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job verdeelt bij Lavakaart 56 routeblokken over 7 gelijke groepen. Hoeveel routeblokken krijgt elke groep?",
+            "answer": 8,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 8 = 56, is 56 : 7 = 8.",
+            "explanation": "56 : 7 = 8."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
   id: "LVL-0011",
   title: "De Netherproef",
@@ -189,6 +663,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       activate: "De deur naar boven gaat open."
     }
   ],
+  learningChallenges: learningChallengesLVL0011,
   runes: [
     {
       id: "potionTable",
@@ -199,14 +674,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       intro: "Flesjes borrelen op de brouwtafel.",
       prompt: "Tel de borrelende flesjes.",
       solved: "Mooi! De flesjes stoppen met pruttelen.",
-      questions: [
-        { a: 3, b: 9 },
-        { a: 4, b: 7 },
-        { a: 5, b: 8 },
-        { a: 6, b: 5 },
-        { a: 8, b: 2 },
-        { a: 9, b: 4 }
-      ]
+      challengeId: "potionTable"
     },
     {
       id: "netherOrb",
@@ -217,14 +685,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       intro: "De paarse bol draait in vuurlicht.",
       prompt: "Tel de paarse pulsen.",
       solved: "Goed zo! De bol blijft in balans.",
-      questions: [
-        { a: 6, b: 7 },
-        { a: 8, b: 4 },
-        { a: 7, b: 5 },
-        { a: 10, b: 3 },
-        { a: 9, b: 6 },
-        { a: 5, b: 9 }
-      ]
+      challengeId: "netherOrb"
     },
     {
       id: "netherMap",
@@ -235,14 +696,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       intro: "De kaart toont veilige stenen tussen lava.",
       prompt: "Tel de veilige stenen.",
       solved: "Sterk! De kaart vindt de deur.",
-      questions: [
-        { a: 8, b: 8 },
-        { a: 7, b: 9 },
-        { a: 10, b: 6 },
-        { a: 6, b: 8 },
-        { a: 9, b: 7 },
-        { a: 10, b: 8 }
-      ]
+      challengeId: "netherMap"
     }
   ],
   reward: {

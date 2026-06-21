@@ -1,5 +1,473 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0012 = [
+  {
+    "id": "homeMap",
+    "anchorId": "homeMap",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "homeMap-slot-1",
+        "variants": [
+          {
+            "id": "homeMap-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 4 = ?",
+            "answer": 24,
+            "choices": [
+              20,
+              24,
+              28,
+              32
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 6 twee keer.",
+            "explanation": "6 × 4 = 24."
+          },
+          {
+            "id": "homeMap-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "36 : 9 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 4 = 36, is 36 : 9 = 4.",
+            "explanation": "36 : 9 = 4."
+          }
+        ]
+      },
+      {
+        "id": "homeMap-slot-2",
+        "variants": [
+          {
+            "id": "homeMap-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "21 : 7 = ?",
+            "answer": 3,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 3 = 21, is 21 : 7 = 3.",
+            "explanation": "21 : 7 = 3."
+          },
+          {
+            "id": "homeMap-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 4 = ?",
+            "answer": 36,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 9 twee keer.",
+            "explanation": "9 × 4 = 36."
+          }
+        ]
+      },
+      {
+        "id": "homeMap-slot-3",
+        "variants": [
+          {
+            "id": "homeMap-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 4 = ?",
+            "answer": 8,
+            "choices": [
+              4,
+              8,
+              12,
+              16
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 2 twee keer.",
+            "explanation": "2 × 4 = 8."
+          },
+          {
+            "id": "homeMap-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job koopt 7 bouwkaarten voor 8 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 56,
+            "hintMinnie": "Elk kaartje kost 8 euro.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56 euro."
+          }
+        ]
+      },
+      {
+        "id": "homeMap-slot-4",
+        "variants": [
+          {
+            "id": "homeMap-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Thuiskaart 8 groepjes van 8 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+            "answer": 64,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "explanation": "8 × 8 = 64."
+          },
+          {
+            "id": "homeMap-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 4 = ?",
+            "answer": 20,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 5 twee keer.",
+            "explanation": "5 × 4 = 20."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "enchantTable",
+    "anchorId": "enchantTable",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "enchantTable-slot-1",
+        "variants": [
+          {
+            "id": "enchantTable-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 6 = ?",
+            "answer": 48,
+            "choices": [
+              42,
+              48,
+              54,
+              60
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 8 en tel nog 8 erbij.",
+            "explanation": "8 × 6 = 48."
+          },
+          {
+            "id": "enchantTable-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job verdeelt bij Betovertafel 54 betoverboeken over 6 gelijke groepen. Hoeveel betoverboeken krijgt elke groep?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 9 = 54, is 54 : 6 = 9.",
+            "explanation": "54 : 6 = 9."
+          }
+        ]
+      },
+      {
+        "id": "enchantTable-slot-2",
+        "variants": [
+          {
+            "id": "enchantTable-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 3 = ?",
+            "answer": 21,
+            "choices": [
+              18,
+              21,
+              24,
+              27
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 3 = 21."
+          },
+          {
+            "id": "enchantTable-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 3 = ?",
+            "answer": 24,
+            "choices": [
+              21,
+              24,
+              27,
+              30
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 8 en tel nog 8 erbij.",
+            "explanation": "8 × 3 = 24."
+          }
+        ]
+      },
+      {
+        "id": "enchantTable-slot-3",
+        "variants": [
+          {
+            "id": "enchantTable-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 8 = ?",
+            "answer": 48,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          },
+          {
+            "id": "enchantTable-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          }
+        ]
+      },
+      {
+        "id": "enchantTable-slot-4",
+        "variants": [
+          {
+            "id": "enchantTable-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 9 = ?",
+            "answer": 81,
+            "choices": [
+              72,
+              81,
+              90,
+              99
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 9 en haal 9 eraf.",
+            "explanation": "9 × 9 = 81."
+          },
+          {
+            "id": "enchantTable-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "3 × 2 = ?",
+            "answer": 6,
+            "choices": [
+              4,
+              6,
+              8,
+              10
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 3.",
+            "explanation": "3 × 2 = 6."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "purplePortal",
+    "anchorId": "purplePortal",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "purplePortal-slot-1",
+        "variants": [
+          {
+            "id": "purplePortal-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 4 = ?",
+            "answer": 24,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 6 twee keer.",
+            "explanation": "6 × 4 = 24."
+          },
+          {
+            "id": "purplePortal-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "36 : 9 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 4 = 36, is 36 : 9 = 4.",
+            "explanation": "36 : 9 = 4."
+          }
+        ]
+      },
+      {
+        "id": "purplePortal-slot-2",
+        "variants": [
+          {
+            "id": "purplePortal-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 2 = ?",
+            "answer": 12,
+            "choices": [
+              10,
+              12,
+              14,
+              16
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 6.",
+            "explanation": "6 × 2 = 12."
+          },
+          {
+            "id": "purplePortal-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 7 = ?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      },
+      {
+        "id": "purplePortal-slot-3",
+        "variants": [
+          {
+            "id": "purplePortal-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Paars portaal is 80 meter lang en heeft 10 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 8,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 10 × 8 = 80, is 80 : 10 = 8.",
+            "explanation": "80 : 10 = 8 meter."
+          },
+          {
+            "id": "purplePortal-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          }
+        ]
+      },
+      {
+        "id": "purplePortal-slot-4",
+        "variants": [
+          {
+            "id": "purplePortal-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "36 : 6 = ?",
+            "answer": 6,
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "explanation": "36 : 6 = 6."
+          },
+          {
+            "id": "purplePortal-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job legt bij Paars portaal 3 groepjes van 2 portaalblokken. Hoeveel portaalblokken zijn dat samen?",
+            "answer": 6,
+            "choices": [
+              4,
+              6,
+              8,
+              10
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 3.",
+            "explanation": "3 × 2 = 6."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
   id: "LVL-0012",
   title: "De Weg Naar Huis",
@@ -42,7 +510,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
   challengeArt: "Levels/LVL-0012/assets/dutchtuber-job.png",
   player: {
     startNode: "left-door-start",
-    start: { x: 238, y: 540 }
+    start: { x: 247, y: 577 }
   },
   interactiveObjects: [
     {
@@ -189,6 +657,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       activate: "Sven stapt terug naar huis."
     }
   ],
+  learningChallenges: learningChallengesLVL0012,
   runes: [
     {
       id: "homeMap",
@@ -199,14 +668,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       intro: "De kaart toont de laatste route.",
       prompt: "Tel de blokken naar huis.",
       solved: "Mooi! De kaart wijst naar rechts.",
-      questions: [
-        { a: 3, b: 6 },
-        { a: 4, b: 8 },
-        { a: 5, b: 7 },
-        { a: 6, b: 4 },
-        { a: 7, b: 3 },
-        { a: 8, b: 5 }
-      ]
+      challengeId: "homeMap"
     },
     {
       id: "enchantTable",
@@ -217,14 +679,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       intro: "De betovertafel knispert zacht.",
       prompt: "Tel de lichtletters.",
       solved: "Goed zo! De tafel klapt dicht.",
-      questions: [
-        { a: 6, b: 7 },
-        { a: 8, b: 3 },
-        { a: 9, b: 4 },
-        { a: 7, b: 8 },
-        { a: 10, b: 5 },
-        { a: 5, b: 9 }
-      ]
+      challengeId: "enchantTable"
     },
     {
       id: "purplePortal",
@@ -235,14 +690,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       intro: "Het portaal zoemt tussen twee werelden.",
       prompt: "Tel de paarse blokken.",
       solved: "Sterk! Het portaal wijst naar de uitgang.",
-      questions: [
-        { a: 8, b: 8 },
-        { a: 9, b: 6 },
-        { a: 10, b: 7 },
-        { a: 6, b: 9 },
-        { a: 7, b: 10 },
-        { a: 9, b: 8 }
-      ]
+      challengeId: "purplePortal"
     }
   ],
   reward: {

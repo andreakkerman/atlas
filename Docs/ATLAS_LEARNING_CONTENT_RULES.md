@@ -75,25 +75,27 @@ Prioritize multiplication-table automation.
 
 Preferred tables:
 
-* 6
-* 7
-* 8
-* 9
+6
+7
+8
+9
 
-Also include review of:
+Also include regular mixed review of:
 
-* 3
-* 4
-* 5
+2
+3
+4
+5
+10
+
+Across a full adventure, aim for approximately 60% of multiplication and division practice to target tables 6–9. The remaining practice should regularly revisit tables 2–5 and 10 so that Atlas supports mixed retrieval rather than only repeated practice of the harder tables.
 
 Good bare multiplication examples:
 
-```text
 7 × 8 = ?
 6 × 9 = ?
 8 × 4 = ?
 9 × 5 = ?
-```
 
 Good Minnie hints:
 

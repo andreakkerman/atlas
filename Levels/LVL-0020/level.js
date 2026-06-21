@@ -4,472 +4,478 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const asset = "Levels/LVL-0020/assets/rheden.png";
   const challengerAsset = "Levels/LVL-0020/assets/atlas-de-reiziger.png";
   const learningChallenges = [
-    {
-      "id": "mapBoard",
-      "anchorId": "mapBoard",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "map-board-slot-1",
-          "variants": [
-            {
-              "id": "map-board-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "7 kaartvakken hebben elk 8 routepunten. Hoeveel routepunten zijn dat samen?",
-              "answer": 56,
-              "hintMinnie": "Zoek 7 gelijke groepjes van 8.",
-              "hintMoose": "Reken 7 × 8 stap voor stap.",
-              "explanation": "7 × 8 = 56."
-            },
-            {
-              "id": "map-board-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 9 rijen met telkens 6 routepunten. Hoeveel routepunten zijn dat?",
-              "answer": 54,
-              "choices": [
-                50,
-                54,
-                58,
-                62
-              ],
-              "hintMinnie": "Denk aan 9 groepjes van 6.",
-              "hintMoose": "Vermenigvuldig 9 met 6.",
-              "explanation": "9 × 6 = 54."
-            }
-          ]
-        },
-        {
-          "id": "map-board-slot-2",
-          "variants": [
-            {
-              "id": "map-board-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "56 routepunten worden eerlijk verdeeld over 7 kaartvakken. Hoeveel krijgt elke groep?",
-              "answer": 8,
-              "choices": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "hintMinnie": "Verdeel 56 in 7 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 7 precies 56 is.",
-              "explanation": "56 : 7 = 8."
-            },
-            {
-              "id": "map-board-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 72 routepunten. In elke groep passen er 8. Hoeveel groepen zijn nodig?",
-              "answer": 9,
-              "hintMinnie": "Maak groepjes van 8.",
-              "hintMoose": "Reken 72 gedeeld door 8.",
-              "explanation": "72 : 8 = 9."
-            }
-          ]
-        },
-        {
-          "id": "map-board-slot-3",
-          "variants": [
-            {
-              "id": "map-board-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 5 wandelkaarten voor €4 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 20,
-              "hintMinnie": "Elk stuk kost €4.",
-              "hintMoose": "Reken 5 × 4.",
-              "explanation": "5 × €4 = €20."
-            },
-            {
-              "id": "map-board-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Posbankkaart is 63 meter en heeft 7 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 7 gelijke delen.",
-              "hintMoose": "Reken 63 : 7.",
-              "explanation": "63 : 7 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "map-board-slot-4",
-          "variants": [
-            {
-              "id": "map-board-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "8 × 9 = ?",
-              "answer": 72,
-              "hintMinnie": "Splits 8 in handige delen.",
-              "hintMoose": "Reken 8 groepjes van 9.",
-              "explanation": "8 × 9 = 72."
-            },
-            {
-              "id": "map-board-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "54 : 6 = ?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Zoek welk getal keer 6 gelijk is aan 54.",
-              "hintMoose": "Verdeel 54 in groepjes van 6.",
-              "explanation": "54 : 6 = 9."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "telescope",
-      "anchorId": "telescope",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "telescope-slot-1",
-          "variants": [
-            {
-              "id": "telescope-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "6 uitkijkrondes hebben elk 9 uitzichtpunten. Hoeveel uitzichtpunten zijn dat samen?",
-              "answer": 54,
-              "hintMinnie": "Zoek 6 gelijke groepjes van 9.",
-              "hintMoose": "Reken 6 × 9 stap voor stap.",
-              "explanation": "6 × 9 = 54."
-            },
-            {
-              "id": "telescope-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 8 rijen met telkens 7 uitzichtpunten. Hoeveel uitzichtpunten zijn dat?",
-              "answer": 56,
-              "choices": [
-                52,
-                56,
-                60,
-                64
-              ],
-              "hintMinnie": "Denk aan 8 groepjes van 7.",
-              "hintMoose": "Vermenigvuldig 8 met 7.",
-              "explanation": "8 × 7 = 56."
-            }
-          ]
-        },
-        {
-          "id": "telescope-slot-2",
-          "variants": [
-            {
-              "id": "telescope-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "54 uitzichtpunten worden eerlijk verdeeld over 6 uitkijkrondes. Hoeveel krijgt elke groep?",
-              "answer": 9,
-              "choices": [
-                7,
-                9,
-                11,
-                13
-              ],
-              "hintMinnie": "Verdeel 54 in 6 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 6 precies 54 is.",
-              "explanation": "54 : 6 = 9."
-            },
-            {
-              "id": "telescope-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 64 uitzichtpunten. In elke groep passen er 8. Hoeveel groepen zijn nodig?",
-              "answer": 8,
-              "hintMinnie": "Maak groepjes van 8.",
-              "hintMoose": "Reken 64 gedeeld door 8.",
-              "explanation": "64 : 8 = 8."
-            }
-          ]
-        },
-        {
-          "id": "telescope-slot-3",
-          "variants": [
-            {
-              "id": "telescope-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 4 kijkkaarten voor €6 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 24,
-              "hintMinnie": "Elk stuk kost €6.",
-              "hintMoose": "Reken 4 × 6.",
-              "explanation": "4 × €6 = €24."
-            },
-            {
-              "id": "telescope-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Heidekijker is 72 meter en heeft 9 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Verdeel de hele route in 9 gelijke delen.",
-              "hintMoose": "Reken 72 : 9.",
-              "explanation": "72 : 9 = 8 meter."
-            }
-          ]
-        },
-        {
-          "id": "telescope-slot-4",
-          "variants": [
-            {
-              "id": "telescope-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "9 × 7 = ?",
-              "answer": 63,
-              "hintMinnie": "Splits 9 in handige delen.",
-              "hintMoose": "Reken 9 groepjes van 7.",
-              "explanation": "9 × 7 = 63."
-            },
-            {
-              "id": "telescope-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "63 : 7 = ?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Zoek welk getal keer 7 gelijk is aan 63.",
-              "hintMoose": "Verdeel 63 in groepjes van 7.",
-              "explanation": "63 : 7 = 9."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "deerStatue",
-      "anchorId": "deerStatue",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "deer-statue-slot-1",
-          "variants": [
-            {
-              "id": "deer-statue-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "8 wandelgroepen hebben elk 8 wandelaars. Hoeveel wandelaars zijn dat samen?",
-              "answer": 64,
-              "hintMinnie": "Zoek 8 gelijke groepjes van 8.",
-              "hintMoose": "Reken 8 × 8 stap voor stap.",
-              "explanation": "8 × 8 = 64."
-            },
-            {
-              "id": "deer-statue-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 7 rijen met telkens 9 wandelaars. Hoeveel wandelaars zijn dat?",
-              "answer": 63,
-              "choices": [
-                59,
-                63,
-                67,
-                71
-              ],
-              "hintMinnie": "Denk aan 7 groepjes van 9.",
-              "hintMoose": "Vermenigvuldig 7 met 9.",
-              "explanation": "7 × 9 = 63."
-            }
-          ]
-        },
-        {
-          "id": "deer-statue-slot-2",
-          "variants": [
-            {
-              "id": "deer-statue-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "72 wandelaars worden eerlijk verdeeld over 8 wandelgroepen. Hoeveel krijgt elke groep?",
-              "answer": 9,
-              "choices": [
-                7,
-                9,
-                11,
-                13
-              ],
-              "hintMinnie": "Verdeel 72 in 8 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 8 precies 72 is.",
-              "explanation": "72 : 8 = 9."
-            },
-            {
-              "id": "deer-statue-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 56 wandelaars. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
-              "answer": 8,
-              "hintMinnie": "Maak groepjes van 7.",
-              "hintMoose": "Reken 56 gedeeld door 7.",
-              "explanation": "56 : 7 = 8."
-            }
-          ]
-        },
-        {
-          "id": "deer-statue-slot-3",
-          "variants": [
-            {
-              "id": "deer-statue-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 6 hertenkaarten voor €5 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 30,
-              "hintMinnie": "Elk stuk kost €5.",
-              "hintMoose": "Reken 6 × 5.",
-              "explanation": "6 × €5 = €30."
-            },
-            {
-              "id": "deer-statue-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs het Hertenbeeld is 64 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
-              "hintMoose": "Reken 64 : 8.",
-              "explanation": "64 : 8 = 8 meter."
-            }
-          ]
-        },
-        {
-          "id": "deer-statue-slot-4",
-          "variants": [
-            {
-              "id": "deer-statue-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "8 × 9 = ?",
-              "answer": 72,
-              "hintMinnie": "Splits 8 in handige delen.",
-              "hintMoose": "Reken 8 groepjes van 9.",
-              "explanation": "8 × 9 = 72."
-            },
-            {
-              "id": "deer-statue-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "54 : 6 = ?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Zoek welk getal keer 6 gelijk is aan 54.",
-              "hintMoose": "Verdeel 54 in groepjes van 6.",
-              "explanation": "54 : 6 = 9."
-            }
-          ]
-        }
-      ]
-    }
-  ];
+  {
+    "id": "mapBoard",
+    "anchorId": "mapBoard",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "map-board-slot-1",
+        "variants": [
+          {
+            "id": "map-board-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas verdeelt bij Posbankkaart 35 routepunten over 7 gelijke groepen. Hoeveel routepunten krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 5 = 35, is 35 : 7 = 5.",
+            "explanation": "35 : 7 = 5."
+          },
+          {
+            "id": "map-board-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 7 = ?",
+            "answer": 42,
+            "choices": [
+              35,
+              42,
+              49,
+              56
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 6 en 2 × 6.",
+            "explanation": "6 × 7 = 42."
+          }
+        ]
+      },
+      {
+        "id": "map-board-slot-2",
+        "variants": [
+          {
+            "id": "map-board-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Posbankkaart 6 groepjes van 6 routepunten. Hoeveel routepunten zijn dat samen?",
+            "answer": 36,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 6 en tel nog 6 erbij.",
+            "explanation": "6 × 6 = 36."
+          },
+          {
+            "id": "map-board-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Posbankkaart 8 groepjes van 7 routepunten. Hoeveel routepunten zijn dat samen?",
+            "answer": 56,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "explanation": "8 × 7 = 56."
+          }
+        ]
+      },
+      {
+        "id": "map-board-slot-3",
+        "variants": [
+          {
+            "id": "map-board-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "63 : 7 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+            "explanation": "63 : 7 = 9."
+          },
+          {
+            "id": "map-board-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "54 : 6 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 9 = 54, is 54 : 6 = 9.",
+            "explanation": "54 : 6 = 9."
+          }
+        ]
+      },
+      {
+        "id": "map-board-slot-4",
+        "variants": [
+          {
+            "id": "map-board-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Posbankkaart 4 groepjes van 8 routepunten. Hoeveel routepunten zijn dat samen?",
+            "answer": 32,
+            "choices": [
+              24,
+              32,
+              40,
+              48
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          },
+          {
+            "id": "map-board-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "14 : 2 = ?",
+            "answer": 7,
+            "choices": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "hintMinnie": "Welke som uit de tafel van 2 helpt?",
+            "hintMoose": "Omdat 2 × 7 = 14, is 14 : 2 = 7.",
+            "explanation": "14 : 2 = 7."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "telescope",
+    "anchorId": "telescope",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "telescope-slot-1",
+        "variants": [
+          {
+            "id": "telescope-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Heidekijker 6 groepjes van 8 kijkpunten. Hoeveel kijkpunten zijn dat samen?",
+            "answer": 48,
+            "choices": [
+              40,
+              48,
+              56,
+              64
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          },
+          {
+            "id": "telescope-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 7 = ?",
+            "answer": 42,
+            "choices": [
+              35,
+              42,
+              49,
+              56
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 6 en 2 × 6.",
+            "explanation": "6 × 7 = 42."
+          }
+        ]
+      },
+      {
+        "id": "telescope-slot-2",
+        "variants": [
+          {
+            "id": "telescope-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 10 = ?",
+            "answer": 20,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "2 groepjes van 10 eindigen op nul.",
+            "explanation": "2 × 10 = 20."
+          },
+          {
+            "id": "telescope-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Heidekijker is 6 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 3,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 2 × 3 = 6, is 6 : 2 = 3.",
+            "explanation": "6 : 2 = 3 meter."
+          }
+        ]
+      },
+      {
+        "id": "telescope-slot-3",
+        "variants": [
+          {
+            "id": "telescope-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas koopt 6 routekaarten voor 4 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 24,
+            "hintMinnie": "Elk kaartje kost 4 euro.",
+            "hintMoose": "Verdubbel 6 twee keer.",
+            "explanation": "6 × 4 = 24 euro."
+          },
+          {
+            "id": "telescope-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 10 = ?",
+            "answer": 50,
+            "choices": [
+              40,
+              50,
+              60,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "explanation": "5 × 10 = 50."
+          }
+        ]
+      },
+      {
+        "id": "telescope-slot-4",
+        "variants": [
+          {
+            "id": "telescope-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "32 : 4 = ?",
+            "answer": 8,
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 8 = 32, is 32 : 4 = 8.",
+            "explanation": "32 : 4 = 8."
+          },
+          {
+            "id": "telescope-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "28 : 7 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 4 = 28, is 28 : 7 = 4.",
+            "explanation": "28 : 7 = 4."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "deerStatue",
+    "anchorId": "deerStatue",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "deer-statue-slot-1",
+        "variants": [
+          {
+            "id": "deer-statue-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Hertenbeeld 7 groepjes van 9 wandelkaartjes. Hoeveel wandelkaartjes zijn dat samen?",
+            "answer": 63,
+            "choices": [
+              54,
+              63,
+              72,
+              81
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "explanation": "7 × 9 = 63."
+          },
+          {
+            "id": "deer-statue-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas verdeelt bij Hertenbeeld 18 wandelkaartjes over 2 gelijke groepen. Hoeveel wandelkaartjes krijgt elke groep?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 2 helpt?",
+            "hintMoose": "Omdat 2 × 9 = 18, is 18 : 2 = 9.",
+            "explanation": "18 : 2 = 9."
+          }
+        ]
+      },
+      {
+        "id": "deer-statue-slot-2",
+        "variants": [
+          {
+            "id": "deer-statue-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "8 × 8 = ?",
+            "answer": 64,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "explanation": "8 × 8 = 64."
+          },
+          {
+            "id": "deer-statue-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Hertenbeeld 3 groepjes van 10 wandelkaartjes. Hoeveel wandelkaartjes zijn dat samen?",
+            "answer": 30,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "3 groepjes van 10 eindigen op nul.",
+            "explanation": "3 × 10 = 30."
+          }
+        ]
+      },
+      {
+        "id": "deer-statue-slot-3",
+        "variants": [
+          {
+            "id": "deer-statue-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Hertenbeeld is 24 meter lang en heeft 4 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 6,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 4 × 6 = 24, is 24 : 4 = 6.",
+            "explanation": "24 : 4 = 6 meter."
+          },
+          {
+            "id": "deer-statue-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 3 = ?",
+            "answer": 18,
+            "choices": [
+              15,
+              18,
+              21,
+              24
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+            "explanation": "6 × 3 = 18."
+          }
+        ]
+      },
+      {
+        "id": "deer-statue-slot-4",
+        "variants": [
+          {
+            "id": "deer-statue-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 9 = ?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "deer-statue-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Hertenbeeld 7 groepjes van 2 wandelkaartjes. Hoeveel wandelkaartjes zijn dat samen?",
+            "answer": 14,
+            "choices": [
+              12,
+              14,
+              16,
+              18
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 7.",
+            "explanation": "7 × 2 = 14."
+          }
+        ]
+      }
+    ]
+  }
+];
   const challenges = [
     {
       id: "mapBoard", name: "Posbankkaart", shortName: "Kaart", center: { x: 760, y: 475 }, radius: 88,
@@ -521,7 +527,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     world: { width: 2172, height: 724, aspectRatio: 3, viewportWidth: 1000, background: asset },
     learningChallenges,
     challengeArt: challengerAsset,
-    player: { startNode: "left-start", start: { x: 220, y: 600 } },
+    player: { startNode: "left-start", start: { x: 253, y: 594 } },
     interactiveObjects: [
     {
       id: "mapBoard",

@@ -155,19 +155,19 @@ window.SVEN_AUDIO_CONFIG = {
       "music": "europeGrandTour",
       "ambience": "europeNoorwegen",
       "musicVolume": 0.23,
-      "ambienceVolume": 0.42
+      "ambienceVolume": 0.36
     },
     "LVL-0019": {
       "music": "europeGrandTour",
       "ambience": "europeZweden",
       "musicVolume": 0.24,
-      "ambienceVolume": 0.34
+      "ambienceVolume": 0.3
     },
     "LVL-0020": {
       "music": "europeGrandTour",
       "ambience": "europeRheden",
       "musicVolume": 0.24,
-      "ambienceVolume": 0.3
+      "ambienceVolume": 0.24
     }
   },
   "volumes": {

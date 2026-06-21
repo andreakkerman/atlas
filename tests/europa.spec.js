@@ -206,8 +206,8 @@ test.describe("De Grote Reis door Europa", () => {
     expect(allChallenges).toHaveLength(24);
     expect(allSlots).toHaveLength(96);
     expect(allVariants).toHaveLength(192);
-    expect(allVariants.filter((variant) => variant.presentation === "story")).toHaveLength(114);
-    expect(allVariants.filter((variant) => variant.presentation === "bare")).toHaveLength(78);
+    expect(allVariants.filter((variant) => variant.presentation === "story")).toHaveLength(53);
+    expect(allVariants.filter((variant) => variant.presentation === "bare")).toHaveLength(139);
     expect(allVariants.filter((variant) => variant.answerMode === "open")).toHaveLength(76);
     expect(allVariants.filter((variant) => variant.answerMode === "multipleChoice")).toHaveLength(116);
 
@@ -236,13 +236,13 @@ test.describe("De Grote Reis door Europa", () => {
     }
   });
 
-  test("plays an open story problem through Minnie, Moose, and assisted completion", async ({ page }) => {
+  test("plays an open multiplication problem through Minnie, Moose, and assisted completion", async ({ page }) => {
     await startEuropeAdventure(page);
     await page.evaluate(() => { Math.random = () => 0; });
     await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
 
     await expect(page.locator("[data-challenge-character='atlas-de-reiziger']")).toContainText("Atlas de Reiziger");
-    await expect(page.getByText("4 wieken hebben elk 8 linten. Hoeveel linten zijn dat samen?")).toBeVisible();
+    await expect(page.getByText("7 × 8 = ?")).toBeVisible();
     await expect(page.locator("[data-open-answer]")).toBeVisible();
     await expect(page.locator("[data-open-answer]")).toHaveAttribute("type", "text");
     await expect(page.locator("[data-open-answer]")).toHaveAttribute("inputmode", "numeric");
@@ -263,24 +263,24 @@ test.describe("De Grote Reis door Europa", () => {
     });
     expect(layout.panelBottom).toBeLessThanOrEqual(layout.companionTop);
 
-    await page.locator("[data-open-answer]").fill("30");
+    await page.locator("[data-open-answer]").fill("50");
     await tap(page.getByRole("button", { name: "Controleer" }));
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "minnie");
-    await expect(page.locator(".teamMessage")).toHaveText("Zoek 4 gelijke groepjes van 8.");
-    await expect(page.locator(".runeChallengeBox").getByText("Zoek 4 gelijke groepjes van 8.")).toHaveCount(0);
+    await expect(page.locator(".teamMessage")).toHaveText("Denk aan de tafel van 8.");
+    await expect(page.locator(".runeChallengeBox").getByText("Denk aan de tafel van 8.")).toHaveCount(0);
 
-    await page.locator("[data-open-answer]").fill("31");
+    await page.locator("[data-open-answer]").fill("54");
     await tap(page.getByRole("button", { name: "Controleer" }));
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
-    await expect(page.locator(".teamMessage")).toHaveText("Reken 4 × 8 stap voor stap.");
-    await expect(page.locator(".runeChallengeBox").getByText("Reken 4 × 8 stap voor stap.")).toHaveCount(0);
+    await expect(page.locator(".teamMessage")).toHaveText("Reken 7 groepjes van 8.");
+    await expect(page.locator(".runeChallengeBox").getByText("Reken 7 groepjes van 8.")).toHaveCount(0);
 
-    await page.locator("[data-open-answer]").fill("33");
+    await page.locator("[data-open-answer]").fill("55");
     await tap(page.getByRole("button", { name: "Controleer" }));
-    await expect(page.locator(".runeChallengeBox").getByText("4 × 8 = 32.")).toBeVisible();
+    await expect(page.locator(".runeChallengeBox").getByText("7 × 8 = 56.")).toBeVisible();
     await tap(page.getByRole("button", { name: "Samen afronden" }));
     await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
-    await expect(page.getByText(/Het antwoord is 32/)).toBeVisible();
+    await expect(page.getByText(/Het antwoord is 56/)).toBeVisible();
   });
 
   test("clears hotspot attention when an authored challenge starts", async ({ page }) => {
@@ -446,7 +446,7 @@ test.describe("De Grote Reis door Europa", () => {
     await startEuropeAdventure(page);
     await page.evaluate(() => { Math.random = () => 0; });
     await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
-    await expect(page.getByText("4 wieken hebben elk 8 linten. Hoeveel linten zijn dat samen?"))
+    await expect(page.getByText("7 × 8 = ?"))
       .toBeVisible({ timeout: 30000 });
     const before = await page.evaluate(() => ({
       ids: window.eval("state.activeQuestions.map((question) => question.id)"),
@@ -516,6 +516,76 @@ test.describe("De Grote Reis door Europa", () => {
     expect(geometry.startX).toBeLessThan(400);
     expect(geometry.exitX).toBeGreaterThan(1800);
     expect(geometry.challengeCount).toBe(3);
+  });
+
+  test("normal gameplay follows the authored Sweden and Rheden start routes", async ({ page }) => {
+    await page.goto(gameUrl);
+    const cases = [
+      { levelId: "LVL-0019", objectName: "Dalapaard", objectId: "dalaHorse" },
+      { levelId: "LVL-0020", objectName: "Posbankkaart", objectId: "mapBoard" }
+    ];
+
+    for (const item of cases) {
+      await page.evaluate(async (levelId) => {
+        await window.eval("selectLevel")(levelId, { startImmediately: true });
+        window.eval("render")();
+      }, item.levelId);
+
+      const start = await page.evaluate(() => {
+        const currentLevel = window.eval("level");
+        const currentState = window.eval("state");
+        const startNode = currentLevel.walkGraph.nodes.find(
+          (node) => node.id === currentLevel.player.startNode
+        );
+        return {
+          playerStart: currentLevel.player.start,
+          startNode: { x: startNode.x, y: startNode.y },
+          actor: { x: currentState.worldX, y: currentState.worldY }
+        };
+      });
+      expect(start.playerStart).toEqual(start.startNode);
+      expect(start.actor).toEqual(start.startNode);
+
+      const actor = page.locator("[data-actor='sven']");
+      await page.getByRole("button", { name: item.objectName, exact: true }).dispatchEvent("click");
+      await expect(actor).toHaveAttribute("data-animation", "walk");
+      await expect(page.getByRole("heading", { name: item.objectName, exact: true })).toBeVisible({
+        timeout: 30000
+      });
+
+      const arrival = await page.evaluate((objectId) => {
+        const currentLevel = window.eval("level");
+        const currentState = window.eval("state");
+        const object = currentLevel.interactiveObjects.find((entry) => entry.id === objectId);
+        const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+        return {
+          actor: { x: currentState.worldX, y: currentState.worldY },
+          approach: { x: approach.x, y: approach.y }
+        };
+      }, item.objectId);
+      expect(arrival.actor).toEqual(arrival.approach);
+    }
+  });
+
+  test("editor mode uses the same Sweden and Rheden authored starts", async ({ page }) => {
+    await page.goto(devGameUrl);
+    for (const levelId of ["LVL-0019", "LVL-0020"]) {
+      const geometry = await page.evaluate(async (id) => {
+        await window.eval("selectLevel")(id, { startImmediately: true });
+        const currentLevel = window.eval("level");
+        const currentState = window.eval("state");
+        const startNode = currentLevel.walkGraph.nodes.find(
+          (node) => node.id === currentLevel.player.startNode
+        );
+        return {
+          playerStart: currentLevel.player.start,
+          startNode: { x: startNode.x, y: startNode.y },
+          actor: { x: currentState.worldX, y: currentState.worldY }
+        };
+      }, levelId);
+      expect(geometry.playerStart).toEqual(geometry.startNode);
+      expect(geometry.actor).toEqual(geometry.startNode);
+    }
   });
 
   test("shows the standard per-level music and ambience controls in editor mode", async ({ page }) => {

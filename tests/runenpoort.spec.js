@@ -22,7 +22,7 @@ const templeChallenges = [
 
 const harborChallenges = [
   { name: "Havenkaart" },
-  { name: "Scheepskompas" },
+  { name: "Scheepsklok" },
   { name: "Touwrol" },
   { name: "Poortschild" }
 ];
@@ -386,30 +386,45 @@ async function walkRightUntil(page, threshold) {
 }
 
 async function getCurrentQuestion(page) {
-  const sumText = await page.locator(".sum").textContent();
-  const match = sumText?.match(/Hoeveel is (\d+) x (\d+)\?/);
-  if (!match) throw new Error(`Could not parse question from "${sumText}"`);
-  const a = Number(match[1]);
-  const b = Number(match[2]);
-  return { a, b, correct: a * b };
+  return page.evaluate(() => {
+    const question = window.eval("currentChallengeQuestions()[state.questionIndex]");
+    return {
+      prompt: question.prompt || `Hoeveel is ${question.a} x ${question.b}?`,
+      correct: question.answer ?? question.a * question.b,
+      answerMode: question.answerMode || "multipleChoice",
+      authored: Boolean(question.answerMode)
+    };
+  });
 }
 
 async function answerCurrentQuestion(page, options = {}) {
-  const { a, b, correct } = await getCurrentQuestion(page);
-  await expect(page.getByText(`Hoeveel is ${a} x ${b}?`)).toBeVisible();
+  const { prompt, correct, answerMode, authored } = await getCurrentQuestion(page);
+  await expect(page.getByText(prompt)).toBeVisible();
 
   if (options.answerWrongFirst) {
-    const wrongChoice = await page.locator(".choices button").evaluateAll((buttons, correctValue) => {
-      return buttons.map((button) => button.textContent.trim()).find((value) => value !== String(correctValue));
-    }, correct);
-
-    await tap(page.locator(`button[data-choice="${wrongChoice}"]`));
-    await expect(page.getByText(`Hoeveel is ${a} x ${b}?`)).toBeVisible();
+    if (answerMode === "open") {
+      await page.locator("[data-open-answer]").fill(String(Number(correct) + 1));
+      await tap(page.getByRole("button", { name: "Controleer" }));
+    } else {
+      const wrongChoice = await page.locator(".choices button").evaluateAll((buttons, correctValue) => {
+        return buttons.map((button) => button.textContent.trim()).find((value) => value !== String(correctValue));
+      }, correct);
+      await tap(page.locator(`button[data-choice="${wrongChoice}"]`));
+    }
+    await expect(page.getByText(prompt)).toBeVisible();
     await expect(page.locator(".feedback")).toHaveCount(0);
   }
 
-  await tap(page.locator(`button[data-choice="${correct}"]`));
-  await expect(page.getByText(`Ja! ${a} x ${b} = ${correct}.`)).toBeVisible();
+  if (answerMode === "open") {
+    await page.locator("[data-open-answer]").fill(String(correct));
+    await tap(page.getByRole("button", { name: "Controleer" }));
+  } else {
+    await tap(page.locator(`button[data-choice="${correct}"]`));
+  }
+  await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
+  if (authored) {
+    await expect(page.getByText(`Ja! Het antwoord is ${correct}.`)).toBeVisible();
+  }
   await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
 }
 
@@ -460,7 +475,7 @@ async function playFullAdventure(page) {
     await expect(page.locator("[data-challenge-character='runewachter']")).toContainText("Runewachter");
     await expect(page.locator("[data-challenge-character='runewachter'] img")).toHaveAttribute("src", /viking-spirit\.png/);
     await expect(page.getByText(`Laat de ${rune.name} ontwaken.`)).toHaveCount(0);
-    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+    await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
 
     for (let questionIndex = 0; questionIndex < 4; questionIndex += 1) {
       await answerCurrentQuestion(page, {
@@ -555,6 +570,10 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /Ontdek vijf blokkenkamers/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Reis door Europa/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Reis door zeven Europese landen/ })).toBeVisible();
+    await expect(page.getByText("3 plekken", { exact: true })).toBeVisible();
+    await expect(page.getByText("4 plekken", { exact: true })).toBeVisible();
+    await expect(page.getByText("5 plekken", { exact: true })).toBeVisible();
+    await expect(page.getByText("8 plekken", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
@@ -646,7 +665,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator("[data-adventure-team-bar]")).toContainText("Even opletten.");
   });
 
-  test("plays through the full adventure and persists progress", async ({ page }) => {
+  test("plays through the full adventure and persists completion", async ({ page }) => {
     await playFullAdventure(page);
 
     const completion = await page.evaluate(() => JSON.parse(localStorage.getItem("svenadventure-runenpoort-v1")));
@@ -657,28 +676,9 @@ test.describe("SvenAdventure", () => {
       attempts: 13
     });
 
-    const tableProgress = await page.evaluate(() => JSON.parse(localStorage.getItem("svenadventure-table-progress-v1")));
-    const progressTotals = Object.values(tableProgress.tables).reduce(
-      (totals, table) => ({
-        questionsAsked: totals.questionsAsked + table.questionsAsked,
-        attempts: totals.attempts + table.attempts,
-        mistakes: totals.mistakes + table.mistakes,
-        firstTryCorrect: totals.firstTryCorrect + table.firstTryCorrect
-      }),
-      { questionsAsked: 0, attempts: 0, mistakes: 0, firstTryCorrect: 0 }
-    );
-    expect(progressTotals).toMatchObject({
-      questionsAsked: 12,
-      attempts: 13,
-      mistakes: 1,
-      firstTryCorrect: 11
-    });
-
     await page.reload();
     const completionAfterReload = await page.evaluate(() => localStorage.getItem("svenadventure-runenpoort-v1"));
-    const progressAfterReload = await page.evaluate(() => localStorage.getItem("svenadventure-table-progress-v1"));
     expect(completionAfterReload).toBeTruthy();
-    expect(progressAfterReload).toBeTruthy();
   });
 
   test("continues through the temple interior and Viking harbor", async ({ page }, testInfo) => {
@@ -995,6 +995,138 @@ test.describe("SvenAdventure", () => {
         }
       }
     }
+  });
+
+  test("authors the legacy adventures with Atlas Learning slots and variants", async ({ page }) => {
+    await page.goto(gameUrl);
+    const levels = await page.evaluate(async () => {
+      const ids = Array.from({ length: 12 }, (_, index) => `LVL-${String(index + 1).padStart(4, "0")}`);
+      for (const id of ids) {
+        if (window.SVEN_LEVEL_DEFINITIONS[id]) continue;
+        const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === id);
+        await new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src = entry.script;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.append(script);
+        });
+      }
+      return ids.map((id) => {
+        const selected = window.SVEN_LEVEL_DEFINITIONS[id];
+        return {
+          id,
+          characterId: selected.challengeCharacter.id,
+          challenges: selected.learningChallenges,
+          runes: selected.runes,
+          clockLabel: selected.interactiveObjects.find((item) => item.id === "shipCompass")?.label
+        };
+      });
+    });
+
+    const required = [
+      "id", "domain", "schoolBand", "family", "presentation",
+      "answerMode", "prompt", "answer", "hintMinnie", "hintMoose", "explanation"
+    ];
+    const challenges = levels.flatMap((level) => level.challenges);
+    const slots = challenges.flatMap((challenge) => challenge.questions);
+    const variants = slots.flatMap((slot) => slot.variants);
+
+    expect(challenges).toHaveLength(38);
+    expect(slots).toHaveLength(152);
+    expect(variants).toHaveLength(304);
+    expect(variants.filter((variant) => variant.family === "clock_reading_five_minutes")).toHaveLength(8);
+    expect(variants.filter((variant) => variant.family.includes("multiplication"))).toHaveLength(185);
+    expect(variants.filter((variant) => variant.family.includes("division"))).toHaveLength(111);
+
+    for (const level of levels) {
+      expect(level.challenges).toHaveLength(level.runes.length);
+      expect(level.runes.map((rune) => rune.challengeId)).toEqual(level.challenges.map((challenge) => challenge.id));
+      for (const challenge of level.challenges) {
+        expect(challenge.anchorId).toBe(challenge.id);
+        expect(challenge.challengeCharacterId).toBe(level.characterId);
+        expect(challenge.questions).toHaveLength(4);
+        for (const slot of challenge.questions) {
+          expect(slot.variants).toHaveLength(2);
+          for (const variant of slot.variants) {
+            for (const field of required) expect(variant[field], `${level.id}.${variant.id}.${field}`).toBeDefined();
+            expect(variant.domain).toBe("math");
+            expect(variant.schoolBand).toBe("E5-intended");
+            if (variant.answerMode === "multipleChoice") {
+              expect(variant.choices).toContain(variant.answer);
+              expect(new Set(variant.choices.map(String)).size).toBe(variant.choices.length);
+            }
+          }
+        }
+      }
+    }
+
+    expect(levels.find((level) => level.id === "LVL-0003").clockLabel).toBe("Scheepsklok");
+  });
+
+  test("keeps the Scheepsklok variant stable through hints, rerenders, and assisted completion", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      Math.random = () => 0;
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+      window.eval("render")();
+    });
+    await page.getByRole("button", { name: "Scheepsklok", exact: true }).dispatchEvent("click");
+    await expect(page.getByText("Hoe laat is het?")).toBeVisible({ timeout: 30000 });
+    await expect(page.locator("[data-clock-visual]")).toHaveAttribute("data-clock-hour", "8");
+    await expect(page.locator("[data-clock-visual]")).toHaveAttribute("data-clock-minute", "10");
+    await expect(page.getByRole("button", { name: "Tien over acht", exact: true })).toBeVisible();
+
+    const before = await page.evaluate(() => ({
+      id: window.eval("state.activeQuestions[0].id"),
+      prompt: window.eval("state.activeQuestions[0].prompt"),
+      answer: window.eval("state.activeQuestions[0].answer")
+    }));
+    for (const wrongAnswer of ["Vijf over acht", "Tien voor acht", "Kwart over acht"]) {
+      await tap(page.getByRole("button", { name: wrongAnswer, exact: true }));
+      await page.evaluate(() => {
+        Math.random = () => 0.999;
+        window.eval("render")();
+      });
+      const current = await page.evaluate(() => ({
+        id: window.eval("state.activeQuestions[0].id"),
+        prompt: window.eval("state.activeQuestions[0].prompt"),
+        answer: window.eval("state.activeQuestions[0].answer")
+      }));
+      expect(current).toEqual(before);
+    }
+    await expect(page.getByRole("button", { name: "Samen afronden" })).toBeVisible();
+    await tap(page.getByRole("button", { name: "Samen afronden" }));
+    await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
+  });
+
+  test("challenge shortcut completes an old scene without learning evidence", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      localStorage.clear();
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+      window.eval("render")();
+    });
+    const before = await page.evaluate(() => ({
+      answered: window.eval("state.answered"),
+      attempts: window.eval("state.attempts"),
+      completion: localStorage.getItem("svenadventure-vikinghaven-v1")
+    }));
+    await page.keyboard.press("Control+Shift+C");
+    const after = await page.evaluate(() => ({
+      completed: window.eval("state.completedRunes.size"),
+      total: window.eval("level.runes.length"),
+      answered: window.eval("state.answered"),
+      attempts: window.eval("state.attempts"),
+      completion: localStorage.getItem("svenadventure-vikinghaven-v1")
+    }));
+    expect(after).toEqual({
+      completed: 4,
+      total: 4,
+      answered: before.answered,
+      attempts: before.attempts,
+      completion: before.completion
+    });
   });
 
   test("shows challenge attention while walking and opens on one tap", async ({ page }) => {

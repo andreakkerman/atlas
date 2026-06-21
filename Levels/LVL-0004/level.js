@@ -1,5 +1,467 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0004 = [
+  {
+    "id": "harborMap",
+    "anchorId": "harborMap",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "harborMap-slot-1",
+        "variants": [
+          {
+            "id": "harborMap-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "63 : 9 = ?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 7 = 63, is 63 : 9 = 7.",
+            "explanation": "63 : 9 = 7."
+          },
+          {
+            "id": "harborMap-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "56 : 8 = ?",
+            "answer": 7,
+            "choices": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 7 = 56, is 56 : 8 = 7.",
+            "explanation": "56 : 8 = 7."
+          }
+        ]
+      },
+      {
+        "id": "harborMap-slot-2",
+        "variants": [
+          {
+            "id": "harborMap-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 7 = ?",
+            "answer": 49,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 7 en 2 × 7.",
+            "explanation": "7 × 7 = 49."
+          },
+          {
+            "id": "harborMap-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Havenkaart 7 groepjes van 6 routefiches. Hoeveel routefiches zijn dat samen?",
+            "answer": 42,
+            "choices": [
+              36,
+              42,
+              48,
+              54
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 6 = 42."
+          }
+        ]
+      },
+      {
+        "id": "harborMap-slot-3",
+        "variants": [
+          {
+            "id": "harborMap-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "63 : 7 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+            "explanation": "63 : 7 = 9."
+          },
+          {
+            "id": "harborMap-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 10 = ?",
+            "answer": 50,
+            "choices": [
+              40,
+              50,
+              60,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "explanation": "5 × 10 = 50."
+          }
+        ]
+      },
+      {
+        "id": "harborMap-slot-4",
+        "variants": [
+          {
+            "id": "harborMap-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Havenkaart 9 groepjes van 5 routefiches. Hoeveel routefiches zijn dat samen?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 9 sprongen van 5.",
+            "explanation": "9 × 5 = 45."
+          },
+          {
+            "id": "harborMap-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 5 = ?",
+            "answer": 10,
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 2 sprongen van 5.",
+            "explanation": "2 × 5 = 10."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "brassTelescope",
+    "anchorId": "brassTelescope",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "brassTelescope-slot-1",
+        "variants": [
+          {
+            "id": "brassTelescope-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 6 = ?",
+            "answer": 24,
+            "choices": [
+              18,
+              24,
+              30,
+              36
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 6 = 24."
+          },
+          {
+            "id": "brassTelescope-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 4 = ?",
+            "answer": 12,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 3 twee keer.",
+            "explanation": "3 × 4 = 12."
+          }
+        ]
+      },
+      {
+        "id": "brassTelescope-slot-2",
+        "variants": [
+          {
+            "id": "brassTelescope-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "49 : 7 = ?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 7 = 49, is 49 : 7 = 7.",
+            "explanation": "49 : 7 = 7."
+          },
+          {
+            "id": "brassTelescope-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 8 = ?",
+            "answer": 72,
+            "choices": [
+              64,
+              72,
+              80,
+              88
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+            "explanation": "9 × 8 = 72."
+          }
+        ]
+      },
+      {
+        "id": "brassTelescope-slot-3",
+        "variants": [
+          {
+            "id": "brassTelescope-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 8 = ?",
+            "answer": 16,
+            "choices": [
+              8,
+              16,
+              24,
+              32
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "explanation": "2 × 8 = 16."
+          },
+          {
+            "id": "brassTelescope-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Koperen kijker 5 groepjes van 10 kijkkaarten. Hoeveel kijkkaarten zijn dat samen?",
+            "answer": 50,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "explanation": "5 × 10 = 50."
+          }
+        ]
+      },
+      {
+        "id": "brassTelescope-slot-4",
+        "variants": [
+          {
+            "id": "brassTelescope-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Koperen kijker 9 groepjes van 5 kijkkaarten. Hoeveel kijkkaarten zijn dat samen?",
+            "answer": 45,
+            "choices": [
+              40,
+              45,
+              50,
+              55
+            ],
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 9 sprongen van 5.",
+            "explanation": "9 × 5 = 45."
+          },
+          {
+            "id": "brassTelescope-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Koperen kijker 3 groepjes van 6 kijkkaarten. Hoeveel kijkkaarten zijn dat samen?",
+            "answer": 18,
+            "choices": [
+              12,
+              18,
+              24,
+              30
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 6 = 18."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "nautilusLight",
+    "anchorId": "nautilusLight",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "nautilusLight-slot-1",
+        "variants": [
+          {
+            "id": "nautilusLight-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo koopt 8 havenkaarten voor 10 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 80,
+            "hintMinnie": "Elk kaartje kost 10 euro.",
+            "hintMoose": "8 groepjes van 10 eindigen op nul.",
+            "explanation": "8 × 10 = 80 euro."
+          },
+          {
+            "id": "nautilusLight-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          }
+        ]
+      },
+      {
+        "id": "nautilusLight-slot-2",
+        "variants": [
+          {
+            "id": "nautilusLight-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "64 : 8 = ?",
+            "answer": 8,
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 8 = 64, is 64 : 8 = 8.",
+            "explanation": "64 : 8 = 8."
+          },
+          {
+            "id": "nautilusLight-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 3 = ?",
+            "answer": 12,
+            "choices": [
+              9,
+              12,
+              15,
+              18
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 3 = 12."
+          }
+        ]
+      },
+      {
+        "id": "nautilusLight-slot-3",
+        "variants": [
+          {
+            "id": "nautilusLight-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Nautiluslamp is 16 meter lang en heeft 8 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 2,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+            "explanation": "16 : 8 = 2 meter."
+          },
+          {
+            "id": "nautilusLight-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Nautiluslamp 9 groepjes van 6 lichtfiches. Hoeveel lichtfiches zijn dat samen?",
+            "answer": 54,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "explanation": "9 × 6 = 54."
+          }
+        ]
+      },
+      {
+        "id": "nautilusLight-slot-4",
+        "variants": [
+          {
+            "id": "nautilusLight-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 7 = ?",
+            "answer": 21,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 3 en 2 × 3.",
+            "explanation": "3 × 7 = 21."
+          },
+          {
+            "id": "nautilusLight-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "40 : 8 = ?",
+            "answer": 5,
+            "choices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 5 = 40, is 40 : 8 = 5.",
+            "explanation": "40 : 8 = 5."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   id: "LVL-0004",
   title: "De Nautilus",
@@ -15,7 +477,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   progressLabelPlural: "proeven",
   menu: {
     illustration: "Levels/LVL-0004/assets/nautilus-harbor.png",
-    badge: "Nieuw avontuur",
+    badge: "4 plekken",
     detail: "Een tropische haven en een mysterieuze duikboot"
   },
   companion: {
@@ -217,6 +679,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       activate: "De poort naar de Nautilus gaat open."
     }
   ],
+  learningChallenges: learningChallengesLVL0004,
   runes: [
     {
       id: "harborMap",
@@ -227,14 +690,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       intro: "Op de kaart staan routes naar de steiger.",
       prompt: "Tel de routepunten op de kaart.",
       solved: "Mooi! De kaart wijst naar de Nautilus.",
-      questions: [
-        { a: 4, b: 6 },
-        { a: 7, b: 3 },
-        { a: 5, b: 5 },
-        { a: 8, b: 2 },
-        { a: 9, b: 5 },
-        { a: 6, b: 4 }
-      ]
+      challengeId: "harborMap"
     },
     {
       id: "brassTelescope",
@@ -245,14 +701,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       intro: "De kijker staat gericht op de duikboot.",
       prompt: "Tel de lichtjes die Sven ziet.",
       solved: "Goed zo! De kijker vindt de ingang.",
-      questions: [
-        { a: 5, b: 8 },
-        { a: 6, b: 7 },
-        { a: 3, b: 9 },
-        { a: 4, b: 4 },
-        { a: 8, b: 3 },
-        { a: 10, b: 2 }
-      ]
+      challengeId: "brassTelescope"
     },
     {
       id: "nautilusLight",
@@ -263,14 +712,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       intro: "De blauwe lamp pulseert zacht.",
       prompt: "Tel de pulsen van de Nautilus.",
       solved: "Sterk! De Nautilus geeft antwoord.",
-      questions: [
-        { a: 9, b: 4 },
-        { a: 8, b: 6 },
-        { a: 7, b: 5 },
-        { a: 6, b: 6 },
-        { a: 10, b: 7 },
-        { a: 5, b: 9 }
-      ]
+      challengeId: "nautilusLight"
     }
   ],
   reward: {

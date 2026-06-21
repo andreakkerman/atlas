@@ -4,472 +4,472 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const asset = "Levels/LVL-0018/assets/noorwegen.png";
   const challengerAsset = "Levels/LVL-0018/assets/atlas-de-reiziger.png";
   const learningChallenges = [
-    {
-      "id": "staveChurch",
-      "anchorId": "staveChurch",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "stave-church-slot-1",
-          "variants": [
-            {
-              "id": "stave-church-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "7 daklagen hebben elk 8 houten planken. Hoeveel houten planken zijn dat samen?",
-              "answer": 56,
-              "hintMinnie": "Zoek 7 gelijke groepjes van 8.",
-              "hintMoose": "Reken 7 × 8 stap voor stap.",
-              "explanation": "7 × 8 = 56."
-            },
-            {
-              "id": "stave-church-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 6 rijen met telkens 9 houten planken. Hoeveel houten planken zijn dat?",
-              "answer": 54,
-              "choices": [
-                50,
-                54,
-                58,
-                62
-              ],
-              "hintMinnie": "Denk aan 6 groepjes van 9.",
-              "hintMoose": "Vermenigvuldig 6 met 9.",
-              "explanation": "6 × 9 = 54."
-            }
-          ]
-        },
-        {
-          "id": "stave-church-slot-2",
-          "variants": [
-            {
-              "id": "stave-church-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "56 houten planken worden eerlijk verdeeld over 7 daklagen. Hoeveel krijgt elke groep?",
-              "answer": 8,
-              "choices": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "hintMinnie": "Verdeel 56 in 7 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 7 precies 56 is.",
-              "explanation": "56 : 7 = 8."
-            },
-            {
-              "id": "stave-church-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 54 houten planken. In elke groep passen er 6. Hoeveel groepen zijn nodig?",
-              "answer": 9,
-              "hintMinnie": "Maak groepjes van 6.",
-              "hintMoose": "Reken 54 gedeeld door 6.",
-              "explanation": "54 : 6 = 9."
-            }
-          ]
-        },
-        {
-          "id": "stave-church-slot-3",
-          "variants": [
-            {
-              "id": "stave-church-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 4 houtsnijwerkjes voor €6 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 24,
-              "hintMinnie": "Elk stuk kost €6.",
-              "hintMoose": "Reken 4 × 6.",
-              "explanation": "4 × €6 = €24."
-            },
-            {
-              "id": "stave-church-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Houten staafkerk is 72 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
-              "hintMoose": "Reken 72 : 8.",
-              "explanation": "72 : 8 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "stave-church-slot-4",
-          "variants": [
-            {
-              "id": "stave-church-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "8 × 7 = ?",
-              "answer": 56,
-              "hintMinnie": "Splits 8 in handige delen.",
-              "hintMoose": "Reken 8 groepjes van 7.",
-              "explanation": "8 × 7 = 56."
-            },
-            {
-              "id": "stave-church-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "63 : 9 = ?",
-              "answer": 7,
-              "choices": [
-                4,
-                7,
-                10,
-                13
-              ],
-              "hintMinnie": "Zoek welk getal keer 9 gelijk is aan 63.",
-              "hintMoose": "Verdeel 63 in groepjes van 9.",
-              "explanation": "63 : 9 = 7."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "lighthouse",
-      "anchorId": "lighthouse",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "lighthouse-slot-1",
-          "variants": [
-            {
-              "id": "lighthouse-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "8 lichtrondes hebben elk 6 lichtflitsen. Hoeveel lichtflitsen zijn dat samen?",
-              "answer": 48,
-              "hintMinnie": "Zoek 8 gelijke groepjes van 6.",
-              "hintMoose": "Reken 8 × 6 stap voor stap.",
-              "explanation": "8 × 6 = 48."
-            },
-            {
-              "id": "lighthouse-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 9 rijen met telkens 7 lichtflitsen. Hoeveel lichtflitsen zijn dat?",
-              "answer": 63,
-              "choices": [
-                59,
-                63,
-                67,
-                71
-              ],
-              "hintMinnie": "Denk aan 9 groepjes van 7.",
-              "hintMoose": "Vermenigvuldig 9 met 7.",
-              "explanation": "9 × 7 = 63."
-            }
-          ]
-        },
-        {
-          "id": "lighthouse-slot-2",
-          "variants": [
-            {
-              "id": "lighthouse-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "64 lichtflitsen worden eerlijk verdeeld over 8 lichtrondes. Hoeveel krijgt elke groep?",
-              "answer": 8,
-              "choices": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "hintMinnie": "Verdeel 64 in 8 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 8 precies 64 is.",
-              "explanation": "64 : 8 = 8."
-            },
-            {
-              "id": "lighthouse-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 63 lichtflitsen. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
-              "answer": 9,
-              "hintMinnie": "Maak groepjes van 7.",
-              "hintMoose": "Reken 63 gedeeld door 7.",
-              "explanation": "63 : 7 = 9."
-            }
-          ]
-        },
-        {
-          "id": "lighthouse-slot-3",
-          "variants": [
-            {
-              "id": "lighthouse-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 5 havenkaarten voor €4 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 20,
-              "hintMinnie": "Elk stuk kost €4.",
-              "hintMoose": "Reken 5 × 4.",
-              "explanation": "5 × €4 = €20."
-            },
-            {
-              "id": "lighthouse-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Fjordvuurtoren is 54 meter en heeft 6 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 6 gelijke delen.",
-              "hintMoose": "Reken 54 : 6.",
-              "explanation": "54 : 6 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "lighthouse-slot-4",
-          "variants": [
-            {
-              "id": "lighthouse-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "9 × 8 = ?",
-              "answer": 72,
-              "hintMinnie": "Splits 9 in handige delen.",
-              "hintMoose": "Reken 9 groepjes van 8.",
-              "explanation": "9 × 8 = 72."
-            },
-            {
-              "id": "lighthouse-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "72 : 9 = ?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Zoek welk getal keer 9 gelijk is aan 72.",
-              "hintMoose": "Verdeel 72 in groepjes van 9.",
-              "explanation": "72 : 9 = 8."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "vikingShip",
-      "anchorId": "vikingShip",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "viking-ship-slot-1",
-          "variants": [
-            {
-              "id": "viking-ship-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "7 schildrijen hebben elk 9 schilden. Hoeveel schilden zijn dat samen?",
-              "answer": 63,
-              "hintMinnie": "Zoek 7 gelijke groepjes van 9.",
-              "hintMoose": "Reken 7 × 9 stap voor stap.",
-              "explanation": "7 × 9 = 63."
-            },
-            {
-              "id": "viking-ship-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 8 rijen met telkens 8 schilden. Hoeveel schilden zijn dat?",
-              "answer": 64,
-              "choices": [
-                60,
-                64,
-                68,
-                72
-              ],
-              "hintMinnie": "Denk aan 8 groepjes van 8.",
-              "hintMoose": "Vermenigvuldig 8 met 8.",
-              "explanation": "8 × 8 = 64."
-            }
-          ]
-        },
-        {
-          "id": "viking-ship-slot-2",
-          "variants": [
-            {
-              "id": "viking-ship-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "72 schilden worden eerlijk verdeeld over 8 schildrijen. Hoeveel krijgt elke groep?",
-              "answer": 9,
-              "choices": [
-                7,
-                9,
-                11,
-                13
-              ],
-              "hintMinnie": "Verdeel 72 in 8 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 8 precies 72 is.",
-              "explanation": "72 : 8 = 9."
-            },
-            {
-              "id": "viking-ship-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 56 schilden. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
-              "answer": 8,
-              "hintMinnie": "Maak groepjes van 7.",
-              "hintMoose": "Reken 56 gedeeld door 7.",
-              "explanation": "56 : 7 = 8."
-            }
-          ]
-        },
-        {
-          "id": "viking-ship-slot-3",
-          "variants": [
-            {
-              "id": "viking-ship-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 6 vaartkaartjes voor €5 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 30,
-              "hintMinnie": "Elk stuk kost €5.",
-              "hintMoose": "Reken 6 × 5.",
-              "explanation": "6 × €5 = €30."
-            },
-            {
-              "id": "viking-ship-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs het Vikingschip is 63 meter en heeft 7 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 7 gelijke delen.",
-              "hintMoose": "Reken 63 : 7.",
-              "explanation": "63 : 7 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "viking-ship-slot-4",
-          "variants": [
-            {
-              "id": "viking-ship-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "8 × 9 = ?",
-              "answer": 72,
-              "hintMinnie": "Splits 8 in handige delen.",
-              "hintMoose": "Reken 8 groepjes van 9.",
-              "explanation": "8 × 9 = 72."
-            },
-            {
-              "id": "viking-ship-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "54 : 6 = ?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Zoek welk getal keer 6 gelijk is aan 54.",
-              "hintMoose": "Verdeel 54 in groepjes van 6.",
-              "explanation": "54 : 6 = 9."
-            }
-          ]
-        }
-      ]
-    }
-  ];
+  {
+    "id": "staveChurch",
+    "anchorId": "staveChurch",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "stave-church-slot-1",
+        "variants": [
+          {
+            "id": "stave-church-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 8 = ?",
+            "answer": 48,
+            "choices": [
+              40,
+              48,
+              56,
+              64
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          },
+          {
+            "id": "stave-church-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "12 : 4 = ?",
+            "answer": 3,
+            "choices": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 3 = 12, is 12 : 4 = 3.",
+            "explanation": "12 : 4 = 3."
+          }
+        ]
+      },
+      {
+        "id": "stave-church-slot-2",
+        "variants": [
+          {
+            "id": "stave-church-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 5 = ?",
+            "answer": 25,
+            "choices": [
+              20,
+              25,
+              30,
+              35
+            ],
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 5 sprongen van 5.",
+            "explanation": "5 × 5 = 25."
+          },
+          {
+            "id": "stave-church-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 6 = ?",
+            "answer": 42,
+            "choices": [
+              36,
+              42,
+              48,
+              54
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 6 = 42."
+          }
+        ]
+      },
+      {
+        "id": "stave-church-slot-3",
+        "variants": [
+          {
+            "id": "stave-church-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas verdeelt bij Houten staafkerk 15 houten plankjes over 3 gelijke groepen. Hoeveel houten plankjes krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 5 = 15, is 15 : 3 = 5.",
+            "explanation": "15 : 3 = 5."
+          },
+          {
+            "id": "stave-church-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 10 = ?",
+            "answer": 50,
+            "choices": [
+              40,
+              50,
+              60,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "explanation": "5 × 10 = 50."
+          }
+        ]
+      },
+      {
+        "id": "stave-church-slot-4",
+        "variants": [
+          {
+            "id": "stave-church-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 8 = ?",
+            "answer": 32,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          },
+          {
+            "id": "stave-church-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 4 = ?",
+            "answer": 36,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 9 twee keer.",
+            "explanation": "9 × 4 = 36."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lighthouse",
+    "anchorId": "lighthouse",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "lighthouse-slot-1",
+        "variants": [
+          {
+            "id": "lighthouse-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas verdeelt bij Fjordvuurtoren 48 lichtfiches over 8 gelijke groepen. Hoeveel lichtfiches krijgt elke groep?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 6 = 48, is 48 : 8 = 6.",
+            "explanation": "48 : 8 = 6."
+          },
+          {
+            "id": "lighthouse-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 7 = ?",
+            "answer": 42,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 6 en 2 × 6.",
+            "explanation": "6 × 7 = 42."
+          }
+        ]
+      },
+      {
+        "id": "lighthouse-slot-2",
+        "variants": [
+          {
+            "id": "lighthouse-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "81 : 9 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 9 = 81, is 81 : 9 = 9.",
+            "explanation": "81 : 9 = 9."
+          },
+          {
+            "id": "lighthouse-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "30 : 5 = ?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 6 = 30, is 30 : 5 = 6.",
+            "explanation": "30 : 5 = 6."
+          }
+        ]
+      },
+      {
+        "id": "lighthouse-slot-3",
+        "variants": [
+          {
+            "id": "lighthouse-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 8 = ?",
+            "answer": 16,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "explanation": "2 × 8 = 16."
+          },
+          {
+            "id": "lighthouse-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Fjordvuurtoren 7 groepjes van 4 lichtfiches. Hoeveel lichtfiches zijn dat samen?",
+            "answer": 28,
+            "choices": [
+              24,
+              28,
+              32,
+              36
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 7 twee keer.",
+            "explanation": "7 × 4 = 28."
+          }
+        ]
+      },
+      {
+        "id": "lighthouse-slot-4",
+        "variants": [
+          {
+            "id": "lighthouse-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "8 × 4 = ?",
+            "answer": 32,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 8 twee keer.",
+            "explanation": "8 × 4 = 32."
+          },
+          {
+            "id": "lighthouse-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 7 = ?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "vikingShip",
+    "anchorId": "vikingShip",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "viking-ship-slot-1",
+        "variants": [
+          {
+            "id": "viking-ship-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 8 = ?",
+            "answer": 48,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          },
+          {
+            "id": "viking-ship-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 4 = ?",
+            "answer": 12,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 3 twee keer.",
+            "explanation": "3 × 4 = 12."
+          }
+        ]
+      },
+      {
+        "id": "viking-ship-slot-2",
+        "variants": [
+          {
+            "id": "viking-ship-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "16 : 4 = ?",
+            "answer": 4,
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 4 = 16, is 16 : 4 = 4.",
+            "explanation": "16 : 4 = 4."
+          },
+          {
+            "id": "viking-ship-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Vikingschip 8 groepjes van 7 scheepskisten. Hoeveel scheepskisten zijn dat samen?",
+            "answer": 56,
+            "choices": [
+              49,
+              56,
+              63,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "explanation": "8 × 7 = 56."
+          }
+        ]
+      },
+      {
+        "id": "viking-ship-slot-3",
+        "variants": [
+          {
+            "id": "viking-ship-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "3 × 9 = ?",
+            "answer": 27,
+            "choices": [
+              18,
+              27,
+              36,
+              45
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+            "explanation": "3 × 9 = 27."
+          },
+          {
+            "id": "viking-ship-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 9 = ?",
+            "answer": 36,
+            "choices": [
+              27,
+              36,
+              45,
+              54
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 4 en haal 4 eraf.",
+            "explanation": "4 × 9 = 36."
+          }
+        ]
+      },
+      {
+        "id": "viking-ship-slot-4",
+        "variants": [
+          {
+            "id": "viking-ship-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 8 = ?",
+            "answer": 32,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          },
+          {
+            "id": "viking-ship-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 7 = ?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      }
+    ]
+  }
+];
   const challenges = [
     {
       id: "staveChurch", name: "Houten staafkerk", shortName: "Kerk", center: { x: 555, y: 330 }, radius: 110,

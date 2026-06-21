@@ -7,7 +7,7 @@ window.SVEN_LEVEL_MANIFEST = {
       script: "Levels/LVL-0001/level.js",
       menu: {
         illustration: "Levels/LVL-0001/assets/level-1-wide-world.png",
-        badge: "Eerste avontuur",
+        badge: "3 plekken",
         detail: "Een vergeten Vikingtempel en oude runen"
       }
     },
@@ -44,7 +44,7 @@ window.SVEN_LEVEL_MANIFEST = {
       script: "Levels/LVL-0004/level.js",
       menu: {
         illustration: "Levels/LVL-0004/assets/nautilus-harbor.png",
-        badge: "Nieuw avontuur",
+        badge: "4 plekken",
         detail: "Een tropische haven en een mysterieuze duikboot"
       }
     },
@@ -94,7 +94,7 @@ window.SVEN_LEVEL_MANIFEST = {
       script: "Levels/LVL-0008/level.js",
       menu: {
         illustration: "Levels/LVL-0008/assets/blokkenpoort-sealed-room.png",
-        badge: "Nieuw avontuur",
+        badge: "5 plekken",
         detail: "Blokkenkamers, portalen en Dutchtuber Job"
       }
     },
@@ -157,7 +157,7 @@ window.SVEN_LEVEL_MANIFEST = {
       script: "Levels/LVL-0013/level.js",
       menu: {
         illustration: "Levels/LVL-0013/assets/nederland.png",
-        badge: "Nieuw avontuur",
+        badge: "8 plekken",
         detail: "Molens, wereldsteden, fjorden en de Posbank"
       }
     },

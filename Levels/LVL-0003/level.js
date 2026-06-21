@@ -1,10 +1,685 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0003 = [
+  {
+    "id": "harborMap",
+    "anchorId": "harborMap",
+    "challengeCharacterId": "havenmeester-eivar",
+    "questions": [
+      {
+        "id": "harborMap-slot-1",
+        "variants": [
+          {
+            "id": "harborMap-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 7 = ?",
+            "answer": 14,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 2 en 2 × 2.",
+            "explanation": "2 × 7 = 14."
+          },
+          {
+            "id": "harborMap-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 8 = ?",
+            "answer": 32,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          }
+        ]
+      },
+      {
+        "id": "harborMap-slot-2",
+        "variants": [
+          {
+            "id": "harborMap-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking koopt 4 Vikingkaarten voor 7 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 28,
+            "hintMinnie": "Elk kaartje kost 7 euro.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28 euro."
+          },
+          {
+            "id": "harborMap-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 5 = ?",
+            "answer": 15,
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 3 sprongen van 5.",
+            "explanation": "3 × 5 = 15."
+          }
+        ]
+      },
+      {
+        "id": "harborMap-slot-3",
+        "variants": [
+          {
+            "id": "harborMap-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 3 = ?",
+            "answer": 6,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+            "explanation": "2 × 3 = 6."
+          },
+          {
+            "id": "harborMap-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking verdeelt bij Havenkaart 49 routefiches over 7 gelijke groepen. Hoeveel routefiches krijgt elke groep?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 7 = 49, is 49 : 7 = 7.",
+            "explanation": "49 : 7 = 7."
+          }
+        ]
+      },
+      {
+        "id": "harborMap-slot-4",
+        "variants": [
+          {
+            "id": "harborMap-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 7 = ?",
+            "answer": 56,
+            "choices": [
+              49,
+              56,
+              63,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "explanation": "8 × 7 = 56."
+          },
+          {
+            "id": "harborMap-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 3 = ?",
+            "answer": 15,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 3 = 15."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shipCompass",
+    "anchorId": "shipCompass",
+    "challengeCharacterId": "havenmeester-eivar",
+    "questions": [
+      {
+        "id": "shipCompass-slot-1",
+        "variants": [
+          {
+            "id": "shipCompass-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien over acht",
+            "choices": [
+              "Vijf over acht",
+              "Tien over acht",
+              "Tien voor acht",
+              "Kwart over acht"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 8,
+              "minute": 10
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien over acht.",
+            "explanation": "Het is tien over acht."
+          },
+          {
+            "id": "shipCompass-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien voor half vijf",
+            "choices": [
+              "Kwart over vier",
+              "Tien voor half vijf",
+              "Tien over half vier",
+              "Half vijf"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 4,
+              "minute": 20
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien voor half vijf.",
+            "explanation": "Het is tien voor half vijf."
+          }
+        ]
+      },
+      {
+        "id": "shipCompass-slot-2",
+        "variants": [
+          {
+            "id": "shipCompass-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf voor half zeven",
+            "choices": [
+              "Vijf over zes",
+              "Vijf voor half zeven",
+              "Half zeven",
+              "Vijf over half zeven"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 6,
+              "minute": 25
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf voor half zeven.",
+            "explanation": "Het is vijf voor half zeven."
+          },
+          {
+            "id": "shipCompass-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf over half elf",
+            "choices": [
+              "Half elf",
+              "Vijf voor half elf",
+              "Vijf over half elf",
+              "Vijf voor elf"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 10,
+              "minute": 35
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf over half elf.",
+            "explanation": "Het is vijf over half elf."
+          }
+        ]
+      },
+      {
+        "id": "shipCompass-slot-3",
+        "variants": [
+          {
+            "id": "shipCompass-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien over half drie",
+            "choices": [
+              "Tien voor half drie",
+              "Half drie",
+              "Tien over half drie",
+              "Tien voor drie"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 2,
+              "minute": 40
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien over half drie.",
+            "explanation": "Het is tien over half drie."
+          },
+          {
+            "id": "shipCompass-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien voor acht",
+            "choices": [
+              "Tien over zeven",
+              "Vijf voor acht",
+              "Tien voor acht",
+              "Acht uur"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 7,
+              "minute": 50
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij tien voor acht.",
+            "explanation": "Het is tien voor acht."
+          }
+        ]
+      },
+      {
+        "id": "shipCompass-slot-4",
+        "variants": [
+          {
+            "id": "shipCompass-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf over elf",
+            "choices": [
+              "Vijf voor elf",
+              "Vijf over elf",
+              "Tien over elf",
+              "Elf uur"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 11,
+              "minute": 5
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf over elf.",
+            "explanation": "Het is vijf over elf."
+          },
+          {
+            "id": "shipCompass-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf voor twee",
+            "choices": [
+              "Vijf over één",
+              "Tien voor twee",
+              "Vijf voor twee",
+              "Twee uur"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 1,
+              "minute": 55
+            },
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer wijst de minuten aan. De kleine wijzer helpt je bij vijf voor twee.",
+            "explanation": "Het is vijf voor twee."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mooringRope",
+    "anchorId": "mooringRope",
+    "challengeCharacterId": "havenmeester-eivar",
+    "questions": [
+      {
+        "id": "mooringRope-slot-1",
+        "variants": [
+          {
+            "id": "mooringRope-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 3 = ?",
+            "answer": 18,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+            "explanation": "6 × 3 = 18."
+          },
+          {
+            "id": "mooringRope-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 8 = ?",
+            "answer": 32,
+            "choices": [
+              24,
+              32,
+              40,
+              48
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          }
+        ]
+      },
+      {
+        "id": "mooringRope-slot-2",
+        "variants": [
+          {
+            "id": "mooringRope-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij Touwrol 3 groepjes van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
+            "answer": 18,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 6 = 18."
+          },
+          {
+            "id": "mooringRope-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 4 = ?",
+            "answer": 8,
+            "choices": [
+              4,
+              8,
+              12,
+              16
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 2 twee keer.",
+            "explanation": "2 × 4 = 8."
+          }
+        ]
+      },
+      {
+        "id": "mooringRope-slot-3",
+        "variants": [
+          {
+            "id": "mooringRope-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Touwrol is 18 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 9,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 2 × 9 = 18, is 18 : 2 = 9.",
+            "explanation": "18 : 2 = 9 meter."
+          },
+          {
+            "id": "mooringRope-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking verdeelt bij Touwrol 49 touwlussen over 7 gelijke groepen. Hoeveel touwlussen krijgt elke groep?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 7 = 49, is 49 : 7 = 7.",
+            "explanation": "49 : 7 = 7."
+          }
+        ]
+      },
+      {
+        "id": "mooringRope-slot-4",
+        "variants": [
+          {
+            "id": "mooringRope-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking verdeelt bij Touwrol 42 touwlussen over 6 gelijke groepen. Hoeveel touwlussen krijgt elke groep?",
+            "answer": 7,
+            "choices": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+            "explanation": "42 : 6 = 7."
+          },
+          {
+            "id": "mooringRope-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Touwrol 8 groepjes van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
+            "answer": 48,
+            "choices": [
+              42,
+              48,
+              54,
+              60
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 8 en tel nog 8 erbij.",
+            "explanation": "8 × 6 = 48."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gateShield",
+    "anchorId": "gateShield",
+    "challengeCharacterId": "havenmeester-eivar",
+    "questions": [
+      {
+        "id": "gateShield-slot-1",
+        "variants": [
+          {
+            "id": "gateShield-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Poortschild 4 groepjes van 9 schildtekens. Hoeveel schildtekens zijn dat samen?",
+            "answer": 36,
+            "choices": [
+              27,
+              36,
+              45,
+              54
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 4 en haal 4 eraf.",
+            "explanation": "4 × 9 = 36."
+          },
+          {
+            "id": "gateShield-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "32 : 8 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 4 = 32, is 32 : 8 = 4.",
+            "explanation": "32 : 8 = 4."
+          }
+        ]
+      },
+      {
+        "id": "gateShield-slot-2",
+        "variants": [
+          {
+            "id": "gateShield-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 8 = ?",
+            "answer": 40,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+            "explanation": "5 × 8 = 40."
+          },
+          {
+            "id": "gateShield-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 9 = ?",
+            "answer": 63,
+            "choices": [
+              54,
+              63,
+              72,
+              81
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "explanation": "7 × 9 = 63."
+          }
+        ]
+      },
+      {
+        "id": "gateShield-slot-3",
+        "variants": [
+          {
+            "id": "gateShield-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Poortschild 7 groepjes van 8 schildtekens. Hoeveel schildtekens zijn dat samen?",
+            "answer": 56,
+            "choices": [
+              48,
+              56,
+              64,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          },
+          {
+            "id": "gateShield-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 9 = ?",
+            "answer": 81,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 9 en haal 9 eraf.",
+            "explanation": "9 × 9 = 81."
+          }
+        ]
+      },
+      {
+        "id": "gateShield-slot-4",
+        "variants": [
+          {
+            "id": "gateShield-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 8 = ?",
+            "answer": 72,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+            "explanation": "9 × 8 = 72."
+          },
+          {
+            "id": "gateShield-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Poortschild 4 groepjes van 2 schildtekens. Hoeveel schildtekens zijn dat samen?",
+            "answer": 8,
+            "choices": [
+              6,
+              8,
+              10,
+              12
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 4.",
+            "explanation": "4 × 2 = 8."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   id: "LVL-0003",
   title: "De Vikinghaven",
   subtitle: "De havenpoort opent pas als het schip klaar is.",
-  description: "Sven bereikt de Vikinghaven, helpt de havenmeester met vier keersom-proeven en maakt het schip klaar voor vertrek.",
+  description: "Sven bereikt de Vikinghaven, helpt de havenmeester met vier havenproeven en maakt het schip klaar voor vertrek.",
   storageKey: "svenadventure-vikinghaven-v1",
   progressKey: "svenadventure-table-progress-v1",
   exitHotspotId: "departureGate",
@@ -16,7 +691,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   menu: {
     illustration: "Levels/LVL-0003/assets/viking-harbor.png",
     badge: "Verbonden gebied",
-    detail: "Haven, kompas en vertrek naar zee"
+    detail: "Haven, scheepsklok en vertrek naar zee"
   },
   companion: {
     name: "Havenmeester Eivar",
@@ -65,7 +740,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       center: { x: 856, y: 358 },
       radius: 90,
       approachNode: "compass-approach",
-      label: "Scheepskompas"
+      label: "Scheepsklok"
     },
     {
       id: "mooringRope",
@@ -145,10 +820,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     }
   },
   levelSemantics: {
-    setting: "een Vikinghaven met touwen, kranen, kompassen en een gesloten vertrekpoort",
+    setting: "een Vikinghaven met touwen, kranen, scheepsklokken en een gesloten vertrekpoort",
     mood: "frisse zeewind, klaar voor vertrek",
     companionFocus: {
-      minnie: "glimmende kompassen, kaarten en het schip",
+      minnie: "glimmende scheepsklokken, kaarten en het schip",
       moose: "natte stenen, lading, touwen en veilige afvaart"
     }
   },
@@ -178,7 +853,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       event: "HOTSPOT_ATTENTION_FIRST",
       challengeId: "shipCompass",
       speaker: "minnie",
-      text: "Het kompas draait langs lichtjes. Ik wil ze allemaal tellen."
+      text: "De scheepsklok toont de vertrektijd. Kun jij hem lezen?"
     },
     {
       id: "harbor-shield",
@@ -226,6 +901,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       activate: "De poort opent. Het schip kan vertrekken."
     }
   ],
+  learningChallenges: learningChallengesLVL0003,
   runes: [
     {
       id: "harborMap",
@@ -236,32 +912,18 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       intro: "Op de kaart staan steigers in groepjes.",
       prompt: "Tel de steigers op de kaart.",
       solved: "Goed zo! De route is duidelijk.",
-      questions: [
-        { a: 3, b: 9 },
-        { a: 6, b: 4 },
-        { a: 8, b: 5 },
-        { a: 7, b: 3 },
-        { a: 2, b: 8 },
-        { a: 10, b: 5 }
-      ]
+      challengeId: "harborMap"
     },
     {
       id: "shipCompass",
       objectId: "shipCompass",
-      name: "Scheepskompas",
-      shortName: "Kompas",
+      name: "Scheepsklok",
+      shortName: "Klok",
       defaultAction: "activate",
-      intro: "Het kompas draait langs lichtpunten.",
-      prompt: "Tel de lichtpunten van het kompas.",
-      solved: "Mooi! Het kompas wijst de weg.",
-      questions: [
-        { a: 4, b: 8 },
-        { a: 7, b: 6 },
-        { a: 9, b: 3 },
-        { a: 5, b: 7 },
-        { a: 6, b: 9 },
-        { a: 3, b: 6 }
-      ]
+      intro: "De scheepsklok toont de vertrektijd.",
+      prompt: "Lees de tijd op de scheepsklok.",
+      solved: "Mooi! De vertrektijd is duidelijk.",
+      challengeId: "shipCompass"
     },
     {
       id: "mooringRope",
@@ -272,14 +934,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       intro: "Het meertouw ligt in nette lussen.",
       prompt: "Tel de lussen van het touw.",
       solved: "Sterk! Het touw ligt klaar.",
-      questions: [
-        { a: 7, b: 5 },
-        { a: 8, b: 6 },
-        { a: 10, b: 4 },
-        { a: 6, b: 5 },
-        { a: 9, b: 4 },
-        { a: 4, b: 10 }
-      ]
+      challengeId: "mooringRope"
     },
     {
       id: "gateShield",
@@ -290,14 +945,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       intro: "Het schild op de poort gloeit blauw.",
       prompt: "Tel de tekens op het poortschild.",
       solved: "Goed zo! Het poortschild gaat open.",
-      questions: [
-        { a: 9, b: 6 },
-        { a: 7, b: 8 },
-        { a: 9, b: 5 },
-        { a: 4, b: 7 },
-        { a: 8, b: 9 },
-        { a: 10, b: 6 }
-      ]
+      challengeId: "gateShield"
     }
   ],
   reward: {

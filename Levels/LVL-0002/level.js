@@ -1,5 +1,628 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0002 = [
+  {
+    "id": "shieldWall",
+    "anchorId": "shieldWall",
+    "challengeCharacterId": "steenpriester",
+    "questions": [
+      {
+        "id": "shieldWall-slot-1",
+        "variants": [
+          {
+            "id": "shieldWall-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "18 : 3 = ?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 6 = 18, is 18 : 3 = 6.",
+            "explanation": "18 : 3 = 6."
+          },
+          {
+            "id": "shieldWall-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij Schildenmuur 7 groepjes van 3 ronde schilden. Hoeveel ronde schilden zijn dat samen?",
+            "answer": 21,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 3 = 21."
+          }
+        ]
+      },
+      {
+        "id": "shieldWall-slot-2",
+        "variants": [
+          {
+            "id": "shieldWall-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "3 × 6 = ?",
+            "answer": 18,
+            "choices": [
+              12,
+              18,
+              24,
+              30
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 6 = 18."
+          },
+          {
+            "id": "shieldWall-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 9 = ?",
+            "answer": 63,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "explanation": "7 × 9 = 63."
+          }
+        ]
+      },
+      {
+        "id": "shieldWall-slot-3",
+        "variants": [
+          {
+            "id": "shieldWall-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking verdeelt bij Schildenmuur 30 ronde schilden over 6 gelijke groepen. Hoeveel ronde schilden krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 5 = 30, is 30 : 6 = 5.",
+            "explanation": "30 : 6 = 5."
+          },
+          {
+            "id": "shieldWall-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking verdeelt bij Schildenmuur 36 ronde schilden over 6 gelijke groepen. Hoeveel ronde schilden krijgt elke groep?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "explanation": "36 : 6 = 6."
+          }
+        ]
+      },
+      {
+        "id": "shieldWall-slot-4",
+        "variants": [
+          {
+            "id": "shieldWall-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 : 2 = ?",
+            "answer": 3,
+            "hintMinnie": "Welke som uit de tafel van 2 helpt?",
+            "hintMoose": "Omdat 2 × 3 = 6, is 6 : 2 = 3.",
+            "explanation": "6 : 2 = 3."
+          },
+          {
+            "id": "shieldWall-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Schildenmuur 2 groepjes van 8 ronde schilden. Hoeveel ronde schilden zijn dat samen?",
+            "answer": 16,
+            "choices": [
+              8,
+              16,
+              24,
+              32
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "explanation": "2 × 8 = 16."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mapTable",
+    "anchorId": "mapTable",
+    "challengeCharacterId": "steenpriester",
+    "questions": [
+      {
+        "id": "mapTable-slot-1",
+        "variants": [
+          {
+            "id": "mapTable-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Kaarttafel 3 groepjes van 8 routefiches. Hoeveel routefiches zijn dat samen?",
+            "answer": 24,
+            "choices": [
+              16,
+              24,
+              32,
+              40
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 3 en verdubbel dat.",
+            "explanation": "3 × 8 = 24."
+          },
+          {
+            "id": "mapTable-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "32 : 4 = ?",
+            "answer": 8,
+            "choices": [
+              7,
+              8,
+              9,
+              10
+            ],
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 8 = 32, is 32 : 4 = 8.",
+            "explanation": "32 : 4 = 8."
+          }
+        ]
+      },
+      {
+        "id": "mapTable-slot-2",
+        "variants": [
+          {
+            "id": "mapTable-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij Kaarttafel 9 groepjes van 4 routefiches. Hoeveel routefiches zijn dat samen?",
+            "answer": 36,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 9 twee keer.",
+            "explanation": "9 × 4 = 36."
+          },
+          {
+            "id": "mapTable-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 8 = ?",
+            "answer": 48,
+            "choices": [
+              40,
+              48,
+              56,
+              64
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          }
+        ]
+      },
+      {
+        "id": "mapTable-slot-3",
+        "variants": [
+          {
+            "id": "mapTable-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "choices": [
+              48,
+              56,
+              64,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          },
+          {
+            "id": "mapTable-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij Kaarttafel 7 groepjes van 7 routefiches. Hoeveel routefiches zijn dat samen?",
+            "answer": 49,
+            "choices": [
+              42,
+              49,
+              56,
+              63
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 7 en 2 × 7.",
+            "explanation": "7 × 7 = 49."
+          }
+        ]
+      },
+      {
+        "id": "mapTable-slot-4",
+        "variants": [
+          {
+            "id": "mapTable-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 3 = ?",
+            "answer": 12,
+            "choices": [
+              9,
+              12,
+              15,
+              18
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 3 = 12."
+          },
+          {
+            "id": "mapTable-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "27 : 9 = ?",
+            "answer": 3,
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 3 = 27, is 27 : 9 = 3.",
+            "explanation": "27 : 9 = 3."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fireBowl",
+    "anchorId": "fireBowl",
+    "challengeCharacterId": "steenpriester",
+    "questions": [
+      {
+        "id": "fireBowl-slot-1",
+        "variants": [
+          {
+            "id": "fireBowl-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 6 = ?",
+            "answer": 54,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "explanation": "9 × 6 = 54."
+          },
+          {
+            "id": "fireBowl-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij Vuurschaal 6 groepjes van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
+            "answer": 60,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "6 groepjes van 10 eindigen op nul.",
+            "explanation": "6 × 10 = 60."
+          }
+        ]
+      },
+      {
+        "id": "fireBowl-slot-2",
+        "variants": [
+          {
+            "id": "fireBowl-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij Vuurschaal 7 groepjes van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
+            "answer": 70,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "7 groepjes van 10 eindigen op nul.",
+            "explanation": "7 × 10 = 70."
+          },
+          {
+            "id": "fireBowl-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "15 : 5 = ?",
+            "answer": 3,
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 3 = 15, is 15 : 5 = 3.",
+            "explanation": "15 : 5 = 3."
+          }
+        ]
+      },
+      {
+        "id": "fireBowl-slot-3",
+        "variants": [
+          {
+            "id": "fireBowl-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 2 = ?",
+            "answer": 18,
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 9.",
+            "explanation": "9 × 2 = 18."
+          },
+          {
+            "id": "fireBowl-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 9 = ?",
+            "answer": 81,
+            "choices": [
+              72,
+              81,
+              90,
+              99
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 9 en haal 9 eraf.",
+            "explanation": "9 × 9 = 81."
+          }
+        ]
+      },
+      {
+        "id": "fireBowl-slot-4",
+        "variants": [
+          {
+            "id": "fireBowl-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "42 : 6 = ?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+            "explanation": "42 : 6 = 7."
+          },
+          {
+            "id": "fireBowl-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 7 = ?",
+            "answer": 63,
+            "choices": [
+              56,
+              63,
+              70,
+              77
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "explanation": "9 × 7 = 63."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "shipModel",
+    "anchorId": "shipModel",
+    "challengeCharacterId": "steenpriester",
+    "questions": [
+      {
+        "id": "shipModel-slot-1",
+        "variants": [
+          {
+            "id": "shipModel-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 4 = ?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 7 twee keer.",
+            "explanation": "7 × 4 = 28."
+          },
+          {
+            "id": "shipModel-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 3 = ?",
+            "answer": 21,
+            "choices": [
+              18,
+              21,
+              24,
+              27
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 3 = 21."
+          }
+        ]
+      },
+      {
+        "id": "shipModel-slot-2",
+        "variants": [
+          {
+            "id": "shipModel-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 4 = ?",
+            "answer": 36,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 9 twee keer.",
+            "explanation": "9 × 4 = 36."
+          },
+          {
+            "id": "shipModel-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking verdeelt bij Scheepsmodel 35 scheepsplanken over 7 gelijke groepen. Hoeveel scheepsplanken krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 5 = 35, is 35 : 7 = 5.",
+            "explanation": "35 : 7 = 5."
+          }
+        ]
+      },
+      {
+        "id": "shipModel-slot-3",
+        "variants": [
+          {
+            "id": "shipModel-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 6 = ?",
+            "answer": 30,
+            "choices": [
+              24,
+              30,
+              36,
+              42
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 6 = 30."
+          },
+          {
+            "id": "shipModel-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Scheepsmodel is 9 meter lang en heeft 3 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 3,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 3 × 3 = 9, is 9 : 3 = 3.",
+            "explanation": "9 : 3 = 3 meter."
+          }
+        ]
+      },
+      {
+        "id": "shipModel-slot-4",
+        "variants": [
+          {
+            "id": "shipModel-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 4 = ?",
+            "answer": 20,
+            "choices": [
+              16,
+              20,
+              24,
+              28
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 5 twee keer.",
+            "explanation": "5 × 4 = 20."
+          },
+          {
+            "id": "shipModel-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 7 = ?",
+            "answer": 63,
+            "choices": [
+              56,
+              63,
+              70,
+              77
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "explanation": "9 × 7 = 63."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
   id: "LVL-0002",
   title: "De Tempelzaal",
@@ -249,6 +872,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       activate: "De deur opent naar de Vikinghaven."
     }
   ],
+  learningChallenges: learningChallengesLVL0002,
   runes: [
     {
       id: "shieldWall",
@@ -259,14 +883,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       intro: "De schilden hangen in nette rijen.",
       prompt: "Tel de schilden in groepen.",
       solved: "Goed zo! De schilden klikken op hun plek.",
-      questions: [
-        { a: 3, b: 8 },
-        { a: 4, b: 6 },
-        { a: 5, b: 4 },
-        { a: 2, b: 9 },
-        { a: 7, b: 2 },
-        { a: 6, b: 3 }
-      ]
+      challengeId: "shieldWall"
     },
     {
       id: "mapTable",
@@ -277,14 +894,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       intro: "Op de kaart staan routes in groepjes.",
       prompt: "Vind het juiste aantal routes.",
       solved: "Mooi! De kaart wijst naar de haven.",
-      questions: [
-        { a: 4, b: 7 },
-        { a: 6, b: 5 },
-        { a: 8, b: 2 },
-        { a: 3, b: 9 },
-        { a: 10, b: 3 },
-        { a: 9, b: 4 }
-      ]
+      challengeId: "mapTable"
     },
     {
       id: "fireBowl",
@@ -295,14 +905,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       intro: "De vlammen springen in groepjes omhoog.",
       prompt: "Tel de vonken van het vuur.",
       solved: "Sterk! Het vuur brandt helder.",
-      questions: [
-        { a: 7, b: 3 },
-        { a: 5, b: 9 },
-        { a: 6, b: 6 },
-        { a: 4, b: 8 },
-        { a: 8, b: 7 },
-        { a: 2, b: 10 }
-      ]
+      challengeId: "fireBowl"
     },
     {
       id: "shipModel",
@@ -313,14 +916,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       intro: "Het kleine Vikingschip staat klaar op de tafel.",
       prompt: "Tel de riemen van het schip.",
       solved: "Goed zo! Het schip wijst naar buiten.",
-      questions: [
-        { a: 8, b: 4 },
-        { a: 6, b: 7 },
-        { a: 8, b: 9 },
-        { a: 5, b: 5 },
-        { a: 10, b: 6 },
-        { a: 7, b: 9 }
-      ]
+      challengeId: "shipModel"
     }
   ],
   reward: {

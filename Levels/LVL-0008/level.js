@@ -1,5 +1,455 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0008 = [
+  {
+    "id": "diamondSword",
+    "anchorId": "diamondSword",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "diamondSword-slot-1",
+        "variants": [
+          {
+            "id": "diamondSword-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 7 = ?",
+            "answer": 63,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "explanation": "9 × 7 = 63."
+          },
+          {
+            "id": "diamondSword-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 3 = ?",
+            "answer": 18,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+            "explanation": "6 × 3 = 18."
+          }
+        ]
+      },
+      {
+        "id": "diamondSword-slot-2",
+        "variants": [
+          {
+            "id": "diamondSword-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 8 = ?",
+            "answer": 32,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          },
+          {
+            "id": "diamondSword-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "70 : 10 = ?",
+            "answer": 7,
+            "choices": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "hintMinnie": "Welke som uit de tafel van 10 helpt?",
+            "hintMoose": "Omdat 10 × 7 = 70, is 70 : 10 = 7.",
+            "explanation": "70 : 10 = 7."
+          }
+        ]
+      },
+      {
+        "id": "diamondSword-slot-3",
+        "variants": [
+          {
+            "id": "diamondSword-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job verdeelt bij Diamantzwaard 35 diamantblokken over 7 gelijke groepen. Hoeveel diamantblokken krijgt elke groep?",
+            "answer": 5,
+            "choices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 5 = 35, is 35 : 7 = 5.",
+            "explanation": "35 : 7 = 5."
+          },
+          {
+            "id": "diamondSword-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job verdeelt bij Diamantzwaard 30 diamantblokken over 6 gelijke groepen. Hoeveel diamantblokken krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 5 = 30, is 30 : 6 = 5.",
+            "explanation": "30 : 6 = 5."
+          }
+        ]
+      },
+      {
+        "id": "diamondSword-slot-4",
+        "variants": [
+          {
+            "id": "diamondSword-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 3 = ?",
+            "answer": 9,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 3 = 9."
+          },
+          {
+            "id": "diamondSword-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 7 = ?",
+            "answer": 56,
+            "choices": [
+              49,
+              56,
+              63,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "explanation": "8 × 7 = 56."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "creeperMask",
+    "anchorId": "creeperMask",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "creeperMask-slot-1",
+        "variants": [
+          {
+            "id": "creeperMask-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "27 : 9 = ?",
+            "answer": 3,
+            "choices": [
+              2,
+              3,
+              4,
+              5
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 3 = 27, is 27 : 9 = 3.",
+            "explanation": "27 : 9 = 3."
+          },
+          {
+            "id": "creeperMask-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 6 = ?",
+            "answer": 54,
+            "choices": [
+              48,
+              54,
+              60,
+              66
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "explanation": "9 × 6 = 54."
+          }
+        ]
+      },
+      {
+        "id": "creeperMask-slot-2",
+        "variants": [
+          {
+            "id": "creeperMask-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "45 : 5 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 9 = 45, is 45 : 5 = 9.",
+            "explanation": "45 : 5 = 9."
+          },
+          {
+            "id": "creeperMask-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Creepermasker 6 groepjes van 9 groene blokken. Hoeveel groene blokken zijn dat samen?",
+            "answer": 54,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+            "explanation": "6 × 9 = 54."
+          }
+        ]
+      },
+      {
+        "id": "creeperMask-slot-3",
+        "variants": [
+          {
+            "id": "creeperMask-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "80 : 10 = ?",
+            "answer": 8,
+            "hintMinnie": "Welke som uit de tafel van 10 helpt?",
+            "hintMoose": "Omdat 10 × 8 = 80, is 80 : 10 = 8.",
+            "explanation": "80 : 10 = 8."
+          },
+          {
+            "id": "creeperMask-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Creepermasker 5 groepjes van 6 groene blokken. Hoeveel groene blokken zijn dat samen?",
+            "answer": 30,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 6 = 30."
+          }
+        ]
+      },
+      {
+        "id": "creeperMask-slot-4",
+        "variants": [
+          {
+            "id": "creeperMask-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "3 × 3 = ?",
+            "answer": 9,
+            "choices": [
+              6,
+              9,
+              12,
+              15
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 3 = 9."
+          },
+          {
+            "id": "creeperMask-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 2 = ?",
+            "answer": 6,
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 3.",
+            "explanation": "3 × 2 = 6."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "enderPortal",
+    "anchorId": "enderPortal",
+    "challengeCharacterId": "dutchtuber-job",
+    "questions": [
+      {
+        "id": "enderPortal-slot-1",
+        "variants": [
+          {
+            "id": "enderPortal-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 9 = ?",
+            "answer": 27,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+            "explanation": "3 × 9 = 27."
+          },
+          {
+            "id": "enderPortal-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 6 = ?",
+            "answer": 54,
+            "choices": [
+              48,
+              54,
+              60,
+              66
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "explanation": "9 × 6 = 54."
+          }
+        ]
+      },
+      {
+        "id": "enderPortal-slot-2",
+        "variants": [
+          {
+            "id": "enderPortal-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Donkere poort 6 groepjes van 10 portaalstenen. Hoeveel portaalstenen zijn dat samen?",
+            "answer": 60,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "6 groepjes van 10 eindigen op nul.",
+            "explanation": "6 × 10 = 60."
+          },
+          {
+            "id": "enderPortal-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Dutchtuber Job legt bij Donkere poort 3 groepjes van 6 portaalstenen. Hoeveel portaalstenen zijn dat samen?",
+            "answer": 18,
+            "choices": [
+              12,
+              18,
+              24,
+              30
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 6 = 18."
+          }
+        ]
+      },
+      {
+        "id": "enderPortal-slot-3",
+        "variants": [
+          {
+            "id": "enderPortal-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job legt bij Donkere poort 7 groepjes van 9 portaalstenen. Hoeveel portaalstenen zijn dat samen?",
+            "answer": 63,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "explanation": "7 × 9 = 63."
+          },
+          {
+            "id": "enderPortal-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 6 = ?",
+            "answer": 30,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 6 = 30."
+          }
+        ]
+      },
+      {
+        "id": "enderPortal-slot-4",
+        "variants": [
+          {
+            "id": "enderPortal-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 7 = ?",
+            "answer": 49,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 7 en 2 × 7.",
+            "explanation": "7 × 7 = 49."
+          },
+          {
+            "id": "enderPortal-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Dutchtuber Job verdeelt bij Donkere poort 42 portaalstenen over 6 gelijke groepen. Hoeveel portaalstenen krijgt elke groep?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+            "explanation": "42 : 6 = 7."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
   id: "LVL-0008",
   title: "De Blokkenpoort",
@@ -15,7 +465,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
   progressLabelPlural: "tekens",
   menu: {
     illustration: "Levels/LVL-0008/assets/blokkenpoort-sealed-room.png",
-    badge: "Nieuw avontuur",
+    badge: "5 plekken",
     detail: "Blokkenkamers, portalen en Dutchtuber Job"
   },
   companion: {
@@ -42,7 +492,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
   challengeArt: "Levels/LVL-0008/assets/dutchtuber-job.png",
   player: {
     startNode: "left-door-start",
-    start: { x: 260, y: 575 }
+    start: { x: 272, y: 470 }
   },
   interactiveObjects: [
     {
@@ -189,6 +639,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       activate: "De rechterpoort schuift open."
     }
   ],
+  learningChallenges: learningChallengesLVL0008,
   runes: [
     {
       id: "diamondSword",
@@ -199,14 +650,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       intro: "Het zwaard trilt in zijn lijst.",
       prompt: "Tel de diamantblokken.",
       solved: "Mooi! Het zwaard geeft blauw licht.",
-      questions: [
-        { a: 2, b: 6 },
-        { a: 3, b: 4 },
-        { a: 5, b: 5 },
-        { a: 4, b: 7 },
-        { a: 6, b: 3 },
-        { a: 8, b: 2 }
-      ]
+      challengeId: "diamondSword"
     },
     {
       id: "creeperMask",
@@ -217,14 +661,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       intro: "Het groene masker kijkt Sven strak aan.",
       prompt: "Tel de groene vakjes.",
       solved: "Goed zo! Het masker knippert.",
-      questions: [
-        { a: 4, b: 6 },
-        { a: 7, b: 3 },
-        { a: 5, b: 8 },
-        { a: 9, b: 2 },
-        { a: 6, b: 5 },
-        { a: 10, b: 3 }
-      ]
+      challengeId: "creeperMask"
     },
     {
       id: "enderPortal",
@@ -235,14 +672,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       intro: "In de poort draaien paarse vonken.",
       prompt: "Tel de poortstenen.",
       solved: "Sterk! De poort bromt warmer.",
-      questions: [
-        { a: 6, b: 7 },
-        { a: 8, b: 4 },
-        { a: 9, b: 5 },
-        { a: 7, b: 6 },
-        { a: 10, b: 4 },
-        { a: 8, b: 7 }
-      ]
+      challengeId: "enderPortal"
     }
   ],
   reward: {

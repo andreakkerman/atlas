@@ -1,5 +1,467 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0005 = [
+  {
+    "id": "captainChart",
+    "anchorId": "captainChart",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "captainChart-slot-1",
+        "variants": [
+          {
+            "id": "captainChart-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Kapiteinskaart 8 groepjes van 10 koersfiches. Hoeveel koersfiches zijn dat samen?",
+            "answer": 80,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "8 groepjes van 10 eindigen op nul.",
+            "explanation": "8 × 10 = 80."
+          },
+          {
+            "id": "captainChart-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 4 = ?",
+            "answer": 12,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 3 twee keer.",
+            "explanation": "3 × 4 = 12."
+          }
+        ]
+      },
+      {
+        "id": "captainChart-slot-2",
+        "variants": [
+          {
+            "id": "captainChart-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo verdeelt bij Kapiteinskaart 36 koersfiches over 6 gelijke groepen. Hoeveel koersfiches krijgt elke groep?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "explanation": "36 : 6 = 6."
+          },
+          {
+            "id": "captainChart-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Kapiteinskaart 4 groepjes van 3 koersfiches. Hoeveel koersfiches zijn dat samen?",
+            "answer": 12,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 3 = 12."
+          }
+        ]
+      },
+      {
+        "id": "captainChart-slot-3",
+        "variants": [
+          {
+            "id": "captainChart-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "63 : 7 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+            "explanation": "63 : 7 = 9."
+          },
+          {
+            "id": "captainChart-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 4 = ?",
+            "answer": 28,
+            "choices": [
+              24,
+              28,
+              32,
+              36
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 7 twee keer.",
+            "explanation": "7 × 4 = 28."
+          }
+        ]
+      },
+      {
+        "id": "captainChart-slot-4",
+        "variants": [
+          {
+            "id": "captainChart-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 9 = ?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "captainChart-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 6 = ?",
+            "answer": 18,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 6 = 18."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "mainPorthole",
+    "anchorId": "mainPorthole",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "mainPorthole-slot-1",
+        "variants": [
+          {
+            "id": "mainPorthole-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Groot raam 4 groepjes van 6 raamfiches. Hoeveel raamfiches zijn dat samen?",
+            "answer": 24,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 6 = 24."
+          },
+          {
+            "id": "mainPorthole-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo verdeelt bij Groot raam 42 raamfiches over 7 gelijke groepen. Hoeveel raamfiches krijgt elke groep?",
+            "answer": 6,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 6 = 42, is 42 : 7 = 6.",
+            "explanation": "42 : 7 = 6."
+          }
+        ]
+      },
+      {
+        "id": "mainPorthole-slot-2",
+        "variants": [
+          {
+            "id": "mainPorthole-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 4 = ?",
+            "answer": 16,
+            "choices": [
+              12,
+              16,
+              20,
+              24
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 4 twee keer.",
+            "explanation": "4 × 4 = 16."
+          },
+          {
+            "id": "mainPorthole-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Groot raam 9 groepjes van 8 raamfiches. Hoeveel raamfiches zijn dat samen?",
+            "answer": 72,
+            "choices": [
+              64,
+              72,
+              80,
+              88
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+            "explanation": "9 × 8 = 72."
+          }
+        ]
+      },
+      {
+        "id": "mainPorthole-slot-3",
+        "variants": [
+          {
+            "id": "mainPorthole-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 3 = ?",
+            "answer": 15,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 3 = 15."
+          },
+          {
+            "id": "mainPorthole-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo verdeelt bij Groot raam 36 raamfiches over 9 gelijke groepen. Hoeveel raamfiches krijgt elke groep?",
+            "answer": 4,
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 4 = 36, is 36 : 9 = 4.",
+            "explanation": "36 : 9 = 4."
+          }
+        ]
+      },
+      {
+        "id": "mainPorthole-slot-4",
+        "variants": [
+          {
+            "id": "mainPorthole-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "45 : 5 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 9 = 45, is 45 : 5 = 9.",
+            "explanation": "45 : 5 = 9."
+          },
+          {
+            "id": "mainPorthole-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 4 = ?",
+            "answer": 36,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 9 twee keer.",
+            "explanation": "9 × 4 = 36."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "logbookDesk",
+    "anchorId": "logbookDesk",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "logbookDesk-slot-1",
+        "variants": [
+          {
+            "id": "logbookDesk-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo verdeelt bij Logboektafel 8 logboekkaarten over 4 gelijke groepen. Hoeveel logboekkaarten krijgt elke groep?",
+            "answer": 2,
+            "choices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 2 = 8, is 8 : 4 = 2.",
+            "explanation": "8 : 4 = 2."
+          },
+          {
+            "id": "logbookDesk-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 5 = ?",
+            "answer": 20,
+            "choices": [
+              15,
+              20,
+              25,
+              30
+            ],
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 4 sprongen van 5.",
+            "explanation": "4 × 5 = 20."
+          }
+        ]
+      },
+      {
+        "id": "logbookDesk-slot-2",
+        "variants": [
+          {
+            "id": "logbookDesk-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo verdeelt bij Logboektafel 36 logboekkaarten over 6 gelijke groepen. Hoeveel logboekkaarten krijgt elke groep?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 6 = 36, is 36 : 6 = 6.",
+            "explanation": "36 : 6 = 6."
+          },
+          {
+            "id": "logbookDesk-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "42 : 6 = ?",
+            "answer": 7,
+            "choices": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+            "explanation": "42 : 6 = 7."
+          }
+        ]
+      },
+      {
+        "id": "logbookDesk-slot-3",
+        "variants": [
+          {
+            "id": "logbookDesk-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Logboektafel 2 groepjes van 8 logboekkaarten. Hoeveel logboekkaarten zijn dat samen?",
+            "answer": 16,
+            "choices": [
+              8,
+              16,
+              24,
+              32
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "explanation": "2 × 8 = 16."
+          },
+          {
+            "id": "logbookDesk-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 4 = ?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 7 twee keer.",
+            "explanation": "7 × 4 = 28."
+          }
+        ]
+      },
+      {
+        "id": "logbookDesk-slot-4",
+        "variants": [
+          {
+            "id": "logbookDesk-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 9 = ?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "logbookDesk-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Logboektafel 4 groepjes van 7 logboekkaarten. Hoeveel logboekkaarten zijn dat samen?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
   id: "LVL-0005",
   title: "Aan boord",
@@ -189,6 +651,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       activate: "De deur naar de minisub gaat open."
     }
   ],
+  learningChallenges: learningChallengesLVL0005,
   runes: [
     {
       id: "captainChart",
@@ -199,14 +662,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       intro: "De kaart toont routes door diepe zeeen.",
       prompt: "Tel de zeelijnen op de kaart.",
       solved: "Mooi! De route is duidelijk.",
-      questions: [
-        { a: 6, b: 4 },
-        { a: 8, b: 3 },
-        { a: 7, b: 2 },
-        { a: 9, b: 2 },
-        { a: 3, b: 8 },
-        { a: 10, b: 4 }
-      ]
+      challengeId: "captainChart"
     },
     {
       id: "mainPorthole",
@@ -217,14 +673,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       intro: "Achter het raam zwemmen vissen in groepjes.",
       prompt: "Tel de vissen achter het glas.",
       solved: "Goed zo! Het raam licht blauw op.",
-      questions: [
-        { a: 5, b: 7 },
-        { a: 2, b: 9 },
-        { a: 4, b: 8 },
-        { a: 6, b: 3 },
-        { a: 8, b: 5 },
-        { a: 7, b: 4 }
-      ]
+      challengeId: "mainPorthole"
     },
     {
       id: "logbookDesk",
@@ -235,14 +684,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       intro: "Het logboek ligt open op de tafel.",
       prompt: "Tel de dagen in het logboek.",
       solved: "Sterk! Het logboek klapt dicht.",
-      questions: [
-        { a: 5, b: 9 },
-        { a: 8, b: 7 },
-        { a: 6, b: 6 },
-        { a: 10, b: 3 },
-        { a: 9, b: 6 },
-        { a: 4, b: 10 }
-      ]
+      challengeId: "logbookDesk"
     }
   ],
   reward: {

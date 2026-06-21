@@ -4,536 +4,518 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const asset = "Levels/LVL-0015/assets/frankrijk.png";
   const challengerAsset = "Levels/LVL-0015/assets/atlas-de-reiziger.png";
   const learningChallenges = [
-    {
-      "id": "marketStall",
-      "anchorId": "marketStall",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "market-stall-slot-1",
-          "variants": [
-            {
-              "id": "market-stall-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "6 kratten hebben elk 8 sinaasappels. Hoeveel sinaasappels zijn dat samen?",
-              "answer": 48,
-              "hintMinnie": "Zoek 6 gelijke groepjes van 8.",
-              "hintMoose": "Reken 6 × 8 stap voor stap.",
-              "explanation": "6 × 8 = 48."
+  {
+    "id": "marketStall",
+    "anchorId": "marketStall",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "market-stall-slot-1",
+        "variants": [
+          {
+            "id": "market-stall-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 7 = ?",
+            "answer": 35,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 5 en 2 × 5.",
+            "explanation": "5 × 7 = 35."
+          },
+          {
+            "id": "market-stall-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "20 : 5 = ?",
+            "answer": 4,
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 4 = 20, is 20 : 5 = 4.",
+            "explanation": "20 : 5 = 4."
+          }
+        ]
+      },
+      {
+        "id": "market-stall-slot-2",
+        "variants": [
+          {
+            "id": "market-stall-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Marktkraam is 4 meter lang en heeft 2 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 2,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 2 × 2 = 4, is 4 : 2 = 2.",
+            "explanation": "4 : 2 = 2 meter."
+          },
+          {
+            "id": "market-stall-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 8 = ?",
+            "answer": 72,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+            "explanation": "9 × 8 = 72."
+          }
+        ]
+      },
+      {
+        "id": "market-stall-slot-3",
+        "variants": [
+          {
+            "id": "market-stall-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 3 = ?",
+            "answer": 15,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 3 = 15."
+          },
+          {
+            "id": "market-stall-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 6 = ?",
+            "answer": 54,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "explanation": "9 × 6 = 54."
+          }
+        ]
+      },
+      {
+        "id": "market-stall-slot-4",
+        "variants": [
+          {
+            "id": "market-stall-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Marktkraam 5 groepjes van 9 marktkistjes. Hoeveel marktkistjes zijn dat samen?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "market-stall-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 7 = ?",
+            "answer": 28,
+            "choices": [
+              21,
+              28,
+              35,
+              42
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "villageClock",
+    "anchorId": "villageClock",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "village-clock-slot-1",
+        "variants": [
+          {
+            "id": "fr-clock-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien over drie",
+            "choices": [
+              "Vijf over drie",
+              "Tien over drie",
+              "Tien voor drie",
+              "Kwart over drie"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 3,
+              "minute": 10
             },
-            {
-              "id": "market-stall-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 7 rijen met telkens 7 sinaasappels. Hoeveel sinaasappels zijn dat?",
-              "answer": 49,
-              "choices": [
-                45,
-                49,
-                53,
-                57
-              ],
-              "hintMinnie": "Denk aan 7 groepjes van 7.",
-              "hintMoose": "Vermenigvuldig 7 met 7.",
-              "explanation": "7 × 7 = 49."
-            }
-          ]
-        },
-        {
-          "id": "market-stall-slot-2",
-          "variants": [
-            {
-              "id": "market-stall-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "56 sinaasappels worden eerlijk verdeeld over 7 kratten. Hoeveel krijgt elke groep?",
-              "answer": 8,
-              "choices": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "hintMinnie": "Verdeel 56 in 7 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 7 precies 56 is.",
-              "explanation": "56 : 7 = 8."
+            "hintMinnie": "Kijk eerst naar de grote wijzer.",
+            "hintMoose": "De grote wijzer op de 2 betekent tien over. De kleine wijzer staat net na de 3.",
+            "explanation": "Het is tien over drie."
+          },
+          {
+            "id": "fr-clock-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf over zes",
+            "choices": [
+              "Vijf voor zes",
+              "Vijf over zes",
+              "Tien over zes",
+              "Zes uur"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 6,
+              "minute": 5
             },
-            {
-              "id": "market-stall-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 63 sinaasappels. In elke groep passen er 9. Hoeveel groepen zijn nodig?",
-              "answer": 7,
-              "hintMinnie": "Maak groepjes van 9.",
-              "hintMoose": "Reken 63 gedeeld door 9.",
-              "explanation": "63 : 9 = 7."
-            }
-          ]
-        },
-        {
-          "id": "market-stall-slot-3",
-          "variants": [
-            {
-              "id": "market-stall-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 5 fruitmandjes voor €6 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 30,
-              "hintMinnie": "Elk stuk kost €6.",
-              "hintMoose": "Reken 5 × 6.",
-              "explanation": "5 × €6 = €30."
+            "hintMinnie": "Elk cijfer is vijf minuten.",
+            "hintMoose": "De grote wijzer staat op de 1: vijf minuten na zes.",
+            "explanation": "Het is vijf over zes."
+          }
+        ]
+      },
+      {
+        "id": "village-clock-slot-2",
+        "variants": [
+          {
+            "id": "fr-clock-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien voor half negen",
+            "choices": [
+              "Tien over half acht",
+              "Kwart over acht",
+              "Tien voor half negen",
+              "Half negen"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 8,
+              "minute": 20
             },
-            {
-              "id": "market-stall-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Marktkraam is 72 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
-              "hintMoose": "Reken 72 : 8.",
-              "explanation": "72 : 8 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "market-stall-slot-4",
-          "variants": [
-            {
-              "id": "market-stall-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "9 × 7 = ?",
-              "answer": 63,
-              "hintMinnie": "Splits 9 in handige delen.",
-              "hintMoose": "Reken 9 groepjes van 7.",
-              "explanation": "9 × 7 = 63."
+            "hintMinnie": "De grote wijzer staat op de 4.",
+            "hintMoose": "De grote wijzer op de 4 betekent tien minuten voor half. De kleine wijzer staat tussen acht en negen.",
+            "explanation": "Het is tien voor half negen."
+          },
+          {
+            "id": "fr-clock-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf voor half twee",
+            "choices": [
+              "Vijf over één",
+              "Vijf voor half twee",
+              "Vijf over half twee",
+              "Half twee"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 1,
+              "minute": 25
             },
-            {
-              "id": "market-stall-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "64 : 8 = ?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Zoek welk getal keer 8 gelijk is aan 64.",
-              "hintMoose": "Verdeel 64 in groepjes van 8.",
-              "explanation": "64 : 8 = 8."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "villageClock",
-      "anchorId": "villageClock",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "village-clock-slot-1",
-          "variants": [
-            {
-              "id": "fr-clock-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Tien over drie",
-              "choices": [
-                "Vijf over drie",
-                "Tien over drie",
-                "Tien voor drie",
-                "Kwart over drie"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 3,
-                "minute": 10
-              },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer op de 2 betekent tien over. De kleine wijzer staat net na de 3.",
-              "explanation": "Het is tien over drie."
+            "hintMinnie": "De grote wijzer staat op de 5.",
+            "hintMoose": "Vijf minuten voor het halve uur zeg je vijf voor half twee.",
+            "explanation": "Het is vijf voor half twee."
+          }
+        ]
+      },
+      {
+        "id": "village-clock-slot-3",
+        "variants": [
+          {
+            "id": "fr-clock-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien over half zes",
+            "choices": [
+              "Tien voor half zes",
+              "Half zes",
+              "Tien over half zes",
+              "Tien voor zes"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 5,
+              "minute": 40
             },
-            {
-              "id": "fr-clock-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Vijf over zes",
-              "choices": [
-                "Vijf voor zes",
-                "Vijf over zes",
-                "Tien over zes",
-                "Zes uur"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 6,
-                "minute": 5
-              },
-              "hintMinnie": "Elk cijfer is vijf minuten.",
-              "hintMoose": "De grote wijzer staat op de 1: vijf minuten na zes.",
-              "explanation": "Het is vijf over zes."
-            }
-          ]
-        },
-        {
-          "id": "village-clock-slot-2",
-          "variants": [
-            {
-              "id": "fr-clock-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Twintig over acht",
-              "choices": [
-                "Twintig voor acht",
-                "Kwart over acht",
-                "Twintig over acht",
-                "Half negen"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 8,
-                "minute": 20
-              },
-              "hintMinnie": "De grote wijzer staat op de 4.",
-              "hintMoose": "Vier keer vijf minuten is twintig over.",
-              "explanation": "Het is twintig over acht."
+            "hintMinnie": "De grote wijzer staat op de 8.",
+            "hintMoose": "De grote wijzer op de 8 betekent tien minuten na half. De kleine wijzer staat tussen vijf en zes.",
+            "explanation": "Het is tien over half zes."
+          },
+          {
+            "id": "fr-clock-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf over half tien",
+            "choices": [
+              "Vijf voor half tien",
+              "Half tien",
+              "Vijf over half tien",
+              "Vijf voor tien"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 9,
+              "minute": 35
             },
-            {
-              "id": "fr-clock-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Vijf voor half twee",
-              "choices": [
-                "Vijf over één",
-                "Vijf voor half twee",
-                "Vijf over half twee",
-                "Half twee"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 1,
-                "minute": 25
-              },
-              "hintMinnie": "De grote wijzer staat op de 5.",
-              "hintMoose": "Vijf minuten voor het halve uur zeg je vijf voor half twee.",
-              "explanation": "Het is vijf voor half twee."
-            }
-          ]
-        },
-        {
-          "id": "village-clock-slot-3",
-          "variants": [
-            {
-              "id": "fr-clock-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Twintig voor zes",
-              "choices": [
-                "Twintig over vijf",
-                "Half zes",
-                "Twintig voor zes",
-                "Tien voor zes"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 5,
-                "minute": 40
-              },
-              "hintMinnie": "De grote wijzer staat op de 8.",
-              "hintMoose": "Vanaf de 8 zijn het nog twintig minuten tot zes.",
-              "explanation": "Het is twintig voor zes."
+            "hintMinnie": "De grote wijzer is net voorbij de 6.",
+            "hintMoose": "Op de 7 is het vijf minuten na half tien.",
+            "explanation": "Het is vijf over half tien."
+          }
+        ]
+      },
+      {
+        "id": "village-clock-slot-4",
+        "variants": [
+          {
+            "id": "fr-clock-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Tien voor twaalf",
+            "choices": [
+              "Tien over elf",
+              "Vijf voor twaalf",
+              "Tien voor twaalf",
+              "Twaalf uur"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 11,
+              "minute": 50
             },
-            {
-              "id": "fr-clock-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Vijf over half tien",
-              "choices": [
-                "Vijf voor half tien",
-                "Half tien",
-                "Vijf over half tien",
-                "Vijf voor tien"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 9,
-                "minute": 35
-              },
-              "hintMinnie": "De grote wijzer is net voorbij de 6.",
-              "hintMoose": "Op de 7 is het vijf minuten na half tien.",
-              "explanation": "Het is vijf over half tien."
-            }
-          ]
-        },
-        {
-          "id": "village-clock-slot-4",
-          "variants": [
-            {
-              "id": "fr-clock-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Tien voor twaalf",
-              "choices": [
-                "Tien over elf",
-                "Vijf voor twaalf",
-                "Tien voor twaalf",
-                "Twaalf uur"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 11,
-                "minute": 50
-              },
-              "hintMinnie": "De grote wijzer staat op de 10.",
-              "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot twaalf.",
-              "explanation": "Het is tien voor twaalf."
+            "hintMinnie": "De grote wijzer staat op de 10.",
+            "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot twaalf.",
+            "explanation": "Het is tien voor twaalf."
+          },
+          {
+            "id": "fr-clock-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "clock_reading_five_minutes",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "Hoe laat is het?",
+            "answer": "Vijf voor drie",
+            "choices": [
+              "Vijf over twee",
+              "Tien voor drie",
+              "Vijf voor drie",
+              "Drie uur"
+            ],
+            "visual": {
+              "type": "clock",
+              "hour": 2,
+              "minute": 55
             },
-            {
-              "id": "fr-clock-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "clock_reading_five_minutes",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "Hoe laat is het?",
-              "answer": "Vijf voor drie",
-              "choices": [
-                "Vijf over twee",
-                "Tien voor drie",
-                "Vijf voor drie",
-                "Drie uur"
-              ],
-              "visual": {
-                "type": "clock",
-                "hour": 2,
-                "minute": 55
-              },
-              "hintMinnie": "De grote wijzer staat op de 11.",
-              "hintMoose": "Vanaf de 11 duurt het nog vijf minuten tot drie.",
-              "explanation": "Het is vijf voor drie."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "fountain",
-      "anchorId": "fountain",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "fountain-slot-1",
-          "variants": [
-            {
-              "id": "fountain-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "6 waterstralen hebben elk 9 druppels. Hoeveel druppels zijn dat samen?",
-              "answer": 54,
-              "hintMinnie": "Zoek 6 gelijke groepjes van 9.",
-              "hintMoose": "Reken 6 × 9 stap voor stap.",
-              "explanation": "6 × 9 = 54."
-            },
-            {
-              "id": "fountain-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 8 rijen met telkens 7 druppels. Hoeveel druppels zijn dat?",
-              "answer": 56,
-              "choices": [
-                52,
-                56,
-                60,
-                64
-              ],
-              "hintMinnie": "Denk aan 8 groepjes van 7.",
-              "hintMoose": "Vermenigvuldig 8 met 7.",
-              "explanation": "8 × 7 = 56."
-            }
-          ]
-        },
-        {
-          "id": "fountain-slot-2",
-          "variants": [
-            {
-              "id": "fountain-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "54 druppels worden eerlijk verdeeld over 6 waterstralen. Hoeveel krijgt elke groep?",
-              "answer": 9,
-              "choices": [
-                7,
-                9,
-                11,
-                13
-              ],
-              "hintMinnie": "Verdeel 54 in 6 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 6 precies 54 is.",
-              "explanation": "54 : 6 = 9."
-            },
-            {
-              "id": "fountain-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 64 druppels. In elke groep passen er 8. Hoeveel groepen zijn nodig?",
-              "answer": 8,
-              "hintMinnie": "Maak groepjes van 8.",
-              "hintMoose": "Reken 64 gedeeld door 8.",
-              "explanation": "64 : 8 = 8."
-            }
-          ]
-        },
-        {
-          "id": "fountain-slot-3",
-          "variants": [
-            {
-              "id": "fountain-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 4 fonteinmunten voor €5 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 20,
-              "hintMinnie": "Elk stuk kost €5.",
-              "hintMoose": "Reken 4 × 5.",
-              "explanation": "4 × €5 = €20."
-            },
-            {
-              "id": "fountain-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Dorpsfontein is 63 meter en heeft 7 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 7 gelijke delen.",
-              "hintMoose": "Reken 63 : 7.",
-              "explanation": "63 : 7 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "fountain-slot-4",
-          "variants": [
-            {
-              "id": "fountain-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "8 × 8 = ?",
-              "answer": 64,
-              "hintMinnie": "Splits 8 in handige delen.",
-              "hintMoose": "Reken 8 groepjes van 8.",
-              "explanation": "8 × 8 = 64."
-            },
-            {
-              "id": "fountain-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "72 : 9 = ?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Zoek welk getal keer 9 gelijk is aan 72.",
-              "hintMoose": "Verdeel 72 in groepjes van 9.",
-              "explanation": "72 : 9 = 8."
-            }
-          ]
-        }
-      ]
-    }
-  ];
+            "hintMinnie": "De grote wijzer staat op de 11.",
+            "hintMoose": "Vanaf de 11 duurt het nog vijf minuten tot drie.",
+            "explanation": "Het is vijf voor drie."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fountain",
+    "anchorId": "fountain",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "fountain-slot-1",
+        "variants": [
+          {
+            "id": "fountain-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas verdeelt bij Dorpsfontein 27 waterfiches over 3 gelijke groepen. Hoeveel waterfiches krijgt elke groep?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 9 = 27, is 27 : 3 = 9.",
+            "explanation": "27 : 3 = 9."
+          },
+          {
+            "id": "fountain-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 3 = ?",
+            "answer": 6,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+            "explanation": "2 × 3 = 6."
+          }
+        ]
+      },
+      {
+        "id": "fountain-slot-2",
+        "variants": [
+          {
+            "id": "fountain-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 2 = ?",
+            "answer": 4,
+            "choices": [
+              2,
+              4,
+              6,
+              8
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 2.",
+            "explanation": "2 × 2 = 4."
+          },
+          {
+            "id": "fountain-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 6 = ?",
+            "answer": 42,
+            "choices": [
+              36,
+              42,
+              48,
+              54
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 6 = 42."
+          }
+        ]
+      },
+      {
+        "id": "fountain-slot-3",
+        "variants": [
+          {
+            "id": "fountain-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "15 : 3 = ?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 5 = 15, is 15 : 3 = 5.",
+            "explanation": "15 : 3 = 5."
+          },
+          {
+            "id": "fountain-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 7 = ?",
+            "answer": 14,
+            "choices": [
+              7,
+              14,
+              21,
+              28
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 2 en 2 × 2.",
+            "explanation": "2 × 7 = 14."
+          }
+        ]
+      },
+      {
+        "id": "fountain-slot-4",
+        "variants": [
+          {
+            "id": "fountain-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas verdeelt bij Dorpsfontein 32 waterfiches over 8 gelijke groepen. Hoeveel waterfiches krijgt elke groep?",
+            "answer": 4,
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 4 = 32, is 32 : 8 = 4.",
+            "explanation": "32 : 8 = 4."
+          },
+          {
+            "id": "fountain-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "70 : 10 = ?",
+            "answer": 7,
+            "hintMinnie": "Welke som uit de tafel van 10 helpt?",
+            "hintMoose": "Omdat 10 × 7 = 70, is 70 : 10 = 7.",
+            "explanation": "70 : 10 = 7."
+          }
+        ]
+      }
+    ]
+  }
+];
   const challenges = [
     {
       id: "marketStall", name: "Marktkraam", shortName: "Markt", center: { x: 450, y: 430 }, radius: 104,

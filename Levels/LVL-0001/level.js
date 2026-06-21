@@ -1,5 +1,485 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0001 = [
+  {
+    "id": "zon",
+    "anchorId": "zon",
+    "challengeCharacterId": "runewachter",
+    "questions": [
+      {
+        "id": "zon-slot-1",
+        "variants": [
+          {
+            "id": "zon-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 10 = ?",
+            "answer": 50,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "explanation": "5 × 10 = 50."
+          },
+          {
+            "id": "zon-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 8 = ?",
+            "answer": 32,
+            "choices": [
+              24,
+              32,
+              40,
+              48
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "explanation": "4 × 8 = 32."
+          }
+        ]
+      },
+      {
+        "id": "zon-slot-2",
+        "variants": [
+          {
+            "id": "zon-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij zonneteken 4 groepjes van 7 gouden schijfjes. Hoeveel gouden schijfjes zijn dat samen?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          },
+          {
+            "id": "zon-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 4 = ?",
+            "answer": 8,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 2 twee keer.",
+            "explanation": "2 × 4 = 8."
+          }
+        ]
+      },
+      {
+        "id": "zon-slot-3",
+        "variants": [
+          {
+            "id": "zon-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 9 = ?",
+            "answer": 72,
+            "choices": [
+              63,
+              72,
+              81,
+              90
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 8 en haal 8 eraf.",
+            "explanation": "8 × 9 = 72."
+          },
+          {
+            "id": "zon-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 5 = ?",
+            "answer": 25,
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 5 sprongen van 5.",
+            "explanation": "5 × 5 = 25."
+          }
+        ]
+      },
+      {
+        "id": "zon-slot-4",
+        "variants": [
+          {
+            "id": "zon-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 7 = ?",
+            "answer": 56,
+            "choices": [
+              49,
+              56,
+              63,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "explanation": "8 × 7 = 56."
+          },
+          {
+            "id": "zon-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "35 : 5 = ?",
+            "answer": 7,
+            "choices": [
+              6,
+              7,
+              8,
+              9
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 7 = 35, is 35 : 5 = 7.",
+            "explanation": "35 : 5 = 7."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "steen",
+    "anchorId": "steen",
+    "challengeCharacterId": "runewachter",
+    "questions": [
+      {
+        "id": "steen-slot-1",
+        "variants": [
+          {
+            "id": "steen-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij steenteken 3 groepjes van 8 steenblokken. Hoeveel steenblokken zijn dat samen?",
+            "answer": 24,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 3 en verdubbel dat.",
+            "explanation": "3 × 8 = 24."
+          },
+          {
+            "id": "steen-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 6 = ?",
+            "answer": 12,
+            "choices": [
+              6,
+              12,
+              18,
+              24
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 2 en tel nog 2 erbij.",
+            "explanation": "2 × 6 = 12."
+          }
+        ]
+      },
+      {
+        "id": "steen-slot-2",
+        "variants": [
+          {
+            "id": "steen-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 10 = ?",
+            "answer": 70,
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "7 groepjes van 10 eindigen op nul.",
+            "explanation": "7 × 10 = 70."
+          },
+          {
+            "id": "steen-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 8 = ?",
+            "answer": 48,
+            "choices": [
+              40,
+              48,
+              56,
+              64
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          }
+        ]
+      },
+      {
+        "id": "steen-slot-3",
+        "variants": [
+          {
+            "id": "steen-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "20 : 5 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 4 = 20, is 20 : 5 = 4.",
+            "explanation": "20 : 5 = 4."
+          },
+          {
+            "id": "steen-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 8 = ?",
+            "answer": 64,
+            "choices": [
+              56,
+              64,
+              72,
+              80
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "explanation": "8 × 8 = 64."
+          }
+        ]
+      },
+      {
+        "id": "steen-slot-4",
+        "variants": [
+          {
+            "id": "steen-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 9 = ?",
+            "answer": 18,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+            "explanation": "2 × 9 = 18."
+          },
+          {
+            "id": "steen-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking verdeelt bij steenteken 63 steenblokken over 7 gelijke groepen. Hoeveel steenblokken krijgt elke groep?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+            "explanation": "63 : 7 = 9."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "wind",
+    "anchorId": "wind",
+    "challengeCharacterId": "runewachter",
+    "questions": [
+      {
+        "id": "wind-slot-1",
+        "variants": [
+          {
+            "id": "wind-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "14 : 7 = ?",
+            "answer": 2,
+            "choices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 2 = 14, is 14 : 7 = 2.",
+            "explanation": "14 : 7 = 2."
+          },
+          {
+            "id": "wind-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 2 = ?",
+            "answer": 12,
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 6.",
+            "explanation": "6 × 2 = 12."
+          }
+        ]
+      },
+      {
+        "id": "wind-slot-2",
+        "variants": [
+          {
+            "id": "wind-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "36 : 4 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 9 = 36, is 36 : 4 = 9.",
+            "explanation": "36 : 4 = 9."
+          },
+          {
+            "id": "wind-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "24 : 6 = ?",
+            "answer": 4,
+            "choices": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 4 = 24, is 24 : 6 = 4.",
+            "explanation": "24 : 6 = 4."
+          }
+        ]
+      },
+      {
+        "id": "wind-slot-3",
+        "variants": [
+          {
+            "id": "wind-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking koopt 5 Vikingkaarten voor 6 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 30,
+            "hintMinnie": "Elk kaartje kost 6 euro.",
+            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 6 = 30 euro."
+          },
+          {
+            "id": "wind-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking verdeelt bij windteken 25 Vikinglinten over 5 gelijke groepen. Hoeveel Vikinglinten krijgt elke groep?",
+            "answer": 5,
+            "choices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 5 = 25, is 25 : 5 = 5.",
+            "explanation": "25 : 5 = 5."
+          }
+        ]
+      },
+      {
+        "id": "wind-slot-4",
+        "variants": [
+          {
+            "id": "wind-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "De Viking legt bij windteken 8 groepjes van 7 Vikinglinten. Hoeveel Vikinglinten zijn dat samen?",
+            "answer": 56,
+            "choices": [
+              49,
+              56,
+              63,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "explanation": "8 × 7 = 56."
+          },
+          {
+            "id": "wind-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De Viking legt bij windteken 6 groepjes van 4 Vikinglinten. Hoeveel Vikinglinten zijn dat samen?",
+            "answer": 24,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 6 twee keer.",
+            "explanation": "6 × 4 = 24."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   id: "LVL-0001",
   title: "De Runenpoort",
@@ -9,7 +489,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   progressKey: "svenadventure-table-progress-v1",
   menu: {
     illustration: "Levels/LVL-0001/assets/level-1-wide-world.png",
-    badge: "Eerste avontuur",
+    badge: "3 plekken",
     detail: "Een vergeten Vikingtempel en oude runen"
   },
   companion: {
@@ -245,6 +725,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       activate: "De poort wacht op drie wakkere runen."
     }
   ],
+  learningChallenges: learningChallengesLVL0001,
   runes: [
     {
       id: "zon",
@@ -254,14 +735,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       defaultAction: "activate",
       intro: "De Zonrune voelt warm aan.",
       solved: "Goed zo! De Zonrune gloeit.",
-      questions: [
-        { a: 3, b: 4 },
-        { a: 5, b: 6 },
-        { a: 2, b: 8 },
-        { a: 4, b: 7 },
-        { a: 9, b: 3 },
-        { a: 6, b: 2 }
-      ]
+      challengeId: "zon"
     },
     {
       id: "steen",
@@ -271,14 +745,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       defaultAction: "activate",
       intro: "De Steenrune bromt zacht.",
       solved: "Sterk! De Steenrune is wakker.",
-      questions: [
-        { a: 6, b: 4 },
-        { a: 8, b: 3 },
-        { a: 7, b: 5 },
-        { a: 9, b: 2 },
-        { a: 10, b: 4 },
-        { a: 3, b: 7 }
-      ]
+      challengeId: "steen"
     },
     {
       id: "wind",
@@ -288,14 +755,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       defaultAction: "activate",
       intro: "De Windrune suist in het mos.",
       solved: "Mooi! De Windrune zingt.",
-      questions: [
-        { a: 4, b: 9 },
-        { a: 6, b: 8 },
-        { a: 10, b: 7 },
-        { a: 8, b: 5 },
-        { a: 7, b: 6 },
-        { a: 5, b: 9 }
-      ]
+      challengeId: "wind"
     }
   ],
   reward: {

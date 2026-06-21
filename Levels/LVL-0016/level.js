@@ -4,472 +4,460 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
   const asset = "Levels/LVL-0016/assets/italie.png";
   const challengerAsset = "Levels/LVL-0016/assets/atlas-de-reiziger.png";
   const learningChallenges = [
-    {
-      "id": "colosseum",
-      "anchorId": "colosseum",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "colosseum-slot-1",
-          "variants": [
-            {
-              "id": "colosseum-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "8 bogenrijen hebben elk 7 zitplaatsen. Hoeveel zitplaatsen zijn dat samen?",
-              "answer": 56,
-              "hintMinnie": "Zoek 8 gelijke groepjes van 7.",
-              "hintMoose": "Reken 8 × 7 stap voor stap.",
-              "explanation": "8 × 7 = 56."
-            },
-            {
-              "id": "colosseum-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 9 rijen met telkens 6 zitplaatsen. Hoeveel zitplaatsen zijn dat?",
-              "answer": 54,
-              "choices": [
-                50,
-                54,
-                58,
-                62
-              ],
-              "hintMinnie": "Denk aan 9 groepjes van 6.",
-              "hintMoose": "Vermenigvuldig 9 met 6.",
-              "explanation": "9 × 6 = 54."
-            }
-          ]
-        },
-        {
-          "id": "colosseum-slot-2",
-          "variants": [
-            {
-              "id": "colosseum-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "72 zitplaatsen worden eerlijk verdeeld over 8 bogenrijen. Hoeveel krijgt elke groep?",
-              "answer": 9,
-              "choices": [
-                7,
-                9,
-                11,
-                13
-              ],
-              "hintMinnie": "Verdeel 72 in 8 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 8 precies 72 is.",
-              "explanation": "72 : 8 = 9."
-            },
-            {
-              "id": "colosseum-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 63 zitplaatsen. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
-              "answer": 9,
-              "hintMinnie": "Maak groepjes van 7.",
-              "hintMoose": "Reken 63 gedeeld door 7.",
-              "explanation": "63 : 7 = 9."
-            }
-          ]
-        },
-        {
-          "id": "colosseum-slot-3",
-          "variants": [
-            {
-              "id": "colosseum-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 5 toegangskaartjes voor €6 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 30,
-              "hintMinnie": "Elk stuk kost €6.",
-              "hintMoose": "Reken 5 × 6.",
-              "explanation": "5 × €6 = €30."
-            },
-            {
-              "id": "colosseum-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs het Colosseum is 64 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
-              "hintMoose": "Reken 64 : 8.",
-              "explanation": "64 : 8 = 8 meter."
-            }
-          ]
-        },
-        {
-          "id": "colosseum-slot-4",
-          "variants": [
-            {
-              "id": "colosseum-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "9 × 8 = ?",
-              "answer": 72,
-              "hintMinnie": "Splits 9 in handige delen.",
-              "hintMoose": "Reken 9 groepjes van 8.",
-              "explanation": "9 × 8 = 72."
-            },
-            {
-              "id": "colosseum-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "54 : 6 = ?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Zoek welk getal keer 6 gelijk is aan 54.",
-              "hintMoose": "Verdeel 54 in groepjes van 6.",
-              "explanation": "54 : 6 = 9."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "romanFountain",
-      "anchorId": "romanFountain",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "roman-fountain-slot-1",
-          "variants": [
-            {
-              "id": "roman-fountain-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "7 waterstralen hebben elk 8 waterbogen. Hoeveel waterbogen zijn dat samen?",
-              "answer": 56,
-              "hintMinnie": "Zoek 7 gelijke groepjes van 8.",
-              "hintMoose": "Reken 7 × 8 stap voor stap.",
-              "explanation": "7 × 8 = 56."
-            },
-            {
-              "id": "roman-fountain-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 6 rijen met telkens 9 waterbogen. Hoeveel waterbogen zijn dat?",
-              "answer": 54,
-              "choices": [
-                50,
-                54,
-                58,
-                62
-              ],
-              "hintMinnie": "Denk aan 6 groepjes van 9.",
-              "hintMoose": "Vermenigvuldig 6 met 9.",
-              "explanation": "6 × 9 = 54."
-            }
-          ]
-        },
-        {
-          "id": "roman-fountain-slot-2",
-          "variants": [
-            {
-              "id": "roman-fountain-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "56 waterbogen worden eerlijk verdeeld over 7 waterstralen. Hoeveel krijgt elke groep?",
-              "answer": 8,
-              "choices": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "hintMinnie": "Verdeel 56 in 7 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 7 precies 56 is.",
-              "explanation": "56 : 7 = 8."
-            },
-            {
-              "id": "roman-fountain-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 54 waterbogen. In elke groep passen er 6. Hoeveel groepen zijn nodig?",
-              "answer": 9,
-              "hintMinnie": "Maak groepjes van 6.",
-              "hintMoose": "Reken 54 gedeeld door 6.",
-              "explanation": "54 : 6 = 9."
-            }
-          ]
-        },
-        {
-          "id": "roman-fountain-slot-3",
-          "variants": [
-            {
-              "id": "roman-fountain-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 4 fonteinmunten voor €5 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 20,
-              "hintMinnie": "Elk stuk kost €5.",
-              "hintMoose": "Reken 4 × 5.",
-              "explanation": "4 × €5 = €20."
-            },
-            {
-              "id": "roman-fountain-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Romeinse fontein is 72 meter en heeft 8 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 8 gelijke delen.",
-              "hintMoose": "Reken 72 : 8.",
-              "explanation": "72 : 8 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "roman-fountain-slot-4",
-          "variants": [
-            {
-              "id": "roman-fountain-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "8 × 9 = ?",
-              "answer": 72,
-              "hintMinnie": "Splits 8 in handige delen.",
-              "hintMoose": "Reken 8 groepjes van 9.",
-              "explanation": "8 × 9 = 72."
-            },
-            {
-              "id": "roman-fountain-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "63 : 7 = ?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Zoek welk getal keer 7 gelijk is aan 63.",
-              "hintMoose": "Verdeel 63 in groepjes van 7.",
-              "explanation": "63 : 7 = 9."
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "gelatoCart",
-      "anchorId": "gelatoCart",
-      "challengeCharacterId": "atlas-de-reiziger",
-      "questions": [
-        {
-          "id": "gelato-cart-slot-1",
-          "variants": [
-            {
-              "id": "gelato-cart-1a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "8 ijsbakken hebben elk 6 bolletjes. Hoeveel bolletjes zijn dat samen?",
-              "answer": 48,
-              "hintMinnie": "Zoek 8 gelijke groepjes van 6.",
-              "hintMoose": "Reken 8 × 6 stap voor stap.",
-              "explanation": "8 × 6 = 48."
-            },
-            {
-              "id": "gelato-cart-1b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "multiplication",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "Atlas ziet 7 rijen met telkens 9 bolletjes. Hoeveel bolletjes zijn dat?",
-              "answer": 63,
-              "choices": [
-                59,
-                63,
-                67,
-                71
-              ],
-              "hintMinnie": "Denk aan 7 groepjes van 9.",
-              "hintMoose": "Vermenigvuldig 7 met 9.",
-              "explanation": "7 × 9 = 63."
-            }
-          ]
-        },
-        {
-          "id": "gelato-cart-slot-2",
-          "variants": [
-            {
-              "id": "gelato-cart-2a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "64 bolletjes worden eerlijk verdeeld over 8 ijsbakken. Hoeveel krijgt elke groep?",
-              "answer": 8,
-              "choices": [
-                6,
-                8,
-                10,
-                12
-              ],
-              "hintMinnie": "Verdeel 64 in 8 gelijke groepjes.",
-              "hintMoose": "Zoek welk getal keer 8 precies 64 is.",
-              "explanation": "64 : 8 = 8."
-            },
-            {
-              "id": "gelato-cart-2b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "division_grouping",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Er zijn 63 bolletjes. In elke groep passen er 7. Hoeveel groepen zijn nodig?",
-              "answer": 9,
-              "hintMinnie": "Maak groepjes van 7.",
-              "hintMoose": "Reken 63 gedeeld door 7.",
-              "explanation": "63 : 7 = 9."
-            }
-          ]
-        },
-        {
-          "id": "gelato-cart-slot-3",
-          "variants": [
-            {
-              "id": "gelato-cart-3a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "money",
-              "presentation": "story",
-              "answerMode": "open",
-              "prompt": "Atlas koopt 6 ijsjes voor €4 per stuk. Hoeveel euro betaalt hij?",
-              "answer": 24,
-              "hintMinnie": "Elk stuk kost €4.",
-              "hintMoose": "Reken 6 × 4.",
-              "explanation": "6 × €4 = €24."
-            },
-            {
-              "id": "gelato-cart-3b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "route_division",
-              "presentation": "story",
-              "answerMode": "multipleChoice",
-              "prompt": "De route langs de Gelatokar is 54 meter en heeft 6 gelijke stukken. Hoe lang is elk stuk?",
-              "answer": 9,
-              "choices": [
-                6,
-                9,
-                12,
-                15
-              ],
-              "hintMinnie": "Verdeel de hele route in 6 gelijke delen.",
-              "hintMoose": "Reken 54 : 6.",
-              "explanation": "54 : 6 = 9 meter."
-            }
-          ]
-        },
-        {
-          "id": "gelato-cart-slot-4",
-          "variants": [
-            {
-              "id": "gelato-cart-4a",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_multiplication",
-              "presentation": "bare",
-              "answerMode": "open",
-              "prompt": "7 × 8 = ?",
-              "answer": 56,
-              "hintMinnie": "Splits 7 in handige delen.",
-              "hintMoose": "Reken 7 groepjes van 8.",
-              "explanation": "7 × 8 = 56."
-            },
-            {
-              "id": "gelato-cart-4b",
-              "domain": "math",
-              "schoolBand": "E5-intended",
-              "family": "bare_division",
-              "presentation": "bare",
-              "answerMode": "multipleChoice",
-              "prompt": "72 : 9 = ?",
-              "answer": 8,
-              "choices": [
-                5,
-                8,
-                11,
-                14
-              ],
-              "hintMinnie": "Zoek welk getal keer 9 gelijk is aan 72.",
-              "hintMoose": "Verdeel 72 in groepjes van 9.",
-              "explanation": "72 : 9 = 8."
-            }
-          ]
-        }
-      ]
-    }
-  ];
+  {
+    "id": "colosseum",
+    "anchorId": "colosseum",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "colosseum-slot-1",
+        "variants": [
+          {
+            "id": "colosseum-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 7 = ?",
+            "answer": 35,
+            "choices": [
+              28,
+              35,
+              42,
+              49
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 5 en 2 × 5.",
+            "explanation": "5 × 7 = 35."
+          },
+          {
+            "id": "colosseum-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas legt bij Colosseum 2 groepjes van 3 boogfiches. Hoeveel boogfiches zijn dat samen?",
+            "answer": 6,
+            "choices": [
+              3,
+              6,
+              9,
+              12
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+            "explanation": "2 × 3 = 6."
+          }
+        ]
+      },
+      {
+        "id": "colosseum-slot-2",
+        "variants": [
+          {
+            "id": "colosseum-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas verdeelt bij Colosseum 81 boogfiches over 9 gelijke groepen. Hoeveel boogfiches krijgt elke groep?",
+            "answer": 9,
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 9 = 81, is 81 : 9 = 9.",
+            "explanation": "81 : 9 = 9."
+          },
+          {
+            "id": "colosseum-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 6 = ?",
+            "answer": 42,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 6 = 42."
+          }
+        ]
+      },
+      {
+        "id": "colosseum-slot-3",
+        "variants": [
+          {
+            "id": "colosseum-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 9 = ?",
+            "answer": 27,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+            "explanation": "3 × 9 = 27."
+          },
+          {
+            "id": "colosseum-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "7 × 4 = ?",
+            "answer": 28,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 7 twee keer.",
+            "explanation": "7 × 4 = 28."
+          }
+        ]
+      },
+      {
+        "id": "colosseum-slot-4",
+        "variants": [
+          {
+            "id": "colosseum-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Colosseum 5 groepjes van 9 boogfiches. Hoeveel boogfiches zijn dat samen?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "colosseum-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "54 : 9 = ?",
+            "answer": 6,
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 6 = 54, is 54 : 9 = 6.",
+            "explanation": "54 : 9 = 6."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "romanFountain",
+    "anchorId": "romanFountain",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "roman-fountain-slot-1",
+        "variants": [
+          {
+            "id": "roman-fountain-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 6 = ?",
+            "answer": 24,
+            "choices": [
+              18,
+              24,
+              30,
+              36
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 6 = 24."
+          },
+          {
+            "id": "roman-fountain-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas koopt 3 routekaarten voor 4 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 12,
+            "hintMinnie": "Elk kaartje kost 4 euro.",
+            "hintMoose": "Verdubbel 3 twee keer.",
+            "explanation": "3 × 4 = 12 euro."
+          }
+        ]
+      },
+      {
+        "id": "roman-fountain-slot-2",
+        "variants": [
+          {
+            "id": "roman-fountain-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 5 = ?",
+            "answer": 25,
+            "choices": [
+              20,
+              25,
+              30,
+              35
+            ],
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 5 sprongen van 5.",
+            "explanation": "5 × 5 = 25."
+          },
+          {
+            "id": "roman-fountain-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Romeinse fontein 7 groepjes van 6 waterfiches. Hoeveel waterfiches zijn dat samen?",
+            "answer": 42,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 6 = 42."
+          }
+        ]
+      },
+      {
+        "id": "roman-fountain-slot-3",
+        "variants": [
+          {
+            "id": "roman-fountain-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "24 : 4 = ?",
+            "answer": 6,
+            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
+            "hintMoose": "Omdat 4 × 6 = 24, is 24 : 4 = 6.",
+            "explanation": "24 : 4 = 6."
+          },
+          {
+            "id": "roman-fountain-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Romeinse fontein is 14 meter lang en heeft 7 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 2,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 7 × 2 = 14, is 14 : 7 = 2.",
+            "explanation": "14 : 7 = 2 meter."
+          }
+        ]
+      },
+      {
+        "id": "roman-fountain-slot-4",
+        "variants": [
+          {
+            "id": "roman-fountain-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 9 = ?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "roman-fountain-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Romeinse fontein 5 groepjes van 8 waterfiches. Hoeveel waterfiches zijn dat samen?",
+            "answer": 40,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+            "explanation": "5 × 8 = 40."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gelatoCart",
+    "anchorId": "gelatoCart",
+    "challengeCharacterId": "atlas-de-reiziger",
+    "questions": [
+      {
+        "id": "gelato-cart-slot-1",
+        "variants": [
+          {
+            "id": "gelato-cart-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 9 = ?",
+            "answer": 63,
+            "choices": [
+              54,
+              63,
+              72,
+              81
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+            "explanation": "7 × 9 = 63."
+          },
+          {
+            "id": "gelato-cart-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "choices": [
+              48,
+              56,
+              64,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          }
+        ]
+      },
+      {
+        "id": "gelato-cart-slot-2",
+        "variants": [
+          {
+            "id": "gelato-cart-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 3 = ?",
+            "answer": 9,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+            "explanation": "3 × 3 = 9."
+          },
+          {
+            "id": "gelato-cart-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "30 : 5 = ?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
+            "hintMoose": "Omdat 5 × 6 = 30, is 30 : 5 = 6.",
+            "explanation": "30 : 5 = 6."
+          }
+        ]
+      },
+      {
+        "id": "gelato-cart-slot-3",
+        "variants": [
+          {
+            "id": "gelato-cart-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "9 × 7 = ?",
+            "answer": 63,
+            "choices": [
+              56,
+              63,
+              70,
+              77
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "explanation": "9 × 7 = 63."
+          },
+          {
+            "id": "gelato-cart-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Atlas verdeelt bij Gelatokar 54 ijsbekers over 6 gelijke groepen. Hoeveel ijsbekers krijgt elke groep?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 6 helpt?",
+            "hintMoose": "Omdat 6 × 9 = 54, is 54 : 6 = 9.",
+            "explanation": "54 : 6 = 9."
+          }
+        ]
+      },
+      {
+        "id": "gelato-cart-slot-4",
+        "variants": [
+          {
+            "id": "gelato-cart-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Atlas legt bij Gelatokar 5 groepjes van 9 ijsbekers. Hoeveel ijsbekers zijn dat samen?",
+            "answer": 45,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "gelato-cart-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 10 = ?",
+            "answer": 70,
+            "choices": [
+              60,
+              70,
+              80,
+              90
+            ],
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "7 groepjes van 10 eindigen op nul.",
+            "explanation": "7 × 10 = 70."
+          }
+        ]
+      }
+    ]
+  }
+];
   const challenges = [
     {
       id: "colosseum", name: "Colosseum", shortName: "Arena", center: { x: 445, y: 300 }, radius: 116,
@@ -525,24 +513,58 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     world: { width: 2172, height: 724, aspectRatio: 3, viewportWidth: 1000, background: asset },
     learningChallenges,
     challengeArt: challengerAsset,
-    player: { startNode: "left-start", start: { x: 220, y: 600 } },
+    player: { startNode: "left-start", start: { x: 184, y: 645 } },
     interactiveObjects: [
-      ...challenges.map((item) => ({
-        id: item.id, type: "rune", center: item.center, radius: item.radius,
-        approachNode: item.approachNode, label: item.name
-      })),
-      grapePress,
-      exit
-    ],
+    {
+      id: "colosseum",
+      type: "rune",
+      center: { x: 450, y: 314 },
+      radius: 88,
+      approachNode: "colosseum-approach",
+      label: "Colosseum"
+    },
+    {
+      id: "romanFountain",
+      type: "rune",
+      center: { x: 613, y: 461 },
+      radius: 59,
+      approachNode: "fountain-approach",
+      label: "Romeinse fontein"
+    },
+    {
+      id: "gelatoCart",
+      type: "rune",
+      center: { x: 1085, y: 510 },
+      radius: 73,
+      approachNode: "gelato-approach",
+      label: "Gelatokar"
+    },
+    {
+      id: "grapePress",
+      type: "ambient",
+      center: { x: 1617, y: 521 },
+      radius: 69,
+      approachNode: "press-approach",
+      label: "Druivenpers"
+    },
+    {
+      id: "romanGate",
+      type: "gate",
+      center: { x: 2020, y: 539 },
+      radius: 89,
+      approachNode: "gate-approach",
+      label: "Romeinse poort"
+    }
+  ],
     walkPath: [
-      { id: "left-start", x: 220, y: 600 },
-      { id: "colosseum-approach", x: 440, y: 580, role: "approach" },
-      { id: "fountain-approach", x: 620, y: 585, role: "approach" },
-      { id: "gelato-approach", x: 1050, y: 585, role: "approach" },
-      { id: "vineyard-path", x: 1400, y: 590 },
-      { id: "press-approach", x: 1580, y: 585, role: "approach" },
-      { id: "gate-approach", x: 1980, y: 580, role: "approach" }
-    ],
+    { id: "left-start", x: 184, y: 645 },
+    { id: "colosseum-approach", x: 443, y: 636, role: "approach" },
+    { id: "fountain-approach", x: 625, y: 640, role: "approach" },
+    { id: "gelato-approach", x: 1046, y: 642, role: "approach" },
+    { id: "vineyard-path", x: 1394, y: 640 },
+    { id: "press-approach", x: 1612, y: 644, role: "approach" },
+    { id: "gate-approach", x: 2017, y: 645, role: "approach" }
+  ],
     intro: ["Italië ligt onder een blauwe hemel.", "Drie reistekens staan langs de Romeinse route.", "De rechterpoort leidt naar de Alpen."],
     spiritName: "Europakaart",
     spiritLines: {

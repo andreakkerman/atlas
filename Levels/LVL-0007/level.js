@@ -1,5 +1,497 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0007 = [
+  {
+    "id": "escapeBoat",
+    "anchorId": "escapeBoat",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "escapeBoat-slot-1",
+        "variants": [
+          {
+            "id": "escapeBoat-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 8 = ?",
+            "answer": 48,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "explanation": "6 × 8 = 48."
+          },
+          {
+            "id": "escapeBoat-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "5 × 6 = ?",
+            "answer": 30,
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 6 = 30."
+          }
+        ]
+      },
+      {
+        "id": "escapeBoat-slot-2",
+        "variants": [
+          {
+            "id": "escapeBoat-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 6 = ?",
+            "answer": 36,
+            "choices": [
+              30,
+              36,
+              42,
+              48
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 6 en tel nog 6 erbij.",
+            "explanation": "6 × 6 = 36."
+          },
+          {
+            "id": "escapeBoat-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 6 = ?",
+            "answer": 42,
+            "choices": [
+              36,
+              42,
+              48,
+              54
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "explanation": "7 × 6 = 42."
+          }
+        ]
+      },
+      {
+        "id": "escapeBoat-slot-3",
+        "variants": [
+          {
+            "id": "escapeBoat-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "16 : 8 = ?",
+            "answer": 2,
+            "choices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+            "explanation": "16 : 8 = 2."
+          },
+          {
+            "id": "escapeBoat-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 7 = ?",
+            "answer": 14,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 2 en 2 × 2.",
+            "explanation": "2 × 7 = 14."
+          }
+        ]
+      },
+      {
+        "id": "escapeBoat-slot-4",
+        "variants": [
+          {
+            "id": "escapeBoat-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 9 = ?",
+            "answer": 45,
+            "choices": [
+              36,
+              45,
+              54,
+              63
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "escapeBoat-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 7 = ?",
+            "answer": 28,
+            "choices": [
+              21,
+              28,
+              35,
+              42
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "explanation": "4 × 7 = 28."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "islandWheel",
+    "anchorId": "islandWheel",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "islandWheel-slot-1",
+        "variants": [
+          {
+            "id": "islandWheel-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 6 = ?",
+            "answer": 24,
+            "choices": [
+              18,
+              24,
+              30,
+              36
+            ],
+            "hintMinnie": "Denk aan de tafel van 6.",
+            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 6 = 24."
+          },
+          {
+            "id": "islandWheel-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 7 = ?",
+            "answer": 42,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 6 en 2 × 6.",
+            "explanation": "6 × 7 = 42."
+          }
+        ]
+      },
+      {
+        "id": "islandWheel-slot-2",
+        "variants": [
+          {
+            "id": "islandWheel-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 5 = ?",
+            "answer": 25,
+            "choices": [
+              20,
+              25,
+              30,
+              35
+            ],
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 5 sprongen van 5.",
+            "explanation": "5 × 5 = 25."
+          },
+          {
+            "id": "islandWheel-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "route",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "De route bij Stuurwiel is 20 meter lang en heeft 4 gelijke stukken. Hoeveel meter is elk stuk?",
+            "answer": 5,
+            "hintMinnie": "Verdeel de route in gelijke stukken.",
+            "hintMoose": "Omdat 4 × 5 = 20, is 20 : 4 = 5.",
+            "explanation": "20 : 4 = 5 meter."
+          }
+        ]
+      },
+      {
+        "id": "islandWheel-slot-3",
+        "variants": [
+          {
+            "id": "islandWheel-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 3 = ?",
+            "answer": 15,
+            "choices": [
+              12,
+              15,
+              18,
+              21
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+            "explanation": "5 × 3 = 15."
+          },
+          {
+            "id": "islandWheel-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo verdeelt bij Stuurwiel 18 koersfiches over 3 gelijke groepen. Hoeveel koersfiches krijgt elke groep?",
+            "answer": 6,
+            "choices": [
+              5,
+              6,
+              7,
+              8
+            ],
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 6 = 18, is 18 : 3 = 6.",
+            "explanation": "18 : 3 = 6."
+          }
+        ]
+      },
+      {
+        "id": "islandWheel-slot-4",
+        "variants": [
+          {
+            "id": "islandWheel-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo verdeelt bij Stuurwiel 21 koersfiches over 7 gelijke groepen. Hoeveel koersfiches krijgt elke groep?",
+            "answer": 3,
+            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
+            "hintMoose": "Omdat 7 × 3 = 21, is 21 : 7 = 3.",
+            "explanation": "21 : 7 = 3."
+          },
+          {
+            "id": "islandWheel-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 9 = ?",
+            "answer": 54,
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+            "explanation": "6 × 9 = 54."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "islandMap",
+    "anchorId": "islandMap",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "islandMap-slot-1",
+        "variants": [
+          {
+            "id": "islandMap-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 7 = ?",
+            "answer": 35,
+            "choices": [
+              28,
+              35,
+              42,
+              49
+            ],
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 5 en 2 × 5.",
+            "explanation": "5 × 7 = 35."
+          },
+          {
+            "id": "islandMap-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "2 × 3 = ?",
+            "answer": 6,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+            "explanation": "2 × 3 = 6."
+          }
+        ]
+      },
+      {
+        "id": "islandMap-slot-2",
+        "variants": [
+          {
+            "id": "islandMap-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 2 = ?",
+            "answer": 4,
+            "choices": [
+              2,
+              4,
+              6,
+              8
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 2.",
+            "explanation": "2 × 2 = 4."
+          },
+          {
+            "id": "islandMap-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "2 × 9 = ?",
+            "answer": 18,
+            "choices": [
+              9,
+              18,
+              27,
+              36
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+            "explanation": "2 × 9 = 18."
+          }
+        ]
+      },
+      {
+        "id": "islandMap-slot-3",
+        "variants": [
+          {
+            "id": "islandMap-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "16 : 8 = ?",
+            "answer": 2,
+            "choices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+            "explanation": "16 : 8 = 2."
+          },
+          {
+            "id": "islandMap-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "5 × 10 = ?",
+            "answer": 50,
+            "choices": [
+              40,
+              50,
+              60,
+              70
+            ],
+            "hintMinnie": "Denk aan de tafel van 10.",
+            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "explanation": "5 × 10 = 50."
+          }
+        ]
+      },
+      {
+        "id": "islandMap-slot-4",
+        "variants": [
+          {
+            "id": "islandMap-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 2 = ?",
+            "answer": 12,
+            "choices": [
+              10,
+              12,
+              14,
+              16
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 6.",
+            "explanation": "6 × 2 = 12."
+          },
+          {
+            "id": "islandMap-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Eilandkaart 7 groepjes van 2 routefiches. Hoeveel routefiches zijn dat samen?",
+            "answer": 14,
+            "choices": [
+              12,
+              14,
+              16,
+              18
+            ],
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 7.",
+            "explanation": "7 × 2 = 14."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
   id: "LVL-0007",
   title: "Het Tropische Eiland",
@@ -189,6 +681,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       activate: "De uitgang gaat open. Sven stapt het eiland op."
     }
   ],
+  learningChallenges: learningChallengesLVL0007,
   runes: [
     {
       id: "escapeBoat",
@@ -199,14 +692,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       intro: "De sloep dobbert in het blauwe water.",
       prompt: "Tel de planken van de sloep.",
       solved: "Goed zo! De sloep ligt klaar.",
-      questions: [
-        { a: 4, b: 7 },
-        { a: 6, b: 8 },
-        { a: 5, b: 5 },
-        { a: 3, b: 9 },
-        { a: 8, b: 3 },
-        { a: 10, b: 2 }
-      ]
+      challengeId: "escapeBoat"
     },
     {
       id: "islandWheel",
@@ -217,14 +703,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       intro: "Het stuurwiel staat in het licht.",
       prompt: "Tel de spaken van het wiel.",
       solved: "Mooi! Het wiel draait naar buiten.",
-      questions: [
-        { a: 5, b: 6 },
-        { a: 9, b: 3 },
-        { a: 8, b: 4 },
-        { a: 7, b: 2 },
-        { a: 6, b: 7 },
-        { a: 4, b: 9 }
-      ]
+      challengeId: "islandWheel"
     },
     {
       id: "islandMap",
@@ -235,14 +714,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       intro: "De kaart toont de route naar palmen.",
       prompt: "Tel de stappen naar het eiland.",
       solved: "Sterk! De eilandroute is vrij.",
-      questions: [
-        { a: 8, b: 8 },
-        { a: 10, b: 6 },
-        { a: 7, b: 6 },
-        { a: 9, b: 4 },
-        { a: 6, b: 10 },
-        { a: 5, b: 8 }
-      ]
+      challengeId: "islandMap"
     }
   ],
   reward: {

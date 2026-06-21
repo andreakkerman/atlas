@@ -1,5 +1,461 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
+const learningChallengesLVL0006 = [
+  {
+    "id": "divingSuit",
+    "anchorId": "divingSuit",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "divingSuit-slot-1",
+        "variants": [
+          {
+            "id": "divingSuit-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 3 = ?",
+            "answer": 27,
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 9 en tel nog 9 erbij.",
+            "explanation": "9 × 3 = 27."
+          },
+          {
+            "id": "divingSuit-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "7 × 8 = ?",
+            "answer": 56,
+            "choices": [
+              48,
+              56,
+              64,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+            "explanation": "7 × 8 = 56."
+          }
+        ]
+      },
+      {
+        "id": "divingSuit-slot-2",
+        "variants": [
+          {
+            "id": "divingSuit-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "8 × 8 = ?",
+            "answer": 64,
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "explanation": "8 × 8 = 64."
+          },
+          {
+            "id": "divingSuit-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Duikpak 5 groepjes van 4 koperen sluitingen. Hoeveel koperen sluitingen zijn dat samen?",
+            "answer": 20,
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 5 twee keer.",
+            "explanation": "5 × 4 = 20."
+          }
+        ]
+      },
+      {
+        "id": "divingSuit-slot-3",
+        "variants": [
+          {
+            "id": "divingSuit-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo verdeelt bij Duikpak 15 koperen sluitingen over 3 gelijke groepen. Hoeveel koperen sluitingen krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 5 = 15, is 15 : 3 = 5.",
+            "explanation": "15 : 3 = 5."
+          },
+          {
+            "id": "divingSuit-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_division",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo verdeelt bij Duikpak 10 koperen sluitingen over 2 gelijke groepen. Hoeveel koperen sluitingen krijgt elke groep?",
+            "answer": 5,
+            "hintMinnie": "Welke som uit de tafel van 2 helpt?",
+            "hintMoose": "Omdat 2 × 5 = 10, is 10 : 2 = 5.",
+            "explanation": "10 : 2 = 5."
+          }
+        ]
+      },
+      {
+        "id": "divingSuit-slot-4",
+        "variants": [
+          {
+            "id": "divingSuit-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "3 × 7 = ?",
+            "answer": 21,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 3 en 2 × 3.",
+            "explanation": "3 × 7 = 21."
+          },
+          {
+            "id": "divingSuit-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Duikpak 6 groepjes van 9 koperen sluitingen. Hoeveel koperen sluitingen zijn dat samen?",
+            "answer": 54,
+            "choices": [
+              45,
+              54,
+              63,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+            "explanation": "6 × 9 = 54."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "miniSub",
+    "anchorId": "miniSub",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "miniSub-slot-1",
+        "variants": [
+          {
+            "id": "miniSub-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "27 : 3 = ?",
+            "answer": 9,
+            "choices": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
+            "hintMoose": "Omdat 3 × 9 = 27, is 27 : 3 = 9.",
+            "explanation": "27 : 3 = 9."
+          },
+          {
+            "id": "miniSub-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "4 × 5 = ?",
+            "answer": 20,
+            "hintMinnie": "Denk aan de tafel van 5.",
+            "hintMoose": "Tel 4 sprongen van 5.",
+            "explanation": "4 × 5 = 20."
+          }
+        ]
+      },
+      {
+        "id": "miniSub-slot-2",
+        "variants": [
+          {
+            "id": "miniSub-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "8 × 8 = ?",
+            "answer": 64,
+            "choices": [
+              56,
+              64,
+              72,
+              80
+            ],
+            "hintMinnie": "Denk aan de tafel van 8.",
+            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "explanation": "8 × 8 = 64."
+          },
+          {
+            "id": "miniSub-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "4 × 3 = ?",
+            "answer": 12,
+            "choices": [
+              9,
+              12,
+              15,
+              18
+            ],
+            "hintMinnie": "Denk aan de tafel van 3.",
+            "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+            "explanation": "4 × 3 = 12."
+          }
+        ]
+      },
+      {
+        "id": "miniSub-slot-3",
+        "variants": [
+          {
+            "id": "miniSub-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "9 × 7 = ?",
+            "answer": 63,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "explanation": "9 × 7 = 63."
+          },
+          {
+            "id": "miniSub-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "36 : 9 = ?",
+            "answer": 4,
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 4 = 36, is 36 : 9 = 4.",
+            "explanation": "36 : 9 = 4."
+          }
+        ]
+      },
+      {
+        "id": "miniSub-slot-4",
+        "variants": [
+          {
+            "id": "miniSub-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "money",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo koopt 2 havenkaarten voor 6 euro per stuk. Hoeveel euro betaalt hij?",
+            "answer": 12,
+            "hintMinnie": "Elk kaartje kost 6 euro.",
+            "hintMoose": "Reken 5 × 2 en tel nog 2 erbij.",
+            "explanation": "2 × 6 = 12 euro."
+          },
+          {
+            "id": "miniSub-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "6 × 9 = ?",
+            "answer": 54,
+            "choices": [
+              45,
+              54,
+              63,
+              72
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+            "explanation": "6 × 9 = 54."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "controlPanel",
+    "anchorId": "controlPanel",
+    "challengeCharacterId": "captain-nemo",
+    "questions": [
+      {
+        "id": "controlPanel-slot-1",
+        "variants": [
+          {
+            "id": "controlPanel-1a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "48 : 8 = ?",
+            "answer": 6,
+            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
+            "hintMoose": "Omdat 8 × 6 = 48, is 48 : 8 = 6.",
+            "explanation": "48 : 8 = 6."
+          },
+          {
+            "id": "controlPanel-1b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_multiplication",
+            "presentation": "bare",
+            "answerMode": "open",
+            "prompt": "6 × 7 = ?",
+            "answer": 42,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 6 en 2 × 6.",
+            "explanation": "6 × 7 = 42."
+          }
+        ]
+      },
+      {
+        "id": "controlPanel-slot-2",
+        "variants": [
+          {
+            "id": "controlPanel-2a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Drukpaneel 4 groepjes van 4 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "answer": 16,
+            "choices": [
+              12,
+              16,
+              20,
+              24
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 4 twee keer.",
+            "explanation": "4 × 4 = 16."
+          },
+          {
+            "id": "controlPanel-2b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "bare_division",
+            "presentation": "bare",
+            "answerMode": "multipleChoice",
+            "prompt": "18 : 9 = ?",
+            "answer": 2,
+            "choices": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
+            "hintMoose": "Omdat 9 × 2 = 18, is 18 : 9 = 2.",
+            "explanation": "18 : 9 = 2."
+          }
+        ]
+      },
+      {
+        "id": "controlPanel-slot-3",
+        "variants": [
+          {
+            "id": "controlPanel-3a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Drukpaneel 9 groepjes van 7 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "answer": 63,
+            "hintMinnie": "Denk aan de tafel van 7.",
+            "hintMoose": "Reken 5 × 9 en 2 × 9.",
+            "explanation": "9 × 7 = 63."
+          },
+          {
+            "id": "controlPanel-3b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "open",
+            "prompt": "Nemo legt bij Drukpaneel 5 groepjes van 2 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "answer": 10,
+            "hintMinnie": "Denk aan de tafel van 2.",
+            "hintMoose": "Verdubbel 5.",
+            "explanation": "5 × 2 = 10."
+          }
+        ]
+      },
+      {
+        "id": "controlPanel-slot-4",
+        "variants": [
+          {
+            "id": "controlPanel-4a",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Drukpaneel 5 groepjes van 9 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "answer": 45,
+            "choices": [
+              36,
+              45,
+              54,
+              63
+            ],
+            "hintMinnie": "Denk aan de tafel van 9.",
+            "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+            "explanation": "5 × 9 = 45."
+          },
+          {
+            "id": "controlPanel-4b",
+            "domain": "math",
+            "schoolBand": "E5-intended",
+            "family": "story_multiplication",
+            "presentation": "story",
+            "answerMode": "multipleChoice",
+            "prompt": "Nemo legt bij Drukpaneel 9 groepjes van 4 controlefiches. Hoeveel controlefiches zijn dat samen?",
+            "answer": 36,
+            "choices": [
+              32,
+              36,
+              40,
+              44
+            ],
+            "hintMinnie": "Denk aan de tafel van 4.",
+            "hintMoose": "Verdubbel 9 twee keer.",
+            "explanation": "9 × 4 = 36."
+          }
+        ]
+      }
+    ]
+  }
+];
+
 window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
   id: "LVL-0006",
   title: "De Minisub",
@@ -190,6 +646,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       activate: "Het luik opent naar een verborgen grot."
     }
   ],
+  learningChallenges: learningChallengesLVL0006,
   runes: [
     {
       id: "divingSuit",
@@ -200,14 +657,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       intro: "Het duikpak heeft koperen sluitingen.",
       prompt: "Tel de sluitingen van het duikpak.",
       solved: "Goed zo! Het pak is gecontroleerd.",
-      questions: [
-        { a: 3, b: 7 },
-        { a: 4, b: 9 },
-        { a: 5, b: 6 },
-        { a: 8, b: 2 },
-        { a: 6, b: 5 },
-        { a: 9, b: 3 }
-      ]
+      challengeId: "divingSuit"
     },
     {
       id: "miniSub",
@@ -218,14 +668,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       intro: "De kleine onderzeeer borrelt zacht.",
       prompt: "Tel de ronde raampjes van de minisub.",
       solved: "Mooi! De minisub is wakker.",
-      questions: [
-        { a: 6, b: 6 },
-        { a: 8, b: 4 },
-        { a: 7, b: 3 },
-        { a: 5, b: 8 },
-        { a: 10, b: 5 },
-        { a: 4, b: 6 }
-      ]
+      challengeId: "miniSub"
     },
     {
       id: "controlPanel",
@@ -236,14 +679,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       intro: "De meters tikken in groepjes.",
       prompt: "Tel de drukmeters op het paneel.",
       solved: "Sterk! De druk staat goed.",
-      questions: [
-        { a: 7, b: 8 },
-        { a: 9, b: 5 },
-        { a: 6, b: 7 },
-        { a: 10, b: 4 },
-        { a: 8, b: 9 },
-        { a: 5, b: 10 }
-      ]
+      challengeId: "controlPanel"
     }
   ],
   reward: {
