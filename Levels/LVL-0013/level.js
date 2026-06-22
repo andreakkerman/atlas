@@ -686,6 +686,80 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       art: asset,
       nextLevelId: "LVL-0014",
       nextLabel: "Naar Engeland"
-    }
+    },
+    ambientAnimals: [],
+    ambientFlybys: [
+        {
+              id: "NLButterfly01",
+              label: "NLVlinder",
+              frameA: "Levels/LVL-0013/assets/ambient/Vlinder1A.png",
+              frameB: "Levels/LVL-0013/assets/ambient/Vlinder1B.png",
+              sound: "",
+              path: [
+                    {
+                          x: -123,
+                          y: 466
+                    },
+                    {
+                          x: 207,
+                          y: 530
+                    },
+                    {
+                          x: 367,
+                          y: 448
+                    },
+                    {
+                          x: 508,
+                          y: 494
+                    },
+                    {
+                          x: 769,
+                          y: 406
+                    },
+                    {
+                          x: 1021,
+                          y: 494
+                    },
+                    {
+                          x: 1220,
+                          y: 380
+                    },
+                    {
+                          x: 1350,
+                          y: 466
+                    },
+                    {
+                          x: 1577,
+                          y: 379
+                    },
+                    {
+                          x: 1802,
+                          y: 452
+                    },
+                    {
+                          x: 1973,
+                          y: 387
+                    },
+                    {
+                          x: 2250,
+                          y: 427
+                    }
+              ],
+              scale: 0.22,
+              speed: 250,
+              flapFrequencyHz: 8,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 18000,
+              intervalMaxMs: 35000,
+              syncKey: "",
+              startDelayMs: 0,
+              softness: 0,
+              saturation: 1,
+              soundVolume: 0.65,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        }
+  ]
   };
 })();
