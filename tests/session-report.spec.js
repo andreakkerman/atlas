@@ -212,4 +212,27 @@ test.describe("Atlas Session Report v0.1", () => {
     expect(bounds.right).toBeLessThanOrEqual(bounds.viewport);
     expect(bounds.width).toBeGreaterThan(280);
   });
+
+  test("scrolls a long report to the real bottom without making the page itself scrollable", async ({ page }) => {
+    await cleanOpen(page);
+    for (const start of [1000, 3000, 5000]) await createSyntheticSession(page, start, `Sessie ${start}`);
+    await enterMenu(page);
+    await page.getByRole("button", { name: "Voortgang" }).click();
+    const result = await page.locator(".progressScreen").evaluate((screen) => {
+      screen.scrollTop = screen.scrollHeight;
+      const lastButton = screen.querySelector("[data-session-id]:last-child [data-delete-session]").getBoundingClientRect();
+      return {
+        scrollTop: screen.scrollTop,
+        max: screen.scrollHeight - screen.clientHeight,
+        buttonBottom: lastButton.bottom,
+        viewport: innerHeight,
+        bodyOverflow: getComputedStyle(document.body).overflow,
+        pageScrollable: document.documentElement.scrollHeight > innerHeight
+      };
+    });
+    expect(result.scrollTop).toBeCloseTo(result.max, 0);
+    expect(result.buttonBottom).toBeLessThanOrEqual(result.viewport);
+    expect(result.bodyOverflow).toBe("hidden");
+    expect(result.pageScrollable).toBe(false);
+  });
 });

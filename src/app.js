@@ -99,9 +99,34 @@ const audioState = {
 const ambientAnimalRuntime = {
   levelId: null,
   loaded: new Set(),
+  openReady: new Set(),
+  closedReady: new Set(),
   animals: new Map(),
   sounds: new Map()
 };
+const assetCache = window.AtlasAmbientSystem.createAssetCache({
+  warn: (message) => {
+    if (EDITOR_DEV_MODE) console.warn(message);
+  }
+});
+const guideBlinkRuntime = {
+  minnie: { ready: false, timer: null, sequenceTimers: new Set(), frame: "open", blinking: false },
+  moose: { ready: false, timer: null, sequenceTimers: new Set(), frame: "open", blinking: false }
+};
+const GUIDE_BLINK_PATHS = {
+  minnie: "assets/guides/minnie_blink.png",
+  moose: "assets/guides/moose_blink.png"
+};
+const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
+  getLevel: () => level,
+  getScreen: () => state.screen,
+  assetCache,
+  getAudioUnlocked: () => audioState.unlocked,
+  getMasterVolume: () => audioMasterVolume(),
+  warn: (message) => {
+    if (EDITOR_DEV_MODE) console.warn(message);
+  }
+});
 
 let walkPathEditor = {
   enabled: EDITOR_DEV_MODE,
@@ -358,6 +383,10 @@ function setAudioConfig(nextConfig) {
   syncAudioForState();
 }
 
+function cloneAmbientFlybys(flybys) {
+  return JSON.parse(JSON.stringify(flybys || []));
+}
+
 function setLevelWalkPath(walkPath) {
   level.walkPath = cloneWalkPath(walkPath);
   level.walkGraph = deriveWalkGraph(level);
@@ -371,6 +400,12 @@ function setLevelInteractiveObjects(objects) {
 function setLevelAmbientAnimals(animals) {
   level.ambientAnimals = cloneAmbientAnimals(animals);
   resetAmbientAnimalTimers();
+  preloadAmbientAnimals(level);
+}
+
+function setLevelAmbientFlybys(flybys) {
+  level.ambientFlybys = cloneAmbientFlybys(flybys);
+  ambientFlybyRuntime.prepareLevel(level);
 }
 
 function editorApiUrl(action = "editor-draft") {
@@ -399,6 +434,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
     originalInteractiveObjects: cloneInteractiveObjects(selectedLevel.interactiveObjects || []),
     originalAmbientAnimals: cloneAmbientAnimals(selectedLevel.ambientAnimals || []),
+    originalAmbientFlybys: cloneAmbientFlybys(selectedLevel.ambientFlybys || []),
     originalAudioConfig: cloneAudioConfig(audioConfig),
     draggingIndex: null,
     draggingObjectId: null,
@@ -407,6 +443,18 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     currentPoint: null,
     currentObject: null,
     currentAnimal: null,
+    currentFlyby: null,
+    selectedObjectType: (selectedLevel.ambientAnimals || []).length ? "animal" : "flyby",
+    selectedObjectId: selectedLevel.ambientAnimals?.[0]?.id || selectedLevel.ambientFlybys?.[0]?.id || null,
+    assets: { images: [], audio: [] },
+    assetMessage: "",
+    pathMode: false,
+    selectedPathPoint: 0,
+    draggingFlybyPoint: null,
+    addingFlybyPoint: false,
+    pathViewBox: null,
+    pathPan: null,
+    openSections: new Set(["ambient-animals", "ambient-flybys"]),
     status: "Clean",
     modified: false,
     message: EDITOR_DEV_MODE ? "Gebruik Ctrl + Shift + D om levelpunten, objecten of audio te bewerken." : "",
@@ -429,14 +477,18 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     if (Array.isArray(draft.ambientAnimals)) {
       selectedLevel.ambientAnimals = cloneAmbientAnimals(draft.ambientAnimals);
     }
+    if (Array.isArray(draft.ambientFlybys)) {
+      selectedLevel.ambientFlybys = cloneAmbientFlybys(draft.ambientFlybys);
+    }
     if (draft.audioConfig) {
       setAudioConfig(draft.audioConfig);
     }
-    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.ambientAnimals) || draft.audioConfig) {
+    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.ambientAnimals) || Array.isArray(draft.ambientFlybys) || draft.audioConfig) {
       walkPathEditor.status = "Modified";
       walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
     }
+    await refreshAmbientAssets(false, selectedLevel.id);
   } catch (error) {
     walkPathEditor.apiAvailable = false;
     walkPathEditor.message = "Geen dev server. Start npm run dev:editor.";
@@ -533,47 +585,133 @@ function preloadLevelAssets(selectedLevel) {
     selectedLevel.challengeCharacter?.portrait,
     ...Object.values(selectedLevel.guides || {}).map((guide) => guide.portrait),
     ...(selectedLevel.ambientAnimals || []).flatMap((animal) => [animal.openFrame, animal.closedFrame]),
+    ...(selectedLevel.ambientFlybys || []).flatMap((flyby) => [flyby.frameA, flyby.frameB]),
     selectedLevel.challengeArt,
     selectedLevel.reward?.art
   ]
     .filter(Boolean)
     .forEach((src) => {
-      const image = new Image();
-      image.src = src;
+      assetCache.image(src).catch(() => {});
     });
+  (selectedLevel.ambientAnimals || []).map((animal) => animal.sound).filter(Boolean)
+    .forEach((src) => assetCache.sound(src).catch(() => {}));
+  (selectedLevel.ambientFlybys || []).map((flyby) => flyby.sound).filter(Boolean)
+    .forEach((src) => assetCache.sound(src).catch(() => {}));
 }
 
 function loadAndDecodeImage(src) {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    let decoding = false;
-    const decode = async () => {
-      if (decoding) return;
-      decoding = true;
-      try {
-        if (typeof image.decode === "function") await image.decode();
-        resolve(image);
-      } catch (error) {
-        reject(error);
-      }
-    };
-    image.addEventListener("load", decode, { once: true });
-    image.addEventListener("error", reject, { once: true });
-    image.decoding = "sync";
-    image.src = src;
-    if (image.complete && image.naturalWidth) decode();
-  });
+  return assetCache.image(src);
 }
 
 async function preloadAmbientAnimals(selectedLevel) {
   const animals = selectedLevel.ambientAnimals || [];
+  ambientAnimalRuntime.levelId = selectedLevel.id;
   await Promise.all(animals.map(async (animal) => {
-    await Promise.all([
-      loadAndDecodeImage(animal.openFrame),
-      loadAndDecodeImage(animal.closedFrame)
-    ]);
-    ambientAnimalRuntime.loaded.add(`${selectedLevel.id}:${animal.id}`);
+    const key = `${selectedLevel.id}:${animal.id}`;
+    try {
+      await loadAndDecodeImage(animal.openFrame);
+      ambientAnimalRuntime.openReady.add(key);
+    } catch {
+      if (EDITOR_DEV_MODE) console.warn(`[Atlas] ${selectedLevel.id} animal "${animal.id}" failed ${animal.openFrame}`);
+      return;
+    }
+    try {
+      await loadAndDecodeImage(animal.closedFrame);
+      ambientAnimalRuntime.closedReady.add(key);
+      ambientAnimalRuntime.loaded.add(key);
+    } catch {
+      if (EDITOR_DEV_MODE) console.warn(`[Atlas] ${selectedLevel.id} animal "${animal.id}" blink disabled: ${animal.closedFrame}`);
+    }
+    if (animal.sound) assetCache.sound(animal.sound).catch(() => {
+      if (EDITOR_DEV_MODE) console.warn(`[Atlas] ${selectedLevel.id} animal "${animal.id}" sound disabled: ${animal.sound}`);
+    });
   }));
+  if (level?.id === selectedLevel.id) {
+    document.querySelectorAll("[data-ambient-animal]").forEach((shell) => {
+      shell.dataset.ready = String(ambientAnimalRuntime.openReady.has(`${selectedLevel.id}:${shell.dataset.ambientAnimal}`));
+    });
+    syncAmbientAnimalTimers();
+  }
+}
+
+function clearGuideBlinkState(runtime) {
+  window.clearTimeout(runtime.timer);
+  runtime.timer = null;
+  runtime.sequenceTimers.forEach((timer) => window.clearTimeout(timer));
+  runtime.sequenceTimers.clear();
+  runtime.blinking = false;
+  runtime.frame = "open";
+}
+
+function guideBlinkDelay(runtime, callback, delay) {
+  const timer = window.setTimeout(() => {
+    runtime.sequenceTimers.delete(timer);
+    callback();
+  }, delay);
+  runtime.sequenceTimers.add(timer);
+}
+
+function setGuideBlinkFrame(guideId, frame) {
+  const runtime = guideBlinkRuntime[guideId];
+  runtime.frame = frame;
+  const image = document.querySelector(`[data-guide-image="${guideId}"]`);
+  if (image) image.src = frame === "closed" && runtime.ready
+    ? GUIDE_BLINK_PATHS[guideId]
+    : image.dataset.openSrc;
+}
+
+function runGuideBlink(guideId, options = {}) {
+  const runtime = guideBlinkRuntime[guideId];
+  if (!runtime?.ready || runtime.blinking || document.hidden || !document.querySelector(`[data-guide-image="${guideId}"]`)) return false;
+  window.clearTimeout(runtime.timer);
+  runtime.timer = null;
+  runtime.blinking = true;
+  const doubleBlink = options.doubleBlink ?? Math.random() < 0.12;
+  setGuideBlinkFrame(guideId, "closed");
+  guideBlinkDelay(runtime, () => {
+    setGuideBlinkFrame(guideId, "open");
+    if (!doubleBlink) {
+      runtime.blinking = false;
+      scheduleGuideBlink(guideId);
+      return;
+    }
+    guideBlinkDelay(runtime, () => {
+      setGuideBlinkFrame(guideId, "closed");
+      guideBlinkDelay(runtime, () => {
+        setGuideBlinkFrame(guideId, "open");
+        runtime.blinking = false;
+        scheduleGuideBlink(guideId);
+      }, 90 + Math.round(Math.random() * 30));
+    }, 90 + Math.round(Math.random() * 30));
+  }, 90 + Math.round(Math.random() * 30));
+  return true;
+}
+
+function scheduleGuideBlink(guideId) {
+  const runtime = guideBlinkRuntime[guideId];
+  if (!runtime?.ready || runtime.timer || runtime.blinking || document.hidden || !document.querySelector(`[data-guide-image="${guideId}"]`)) return;
+  runtime.timer = window.setTimeout(() => {
+    runtime.timer = null;
+    runGuideBlink(guideId);
+  }, 4000 + Math.round(Math.random() * 5000));
+}
+
+function syncGuideBlinkTimers() {
+  Object.keys(guideBlinkRuntime).forEach((guideId) => {
+    if (document.querySelector(`[data-guide-image="${guideId}"]`)) scheduleGuideBlink(guideId);
+    else clearGuideBlinkState(guideBlinkRuntime[guideId]);
+  });
+}
+
+function preloadGuideBlinkAssets() {
+  Object.entries(GUIDE_BLINK_PATHS).forEach(([guideId, path]) => {
+    assetCache.image(path).then(() => {
+      guideBlinkRuntime[guideId].ready = true;
+      syncGuideBlinkTimers();
+    }).catch(() => {
+      guideBlinkRuntime[guideId].ready = false;
+    });
+  });
 }
 
 function animalRuntimeState(animal) {
@@ -582,6 +720,7 @@ function animalRuntimeState(animal) {
       timer: null,
       sequenceTimers: new Set(),
       blinking: false,
+      automaticBlinking: false,
       frame: "open",
       sequenceCount: 0
     });
@@ -595,6 +734,7 @@ function clearAnimalTimer(runtime) {
   runtime.sequenceTimers.forEach((timer) => window.clearTimeout(timer));
   runtime.sequenceTimers.clear();
   runtime.blinking = false;
+  runtime.automaticBlinking = false;
   runtime.frame = "open";
 }
 
@@ -620,6 +760,13 @@ function animalDelay(callback, delay, runtime) {
 
 function runAmbientAnimalBlink(animal, options = {}) {
   const runtime = animalRuntimeState(animal);
+  if (runtime.blinking && runtime.automaticBlinking && options.doubleBlink !== undefined) {
+    runtime.sequenceTimers.forEach((timer) => window.clearTimeout(timer));
+    runtime.sequenceTimers.clear();
+    runtime.blinking = false;
+    runtime.automaticBlinking = false;
+    setAmbientAnimalFrame(animal.id, "open");
+  }
   if (
     runtime.blinking ||
     document.hidden ||
@@ -628,6 +775,7 @@ function runAmbientAnimalBlink(animal, options = {}) {
   window.clearTimeout(runtime.timer);
   runtime.timer = null;
   runtime.blinking = true;
+  runtime.automaticBlinking = options.doubleBlink === undefined;
   runtime.sequenceCount += 1;
   const doubleBlink = options.doubleBlink ?? Math.random() < animal.doubleBlinkChance;
   const firstClosedMs = doubleBlink ? 80 + Math.round(Math.random() * 10) : animal.blinkDurationMs;
@@ -637,6 +785,7 @@ function runAmbientAnimalBlink(animal, options = {}) {
     setAmbientAnimalFrame(animal.id, "open");
     if (!doubleBlink) {
       runtime.blinking = false;
+      runtime.automaticBlinking = false;
       scheduleAmbientAnimalBlink(animal);
       return;
     }
@@ -646,6 +795,7 @@ function runAmbientAnimalBlink(animal, options = {}) {
       animalDelay(() => {
         setAmbientAnimalFrame(animal.id, "open");
         runtime.blinking = false;
+        runtime.automaticBlinking = false;
         scheduleAmbientAnimalBlink(animal);
       }, 80 + Math.round(Math.random() * 10), runtime);
     }, openGapMs, runtime);
@@ -876,7 +1026,6 @@ async function selectLevel(id, options = {}) {
   let selectedLevel;
   try {
     selectedLevel = await loadLevelDefinition(entry);
-    await preloadAmbientAnimals(selectedLevel);
   } catch (error) {
     state = { screen: "menu", error: error.message };
     render();
@@ -884,9 +1033,12 @@ async function selectLevel(id, options = {}) {
   }
 
   stopMovement();
+  ambientFlybyRuntime.stopAll();
   resetAmbientAnimalTimers();
   await prepareWalkPathEditorForLevel(selectedLevel);
   level = normalizeLevel(selectedLevel);
+  preloadAmbientAnimals(level);
+  ambientFlybyRuntime.prepareLevel(level);
   const adventure = adventureEntryFor(entry);
   sessionReport?.startOrVisitLevel({
     adventureId: adventure.id,
@@ -918,6 +1070,7 @@ function adventureEntryFor(entry) {
 
 function returnToMenu() {
   stopMovement();
+  ambientFlybyRuntime.stopAll();
   resetAmbientAnimalTimers();
   ambientAnimalRuntime.levelId = null;
   sessionReport?.end("menu");
@@ -1293,6 +1446,7 @@ async function persistWalkPathDraft() {
         walkPath: authoredWalkPathPoints(level),
         interactiveObjects: level.interactiveObjects,
         ambientAnimals: level.ambientAnimals || [],
+        ambientFlybys: level.ambientFlybys || [],
         audioConfig
       })
     });
@@ -1315,12 +1469,14 @@ async function applyWalkPathDraft() {
         walkPath: authoredWalkPathPoints(level),
         interactiveObjects: level.interactiveObjects,
         ambientAnimals: level.ambientAnimals || [],
+        ambientFlybys: level.ambientFlybys || [],
         audioConfig
       })
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
     walkPathEditor.originalAmbientAnimals = cloneAmbientAnimals(level.ambientAnimals || []);
+    walkPathEditor.originalAmbientFlybys = cloneAmbientFlybys(level.ambientFlybys || []);
     walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
@@ -1347,10 +1503,12 @@ async function revertWalkPathDraft() {
     setLevelWalkPath(walkPathEditor.originalWalkPath);
     setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
     setLevelAmbientAnimals(walkPathEditor.originalAmbientAnimals);
+    setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
     setAudioConfig(walkPathEditor.originalAudioConfig);
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
     walkPathEditor.currentAnimal = null;
+    walkPathEditor.currentFlyby = null;
     walkPathEditor.status = "Reverted";
     walkPathEditor.modified = false;
     walkPathEditor.message = "Draft weggegooid. Opgeslagen punten, objecten en audio hersteld.";
@@ -1414,6 +1572,16 @@ function updateDraggedInteractiveObject(event) {
   render();
 }
 
+function pointFromFlightWorkspaceEvent(event) {
+  const svg = document.querySelector("[data-flight-path-workspace] svg");
+  if (!svg) return { x: 0, y: 0 };
+  const point = svg.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  const transformed = point.matrixTransform(svg.getScreenCTM().inverse());
+  return { x: transformed.x, y: transformed.y };
+}
+
 function updateDraggedAmbientAnimal(event) {
   if (!walkPathEditor.draggingAnimalId || !level) return;
   const stage = document.querySelector("[data-world-stage]");
@@ -1461,7 +1629,9 @@ function updateAmbientAnimalSetting(animalId, field, value) {
     const numericValue = Number(value);
     animal[field] = field === "softness"
       ? Math.max(0, Math.min(1, numericValue))
-      : clampVolume(numericValue);
+      : field === "saturation"
+        ? Math.max(0, Math.min(2, numericValue))
+        : clampVolume(numericValue);
   }
   walkPathEditor.currentAnimal = animal;
   walkPathEditor.status = "Modified";
@@ -1480,6 +1650,315 @@ function deleteAmbientAnimal(animalId) {
   walkPathEditor.modified = true;
   walkPathEditor.message = `${animalId} verwijderd uit de draft.`;
   persistWalkPathDraft();
+  render();
+}
+
+function markEditorModified(message) {
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = message;
+  persistWalkPathDraft();
+}
+
+async function refreshAmbientAssets(shouldRender = true, levelId = level?.id) {
+  if (!walkPathEditor.apiAvailable) return;
+  const id = levelId;
+  if (!id) return;
+  walkPathEditor.assetMessage = "Assets vernieuwen...";
+  if (shouldRender) render();
+  try {
+    const payload = await requestEditorApi(`/__dev/levels/${encodeURIComponent(id)}/ambient-assets`);
+    walkPathEditor.assets = {
+      images: payload.images || [],
+      audio: payload.audio || []
+    };
+    walkPathEditor.assetMessage = `${walkPathEditor.assets.images.length} afbeeldingen, ${walkPathEditor.assets.audio.length} audiobestanden.`;
+  } catch (error) {
+    walkPathEditor.assetMessage = `Assets laden mislukt. ${error.message}`;
+  }
+  if (shouldRender) render();
+}
+
+function ambientObjectIdExists(id, ignoreId = "") {
+  return [...(level.ambientAnimals || []), ...(level.ambientFlybys || [])]
+    .some((item) => item.id === id && item.id !== ignoreId);
+}
+
+function uniqueAmbientId(base) {
+  const stem = String(base || "ambient-copy").replace(/[^A-Za-z0-9_-]/g, "-") || "ambient-copy";
+  let candidate = `${stem}-copy`;
+  let number = 2;
+  while (ambientObjectIdExists(candidate)) candidate = `${stem}-copy-${number++}`;
+  return candidate;
+}
+
+async function frameDimensionWarning(frameA, frameB) {
+  if (!frameA || !frameB) return "";
+  try {
+    const [a, b] = await Promise.all([assetCache.image(frameA), assetCache.image(frameB)]);
+    if (a.naturalWidth !== b.naturalWidth || a.naturalHeight !== b.naturalHeight) {
+      return `Waarschuwing: frames zijn ${a.naturalWidth}×${a.naturalHeight} en ${b.naturalWidth}×${b.naturalHeight}; dit kan zichtbare uitlijning geven.`;
+    }
+  } catch {
+    return "";
+  }
+  return "";
+}
+
+async function addAmbientAnimalFromEditor() {
+  const form = document.querySelector("[data-add-animal-form]");
+  if (!form) return;
+  const data = new FormData(form);
+  const id = String(data.get("id") || "").trim();
+  const label = String(data.get("label") || "").trim();
+  const openFrame = String(data.get("openFrame") || "");
+  const closedFrame = String(data.get("closedFrame") || "");
+  const sound = String(data.get("sound") || "");
+  if (!id || !label || !openFrame || !closedFrame) {
+    walkPathEditor.message = "ID, label en beide frames zijn verplicht.";
+    render();
+    return;
+  }
+  if (ambientObjectIdExists(id)) {
+    walkPathEditor.message = `ID "${id}" bestaat al.`;
+    render();
+    return;
+  }
+  try {
+    await Promise.all([assetCache.image(openFrame), assetCache.image(closedFrame)]);
+  } catch {
+    walkPathEditor.message = "Een gekozen frame ontbreekt of is ongeldig.";
+    render();
+    return;
+  }
+  const animal = {
+    id,
+    label,
+    type: "ambient",
+    openFrame,
+    closedFrame,
+    sound,
+    x: Math.round(level.world.width / 2),
+    y: Math.round(level.world.height * 0.72),
+    scale: 0.2,
+    blinkMinMs: 4000,
+    blinkMaxMs: 9000,
+    blinkDurationMs: 100,
+    doubleBlinkChance: 0.12,
+    soundCooldownMs: 1500,
+    softness: 0,
+    saturation: 1,
+    soundVolume: 0.65,
+    mirrorX: false
+  };
+  setLevelAmbientAnimals([...(level.ambientAnimals || []), animal]);
+  walkPathEditor.selectedObjectType = "animal";
+  walkPathEditor.selectedObjectId = id;
+  walkPathEditor.currentAnimal = animal;
+  const warning = await frameDimensionWarning(openFrame, closedFrame);
+  markEditorModified(`${label} toegevoegd.${warning ? ` ${warning}` : ""}`);
+  render();
+}
+
+async function addAmbientFlybyFromEditor() {
+  const form = document.querySelector("[data-add-flyby-form]");
+  if (!form) return;
+  const data = new FormData(form);
+  const id = String(data.get("id") || "").trim();
+  const label = String(data.get("label") || "").trim();
+  const frameA = String(data.get("frameA") || "");
+  const frameB = String(data.get("frameB") || "");
+  const sound = String(data.get("sound") || "");
+  if (!id || !label || !frameA || !frameB) {
+    walkPathEditor.message = "ID, label en beide flybyframes zijn verplicht.";
+    render();
+    return;
+  }
+  if (ambientObjectIdExists(id)) {
+    walkPathEditor.message = `ID "${id}" bestaat al.`;
+    render();
+    return;
+  }
+  try {
+    await Promise.all([assetCache.image(frameA), assetCache.image(frameB)]);
+  } catch {
+    walkPathEditor.message = "Een gekozen flybyframe ontbreekt of is ongeldig.";
+    render();
+    return;
+  }
+  const flyby = {
+    id,
+    label,
+    frameA,
+    frameB,
+    sound,
+    path: [
+      { x: -180, y: 190 },
+      { x: Math.round(level.world.width / 2), y: 120 },
+      { x: level.world.width + 180, y: 180 }
+    ],
+    scale: 0.22,
+    speed: 420,
+    flapFrequencyHz: 7,
+    faceFlightDirection: true,
+    mirrorX: false,
+    intervalMinMs: 18000,
+    intervalMaxMs: 35000,
+    syncKey: "",
+    startDelayMs: 0,
+    softness: 0,
+    saturation: 1,
+    soundVolume: 0.65,
+    rotateAlongPath: true,
+    maxRotationDeg: 8
+  };
+  setLevelAmbientFlybys([...(level.ambientFlybys || []), flyby]);
+  walkPathEditor.selectedObjectType = "flyby";
+  walkPathEditor.selectedObjectId = id;
+  walkPathEditor.currentFlyby = flyby;
+  const warning = await frameDimensionWarning(frameA, frameB);
+  markEditorModified(`${label} toegevoegd.${warning ? ` ${warning}` : ""}`);
+  render();
+}
+
+function duplicateSelectedAmbient() {
+  const type = walkPathEditor.selectedObjectType;
+  const id = walkPathEditor.selectedObjectId;
+  if (type === "animal") {
+    const source = (level.ambientAnimals || []).find((item) => item.id === id);
+    if (!source) return;
+    const copy = cloneAmbientAnimals([source])[0];
+    copy.id = uniqueAmbientId(source.id);
+    copy.label = `${source.label || source.id} kopie`;
+    copy.x += 32;
+    copy.y += 20;
+    setLevelAmbientAnimals([...(level.ambientAnimals || []), copy]);
+    walkPathEditor.selectedObjectId = copy.id;
+    markEditorModified(`${copy.label} gedupliceerd.`);
+  } else {
+    const source = (level.ambientFlybys || []).find((item) => item.id === id);
+    if (!source) return;
+    const copy = cloneAmbientFlybys([source])[0];
+    copy.id = uniqueAmbientId(source.id);
+    copy.label = `${source.label || source.id} kopie`;
+    setLevelAmbientFlybys([...(level.ambientFlybys || []), copy]);
+    walkPathEditor.selectedObjectId = copy.id;
+    markEditorModified(`${copy.label} gedupliceerd.`);
+  }
+  render();
+}
+
+function deleteAmbientFlyby(id) {
+  setLevelAmbientFlybys((level.ambientFlybys || []).filter((item) => item.id !== id));
+  walkPathEditor.selectedObjectId = level.ambientFlybys?.[0]?.id || null;
+  walkPathEditor.pathMode = false;
+  markEditorModified(`${id} verwijderd uit de draft.`);
+  render();
+}
+
+function updateAmbientFlybySetting(id, field, value) {
+  const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
+  const flyby = flybys.find((item) => item.id === id);
+  if (!flyby) return;
+  const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath"]);
+  const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey"]);
+  if (booleans.has(field)) flyby[field] = Boolean(value);
+  else if (strings.has(field)) flyby[field] = String(value);
+  else flyby[field] = Number(value);
+  if (field === "intervalMinMs" && flyby.intervalMinMs > flyby.intervalMaxMs) flyby.intervalMaxMs = flyby.intervalMinMs;
+  if (field === "intervalMaxMs" && flyby.intervalMaxMs < flyby.intervalMinMs) flyby.intervalMinMs = flyby.intervalMaxMs;
+  if (["intervalMinMs", "intervalMaxMs"].includes(field) && String(flyby.syncKey || "").trim()) {
+    flybys.forEach((member) => {
+      if (member.syncKey === flyby.syncKey) member[field] = flyby[field];
+    });
+  }
+  setLevelAmbientFlybys(flybys);
+  walkPathEditor.currentFlyby = flyby;
+  markEditorModified(`${flyby.id}: ${field} aangepast.`);
+  render();
+}
+
+function updateFlybyPathPoint(id, index, point) {
+  const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
+  const flyby = flybys.find((item) => item.id === id);
+  if (!flyby || !flyby.path[index]) return;
+  flyby.path[index] = { x: Math.round(Number(point.x)), y: Math.round(Number(point.y)) };
+  setLevelAmbientFlybys(flybys);
+  ambientFlybyRuntime.invalidatePath(id);
+  walkPathEditor.selectedPathPoint = index;
+  markEditorModified(`${flyby.id} punt ${index + 1}: ${flyby.path[index].x}, ${flyby.path[index].y}`);
+  render();
+}
+
+function reverseFlybyPath(id) {
+  const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
+  const flyby = flybys.find((item) => item.id === id);
+  if (!flyby) return;
+  flyby.path.reverse();
+  setLevelAmbientFlybys(flybys);
+  walkPathEditor.selectedPathPoint = Math.max(0, flyby.path.length - 1 - walkPathEditor.selectedPathPoint);
+  markEditorModified(`${flyby.id} vliegrichting omgekeerd.`);
+  render();
+}
+
+function deleteSelectedFlybyPoint(id) {
+  const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
+  const flyby = flybys.find((item) => item.id === id);
+  if (!flyby || flyby.path.length <= 2) {
+    walkPathEditor.message = "Een vliegpad moet minstens 2 punten houden.";
+    render();
+    return;
+  }
+  flyby.path.splice(walkPathEditor.selectedPathPoint, 1);
+  walkPathEditor.selectedPathPoint = Math.min(walkPathEditor.selectedPathPoint, flyby.path.length - 1);
+  setLevelAmbientFlybys(flybys);
+  markEditorModified(`${flyby.id}: punt verwijderd.`);
+  render();
+}
+
+function addFlybyPointAt(id, point) {
+  const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
+  const flyby = flybys.find((item) => item.id === id);
+  if (!flyby) return;
+  let insertAt = 1;
+  let nearest = Infinity;
+  for (let index = 0; index < flyby.path.length - 1; index += 1) {
+    const projection = projectPointToSegment(point, {
+      from: flyby.path[index],
+      to: flyby.path[index + 1]
+    });
+    if (projection.distance < nearest) {
+      nearest = projection.distance;
+      insertAt = index + 1;
+    }
+  }
+  flyby.path.splice(insertAt, 0, { x: Math.round(point.x), y: Math.round(point.y) });
+  walkPathEditor.selectedPathPoint = insertAt;
+  walkPathEditor.addingFlybyPoint = false;
+  setLevelAmbientFlybys(flybys);
+  markEditorModified(`${flyby.id}: punt ${insertAt + 1} toegevoegd.`);
+  render();
+}
+
+function fitFlybyPath(id) {
+  const flyby = (level.ambientFlybys || []).find((item) => item.id === id);
+  if (!flyby) return;
+  const xs = flyby.path.map((point) => point.x);
+  const ys = flyby.path.map((point) => point.y);
+  const margin = 100;
+  const x = Math.min(...xs) - margin;
+  const y = Math.min(...ys) - margin;
+  walkPathEditor.pathViewBox = {
+    x,
+    y,
+    width: Math.max(300, Math.max(...xs) - Math.min(...xs) + margin * 2),
+    height: Math.max(240, Math.max(...ys) - Math.min(...ys) + margin * 2)
+  };
+  render();
+}
+
+function fitFlybyLevel() {
+  walkPathEditor.pathViewBox = { x: 0, y: 0, width: level.world.width, height: level.world.height };
   render();
 }
 
@@ -2392,8 +2871,125 @@ function renderAmbientAnimalEditorControls() {
   `;
 }
 
+function assetOptions(items, selected = "", optional = false) {
+  return `${optional ? '<option value="">None</option>' : '<option value="">Choose asset</option>'}${
+    items.map((path) => `<option value="${path}" ${path === selected ? "selected" : ""}>${path.split("/").at(-1)}</option>`).join("")
+  }`;
+}
+
+function renderAmbientAddForm(type) {
+  const flyby = type === "flyby";
+  return `
+    <form class="editorAddForm" data-add-${type}-form>
+      <label><span>Unique ID</span><input name="id" required pattern="[A-Za-z0-9_-]+" /></label>
+      <label><span>Label</span><input name="label" required /></label>
+      <label><span>${flyby ? "Frame A" : "Open frame"}</span><select name="${flyby ? "frameA" : "openFrame"}">${assetOptions(walkPathEditor.assets.images || [])}</select></label>
+      <label><span>${flyby ? "Frame B" : "Closed frame"}</span><select name="${flyby ? "frameB" : "closedFrame"}">${assetOptions(walkPathEditor.assets.images || [])}</select></label>
+      <label><span>Sound</span><select name="sound">${assetOptions(walkPathEditor.assets.audio || [], "", true)}</select></label>
+      <button type="button" data-debug-action="add-${type}">Add ${flyby ? "ambient flyby" : "ambient animal"}</button>
+    </form>
+  `;
+}
+
+function renderFlybyField(label, flyby, field, options = {}) {
+  if (options.toggle) return `
+    <label class="editorToggle"><input type="checkbox" data-flyby-setting="${field}" data-flyby-id="${flyby.id}" ${flyby[field] ? "checked" : ""}/><span>${label}</span></label>
+  `;
+  return `
+    <label class="editorField"><span>${label}</span><input type="${options.type || "number"}"
+      ${options.min !== undefined ? `min="${options.min}"` : ""} ${options.max !== undefined ? `max="${options.max}"` : ""}
+      step="${options.step || "1"}" value="${options.display ? options.display(flyby[field]) : flyby[field]}"
+      data-flyby-setting="${field}" data-flyby-id="${flyby.id}" data-value-scale="${options.scale || 1}"/></label>
+  `;
+}
+
+function renderAmbientEditorControls() {
+  const animals = level.ambientAnimals || [];
+  const flybys = level.ambientFlybys || [];
+  const animal = animals.find((item) => walkPathEditor.selectedObjectType === "animal" && item.id === walkPathEditor.selectedObjectId);
+  const flyby = flybys.find((item) => walkPathEditor.selectedObjectType === "flyby" && item.id === walkPathEditor.selectedObjectId);
+  const syncMembers = flyby?.syncKey ? flybys.filter((item) => item.syncKey === flyby.syncKey) : [];
+  return `
+    <div class="assetDiscoveryBar">
+      <button type="button" data-debug-action="refresh-assets">Refresh assets</button>
+      <span>${walkPathEditor.assetMessage || "Place files in this level's assets/ambient folder."}</span>
+    </div>
+    <details class="editorSection" open>
+      <summary>Ambient animals <span>${animals.length}</span></summary>
+      <div class="editorObjectPicker">
+        ${animals.map((item) => `<button type="button" aria-label="Selecteer ${item.label || item.id}" data-select-ambient-type="animal" data-select-ambient-id="${item.id}" class="${animal?.id === item.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>${animal?.id === item.id ? "" : `<input class="editorLegacyControl" type="checkbox" data-animal-setting="mirrorX" data-animal-id="${item.id}" ${item.mirrorX ? "checked" : ""}/>`}`).join("") || "<span>Geen dieren.</span>"}
+      </div>
+      ${animal ? `
+        <div class="animalEditorCard" data-animal-editor-id="${animal.id}">
+          <div><strong>${animal.id}</strong><span>${animal.label || animal.type}</span></div>
+          <label><span>Schaal</span><input type="range" min="0.05" max="2" step="0.01" value="${animal.scale}" data-animal-scale="${animal.id}" /><output>${Number(animal.scale).toFixed(2)}</output></label>
+          <label><span>Softness</span><input type="range" min="0" max="1" step="0.05" value="${Number(animal.softness ?? 0)}" data-animal-setting="softness" data-animal-id="${animal.id}" /><output>${Number(animal.softness ?? 0).toFixed(2)}</output></label>
+          <label><span>Saturation</span><input type="range" min="0" max="2" step="0.05" value="${Number(animal.saturation ?? 1)}" data-animal-setting="saturation" data-animal-id="${animal.id}" /><output>${Number(animal.saturation ?? 1).toFixed(2)}</output></label>
+          <label><span>Volume</span><input type="range" min="0" max="1" step="0.05" value="${clampVolume(animal.soundVolume ?? 1)}" data-animal-setting="soundVolume" data-animal-id="${animal.id}" /><output>${Math.round(clampVolume(animal.soundVolume ?? 1) * 100)}%</output></label>
+          <label class="animalEditorToggle"><input type="checkbox" data-animal-setting="mirrorX" data-animal-id="${animal.id}" ${animal.mirrorX ? "checked" : ""}/><span>Mirror horizontally</span></label>
+          <span>x ${animal.x}, y ${animal.y} · bottom-center</span>
+          <div class="animalEditorActions">
+            <button type="button" data-debug-action="preview-animal-blink" data-animal-id="${animal.id}">Preview blink</button>
+            <button type="button" data-debug-action="preview-animal-sound" data-animal-id="${animal.id}">Preview sound</button>
+            <button type="button" data-debug-action="duplicate-selected">Duplicate selected</button>
+            <button type="button" data-debug-action="delete-animal" data-animal-id="${animal.id}">Delete</button>
+          </div>
+        </div>` : ""}
+      <details class="editorNestedSection"><summary>Add ambient animal</summary>${renderAmbientAddForm("animal")}</details>
+    </details>
+    <details class="editorSection" open>
+      <summary>Ambient flybys <span>${flybys.length}</span></summary>
+      <div class="editorObjectPicker">
+        ${flybys.map((item) => `<button type="button" aria-label="Selecteer ${item.label || item.id}" data-select-ambient-type="flyby" data-select-ambient-id="${item.id}" class="${flyby?.id === item.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>`).join("") || "<span>Geen flybys.</span>"}
+      </div>
+      ${flyby ? `
+        <div class="flybyEditorCard" data-flyby-editor-id="${flyby.id}">
+          <div class="editorCommonControls"><strong>${flyby.label}</strong><span>${flyby.id}</span>
+            ${renderFlybyField("Scale", flyby, "scale", { min: 0.02, max: 2, step: 0.01 })}
+            ${renderFlybyField("Speed px/s", flyby, "speed", { min: 20, max: 2000, step: 10 })}
+            <div class="animalEditorActions">
+              <button type="button" data-debug-action="edit-flight-path" data-flyby-id="${flyby.id}">Edit flight path</button>
+              <button type="button" data-debug-action="preview-flyby" data-flyby-id="${flyby.id}">Preview flyby</button>
+              <button type="button" data-debug-action="duplicate-selected">Duplicate selected</button>
+              <button type="button" data-debug-action="delete-flyby" data-flyby-id="${flyby.id}">Delete</button>
+            </div>
+          </div>
+          <details class="editorNestedSection" open><summary>Assets</summary>
+            <label class="editorField"><span>Frame A</span><select data-flyby-setting="frameA" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameA)}</select></label>
+            <label class="editorField"><span>Frame B</span><select data-flyby-setting="frameB" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameB)}</select></label>
+          </details>
+          <details class="editorNestedSection"><summary>Animation</summary>
+            ${renderFlybyField("Flap Hz", flyby, "flapFrequencyHz", { min: 0, max: 20, step: 0.5 })}
+            ${renderFlybyField("Face flight direction", flyby, "faceFlightDirection", { toggle: true })}
+            ${renderFlybyField("Manual mirror", flyby, "mirrorX", { toggle: true })}
+            ${renderFlybyField("Rotate along path", flyby, "rotateAlongPath", { toggle: true })}
+            ${renderFlybyField("Max rotation", flyby, "maxRotationDeg", { min: 0, max: 45 })}
+          </details>
+          <details class="editorNestedSection"><summary>Timing</summary>
+            ${renderFlybyField("Minimum interval (s)", flyby, "intervalMinMs", { min: 5, max: 120, display: (v) => Number(v) / 1000, scale: 1000 })}
+            ${renderFlybyField("Maximum interval (s)", flyby, "intervalMaxMs", { min: 5, max: 120, display: (v) => Number(v) / 1000, scale: 1000 })}
+            <label class="editorField"><span>Sync ID</span><input list="flyby-sync-keys" value="${flyby.syncKey || ""}" data-flyby-setting="syncKey" data-flyby-id="${flyby.id}"/></label>
+            <datalist id="flyby-sync-keys">${[...new Set(flybys.map((item) => item.syncKey).filter(Boolean))].map((key) => `<option value="${key}"></option>`).join("")}</datalist>
+            ${renderFlybyField("Start delay (ms)", flyby, "startDelayMs", { min: 0, max: 10000, step: 50 })}
+            ${syncMembers.length > 1 ? `<p>Shared with: ${syncMembers.map((item) => item.label || item.id).join(", ")}</p><button type="button" data-debug-action="preview-sync-flybys" data-sync-key="${flyby.syncKey}">Preview synchronized flybys</button>` : ""}
+          </details>
+          <details class="editorNestedSection"><summary>Audio</summary>
+            <label class="editorField"><span>Sound</span><select data-flyby-setting="sound" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.audio || [], flyby.sound, true)}</select></label>
+            ${renderFlybyField("Sound volume", flyby, "soundVolume", { min: 0, max: 1, step: 0.05 })}
+          </details>
+          <details class="editorNestedSection"><summary>Advanced</summary>
+            ${renderFlybyField("Softness", flyby, "softness", { min: 0, max: 8, step: 0.25 })}
+            ${renderFlybyField("Saturation", flyby, "saturation", { min: 0, max: 2, step: 0.05 })}
+          </details>
+        </div>` : ""}
+      <details class="editorNestedSection"><summary>Add ambient flyby</summary>${renderAmbientAddForm("flyby")}</details>
+    </details>
+  `;
+}
+
 function renderDeveloperToolsPanel() {
   if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
+  if (walkPathEditor.pathMode) return "";
 
   if (!EDITOR_DEV_MODE) {
     return `
@@ -2445,14 +3041,57 @@ function renderDeveloperToolsPanel() {
             ? `${point.id}: ${point.x}, ${point.y}`
             : "Drag a path point or object."
       }</span>
-      ${renderAmbientAnimalEditorControls()}
-      ${renderAudioEditorControls()}
+      ${renderAmbientEditorControls()}
+      <details class="editorSection" open><summary>Audio</summary>${renderAudioEditorControls()}</details>
       <div class="walkPathEditorActions">
         <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
         <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
       </div>
       <p>${walkPathEditor.message}</p>
     </aside>
+  `;
+}
+
+function renderFlightPathWorkspace() {
+  if (!walkPathEditor.pathMode) return "";
+  const flyby = (level.ambientFlybys || []).find((item) => item.id === walkPathEditor.selectedObjectId);
+  if (!flyby) return "";
+  const view = walkPathEditor.pathViewBox || {
+    x: -250,
+    y: -200,
+    width: level.world.width + 500,
+    height: level.world.height + 300
+  };
+  const cache = window.AtlasAmbientSystem.buildPathCache(flyby.path);
+  const route = cache.samples.map((point) => `${point.x},${point.y}`).join(" ");
+  return `
+    <div class="flybyPathWorkspace" data-flight-path-workspace data-flyby-id="${flyby.id}">
+      <svg viewBox="${view.x} ${view.y} ${view.width} ${view.height}" preserveAspectRatio="xMidYMid meet" data-flight-path-background>
+        <rect class="flybyWorkspaceMargin" x="${view.x}" y="${view.y}" width="${view.width}" height="${view.height}"></rect>
+        <rect class="flybyLevelBoundary" x="0" y="0" width="${level.world.width}" height="${level.world.height}"></rect>
+        <image href="${level.world.background}" x="0" y="0" width="${level.world.width}" height="${level.world.height}" opacity=".42" pointer-events="none"></image>
+        <polyline class="flybyPathCurve" points="${route}"></polyline>
+        ${flyby.path.map((point, index) => `
+          <g class="flybyPathPoint ${index === walkPathEditor.selectedPathPoint ? "flybyPathPointSelected" : ""}"
+            data-flyby-point="${index}" data-flyby-id="${flyby.id}" transform="translate(${point.x} ${point.y})">
+            <circle r="${index === 0 || index === flyby.path.length - 1 ? 15 : 12}"></circle>
+            <text x="19" y="-16">${index === 0 ? "Start" : index === flyby.path.length - 1 ? "End" : index + 1}</text>
+          </g>
+        `).join("")}
+      </svg>
+      <div class="flybyPathToolbar">
+        <strong>Edit flight path · ${flyby.label}</strong>
+        <button type="button" data-debug-action="add-flight-point" class="${walkPathEditor.addingFlybyPoint ? "editorObjectSelected" : ""}">Add point</button>
+        <button type="button" data-debug-action="delete-flight-point">Delete selected point</button>
+        <button type="button" data-debug-action="reverse-flight-path">Reverse path</button>
+        <button type="button" data-debug-action="preview-flyby" data-flyby-id="${flyby.id}">Preview flyby</button>
+        <button type="button" data-debug-action="fit-flight-path">Fit flight path</button>
+        <button type="button" data-debug-action="fit-flight-level">Fit level</button>
+        <button type="button" data-debug-action="done-flight-path">Done</button>
+        <label>X <input type="number" data-flight-point-coordinate="x" value="${flyby.path[walkPathEditor.selectedPathPoint]?.x ?? 0}"/></label>
+        <label>Y <input type="number" data-flight-point-coordinate="y" value="${flyby.path[walkPathEditor.selectedPathPoint]?.y ?? 0}"/></label>
+      </div>
+    </div>
   `;
 }
 
@@ -2473,6 +3112,7 @@ function renderWorldStage() {
         <img class="worldArt" src="${level.world.background}" alt="Een doorlopend bospad naar de Vikingtempel" />
         <div class="forestMist"></div>
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
+        ${(level.ambientFlybys || []).map(renderAmbientFlyby).join("")}
         ${debugOverlayEnabled ? renderDebugOverlay() : ""}
         ${level.hotspots.filter(isTargetVisible).map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
@@ -2493,8 +3133,23 @@ function renderWorldStage() {
           />
         </span>
       </div>
+      ${renderFlightPathWorkspace()}
       ${renderDeveloperToolsPanel()}
     </section>
+  `;
+}
+
+function renderAmbientFlyby(flyby) {
+  const ready = ambientFlybyRuntime.readiness.get(`${level.id}:${flyby.id}`);
+  return `
+    <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
+      data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
+      style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
+      <span class="ambientFlybyFrames">
+        <img class="ambientFlybyFrame ambientFlybyFrameA" src="${flyby.frameA}" alt="" draggable="false" decoding="sync"/>
+        <img class="ambientFlybyFrame ambientFlybyFrameB" src="${flyby.frameB}" alt="" draggable="false" decoding="sync"/>
+      </span>
+    </span>
   `;
 }
 
@@ -2644,7 +3299,8 @@ function renderGuidePortrait([id, guide], activeSpeaker) {
       aria-label="${guide.name} laten spinnen"
       ${active ? 'aria-current="true"' : ""}
     >
-      <img src="${guide.portrait}" alt="${guide.name}" />
+      <img src="${guideBlinkRuntime[id]?.frame === "closed" && guideBlinkRuntime[id]?.ready ? GUIDE_BLINK_PATHS[id] : guide.portrait}"
+        data-guide-image="${id}" data-open-src="${guide.portrait}" alt="${guide.name}" />
       <figcaption>${guide.name}</figcaption>
     </figure>
   `;
@@ -3032,6 +3688,8 @@ function renderTransition() {
 }
 
 function render() {
+  const editorScrollTop = document.querySelector("[data-developer-tools]")?.scrollTop || 0;
+  app.dataset.screen = state.screen;
   if (state.screen === "launch") {
     app.innerHTML = renderLaunch();
   } else if (state.screen === "menu") {
@@ -3069,10 +3727,43 @@ function render() {
   updateWorldDom();
   syncAudioForState();
   syncAmbientAnimalTimers();
+  syncGuideBlinkTimers();
+  ambientFlybyRuntime.sync();
+  const editorPanel = document.querySelector("[data-developer-tools]");
+  if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const ambientSelector = event.target.closest("[data-select-ambient-type]");
+  if (ambientSelector) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.selectedObjectType = ambientSelector.dataset.selectAmbientType;
+    walkPathEditor.selectedObjectId = ambientSelector.dataset.selectAmbientId;
+    render();
+    return;
+  }
+  const flightPoint = event.target.closest("[data-flyby-point]");
+  if (flightPoint) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.selectedPathPoint = Number(flightPoint.dataset.flybyPoint);
+    render();
+    return;
+  }
+  const flightBackground = event.target.closest("[data-flight-path-background]");
+  if (flightBackground && walkPathEditor.addingFlybyPoint) {
+    event.preventDefault();
+    event.stopPropagation();
+    addFlybyPointAt(walkPathEditor.selectedObjectId, pointFromFlightWorkspaceEvent(event));
+    return;
+  }
+  if (event.target.closest("[data-flight-path-workspace]") && !event.target.closest("[data-debug-action], input, label")) {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
   const animalTarget = event.target.closest("[data-ambient-animal]");
   if (animalTarget) {
     event.preventDefault();
@@ -3109,6 +3800,34 @@ app.addEventListener("click", (event) => {
       if (animal) playAmbientAnimalSound(animal);
     }
     if (action === "delete-animal") deleteAmbientAnimal(debugActionTarget.dataset.animalId);
+    if (action === "refresh-assets") refreshAmbientAssets();
+    if (action === "add-animal") addAmbientAnimalFromEditor();
+    if (action === "add-flyby") addAmbientFlybyFromEditor();
+    if (action === "duplicate-selected") duplicateSelectedAmbient();
+    if (action === "delete-flyby") deleteAmbientFlyby(debugActionTarget.dataset.flybyId);
+    if (action === "preview-flyby") ambientFlybyRuntime.preview(debugActionTarget.dataset.flybyId);
+    if (action === "preview-sync-flybys") ambientFlybyRuntime.previewSync(debugActionTarget.dataset.syncKey);
+    if (action === "edit-flight-path") {
+      walkPathEditor.selectedObjectType = "flyby";
+      walkPathEditor.selectedObjectId = debugActionTarget.dataset.flybyId;
+      walkPathEditor.pathMode = true;
+      walkPathEditor.pathViewBox = null;
+      walkPathEditor.selectedPathPoint = 0;
+      render();
+    }
+    if (action === "add-flight-point") {
+      walkPathEditor.addingFlybyPoint = !walkPathEditor.addingFlybyPoint;
+      render();
+    }
+    if (action === "delete-flight-point") deleteSelectedFlybyPoint(walkPathEditor.selectedObjectId);
+    if (action === "reverse-flight-path") reverseFlybyPath(walkPathEditor.selectedObjectId);
+    if (action === "fit-flight-path") fitFlybyPath(walkPathEditor.selectedObjectId);
+    if (action === "fit-flight-level") fitFlybyLevel();
+    if (action === "done-flight-path") {
+      walkPathEditor.pathMode = false;
+      walkPathEditor.addingFlybyPoint = false;
+      render();
+    }
     return;
   }
 
@@ -3215,11 +3934,31 @@ app.addEventListener("input", (event) => {
     return;
   }
   const input = event.target.closest("[data-audio-path]");
-  if (!input) return;
-  updateAudioDraft(input.dataset.audioPath, input.value);
+  if (input) {
+    updateAudioDraft(input.dataset.audioPath, input.value);
+    return;
+  }
 });
 
 app.addEventListener("change", (event) => {
+  const coordinate = event.target.closest("[data-flight-point-coordinate]");
+  if (coordinate) {
+    const flyby = (level.ambientFlybys || []).find((item) => item.id === walkPathEditor.selectedObjectId);
+    const point = { ...flyby.path[walkPathEditor.selectedPathPoint] };
+    point[coordinate.dataset.flightPointCoordinate] = Number(coordinate.value);
+    updateFlybyPathPoint(flyby.id, walkPathEditor.selectedPathPoint, point);
+    return;
+  }
+  const flybySetting = event.target.closest("[data-flyby-setting]");
+  if (flybySetting) {
+    const value = flybySetting.type === "checkbox"
+      ? flybySetting.checked
+      : Number(flybySetting.dataset.valueScale || 1) !== 1
+        ? Number(flybySetting.value) * Number(flybySetting.dataset.valueScale)
+        : flybySetting.value;
+    updateAmbientFlybySetting(flybySetting.dataset.flybyId, flybySetting.dataset.flybySetting, value);
+    return;
+  }
   const animalSetting = event.target.closest("[data-animal-setting='mirrorX']");
   if (!animalSetting) return;
   updateAmbientAnimalSetting(animalSetting.dataset.animalId, "mirrorX", animalSetting.checked);
@@ -3227,6 +3966,31 @@ app.addEventListener("change", (event) => {
 
 app.addEventListener("pointerdown", (event) => {
   ensureAudioUnlocked();
+  const flybyPoint = event.target.closest("[data-flyby-point]");
+  if (flybyPoint && walkPathEditor.pathMode) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.draggingFlybyPoint = Number(flybyPoint.dataset.flybyPoint);
+    walkPathEditor.selectedPathPoint = walkPathEditor.draggingFlybyPoint;
+    return;
+  }
+  const flightWorkspace = event.target.closest("[data-flight-path-workspace]");
+  if (flightWorkspace && walkPathEditor.pathMode && !walkPathEditor.addingFlybyPoint) {
+    event.preventDefault();
+    event.stopPropagation();
+    const svg = flightWorkspace.querySelector("svg");
+    const view = walkPathEditor.pathViewBox || {
+      x: -250, y: -200, width: level.world.width + 500, height: level.world.height + 300
+    };
+    walkPathEditor.pathPan = {
+      clientX: event.clientX,
+      clientY: event.clientY,
+      view: { ...view },
+      width: svg.clientWidth,
+      height: svg.clientHeight
+    };
+    return;
+  }
   const animalTarget = event.target.closest("[data-animal-drag]");
   if (animalTarget && walkPathEditor.enabled && debugOverlayEnabled) {
     event.preventDefault();
@@ -3259,6 +4023,28 @@ app.addEventListener("pointerdown", (event) => {
 });
 
 window.addEventListener("pointermove", (event) => {
+  if (walkPathEditor.pathPan) {
+    event.preventDefault();
+    const pan = walkPathEditor.pathPan;
+    walkPathEditor.pathViewBox = {
+      ...pan.view,
+      x: pan.view.x - (event.clientX - pan.clientX) * pan.view.width / Math.max(1, pan.width),
+      y: pan.view.y - (event.clientY - pan.clientY) * pan.view.height / Math.max(1, pan.height)
+    };
+    const svg = document.querySelector("[data-flight-path-workspace] svg");
+    const view = walkPathEditor.pathViewBox;
+    svg?.setAttribute("viewBox", `${view.x} ${view.y} ${view.width} ${view.height}`);
+    return;
+  }
+  if (walkPathEditor.draggingFlybyPoint !== null && walkPathEditor.draggingFlybyPoint !== undefined) {
+    event.preventDefault();
+    updateFlybyPathPoint(
+      walkPathEditor.selectedObjectId,
+      walkPathEditor.draggingFlybyPoint,
+      pointFromFlightWorkspaceEvent(event)
+    );
+    return;
+  }
   if (walkPathEditor.draggingAnimalId) {
     event.preventDefault();
     updateDraggedAmbientAnimal(event);
@@ -3280,13 +4066,19 @@ window.addEventListener("pointerup", () => {
   walkPathEditor.draggingObjectId = null;
   walkPathEditor.draggingObjectMode = null;
   walkPathEditor.draggingAnimalId = null;
+  walkPathEditor.draggingFlybyPoint = null;
+  walkPathEditor.pathPan = null;
 });
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     pauseAmbientAnimalTimers();
+    ambientFlybyRuntime.stopAll();
+    Object.values(guideBlinkRuntime).forEach(clearGuideBlinkState);
   } else {
     syncAmbientAnimalTimers();
+    syncGuideBlinkTimers();
+    ambientFlybyRuntime.sync();
   }
 });
 
@@ -3318,5 +4110,6 @@ app.addEventListener("submit", (event) => {
 
 preloadActorAnimations();
 preloadMenuAssets();
+preloadGuideBlinkAssets();
 registerServiceWorker();
 render();

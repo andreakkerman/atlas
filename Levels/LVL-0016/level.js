@@ -556,6 +556,164 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       label: "Romeinse poort"
     }
   ],
+    ambientFlybys: [
+        {
+              id: "italyCommonSwift",
+              label: "Gierzwaluw",
+              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: -220,
+                          y: 115
+                    },
+                    {
+                          x: 620,
+                          y: 190
+                    },
+                    {
+                          x: 1270,
+                          y: 160
+                    },
+                    {
+                          x: 2390,
+                          y: 95
+                    }
+              ],
+              scale: 0.14,
+              speed: 820,
+              flapFrequencyHz: 8,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 18000,
+              intervalMaxMs: 35000,
+              syncKey: "italy-swift-pair",
+              startDelayMs: 0,
+              softness: 0.15,
+              saturation: 0.95,
+              soundVolume: 0.62,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        },
+        {
+              id: "italyCommonSwift-copy",
+              label: "Gierzwaluw kopie",
+              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: -205,
+                          y: 82
+                    },
+                    {
+                          x: 620,
+                          y: 150
+                    },
+                    {
+                          x: 1272,
+                          y: 131
+                    },
+                    {
+                          x: 2373,
+                          y: 41
+                    }
+              ],
+              scale: 0.12,
+              speed: 800,
+              flapFrequencyHz: 8,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 18000,
+              intervalMaxMs: 35000,
+              syncKey: "italy-swift-pair",
+              startDelayMs: 0,
+              softness: 0.15,
+              saturation: 0.95,
+              soundVolume: 0.62,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        },
+        {
+              id: "italyCommonSwift-copy-copy",
+              label: "Gierzwaluw kopie kopie",
+              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: -187,
+                          y: 53
+                    },
+                    {
+                          x: 622,
+                          y: 112
+                    },
+                    {
+                          x: 1277,
+                          y: 103
+                    },
+                    {
+                          x: 2368,
+                          y: 7
+                    }
+              ],
+              scale: 0.1,
+              speed: 790,
+              flapFrequencyHz: 8,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 18000,
+              intervalMaxMs: 35000,
+              syncKey: "italy-swift-pair",
+              startDelayMs: 0,
+              softness: 0.15,
+              saturation: 0.95,
+              soundVolume: 0.62,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        },
+        {
+              id: "italyCommonSwift-copy-2",
+              label: "Gierzwaluw kopie",
+              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: -201,
+                          y: 154
+                    },
+                    {
+                          x: 618,
+                          y: 230
+                    },
+                    {
+                          x: 1277,
+                          y: 190
+                    },
+                    {
+                          x: 2390,
+                          y: 95
+                    }
+              ],
+              scale: 0.09,
+              speed: 810,
+              flapFrequencyHz: 8,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 18000,
+              intervalMaxMs: 35000,
+              syncKey: "italy-swift-pair",
+              startDelayMs: 0,
+              softness: 0.15,
+              saturation: 0.95,
+              soundVolume: 0.62,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        }
+  ],
     walkPath: [
     { id: "left-start", x: 184, y: 645 },
     { id: "colosseum-approach", x: 443, y: 636, role: "approach" },
@@ -626,6 +784,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       badge: "Romeinseroutezoeker",
       line: "Sven vond langs oude bogen en gelato de weg naar Oostenrijk.",
       art: asset, nextLevelId: "LVL-0017", nextLabel: "Naar Oostenrijk"
-    }
+    },
+    ambientAnimals: []
   };
 })();

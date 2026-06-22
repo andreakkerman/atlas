@@ -548,12 +548,16 @@ button {
   position: absolute;
   right: 12px;
   top: 12px;
-  z-index: 7;
+  z-index: 10;
   display: grid;
   gap: 6px;
   width: min(540px, calc(100vw - 24px));
-  max-height: min(560px, calc(58dvh - 12px));
-  overflow: auto;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   padding: 10px;
   border: 1px solid rgba(156, 242, 233, 0.46);
   border-radius: 8px;
@@ -977,6 +981,246 @@ button {
   box-shadow: none;
 }
 
+.editorSection,
+.editorNestedSection {
+  min-width: 0;
+  border: 1px solid rgba(255, 231, 166, 0.16);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.editorSection > summary,
+.editorNestedSection > summary {
+  padding: 8px;
+  cursor: pointer;
+  color: #ffd06d;
+  font-weight: 900;
+}
+
+.editorSection > :not(summary),
+.editorNestedSection > :not(summary) {
+  margin: 7px;
+}
+
+.editorObjectPicker,
+.assetDiscoveryBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.editorObjectPicker button,
+.assetDiscoveryBar button,
+.editorAddForm button,
+.editorNestedSection > button {
+  min-height: 32px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 231, 166, 0.34);
+  border-radius: 6px;
+  color: #fff7de;
+  background: rgba(255, 242, 202, 0.1);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.editorObjectSelected {
+  border-color: #2ee6dc !important;
+  background: rgba(46, 230, 220, 0.22) !important;
+}
+
+.editorLegacyControl {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.editorAddForm,
+.flybyEditorCard,
+.editorCommonControls {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+}
+
+.editorAddForm label,
+.editorField {
+  display: grid;
+  grid-template-columns: minmax(105px, .8fr) minmax(0, 1.2fr);
+  gap: 8px;
+  align-items: center;
+}
+
+.editorAddForm input,
+.editorAddForm select,
+.editorField input,
+.editorField select {
+  min-width: 0;
+  width: 100%;
+}
+
+.editorToggle {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.flybyEditorCard {
+  padding: 8px;
+  border: 1px solid rgba(46, 230, 220, 0.24);
+  border-radius: 7px;
+}
+
+.ambientFlyby {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center;
+  contain: layout paint;
+}
+
+.ambientFlyby[data-active="true"][data-ready="true"] {
+  opacity: 1;
+}
+
+.ambientFlybyFrames {
+  position: relative;
+  display: block;
+  filter: blur(var(--flyby-softness, 0)) saturate(var(--flyby-saturation, 1));
+}
+
+.ambientFlybyFrame {
+  display: block;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ambientFlybyFrameB {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+
+.ambientFlyby[data-frame="b"] .ambientFlybyFrameA {
+  visibility: hidden;
+}
+
+.ambientFlyby[data-frame="b"] .ambientFlybyFrameB {
+  visibility: visible;
+}
+
+.flybyPathWorkspace {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  overflow: hidden;
+  background: rgba(5, 12, 11, 0.82);
+  touch-action: none;
+}
+
+.flybyPathWorkspace svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.flybyWorkspaceMargin {
+  fill: rgba(4, 10, 9, 0.88);
+  pointer-events: none;
+}
+
+.flybyLevelBoundary {
+  fill: rgba(255, 255, 255, 0.035);
+  stroke: #ffd06d;
+  stroke-width: 5;
+  vector-effect: non-scaling-stroke;
+}
+
+.flybyPathCurve {
+  fill: none;
+  stroke: #2ee6dc;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.flybyPathPoint {
+  cursor: grab;
+  pointer-events: all;
+}
+
+.flybyPathPoint circle {
+  fill: #173f3b;
+  stroke: #fff7de;
+  stroke-width: 4;
+  vector-effect: non-scaling-stroke;
+  pointer-events: all;
+}
+
+.flybyPathPoint:first-of-type circle,
+.flybyPathPoint:last-of-type circle {
+  fill: #8e4f1b;
+}
+
+.flybyPathPointSelected circle {
+  fill: #2ee6dc;
+  stroke: #10201d;
+}
+
+.flybyPathPoint text {
+  fill: #fff7de;
+  stroke: #10201d;
+  stroke-width: 5;
+  paint-order: stroke;
+  font: 800 22px system-ui;
+  pointer-events: none;
+}
+
+.flybyPathToolbar {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  max-height: 42dvh;
+  overflow-y: auto;
+  padding: 9px;
+  border: 1px solid rgba(255, 231, 166, 0.4);
+  border-radius: 8px;
+  background: rgba(8, 18, 16, 0.94);
+  touch-action: pan-y;
+}
+
+.flybyPathToolbar button,
+.flybyPathToolbar input {
+  min-height: 34px;
+}
+
+.flybyPathToolbar label {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.flybyPathToolbar input {
+  width: 88px;
+}
+
 .progressMenuButton {
   position: fixed;
   z-index: 4;
@@ -1003,10 +1247,16 @@ button {
 }
 
 .progressScreen {
-  min-height: 100dvh;
+  width: 100%;
+  height: 100dvh;
+  min-height: 0;
   padding: max(22px, env(safe-area-inset-top)) max(18px, env(safe-area-inset-right))
     max(32px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-left));
   overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   background:
     radial-gradient(circle at 12% 5%, rgba(46, 230, 220, 0.17), transparent 30rem),
     radial-gradient(circle at 90% 12%, rgba(245, 184, 75, 0.15), transparent 28rem),

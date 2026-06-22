@@ -1,10 +1,11 @@
-const CACHE_NAME = "svenadventure-static-v6";
+const CACHE_NAME = "svenadventure-static-v7";
 const CORE_ASSETS = [
   "./",
   "index.html",
   "manifest.webmanifest",
   "src/styles.css",
   "src/session-report.js",
+  "src/ambient-system.js",
   "src/app.js",
   "src/audio-config.js",
   "Levels/manifest.js",
@@ -21,16 +22,7 @@ const CORE_ASSETS = [
   "assets/sven-stage.png",
   "assets/audio/music/menu.mp3",
   "Levels/LVL-0001/assets/level-1-wide-world.png",
-  "Levels/LVL-0001/assets/ambient/owl-open.png",
-  "Levels/LVL-0001/assets/ambient/owl-closed.png",
-  "Levels/LVL-0001/assets/ambient/owl-call.mp3",
-  "Levels/LVL-0003/assets/ambient/raven-open.png",
-  "Levels/LVL-0003/assets/ambient/raven-closed.png",
-  "Levels/LVL-0003/assets/ambient/raven-call.mp3",
-  "Levels/LVL-0004/assets/nautilus-harbor.png",
-  "Levels/LVL-0004/assets/ambient/meeuw-open.png",
-  "Levels/LVL-0004/assets/ambient/meeuw-closed.png",
-  "Levels/LVL-0004/assets/ambient/meeuw.mp3"
+  "Levels/LVL-0004/assets/nautilus-harbor.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -51,6 +43,23 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
   if (new URL(event.request.url).searchParams.get("dev") === "editor") return;
   if (event.request.url.includes("/__dev/")) return;
+
+  const url = new URL(event.request.url);
+  const refreshable = /\/Levels\/[^/]+\/(?:level\.js|assets\/ambient\/)/.test(url.pathname) ||
+    /\/assets\/guides\/(?:minnie_blink|moose_blink)\.png$/.test(url.pathname);
+
+  if (refreshable) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response.ok && response.type === "basic") {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cached) => {

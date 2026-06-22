@@ -118,9 +118,27 @@ function validateInteractiveObjects(value) {
   });
 }
 
-function validateAmbientAnimals(value) {
+function validateAmbientAsset(levelId, value, label, extensions, optional = false) {
+  if (optional && !value) return "";
+  if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty path.`);
+  const normalized = value.replace(/\\/g, "/");
+  const prefix = `Levels/${levelId}/assets/ambient/`;
+  if (!normalized.startsWith(prefix) || normalized.includes("..")) {
+    throw new Error(`${label} must stay inside ${prefix}`);
+  }
+  if (!extensions.has(path.extname(normalized).toLowerCase())) throw new Error(`${label} has an unsupported extension.`);
+  const resolved = path.resolve(rootDir, normalized);
+  const ambientDir = path.resolve(rootDir, "Levels", levelId, "assets", "ambient");
+  if (!resolved.startsWith(ambientDir + path.sep) || !fs.existsSync(resolved)) throw new Error(`${label} does not exist.`);
+  return normalized;
+}
+
+const ambientImageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp"]);
+const ambientAudioExtensions = new Set([".mp3", ".ogg", ".wav"]);
+
+function validateAmbientAnimals(value, levelId) {
   if (!Array.isArray(value)) throw new Error("ambientAnimals must be an array.");
-  const requiredStrings = ["id", "type", "openFrame", "closedFrame", "sound"];
+  const requiredStrings = ["id", "type", "openFrame", "closedFrame"];
   const requiredNumbers = [
     "x", "y", "scale", "blinkMinMs", "blinkMaxMs", "blinkDurationMs",
     "doubleBlinkChance", "soundCooldownMs"
@@ -161,9 +179,9 @@ function validateAmbientAnimals(value) {
     const next = {
       id: animal.id,
       type: animal.type,
-      openFrame: animal.openFrame,
-      closedFrame: animal.closedFrame,
-      sound: animal.sound,
+      openFrame: validateAmbientAsset(levelId, animal.openFrame, `ambientAnimals[${index}].openFrame`, ambientImageExtensions),
+      closedFrame: validateAmbientAsset(levelId, animal.closedFrame, `ambientAnimals[${index}].closedFrame`, ambientImageExtensions),
+      sound: validateAmbientAsset(levelId, animal.sound, `ambientAnimals[${index}].sound`, ambientAudioExtensions, true),
       x: Math.round(animal.x),
       y: Math.round(animal.y),
       scale: Number(animal.scale),
@@ -184,6 +202,52 @@ function validateAmbientAnimals(value) {
     if (animal.soundVolume !== undefined) next.soundVolume = Number(animal.soundVolume);
     if (animal.mirrorX !== undefined) next.mirrorX = animal.mirrorX;
     return next;
+  });
+}
+
+function validateAmbientFlybys(value, levelId) {
+  if (!Array.isArray(value)) throw new Error("ambientFlybys must be an array.");
+  const ids = new Set();
+  return value.map((flyby, index) => {
+    if (!flyby || typeof flyby !== "object" || Array.isArray(flyby)) throw new Error(`ambientFlybys[${index}] must be an object.`);
+    if (typeof flyby.id !== "string" || !flyby.id.trim()) throw new Error(`ambientFlybys[${index}].id is required.`);
+    if (ids.has(flyby.id)) throw new Error(`Duplicate ambientFlybys id: ${flyby.id}`);
+    ids.add(flyby.id);
+    if (typeof flyby.label !== "string" || !flyby.label.trim()) throw new Error(`ambientFlybys[${index}].label is required.`);
+    if (!Array.isArray(flyby.path) || flyby.path.length < 2) throw new Error(`ambientFlybys[${index}].path needs at least 2 points.`);
+    const pathPoints = flyby.path.map((point, pointIndex) => {
+      if (!Number.isFinite(point?.x) || !Number.isFinite(point?.y)) throw new Error(`ambientFlybys[${index}].path[${pointIndex}] needs numeric x/y.`);
+      return { x: Math.round(point.x), y: Math.round(point.y) };
+    });
+    const number = (field, min = -Infinity, max = Infinity) => {
+      const result = Number(flyby[field]);
+      if (!Number.isFinite(result) || result < min || result > max) throw new Error(`ambientFlybys[${index}].${field} is invalid.`);
+      return result;
+    };
+    const result = {
+      id: flyby.id,
+      label: flyby.label,
+      frameA: validateAmbientAsset(levelId, flyby.frameA, `ambientFlybys[${index}].frameA`, ambientImageExtensions),
+      frameB: validateAmbientAsset(levelId, flyby.frameB, `ambientFlybys[${index}].frameB`, ambientImageExtensions),
+      sound: validateAmbientAsset(levelId, flyby.sound, `ambientFlybys[${index}].sound`, ambientAudioExtensions, true),
+      path: pathPoints,
+      scale: number("scale", 0.001),
+      speed: number("speed", 1),
+      flapFrequencyHz: number("flapFrequencyHz", 0),
+      faceFlightDirection: flyby.faceFlightDirection !== false,
+      mirrorX: Boolean(flyby.mirrorX),
+      intervalMinMs: Math.round(number("intervalMinMs", 0)),
+      intervalMaxMs: Math.round(number("intervalMaxMs", 0)),
+      syncKey: String(flyby.syncKey || ""),
+      startDelayMs: Math.round(number("startDelayMs", 0)),
+      softness: number("softness", 0),
+      saturation: number("saturation", 0),
+      soundVolume: number("soundVolume", 0, 1),
+      rotateAlongPath: Boolean(flyby.rotateAlongPath),
+      maxRotationDeg: number("maxRotationDeg", 0, 180)
+    };
+    if (result.intervalMinMs > result.intervalMaxMs) throw new Error(`ambientFlybys[${index}] minimum interval exceeds maximum.`);
+    return result;
   });
 }
 
@@ -308,6 +372,10 @@ function formatAmbientAnimals(ambientAnimals) {
   return `ambientAnimals: ${formatValue(ambientAnimals)}`;
 }
 
+function formatAmbientFlybys(ambientFlybys) {
+  return `ambientFlybys: ${formatValue(ambientFlybys)}`;
+}
+
 function findArrayPropertyRange(source, propertyName) {
   const keyIndex = source.indexOf(`${propertyName}:`);
   if (keyIndex === -1) throw new Error(`level.js does not contain ${propertyName}.`);
@@ -358,16 +426,24 @@ function applyLevelDraft(levelId, draft) {
     const range = findArrayPropertyRange(source, "interactiveObjects");
     source = `${source.slice(0, range.start)}${formatInteractiveObjects(draft.interactiveObjects)}${source.slice(range.end)}`;
   }
-  if (draft.ambientAnimals) {
-    const range = findArrayPropertyRange(source, "ambientAnimals");
-    source = `${source.slice(0, range.start)}${formatAmbientAnimals(draft.ambientAnimals)}${source.slice(range.end)}`;
-  }
+  if (draft.ambientAnimals) source = upsertArrayProperty(source, "ambientAnimals", formatAmbientAnimals(draft.ambientAnimals));
+  if (draft.ambientFlybys) source = upsertArrayProperty(source, "ambientFlybys", formatAmbientFlybys(draft.ambientFlybys));
   if (draft.walkPath) {
     const range = findArrayPropertyRange(source, "walkPath");
     source = `${source.slice(0, range.start)}${formatWalkPath(draft.walkPath)}${source.slice(range.end)}`;
   }
   const updated = source;
   fs.writeFileSync(filePath, updated);
+}
+
+function upsertArrayProperty(source, propertyName, formatted) {
+  if (source.includes(`${propertyName}:`)) {
+    const range = findArrayPropertyRange(source, propertyName);
+    return `${source.slice(0, range.start)}${formatted}${source.slice(range.end)}`;
+  }
+  const objectEnd = source.lastIndexOf("\n  };");
+  if (objectEnd === -1) throw new Error("Could not find the end of the level definition.");
+  return `${source.slice(0, objectEnd)},\n    ${formatted}${source.slice(objectEnd)}`;
 }
 
 function applyAudioConfigDraft(audioConfig) {
@@ -381,7 +457,7 @@ async function handleDevRequest(request, response, url) {
     return true;
   }
 
-  const match = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/(editor-draft|apply-editor)$/);
+  const match = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/(editor-draft|apply-editor|ambient-assets)$/);
   if (!match) return false;
 
   const [, levelId, action] = match;
@@ -392,10 +468,27 @@ async function handleDevRequest(request, response, url) {
   }
 
   try {
+    if (request.method === "GET" && action === "ambient-assets") {
+      const ambientDir = path.join(folder, "assets", "ambient");
+      if (!fs.existsSync(ambientDir)) {
+        sendJson(response, 200, { images: [], audio: [] });
+        return true;
+      }
+      const files = fs.readdirSync(ambientDir, { withFileTypes: true })
+        .filter((entry) => entry.isFile())
+        .map((entry) => entry.name)
+        .sort((left, right) => left.localeCompare(right, "en", { sensitivity: "base" }));
+      const relative = (name) => `Levels/${levelId}/assets/ambient/${name}`;
+      sendJson(response, 200, {
+        images: files.filter((name) => ambientImageExtensions.has(path.extname(name).toLowerCase())).map(relative),
+        audio: files.filter((name) => ambientAudioExtensions.has(path.extname(name).toLowerCase())).map(relative)
+      });
+      return true;
+    }
     if (request.method === "GET" && action === "editor-draft") {
       const filePath = draftPath(levelId);
       if (!fs.existsSync(filePath)) {
-        sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, audioConfig: null });
+        sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, ambientFlybys: null, audioConfig: null });
         return true;
       }
       sendJson(response, 200, JSON.parse(fs.readFileSync(filePath, "utf8")));
@@ -417,11 +510,17 @@ async function handleDevRequest(request, response, url) {
         draft.interactiveObjects = validateInteractiveObjects(body.interactiveObjects);
       }
       if (body.ambientAnimals !== undefined) {
-        draft.ambientAnimals = validateAmbientAnimals(body.ambientAnimals);
+        draft.ambientAnimals = validateAmbientAnimals(body.ambientAnimals, levelId);
+      }
+      if (body.ambientFlybys !== undefined) draft.ambientFlybys = validateAmbientFlybys(body.ambientFlybys, levelId);
+      if (draft.ambientAnimals || draft.ambientFlybys) {
+        const ids = [...(draft.ambientAnimals || body.ambientAnimals || []), ...(draft.ambientFlybys || body.ambientFlybys || [])]
+          .map((item) => item.id);
+        if (new Set(ids).size !== ids.length) throw new Error("Configured ambient instance IDs must be unique.");
       }
       if (body.audioConfig !== undefined) draft.audioConfig = validateAudioConfig(body.audioConfig);
-      if (!draft.walkPath && !draft.interactiveObjects && !draft.ambientAnimals && !draft.audioConfig) {
-        throw new Error("Request must include walkPath, interactiveObjects, ambientAnimals or audioConfig.");
+      if (!draft.walkPath && !draft.interactiveObjects && !draft.ambientAnimals && !draft.ambientFlybys && !draft.audioConfig) {
+        throw new Error("Request must include walkPath, interactiveObjects, ambientAnimals, ambientFlybys or audioConfig.");
       }
 
       if (action === "editor-draft") {
@@ -435,7 +534,7 @@ async function handleDevRequest(request, response, url) {
       }
 
       if (action === "apply-editor") {
-        if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals) applyLevelDraft(levelId, draft);
+        if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals || draft.ambientFlybys) applyLevelDraft(levelId, draft);
         if (draft.audioConfig) applyAudioConfigDraft(draft.audioConfig);
         const filePath = draftPath(levelId);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
@@ -458,8 +557,11 @@ function contentType(filePath) {
   if (ext === ".css") return "text/css; charset=utf-8";
   if (ext === ".json") return "application/json; charset=utf-8";
   if (ext === ".mp3") return "audio/mpeg";
+  if (ext === ".ogg") return "audio/ogg";
+  if (ext === ".wav") return "audio/wav";
   if (ext === ".png") return "image/png";
   if (ext === ".jpg" || ext === ".jpeg") return "image/jpeg";
+  if (ext === ".webp") return "image/webp";
   return "application/octet-stream";
 }
 
