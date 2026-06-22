@@ -526,7 +526,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               blinkMaxMs: 9000,
               blinkDurationMs: 90,
               doubleBlinkChance: 0.15,
-              soundCooldownMs: 750
+              soundCooldownMs: 750,
+              label: "Meeuw"
+        },
+        {
+              id: "nautilusSeagull",
+              type: "seagull",
+              openFrame: "Levels/LVL-0004/assets/ambient/meeuw-open.png",
+              closedFrame: "Levels/LVL-0004/assets/ambient/meeuw-closed.png",
+              sound: "Levels/LVL-0004/assets/ambient/meeuw.mp3",
+              x: 1440,
+              y: 247,
+              scale: 0.06,
+              blinkMinMs: 4000,
+              blinkMaxMs: 9000,
+              blinkDurationMs: 90,
+              doubleBlinkChance: 0.15,
+              soundCooldownMs: 750,
+              label: "Meeuw op de Nautilus",
+              softness: 0.4,
+              saturation: 0.92,
+              soundVolume: 0.65,
+              mirrorX: true
         }
   ],
   interactiveObjects: [

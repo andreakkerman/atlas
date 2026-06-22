@@ -514,6 +514,7 @@ function validateAmbientAnimals(level, world, label) {
     }
     ["id", "type", "openFrame", "closedFrame", "sound"]
       .forEach((field) => validateRequiredString(animal[field], `${animalLabel}.${field}`));
+    if (animal.label !== undefined) validateRequiredString(animal.label, `${animalLabel}.label`);
     if (ids.has(animal.id)) fail(`${animalLabel}.id is duplicated: ${animal.id}`);
     ids.add(animal.id);
     validatePoint({ x: animal.x, y: animal.y }, animalLabel, world);
@@ -535,6 +536,9 @@ function validateAmbientAnimals(level, world, label) {
     }
     if (animal.soundVolume !== undefined && (!Number.isFinite(animal.soundVolume) || animal.soundVolume < 0 || animal.soundVolume > 1)) {
       fail(`${animalLabel}.soundVolume must be between 0 and 1.`);
+    }
+    if (animal.mirrorX !== undefined && typeof animal.mirrorX !== "boolean") {
+      fail(`${animalLabel}.mirrorX must be boolean.`);
     }
   });
 }

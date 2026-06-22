@@ -524,6 +524,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     startNode: "forest-start",
     start: { x: 170, y: 626 }
   },
+  ambientAnimals: [
+    {
+      id: "forestOwl",
+      type: "owl",
+      label: "Uil",
+      openFrame: "Levels/LVL-0001/assets/ambient/owl-open.png",
+      closedFrame: "Levels/LVL-0001/assets/ambient/owl-closed.png",
+      sound: "Levels/LVL-0001/assets/ambient/owl-call.mp3",
+      x: 273,
+      y: 365,
+      scale: 0.18,
+      softness: 0.3,
+      saturation: 0.92,
+      soundVolume: 0.65,
+      blinkMinMs: 4000,
+      blinkMaxMs: 9000,
+      blinkDurationMs: 90,
+      doubleBlinkChance: 0.15,
+      soundCooldownMs: 750
+    }
+  ],
   interactiveObjects: [
     {
       id: "forestRune",

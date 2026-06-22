@@ -155,6 +155,9 @@ function validateAmbientAnimals(value) {
     if (animal.soundVolume !== undefined && (!Number.isFinite(animal.soundVolume) || animal.soundVolume < 0 || animal.soundVolume > 1)) {
       throw new Error(`ambientAnimals[${index}].soundVolume must be between 0 and 1.`);
     }
+    if (animal.mirrorX !== undefined && typeof animal.mirrorX !== "boolean") {
+      throw new Error(`ambientAnimals[${index}].mirrorX must be boolean.`);
+    }
     const next = {
       id: animal.id,
       type: animal.type,
@@ -170,9 +173,16 @@ function validateAmbientAnimals(value) {
       doubleBlinkChance: Number(animal.doubleBlinkChance),
       soundCooldownMs: Math.round(animal.soundCooldownMs)
     };
+    if (animal.label !== undefined) {
+      if (typeof animal.label !== "string" || !animal.label.trim()) {
+        throw new Error(`ambientAnimals[${index}].label must be a non-empty string.`);
+      }
+      next.label = animal.label;
+    }
     if (animal.softness !== undefined) next.softness = Number(animal.softness);
     if (animal.saturation !== undefined) next.saturation = Number(animal.saturation);
     if (animal.soundVolume !== undefined) next.soundVolume = Number(animal.soundVolume);
+    if (animal.mirrorX !== undefined) next.mirrorX = animal.mirrorX;
     return next;
   });
 }

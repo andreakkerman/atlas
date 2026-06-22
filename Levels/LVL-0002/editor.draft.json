@@ -89,6 +89,17 @@
       "label": "Scheepsmodel"
     },
     {
+      "id": "templeTorch",
+      "type": "ambient",
+      "center": {
+        "x": 1735,
+        "y": 285
+      },
+      "radius": 54,
+      "approachNode": "ship-model-approach",
+      "label": "Wandfakkel"
+    },
+    {
       "id": "harborDoor",
       "type": "gate",
       "center": {

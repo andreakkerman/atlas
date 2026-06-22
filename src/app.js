@@ -6,6 +6,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 let level = null;
 let walkNodesById = new Map();
 let debugOverlayEnabled = false;
+const missingTrackedObjectWarnings = new Set();
 
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
@@ -542,23 +543,37 @@ function preloadLevelAssets(selectedLevel) {
     });
 }
 
-function loadImage(src) {
+function loadAndDecodeImage(src) {
   return new Promise((resolve, reject) => {
     const image = new Image();
-    image.addEventListener("load", () => resolve(src), { once: true });
+    let decoding = false;
+    const decode = async () => {
+      if (decoding) return;
+      decoding = true;
+      try {
+        if (typeof image.decode === "function") await image.decode();
+        resolve(image);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    image.addEventListener("load", decode, { once: true });
     image.addEventListener("error", reject, { once: true });
+    image.decoding = "sync";
     image.src = src;
-    if (image.complete && image.naturalWidth) resolve(src);
+    if (image.complete && image.naturalWidth) decode();
   });
 }
 
 async function preloadAmbientAnimals(selectedLevel) {
   const animals = selectedLevel.ambientAnimals || [];
-  await Promise.all(animals.flatMap((animal) => [
-    loadImage(animal.openFrame),
-    loadImage(animal.closedFrame)
-  ]));
-  animals.forEach((animal) => ambientAnimalRuntime.loaded.add(`${selectedLevel.id}:${animal.id}`));
+  await Promise.all(animals.map(async (animal) => {
+    await Promise.all([
+      loadAndDecodeImage(animal.openFrame),
+      loadAndDecodeImage(animal.closedFrame)
+    ]);
+    ambientAnimalRuntime.loaded.add(`${selectedLevel.id}:${animal.id}`);
+  }));
 }
 
 function animalRuntimeState(animal) {
@@ -605,7 +620,11 @@ function animalDelay(callback, delay, runtime) {
 
 function runAmbientAnimalBlink(animal, options = {}) {
   const runtime = animalRuntimeState(animal);
-  if (runtime.blinking || document.hidden) return false;
+  if (
+    runtime.blinking ||
+    document.hidden ||
+    !ambientAnimalRuntime.loaded.has(`${level?.id}:${animal.id}`)
+  ) return false;
   window.clearTimeout(runtime.timer);
   runtime.timer = null;
   runtime.blinking = true;
@@ -636,7 +655,13 @@ function runAmbientAnimalBlink(animal, options = {}) {
 
 function scheduleAmbientAnimalBlink(animal) {
   const runtime = animalRuntimeState(animal);
-  if (runtime.timer || runtime.blinking || document.hidden || level?.id !== ambientAnimalRuntime.levelId) return;
+  if (
+    runtime.timer ||
+    runtime.blinking ||
+    document.hidden ||
+    level?.id !== ambientAnimalRuntime.levelId ||
+    !ambientAnimalRuntime.loaded.has(`${level.id}:${animal.id}`)
+  ) return;
   const min = Number(animal.blinkMinMs);
   const max = Number(animal.blinkMaxMs);
   const delay = min + Math.round(Math.random() * Math.max(0, max - min));
@@ -1096,6 +1121,7 @@ function centerForTarget(target) {
 }
 
 function objectTrackStyle(object) {
+  if (!object) return "";
   const center = worldToScreen(object.center, "track");
   const size = worldDiameterToTrackSize(object.radius * 2);
   return `left:${center.x}%; top:${center.y}%; width:${size.width}%; height:${size.height}%`;
@@ -1103,6 +1129,18 @@ function objectTrackStyle(object) {
 
 function objectScreenAnchor(object) {
   return worldToScreen(object.center, "viewport");
+}
+
+function warnMissingTrackedObject(target, targetKind) {
+  const objectId = target?.objectId || target?.id || "(onbekend)";
+  const warningKey = `${level?.id || "geen-level"}:${targetKind}:${target?.id || objectId}:${objectId}`;
+  if (!missingTrackedObjectWarnings.has(warningKey)) {
+    missingTrackedObjectWarnings.add(warningKey);
+    console.warn(
+      `[Atlas] ${level?.id || "Onbekend level"} ${targetKind} "${target?.id || "(zonder id)"}" ` +
+      `verwijst naar ontbrekend interactiveObject "${objectId}". Het element wordt niet gerenderd.`
+    );
+  }
 }
 
 function objectViewportPoint(object) {
@@ -1413,14 +1451,18 @@ function updateAmbientAnimalScale(animalId, value) {
 }
 
 function updateAmbientAnimalSetting(animalId, field, value) {
-  if (!walkPathEditor.enabled || !level || !["softness", "soundVolume"].includes(field)) return;
+  if (!walkPathEditor.enabled || !level || !["softness", "saturation", "soundVolume", "mirrorX"].includes(field)) return;
   const animals = cloneAmbientAnimals(level.ambientAnimals || []);
   const animal = animals.find((item) => item.id === animalId);
   if (!animal) return;
-  const numericValue = Number(value);
-  animal[field] = field === "softness"
-    ? Math.max(0, Math.min(1, numericValue))
-    : clampVolume(numericValue);
+  if (field === "mirrorX") {
+    animal.mirrorX = Boolean(value);
+  } else {
+    const numericValue = Number(value);
+    animal[field] = field === "softness"
+      ? Math.max(0, Math.min(1, numericValue))
+      : clampVolume(numericValue);
+  }
   walkPathEditor.currentAnimal = animal;
   walkPathEditor.status = "Modified";
   walkPathEditor.modified = true;
@@ -2325,9 +2367,18 @@ function renderAmbientAnimalEditorControls() {
             <output>${Number(animal.softness ?? 0).toFixed(2)}px</output>
           </label>
           <label>
+            <span>Saturation</span>
+            <input type="range" min="0" max="1" step="0.05" value="${clampVolume(animal.saturation ?? 1)}" data-animal-setting="saturation" data-animal-id="${animal.id}" />
+            <output>${Math.round(clampVolume(animal.saturation ?? 1) * 100)}%</output>
+          </label>
+          <label>
             <span>Animal sound volume</span>
             <input type="range" min="0" max="1" step="0.05" value="${clampVolume(animal.soundVolume ?? 1)}" data-animal-setting="soundVolume" data-animal-id="${animal.id}" />
             <output>${Math.round(clampVolume(animal.soundVolume ?? 1) * 100)}%</output>
+          </label>
+          <label class="animalEditorToggle">
+            <input type="checkbox" data-animal-setting="mirrorX" data-animal-id="${animal.id}" ${animal.mirrorX ? "checked" : ""} />
+            <span>Mirror horizontally</span>
           </label>
           <span>x ${animal.x}, y ${animal.y} · bottom-center</span>
           <div class="animalEditorActions">
@@ -2452,7 +2503,8 @@ function ambientAnimalTrackStyle(animal) {
   const height = (512 * animal.scale / level.world.height) * 100;
   const softness = Math.max(0, Math.min(1, Number(animal.softness ?? 0)));
   const saturation = Math.max(0, Number(animal.saturation ?? 1));
-  return `left:${(animal.x / level.world.width) * 100}%; top:${(animal.y / level.world.height) * 100}%; width:${width}%; height:${height}%; --animal-softness:${softness}px; --animal-saturation:${saturation};`;
+  const mirror = animal.mirrorX ? -1 : 1;
+  return `left:${(animal.x / level.world.width) * 100}%; top:${(animal.y / level.world.height) * 100}%; width:${width}%; height:${height}%; --animal-softness:${softness}px; --animal-saturation:${saturation}; --animal-mirror:${mirror};`;
 }
 
 function renderAmbientAnimal(animal) {
@@ -2473,12 +2525,13 @@ function renderAmbientAnimal(animal) {
       data-softness="${Number(animal.softness ?? 0)}"
       data-saturation="${Number(animal.saturation ?? 1)}"
       data-sound-volume="${clampVolume(animal.soundVolume ?? 1)}"
+      data-mirror-x="${Boolean(animal.mirrorX)}"
       data-anchor="bottom-center"
-      aria-label="${animal.type === "seagull" ? "Meeuw" : "Dier"}"
+      aria-label="${animal.label || "Dier"}"
     >
       <span class="ambientAnimalFrames" ${debugOverlayEnabled && walkPathEditor.enabled ? `data-animal-drag="${animal.id}"` : ""}>
-        <img class="ambientAnimalFrame ambientAnimalOpen" src="${animal.openFrame}" alt="" draggable="false" />
-        <img class="ambientAnimalFrame ambientAnimalClosed" src="${animal.closedFrame}" alt="" draggable="false" />
+        <img class="ambientAnimalFrame ambientAnimalOpen" src="${animal.openFrame}" alt="" draggable="false" decoding="sync" />
+        <img class="ambientAnimalFrame ambientAnimalClosed" src="${animal.closedFrame}" alt="" draggable="false" decoding="sync" />
       </span>
       ${debugOverlayEnabled && walkPathEditor.enabled ? `<span class="ambientAnimalAnchor" aria-hidden="true"></span>` : ""}
     </button>
@@ -2492,6 +2545,10 @@ function isTargetVisible(target) {
 function renderHotspot(hotspot) {
   const disabled = state.screen !== "scene" || (state.moving && hotspot.type !== "ambient");
   const object = interactiveObjectForTarget(hotspot);
+  if (!object) {
+    warnMissingTrackedObject(hotspot, "hotspot");
+    return "";
+  }
   return `
     <button
       class="worldHotspot hotspot-${object?.type || hotspot.type}"
@@ -2515,6 +2572,10 @@ function renderRuneHotspot(rune) {
   const selected = state.selectedChallengeId === rune.id;
   const disabled = state.screen !== "scene";
   const object = interactiveObjectForTarget(rune);
+  if (!object) {
+    warnMissingTrackedObject(rune, "rune");
+    return "";
+  }
   return `
     <button
       class="runeHotspot ${done ? "runeDone" : ""} ${selected ? "runeSelected" : ""} ${justCompleted ? "runeJustCompleted" : ""}"
@@ -3059,6 +3120,10 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  if (event.target.closest("[data-developer-tools]")) {
+    return;
+  }
+
   const levelTarget = event.target.closest("[data-level]");
   if (levelTarget) {
     playSfx("uiClick");
@@ -3136,6 +3201,7 @@ app.addEventListener("click", (event) => {
 app.addEventListener("input", (event) => {
   const animalSetting = event.target.closest("[data-animal-setting]");
   if (animalSetting) {
+    if (animalSetting.dataset.animalSetting === "mirrorX") return;
     updateAmbientAnimalSetting(
       animalSetting.dataset.animalId,
       animalSetting.dataset.animalSetting,
@@ -3151,6 +3217,12 @@ app.addEventListener("input", (event) => {
   const input = event.target.closest("[data-audio-path]");
   if (!input) return;
   updateAudioDraft(input.dataset.audioPath, input.value);
+});
+
+app.addEventListener("change", (event) => {
+  const animalSetting = event.target.closest("[data-animal-setting='mirrorX']");
+  if (!animalSetting) return;
+  updateAmbientAnimalSetting(animalSetting.dataset.animalId, "mirrorX", animalSetting.checked);
 });
 
 app.addEventListener("pointerdown", (event) => {

@@ -725,6 +725,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     startNode: "harbor-start",
     start: { x: 165, y: 586 }
   },
+  ambientAnimals: [
+    {
+      id: "harborRaven",
+      type: "raven",
+      label: "Raaf",
+      openFrame: "Levels/LVL-0003/assets/ambient/raven-open.png",
+      closedFrame: "Levels/LVL-0003/assets/ambient/raven-closed.png",
+      sound: "Levels/LVL-0003/assets/ambient/raven-call.mp3",
+      x: 680,
+      y: 248,
+      scale: 0.16,
+      softness: 0.25,
+      saturation: 0.9,
+      soundVolume: 0.65,
+      mirrorX: false,
+      blinkMinMs: 4000,
+      blinkMaxMs: 9000,
+      blinkDurationMs: 90,
+      doubleBlinkChance: 0.15,
+      soundCooldownMs: 750
+    }
+  ],
   interactiveObjects: [
     {
       id: "harborMap",

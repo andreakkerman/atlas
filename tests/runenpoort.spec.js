@@ -6,6 +6,7 @@ const { pathToFileURL } = require("url");
 
 const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const devGameUrl = `${gameUrl}?dev=editor`;
+const editorRuntimeUrl = process.env.ATLAS_EDITOR_URL || devGameUrl;
 
 const runes = [
   { name: "Zonrune" },
@@ -1127,6 +1128,62 @@ test.describe("SvenAdventure", () => {
       attempts: before.attempts,
       completion: before.completion
     });
+  });
+
+  test("editor shortcut transition from LVL-0001 renders LVL-0002", async ({ page }) => {
+    const pageErrors = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await startAdventure(page, editorRuntimeUrl);
+    await page.keyboard.press("Control+Shift+L");
+    await triggerWorldExit(page, "Runenpoort", "De poort gaat open!");
+    await tap(page.getByRole("button", { name: "De tempel in" }));
+
+    await expect(page.getByRole("heading", { name: "De Tempelzaal" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Schildenmuur" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Wandfakkel" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Havendeur" })).toBeVisible();
+    await expectSpawnAtStartNode(page, "LVL-0002");
+    expect(pageErrors).toEqual([]);
+  });
+
+  test("missing optional tracked hotspot warns and leaves the scene renderable", async ({ page }) => {
+    const warnings = [];
+    page.on("console", (message) => {
+      if (message.type() === "warning") warnings.push(message.text());
+    });
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0002", { startImmediately: true });
+      window.eval("level.interactiveObjects = level.interactiveObjects.filter((object) => object.id !== 'templeTorch')");
+      window.eval("render")();
+    });
+
+    await expect(page.getByRole("button", { name: "Schildenmuur" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Havendeur" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Wandfakkel" })).toHaveCount(0);
+    expect(warnings.some((warning) =>
+      warning.includes('hotspot "templeTorch"') &&
+      warning.includes('interactiveObject "templeTorch"')
+    )).toBe(true);
+  });
+
+  test("direct LVL-0002 load continues to LVL-0003", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0002", { startImmediately: true });
+      window.eval("render")();
+    });
+    await expect(page.getByRole("button", { name: "Schildenmuur" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Wandfakkel" })).toBeVisible();
+    await expectSpawnAtStartNode(page, "LVL-0002");
+
+    await page.keyboard.press("Control+Shift+L");
+    await triggerWorldExit(page, "Havendeur", "De havendeur opent!");
+    await tap(page.getByRole("button", { name: "Naar de haven" }));
+
+    await expect(page.getByRole("button", { name: "Touwrol" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Raaf" })).toBeVisible();
+    await expectSpawnAtStartNode(page, "LVL-0003");
   });
 
   test("shows challenge attention while walking and opens on one tap", async ({ page }) => {
