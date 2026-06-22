@@ -720,6 +720,162 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       art: asset,
       nextLevelId: "LVL-0015",
       nextLabel: "Naar Frankrijk"
-    }
+    },
+    ambientAnimals: [],
+    ambientFlybys: [
+        {
+              id: "GierzwaluwOxford",
+              label: "GierzwaluwOxford",
+              frameA: "Levels/LVL-0014/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0014/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0014/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: 219,
+                          y: -18
+                    },
+                    {
+                          x: 669,
+                          y: 102
+                    },
+                    {
+                          x: 912,
+                          y: 168
+                    },
+                    {
+                          x: 1140,
+                          y: 254
+                    },
+                    {
+                          x: 1373,
+                          y: 205
+                    },
+                    {
+                          x: 1624,
+                          y: 141
+                    },
+                    {
+                          x: 1886,
+                          y: -56
+                    }
+              ],
+              scale: 0.05,
+              speed: 420,
+              flapFrequencyHz: 7,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 10000,
+              intervalMaxMs: 25000,
+              syncKey: "GierzwaluwGroupOxford",
+              startDelayMs: 0,
+              softness: 0,
+              saturation: 1,
+              soundVolume: 0.65,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        },
+        {
+              id: "GierzwaluwOxford-copy",
+              label: "GierzwaluwOxford kopie",
+              frameA: "Levels/LVL-0014/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0014/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0014/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: 242,
+                          y: -33
+                    },
+                    {
+                          x: 687,
+                          y: 86
+                    },
+                    {
+                          x: 890,
+                          y: 192
+                    },
+                    {
+                          x: 1152,
+                          y: 237
+                    },
+                    {
+                          x: 1387,
+                          y: 219
+                    },
+                    {
+                          x: 1627,
+                          y: 118
+                    },
+                    {
+                          x: 1904,
+                          y: -51
+                    }
+              ],
+              scale: 0.05,
+              speed: 420,
+              flapFrequencyHz: 7,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 10000,
+              intervalMaxMs: 25000,
+              syncKey: "GierzwaluwGroupOxford",
+              startDelayMs: 0,
+              softness: 0,
+              saturation: 1,
+              soundVolume: 0.65,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        },
+        {
+              id: "GierzwaluwOxford-copy-copy",
+              label: "GierzwaluwOxford kopie kopie",
+              frameA: "Levels/LVL-0014/assets/ambient/GierzwaluwA.png",
+              frameB: "Levels/LVL-0014/assets/ambient/GierzwaluwB.png",
+              sound: "Levels/LVL-0014/assets/ambient/gierzwaluw.mp3",
+              path: [
+                    {
+                          x: 234,
+                          y: -11
+                    },
+                    {
+                          x: 736,
+                          y: 72
+                    },
+                    {
+                          x: 908,
+                          y: 211
+                    },
+                    {
+                          x: 1181,
+                          y: 212
+                    },
+                    {
+                          x: 1410,
+                          y: 200
+                    },
+                    {
+                          x: 1620,
+                          y: 129
+                    },
+                    {
+                          x: 1870,
+                          y: -45
+                    }
+              ],
+              scale: 0.05,
+              speed: 420,
+              flapFrequencyHz: 7,
+              faceFlightDirection: true,
+              mirrorX: false,
+              intervalMinMs: 10000,
+              intervalMaxMs: 25000,
+              syncKey: "GierzwaluwGroupOxford",
+              startDelayMs: 0,
+              softness: 0,
+              saturation: 1,
+              soundVolume: 0.65,
+              rotateAlongPath: true,
+              maxRotationDeg: 8
+        }
+  ]
   };
 })();
