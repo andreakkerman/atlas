@@ -72,6 +72,9 @@ async function inspectFirstAndLaterBlink(page, animalId) {
     const open = shell.querySelector(".ambientAnimalOpen");
     const closed = shell.querySelector(".ambientAnimalClosed");
     const animal = window.eval(`level.ambientAnimals.find((item) => item.id === "${id}")`);
+    window.eval("resetAmbientAnimalTimers")();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    window.eval("resetAmbientAnimalTimers")();
     const rect = (element) => {
       const box = element.getBoundingClientRect();
       return [box.x, box.y, box.width, box.height].map((value) => Math.round(value * 100) / 100);
@@ -93,7 +96,11 @@ async function inspectFirstAndLaterBlink(page, animalId) {
     });
     observer.observe(shell, { childList: true, subtree: true });
 
-    const firstStarted = window.eval("runAmbientAnimalBlink")(animal, { doubleBlink: false });
+    let firstStarted = window.eval("runAmbientAnimalBlink")(animal, { doubleBlink: false });
+    if (!firstStarted) {
+      await new Promise((resolve) => setTimeout(resolve, 140));
+      firstStarted = window.eval("runAmbientAnimalBlink")(animal, { doubleBlink: false });
+    }
     await new Promise((resolve) => setTimeout(resolve, 20));
     const firstClosed = snapshot();
     await new Promise((resolve) => setTimeout(resolve, 120));
@@ -153,6 +160,12 @@ async function animalGeometry(page) {
       closedFilter: getComputedStyle(shell.querySelector(".ambientAnimalClosed")).filter
     };
   });
+}
+
+async function clickAmbientAnimal(page, locator) {
+  const box = await locator.boundingBox();
+  if (!box) throw new Error("Ambient animal was not measurable.");
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 }
 
 test.describe("ambient animals", () => {
@@ -327,18 +340,18 @@ test.describe("ambient animals", () => {
     await volumeSlider.fill("0.4");
     await page.locator("[data-animal-editor-id='harborSeagull']").getByRole("button", { name: "Preview sound" }).click();
     const previewVolume = await page.evaluate(() =>
-      window.__animalAudios.find((audio) => audio.src.includes("meeuw.mp3"))?.volume
+      window.__animalAudios.find((audio) => audio.src.includes("seagull-call.mp3"))?.volume
     );
     expect(previewVolume).toBe(0.4);
 
     await page.evaluate(() => {
-      const animalAudio = window.__animalAudios.find((audio) => audio.src.includes("meeuw.mp3"));
+      const animalAudio = window.__animalAudios.find((audio) => audio.src.includes("seagull-call.mp3"));
       animalAudio.finish();
       window.eval("ambientAnimalRuntime.sounds.get('harborSeagull').cooldownUntil = 0");
     });
     await page.getByRole("button", { name: "Meeuw", exact: true }).click({ force: true });
     const runtimeVolume = await page.evaluate(() =>
-      window.__animalAudios.filter((audio) => audio.src.includes("meeuw.mp3")).at(-1)?.volume
+      window.__animalAudios.filter((audio) => audio.src.includes("seagull-call.mp3")).at(-1)?.volume
     );
     const afterGlobal = await page.evaluate(() => JSON.stringify(window.eval("audioConfig.volumes")));
 
@@ -356,7 +369,7 @@ test.describe("ambient animals", () => {
       screen: window.eval("state.screen"),
       attempts: window.eval("state.attempts")
     }));
-    await page.getByRole("button", { name: "Meeuw", exact: true }).click();
+    await clickAmbientAnimal(page, page.getByRole("button", { name: "Meeuw", exact: true }));
     await page.waitForTimeout(120);
     const after = await page.evaluate(() => ({
       x: window.eval("state.worldX"),
@@ -553,8 +566,8 @@ test.describe("LVL-0001 owl", () => {
       attempts: window.eval("state.attempts")
     }));
     const owl = page.getByRole("button", { name: "Uil" });
-    await owl.click();
-    await owl.click();
+    await clickAmbientAnimal(page, owl);
+    await clickAmbientAnimal(page, owl);
     const after = await page.evaluate(() => ({
       x: window.eval("state.worldX"),
       y: window.eval("state.worldY"),
@@ -611,6 +624,7 @@ test.describe("ambient animal mirror and additions", () => {
     try {
       await startNautilus(page, editorRuntimeUrl);
       await page.keyboard.press("Control+Shift+D");
+      await page.locator("[data-select-ambient-id='nautilusSeagull']").click();
       const selector = "[data-animal-setting='mirrorX'][data-animal-id='nautilusSeagull']";
       const shellSelector = "[data-ambient-animal='nautilusSeagull']";
       const before = await geometryFor(page, "nautilusSeagull");
@@ -649,6 +663,9 @@ test.describe("ambient animal mirror and additions", () => {
 
       await page.getByRole("button", { name: "Apply" }).click();
       await expect(page.getByText("Draft Status: Applied")).toBeVisible();
+      expect(await page.evaluate(() =>
+        window.eval("level.ambientAnimals.find((animal) => animal.id === 'nautilusSeagull').openFrame")
+      )).toBe("assets/ambient/animals/seagull/seagull-open.png");
       await page.reload();
       await page.evaluate(async () => {
         await window.eval("selectLevel")("LVL-0004", { startImmediately: true });
@@ -729,8 +746,8 @@ test.describe("ambient animal mirror and additions", () => {
     );
     expect(data.find((entry) => entry.id === "nautilusSeagull").mirror).toBe(authoredMirror);
     expect(new Set(data.flatMap((entry) => entry.sources))).toEqual(new Set([
-      "Levels/LVL-0004/assets/ambient/meeuw-open.png",
-      "Levels/LVL-0004/assets/ambient/meeuw-closed.png"
+      "assets/ambient/animals/seagull/seagull-open.png",
+      "assets/ambient/animals/seagull/seagull-closed.png"
     ]));
 
     const independence = await page.evaluate(async () => {
@@ -809,8 +826,8 @@ test.describe("ambient animal mirror and additions", () => {
       attempts: window.eval("state.attempts")
     }));
     const raven = page.getByRole("button", { name: "Raaf" });
-    await raven.click();
-    await raven.click();
+    await clickAmbientAnimal(page, raven);
+    await clickAmbientAnimal(page, raven);
     const after = await page.evaluate(() => ({
       x: window.eval("state.worldX"),
       y: window.eval("state.worldY"),

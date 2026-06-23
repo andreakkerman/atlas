@@ -16,6 +16,15 @@
   --ink: #1b211f;
   --paper: #fff2ca;
   --paper-ink: #2b2418;
+  --layer-background: 10;
+  --layer-ambient-flybys: 20;
+  --layer-ambient-animals: 30;
+  --layer-sven: 40;
+  --layer-world-ui: 50;
+  --layer-overlays: 60;
+  --layer-editor-world: 70;
+  --layer-editor-controls: 80;
+  --layer-transition: 90;
 }
 
 * {
@@ -56,7 +65,7 @@ body {
 .exitIrisOverlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: var(--layer-transition);
   pointer-events: none;
   background: radial-gradient(
     circle at var(--exit-focus-x) var(--exit-focus-y),
@@ -391,7 +400,7 @@ button {
   position: fixed;
   left: max(12px, env(safe-area-inset-left));
   top: max(12px, env(safe-area-inset-top));
-  z-index: 8;
+  z-index: var(--layer-world-ui);
   min-height: 38px;
   padding: 8px 12px;
   border: 1px solid rgba(255, 231, 166, 0.34);
@@ -459,6 +468,7 @@ button {
   height: 100%;
   object-fit: fill;
   display: block;
+  z-index: var(--layer-background);
 }
 
 .forestMist {
@@ -468,12 +478,13 @@ button {
     linear-gradient(90deg, transparent 44%, rgba(18, 28, 22, 0.18) 50%, transparent 56%),
     linear-gradient(180deg, transparent 62%, rgba(19, 12, 7, 0.16));
   pointer-events: none;
+  z-index: var(--layer-background);
 }
 
 .pathDebugOverlay {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  z-index: var(--layer-editor-world);
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -548,7 +559,7 @@ button {
   position: absolute;
   right: 12px;
   top: 12px;
-  z-index: 10;
+  z-index: var(--layer-editor-controls);
   display: grid;
   gap: 6px;
   width: min(540px, calc(100vw - 24px));
@@ -870,6 +881,7 @@ button {
 
 .runeHotspot {
   position: absolute;
+  z-index: var(--layer-world-ui);
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
@@ -913,6 +925,7 @@ button {
 
 .worldHotspot {
   position: absolute;
+  z-index: var(--layer-world-ui);
   transform: translate(-50%, -50%);
   display: grid;
   place-items: center;
@@ -1077,7 +1090,7 @@ button {
   position: absolute;
   left: 0;
   top: 0;
-  z-index: 2;
+  z-index: var(--layer-ambient-flybys);
   display: block;
   opacity: 0;
   pointer-events: none;
@@ -1121,7 +1134,7 @@ button {
 .flybyPathWorkspace {
   position: absolute;
   inset: 0;
-  z-index: 8;
+  z-index: var(--layer-editor-world);
   overflow: hidden;
   background: rgba(5, 12, 11, 0.82);
   touch-action: none;
@@ -1192,7 +1205,7 @@ button {
   left: 12px;
   right: 12px;
   bottom: 12px;
-  z-index: 2;
+  z-index: var(--layer-editor-controls);
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -1223,7 +1236,7 @@ button {
 
 .progressMenuButton {
   position: fixed;
-  z-index: 4;
+  z-index: var(--layer-world-ui);
   top: max(18px, env(safe-area-inset-top));
   right: max(18px, env(safe-area-inset-right));
   min-height: 40px;
@@ -1519,7 +1532,7 @@ button {
 
 .svenInWorld {
   position: absolute;
-  z-index: 2;
+  z-index: var(--layer-sven);
   --sven-direction: 1;
   width: auto;
   height: clamp(168px, 24dvh, 218px);
@@ -1573,7 +1586,7 @@ button {
   position: absolute;
   left: 50%;
   bottom: max(12px, env(safe-area-inset-bottom));
-  z-index: 6;
+  z-index: var(--layer-overlays);
   width: min(980px, calc(100% - 24px));
   transform: translateX(-50%);
   display: grid;
@@ -1613,7 +1626,7 @@ button {
   position: absolute;
   left: 50%;
   bottom: max(12px, env(safe-area-inset-bottom));
-  z-index: 6;
+  z-index: var(--layer-overlays);
   width: min(1180px, calc(100% - 32px));
   transform: translateX(-50%);
   display: grid;
@@ -1653,7 +1666,7 @@ button {
 
 .ambientAnimal {
   position: absolute;
-  z-index: 3;
+  z-index: var(--layer-ambient-animals);
   display: block;
   padding: 0;
   border: 0;
@@ -1703,7 +1716,6 @@ button {
 }
 
 .ambientAnimalEditable {
-  z-index: 6;
   outline: 4px solid rgba(255, 213, 105, 0.92);
   outline-offset: 2px;
   cursor: grab;
@@ -1921,7 +1933,7 @@ button {
 .modalLayer {
   position: fixed;
   inset: 0;
-  z-index: 10;
+  z-index: var(--layer-overlays);
   display: grid;
   place-items: center;
   padding: 16px;

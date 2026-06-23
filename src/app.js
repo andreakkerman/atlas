@@ -162,6 +162,7 @@ function createLevelState(selectedLevel) {
     moving: false,
     movement: null,
     interactionToken: 0,
+    movementIntent: null,
     activeRuneId: null,
     selectedChallengeId: null,
     activeQuestions: [],
@@ -1032,7 +1033,7 @@ async function selectLevel(id, options = {}) {
     return false;
   }
 
-  stopMovement();
+  stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
   resetAmbientAnimalTimers();
   await prepareWalkPathEditorForLevel(selectedLevel);
@@ -1069,7 +1070,7 @@ function adventureEntryFor(entry) {
 }
 
 function returnToMenu() {
-  stopMovement();
+  stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
   resetAmbientAnimalTimers();
   ambientAnimalRuntime.levelId = null;
@@ -1975,21 +1976,37 @@ function updateAudioDraft(path, value) {
   render();
 }
 
-function stopMovement() {
+function stopMovement(options = {}) {
   if (state.movement?.rafId) {
     window.cancelAnimationFrame(state.movement.rafId);
   }
   state.movement = null;
+  state.moving = false;
+  if (options.invalidateIntent && Number.isInteger(state.interactionToken)) {
+    state.interactionToken += 1;
+    state.movementIntent = null;
+  }
 }
 
-function walkRoute(points, onArrive) {
+function replaceMovementIntent(intent) {
+  stopMovement();
+  const token = ++state.interactionToken;
+  state.movementIntent = { ...intent, token };
+  return token;
+}
+
+function movementIntentIsCurrent(token) {
+  return state.interactionToken === token && state.movementIntent?.token === token;
+}
+
+function walkRoute(points, onArrive, intentToken = state.interactionToken) {
   stopMovement();
   state.moving = true;
 
   if (!points.length) {
     state.svenMood = "arrived";
     render();
-    onArrive();
+    if (movementIntentIsCurrent(intentToken)) onArrive();
     return;
   }
 
@@ -2000,6 +2017,7 @@ function walkRoute(points, onArrive) {
     lastTime: 0,
     speed: 250,
     onArrive,
+    intentToken,
     rafId: null
   };
 
@@ -2028,9 +2046,10 @@ function stepMovement(timestamp) {
 
       if (movement.index >= movement.points.length) {
         const onArrive = movement.onArrive;
+        const intentToken = movement.intentToken;
         state.movement = null;
         updateWorldDom();
-        onArrive();
+        if (movementIntentIsCurrent(intentToken)) onArrive();
         return;
       }
     } else {
@@ -2267,44 +2286,43 @@ function actionForTarget(target, kind) {
 }
 
 function beginInteraction(target, kind) {
+  if (!target || state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending) return;
   const action = actionForTarget(target, kind);
-  const interactionToken = ++state.interactionToken;
+  const interactionToken = replaceMovementIntent({
+    type: "interactive",
+    targetId: target.id,
+    kind,
+    action
+  });
 
   state.justCompletedRuneId = null;
   walkRoute(routeTo(target), () => {
-    if (state.interactionToken !== interactionToken) return;
+    if (!movementIntentIsCurrent(interactionToken)) return;
     arriveAtInteraction(target, kind, action, interactionToken);
-  });
+  }, interactionToken);
 }
 
 function selectChallenge(target) {
-  if (!target || state.screen !== "scene") return;
-  if (state.completedRunes.has(target.id)) {
-    emitCompanionEvent("CHALLENGE_SUCCESS", {
+  if (!target || state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending) return;
+  state.selectedChallengeId = target.id;
+  if (!state.completedRunes.has(target.id)) {
+    emitCompanionEvent("HOTSPOT_ATTENTION_FIRST", {
       objectId: target.objectId || target.id,
       challengeId: target.id
     });
-    render();
-    return;
   }
-
-  state.selectedChallengeId = target.id;
-  emitCompanionEvent("HOTSPOT_ATTENTION_FIRST", {
-    objectId: target.objectId || target.id,
-    challengeId: target.id
-  });
   beginInteraction(target, "rune");
 }
 
 function inspectAmbientTarget(target) {
-  if (!target || state.screen !== "scene") return;
+  if (!target || state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending) return;
   state.selectedChallengeId = null;
   beginInteraction(target, "hotspot");
 }
 
 function completeCurrentSceneChallenges() {
   if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return;
-  stopMovement();
+  stopMovement({ invalidateIntent: true });
   state.completedRunes = new Set(level.runes.map((rune) => rune.id));
   state.screen = "scene";
   state.activeRuneId = null;
@@ -2343,18 +2361,19 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
   }
 
   window.setTimeout(() => {
-    if (!state.moving || state.interactionToken !== interactionToken) return;
+    if (!state.moving || !movementIntentIsCurrent(interactionToken)) return;
     state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
     render();
 
     window.setTimeout(() => {
-      if (!state.moving || state.interactionToken !== interactionToken) return;
+      if (!state.moving || !movementIntentIsCurrent(interactionToken)) return;
       finishInteraction(target, kind, action);
     }, action === "activate" || action === "travel" ? 820 : 560);
   }, 180);
 }
 
 function finishInteraction(target, kind, action) {
+  if (state.movementIntent?.type === "interactive") state.movementIntent = null;
   const exitHotspotId = level.exitHotspotId || "templeGate";
   const objectId = target.objectId || target.id;
 
@@ -2438,15 +2457,17 @@ function finishInteraction(target, kind, action) {
 function beginFreeWalk(point) {
   if (state.screen !== "scene") return;
 
-  state.interactionToken += 1;
+  const interactionToken = replaceMovementIntent({ type: "ground", point: { ...point } });
   state.justCompletedRuneId = null;
   state.selectedChallengeId = null;
   walkRoute(routeToPoint(point), () => {
+    if (!movementIntentIsCurrent(interactionToken)) return;
     state.moving = false;
+    state.movementIntent = null;
     state.svenMood = "idle";
     playQueuedCompanionMoment();
     render();
-  });
+  }, interactionToken);
 }
 
 function openRuneChallenge(id) {
@@ -2648,7 +2669,7 @@ async function continueToNextLevel() {
   const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
   if (!nextLevelId || state.sceneTransitionPending) return;
 
-  stopMovement();
+  stopMovement({ invalidateIntent: true });
   state.sceneTransitionPending = true;
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const fadeOutMs = reduceMotion ? 0 : 220;
@@ -2681,7 +2702,7 @@ function restart() {
   state.svenMood = "idle";
   state.svenFacing = "right";
   state.moving = false;
-  stopMovement();
+  stopMovement({ invalidateIntent: true });
   state.activeRuneId = null;
   state.selectedChallengeId = null;
   state.activeQuestions = [];
@@ -2912,7 +2933,7 @@ function renderAmbientEditorControls() {
   return `
     <div class="assetDiscoveryBar">
       <button type="button" data-debug-action="refresh-assets">Refresh assets</button>
-      <span>${walkPathEditor.assetMessage || "Place files in this level's assets/ambient folder."}</span>
+      <span>${walkPathEditor.assetMessage || "Place shared files in assets/ambient/animals or assets/ambient/flybys."}</span>
     </div>
     <details class="editorSection" open>
       <summary>Ambient animals <span>${animals.length}</span></summary>
@@ -3198,7 +3219,7 @@ function isTargetVisible(target) {
 }
 
 function renderHotspot(hotspot) {
-  const disabled = state.screen !== "scene" || (state.moving && hotspot.type !== "ambient");
+  const disabled = state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending;
   const object = interactiveObjectForTarget(hotspot);
   if (!object) {
     warnMissingTrackedObject(hotspot, "hotspot");
@@ -3225,7 +3246,7 @@ function renderRuneHotspot(rune) {
   const done = state.completedRunes.has(rune.id);
   const justCompleted = state.justCompletedRuneId === rune.id;
   const selected = state.selectedChallengeId === rune.id;
-  const disabled = state.screen !== "scene";
+  const disabled = state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending;
   const object = interactiveObjectForTarget(rune);
   if (!object) {
     warnMissingTrackedObject(rune, "rune");
@@ -3764,7 +3785,13 @@ app.addEventListener("click", (event) => {
     event.stopPropagation();
     return;
   }
-  const animalTarget = event.target.closest("[data-ambient-animal]");
+  const markerTarget = event.target.closest("[data-hotspot], [data-rune]");
+  const underlyingAnimal = markerTarget && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
+    ? document.elementsFromPoint(event.clientX, event.clientY)
+      .find((element) => element !== markerTarget && element.closest?.("[data-ambient-animal]"))
+      ?.closest("[data-ambient-animal]")
+    : null;
+  const animalTarget = event.target.closest("[data-ambient-animal]") || underlyingAnimal;
   if (animalTarget) {
     event.preventDefault();
     event.stopPropagation();
@@ -3991,7 +4018,13 @@ app.addEventListener("pointerdown", (event) => {
     };
     return;
   }
-  const animalTarget = event.target.closest("[data-animal-drag]");
+  const pointerMarker = event.target.closest("[data-hotspot], [data-rune]");
+  const underlyingAnimalDrag = pointerMarker && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
+    ? document.elementsFromPoint(event.clientX, event.clientY)
+      .find((element) => element.closest?.("[data-animal-drag]"))
+      ?.closest("[data-animal-drag]")
+    : null;
+  const animalTarget = event.target.closest("[data-animal-drag]") || underlyingAnimalDrag;
   if (animalTarget && walkPathEditor.enabled && debugOverlayEnabled) {
     event.preventDefault();
     event.stopPropagation();
