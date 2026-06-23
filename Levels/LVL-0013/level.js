@@ -692,8 +692,8 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "NLButterfly01",
               label: "NLVlinder",
-              frameA: "Levels/LVL-0013/assets/ambient/Vlinder1A.png",
-              frameB: "Levels/LVL-0013/assets/ambient/Vlinder1B.png",
+              frameA: "assets/ambient/flybys/butterfly/butterfly-a.png",
+              frameB: "assets/ambient/flybys/butterfly/butterfly-b.png",
               sound: "",
               path: [
                     {

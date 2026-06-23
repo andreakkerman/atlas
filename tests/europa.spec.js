@@ -41,6 +41,51 @@ async function expectAudioState(page, expectedMusic, expectedAmbience) {
   });
 }
 
+async function startVisibleRedirectWalk(page, targetId) {
+  await page.goto(gameUrl);
+  await page.evaluate(async (id) => {
+    await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+    const currentLevel = window.eval("level");
+    const currentState = window.eval("state");
+    const object = currentLevel.interactiveObjects.find((item) => item.id === id);
+    const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+    currentState.worldX = approach.x;
+    currentState.worldY = approach.y;
+    currentState.cameraX = undefined;
+    window.eval("render")();
+    window.__oldArrivalCount = 0;
+    const token = window.eval("replaceMovementIntent")({ type: "test-old-visible-walk" });
+    window.eval("walkRoute")(
+      [{ x: Math.min(currentLevel.world.width - 1, approach.x + 220), y: approach.y }],
+      () => { window.__oldArrivalCount += 1; },
+      token
+    );
+  }, targetId);
+  await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
+}
+
+async function tapVisibleTarget(page, locator, useTouch) {
+  await expect.poll(async () => {
+    const box = await locator.boundingBox();
+    if (!box) return null;
+    const point = {
+      x: box.x + box.width / 2,
+      y: box.y + box.height / 2
+    };
+    return page.evaluate(({ x, y }) => {
+      const target = document.elementFromPoint(x, y);
+      return Boolean(target?.closest("[data-rune], [data-hotspot]"));
+    }, point);
+  }).toBe(true);
+
+  const box = await locator.boundingBox();
+  expect(box).not.toBeNull();
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+  if (useTouch) await page.touchscreen.tap(x, y);
+  else await page.mouse.click(x, y);
+}
+
 test.describe("De Grote Reis door Europa", () => {
   test.setTimeout(90000);
 
@@ -167,16 +212,15 @@ test.describe("De Grote Reis door Europa", () => {
     expect({ before, after }).toEqual({ before: 0, after: 0 });
   });
 
-  test("redirects an active walk to a newly clicked challenge", async ({ page }) => {
-    await page.goto(gameUrl);
-    await page.evaluate(async () => {
-      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
-      window.eval("beginFreeWalk")({ x: 1900, y: 640 });
-    });
+  test("redirects an active walk to a newly clicked challenge", async ({ page }, testInfo) => {
+    await startVisibleRedirectWalk(page, "telescope");
     const actor = page.locator("[data-actor='sven']");
-    await expect(actor).toHaveAttribute("data-animation", "walk");
 
-    await page.getByRole("button", { name: "Koperen telescoop", exact: true }).click();
+    await tapVisibleTarget(
+      page,
+      page.getByRole("button", { name: "Koperen telescoop", exact: true }),
+      testInfo.project.name.startsWith("ipad-")
+    );
     await expect(page.getByRole("heading", { name: "Koperen telescoop", exact: true })).toBeVisible({
       timeout: 30000
     });
@@ -187,22 +231,25 @@ test.describe("De Grote Reis door Europa", () => {
       const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
       return {
         actor: { x: currentState.worldX, y: currentState.worldY },
-        approach: { x: approach.x, y: approach.y }
+        approach: { x: approach.x, y: approach.y },
+        activeRuneId: currentState.activeRuneId,
+        oldArrivalCount: window.__oldArrivalCount
       };
     });
     expect(arrival.actor).toEqual(arrival.approach);
+    expect(arrival.activeRuneId).toBe("telescope");
+    expect(arrival.oldArrivalCount).toBe(0);
   });
 
-  test("redirects an active walk to a newly clicked ambient object", async ({ page }) => {
-    await page.goto(gameUrl);
-    await page.evaluate(async () => {
-      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
-      window.eval("beginFreeWalk")({ x: 1900, y: 640 });
-    });
+  test("redirects an active walk to a newly clicked ambient object", async ({ page }, testInfo) => {
+    await startVisibleRedirectWalk(page, "travelCrystal");
     const actor = page.locator("[data-actor='sven']");
-    await expect(actor).toHaveAttribute("data-animation", "walk");
 
-    await page.getByRole("button", { name: "Reiskristal", exact: true }).click();
+    await tapVisibleTarget(
+      page,
+      page.getByRole("button", { name: "Reiskristal", exact: true }),
+      testInfo.project.name.startsWith("ipad-")
+    );
     await expect(actor).toHaveAttribute("data-animation", "walk");
     await expect(page.locator(".teamMessage")).not.toHaveText(
       "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen."
@@ -223,11 +270,13 @@ test.describe("De Grote Reis door Europa", () => {
       return {
         actor: { x: currentState.worldX, y: currentState.worldY },
         approach: { x: approach.x, y: approach.y },
-        activeRuneId: currentState.activeRuneId
+        activeRuneId: currentState.activeRuneId,
+        oldArrivalCount: window.__oldArrivalCount
       };
     });
     expect(arrival.actor).toEqual(arrival.approach);
     expect(arrival.activeRuneId).toBeNull();
+    expect(arrival.oldArrivalCount).toBe(0);
   });
 
   test("only opens the latest object clicked during movement", async ({ page }) => {
@@ -237,9 +286,9 @@ test.describe("De Grote Reis door Europa", () => {
       window.eval("beginFreeWalk")({ x: 1900, y: 640 });
     });
 
-    await page.getByRole("button", { name: "Oude klokkentoren", exact: true }).click();
+    await page.getByRole("button", { name: "Oude klokkentoren", exact: true }).dispatchEvent("click");
     await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
-    await page.getByRole("button", { name: "Rode brievenbus", exact: true }).click();
+    await page.getByRole("button", { name: "Rode brievenbus", exact: true }).dispatchEvent("click");
 
     await expect(page.getByRole("heading", { name: "Rode brievenbus", exact: true })).toBeVisible({
       timeout: 30000
@@ -247,6 +296,60 @@ test.describe("De Grote Reis door Europa", () => {
     await page.waitForTimeout(1200);
     await expect(page.getByRole("heading", { name: "Oude klokkentoren", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => window.eval("state.activeRuneId"))).toBe("postbox");
+  });
+
+  test("replaces an active ground walk with an exit intent and cancels the old callback", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.__oldArrivalCount = 0;
+      const token = window.eval("replaceMovementIntent")({ type: "test-old-intent" });
+      window.eval("walkRoute")(
+        [{ x: 900, y: 640 }, { x: 1200, y: 640 }],
+        () => { window.__oldArrivalCount += 1; },
+        token
+      );
+    });
+    await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
+
+    await page.getByRole("button", { name: "Collegepoort", exact: true }).dispatchEvent("click");
+    await expect(page.locator(".teamMessage")).toContainText(/collegepoort/i, { timeout: 30000 });
+    const result = await page.evaluate(() => {
+      const currentLevel = window.eval("level");
+      const currentState = window.eval("state");
+      const object = currentLevel.interactiveObjects.find((item) => item.id === "collegeGate");
+      const approach = currentLevel.walkGraph.nodes.find((node) => node.id === object.approachNode);
+      return {
+        actor: { x: currentState.worldX, y: currentState.worldY },
+        approach: { x: approach.x, y: approach.y },
+        oldArrivalCount: window.__oldArrivalCount,
+        intent: currentState.movementIntent
+      };
+    });
+    expect(result.actor).toEqual(result.approach);
+    expect(result.oldArrivalCount).toBe(0);
+    expect(result.intent).toBeNull();
+  });
+
+  test("rapid repeated exit clicks produce one transition", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("completeCurrentSceneChallenges")();
+      window.__exitTransitionCalls = 0;
+      window.eval(`transitionToReward = async function () {
+        window.__exitTransitionCalls += 1;
+        state.exitTransitionPending = true;
+        render();
+      }`);
+      window.eval("beginFreeWalk")({ x: 900, y: 640 });
+    });
+    const exit = page.getByRole("button", { name: "Collegepoort", exact: true });
+    await exit.dispatchEvent("click");
+    await exit.dispatchEvent("click");
+    await exit.dispatchEvent("click");
+    await expect.poll(() => page.evaluate(() => window.__exitTransitionCalls), { timeout: 30000 }).toBe(1);
+    expect(await page.evaluate(() => window.eval("state.exitTransitionPending"))).toBe(true);
   });
 
   test("uses authored two-variant question slots across all Europe scenes", async ({ page }) => {

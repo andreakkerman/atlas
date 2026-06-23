@@ -1197,7 +1197,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", "walk");
     await expect(page.locator(".teamMessage")).toHaveText("De Zonrune voelt warm. Welke som laat haar feller gloeien?");
     await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible({ timeout: 22000 });
-    await expect(page.locator("[data-adventure-team-bar]")).toHaveCount(0);
+    await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
   });
 
   test("shows authored first attention in Nautilus and Blokkenpoort scenes", async ({ page }) => {

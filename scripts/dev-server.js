@@ -118,17 +118,21 @@ function validateInteractiveObjects(value) {
   });
 }
 
+function ambientLibraryDir() {
+  return path.join(rootDir, "assets", "ambient");
+}
+
 function validateAmbientAsset(levelId, value, label, extensions, optional = false) {
   if (optional && !value) return "";
   if (typeof value !== "string" || !value.trim()) throw new Error(`${label} must be a non-empty path.`);
   const normalized = value.replace(/\\/g, "/");
-  const prefix = `Levels/${levelId}/assets/ambient/`;
+  const prefix = "assets/ambient/";
   if (!normalized.startsWith(prefix) || normalized.includes("..")) {
     throw new Error(`${label} must stay inside ${prefix}`);
   }
   if (!extensions.has(path.extname(normalized).toLowerCase())) throw new Error(`${label} has an unsupported extension.`);
   const resolved = path.resolve(rootDir, normalized);
-  const ambientDir = path.resolve(rootDir, "Levels", levelId, "assets", "ambient");
+  const ambientDir = path.resolve(ambientLibraryDir());
   if (!resolved.startsWith(ambientDir + path.sep) || !fs.existsSync(resolved)) throw new Error(`${label} does not exist.`);
   return normalized;
 }
@@ -441,7 +445,7 @@ function upsertArrayProperty(source, propertyName, formatted) {
     const range = findArrayPropertyRange(source, propertyName);
     return `${source.slice(0, range.start)}${formatted}${source.slice(range.end)}`;
   }
-  const objectEnd = source.lastIndexOf("\n  };");
+  const objectEnd = source.lastIndexOf("\n};");
   if (objectEnd === -1) throw new Error("Could not find the end of the level definition.");
   return `${source.slice(0, objectEnd)},\n    ${formatted}${source.slice(objectEnd)}`;
 }
@@ -469,16 +473,16 @@ async function handleDevRequest(request, response, url) {
 
   try {
     if (request.method === "GET" && action === "ambient-assets") {
-      const ambientDir = path.join(folder, "assets", "ambient");
+      const ambientDir = ambientLibraryDir();
       if (!fs.existsSync(ambientDir)) {
         sendJson(response, 200, { images: [], audio: [] });
         return true;
       }
-      const files = fs.readdirSync(ambientDir, { withFileTypes: true })
+      const files = fs.readdirSync(ambientDir, { recursive: true, withFileTypes: true })
         .filter((entry) => entry.isFile())
-        .map((entry) => entry.name)
+        .map((entry) => path.relative(ambientDir, path.join(entry.parentPath || entry.path, entry.name)).replace(/\\/g, "/"))
         .sort((left, right) => left.localeCompare(right, "en", { sensitivity: "base" }));
-      const relative = (name) => `Levels/${levelId}/assets/ambient/${name}`;
+      const relative = (name) => `assets/ambient/${name}`;
       sendJson(response, 200, {
         images: files.filter((name) => ambientImageExtensions.has(path.extname(name).toLowerCase())).map(relative),
         audio: files.filter((name) => ambientAudioExtensions.has(path.extname(name).toLowerCase())).map(relative)

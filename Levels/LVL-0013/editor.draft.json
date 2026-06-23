@@ -88,8 +88,8 @@
     {
       "id": "NLButterfly01",
       "label": "NLVlinder",
-      "frameA": "Levels/LVL-0013/assets/ambient/Vlinder1A.png",
-      "frameB": "Levels/LVL-0013/assets/ambient/Vlinder1B.png",
+      "frameA": "assets/ambient/flybys/butterfly/butterfly-a.png",
+      "frameB": "assets/ambient/flybys/butterfly/butterfly-b.png",
       "sound": "",
       "path": [
         {
@@ -159,8 +159,8 @@
     {
       "id": "NLButterfly01-copy",
       "label": "NLVlinder kopie",
-      "frameA": "Levels/LVL-0013/assets/ambient/Vlinder1A.png",
-      "frameB": "Levels/LVL-0013/assets/ambient/Vlinder1B.png",
+      "frameA": "assets/ambient/flybys/butterfly/butterfly-a.png",
+      "frameB": "assets/ambient/flybys/butterfly/butterfly-b.png",
       "sound": "",
       "path": [
         {

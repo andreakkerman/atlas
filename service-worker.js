@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v7";
+const CACHE_NAME = "svenadventure-static-v8";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -45,7 +45,8 @@ self.addEventListener("fetch", (event) => {
   if (event.request.url.includes("/__dev/")) return;
 
   const url = new URL(event.request.url);
-  const refreshable = /\/Levels\/[^/]+\/(?:level\.js|assets\/ambient\/)/.test(url.pathname) ||
+  const refreshable = /\/Levels\/[^/]+\/level\.js$/.test(url.pathname) ||
+    /\/assets\/ambient\//.test(url.pathname) ||
     /\/assets\/guides\/(?:minnie_blink|moose_blink)\.png$/.test(url.pathname);
 
   if (refreshable) {

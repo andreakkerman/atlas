@@ -726,9 +726,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "GierzwaluwOxford",
               label: "GierzwaluwOxford",
-              frameA: "Levels/LVL-0014/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0014/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0014/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: 219,
@@ -777,9 +777,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "GierzwaluwOxford-copy",
               label: "GierzwaluwOxford kopie",
-              frameA: "Levels/LVL-0014/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0014/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0014/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: 242,
@@ -828,9 +828,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "GierzwaluwOxford-copy-copy",
               label: "GierzwaluwOxford kopie kopie",
-              frameA: "Levels/LVL-0014/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0014/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0014/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: 234,

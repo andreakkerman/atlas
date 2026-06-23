@@ -126,6 +126,17 @@ function assertProjectAssetExists(relativePath, ownerLabel) {
   return resolved;
 }
 
+function assertCentralAmbientAsset(relativePath, ownerLabel, optional = false) {
+  if (optional && !relativePath) return null;
+  const resolved = assertProjectAssetExists(relativePath, ownerLabel);
+  if (!resolved) return null;
+  const ambientFolder = path.join(rootDir, "assets", "ambient");
+  if (!resolved.startsWith(ambientFolder + path.sep)) {
+    fail(`${ownerLabel} must be inside assets/ambient: ${relativePath}`);
+  }
+  return resolved;
+}
+
 function validateVolumeValue(value, label) {
   if (!isFiniteNumber(value) || value < 0 || value > 1) {
     fail(`${label} must be a number between 0 and 1.`);
@@ -492,9 +503,14 @@ function validateAssets(level, entry, levelFolder, label) {
     assertAssetExists(level.challengeCharacter.portrait, `${label}.challengeCharacter.portrait`, levelFolder);
   }
   (level.ambientAnimals || []).forEach((animal, index) => {
-    assertAssetExists(animal.openFrame, `${label}.ambientAnimals[${index}].openFrame`, levelFolder);
-    assertAssetExists(animal.closedFrame, `${label}.ambientAnimals[${index}].closedFrame`, levelFolder);
-    assertAssetExists(animal.sound, `${label}.ambientAnimals[${index}].sound`, levelFolder);
+    assertCentralAmbientAsset(animal.openFrame, `${label}.ambientAnimals[${index}].openFrame`);
+    assertCentralAmbientAsset(animal.closedFrame, `${label}.ambientAnimals[${index}].closedFrame`);
+    assertCentralAmbientAsset(animal.sound, `${label}.ambientAnimals[${index}].sound`, true);
+  });
+  (level.ambientFlybys || []).forEach((flyby, index) => {
+    assertCentralAmbientAsset(flyby.frameA, `${label}.ambientFlybys[${index}].frameA`);
+    assertCentralAmbientAsset(flyby.frameB, `${label}.ambientFlybys[${index}].frameB`);
+    assertCentralAmbientAsset(flyby.sound, `${label}.ambientFlybys[${index}].sound`, true);
   });
   assertAssetExists(level.reward?.art, `${label}.reward.art`, levelFolder);
 }

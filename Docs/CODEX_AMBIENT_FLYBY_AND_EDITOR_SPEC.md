@@ -151,9 +151,9 @@ Use `LVL-0016` as the first flyby pilot.
 Assets already exist at:
 
 ```text
-Levels/LVL-0016/assets/ambient/GierzwaluwA.png
-Levels/LVL-0016/assets/ambient/GierzwaluwB.png
-Levels/LVL-0016/assets/ambient/gierzwaluw.mp3
+assets/ambient/flybys/common-swift/common-swift-a.png
+assets/ambient/flybys/common-swift/common-swift-b.png
+assets/ambient/flybys/common-swift/common-swift-call.mp3
 ```
 
 Use exact case-sensitive paths.
@@ -455,7 +455,8 @@ The user must be able to add new ambient animals and flybys without manually edi
 The user places assets in:
 
 ```text
-Levels/<LEVEL-ID>/assets/ambient/
+assets/ambient/animals/
+assets/ambient/flybys/
 ```
 
 Then starts:

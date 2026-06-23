@@ -560,9 +560,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "italyCommonSwift",
               label: "Gierzwaluw",
-              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: -220,
@@ -599,9 +599,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "italyCommonSwift-copy",
               label: "Gierzwaluw kopie",
-              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: -205,
@@ -638,9 +638,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "italyCommonSwift-copy-copy",
               label: "Gierzwaluw kopie kopie",
-              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: -187,
@@ -677,9 +677,9 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         {
               id: "italyCommonSwift-copy-2",
               label: "Gierzwaluw kopie",
-              frameA: "Levels/LVL-0016/assets/ambient/GierzwaluwA.png",
-              frameB: "Levels/LVL-0016/assets/ambient/GierzwaluwB.png",
-              sound: "Levels/LVL-0016/assets/ambient/gierzwaluw.mp3",
+              frameA: "assets/ambient/flybys/common-swift/common-swift-a.png",
+              frameB: "assets/ambient/flybys/common-swift/common-swift-b.png",
+              sound: "assets/ambient/flybys/common-swift/common-swift-call.mp3",
               path: [
                     {
                           x: -201,

@@ -55,8 +55,8 @@ test.describe("ambient flyby runtime", () => {
     });
 
     expect(result.config).toMatchObject({
-      intervalMinMs: 18000,
-      intervalMaxMs: 35000,
+      intervalMinMs: 10000,
+      intervalMaxMs: 25000,
       faceFlightDirection: true,
       rotateAlongPath: true
     });
@@ -117,7 +117,7 @@ test.describe("ambient editor usability", () => {
   test("panel scrolls, sections collapse, and flight points remain editable off-screen", async ({ page }) => {
     await startItaly(page, editorUrl);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Selecteer Gierzwaluw" }).click();
+    await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
     const panel = page.locator("[data-developer-tools]");
     const scroll = await panel.evaluate((node) => {
       node.scrollTop = node.scrollHeight;

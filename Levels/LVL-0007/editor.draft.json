@@ -87,9 +87,9 @@
     {
       "id": "raven_nautilus_island",
       "type": "ambient",
-      "openFrame": "Levels/LVL-0007/assets/ambient/raven-open.png",
-      "closedFrame": "Levels/LVL-0007/assets/ambient/raven-closed.png",
-      "sound": "Levels/LVL-0007/assets/ambient/raven-call.mp3",
+      "openFrame": "assets/ambient/animals/raven/raven-open.png",
+      "closedFrame": "assets/ambient/animals/raven/raven-closed.png",
+      "sound": "assets/ambient/animals/raven/raven-call.mp3",
       "x": 515,
       "y": 446,
       "scale": 0.14,
