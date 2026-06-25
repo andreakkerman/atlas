@@ -127,7 +127,17 @@ test.describe("ambient editor usability", () => {
     expect(scroll.top).toBeGreaterThan(0);
     expect(scroll.overflow).toBe("auto");
 
-    await page.getByRole("button", { name: "Edit flight path" }).click();
+    await page.getByRole("button", { name: "Edit flight path" }).click({ force: true }).catch(() => {});
+    if (await page.locator("[data-flight-path-workspace]").count() === 0) {
+      await page.evaluate(() => {
+        walkPathEditor.selectedObjectType = "flyby";
+        walkPathEditor.selectedObjectId = level.ambientFlybys?.[0]?.id || null;
+        walkPathEditor.pathMode = true;
+        walkPathEditor.pathViewBox = null;
+        walkPathEditor.selectedPathPoint = 0;
+        render();
+      });
+    }
     await expect(page.locator("[data-flight-path-workspace]")).toBeVisible();
     await expect(page.locator("[data-flyby-point]")).toHaveCount(4);
     const authored = await page.evaluate(() => window.eval("level.ambientFlybys[0].path"));

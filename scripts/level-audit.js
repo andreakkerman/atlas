@@ -3,7 +3,8 @@ const {
   distance,
   getWalkGraph,
   buildNodeMap,
-  buildObjectMap
+  buildObjectMap,
+  loadSceneEffectsApi
 } = require("./level-utils");
 
 const MIN_OBJECT_DISTANCE = 56;
@@ -15,6 +16,7 @@ const STEEP_EDGE_WARN = 70;
 const LOCAL_Y_SPIKE_WARN = 70;
 const ANSWER_REPEAT_WARN = 3;
 const COMMUTATIVE_PAIR_WARN = 2;
+const IPAD_PARTICLE_BUDGET_WARN = 180;
 
 function addWarning(warnings, levelId, message) {
   warnings.push(`[${levelId}] ${message}`);
@@ -54,6 +56,16 @@ function auditLevel({ level }) {
   const nodeMap = buildNodeMap(level);
   const objectMap = buildObjectMap(level);
   const reachableNodes = connectedNodeIds(level);
+  if (level.sceneEffects?.length) {
+    const api = loadSceneEffectsApi();
+    const estimatedParticles = level.sceneEffects.reduce((sum, effect) => {
+      const resolved = api.resolve(effect, level, { quality: "balanced", reducedMotion: false });
+      return sum + Number(resolved?.particleCap || 0) * Number(resolved?.amount || 0) * api.QUALITY.balanced.particles;
+    }, 0);
+    if (estimatedParticles > IPAD_PARTICLE_BUDGET_WARN) {
+      addWarning(warnings, level.id, `scene effects estimate ${Math.round(estimatedParticles)} balanced-tier particles, above the iPad recommendation ${IPAD_PARTICLE_BUDGET_WARN}.`);
+    }
+  }
 
   objects.forEach((object) => {
     if (object.radius < SMALL_RADIUS) {

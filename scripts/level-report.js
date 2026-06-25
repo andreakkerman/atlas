@@ -5,7 +5,8 @@ const {
   loadAllLevels,
   readImageDimensions,
   distance,
-  getWalkGraph
+  getWalkGraph,
+  loadSceneEffectsApi
 } = require("./level-utils");
 
 function relative(filePath) {
@@ -113,6 +114,19 @@ function reportLevel(loaded) {
   console.log(`* rune count: ${level.runes?.length || 0}`);
   console.log(`* question count: ${challengeCount}`);
   if (variantCount) console.log(`* authored variant count: ${variantCount}`);
+  console.log("");
+  console.log("Scene Effects:");
+  console.log(`* effect count: ${level.sceneEffects?.length || 0}`);
+  console.log(`* group count: ${level.sceneEffectGroups?.length || 0}`);
+  console.log(`* presets: ${[...new Set((level.sceneEffects || []).map((effect) => effect.presetId))].join(", ") || "none"}`);
+  if (level.sceneEffects?.length) {
+    const api = loadSceneEffectsApi();
+    const estimatedParticles = level.sceneEffects.reduce((sum, effect) => {
+      const resolved = api.resolve(effect, level, { quality: "balanced", reducedMotion: false });
+      return sum + Number(resolved?.particleCap || 0) * Number(resolved?.amount || 0) * api.QUALITY.balanced.particles;
+    }, 0);
+    console.log(`* balanced estimated particles: ${Math.round(estimatedParticles)}`);
+  }
   console.log("");
   console.log("Warnings:");
   if (warnings.length) {

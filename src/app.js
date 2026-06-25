@@ -85,6 +85,7 @@ let state = {
 };
 
 let audioConfig = cloneAudioConfig(window.SVEN_AUDIO_CONFIG || {});
+const originalAudioTracks = cloneAudioConfig(window.SVEN_AUDIO_CONFIG?.tracks || {});
 const audioState = {
   unlocked: false,
   music: null,
@@ -94,7 +95,8 @@ const audioState = {
   sfx: new Map(),
   purr: null,
   purringGuide: null,
-  lastPurrByGuide: {}
+  lastPurrByGuide: {},
+  purrPulseTimer: null
 };
 const ambientAnimalRuntime = {
   levelId: null,
@@ -127,6 +129,11 @@ const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
     if (EDITOR_DEV_MODE) console.warn(message);
   }
 });
+const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
+  getLevel: () => level,
+  getScreen: () => state.screen,
+  warn: (message) => console.warn(message)
+});
 
 let walkPathEditor = {
   enabled: EDITOR_DEV_MODE,
@@ -137,7 +144,8 @@ let walkPathEditor = {
   status: "Clean",
   modified: false,
   message: "",
-  busy: false
+  busy: false,
+  panelCollapsed: false
 };
 
 function createLevelState(selectedLevel) {
@@ -357,6 +365,28 @@ function cloneAudioConfig(config) {
   return JSON.parse(JSON.stringify(config || {}));
 }
 
+function persistedAudioConfig() {
+  const current = cloneAudioConfig(audioConfig || {});
+  return {
+    tracks: cloneAudioConfig(originalAudioTracks || current.tracks || {}),
+    menu: cloneAudioConfig(current.menu || {}),
+    levels: cloneAudioConfig(current.levels || {}),
+    volumes: cloneAudioConfig(current.volumes || {})
+  };
+}
+
+function persistedLevelEditorPayload() {
+  return {
+    walkPath: authoredWalkPathPoints(level),
+    interactiveObjects: cloneInteractiveObjects(level.interactiveObjects || []),
+    ambientAnimals: cloneAmbientAnimals(level.ambientAnimals || []),
+    ambientFlybys: cloneAmbientFlybys(level.ambientFlybys || []),
+    sceneEffects: cloneSceneEffects(level.sceneEffects || []),
+    sceneEffectGroups: cloneSceneEffectGroups(level.sceneEffectGroups || []),
+    audioConfig: persistedAudioConfig()
+  };
+}
+
 function clampVolume(value) {
   const number = Number(value);
   if (!Number.isFinite(number)) return 0;
@@ -388,6 +418,14 @@ function cloneAmbientFlybys(flybys) {
   return JSON.parse(JSON.stringify(flybys || []));
 }
 
+function cloneSceneEffects(effects) {
+  return window.AtlasSceneEffects.clone(effects || []);
+}
+
+function cloneSceneEffectGroups(groups) {
+  return window.AtlasSceneEffects.clone(groups || []);
+}
+
 function setLevelWalkPath(walkPath) {
   level.walkPath = cloneWalkPath(walkPath);
   level.walkGraph = deriveWalkGraph(level);
@@ -407,6 +445,12 @@ function setLevelAmbientAnimals(animals) {
 function setLevelAmbientFlybys(flybys) {
   level.ambientFlybys = cloneAmbientFlybys(flybys);
   ambientFlybyRuntime.prepareLevel(level);
+}
+
+function setLevelSceneEffects(effects, groups = level.sceneEffectGroups || []) {
+  level.sceneEffects = cloneSceneEffects(effects);
+  level.sceneEffectGroups = cloneSceneEffectGroups(groups);
+  sceneEffectRuntime.prepareLevel(level);
 }
 
 function editorApiUrl(action = "editor-draft") {
@@ -436,6 +480,8 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     originalInteractiveObjects: cloneInteractiveObjects(selectedLevel.interactiveObjects || []),
     originalAmbientAnimals: cloneAmbientAnimals(selectedLevel.ambientAnimals || []),
     originalAmbientFlybys: cloneAmbientFlybys(selectedLevel.ambientFlybys || []),
+    originalSceneEffects: cloneSceneEffects(selectedLevel.sceneEffects || []),
+    originalSceneEffectGroups: cloneSceneEffectGroups(selectedLevel.sceneEffectGroups || []),
     originalAudioConfig: cloneAudioConfig(audioConfig),
     draggingIndex: null,
     draggingObjectId: null,
@@ -447,6 +493,20 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     currentFlyby: null,
     selectedObjectType: (selectedLevel.ambientAnimals || []).length ? "animal" : "flyby",
     selectedObjectId: selectedLevel.ambientAnimals?.[0]?.id || selectedLevel.ambientFlybys?.[0]?.id || null,
+    editorMode: "objects",
+    selectedEffectId: selectedLevel.sceneEffects?.[0]?.id || null,
+    effectGeometryMode: false,
+    effectEditScope: "source",
+    selectedEffectVertex: null,
+    selectedCutoutIndex: null,
+    effectTool: "select",
+    effectLinkedMaskMovement: false,
+    effectPolygonDraft: null,
+    effectViewBox: null,
+    effectPan: null,
+    effectDrag: null,
+    showEffectGuides: true,
+    effectVisibility: "all",
     assets: { images: [], audio: [] },
     assetMessage: "",
     pathMode: false,
@@ -459,7 +519,8 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     status: "Clean",
     modified: false,
     message: EDITOR_DEV_MODE ? "Gebruik Ctrl + Shift + D om levelpunten, objecten of audio te bewerken." : "",
-    busy: false
+    busy: false,
+    panelCollapsed: false
   };
 
   if (!EDITOR_DEV_MODE || !window.location.protocol.startsWith("http")) return;
@@ -481,10 +542,19 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     if (Array.isArray(draft.ambientFlybys)) {
       selectedLevel.ambientFlybys = cloneAmbientFlybys(draft.ambientFlybys);
     }
+    if (Array.isArray(draft.sceneEffects)) {
+      selectedLevel.sceneEffects = cloneSceneEffects(draft.sceneEffects);
+      if (!walkPathEditor.selectedEffectId) {
+        walkPathEditor.selectedEffectId = selectedLevel.sceneEffects[0]?.id || null;
+      }
+    }
+    if (Array.isArray(draft.sceneEffectGroups)) {
+      selectedLevel.sceneEffectGroups = cloneSceneEffectGroups(draft.sceneEffectGroups);
+    }
     if (draft.audioConfig) {
       setAudioConfig(draft.audioConfig);
     }
-    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.ambientAnimals) || Array.isArray(draft.ambientFlybys) || draft.audioConfig) {
+    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.ambientAnimals) || Array.isArray(draft.ambientFlybys) || Array.isArray(draft.sceneEffects) || Array.isArray(draft.sceneEffectGroups) || draft.audioConfig) {
       walkPathEditor.status = "Modified";
       walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
@@ -642,6 +712,13 @@ function clearGuideBlinkState(runtime) {
   runtime.sequenceTimers.clear();
   runtime.blinking = false;
   runtime.frame = "open";
+}
+
+function interruptGuideBlink(guideId) {
+  const runtime = guideBlinkRuntime[guideId];
+  if (!runtime) return;
+  clearGuideBlinkState(runtime);
+  setGuideBlinkFrame(guideId, "open");
 }
 
 function guideBlinkDelay(runtime, callback, delay) {
@@ -959,6 +1036,7 @@ function cloneAmbientAnimals(animals) {
 function playGuidePurr(guideId) {
   const keys = GUIDE_PURR_KEYS[guideId];
   if (!audioState.unlocked || audioState.purr || !keys?.length) return;
+  interruptGuideBlink(guideId);
 
   const previousKey = audioState.lastPurrByGuide[guideId];
   const availableKeys = keys.length > 1 ? keys.filter((key) => key !== previousKey) : keys;
@@ -971,13 +1049,25 @@ function playGuidePurr(guideId) {
   audioState.purr = audio;
   audioState.purringGuide = guideId;
   audioState.lastPurrByGuide[guideId] = key;
-  document.querySelector(`[data-purr-guide="${guideId}"]`)?.classList.add("teamPortraitPurring");
+  const portrait = document.querySelector(`[data-purr-guide="${guideId}"]`);
+  portrait?.classList.remove("teamPortraitPurring");
+  portrait?.getBoundingClientRect();
+  portrait?.classList.add("teamPortraitPurring");
+  window.clearTimeout(audioState.purrPulseTimer);
+  audioState.purrPulseTimer = window.setTimeout(() => {
+    document.querySelector(`[data-purr-guide="${guideId}"]`)?.classList.remove("teamPortraitPurring");
+    audioState.purrPulseTimer = null;
+    scheduleGuideBlink(guideId);
+  }, 680);
 
   const finish = () => {
     if (audioState.purr !== audio) return;
+    window.clearTimeout(audioState.purrPulseTimer);
+    audioState.purrPulseTimer = null;
     audioState.purr = null;
     audioState.purringGuide = null;
     document.querySelector(`[data-purr-guide="${guideId}"]`)?.classList.remove("teamPortraitPurring");
+    scheduleGuideBlink(guideId);
   };
   audio.addEventListener("ended", finish, { once: true });
   audio.addEventListener("error", finish, { once: true });
@@ -1035,11 +1125,13 @@ async function selectLevel(id, options = {}) {
 
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
+  sceneEffectRuntime.dispose();
   resetAmbientAnimalTimers();
   await prepareWalkPathEditorForLevel(selectedLevel);
   level = normalizeLevel(selectedLevel);
   preloadAmbientAnimals(level);
   ambientFlybyRuntime.prepareLevel(level);
+  sceneEffectRuntime.prepareLevel(level);
   const adventure = adventureEntryFor(entry);
   sessionReport?.startOrVisitLevel({
     adventureId: adventure.id,
@@ -1072,6 +1164,7 @@ function adventureEntryFor(entry) {
 function returnToMenu() {
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
+  sceneEffectRuntime.dispose();
   resetAmbientAnimalTimers();
   ambientAnimalRuntime.levelId = null;
   sessionReport?.end("menu");
@@ -1443,13 +1536,7 @@ async function persistWalkPathDraft() {
   try {
     await requestEditorApi(editorApiUrl("editor-draft"), {
       method: "POST",
-      body: JSON.stringify({
-        walkPath: authoredWalkPathPoints(level),
-        interactiveObjects: level.interactiveObjects,
-        ambientAnimals: level.ambientAnimals || [],
-        ambientFlybys: level.ambientFlybys || [],
-        audioConfig
-      })
+      body: JSON.stringify(persistedLevelEditorPayload())
     });
   } catch (error) {
     walkPathEditor.status = "Error";
@@ -1466,18 +1553,14 @@ async function applyWalkPathDraft() {
   try {
     await requestEditorApi(editorApiUrl("apply-editor"), {
       method: "POST",
-      body: JSON.stringify({
-        walkPath: authoredWalkPathPoints(level),
-        interactiveObjects: level.interactiveObjects,
-        ambientAnimals: level.ambientAnimals || [],
-        ambientFlybys: level.ambientFlybys || [],
-        audioConfig
-      })
+      body: JSON.stringify(persistedLevelEditorPayload())
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
     walkPathEditor.originalAmbientAnimals = cloneAmbientAnimals(level.ambientAnimals || []);
     walkPathEditor.originalAmbientFlybys = cloneAmbientFlybys(level.ambientFlybys || []);
+    walkPathEditor.originalSceneEffects = cloneSceneEffects(level.sceneEffects || []);
+    walkPathEditor.originalSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
     walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
@@ -1505,6 +1588,7 @@ async function revertWalkPathDraft() {
     setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
     setLevelAmbientAnimals(walkPathEditor.originalAmbientAnimals);
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
+    setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
     setAudioConfig(walkPathEditor.originalAudioConfig);
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
@@ -2324,6 +2408,8 @@ function completeCurrentSceneChallenges() {
   if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return;
   stopMovement({ invalidateIntent: true });
   state.completedRunes = new Set(level.runes.map((rune) => rune.id));
+  state.answered = Math.max(state.answered, state.totalQuestions || level.runes.length * 4);
+  state.attempts = Math.max(state.attempts, state.totalQuestions || level.runes.length * 4);
   state.screen = "scene";
   state.activeRuneId = null;
   state.selectedChallengeId = null;
@@ -3008,9 +3094,983 @@ function renderAmbientEditorControls() {
   `;
 }
 
+function selectedSceneEffect() {
+  return (level.sceneEffects || []).find((effect) => effect.id === walkPathEditor.selectedEffectId) || null;
+}
+
+function sceneEffectPreset(effect = selectedSceneEffect()) {
+  return window.AtlasSceneEffects.presetById(effect?.presetId);
+}
+
+function uniqueSceneEffectId(base) {
+  const stem = String(base || "scene-effect").replace(/[^A-Za-z0-9_-]/g, "-") || "scene-effect";
+  const ids = new Set((level.sceneEffects || []).map((effect) => effect.id));
+  if (!ids.has(stem)) return stem;
+  let index = 2;
+  while (ids.has(`${stem}-${index}`)) index += 1;
+  return `${stem}-${index}`;
+}
+
+function commitSceneEffects(message, options = {}) {
+  sceneEffectRuntime.prepareLevel(level);
+  markEditorModified(message);
+  if (options.render !== false) render();
+}
+
+function addSceneEffect(presetId, variantId) {
+  const instance = window.AtlasSceneEffects.defaultInstance(
+    presetId,
+    variantId,
+    level.world,
+    (level.sceneEffects || []).length
+  );
+  if (!instance) return;
+  instance.id = uniqueSceneEffectId(instance.id);
+  level.sceneEffects = [...(level.sceneEffects || []), instance];
+  walkPathEditor.selectedEffectId = instance.id;
+  walkPathEditor.editorMode = "effects";
+  walkPathEditor.effectEditScope = "source";
+  walkPathEditor.selectedEffectVertex = null;
+  walkPathEditor.effectPolygonDraft = null;
+  commitSceneEffects(`${instance.label} toegevoegd.`);
+}
+
+function duplicateSceneEffect() {
+  const source = selectedSceneEffect();
+  if (!source) return;
+  const copy = cloneSceneEffects([source])[0];
+  copy.id = uniqueSceneEffectId(`${source.id}-copy`);
+  copy.label = `${source.label || source.id} copy`;
+  const geometry = copy.geometry;
+  if (Number.isFinite(geometry.x)) geometry.x += 24;
+  if (Number.isFinite(geometry.y)) geometry.y += 18;
+  (geometry.points || []).forEach((point) => { point.x += 24; point.y += 18; });
+  (geometry.cutouts || []).flat().forEach((point) => { point.x += 24; point.y += 18; });
+  if (copy.mask) translateEffectMask(copy.mask, 24, 18);
+  level.sceneEffects.push(copy);
+  walkPathEditor.selectedEffectId = copy.id;
+  commitSceneEffects(`${copy.label} duplicated.`);
+}
+
+function deleteSceneEffect() {
+  const selected = selectedSceneEffect();
+  if (!selected) return;
+  level.sceneEffects = (level.sceneEffects || []).filter((effect) => effect.id !== selected.id);
+  walkPathEditor.selectedEffectId = level.sceneEffects[0]?.id || null;
+  commitSceneEffects(`${selected.label || selected.id} deleted.`);
+}
+
+function copySceneEffect() {
+  const selected = selectedSceneEffect();
+  if (!selected) return;
+  walkPathEditor.effectClipboard = cloneSceneEffects([selected])[0];
+  walkPathEditor.message = `${selected.label || selected.id} copied.`;
+  render();
+}
+
+function pasteSceneEffect() {
+  if (!walkPathEditor.effectClipboard) return;
+  const copy = cloneSceneEffects([walkPathEditor.effectClipboard])[0];
+  copy.id = uniqueSceneEffectId(`${copy.id}-copy`);
+  copy.label = `${copy.label || copy.id} copy`;
+  if (Number.isFinite(copy.geometry?.x)) copy.geometry.x += 24;
+  if (Number.isFinite(copy.geometry?.y)) copy.geometry.y += 18;
+  (copy.geometry?.points || []).forEach((point) => { point.x += 24; point.y += 18; });
+  (copy.geometry?.cutouts || []).flat().forEach((point) => { point.x += 24; point.y += 18; });
+  if (copy.mask) translateEffectMask(copy.mask, 24, 18);
+  level.sceneEffects ||= [];
+  level.sceneEffects.push(copy);
+  walkPathEditor.selectedEffectId = copy.id;
+  commitSceneEffects(`${copy.label} pasted.`);
+}
+
+function updateSceneEffectField(field, value) {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  if (field === "geometryType") {
+    convertSceneEffectGeometry(effect, String(value));
+  } else if (["label", "variantId", "layerSlot", "groupId", "qualityTier"].includes(field)) effect[field] = String(value);
+  else if (field === "enabled") effect.enabled = Boolean(value);
+  else if (field === "seed") effect.seed = Math.max(0, Math.min(2147483647, Math.round(Number(value))));
+  commitSceneEffects(`${effect.label || effect.id}: ${field} updated.`);
+}
+
+function convertSceneEffectGeometry(effect, type) {
+  const preset = sceneEffectPreset(effect);
+  if (!preset?.geometryTypes.includes(type) || effect.geometry.type === type) return;
+  const center = effectGeometryCenter(effect.geometry);
+  const bounds = window.AtlasSceneEffects.geometryBounds(effect.geometry);
+  const width = Math.max(80, bounds.width || 220);
+  const height = Math.max(60, bounds.height || 140);
+  if (type === "point") effect.geometry = { type, x: Math.round(center.x), y: Math.round(center.y) };
+  if (type === "pointRadius") effect.geometry = { type, x: Math.round(center.x), y: Math.round(center.y), radius: Math.round(Math.max(width, height) / 2) };
+  if (type === "rectangle" || type === "ellipse") effect.geometry = { type, x: Math.round(center.x), y: Math.round(center.y), width: Math.round(width), height: Math.round(height) };
+  if (type === "polygon") effect.geometry = {
+    type,
+    points: [
+      { x: Math.round(center.x - width / 2), y: Math.round(center.y - height / 2) },
+      { x: Math.round(center.x + width / 2), y: Math.round(center.y - height / 2) },
+      { x: Math.round(center.x + width / 2), y: Math.round(center.y + height / 2) },
+      { x: Math.round(center.x - width / 2), y: Math.round(center.y + height / 2) }
+    ],
+    cutouts: []
+  };
+  if (type === "directionalEmitter") effect.geometry = { type, x: Math.round(center.x), y: Math.round(center.y), directionDeg: -90, spreadDeg: 18, width: 24 };
+  if (type === "directionalBeam") effect.geometry = { type, x: Math.round(center.x), y: Math.round(center.y), directionDeg: 45, length: Math.round(Math.max(180, width)), startWidth: 45, endWidth: Math.round(Math.max(120, height)) };
+}
+
+function updateSceneEffectOverride(field, value) {
+  const effect = selectedSceneEffect();
+  const preset = sceneEffectPreset(effect);
+  if (!effect || !preset) return;
+  effect.overrides ||= {};
+  if (/Color$/.test(field)) {
+    if (!/^#[0-9A-F]{6}$/i.test(String(value))) return;
+    effect.overrides[field] = String(value).toUpperCase();
+  } else {
+    const definition = window.AtlasSceneEffects.CONTROL_DEFS[field];
+    const number = Number(value);
+    if (!Number.isFinite(number)) return;
+    effect.overrides[field] = definition ? Math.max(definition.min, Math.min(definition.max, number)) : number;
+  }
+  commitSceneEffects(`${effect.label || effect.id}: ${field} override updated.`);
+}
+
+function resetSceneEffectField(field) {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  delete effect.overrides?.[field];
+  commitSceneEffects(`${effect.label || effect.id}: ${field} reset.`);
+}
+
+function resetSceneEffectSection(section) {
+  const effect = selectedSceneEffect();
+  const preset = sceneEffectPreset(effect);
+  if (!effect || !preset) return;
+  for (const field of preset.controls) {
+    if (window.AtlasSceneEffects.CONTROL_DEFS[field]?.section === section) delete effect.overrides?.[field];
+  }
+  if (section === "quick") delete effect.overrides?.primaryColor;
+  if (section === "advanced") {
+    delete effect.overrides?.secondaryColor;
+    delete effect.overrides?.glowColor;
+    delete effect.overrides?.tintColor;
+    delete effect.overrides?.blendMode;
+  }
+  commitSceneEffects(`${effect.label || effect.id}: ${section} reset.`);
+}
+
+function resetSceneEffect() {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  effect.overrides = {};
+  effect.layerSlot = sceneEffectPreset(effect)?.layerSlot || "worldAtmosphere";
+  commitSceneEffects(`${effect.label || effect.id} reset to preset.`);
+}
+
+function createSceneEffectGroup() {
+  const selected = selectedSceneEffect();
+  if (!selected) return;
+  level.sceneEffectGroups ||= [];
+  const base = `${selected.presetId}-group`;
+  let id = base;
+  let number = 2;
+  while (level.sceneEffectGroups.some((group) => group.id === id)) id = `${base}-${number++}`;
+  level.sceneEffectGroups.push({
+    id,
+    label: `${sceneEffectPreset(selected)?.name || "Effect"} group`,
+    sharedProperties: ["primaryColor", "intensity", "speed", "directionDeg"],
+    overrides: {}
+  });
+  selected.groupId = id;
+  commitSceneEffects(`Group ${id} created.`);
+}
+
+function updateSceneEffectGroup(field, value) {
+  const effect = selectedSceneEffect();
+  const group = (level.sceneEffectGroups || []).find((item) => item.id === effect?.groupId);
+  if (!group) return;
+  group.overrides ||= {};
+  group.overrides[field] = /Color$/.test(field) ? String(value).toUpperCase() : Number(value);
+  group.sharedProperties ||= [];
+  if (!group.sharedProperties.includes(field)) group.sharedProperties.push(field);
+  for (const member of level.sceneEffects || []) {
+    if (member.groupId === group.id) delete member.overrides?.[field];
+  }
+  commitSceneEffects(`Group ${group.id}: ${field} shared.`);
+}
+
+function effectControlValue(effect, field) {
+  return window.AtlasSceneEffects.resolve(effect, level, {
+    quality: document.documentElement.dataset.effectsQuality || "high",
+    reducedMotion: false
+  })?.[field];
+}
+
+function renderEffectNumberControl(effect, field, inherited = false) {
+  const definition = window.AtlasSceneEffects.CONTROL_DEFS[field];
+  if (!definition) return "";
+  const preset = sceneEffectPreset(effect);
+  const maximum = field === "particleCap" ? preset.hardCap : definition.max;
+  const overridden = Object.hasOwn(effect.overrides || {}, field);
+  const value = effectControlValue(effect, field);
+  return `
+    <label class="effectEditorField ${inherited && !overridden ? "effectFieldInherited" : ""}">
+      <span>${definition.label}${inherited && !overridden ? " · group" : ""}</span>
+      <input type="number" min="${definition.min}" max="${maximum}" step="${definition.step}" value="${Number(value).toFixed(definition.step < 1 ? 2 : 0)}"
+        data-effect-override="${field}" />
+      <button type="button" title="Reset field" data-effect-reset-field="${field}" ${overridden ? "" : "disabled"}>↺</button>
+    </label>
+  `;
+}
+
+function renderEffectColorControl(effect, field, label, inherited = false) {
+  const value = effectControlValue(effect, field);
+  const overridden = Object.hasOwn(effect.overrides || {}, field);
+  const automatic = ["secondaryColor", "glowColor"].includes(field) && !overridden;
+  return `
+    <label class="effectColorField ${inherited && !overridden ? "effectFieldInherited" : ""}">
+      <span>${label}${inherited && !overridden ? " · group" : automatic ? " · auto" : ""}</span>
+      <input type="color" value="${value}" data-effect-color="${field}" />
+      <input type="text" value="${value}" pattern="#[0-9A-Fa-f]{6}" maxlength="7" data-effect-hex="${field}" />
+      <button type="button" title="Reset color" data-effect-reset-field="${field}" ${overridden ? "" : "disabled"}>↺</button>
+    </label>
+  `;
+}
+
+function renderEffectControlSection(effect, preset, section, title, open = false) {
+  const group = (level.sceneEffectGroups || []).find((item) => item.id === effect.groupId);
+  const fields = preset.controls.filter((field) => window.AtlasSceneEffects.CONTROL_DEFS[field]?.section === section);
+  const colors = section === "quick"
+    ? renderEffectColorControl(effect, "primaryColor", "Main color", group?.sharedProperties?.includes("primaryColor"))
+    : section === "advanced"
+      ? [
+          renderEffectColorControl(effect, "secondaryColor", "Secondary color", group?.sharedProperties?.includes("secondaryColor")),
+          renderEffectColorControl(effect, "glowColor", "Glow color", group?.sharedProperties?.includes("glowColor")),
+          renderEffectColorControl(effect, "tintColor", "Tint color", group?.sharedProperties?.includes("tintColor"))
+        ].join("")
+      : "";
+  if (!fields.length && !colors) return "";
+  return `
+    <details class="editorNestedSection effectControlSection" ${open ? "open" : ""}>
+      <summary>${title}</summary>
+      ${colors}
+      ${fields.map((field) => renderEffectNumberControl(effect, field, group?.sharedProperties?.includes(field))).join("")}
+      <button type="button" data-effect-reset-section="${section}">Reset ${title}</button>
+    </details>
+  `;
+}
+
+function renderEffectLibrary() {
+  return window.AtlasSceneEffects.CATEGORIES.map((category) => {
+    const presets = Object.values(window.AtlasSceneEffects.PRESETS).filter((preset) => preset.category === category);
+    if (!presets.length) return "";
+    return `
+      <details class="effectLibraryCategory" ${["Light and fire", "Water"].includes(category) ? "open" : ""}>
+        <summary>${category}</summary>
+        <div class="effectPresetGrid">
+          ${presets.map((preset) => `
+            <article class="effectPresetCard" data-effect-preset-card="${preset.id}">
+              <span class="effectPresetSwatch" style="--effect-card-color:${preset.colors.primaryColor}"></span>
+              <strong>${preset.name}</strong>
+              <p>${preset.description}</p>
+              <small>Placement: ${preset.geometryTypes.join(" / ")} · Performance: ${preset.performance}</small>
+              <label>Variant
+                <select data-effect-library-variant="${preset.id}">
+                  ${preset.variants.map((item) => `<option value="${item.id}">${item.name}</option>`).join("")}
+                </select>
+              </label>
+              <button type="button" data-add-effect="${preset.id}">Add effect</button>
+            </article>
+          `).join("")}
+        </div>
+      </details>
+    `;
+  }).join("");
+}
+
+function renderSceneEffectsEditorControls() {
+  const effects = level.sceneEffects || [];
+  const effect = selectedSceneEffect();
+  const preset = sceneEffectPreset(effect);
+  const variant = preset && window.AtlasSceneEffects.variantById(preset, effect.variantId);
+  const group = (level.sceneEffectGroups || []).find((item) => item.id === effect?.groupId);
+  const totalBudget = effects.reduce((sum, item) => {
+    const resolved = window.AtlasSceneEffects.resolve(item, level, { quality: "balanced", reducedMotion: false });
+    return sum + Number(resolved?.particleCap || 0) * Number(resolved?.amount || 0) * window.AtlasSceneEffects.QUALITY.balanced.particles;
+  }, 0);
+  const budgetLevel = totalBudget > 180 ? "High" : totalBudget > 140 ? "Medium" : "Low";
+  return `
+    <section class="sceneEffectsEditor" data-scene-effects-editor>
+      <details class="editorSection effectLibrary" open>
+        <summary>Effect preset library</summary>
+        ${renderEffectLibrary()}
+      </details>
+      <details class="editorSection" open>
+        <summary>Level effects <span>${effects.length}</span></summary>
+        <div class="effectBudget effectBudget${budgetLevel}">iPad budget: ${budgetLevel} · balanced estimate ${Math.round(totalBudget)} particles</div>
+        <div class="editorObjectPicker">
+          ${effects.map((item) => `<button type="button" data-select-effect="${item.id}" class="${item.id === effect?.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>`).join("") || "<span>No effects yet.</span>"}
+        </div>
+      </details>
+      ${effect && preset ? `
+        <section class="effectPropertyPanel" data-effect-property-panel="${effect.id}">
+          <div class="effectHeading">
+            <strong>${preset.name} · ${variant?.name || effect.variantId}</strong>
+            <span>${effect.id}</span>
+          </div>
+          <label class="editorField"><span>Label</span><input value="${effect.label || effect.id}" data-effect-field="label" /></label>
+          <label class="editorField"><span>Variant</span><select data-effect-field="variantId">${preset.variants.map((item) => `<option value="${item.id}" ${item.id === effect.variantId ? "selected" : ""}>${item.name}</option>`).join("")}</select></label>
+          <label class="editorField"><span>Layer slot</span><select data-effect-field="layerSlot">${window.AtlasSceneEffects.LAYER_SLOTS.map((slot) => `<option value="${slot}" ${slot === effect.layerSlot ? "selected" : ""}>${slot}</option>`).join("")}</select></label>
+          <label class="editorField"><span>Geometry</span><select data-effect-field="geometryType">${preset.geometryTypes.map((type) => `<option value="${type}" ${type === effect.geometry.type ? "selected" : ""}>${type}</option>`).join("")}</select></label>
+          <label class="editorField"><span>Quality tier</span><select data-effect-field="qualityTier">${["auto", "high", "balanced", "reduced"].map((tier) => `<option value="${tier}" ${(effect.qualityTier || "auto") === tier ? "selected" : ""}>${tier}</option>`).join("")}</select></label>
+          <label class="editorField"><span>Group</span><select data-effect-field="groupId"><option value="">None</option>${(level.sceneEffectGroups || []).map((item) => `<option value="${item.id}" ${item.id === effect.groupId ? "selected" : ""}>${item.label || item.id}</option>`).join("")}</select></label>
+          <label class="editorToggle"><input type="checkbox" data-effect-field="enabled" ${effect.enabled !== false ? "checked" : ""}/><span>Enabled</span></label>
+          ${renderEffectControlSection(effect, preset, "quick", "Quick", true)}
+          ${renderEffectControlSection(effect, preset, "advanced", "Advanced")}
+          <label class="editorField"><span>Blend mode</span><select data-effect-blend-mode>
+            ${["source-over", "lighter", "screen", "soft-light"].map((mode) => `<option value="${mode}" ${(effect.overrides?.blendMode || preset.blendMode) === mode ? "selected" : ""}>${mode}</option>`).join("")}
+          </select></label>
+          ${renderEffectControlSection(effect, preset, "expert", "Expert")}
+          ${group ? `
+            <details class="editorNestedSection"><summary>Group sharing · ${group.label || group.id}</summary>
+              ${["primaryColor", "intensity", "speed", "directionDeg"].map((field) => /Color$/.test(field)
+                ? `<button type="button" data-share-group-field="${field}">Share current color</button>`
+                : `<button type="button" data-share-group-field="${field}">Share current ${field}</button>`).join("")}
+            </details>` : ""}
+          <div class="effectActions">
+            <button type="button" data-debug-action="edit-effect-geometry">Edit geometry</button>
+            <button type="button" data-debug-action="duplicate-effect">Duplicate</button>
+            <button type="button" data-debug-action="copy-effect">Copy</button>
+            <button type="button" data-debug-action="paste-effect" ${walkPathEditor.effectClipboard ? "" : "disabled"}>Paste</button>
+            <button type="button" data-debug-action="create-effect-group">Create group</button>
+            <button type="button" data-debug-action="reset-effect">Reset effect</button>
+            <button type="button" data-debug-action="delete-effect">Delete</button>
+          </div>
+        </section>
+      ` : ""}
+      <section class="effectPreviewControls">
+        <strong>Preview</strong>
+        <button type="button" data-debug-action="effect-play">Play</button>
+        <button type="button" data-debug-action="effect-pause">Pause</button>
+        <button type="button" data-debug-action="effect-restart">Restart</button>
+        <button type="button" data-debug-action="effect-new-seed">Generate variation</button>
+        <button type="button" data-debug-action="effect-toggle-guides">${walkPathEditor.showEffectGuides ? "Hide guides" : "Show guides"}</button>
+        <button type="button" data-debug-action="effect-toggle-selected">${walkPathEditor.effectVisibility === "selectedHidden" ? "Show effect" : "Hide effect"}</button>
+        <button type="button" data-debug-action="effect-isolate">Isolate selected</button>
+        <button type="button" data-debug-action="effect-show-all">Show all effects</button>
+        <button type="button" data-debug-action="effect-background-only">Background only</button>
+      </section>
+    </section>
+  `;
+}
+
+function effectGeometryCenter(geometry) {
+  const bounds = window.AtlasSceneEffects.geometryBounds(geometry);
+  if (["point", "pointRadius", "rectangle", "ellipse", "directionalEmitter", "directionalBeam"].includes(geometry?.type) &&
+      Number.isFinite(geometry.x) && Number.isFinite(geometry.y)) {
+    return { x: geometry.x, y: geometry.y };
+  }
+  return { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 };
+}
+
+function translateEffectGeometry(geometry, dx, dy) {
+  if (Number.isFinite(geometry.x)) geometry.x = Math.round(geometry.x + dx);
+  if (Number.isFinite(geometry.y)) geometry.y = Math.round(geometry.y + dy);
+  (geometry.points || []).forEach((point) => { point.x = Math.round(point.x + dx); point.y = Math.round(point.y + dy); });
+  (geometry.cutouts || []).flat().forEach((point) => { point.x = Math.round(point.x + dx); point.y = Math.round(point.y + dy); });
+}
+
+function ensureEffectMask(effect) {
+  effect.mask ||= { includes: [], cutouts: [] };
+  effect.mask.includes ||= [];
+  effect.mask.cutouts ||= [];
+  return effect.mask;
+}
+
+function polygonFromBounds(bounds) {
+  return [
+    { x: Math.round(bounds.x), y: Math.round(bounds.y) },
+    { x: Math.round(bounds.x + bounds.width), y: Math.round(bounds.y) },
+    { x: Math.round(bounds.x + bounds.width), y: Math.round(bounds.y + bounds.height) },
+    { x: Math.round(bounds.x), y: Math.round(bounds.y + bounds.height) }
+  ];
+}
+
+function ellipseToPolygon(geometry, segments = 16) {
+  return Array.from({ length: segments }, (_, index) => {
+    const angle = (index / segments) * Math.PI * 2;
+    return {
+      x: Math.round(geometry.x + Math.cos(angle) * geometry.width / 2),
+      y: Math.round(geometry.y + Math.sin(angle) * geometry.height / 2)
+    };
+  });
+}
+
+function geometryToPolygon(geometry) {
+  if (geometry.type === "polygon") return cloneSceneEffects([{ geometry }])[0].geometry.points;
+  if (geometry.type === "ellipse") return ellipseToPolygon(geometry);
+  return polygonFromBounds(window.AtlasSceneEffects.geometryBounds(geometry));
+}
+
+function maskAllPoints(mask) {
+  return [...(mask?.includes || []).flat(), ...(mask?.cutouts || []).flat()];
+}
+
+function translateEffectMask(mask, dx, dy) {
+  maskAllPoints(mask).forEach((point) => {
+    point.x = Math.round(point.x + dx);
+    point.y = Math.round(point.y + dy);
+  });
+}
+
+function translatePolygon(points, dx, dy) {
+  (points || []).forEach((point) => {
+    point.x = Math.round(point.x + dx);
+    point.y = Math.round(point.y + dy);
+  });
+}
+
+function selectedEffectPolygonRef(effect, selection = walkPathEditor.selectedEffectVertex) {
+  if (!effect || !selection) return null;
+  if (!selection.target || selection.target === "source") return effect.geometry.points || null;
+  if (selection.target === "sourceCutout") return effect.geometry.cutouts?.[selection.cutoutIndex] || null;
+  if (selection.target === "maskInclude") return effect.mask?.includes?.[selection.polygonIndex] || null;
+  if (selection.target === "maskCutout") return effect.mask?.cutouts?.[selection.polygonIndex] || null;
+  return null;
+}
+
+function validClosedPolygon(points) {
+  return Array.isArray(points) &&
+    points.length >= 3 &&
+    points.every((point) => Number.isFinite(point.x) && Number.isFinite(point.y)) &&
+    !window.AtlasSceneEffects.polygonSelfIntersects(points);
+}
+
+function duplicateSourceMask(effect) {
+  if (!effect) return;
+  const mask = ensureEffectMask(effect);
+  mask.includes = [geometryToPolygon(effect.geometry)];
+  mask.cutouts = cloneSceneEffects([{ geometry: effect.geometry }])[0].geometry.cutouts || [];
+  walkPathEditor.effectEditScope = "mask";
+  walkPathEditor.selectedEffectVertex = { target: "maskInclude", polygonIndex: 0, vertexIndex: 0 };
+  updateEffectGeometry(`${effect.label || effect.id}: mask duplicated from source.`);
+}
+
+function resetEffectMask(effect = selectedSceneEffect()) {
+  if (!effect) return;
+  delete effect.mask;
+  walkPathEditor.selectedEffectVertex = null;
+  updateEffectGeometry(`${effect.label || effect.id}: mask reset.`);
+}
+
+function reverseSelectedPolygon() {
+  const effect = selectedSceneEffect();
+  const polygon = selectedEffectPolygonRef(effect);
+  if (!polygon) return;
+  polygon.reverse();
+  walkPathEditor.selectedEffectVertex = { ...walkPathEditor.selectedEffectVertex, vertexIndex: 0 };
+  updateEffectGeometry(`${effect.label || effect.id}: polygon order reversed.`);
+}
+
+function centerSourceInMask(effect = selectedSceneEffect()) {
+  const maskBounds = window.AtlasSceneEffects.maskBounds(effect?.mask);
+  if (!effect || !maskBounds) return;
+  const source = effectGeometryCenter(effect.geometry);
+  const target = { x: maskBounds.x + maskBounds.width / 2, y: maskBounds.y + maskBounds.height / 2 };
+  translateEffectGeometry(effect.geometry, target.x - source.x, target.y - source.y);
+  updateEffectGeometry(`${effect.label || effect.id}: source centered in mask.`);
+}
+
+function startEffectPolygonDraft(target) {
+  walkPathEditor.effectPolygonDraft = { target, points: [] };
+  walkPathEditor.message = "Click/tap points. Close with first point or Enter. Escape cancels.";
+  render();
+}
+
+function cancelEffectPolygonDraft() {
+  walkPathEditor.effectPolygonDraft = null;
+  render();
+}
+
+function commitEffectPolygonDraft() {
+  const effect = selectedSceneEffect();
+  const draft = walkPathEditor.effectPolygonDraft;
+  if (!effect || !draft) return;
+  if (!validClosedPolygon(draft.points)) {
+    walkPathEditor.message = "Polygon rejected: use at least three finite, non-intersecting points.";
+    walkPathEditor.effectPolygonDraft = null;
+    render();
+    return;
+  }
+  if (draft.target === "source") {
+    effect.geometry = { type: "polygon", points: cloneSceneEffects([{ points: draft.points }])[0].points, cutouts: [] };
+    walkPathEditor.selectedEffectVertex = { target: "source", cutoutIndex: null, vertexIndex: 0 };
+  } else {
+    const mask = ensureEffectMask(effect);
+    const list = draft.target === "maskCutout" ? mask.cutouts : mask.includes;
+    list.push(cloneSceneEffects([{ points: draft.points }])[0].points);
+    walkPathEditor.effectEditScope = draft.target === "maskCutout" ? "cutout" : "mask";
+    walkPathEditor.selectedEffectVertex = {
+      target: draft.target === "maskCutout" ? "maskCutout" : "maskInclude",
+      polygonIndex: list.length - 1,
+      vertexIndex: 0
+    };
+  }
+  walkPathEditor.effectPolygonDraft = null;
+  updateEffectGeometry(`${effect.label || effect.id}: polygon drawn.`);
+}
+
+function addEffectDraftPoint(point) {
+  const draft = walkPathEditor.effectPolygonDraft;
+  if (!draft) return false;
+  if (draft.points.length >= 3 && Math.hypot(point.x - draft.points[0].x, point.y - draft.points[0].y) < 18) {
+    commitEffectPolygonDraft();
+    return true;
+  }
+  draft.points.push(point);
+  syncEffectDraftDom();
+  return true;
+}
+
+function syncEffectDraftDom() {
+  const draft = walkPathEditor.effectPolygonDraft;
+  document.querySelectorAll("[data-effect-draft-path]").forEach((path) => {
+    path.setAttribute("d", draft?.points?.length ? geometryPathData(draft.points).replace(" Z", "") : "");
+  });
+  document.querySelectorAll("[data-effect-draft-points]").forEach((group) => {
+    group.innerHTML = (draft?.points || []).map((point, index) =>
+      `<circle class="effectGuideVertex effectGuideDraftVertex" cx="${point.x}" cy="${point.y}" r="${index ? 11 : 15}"></circle>`
+    ).join("");
+  });
+}
+
+function updateEffectGeometry(message, renderNow = true) {
+  sceneEffectRuntime.prepareLevel(level);
+  markEditorModified(message);
+  if (renderNow) render();
+}
+
+function geometryPathData(points) {
+  return (points || []).map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ") + " Z";
+}
+
+function renderEffectPolygonControls(points, target, options = {}) {
+  const selectedVertex = walkPathEditor.selectedEffectVertex;
+  const polygonIndex = options.polygonIndex;
+  const cutoutIndex = options.cutoutIndex;
+  const editable = options.editable !== false;
+  const targetMatches = (vertexIndex) => {
+    if (!selectedVertex) return false;
+    if (target === "source") return (!selectedVertex.target || selectedVertex.target === "source") && selectedVertex.vertexIndex === vertexIndex;
+    if (target === "sourceCutout") return selectedVertex.target === "sourceCutout" && selectedVertex.cutoutIndex === cutoutIndex && selectedVertex.vertexIndex === vertexIndex;
+    return selectedVertex.target === target && selectedVertex.polygonIndex === polygonIndex && selectedVertex.vertexIndex === vertexIndex;
+  };
+  const vertices = editable ? points.map((point, index) => `<circle class="effectGuideVertex ${targetMatches(index) ? "effectGuideVertexSelected" : ""}" cx="${point.x}" cy="${point.y}" r="15"
+    data-effect-vertex="${index}" data-effect-vertex-scope="${target}" data-effect-polygon-index="${polygonIndex ?? ""}" data-effect-cutout="${cutoutIndex ?? ""}"></circle>`).join("") : "";
+  const edges = editable ? points.map((point, index) => {
+    const next = points[(index + 1) % points.length];
+    return `<circle class="effectGuideEdge" cx="${(point.x + next.x) / 2}" cy="${(point.y + next.y) / 2}" r="11"
+      data-effect-edge="${index}" data-effect-edge-scope="${target}" data-effect-polygon-index="${polygonIndex ?? ""}" data-effect-cutout="${cutoutIndex ?? ""}"></circle>`;
+  }).join("") : "";
+  return `${vertices}${edges}`;
+}
+
+function renderMaskGuide(effect, options = {}) {
+  const mask = effect.mask;
+  const scope = walkPathEditor.effectEditScope || "source";
+  if (!mask || (!mask.includes?.length && !mask.cutouts?.length)) return "";
+  const includeEditable = scope === "mask";
+  const cutoutEditable = scope === "cutout";
+  const includes = (mask.includes || []).map((points, polygonIndex) => {
+    const center = polygonCenter(points);
+    return `<g data-effect-mask-include="${polygonIndex}">
+      <path class="effectGuideMaskInclude" data-effect-mask-shape="include" data-effect-polygon-index="${polygonIndex}" d="${geometryPathData(points)}"></path>
+      ${includeEditable ? `<circle class="effectGuideCenter effectGuideMaskMove" cx="${center.x}" cy="${center.y}" r="14" data-effect-handle="mask-move" data-effect-polygon-index="${polygonIndex}"></circle>` : ""}
+      ${renderEffectPolygonControls(points, "maskInclude", { polygonIndex, editable: includeEditable })}
+    </g>`;
+  }).join("");
+  const cutouts = (mask.cutouts || []).map((points, polygonIndex) => {
+    const center = polygonCenter(points);
+    return `<g data-effect-mask-cutout="${polygonIndex}">
+      <path class="effectGuideMaskCutout" data-effect-mask-shape="cutout" data-effect-polygon-index="${polygonIndex}" d="${geometryPathData(points)}"></path>
+      ${cutoutEditable ? `<circle class="effectGuideCenter effectGuideMaskCutoutMove" cx="${center.x}" cy="${center.y}" r="14" data-effect-handle="mask-cutout-move" data-effect-polygon-index="${polygonIndex}"></circle>` : ""}
+      ${renderEffectPolygonControls(points, "maskCutout", { polygonIndex, editable: cutoutEditable })}
+    </g>`;
+  }).join("");
+  return `<g class="effectGuideMaskLayer" data-effect-mask-layer>${includes}${cutouts}</g>`;
+}
+
+function polygonCenter(points) {
+  const xs = (points || []).map((point) => point.x);
+  const ys = (points || []).map((point) => point.y);
+  if (!xs.length) return { x: 0, y: 0 };
+  return {
+    x: Math.round((Math.min(...xs) + Math.max(...xs)) / 2),
+    y: Math.round((Math.min(...ys) + Math.max(...ys)) / 2)
+  };
+}
+
+function renderEffectGeometryShape(effect, options = {}) {
+  const geometry = effect.geometry;
+  const sourceEditable = options.editable !== false && (walkPathEditor.effectEditScope || "source") === "source";
+  const mask = options.includeMask === false ? "" : renderMaskGuide(effect, options);
+  const center = effectGeometryCenter(geometry);
+  if (geometry.type === "polygon") {
+    const outer = `<path class="effectGuideShape" data-effect-shape="source" d="${geometryPathData(geometry.points)}"></path>`;
+    const cutouts = (geometry.cutouts || []).map((points, cutoutIndex) => `<path class="effectGuideCutout" data-effect-source-cutout-shape="${cutoutIndex}" d="${geometryPathData(points)}"></path>${
+      renderEffectPolygonControls(points, "sourceCutout", { cutoutIndex, editable: sourceEditable })
+    }`).join("");
+    return `${outer}${cutouts}${renderEffectPolygonControls(geometry.points, "source", { editable: sourceEditable })}${mask}`;
+  }
+  if (geometry.type === "ellipse") return `
+    <ellipse class="effectGuideShape" data-effect-shape="source" cx="${geometry.x}" cy="${geometry.y}" rx="${geometry.width / 2}" ry="${geometry.height / 2}"></ellipse>
+    ${sourceEditable ? `<circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y}" r="14" data-effect-handle="resize-x"></circle>
+    <circle class="effectGuideHandle" cx="${geometry.x}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize-y"></circle>
+    <circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize"></circle>` : ""}${mask}`;
+  if (geometry.type === "rectangle") return `
+    <rect class="effectGuideShape" data-effect-shape="source" x="${geometry.x - geometry.width / 2}" y="${geometry.y - geometry.height / 2}" width="${geometry.width}" height="${geometry.height}"></rect>
+    ${sourceEditable ? `<circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y}" r="14" data-effect-handle="resize-x"></circle>
+    <circle class="effectGuideHandle" cx="${geometry.x}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize-y"></circle>
+    <circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize"></circle>` : ""}${mask}`;
+  if (geometry.type === "pointRadius" || geometry.type === "point") return `
+    <circle class="effectGuideShape" data-effect-shape="source" cx="${geometry.x}" cy="${geometry.y}" r="${geometry.radius || 28}"></circle>
+    ${sourceEditable && geometry.type === "pointRadius" ? `<circle class="effectGuideHandle" cx="${geometry.x + geometry.radius}" cy="${geometry.y}" r="15" data-effect-handle="radius"></circle>` : ""}${mask}`;
+  if (geometry.type === "directionalEmitter" || geometry.type === "directionalBeam") {
+    const length = geometry.type === "directionalBeam" ? geometry.length : Math.max(120, (geometry.width || 20) * 6);
+    const angle = geometry.directionDeg * Math.PI / 180;
+    const x = geometry.x + Math.cos(angle) * length;
+    const y = geometry.y + Math.sin(angle) * length;
+    const sideX = Math.cos(angle + Math.PI / 2);
+    const sideY = Math.sin(angle + Math.PI / 2);
+    const width = geometry.type === "directionalBeam" ? geometry.startWidth : geometry.width;
+    return `
+      <line class="effectGuideDirection" data-effect-direction-line x1="${geometry.x}" y1="${geometry.y}" x2="${x}" y2="${y}"></line>
+      ${sourceEditable ? `<circle class="effectGuideHandle" cx="${x}" cy="${y}" r="16" data-effect-handle="direction"></circle>
+      <circle class="effectGuideHandle effectGuideWidthHandle" cx="${geometry.x + sideX * width}" cy="${geometry.y + sideY * width}" r="14" data-effect-handle="${geometry.type === "directionalBeam" ? "start-width" : "width"}"></circle>
+      ${geometry.type === "directionalBeam" ? `<circle class="effectGuideHandle effectGuideWidthHandle" cx="${x + sideX * geometry.endWidth}" cy="${y + sideY * geometry.endWidth}" r="14" data-effect-handle="end-width"></circle>` : ""}
+      ${geometry.type === "directionalEmitter" ? `<circle class="effectGuideHandle effectGuideSpreadHandle" cx="${geometry.x + Math.cos(angle - (geometry.spreadDeg || 0) * Math.PI / 360) * length * 0.55}" cy="${geometry.y + Math.sin(angle - (geometry.spreadDeg || 0) * Math.PI / 360) * length * 0.55}" r="13" data-effect-handle="spread"></circle>` : ""}` : ""}${mask}`;
+  }
+  return mask;
+}
+
+function renderEffectGeometryWorkspace() {
+  if (!walkPathEditor.effectGeometryMode) return "";
+  const effect = selectedSceneEffect();
+  if (!effect) return "";
+  const view = walkPathEditor.effectViewBox || { x: 0, y: 0, width: level.world.width, height: level.world.height };
+  const center = effectGeometryCenter(effect.geometry);
+  const selectedVertex = walkPathEditor.selectedEffectVertex;
+  const selectedPolygon = selectedEffectPolygonRef(effect, selectedVertex);
+  const vertex = selectedPolygon?.[selectedVertex?.vertexIndex];
+  const scope = walkPathEditor.effectEditScope || "source";
+  const draft = walkPathEditor.effectPolygonDraft;
+  return `
+    <div class="effectGeometryWorkspace" data-effect-geometry-workspace>
+      <svg viewBox="${view.x} ${view.y} ${view.width} ${view.height}" preserveAspectRatio="xMidYMid meet" data-effect-geometry-background data-effect-geometry-surface="workspace">
+        <rect class="effectWorkspaceBackground" x="${view.x}" y="${view.y}" width="${view.width}" height="${view.height}"></rect>
+        <image href="${level.world.background}" x="0" y="0" width="${level.world.width}" height="${level.world.height}" opacity="${walkPathEditor.effectVisibility === "backgroundOnly" ? 1 : .62}" pointer-events="none"></image>
+        ${walkPathEditor.effectVisibility === "backgroundOnly" ? "" : `<g data-effect-guide="${effect.id}">
+          ${renderEffectGeometryShape(effect, { includeMask: true })}
+          ${scope === "source" ? `<circle class="effectGuideCenter" cx="${center.x}" cy="${center.y}" r="16" data-effect-handle="move"></circle>` : ""}
+          <text class="effectGuideLabel" x="${center.x + 24}" y="${center.y - 28}">${effect.label || effect.id}</text>
+        </g>`}
+        <path class="effectGuideDraftPath" data-effect-draft-path d="${draft?.points?.length ? geometryPathData(draft.points).replace(" Z", "") : ""}"></path>
+        <g data-effect-draft-points>${(draft?.points || []).map((point, index) => `<circle class="effectGuideVertex effectGuideDraftVertex" cx="${point.x}" cy="${point.y}" r="${index ? 11 : 15}"></circle>`).join("")}</g>
+      </svg>
+      <div class="effectGeometryToolbar">
+        <strong>Edit effect geometry · ${effect.label || effect.id}</strong>
+        <div class="effectGeometryModeTabs" role="group" aria-label="Effect geometry scope">
+          ${["source", "mask", "cutout"].map((item) => `<button type="button" data-debug-action="effect-edit-${item}" class="${scope === item ? "editorObjectSelected" : ""}">${item === "source" ? "Source" : item === "mask" ? "Mask" : "Cutout"}</button>`).join("")}
+          <label><input type="checkbox" data-effect-linked-mask ${walkPathEditor.effectLinkedMaskMovement ? "checked" : ""}/> Link source+mask movement</label>
+        </div>
+        <button type="button" data-debug-action="effect-fit-level">Fit level</button>
+        <button type="button" data-debug-action="effect-fit-selected">Fit selected effect</button>
+        <button type="button" data-debug-action="effect-zoom-in">Zoom in</button>
+        <button type="button" data-debug-action="effect-zoom-out">Zoom out</button>
+        ${scope === "source" ? `
+          <button type="button" data-debug-action="effect-draw-source-polygon">${draft?.target === "source" ? "Drawing source..." : "Draw source polygon"}</button>
+          ${effect.geometry.type === "polygon" ? `<button type="button" data-debug-action="effect-add-cutout">Add cutout</button>` : ""}
+          ${["rectangle", "ellipse"].includes(effect.geometry.type) ? `<button type="button" data-debug-action="effect-convert-polygon">Convert to polygon</button>` : ""}
+        ` : ""}
+        ${scope === "mask" ? `
+          <button type="button" data-debug-action="effect-duplicate-mask">Duplicate mask from source</button>
+          <button type="button" data-debug-action="effect-draw-mask-polygon">${draft?.target === "maskInclude" ? "Drawing mask..." : "Draw include polygon"}</button>
+          <button type="button" data-debug-action="effect-reset-mask">Reset mask</button>
+        ` : ""}
+        ${scope === "cutout" ? `
+          <button type="button" data-debug-action="effect-draw-cutout-polygon">${draft?.target === "maskCutout" ? "Drawing cutout..." : "Draw mask cutout"}</button>
+          <button type="button" data-debug-action="effect-add-cutout">Add cutout</button>
+        ` : ""}
+        <button type="button" data-debug-action="effect-reverse-polygon" ${selectedPolygon ? "" : "disabled"}>Reverse point order</button>
+        <button type="button" data-debug-action="effect-center-source-mask" ${effect.mask ? "" : "disabled"}>Center source in mask</button>
+        <button type="button" data-debug-action="effect-delete-vertex" ${vertex ? "" : "disabled"}>Delete vertex</button>
+        ${draft ? `<button type="button" data-debug-action="effect-commit-polygon">Close polygon</button><button type="button" data-debug-action="effect-cancel-polygon">Cancel polygon</button>` : ""}
+        <button type="button" data-debug-action="done-effect-geometry">Done</button>
+        <label>X <input type="number" data-effect-coordinate="x" value="${Math.round(vertex?.x ?? center.x)}"/></label>
+        <label>Y <input type="number" data-effect-coordinate="y" value="${Math.round(vertex?.y ?? center.y)}"/></label>
+        ${effect.geometry.type === "pointRadius" ? `<label>Radius <input type="number" data-effect-coordinate="radius" value="${Math.round(effect.geometry.radius)}"/></label>` : ""}
+        ${["rectangle", "ellipse"].includes(effect.geometry.type) ? `<label>Width <input type="number" data-effect-coordinate="width" value="${Math.round(effect.geometry.width)}"/></label><label>Height <input type="number" data-effect-coordinate="height" value="${Math.round(effect.geometry.height)}"/></label>` : ""}
+        ${effect.geometry.type === "directionalEmitter" ? `<label>Spread <input type="number" data-effect-coordinate="spreadDeg" value="${Math.round(effect.geometry.spreadDeg)}"/></label><label>Width <input type="number" data-effect-coordinate="width" value="${Math.round(effect.geometry.width)}"/></label>` : ""}
+        ${effect.geometry.type === "directionalBeam" ? `<label>Length <input type="number" data-effect-coordinate="length" value="${Math.round(effect.geometry.length)}"/></label><label>Start width <input type="number" data-effect-coordinate="startWidth" value="${Math.round(effect.geometry.startWidth)}"/></label><label>End width <input type="number" data-effect-coordinate="endWidth" value="${Math.round(effect.geometry.endWidth)}"/></label>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function pointFromEffectWorkspaceEvent(event) {
+  const svg = event.target?.closest?.("svg[data-effect-geometry-surface]") ||
+    document.querySelector("[data-effect-geometry-workspace] svg") ||
+    document.querySelector(".sceneEffectGuides");
+  if (!svg) return { x: 0, y: 0 };
+  const point = svg.createSVGPoint();
+  point.x = event.clientX;
+  point.y = event.clientY;
+  const worldPoint = point.matrixTransform(svg.getScreenCTM().inverse());
+  return {
+    x: Math.round(Math.max(-2000, Math.min(level.world.width + 2000, worldPoint.x))),
+    y: Math.round(Math.max(-2000, Math.min(level.world.height + 2000, worldPoint.y)))
+  };
+}
+
+function setEffectViewZoom(scale) {
+  const current = walkPathEditor.effectViewBox || { x: 0, y: 0, width: level.world.width, height: level.world.height };
+  const center = { x: current.x + current.width / 2, y: current.y + current.height / 2 };
+  const width = Math.max(120, Math.min(level.world.width * 2, current.width * scale));
+  const height = width * (current.height / current.width);
+  walkPathEditor.effectViewBox = { x: center.x - width / 2, y: center.y - height / 2, width, height };
+  render();
+}
+
+function fitSelectedEffectGeometry() {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  const bounds = window.AtlasSceneEffects.geometryBounds(effect.geometry);
+  const padding = Math.max(60, Math.max(bounds.width, bounds.height) * 0.3);
+  const width = Math.max(180, bounds.width + padding * 2);
+  const height = Math.max(140, bounds.height + padding * 2);
+  walkPathEditor.effectViewBox = { x: bounds.x - padding, y: bounds.y - padding, width, height };
+  render();
+}
+
+function addEffectCutout() {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  const targetMask = (walkPathEditor.effectEditScope || "source") === "cutout";
+  if (!targetMask && effect.geometry.type !== "polygon") return;
+  const bounds = targetMask && window.AtlasSceneEffects.maskBounds(effect.mask)
+    ? window.AtlasSceneEffects.maskBounds(effect.mask)
+    : window.AtlasSceneEffects.geometryBounds(effect.geometry);
+  const center = targetMask && window.AtlasSceneEffects.maskBounds(effect.mask)
+    ? { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }
+    : effectGeometryCenter(effect.geometry);
+  const radius = Math.max(24, Math.min(bounds.width, bounds.height) * 0.14);
+  const polygon = [
+    { x: Math.round(center.x - radius), y: Math.round(center.y + radius * .7) },
+    { x: Math.round(center.x), y: Math.round(center.y - radius) },
+    { x: Math.round(center.x + radius), y: Math.round(center.y + radius * .7) }
+  ];
+  if (targetMask) {
+    const mask = ensureEffectMask(effect);
+    mask.cutouts.push(polygon);
+    walkPathEditor.selectedEffectVertex = { target: "maskCutout", polygonIndex: mask.cutouts.length - 1, vertexIndex: 0 };
+  } else {
+    effect.geometry.cutouts ||= [];
+    effect.geometry.cutouts.push(polygon);
+    walkPathEditor.selectedEffectVertex = { target: "sourceCutout", cutoutIndex: effect.geometry.cutouts.length - 1, vertexIndex: 0 };
+  }
+  updateEffectGeometry(`${effect.label}: cutout added.`);
+}
+
+function deleteSelectedEffectVertex() {
+  const effect = selectedSceneEffect();
+  const selected = walkPathEditor.selectedEffectVertex;
+  if (!effect || !selected) return;
+  const points = selectedEffectPolygonRef(effect, selected);
+  if (!points || points.length <= 3) return;
+  points.splice(selected.vertexIndex, 1);
+  walkPathEditor.selectedEffectVertex = null;
+  updateEffectGeometry(`${effect.label}: vertex deleted.`);
+}
+
+function insertEffectVertex(edgeIndex, selection = {}) {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  const points = selectedEffectPolygonRef(effect, selection);
+  if (!points?.length) return;
+  const from = points[edgeIndex];
+  const to = points[(edgeIndex + 1) % points.length];
+  const point = { x: Math.round((from.x + to.x) / 2), y: Math.round((from.y + to.y) / 2) };
+  points.splice(edgeIndex + 1, 0, point);
+  walkPathEditor.selectedEffectVertex = { ...selection, vertexIndex: edgeIndex + 1 };
+  updateEffectGeometry(`${effect.label}: vertex inserted.`);
+}
+
+function updateEffectCoordinate(axis, value) {
+  const effect = selectedSceneEffect();
+  if (!effect || !Number.isFinite(Number(value))) return;
+  const selected = walkPathEditor.selectedEffectVertex;
+  if (selected && ["x", "y"].includes(axis)) {
+    const points = selectedEffectPolygonRef(effect, selected);
+    if (points?.[selected.vertexIndex]) points[selected.vertexIndex][axis] = Math.round(Number(value));
+  } else if (["radius", "width", "height", "length", "startWidth", "endWidth", "spreadDeg"].includes(axis)) {
+    effect.geometry[axis] = Math.max(axis === "spreadDeg" ? 0 : 1, Math.round(Number(value)));
+  } else {
+    const center = effectGeometryCenter(effect.geometry);
+    translateEffectGeometry(effect.geometry, axis === "x" ? Number(value) - center.x : 0, axis === "y" ? Number(value) - center.y : 0);
+  }
+  updateEffectGeometry(`${effect.label}: ${axis} updated.`);
+}
+
+function updateEffectDrag(event) {
+  const drag = walkPathEditor.effectDrag;
+  const effect = selectedSceneEffect();
+  if (!drag || !effect) return;
+  const point = pointFromEffectWorkspaceEvent(event);
+  const geometry = effect.geometry;
+  if (drag.type === "move") {
+    const dx = point.x - drag.last.x;
+    const dy = point.y - drag.last.y;
+    translateEffectGeometry(geometry, dx, dy);
+    if (walkPathEditor.effectLinkedMaskMovement && effect.mask) translateEffectMask(effect.mask, dx, dy);
+    drag.last = point;
+  } else if (drag.type === "mask-move") {
+    const points = effect.mask?.includes?.[drag.polygonIndex];
+    if (points) translatePolygon(points, point.x - drag.last.x, point.y - drag.last.y);
+    drag.last = point;
+  } else if (drag.type === "mask-cutout-move") {
+    const points = effect.mask?.cutouts?.[drag.polygonIndex];
+    if (points) translatePolygon(points, point.x - drag.last.x, point.y - drag.last.y);
+    drag.last = point;
+  } else if (drag.type === "vertex") {
+    const points = selectedEffectPolygonRef(effect, drag);
+    if (points?.[drag.vertexIndex]) points[drag.vertexIndex] = point;
+  } else if (drag.type === "radius") {
+    geometry.radius = Math.max(1, Math.round(Math.hypot(point.x - geometry.x, point.y - geometry.y)));
+  } else if (drag.type === "resize" || drag.type === "resize-x" || drag.type === "resize-y") {
+    if (drag.type !== "resize-y") geometry.width = Math.max(2, Math.round(Math.abs(point.x - geometry.x) * 2));
+    if (drag.type !== "resize-x") geometry.height = Math.max(2, Math.round(Math.abs(point.y - geometry.y) * 2));
+  } else if (drag.type === "width") {
+    const angle = (geometry.directionDeg || 0) * Math.PI / 180 + Math.PI / 2;
+    geometry.width = Math.max(1, Math.round(Math.abs((point.x - geometry.x) * Math.cos(angle) + (point.y - geometry.y) * Math.sin(angle))));
+  } else if (drag.type === "start-width" || drag.type === "end-width") {
+    const angle = (geometry.directionDeg || 0) * Math.PI / 180;
+    const end = { x: geometry.x + Math.cos(angle) * geometry.length, y: geometry.y + Math.sin(angle) * geometry.length };
+    const origin = drag.type === "start-width" ? geometry : end;
+    const side = angle + Math.PI / 2;
+    geometry[drag.type === "start-width" ? "startWidth" : "endWidth"] = Math.max(1, Math.round(Math.abs((point.x - origin.x) * Math.cos(side) + (point.y - origin.y) * Math.sin(side))));
+  } else if (drag.type === "spread") {
+    const base = Math.atan2(point.y - geometry.y, point.x - geometry.x) * 180 / Math.PI;
+    geometry.spreadDeg = Math.max(0, Math.min(180, Math.round(Math.abs(base - (geometry.directionDeg || 0)) * 2)));
+  } else if (drag.type === "resize") {
+    geometry.width = Math.max(2, Math.round(Math.abs(point.x - geometry.x) * 2));
+    geometry.height = Math.max(2, Math.round(Math.abs(point.y - geometry.y) * 2));
+  } else if (drag.type === "direction") {
+    geometry.directionDeg = Math.round(Math.atan2(point.y - geometry.y, point.x - geometry.x) * 180 / Math.PI);
+    if (geometry.type === "directionalBeam") geometry.length = Math.max(1, Math.round(Math.hypot(point.x - geometry.x, point.y - geometry.y)));
+  } else if (drag.type === "pan") {
+    const svg = document.querySelector("[data-effect-geometry-workspace] svg");
+    const view = drag.view;
+    walkPathEditor.effectViewBox = {
+      ...view,
+      x: view.x - (event.clientX - drag.clientX) * view.width / Math.max(1, svg.clientWidth),
+      y: view.y - (event.clientY - drag.clientY) * view.height / Math.max(1, svg.clientHeight)
+    };
+    const next = walkPathEditor.effectViewBox;
+    svg.setAttribute("viewBox", `${next.x} ${next.y} ${next.width} ${next.height}`);
+    return;
+  }
+  sceneEffectRuntime.restart();
+  syncEffectGuideDom(effect);
+}
+
+function setSvgPoint(element, x, y) {
+  if (!element) return;
+  element.setAttribute("cx", String(Math.round(x)));
+  element.setAttribute("cy", String(Math.round(y)));
+}
+
+function syncEffectGuideDom(effect) {
+  if (!effect) return;
+  const geometry = effect.geometry;
+  const center = effectGeometryCenter(geometry);
+  document.querySelectorAll(`[data-effect-guide="${CSS.escape(effect.id)}"]`).forEach((guide) => {
+    const source = guide.querySelector("[data-effect-shape='source']");
+    if (source) {
+      if (geometry.type === "polygon") source.setAttribute("d", geometryPathData(geometry.points));
+      if (geometry.type === "ellipse") {
+        source.setAttribute("cx", geometry.x);
+        source.setAttribute("cy", geometry.y);
+        source.setAttribute("rx", geometry.width / 2);
+        source.setAttribute("ry", geometry.height / 2);
+      }
+      if (geometry.type === "rectangle") {
+        source.setAttribute("x", geometry.x - geometry.width / 2);
+        source.setAttribute("y", geometry.y - geometry.height / 2);
+        source.setAttribute("width", geometry.width);
+        source.setAttribute("height", geometry.height);
+      }
+      if (geometry.type === "point" || geometry.type === "pointRadius") {
+        source.setAttribute("cx", geometry.x);
+        source.setAttribute("cy", geometry.y);
+        source.setAttribute("r", geometry.radius || 28);
+      }
+    }
+    guide.querySelectorAll("[data-effect-vertex-scope='source']").forEach((node) => {
+      const point = geometry.points?.[Number(node.dataset.effectVertex)];
+      if (point) setSvgPoint(node, point.x, point.y);
+    });
+    guide.querySelectorAll("[data-effect-vertex-scope='sourceCutout']").forEach((node) => {
+      const point = geometry.cutouts?.[Number(node.dataset.effectCutout)]?.[Number(node.dataset.effectVertex)];
+      if (point) setSvgPoint(node, point.x, point.y);
+    });
+    guide.querySelectorAll("[data-effect-mask-shape='include']").forEach((node) => {
+      const points = effect.mask?.includes?.[Number(node.dataset.effectPolygonIndex)];
+      if (points) node.setAttribute("d", geometryPathData(points));
+    });
+    guide.querySelectorAll("[data-effect-mask-shape='cutout']").forEach((node) => {
+      const points = effect.mask?.cutouts?.[Number(node.dataset.effectPolygonIndex)];
+      if (points) node.setAttribute("d", geometryPathData(points));
+    });
+    guide.querySelectorAll("[data-effect-vertex-scope='maskInclude']").forEach((node) => {
+      const point = effect.mask?.includes?.[Number(node.dataset.effectPolygonIndex)]?.[Number(node.dataset.effectVertex)];
+      if (point) setSvgPoint(node, point.x, point.y);
+    });
+    guide.querySelectorAll("[data-effect-vertex-scope='maskCutout']").forEach((node) => {
+      const point = effect.mask?.cutouts?.[Number(node.dataset.effectPolygonIndex)]?.[Number(node.dataset.effectVertex)];
+      if (point) setSvgPoint(node, point.x, point.y);
+    });
+    guide.querySelector("[data-effect-handle='move']") && setSvgPoint(guide.querySelector("[data-effect-handle='move']"), center.x, center.y);
+    const label = guide.querySelector(".effectGuideLabel");
+    if (label) {
+      label.setAttribute("x", String(center.x + 24));
+      label.setAttribute("y", String(center.y - 28));
+    }
+  });
+  document.querySelectorAll("[data-effect-coordinate='x']").forEach((input) => { input.value = Math.round(center.x); });
+  document.querySelectorAll("[data-effect-coordinate='y']").forEach((input) => { input.value = Math.round(center.y); });
+}
+
+function nudgeSelectedEffect(dx, dy) {
+  const effect = selectedSceneEffect();
+  if (!effect) return;
+  const selected = walkPathEditor.selectedEffectVertex;
+  if (selected) {
+    const points = selectedEffectPolygonRef(effect, selected);
+    if (points?.[selected.vertexIndex]) {
+      points[selected.vertexIndex].x += dx;
+      points[selected.vertexIndex].y += dy;
+    }
+  } else {
+    translateEffectGeometry(effect.geometry, dx, dy);
+    if (walkPathEditor.effectLinkedMaskMovement && effect.mask) translateEffectMask(effect.mask, dx, dy);
+  }
+  updateEffectGeometry(`${effect.label}: nudged ${dx}, ${dy}.`);
+}
+
 function renderDeveloperToolsPanel() {
   if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
-  if (walkPathEditor.pathMode) return "";
+  if (walkPathEditor.pathMode || walkPathEditor.effectGeometryMode) return "";
 
   if (!EDITOR_DEV_MODE) {
     return `
@@ -3030,6 +4090,19 @@ function renderDeveloperToolsPanel() {
     `;
   }
 
+  if (walkPathEditor.panelCollapsed) {
+    return `
+      <button
+        type="button"
+        class="walkPathEditorRestore"
+        data-debug-action="restore-editor-panel"
+        aria-label="Editorpaneel herstellen"
+      >
+        Editor
+      </button>
+    `;
+  }
+
   const point = walkPathEditor.currentPoint;
   const object = walkPathEditor.currentObject;
   const animal = walkPathEditor.currentAnimal;
@@ -3037,10 +4110,19 @@ function renderDeveloperToolsPanel() {
   const statusClass = `walkPathStatus${walkPathEditor.status}`;
 
   return `
-    <aside class="walkPathEditorPanel" data-developer-tools>
-      <strong>Developer Tools</strong>
+    <aside class="walkPathEditorPanel" data-developer-tools data-current-editor-mode="${walkPathEditor.editorMode}">
+      <div class="walkPathEditorHeader">
+        <strong>Developer Tools</strong>
+        <button type="button" data-debug-action="collapse-editor-panel" aria-label="Editorpaneel inklappen">Minimize</button>
+      </div>
       <span class="developerToolMode">Current Mode: Level Editing</span>
       <span class="${statusClass}">Draft Status: ${walkPathEditor.status}</span>
+      <nav class="editorModeTabs" aria-label="Editor mode">
+        <button type="button" data-editor-mode="objects" class="${walkPathEditor.editorMode === "objects" ? "editorObjectSelected" : ""}">Objects</button>
+        <button type="button" data-editor-mode="effects" class="${walkPathEditor.editorMode === "effects" ? "editorObjectSelected" : ""}">Effects</button>
+      </nav>
+      <p>Real files change only when Apply is pressed.</p>
+      ${walkPathEditor.editorMode === "objects" ? `
       <span>How to use:</span>
       <ol>
         <li>Drag walkPath points</li>
@@ -3052,7 +4134,6 @@ function renderDeveloperToolsPanel() {
         <li>Apply saves level and audio files</li>
         <li>Revert restores the saved path, objects and audio</li>
       </ol>
-      <p>Real files change only when Apply is pressed.</p>
       <span>${
         animal
           ? `${animal.id}: ${animal.x}, ${animal.y}, schaal ${Number(animal.scale).toFixed(2)}`
@@ -3063,7 +4144,7 @@ function renderDeveloperToolsPanel() {
             : "Drag a path point or object."
       }</span>
       ${renderAmbientEditorControls()}
-      <details class="editorSection" open><summary>Audio</summary>${renderAudioEditorControls()}</details>
+      <details class="editorSection" open><summary>Audio</summary>${renderAudioEditorControls()}</details>` : renderSceneEffectsEditorControls()}
       <div class="walkPathEditorActions">
         <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
         <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
@@ -3132,9 +4213,11 @@ function renderWorldStage() {
       >
         <img class="worldArt" src="${level.world.background}" alt="Een doorlopend bospad naar de Vikingtempel" />
         <div class="forestMist"></div>
+        ${renderSceneEffectCanvases()}
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
         ${(level.ambientFlybys || []).map(renderAmbientFlyby).join("")}
         ${debugOverlayEnabled ? renderDebugOverlay() : ""}
+        ${renderSceneEffectGuides()}
         ${level.hotspots.filter(isTargetVisible).map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
         <span
@@ -3155,8 +4238,45 @@ function renderWorldStage() {
         </span>
       </div>
       ${renderFlightPathWorkspace()}
+      ${renderEffectGeometryWorkspace()}
       ${renderDeveloperToolsPanel()}
     </section>
+  `;
+}
+
+function renderSceneEffectCanvases() {
+  if (!(level.sceneEffects || []).some((effect) => effect?.enabled !== false)) return "";
+  return window.AtlasSceneEffects.LAYER_SLOTS.map((slot) => `
+    <canvas class="sceneEffectsCanvas" data-scene-effects-canvas="${slot}" aria-hidden="true"></canvas>
+  `).join("");
+}
+
+function renderSceneEffectGuides() {
+  if (!EDITOR_DEV_MODE || !debugOverlayEnabled || walkPathEditor.editorMode !== "effects" || walkPathEditor.effectGeometryMode || !walkPathEditor.showEffectGuides) return "";
+  const effects = (level.sceneEffects || []).filter((effect) => effect.enabled !== false);
+  return `
+    <svg class="sceneEffectGuides" viewBox="0 0 ${level.world.width} ${level.world.height}" preserveAspectRatio="none" data-effect-geometry-surface="scene" aria-hidden="true">
+      ${effects.map((effect) => {
+        const geometry = effect.geometry;
+        const isSelected = effect.id === walkPathEditor.selectedEffectId;
+        const selected = isSelected ? " sceneEffectGuideSelected" : "";
+        if (isSelected) {
+          const center = effectGeometryCenter(geometry);
+          return `<g data-effect-guide="${effect.id}" class="sceneEffectGuideInteractive">
+            ${renderEffectGeometryShape(effect, { includeMask: true })}
+            ${(walkPathEditor.effectEditScope || "source") === "source" ? `<circle class="effectGuideCenter" cx="${center.x}" cy="${center.y}" r="17" data-effect-handle="move"></circle>` : ""}
+            <text class="effectGuideLabel" x="${center.x + 24}" y="${center.y - 28}">${effect.label || effect.id}</text>
+          </g>`;
+        }
+        if (geometry.type === "polygon") return `<path class="sceneEffectGuide${selected}" d="${geometryPathData(geometry.points)}"></path>`;
+        if (geometry.type === "ellipse") return `<ellipse class="sceneEffectGuide${selected}" cx="${geometry.x}" cy="${geometry.y}" rx="${geometry.width / 2}" ry="${geometry.height / 2}"></ellipse>`;
+        if (geometry.type === "rectangle") return `<rect class="sceneEffectGuide${selected}" x="${geometry.x - geometry.width / 2}" y="${geometry.y - geometry.height / 2}" width="${geometry.width}" height="${geometry.height}"></rect>`;
+        if (geometry.type === "point" || geometry.type === "pointRadius") return `<circle class="sceneEffectGuide${selected}" cx="${geometry.x}" cy="${geometry.y}" r="${geometry.radius || 28}"></circle>`;
+        const length = geometry.type === "directionalBeam" ? geometry.length : Math.max(120, (geometry.width || 20) * 6);
+        const angle = geometry.directionDeg * Math.PI / 180;
+        return `<line class="sceneEffectGuide${selected}" x1="${geometry.x}" y1="${geometry.y}" x2="${geometry.x + Math.cos(angle) * length}" y2="${geometry.y + Math.sin(angle) * length}"></line>`;
+      }).join("")}
+    </svg>
   `;
 }
 
@@ -3556,12 +4676,14 @@ function renderLevelTile(item) {
 }
 
 function renderIntro() {
+  const theme = level.theme || level.subtitle;
   return `
     <main class="introScreen">
       <img class="introBackdrop" src="${level.world.background}" alt="${level.title}" />
       <section class="introPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.title}</h1>
+        ${theme ? `<p class="introTheme">${theme}</p>` : ""}
         <p>${level.intro[0]}</p>
         <button class="secondaryButton" type="button" data-action="menu">Terug</button>
         <button class="primaryButton" type="button" data-action="intro-next">Start avontuur</button>
@@ -3672,6 +4794,8 @@ function renderCorrect() {
 
 function renderReward() {
   const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
+  const progressLabel = level.progressLabelPlural || "runen";
+  const rewardBadge = level.reward?.badge || `${state.completedRunes.size}/${level.runes.length} ${progressLabel}`;
   return `
     <main class="rewardScreen">
       <img class="rewardArt" src="${level.reward.art}" alt="Sven voor de geopende tempelpoort" />
@@ -3679,10 +4803,10 @@ function renderReward() {
         <p class="eyebrow">${level.id}</p>
         <h1>${level.reward.title}</h1>
         <p>${level.reward.line}</p>
-        <div class="badge">${level.reward.badge}</div>
+        <div class="badge">${rewardBadge}</div>
         <div class="stats">
-          <span>${state.answered} sommen</span>
-          <span>${getAccuracy()}% in een keer goed</span>
+          <span>${state.answered} opdrachten</span>
+          <span>${getAccuracy()}% in één keer goed</span>
           <span>${state.attempts} pogingen</span>
         </div>
         ${
@@ -3750,12 +4874,98 @@ function render() {
   syncAmbientAnimalTimers();
   syncGuideBlinkTimers();
   ambientFlybyRuntime.sync();
+  sceneEffectRuntime.sync();
   const editorPanel = document.querySelector("[data-developer-tools]");
   if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const editorMode = event.target.closest(".editorModeTabs button[data-editor-mode]");
+  if (editorMode) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.editorMode = editorMode.dataset.editorMode;
+    render();
+    return;
+  }
+  const effectSelector = event.target.closest("[data-select-effect]");
+  if (effectSelector) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.selectedEffectId = effectSelector.dataset.selectEffect;
+    sceneEffectRuntime.setVisibility("all", walkPathEditor.selectedEffectId);
+    walkPathEditor.effectVisibility = "all";
+    render();
+    return;
+  }
+  const addEffectTarget = event.target.closest("[data-add-effect]");
+  if (addEffectTarget) {
+    event.preventDefault();
+    event.stopPropagation();
+    const select = document.querySelector(`[data-effect-library-variant="${CSS.escape(addEffectTarget.dataset.addEffect)}"]`);
+    addSceneEffect(addEffectTarget.dataset.addEffect, select?.value);
+    return;
+  }
+  const resetEffectFieldTarget = event.target.closest("[data-effect-reset-field]");
+  if (resetEffectFieldTarget) {
+    event.preventDefault();
+    resetSceneEffectField(resetEffectFieldTarget.dataset.effectResetField);
+    return;
+  }
+  const resetEffectSectionTarget = event.target.closest("[data-effect-reset-section]");
+  if (resetEffectSectionTarget) {
+    event.preventDefault();
+    resetSceneEffectSection(resetEffectSectionTarget.dataset.effectResetSection);
+    return;
+  }
+  const shareGroupFieldTarget = event.target.closest("[data-share-group-field]");
+  if (shareGroupFieldTarget) {
+    event.preventDefault();
+    const field = shareGroupFieldTarget.dataset.shareGroupField;
+    updateSceneEffectGroup(field, effectControlValue(selectedSceneEffect(), field));
+    return;
+  }
+  const effectVertex = event.target.closest("[data-effect-vertex]");
+  if (effectVertex) {
+    event.preventDefault();
+    event.stopPropagation();
+    walkPathEditor.selectedEffectVertex = {
+      target: effectVertex.dataset.effectVertexScope || "source",
+      polygonIndex: effectVertex.dataset.effectPolygonIndex === "" ? undefined : Number(effectVertex.dataset.effectPolygonIndex),
+      cutoutIndex: effectVertex.dataset.effectCutout === "" ? null : Number(effectVertex.dataset.effectCutout),
+      vertexIndex: Number(effectVertex.dataset.effectVertex)
+    };
+    render();
+    return;
+  }
+  const effectEdge = event.target.closest("[data-effect-edge]");
+  if (effectEdge) {
+    event.preventDefault();
+    event.stopPropagation();
+    insertEffectVertex(Number(effectEdge.dataset.effectEdge), {
+      target: effectEdge.dataset.effectEdgeScope || "source",
+      polygonIndex: effectEdge.dataset.effectPolygonIndex === "" ? undefined : Number(effectEdge.dataset.effectPolygonIndex),
+      cutoutIndex: effectEdge.dataset.effectCutout === "" ? null : Number(effectEdge.dataset.effectCutout)
+    });
+    return;
+  }
+  const effectHandleClick = event.target.closest("[data-effect-handle]");
+  if (effectHandleClick && walkPathEditor.editorMode === "effects") {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
+  if (event.target.closest(".sceneEffectGuides") && walkPathEditor.editorMode === "effects") {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
+  if (event.target.closest("[data-effect-geometry-workspace]") && !event.target.closest("[data-debug-action], input, label, [data-effect-handle], [data-effect-vertex], [data-effect-edge]")) {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
   const ambientSelector = event.target.closest("[data-select-ambient-type]");
   if (ambientSelector) {
     event.preventDefault();
@@ -3816,6 +5026,14 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     playSfx("uiClick");
     const action = debugActionTarget.dataset.debugAction;
+    if (action === "collapse-editor-panel") {
+      walkPathEditor.panelCollapsed = true;
+      render();
+    }
+    if (action === "restore-editor-panel") {
+      walkPathEditor.panelCollapsed = false;
+      render();
+    }
     if (action === "apply-walkpath") applyWalkPathDraft();
     if (action === "revert-walkpath") revertWalkPathDraft();
     if (action === "preview-animal-blink") {
@@ -3855,6 +5073,84 @@ app.addEventListener("click", (event) => {
       walkPathEditor.addingFlybyPoint = false;
       render();
     }
+    if (action === "edit-effect-geometry") {
+      walkPathEditor.effectGeometryMode = true;
+      walkPathEditor.effectViewBox = { x: 0, y: 0, width: level.world.width, height: level.world.height };
+      walkPathEditor.selectedEffectVertex = null;
+      walkPathEditor.effectPolygonDraft = null;
+      render();
+    }
+    if (action === "done-effect-geometry") {
+      walkPathEditor.effectGeometryMode = false;
+      walkPathEditor.effectDrag = null;
+      walkPathEditor.effectPolygonDraft = null;
+      render();
+    }
+    if (action === "effect-edit-source" || action === "effect-edit-mask" || action === "effect-edit-cutout") {
+      walkPathEditor.effectEditScope = action.replace("effect-edit-", "");
+      walkPathEditor.selectedEffectVertex = null;
+      walkPathEditor.effectPolygonDraft = null;
+      render();
+    }
+    if (action === "duplicate-effect") duplicateSceneEffect();
+    if (action === "delete-effect") deleteSceneEffect();
+    if (action === "copy-effect") copySceneEffect();
+    if (action === "paste-effect") pasteSceneEffect();
+    if (action === "create-effect-group") createSceneEffectGroup();
+    if (action === "reset-effect") resetSceneEffect();
+    if (action === "effect-play") sceneEffectRuntime.play();
+    if (action === "effect-pause") sceneEffectRuntime.pause();
+    if (action === "effect-restart") sceneEffectRuntime.restart();
+    if (action === "effect-new-seed") {
+      const seed = sceneEffectRuntime.generateSeed(walkPathEditor.selectedEffectId);
+      if (seed !== null) {
+        markEditorModified(`${walkPathEditor.selectedEffectId}: seed ${seed}.`);
+        render();
+      }
+    }
+    if (action === "effect-toggle-guides") {
+      walkPathEditor.showEffectGuides = !walkPathEditor.showEffectGuides;
+      render();
+    }
+    if (action === "effect-toggle-selected") {
+      walkPathEditor.effectVisibility = walkPathEditor.effectVisibility === "selectedHidden" ? "all" : "selectedHidden";
+      sceneEffectRuntime.setVisibility(walkPathEditor.effectVisibility, walkPathEditor.selectedEffectId);
+      render();
+    }
+    if (action === "effect-isolate") {
+      walkPathEditor.effectVisibility = "isolate";
+      sceneEffectRuntime.setVisibility("isolate", walkPathEditor.selectedEffectId);
+      render();
+    }
+    if (action === "effect-show-all") {
+      walkPathEditor.effectVisibility = "all";
+      sceneEffectRuntime.setVisibility("all", walkPathEditor.selectedEffectId);
+      render();
+    }
+    if (action === "effect-background-only") {
+      walkPathEditor.effectVisibility = "backgroundOnly";
+      sceneEffectRuntime.setVisibility("backgroundOnly", walkPathEditor.selectedEffectId);
+      render();
+    }
+    if (action === "effect-fit-level") {
+      walkPathEditor.effectViewBox = { x: 0, y: 0, width: level.world.width, height: level.world.height };
+      render();
+    }
+    if (action === "effect-fit-selected") fitSelectedEffectGeometry();
+    if (action === "effect-zoom-in") setEffectViewZoom(0.75);
+    if (action === "effect-zoom-out") setEffectViewZoom(1.33);
+    if (action === "effect-add-cutout") addEffectCutout();
+    if (action === "effect-delete-vertex") deleteSelectedEffectVertex();
+    if (action === "effect-convert-polygon") updateSceneEffectField("geometryType", "polygon");
+    if (action === "effect-duplicate-mask") duplicateSourceMask(selectedSceneEffect());
+    if (action === "effect-reset-mask") resetEffectMask();
+    if (action === "effect-reverse-polygon") reverseSelectedPolygon();
+    if (action === "effect-center-source-mask") centerSourceInMask();
+    if (action === "effect-draw-source-polygon") startEffectPolygonDraft("source");
+    if (action === "effect-draw-mask-polygon") startEffectPolygonDraft("maskInclude");
+    if (action === "effect-draw-cutout-polygon") startEffectPolygonDraft("maskCutout");
+    if (action === "effect-commit-polygon") commitEffectPolygonDraft();
+    if (action === "effect-cancel-polygon") cancelEffectPolygonDraft();
     return;
   }
 
@@ -3945,6 +5241,11 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const effectColor = event.target.closest("[data-effect-color]");
+  if (effectColor) {
+    updateSceneEffectOverride(effectColor.dataset.effectColor, effectColor.value);
+    return;
+  }
   const animalSetting = event.target.closest("[data-animal-setting]");
   if (animalSetting) {
     if (animalSetting.dataset.animalSetting === "mirrorX") return;
@@ -3968,6 +5269,44 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  const effectOverride = event.target.closest("[data-effect-override]");
+  if (effectOverride) {
+    updateSceneEffectOverride(effectOverride.dataset.effectOverride, effectOverride.value);
+    return;
+  }
+  const effectHex = event.target.closest("[data-effect-hex]");
+  if (effectHex) {
+    updateSceneEffectOverride(effectHex.dataset.effectHex, effectHex.value);
+    return;
+  }
+  const effectField = event.target.closest("[data-effect-field]");
+  if (effectField) {
+    updateSceneEffectField(
+      effectField.dataset.effectField,
+      effectField.type === "checkbox" ? effectField.checked : effectField.value
+    );
+    return;
+  }
+  const linkedMask = event.target.closest("[data-effect-linked-mask]");
+  if (linkedMask) {
+    walkPathEditor.effectLinkedMaskMovement = linkedMask.checked;
+    return;
+  }
+  const effectBlendMode = event.target.closest("[data-effect-blend-mode]");
+  if (effectBlendMode) {
+    const effect = selectedSceneEffect();
+    if (effect) {
+      effect.overrides ||= {};
+      effect.overrides.blendMode = effectBlendMode.value;
+      commitSceneEffects(`${effect.label || effect.id}: blend mode updated.`);
+    }
+    return;
+  }
+  const effectCoordinate = event.target.closest("[data-effect-coordinate]");
+  if (effectCoordinate) {
+    updateEffectCoordinate(effectCoordinate.dataset.effectCoordinate, effectCoordinate.value);
+    return;
+  }
   const coordinate = event.target.closest("[data-flight-point-coordinate]");
   if (coordinate) {
     const flyby = (level.ambientFlybys || []).find((item) => item.id === walkPathEditor.selectedObjectId);
@@ -3993,6 +5332,52 @@ app.addEventListener("change", (event) => {
 
 app.addEventListener("pointerdown", (event) => {
   ensureAudioUnlocked();
+  const effectHandle = event.target.closest("[data-effect-handle]");
+  if (effectHandle && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "effects")) {
+    event.preventDefault();
+    event.stopPropagation();
+    effectHandle.setPointerCapture?.(event.pointerId);
+    walkPathEditor.effectDrag = {
+      type: effectHandle.dataset.effectHandle,
+      polygonIndex: effectHandle.dataset.effectPolygonIndex === "" ? undefined : Number(effectHandle.dataset.effectPolygonIndex),
+      last: pointFromEffectWorkspaceEvent(event)
+    };
+    return;
+  }
+  const effectVertex = event.target.closest("[data-effect-vertex]");
+  if (effectVertex && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "effects")) {
+    event.preventDefault();
+    event.stopPropagation();
+    effectVertex.setPointerCapture?.(event.pointerId);
+    const cutoutIndex = effectVertex.dataset.effectCutout === "" ? null : Number(effectVertex.dataset.effectCutout);
+    const vertexIndex = Number(effectVertex.dataset.effectVertex);
+    const polygonIndex = effectVertex.dataset.effectPolygonIndex === "" ? undefined : Number(effectVertex.dataset.effectPolygonIndex);
+    const target = effectVertex.dataset.effectVertexScope || "source";
+    walkPathEditor.selectedEffectVertex = { target, polygonIndex, cutoutIndex, vertexIndex };
+    walkPathEditor.effectDrag = { type: "vertex", target, polygonIndex, cutoutIndex, vertexIndex };
+    return;
+  }
+  const effectWorkspace = event.target.closest("[data-effect-geometry-workspace]");
+  if (effectWorkspace && walkPathEditor.effectGeometryMode) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (walkPathEditor.effectPolygonDraft) {
+      addEffectDraftPoint(pointFromEffectWorkspaceEvent(event));
+      return;
+    }
+    walkPathEditor.effectDrag = {
+      type: "pan",
+      clientX: event.clientX,
+      clientY: event.clientY,
+      view: { ...(walkPathEditor.effectViewBox || { x: 0, y: 0, width: level.world.width, height: level.world.height }) }
+    };
+    return;
+  }
+  if (event.target.closest(".sceneEffectGuides") && walkPathEditor.editorMode === "effects") {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
   const flybyPoint = event.target.closest("[data-flyby-point]");
   if (flybyPoint && walkPathEditor.pathMode) {
     event.preventDefault();
@@ -4056,6 +5441,11 @@ app.addEventListener("pointerdown", (event) => {
 });
 
 window.addEventListener("pointermove", (event) => {
+  if (walkPathEditor.effectDrag) {
+    event.preventDefault();
+    updateEffectDrag(event);
+    return;
+  }
   if (walkPathEditor.pathPan) {
     event.preventDefault();
     const pan = walkPathEditor.pathPan;
@@ -4095,6 +5485,15 @@ window.addEventListener("pointermove", (event) => {
 });
 
 window.addEventListener("pointerup", () => {
+  if (walkPathEditor.effectDrag && walkPathEditor.effectDrag.type !== "pan") {
+    const effect = selectedSceneEffect();
+    if (effect) {
+      sceneEffectRuntime.prepareLevel(level);
+      markEditorModified(`${effect.label || effect.id}: geometry updated.`);
+      render();
+    }
+  }
+  walkPathEditor.effectDrag = null;
   walkPathEditor.draggingIndex = null;
   walkPathEditor.draggingObjectId = null;
   walkPathEditor.draggingObjectMode = null;
@@ -4107,11 +5506,13 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     pauseAmbientAnimalTimers();
     ambientFlybyRuntime.stopAll();
+    sceneEffectRuntime.stop();
     Object.values(guideBlinkRuntime).forEach(clearGuideBlinkState);
   } else {
     syncAmbientAnimalTimers();
     syncGuideBlinkTimers();
     ambientFlybyRuntime.sync();
+    sceneEffectRuntime.sync();
   }
 });
 
@@ -4119,6 +5520,41 @@ window.addEventListener("resize", updateWorldDom);
 
 window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();
+  const editingText = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement;
+  if (!editingText && walkPathEditor.effectPolygonDraft && ["Enter", "Escape", "Backspace"].includes(event.key)) {
+    event.preventDefault();
+    if (event.key === "Enter") commitEffectPolygonDraft();
+    if (event.key === "Escape") cancelEffectPolygonDraft();
+    if (event.key === "Backspace") {
+      walkPathEditor.effectPolygonDraft.points.pop();
+      syncEffectDraftDom();
+    }
+    return;
+  }
+  if (!editingText && walkPathEditor.effectGeometryMode && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+    event.preventDefault();
+    const amount = event.shiftKey ? 10 : 1;
+    nudgeSelectedEffect(
+      event.key === "ArrowLeft" ? -amount : event.key === "ArrowRight" ? amount : 0,
+      event.key === "ArrowUp" ? -amount : event.key === "ArrowDown" ? amount : 0
+    );
+    return;
+  }
+  if (!editingText && walkPathEditor.editorMode === "effects" && event.ctrlKey && event.key.toLowerCase() === "c") {
+    event.preventDefault();
+    copySceneEffect();
+    return;
+  }
+  if (!editingText && walkPathEditor.editorMode === "effects" && event.ctrlKey && event.key.toLowerCase() === "v") {
+    event.preventDefault();
+    pasteSceneEffect();
+    return;
+  }
+  if (!editingText && walkPathEditor.effectGeometryMode && (event.key === "Delete" || event.key === "Backspace") && walkPathEditor.selectedEffectVertex) {
+    event.preventDefault();
+    deleteSelectedEffectVertex();
+    return;
+  }
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
     event.preventDefault();
     sessionReport?.discard();

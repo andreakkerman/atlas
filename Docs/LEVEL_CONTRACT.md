@@ -114,6 +114,15 @@ Required top-level fields:
 
 `walkGraph` may exist at runtime after derivation, but future authored levels should prefer `walkPath`.
 
+Optional procedural enhancement fields:
+
+* `sceneEffects`
+* `sceneEffectGroups`
+
+Levels that omit these fields retain their previous runtime behavior. See
+`ATLAS_SCENE_EFFECTS_IMPLEMENTATION.md` for the versioned preset, source
+geometry, optional visibility-mask, grouping and semantic-layer contract.
+
 ## World
 
 The world is defined by one background image.

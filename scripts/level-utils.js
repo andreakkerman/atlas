@@ -4,6 +4,7 @@ const vm = require("vm");
 
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
+const sceneEffectsPath = path.join(rootDir, "src", "scene-effects.js");
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
 
 function runScript(filePath, context) {
@@ -52,6 +53,12 @@ function loadLevel(entry) {
 function loadAllLevels() {
   const manifest = loadManifest();
   return manifest.levels.map(loadLevel);
+}
+
+function loadSceneEffectsApi() {
+  const context = { window: {}, console, performance: { now: () => 0 } };
+  runScript(sceneEffectsPath, context);
+  return context.window.AtlasSceneEffects;
 }
 
 function readImageDimensions(filePath) {
@@ -175,6 +182,7 @@ module.exports = {
   rootDir,
   resolveProjectPath,
   loadAllLevels,
+  loadSceneEffectsApi,
   readImageDimensions,
   distance,
   authoredWalkPathPoints,

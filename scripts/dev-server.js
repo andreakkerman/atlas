@@ -1,10 +1,21 @@
 const fs = require("fs");
 const http = require("http");
 const path = require("path");
+const vm = require("vm");
 const { URL } = require("url");
 
 const rootDir = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT || 4173);
+
+function loadSceneEffectsApi() {
+  const context = { window: {}, console, performance: { now: () => 0 } };
+  vm.runInNewContext(fs.readFileSync(path.join(rootDir, "src", "scene-effects.js"), "utf8"), context, {
+    filename: "src/scene-effects.js"
+  });
+  return context.window.AtlasSceneEffects;
+}
+
+const sceneEffectsApi = loadSceneEffectsApi();
 
 function sendJson(response, status, payload) {
   response.writeHead(status, {
@@ -255,6 +266,15 @@ function validateAmbientFlybys(value, levelId) {
   });
 }
 
+function validateSceneEffectPayload(sceneEffects, sceneEffectGroups) {
+  if (!Array.isArray(sceneEffects)) throw new Error("sceneEffects must be an array.");
+  if (!Array.isArray(sceneEffectGroups)) throw new Error("sceneEffectGroups must be an array.");
+  const payload = JSON.parse(JSON.stringify({ sceneEffects, sceneEffectGroups }));
+  const result = sceneEffectsApi.validateLevel(payload);
+  if (!result.valid) throw new Error(result.errors.join(" "));
+  return payload;
+}
+
 function validateVolume(value, label) {
   if (!Number.isFinite(value) || value < 0 || value > 1) {
     throw new Error(`${label} must be a number between 0 and 1.`);
@@ -380,6 +400,14 @@ function formatAmbientFlybys(ambientFlybys) {
   return `ambientFlybys: ${formatValue(ambientFlybys)}`;
 }
 
+function formatSceneEffects(sceneEffects) {
+  return `sceneEffects: ${formatValue(sceneEffects)}`;
+}
+
+function formatSceneEffectGroups(groups) {
+  return `sceneEffectGroups: ${formatValue(groups)}`;
+}
+
 function findArrayPropertyRange(source, propertyName) {
   const keyIndex = source.indexOf(`${propertyName}:`);
   if (keyIndex === -1) throw new Error(`level.js does not contain ${propertyName}.`);
@@ -423,21 +451,71 @@ function findArrayPropertyRange(source, propertyName) {
   throw new Error(`${propertyName} array was not closed.`);
 }
 
-function applyLevelDraft(levelId, draft) {
+function loadLevelDefinition(levelId) {
   const filePath = levelPath(levelId);
-  let source = fs.readFileSync(filePath, "utf8");
-  if (draft.interactiveObjects) {
-    const range = findArrayPropertyRange(source, "interactiveObjects");
-    source = `${source.slice(0, range.start)}${formatInteractiveObjects(draft.interactiveObjects)}${source.slice(range.end)}`;
+  const source = fs.readFileSync(filePath, "utf8");
+  const context = { window: { SVEN_LEVEL_DEFINITIONS: {} } };
+  vm.createContext(context);
+  vm.runInContext(source, context, { filename: filePath });
+  const level = context.window.SVEN_LEVEL_DEFINITIONS?.[levelId];
+  if (!level || typeof level !== "object") {
+    throw new Error(`level.js does not define ${levelId}.`);
   }
-  if (draft.ambientAnimals) source = upsertArrayProperty(source, "ambientAnimals", formatAmbientAnimals(draft.ambientAnimals));
-  if (draft.ambientFlybys) source = upsertArrayProperty(source, "ambientFlybys", formatAmbientFlybys(draft.ambientFlybys));
-  if (draft.walkPath) {
-    const range = findArrayPropertyRange(source, "walkPath");
-    source = `${source.slice(0, range.start)}${formatWalkPath(draft.walkPath)}${source.slice(range.end)}`;
-  }
-  const updated = source;
-  fs.writeFileSync(filePath, updated);
+  return level;
+}
+
+function writeLevelDefinitionAtomic(levelId, level) {
+  const filePath = levelPath(levelId);
+  const source = `window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};\n\nwindow.SVEN_LEVEL_DEFINITIONS[${JSON.stringify(levelId)}] = ${JSON.stringify(level, null, 2)};\n`;
+  const tempPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
+  fs.writeFileSync(tempPath, source);
+  fs.renameSync(tempPath, filePath);
+}
+
+function syncLegacyObjectsGeometry(level) {
+  if (!Array.isArray(level.objects)) return;
+  const walkNodes = new Map((Array.isArray(level.walkPath) ? level.walkPath : []).map((point) => [point.id, point]));
+  const interactiveById = new Map((level.interactiveObjects || []).map((object) => [object.id, object]));
+  level.objects = level.objects.map((object) => {
+    const interactive = interactiveById.get(object.id);
+    if (!interactive) return object;
+    const approach = interactive.approachNode ? walkNodes.get(interactive.approachNode) : null;
+    return {
+      ...object,
+      x: interactive.center.x,
+      y: interactive.center.y,
+      radius: interactive.radius,
+      approach: approach ? { x: approach.x, y: approach.y } : object.approach
+    };
+  });
+}
+
+function syncPlayerStart(level) {
+  const startNodeId = level.player?.startNode;
+  if (!startNodeId || !Array.isArray(level.walkPath)) return;
+  const startNode = level.walkPath.find((point) => point.id === startNodeId);
+  if (!startNode) return;
+  level.player = {
+    ...level.player,
+    start: { x: startNode.x, y: startNode.y }
+  };
+}
+
+function applyLevelDraft(levelId, draft) {
+  const level = loadLevelDefinition(levelId);
+  const hadSceneEffects = Object.prototype.hasOwnProperty.call(level, "sceneEffects");
+  const hadSceneEffectGroups = Object.prototype.hasOwnProperty.call(level, "sceneEffectGroups");
+
+  if (draft.walkPath) level.walkPath = draft.walkPath;
+  if (draft.interactiveObjects) level.interactiveObjects = draft.interactiveObjects;
+  if (draft.ambientAnimals) level.ambientAnimals = draft.ambientAnimals;
+  if (draft.ambientFlybys) level.ambientFlybys = draft.ambientFlybys;
+  if (draft.sceneEffects && (draft.sceneEffects.length || hadSceneEffects)) level.sceneEffects = draft.sceneEffects;
+  if (draft.sceneEffectGroups && (draft.sceneEffectGroups.length || hadSceneEffectGroups)) level.sceneEffectGroups = draft.sceneEffectGroups;
+
+  syncPlayerStart(level);
+  syncLegacyObjectsGeometry(level);
+  writeLevelDefinitionAtomic(levelId, level);
 }
 
 function upsertArrayProperty(source, propertyName, formatted) {
@@ -492,7 +570,7 @@ async function handleDevRequest(request, response, url) {
     if (request.method === "GET" && action === "editor-draft") {
       const filePath = draftPath(levelId);
       if (!fs.existsSync(filePath)) {
-        sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, ambientFlybys: null, audioConfig: null });
+        sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, ambientFlybys: null, sceneEffects: null, sceneEffectGroups: null, audioConfig: null });
         return true;
       }
       sendJson(response, 200, JSON.parse(fs.readFileSync(filePath, "utf8")));
@@ -517,14 +595,19 @@ async function handleDevRequest(request, response, url) {
         draft.ambientAnimals = validateAmbientAnimals(body.ambientAnimals, levelId);
       }
       if (body.ambientFlybys !== undefined) draft.ambientFlybys = validateAmbientFlybys(body.ambientFlybys, levelId);
+      if (body.sceneEffects !== undefined || body.sceneEffectGroups !== undefined) {
+        const validated = validateSceneEffectPayload(body.sceneEffects || [], body.sceneEffectGroups || []);
+        draft.sceneEffects = validated.sceneEffects;
+        draft.sceneEffectGroups = validated.sceneEffectGroups;
+      }
       if (draft.ambientAnimals || draft.ambientFlybys) {
         const ids = [...(draft.ambientAnimals || body.ambientAnimals || []), ...(draft.ambientFlybys || body.ambientFlybys || [])]
           .map((item) => item.id);
         if (new Set(ids).size !== ids.length) throw new Error("Configured ambient instance IDs must be unique.");
       }
       if (body.audioConfig !== undefined) draft.audioConfig = validateAudioConfig(body.audioConfig);
-      if (!draft.walkPath && !draft.interactiveObjects && !draft.ambientAnimals && !draft.ambientFlybys && !draft.audioConfig) {
-        throw new Error("Request must include walkPath, interactiveObjects, ambientAnimals, ambientFlybys or audioConfig.");
+      if (!draft.walkPath && !draft.interactiveObjects && !draft.ambientAnimals && !draft.ambientFlybys && !draft.sceneEffects && !draft.sceneEffectGroups && !draft.audioConfig) {
+        throw new Error("Request must include level editor data.");
       }
 
       if (action === "editor-draft") {
@@ -538,7 +621,7 @@ async function handleDevRequest(request, response, url) {
       }
 
       if (action === "apply-editor") {
-        if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals || draft.ambientFlybys) applyLevelDraft(levelId, draft);
+        if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals || draft.ambientFlybys || draft.sceneEffects || draft.sceneEffectGroups) applyLevelDraft(levelId, draft);
         if (draft.audioConfig) applyAudioConfigDraft(draft.audioConfig);
         const filePath = draftPath(levelId);
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);

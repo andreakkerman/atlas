@@ -252,5 +252,82 @@ window.SVEN_LEVEL_MANIFEST = {
         detail: "Heide, uitzicht en thuiskomen op de Posbank"
       }
     }
+    ,
+    {
+      id: "LVL-0021",
+      title: "Leonardo’s onvoltooide atlas",
+      subtitle: "Reis door Italië en ontdek hoe Leonardo keek, mat, onderzocht en ontwierp.",
+      script: "Levels/LVL-0021/level.js",
+      menu: {
+        illustration: "Levels/LVL-0021/assets/rome.png",
+        badge: "6 plekken",
+        detail: "Rome, Proceno, Umbrie, Marche, Florence en Vinci"
+      }
+    },
+    {
+      id: "LVL-0022",
+      title: "Proceno - Meten en Bouwen",
+      subtitle: "Meet, bouw en onderzoek mechanismen in Proceno.",
+      script: "Levels/LVL-0022/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0021",
+      menu: {
+        illustration: "Levels/LVL-0022/assets/proceno.png",
+        badge: "Verbonden gebied",
+        detail: "Meettafels, brugmodel, put en poortmechanisme"
+      }
+    },
+    {
+      id: "LVL-0023",
+      title: "Umbrie - Water en Stroming",
+      subtitle: "Onderzoek waterstand, ventielen, waterrad en waterklok.",
+      script: "Levels/LVL-0023/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0022",
+      menu: {
+        illustration: "Levels/LVL-0023/assets/umbria.png",
+        badge: "Verbonden gebied",
+        detail: "Waterstand, stroming en timing"
+      }
+    },
+    {
+      id: "LVL-0024",
+      title: "Marche - Vlucht en Wind",
+      subtitle: "Test vleugels, balans en wind in de heuvels van Marche.",
+      script: "Levels/LVL-0024/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0023",
+      menu: {
+        illustration: "Levels/LVL-0024/assets/marche.png",
+        badge: "Verbonden gebied",
+        detail: "Vleugels, tegengewichten en veilige windtesten"
+      }
+    },
+    {
+      id: "LVL-0025",
+      title: "Florence - Perspectief en Kleur",
+      subtitle: "Werk met perspectief, patronen, pigment en katrollen.",
+      script: "Levels/LVL-0025/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0024",
+      menu: {
+        illustration: "Levels/LVL-0025/assets/florence.png",
+        badge: "Verbonden gebied",
+        detail: "Atelier, perspectief, kleur en werkplaatstijd"
+      }
+    },
+    {
+      id: "LVL-0026",
+      title: "Vinci - Het Nieuwe Ontwerp",
+      subtitle: "Combineer eerdere principes in Leonardo's werkplaats.",
+      script: "Levels/LVL-0026/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0025",
+      menu: {
+        illustration: "Levels/LVL-0026/assets/vinci.png",
+        badge: "Finale",
+        detail: "Water, licht, codex, vleugel en ontwerp"
+      }
+    }
   ]
 };

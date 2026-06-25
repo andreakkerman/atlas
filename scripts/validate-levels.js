@@ -5,6 +5,7 @@ const vm = require("vm");
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
 const audioConfigPath = path.join(rootDir, "src", "audio-config.js");
+const sceneEffectsPath = path.join(rootDir, "src", "scene-effects.js");
 const requiredSfxKeys = [
   "uiClick",
   "challengeOpen",
@@ -38,6 +39,7 @@ const forbiddenCompanionTextPatterns = [
 ];
 
 const errors = [];
+let sceneEffectsApi = null;
 
 function fail(message) {
   errors.push(message);
@@ -124,6 +126,15 @@ function assertProjectAssetExists(relativePath, ownerLabel) {
   }
 
   return resolved;
+}
+
+function loadSceneEffectsApi() {
+  if (sceneEffectsApi) return sceneEffectsApi;
+  const context = { window: {}, console, performance: { now: () => 0 } };
+  if (!runScript(sceneEffectsPath, context, "Scene effects registry")) return null;
+  sceneEffectsApi = context.window.AtlasSceneEffects;
+  if (!sceneEffectsApi) fail("src/scene-effects.js must define window.AtlasSceneEffects.");
+  return sceneEffectsApi;
 }
 
 function assertCentralAmbientAsset(relativePath, ownerLabel, optional = false) {
@@ -559,6 +570,25 @@ function validateAmbientAnimals(level, world, label) {
   });
 }
 
+function validateSceneEffects(level, label) {
+  if (level.sceneEffects === undefined && level.sceneEffectGroups === undefined) return;
+  if (level.sceneEffects !== undefined && !Array.isArray(level.sceneEffects)) {
+    fail(`${label}.sceneEffects must be an array.`);
+    return;
+  }
+  if (level.sceneEffectGroups !== undefined && !Array.isArray(level.sceneEffectGroups)) {
+    fail(`${label}.sceneEffectGroups must be an array.`);
+    return;
+  }
+  const api = loadSceneEffectsApi();
+  if (!api) return;
+  const result = api.validateLevel({
+    sceneEffects: level.sceneEffects || [],
+    sceneEffectGroups: level.sceneEffectGroups || []
+  });
+  result.errors.forEach((message) => fail(`${label}.${message}`));
+}
+
 function validateReferences(level, objects, nodeIds, label) {
   if (!Array.isArray(level.hotspots)) fail(`${label}.hotspots must be an array.`);
   if (!Array.isArray(level.runes) || level.runes.length === 0) fail(`${label}.runes must be a non-empty array.`);
@@ -862,6 +892,7 @@ function validateLevel(entry) {
   const { nodeIds } = validateWalkGraph(level, world, label);
   const objects = validateInteractiveObjects(level, world, nodeIds, label);
   validateAmbientAnimals(level, world, label);
+  validateSceneEffects(level, label);
   validatePlayer(level, world, nodeIds, label);
   validateReferences(level, objects, nodeIds, label);
   validateCompanionAuthoring(level, objects, label);

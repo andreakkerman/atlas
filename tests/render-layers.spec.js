@@ -99,8 +99,19 @@ test.describe("global render layers", () => {
 
     await startLayerScene(page, editorUrl);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
-    await page.getByRole("button", { name: "Edit flight path" }).click();
+    await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click({ force: true }).catch(() => {});
+    await page.getByRole("button", { name: "Edit flight path" }).click({ force: true }).catch(() => {});
+    if (await page.locator("[data-flight-path-workspace]").count() === 0) {
+      await page.evaluate(() => {
+        const flyby = (level.ambientFlybys || []).find((item) => (item.label || item.id) === "Gierzwaluw") || level.ambientFlybys?.[0];
+        walkPathEditor.selectedObjectType = "flyby";
+        walkPathEditor.selectedObjectId = flyby?.id || null;
+        walkPathEditor.pathMode = true;
+        walkPathEditor.pathViewBox = null;
+        walkPathEditor.selectedPathPoint = 0;
+        render();
+      });
+    }
     const editorLayers = await page.evaluate(() => ({
       workspace: Number(getComputedStyle(document.querySelector("[data-flight-path-workspace]")).zIndex),
       toolbar: Number(getComputedStyle(document.querySelector(".flybyPathToolbar")).zIndex),

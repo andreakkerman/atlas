@@ -5,7 +5,8 @@ window.SVEN_AUDIO_CONFIG = {
       "runeCompass": "assets/audio/music/rune-compass.mp3",
       "nautilus": "assets/audio/music/nautilus.mp3",
       "minecraft": "assets/audio/music/minecraft.mp3",
-      "europeGrandTour": "assets/audio/music/europe_grand_tour.mp3"
+      "europeGrandTour": "assets/audio/music/europe_grand_tour.mp3",
+      "leonardoLevel": "assets/audio/music/leonardo-level.mp3"
     },
     "ambience": {
       "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
@@ -26,7 +27,13 @@ window.SVEN_AUDIO_CONFIG = {
       "europeOostenrijk": "assets/audio/ambience/europe/oostenrijk.mp3",
       "europeNoorwegen": "assets/audio/ambience/europe/noorwegen.mp3",
       "europeZweden": "assets/audio/ambience/europe/zweden.mp3",
-      "europeRheden": "assets/audio/ambience/europe/rheden.mp3"
+      "europeRheden": "assets/audio/ambience/europe/rheden.mp3",
+      "leonardoRome": "assets/audio/ambience/leonardo/rome.mp3",
+      "leonardoProceno": "assets/audio/ambience/leonardo/proceno.mp3",
+      "leonardoUmbria": "assets/audio/ambience/leonardo/umbria.mp3",
+      "leonardoMarche": "assets/audio/ambience/leonardo/marche.mp3",
+      "leonardoFlorence": "assets/audio/ambience/leonardo/florence.mp3",
+      "leonardoVinci": "assets/audio/ambience/leonardo/vinci.mp3"
     },
     "sfx": {
       "uiClick": "assets/audio/sfx/ui-click.mp3",
@@ -168,6 +175,42 @@ window.SVEN_AUDIO_CONFIG = {
       "ambience": "europeRheden",
       "musicVolume": 0.24,
       "ambienceVolume": 0.24
+    },
+    "LVL-0021": {
+      "music": "leonardoLevel",
+      "ambience": "leonardoRome",
+      "musicVolume": 0.27,
+      "ambienceVolume": 0.71
+    },
+    "LVL-0022": {
+      "music": "leonardoLevel",
+      "ambience": "leonardoProceno",
+      "musicVolume": 0.27,
+      "ambienceVolume": 0.87
+    },
+    "LVL-0023": {
+      "music": "leonardoLevel",
+      "ambience": "leonardoUmbria",
+      "musicVolume": 0.26,
+      "ambienceVolume": 0.63
+    },
+    "LVL-0024": {
+      "music": "leonardoLevel",
+      "ambience": "leonardoMarche",
+      "musicVolume": 0.26,
+      "ambienceVolume": 1
+    },
+    "LVL-0025": {
+      "music": "leonardoLevel",
+      "ambience": "leonardoFlorence",
+      "musicVolume": 0.27,
+      "ambienceVolume": 1
+    },
+    "LVL-0026": {
+      "music": "leonardoLevel",
+      "ambience": "leonardoVinci",
+      "musicVolume": 0.25,
+      "ambienceVolume": 0.93
     }
   },
   "volumes": {

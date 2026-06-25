@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v8";
+const CACHE_NAME = "svenadventure-static-v10";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -6,6 +6,7 @@ const CORE_ASSETS = [
   "src/styles.css",
   "src/session-report.js",
   "src/ambient-system.js",
+  "src/scene-effects.js",
   "src/app.js",
   "src/audio-config.js",
   "Levels/manifest.js",
@@ -21,8 +22,17 @@ const CORE_ASSETS = [
   "assets/audio/guides/cat_purr_moose2.mp3",
   "assets/sven-stage.png",
   "assets/audio/music/menu.mp3",
+  "assets/audio/music/leonardo-level.mp3",
+  "assets/audio/ambience/leonardo/rome.mp3",
+  "assets/audio/ambience/leonardo/proceno.mp3",
+  "assets/audio/ambience/leonardo/umbria.mp3",
+  "assets/audio/ambience/leonardo/marche.mp3",
+  "assets/audio/ambience/leonardo/florence.mp3",
+  "assets/audio/ambience/leonardo/vinci.mp3",
   "Levels/LVL-0001/assets/level-1-wide-world.png",
-  "Levels/LVL-0004/assets/nautilus-harbor.png"
+  "Levels/LVL-0004/assets/nautilus-harbor.png",
+  "Levels/LVL-0021/assets/rome.png",
+  "Levels/LVL-0021/assets/leonardo-da-vinci.png"
 ];
 
 self.addEventListener("install", (event) => {

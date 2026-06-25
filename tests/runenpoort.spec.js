@@ -571,9 +571,12 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /Ontdek vijf blokkenkamers/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Reis door Europa/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Reis door zeven Europese landen/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Leonardo/ })).toBeVisible();
+    await expect(page.getByRole("button", { name: /Reis door Italië/ })).toBeVisible();
     await expect(page.getByText("3 plekken", { exact: true })).toBeVisible();
     await expect(page.getByText("4 plekken", { exact: true })).toBeVisible();
     await expect(page.getByText("5 plekken", { exact: true })).toBeVisible();
+    await expect(page.getByText("6 plekken", { exact: true })).toBeVisible();
     await expect(page.getByText("8 plekken", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
@@ -584,7 +587,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /De Strandkamer/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Netherproef/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Weg Naar Huis/ })).toHaveCount(0);
-    await expect(page.locator(".levelTile")).toHaveCount(4);
+    await expect(page.locator(".levelTile")).toHaveCount(5);
     const tiles = await page.locator(".levelTile").evaluateAll((nodes) =>
       nodes.map((node) => {
         const box = node.getBoundingClientRect();
@@ -594,9 +597,9 @@ test.describe("SvenAdventure", () => {
     for (const tile of tiles) {
       expect(tile.width).toBeGreaterThan(tile.height * 2);
     }
-    expect(tiles[1].y).toBeGreaterThan(tiles[0].y + tiles[0].height);
-    expect(tiles[2].y).toBeGreaterThan(tiles[1].y + tiles[1].height);
-    expect(tiles[3].y).toBeGreaterThan(tiles[2].y + tiles[2].height);
+    for (let index = 1; index < tiles.length; index += 1) {
+      expect(tiles[index].y).toBeGreaterThan(tiles[index - 1].y + tiles[index - 1].height);
+    }
     expect(Math.abs(tiles[0].x - tiles[1].x)).toBeLessThan(2);
     expect(Math.abs(tiles[1].x - tiles[2].x)).toBeLessThan(2);
     expect(Math.abs(tiles[2].x - tiles[3].x)).toBeLessThan(2);
@@ -1288,25 +1291,43 @@ test.describe("SvenAdventure", () => {
     await startAdventure(page);
     await page.evaluate(() => {
       Math.random = () => 0;
+      window.eval("guideBlinkRuntime.minnie.ready = true");
+      window.eval("guideBlinkRuntime.moose.ready = true");
     });
 
     const before = await page.locator(".teamMessage").textContent();
+    await page.evaluate(() => window.eval("runGuideBlink")("minnie", { doubleBlink: true }));
+    await expect(page.locator('[data-guide-image="minnie"]')).toHaveAttribute("src", "assets/guides/minnie_blink.png");
     await tap(page.locator('[data-purr-guide="minnie"]'));
     await expect(page.locator('[data-purr-guide="minnie"]')).toHaveClass(/teamPortraitPurring/);
+    await expect(page.locator('[data-guide-image="minnie"]')).toHaveAttribute("src", "assets/guides/minnie.png");
     const first = await page.evaluate(() => ({
       guide: window.eval("audioState.purringGuide"),
       key: window.eval("audioState.lastPurrByGuide.minnie"),
-      message: window.eval("state.guideMessage.text")
+      message: window.eval("state.guideMessage.text"),
+      blinking: window.eval("guideBlinkRuntime.minnie.blinking"),
+      pendingFrames: window.eval("guideBlinkRuntime.minnie.sequenceTimers.size")
     }));
-    expect(first).toEqual({ guide: "minnie", key: "minnie1", message: before });
+    expect(first).toEqual({ guide: "minnie", key: "minnie1", message: before, blinking: false, pendingFrames: 0 });
 
     await tap(page.locator('[data-purr-guide="moose"]'));
     expect(await page.evaluate(() => window.eval("audioState.purringGuide"))).toBe("minnie");
     await expect(page.locator(".teamMessage")).toHaveText(before);
 
     await page.evaluate(() => window.eval("audioState.purr").dispatchEvent(new Event("ended")));
+    await expect(page.locator('[data-purr-guide="minnie"]')).not.toHaveClass(/teamPortraitPurring/);
     await tap(page.locator('[data-purr-guide="minnie"]'));
     expect(await page.evaluate(() => window.eval("audioState.lastPurrByGuide.minnie"))).toBe("minnie2");
+    await page.evaluate(() => window.eval("audioState.purr").dispatchEvent(new Event("ended")));
+
+    await page.evaluate(() => window.eval("runGuideBlink")("moose", { doubleBlink: true }));
+    await expect(page.locator('[data-guide-image="moose"]')).toHaveAttribute("src", "assets/guides/moose_blink.png");
+    await tap(page.locator('[data-purr-guide="moose"]'));
+    await expect(page.locator('[data-purr-guide="moose"]')).toHaveClass(/teamPortraitPurring/);
+    await expect(page.locator('[data-guide-image="moose"]')).toHaveAttribute("src", "assets/guides/moose.png");
+    expect(await page.evaluate(() => window.eval("audioState.lastPurrByGuide.moose"))).toBe("moose1");
+    await page.evaluate(() => window.eval("audioState.purr").dispatchEvent(new Event("ended")));
+    await expect(page.locator('[data-purr-guide="moose"]')).not.toHaveClass(/teamPortraitPurring/);
   });
 
   test("keeps Minnie left and Moose right when the active speaker changes", async ({ page }) => {
