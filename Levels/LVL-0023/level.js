@@ -968,9 +968,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "id": "marcheGate",
       "type": "exit",
       "name": "Pad naar Marche",
-      "x": 2051,
-      "y": 407,
-      "radius": 90,
+      "x": 2015,
+      "y": 391,
+      "radius": 73,
       "approach": {
         "x": 2003,
         "y": 541
@@ -987,7 +987,150 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
     }
   ],
   "ambientAnimals": [],
-  "ambientFlybys": [],
+  "ambientFlybys": [
+    {
+      "id": "ButterflyUmbrie1",
+      "label": "ButterflyUmbrie1",
+      "frameA": "assets/ambient/flybys/butterfly/butterfly-a.png",
+      "frameB": "assets/ambient/flybys/butterfly/butterfly-b.png",
+      "sound": "",
+      "path": [
+        {
+          "x": 294,
+          "y": 237
+        },
+        {
+          "x": 450,
+          "y": 360
+        },
+        {
+          "x": 646,
+          "y": 381
+        },
+        {
+          "x": 813,
+          "y": 336
+        },
+        {
+          "x": 918,
+          "y": 389
+        },
+        {
+          "x": 1090,
+          "y": 323
+        },
+        {
+          "x": 1174,
+          "y": 385
+        },
+        {
+          "x": 1413,
+          "y": 284
+        },
+        {
+          "x": 1619,
+          "y": 345
+        },
+        {
+          "x": 1833,
+          "y": 292
+        },
+        {
+          "x": 2030,
+          "y": 327
+        },
+        {
+          "x": 2216,
+          "y": 267
+        }
+      ],
+      "scale": 0.22,
+      "speed": 340,
+      "flapFrequencyHz": 10,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 8000,
+      "intervalMaxMs": 22000,
+      "syncKey": "ButterFlyGroupUmbrie",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    },
+    {
+      "id": "ButterflyUmbrie1-copy",
+      "label": "ButterflyUmbrie1 kopie",
+      "frameA": "assets/ambient/flybys/butterfly/butterfly-a.png",
+      "frameB": "assets/ambient/flybys/butterfly/butterfly-b.png",
+      "sound": "",
+      "path": [
+        {
+          "x": 294,
+          "y": 237
+        },
+        {
+          "x": 463,
+          "y": 334
+        },
+        {
+          "x": 649,
+          "y": 392
+        },
+        {
+          "x": 827,
+          "y": 319
+        },
+        {
+          "x": 929,
+          "y": 404
+        },
+        {
+          "x": 1093,
+          "y": 307
+        },
+        {
+          "x": 1208,
+          "y": 389
+        },
+        {
+          "x": 1396,
+          "y": 299
+        },
+        {
+          "x": 1603,
+          "y": 374
+        },
+        {
+          "x": 1812,
+          "y": 301
+        },
+        {
+          "x": 2018,
+          "y": 346
+        },
+        {
+          "x": 2216,
+          "y": 267
+        }
+      ],
+      "scale": 0.18,
+      "speed": 340,
+      "flapFrequencyHz": 10,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 8000,
+      "intervalMaxMs": 22000,
+      "syncKey": "ButterFlyGroupUmbrie",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    }
+  ],
   "description": "Umbrie: Water en stroming.",
   "storageKey": "lvl-0023-progress",
   "progressKey": "lvl-0023-completed",
@@ -1096,10 +1239,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "id": "marcheGate",
       "type": "exit",
       "center": {
-        "x": 2051,
-        "y": 407
+        "x": 2015,
+        "y": 391
       },
-      "radius": 90,
+      "radius": 73,
       "approachNode": "marcheGate-approach",
       "label": "Pad naar Marche"
     }

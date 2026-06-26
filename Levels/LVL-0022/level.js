@@ -738,7 +738,113 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
     }
   ],
   "ambientAnimals": [],
-  "ambientFlybys": [],
+  "ambientFlybys": [
+    {
+      "id": "SwiftProceno1",
+      "label": "SwiftProceno1",
+      "frameA": "assets/ambient/flybys/common-swift/common-swift-a.png",
+      "frameB": "assets/ambient/flybys/common-swift/common-swift-b.png",
+      "sound": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+      "path": [
+        {
+          "x": 340,
+          "y": 136
+        },
+        {
+          "x": 909,
+          "y": 56
+        },
+        {
+          "x": 1666,
+          "y": -12
+        }
+      ],
+      "scale": 0.05,
+      "speed": 420,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 5000,
+      "intervalMaxMs": 20000,
+      "syncKey": "SwiftGroupProceno",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    },
+    {
+      "id": "SwiftProceno1-copy",
+      "label": "SwiftProceno1 kopie",
+      "frameA": "assets/ambient/flybys/common-swift/common-swift-a.png",
+      "frameB": "assets/ambient/flybys/common-swift/common-swift-b.png",
+      "sound": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+      "path": [
+        {
+          "x": 337,
+          "y": 120
+        },
+        {
+          "x": 913,
+          "y": 88
+        },
+        {
+          "x": 1714,
+          "y": -15
+        }
+      ],
+      "scale": 0.04,
+      "speed": 420,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 5000,
+      "intervalMaxMs": 20000,
+      "syncKey": "SwiftGroupProceno",
+      "startDelayMs": 50,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    },
+    {
+      "id": "SwiftProceno1-copy-copy",
+      "label": "SwiftProceno1 kopie kopie",
+      "frameA": "assets/ambient/flybys/common-swift/common-swift-a.png",
+      "frameB": "assets/ambient/flybys/common-swift/common-swift-b.png",
+      "sound": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+      "path": [
+        {
+          "x": 339,
+          "y": 103
+        },
+        {
+          "x": 909,
+          "y": 52
+        },
+        {
+          "x": 1714,
+          "y": -15
+        }
+      ],
+      "scale": 0.04,
+      "speed": 420,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 5000,
+      "intervalMaxMs": 20000,
+      "syncKey": "SwiftGroupProceno",
+      "startDelayMs": 50,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    }
+  ],
   "description": "Proceno: Meten en bouwen.",
   "storageKey": "lvl-0022-progress",
   "progressKey": "lvl-0022-completed",

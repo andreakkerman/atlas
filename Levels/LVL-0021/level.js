@@ -744,7 +744,113 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
     }
   ],
   "ambientAnimals": [],
-  "ambientFlybys": [],
+  "ambientFlybys": [
+    {
+      "id": "SwiftRome1",
+      "label": "SwiftRome1",
+      "frameA": "assets/ambient/flybys/common-swift/common-swift-a.png",
+      "frameB": "assets/ambient/flybys/common-swift/common-swift-b.png",
+      "sound": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+      "path": [
+        {
+          "x": 629,
+          "y": 138
+        },
+        {
+          "x": 957,
+          "y": 142
+        },
+        {
+          "x": 1403,
+          "y": -13
+        }
+      ],
+      "scale": 0.05,
+      "speed": 420,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 6000,
+      "intervalMaxMs": 20000,
+      "syncKey": "SwiftGroupRome",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    },
+    {
+      "id": "SwiftRome1-copy",
+      "label": "SwiftRome1 kopie",
+      "frameA": "assets/ambient/flybys/common-swift/common-swift-a.png",
+      "frameB": "assets/ambient/flybys/common-swift/common-swift-b.png",
+      "sound": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+      "path": [
+        {
+          "x": 630,
+          "y": 127
+        },
+        {
+          "x": 955,
+          "y": 123
+        },
+        {
+          "x": 1530,
+          "y": -15
+        }
+      ],
+      "scale": 0.05,
+      "speed": 420,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 6000,
+      "intervalMaxMs": 20000,
+      "syncKey": "SwiftGroupRome",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    },
+    {
+      "id": "SwiftRome1-copy-copy",
+      "label": "SwiftRome1 kopie kopie",
+      "frameA": "assets/ambient/flybys/common-swift/common-swift-a.png",
+      "frameB": "assets/ambient/flybys/common-swift/common-swift-b.png",
+      "sound": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+      "path": [
+        {
+          "x": 630,
+          "y": 127
+        },
+        {
+          "x": 955,
+          "y": 123
+        },
+        {
+          "x": 1530,
+          "y": -15
+        }
+      ],
+      "scale": 0.04,
+      "speed": 420,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": true,
+      "mirrorX": false,
+      "intervalMinMs": 6000,
+      "intervalMaxMs": 20000,
+      "syncKey": "SwiftGroupRome",
+      "startDelayMs": 50,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": true,
+      "maxRotationDeg": 8
+    }
+  ],
   "description": "Rome: Observatie en licht.",
   "storageKey": "lvl-0021-progress",
   "progressKey": "lvl-0021-completed",
