@@ -206,8 +206,93 @@ test.describe("scene effects registry and runtime", () => {
       preset.recommendedBudget > 0 &&
       preset.hardCap >= preset.recommendedBudget &&
       preset.hardRangeFields.length > 0 &&
+      typeof preset.renderer === "string" &&
       preset.qualityScale.balanced < preset.qualityScale.high
     )).toBe(true);
+  });
+
+  test("resolves priority presets into distinct visual identities", async ({ page }) => {
+    await page.goto(gameUrl);
+    const signatures = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
+      const read = (presetId, variantId) => {
+        const effect = api.defaultInstance(presetId, variantId, level.world, level.sceneEffects.length);
+        level.sceneEffects.push(effect);
+        const resolved = api.resolve(effect, level, { quality: "high", reducedMotion: false });
+        return {
+          renderer: resolved.preset.renderer,
+          variant: resolved.variant.id,
+          particleShape: resolved.particleShape,
+          motionProfile: resolved.motionProfile,
+          emissive: resolved.emissive,
+          glow: resolved.glow,
+          amount: resolved.amount,
+          speed: resolved.speed,
+          lifetime: resolved.lifetime,
+          opacity: resolved.opacity,
+          particleCap: resolved.particleCap,
+          sparkAmount: resolved.sparkAmount,
+          glowProfile: resolved.glowProfile,
+          primaryColor: resolved.primaryColor,
+          highlightDensity: resolved.highlightDensity
+        };
+      };
+      return {
+        pollen: read("ambient-floating-particles", "warm-pollen"),
+        sunDust: read("ambient-floating-particles", "sun-dust"),
+        ancientDust: read("ambient-floating-particles", "fine-ancient-dust"),
+        magicMotes: read("ambient-floating-particles", "magic-motes"),
+        embers: read("sparks-and-embers", "floating-embers"),
+        forgeSparks: read("sparks-and-embers", "forge-sparks"),
+        fireflies: read("living-lights", "forest-fireflies"),
+        fog: read("atmospheric-fog", "harbor-haze"),
+        chimneySmoke: read("smoke-and-steam", "chimney-smoke"),
+        steam: read("smoke-and-steam", "steam-vent"),
+        water: read("water-surface", "harbor-water"),
+        glint: read("surface-glint", "wet-stone"),
+        bubbles: read("bubbles-and-spray", "rising-bubbles"),
+        fountainSparkle: read("bubbles-and-spray", "fountain-sparkle"),
+        rune: read("magical-glow", "rune"),
+        torch: read("light-source-enhancement", "wall-torch")
+      };
+    });
+
+    expect(signatures.pollen).toMatchObject({ renderer: "particleField", motionProfile: "windDrift", emissive: false, glow: 0 });
+    expect(signatures.pollen.particleShape).not.toBe(signatures.fireflies.particleShape);
+    expect(signatures.fireflies).toMatchObject({ motionProfile: "livingWander", particleShape: "fireflyCore", emissive: true });
+    expect(signatures.fireflies.particleCap).toBeLessThan(signatures.pollen.particleCap);
+
+    expect(signatures.sunDust).toMatchObject({ motionProfile: "windDrift", particleShape: "dustSpeck", emissive: false, glow: 0 });
+    expect(signatures.magicMotes).toMatchObject({ motionProfile: "orbitFocus", particleShape: "sparkle", emissive: true });
+    expect(signatures.ancientDust.amount).toBeLessThan(signatures.pollen.amount);
+    expect(signatures.ancientDust.opacity).toBeLessThan(signatures.pollen.opacity);
+
+    expect(signatures.embers).toMatchObject({ motionProfile: "upwardEmber", particleShape: "ember", emissive: true });
+    expect(signatures.forgeSparks).toMatchObject({ motionProfile: "upwardEmber", particleShape: "sparkle" });
+    expect(signatures.embers.motionProfile).not.toBe(signatures.fireflies.motionProfile);
+    expect(signatures.forgeSparks.motionProfile).not.toBe(signatures.magicMotes.motionProfile);
+
+    expect(signatures.fog.renderer).toBe("fogField");
+    expect(signatures.chimneySmoke.renderer).toBe("plumeEmitter");
+    expect(signatures.steam.renderer).toBe("plumeEmitter");
+    expect(signatures.steam.lifetime).toBeLessThan(signatures.chimneySmoke.lifetime);
+    expect(signatures.steam.speed).toBeGreaterThan(signatures.chimneySmoke.speed);
+    expect(signatures.steam.opacity).toBeLessThan(signatures.chimneySmoke.opacity);
+
+    expect(signatures.water.renderer).toBe("surfaceShimmer");
+    expect(signatures.glint.renderer).toBe("surfaceGlint");
+    expect(signatures.glint.amount).toBeLessThan(signatures.water.amount);
+    expect(signatures.glint.highlightDensity).toBeLessThan(signatures.water.highlightDensity);
+
+    expect(signatures.bubbles).toMatchObject({ motionProfile: "risingBubble", particleShape: "bubble", emissive: false });
+    expect(signatures.fountainSparkle).toMatchObject({ motionProfile: "fountainSpray", particleShape: "sparkle" });
+    expect(signatures.bubbles.motionProfile).not.toBe(signatures.fireflies.motionProfile);
+    expect(signatures.bubbles.motionProfile).not.toBe(signatures.magicMotes.motionProfile);
+
+    expect(signatures.rune).toMatchObject({ renderer: "glowField", glowProfile: "magicalPulse", motionProfile: "orbitFocus" });
+    expect(signatures.torch).toMatchObject({ renderer: "glowField", glowProfile: "warmFlicker", motionProfile: "upwardEmber" });
+    expect(signatures.torch.sparkAmount).toBeGreaterThan(signatures.rune.sparkAmount);
   });
 
   test("keeps levels without effects unchanged", async ({ page }) => {
@@ -468,6 +553,11 @@ test.describe("scene effects editor", () => {
     await page.keyboard.press("Control+Shift+D");
     await page.getByRole("button", { name: "Effects", exact: true }).click();
     await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
+    const pollenCard = await page.locator("[data-effect-preset-card='ambient-floating-particles']").textContent();
+    expect(pollenCard).toContain("Best for:");
+    expect(pollenCard).toContain("Avoid for:");
+    expect(pollenCard).toContain("Looks like:");
+    expect(pollenCard).toContain("Sunlit forests");
     await addPresetEffect(page, "water-surface");
     await expect(page.locator("[data-effect-property-panel]")).toBeVisible();
     await expect(page.locator(".sceneEffectGuides")).toHaveCount(1);
@@ -676,6 +766,7 @@ test.describe("scene effects editor", () => {
   });
 
   test("supports direct source, polygon, emitter and independent mask pointer editing", async ({ page }) => {
+    test.slow();
     await openEffectsEditor(page);
 
     await page.locator("[data-effect-preset-card='light-source-enhancement'] [data-effect-library-variant]").selectOption("wall-torch");

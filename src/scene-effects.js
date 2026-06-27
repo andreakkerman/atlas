@@ -85,8 +85,13 @@
         fadeOut: 0.28, edgeFeatherPx: 22, pulseAmount: 0.12, pulseRate: 0.7,
         windStrength: 0.12, plumeExpansion: 0.55, startWidth: 40, endWidth: 150,
         particleCap: 80, depthBands: 3, highlightDensity: 0.65, burstiness: 0.2,
-        flickerAmount: 0.18, sparkAmount: 0.08, warmth: 0.7
+        flickerAmount: 0.18, sparkAmount: 0.08, warmth: 0.7,
+        particleShape: "softDot", motionProfile: "windDrift", emissive: false,
+        glowProfile: "soft"
       },
+      bestFor: "General atmospheric detail.",
+      avoidFor: "Scenes where a more specific effect communicates better.",
+      visualSignature: "Soft marks with gentle motion.",
       qualityScale: { high: 1, balanced: 0.68, reduced: 0.38 },
       reducedMotion: { speed: 0.18, amount: 0.48, pulseAmount: 0.22, flickerAmount: 0.2 },
       geometryTypes: ["pointRadius"],
@@ -115,78 +120,108 @@
     "light-source-enhancement": preset({
       id: "light-source-enhancement", name: "Light source enhancement", category: "Light and fire",
       description: "Flicker, warm glow, light spill and restrained sparks for painted lights.",
+      bestFor: "Torches, candles, lanterns, braziers, warm windows and beacons.",
+      avoidFor: "Magical runes, broad fog, water, or effects that should move freely.",
+      visualSignature: "Warm object-bound glow with controlled flicker and rare upward sparks.",
       renderer: "glowField", layerSlot: "worldLight", geometryTypes: ["point", "pointRadius", "ellipse"],
       variants: [
-        variant("wall-torch", "Wall torch"), variant("large-brazier", "Large brazier", { size: 1.35, sparkAmount: 0.18 }),
-        variant("candle", "Candle", { intensity: 0.38, size: 0.42 }), variant("lantern", "Lantern", { flickerAmount: 0.08 }),
-        variant("window-glow", "Window glow", { intensity: 0.5, softness: 0.9 }), variant("beacon", "Beacon", { intensity: 0.9, size: 1.7 })
+        variant("wall-torch", "Wall torch", { intensity: 1.05, size: 0.9, glow: 1.05, flickerAmount: 0.3, sparkAmount: 0.14, pulseRate: 1.0 }),
+        variant("large-brazier", "Large brazier", { intensity: 1.08, size: 1.42, glow: 1.05, sparkAmount: 0.24, pulseRate: 0.8 }),
+        variant("candle", "Candle", { intensity: 0.58, size: 0.5, flickerAmount: 0.16, sparkAmount: 0.025, glow: 0.52 }),
+        variant("lantern", "Lantern", { intensity: 0.78, flickerAmount: 0.08, sparkAmount: 0, pulseAmount: 0.055, softness: 0.72, glow: 0.68 }),
+        variant("window-glow", "Window glow", { intensity: 0.72, softness: 0.95, glow: 0.55, sparkAmount: 0, pulseAmount: 0.04 }),
+        variant("beacon", "Beacon", { intensity: 1.12, size: 1.72, glow: 1.08, sparkAmount: 0.14, pulseRate: 0.35, pulseAmount: 0.2 })
       ],
+      defaults: { ...preset({}).defaults, intensity: 0.88, amount: 0.72, glow: 0.88, softness: 0.52, opacity: 0.86, particleCap: 92, glowProfile: "warmFlicker", emissive: true, particleShape: "ember", motionProfile: "upwardEmber" },
       controls: ["intensity", "amount", "speed", "size", "glow", "softness", "flickerAmount", "sparkAmount", "warmth", "pulseRate", "particleCap"]
     }),
     "magical-glow": preset({
       id: "magical-glow", name: "Magical glow", category: "Magic",
       description: "Emissive core, soft bloom, controlled pulse and optional motes.",
+      bestFor: "Runes, crystals, portals, altars and magical locks.",
+      avoidFor: "Natural insects, dust, smoke, fire sources or generic water sparkle.",
+      visualSignature: "Cool object-bound pulse with small orbiting energy flecks.",
       renderer: "glowField", layerSlot: "worldLight", geometryTypes: ["pointRadius", "ellipse", "polygon"],
       variants: [
-        variant("rune", "Rune"), variant("crystal", "Crystal", { pulseRate: 0.45 }),
-        variant("sacred", "Sacred", { primaryColor: "#FFF2A6", secondaryColor: "#9CF2E9" }),
-        variant("arcane", "Arcane", { primaryColor: "#A98BFF", glowColor: "#735BFF" }),
-        variant("warning", "Warning", { primaryColor: "#FF695C", glowColor: "#D72B3F" }),
-        variant("portal", "Portal", { intensity: 0.9, pulseAmount: 0.25, size: 1.4 })
+        variant("rune", "Rune", { primaryColor: "#65E7FF", secondaryColor: "#B7F9FF", glowColor: "#4A8EFF", pulseRate: 0.58, pulseAmount: 0.2, particleShape: "sparkle" }),
+        variant("crystal", "Crystal", { primaryColor: "#BDEEFF", glowColor: "#8C86FF", pulseRate: 0.46, particleShape: "sparkle", amount: 0.5, glow: 1.16 }),
+        variant("sacred", "Sacred", { primaryColor: "#FFF2A6", secondaryColor: "#FFFFFF", glowColor: "#9CF2E9", pulseRate: 0.34, pulseAmount: 0.08 }),
+        variant("arcane", "Arcane", { primaryColor: "#A98BFF", secondaryColor: "#8DEAFF", glowColor: "#735BFF", pulseRate: 0.58, pulseAmount: 0.18 }),
+        variant("warning", "Warning", { primaryColor: "#FF695C", glowColor: "#D72B3F", pulseRate: 0.85, pulseAmount: 0.16 }),
+        variant("portal", "Portal", { intensity: 1.05, pulseAmount: 0.28, pulseRate: 0.32, size: 1.4, amount: 0.65 })
       ],
+      defaults: { ...preset({}).defaults, intensity: 0.88, amount: 0.46, speed: 0.45, glow: 1.08, opacity: 0.86, sparkAmount: 0, particleCap: 38, particleShape: "sparkle", motionProfile: "orbitFocus", emissive: true, glowProfile: "magicalPulse" },
       controls: ["intensity", "amount", "speed", "size", "glow", "softness", "pulseAmount", "pulseRate", "particleCap"]
     }),
     "ambient-floating-particles": preset({
       id: "ambient-floating-particles", name: "Ambient floating particles", category: "Atmosphere",
       description: "Layered environmental particles with organic drift and soft fades.",
+      bestFor: "Sunlit forests, meadows, old ruins, dusty interiors and soft air movement.",
+      avoidFor: "Fire sources, living insects, magical objects, bubbles or smoke plumes.",
+      visualSignature: "Non-glowing flecks drifting with wind and depth.",
       renderer: "particleField", geometryTypes: ["rectangle", "ellipse", "polygon"],
       defaultGeometry: { type: "rectangle", x: 500, y: 340, width: 620, height: 300 },
       variants: [
-        variant("warm-pollen", "Warm pollen"), variant("sun-dust", "Sun dust", { primaryColor: "#FFF4C2" }),
-        variant("fine-ancient-dust", "Fine ancient dust", { amount: 0.42, size: 0.6 }),
-        variant("spores", "Spores", { primaryColor: "#C8EFA2", speed: 0.4 }),
-        variant("magic-motes", "Magic motes", { primaryColor: "#8DEAFF", glow: 0.9 }),
-        variant("ash-drift", "Ash drift", { primaryColor: "#B8AAA0", acceleration: 0.12 })
+        variant("warm-pollen", "Warm pollen", { primaryColor: "#FFE08A", secondaryColor: "#FFF6C7", particleShape: "elongatedMote", amount: 0.68, speed: 0.4, size: 0.78, glow: 0, opacity: 0.66 }),
+        variant("sun-dust", "Sun dust", { primaryColor: "#FFF1C8", secondaryColor: "#FFF8DD", particleShape: "dustSpeck", amount: 0.48, size: 0.64, speed: 0.24, glow: 0, opacity: 0.58 }),
+        variant("fine-ancient-dust", "Fine ancient dust", { primaryColor: "#D2C8B6", secondaryColor: "#F2E7D5", particleShape: "dustSpeck", amount: 0.38, size: 0.54, speed: 0.18, glow: 0, opacity: 0.46, turbulence: 0.2 }),
+        variant("spores", "Spores", { primaryColor: "#D8F6AD", secondaryColor: "#F4FFD0", particleShape: "softDot", amount: 0.46, speed: 0.28, size: 0.96, glow: 0.06, opacity: 0.62 }),
+        variant("magic-motes", "Magic motes", { primaryColor: "#8DEAFF", secondaryColor: "#D8FBFF", glowColor: "#7D8CFF", particleShape: "sparkle", motionProfile: "orbitFocus", emissive: true, amount: 0.36, speed: 0.38, glow: 1.12, opacity: 0.84, particleCap: 42 }),
+        variant("ash-drift", "Ash drift", { primaryColor: "#9A918A", secondaryColor: "#C2B5AA", particleShape: "ashFlake", motionProfile: "ashDrift", acceleration: 0.24, directionDeg: 112, amount: 0.46, speed: 0.3, glow: 0, opacity: 0.54 })
       ],
+      defaults: { ...preset({}).defaults, amount: 0.58, speed: 0.32, size: 0.74, glow: 0, opacity: 0.62, lifetime: 8, turbulence: 0.28, acceleration: 0, particleCap: 72, particleShape: "dustSpeck", motionProfile: "windDrift", emissive: false },
       controls: ["intensity", "amount", "speed", "size", "directionDeg", "glow", "softness", "lifetime", "variance", "turbulence", "acceleration", "oscillation", "fadeIn", "fadeOut", "particleCap", "depthBands"]
     }),
     "sparks-and-embers": preset({
       id: "sparks-and-embers", name: "Sparks and embers", category: "Light and fire",
       description: "Short-lived bright fire particles with lift, bursts and speed variation.",
+      bestFor: "Torches, braziers, forges, campfires and magical fire sources.",
+      avoidFor: "Fireflies, pollen, steady magical glows or broad atmosphere.",
+      visualSignature: "Source-bound hot sparks that rise, burst, dim and disappear quickly.",
       renderer: "particleField", blendMode: "lighter", geometryTypes: ["point", "pointRadius", "directionalEmitter"],
       variants: [
-        variant("rising-sparks", "Rising sparks"), variant("floating-embers", "Floating embers", { lifetime: 6, speed: 0.45 }),
-        variant("forge-sparks", "Forge sparks", { speed: 1.8, burstiness: 0.75, directionDeg: -25 }),
-        variant("magical-sparks", "Magical sparks", { primaryColor: "#76E8FF", glowColor: "#A98BFF" })
+        variant("rising-sparks", "Rising sparks", { particleShape: "sparkle", lifetime: 1.35, speed: 1.12, amount: 0.62, burstiness: 0.38 }),
+        variant("floating-embers", "Floating embers", { particleShape: "ember", lifetime: 3.8, speed: 0.48, amount: 0.44, size: 0.95, burstiness: 0.1 }),
+        variant("forge-sparks", "Forge sparks", { particleShape: "sparkle", speed: 1.9, amount: 0.58, burstiness: 0.82, directionDeg: -25, lifetime: 0.95, acceleration: -0.15 }),
+        variant("magical-sparks", "Magical sparks", { primaryColor: "#76E8FF", secondaryColor: "#FFFFFF", glowColor: "#A98BFF", particleShape: "sparkle", burstiness: 0.45 })
       ],
-      defaults: { ...preset({}).defaults, lifetime: 2.1, acceleration: -0.4, glow: 1, particleCap: 72 },
+      defaults: { ...preset({}).defaults, amount: 0.58, speed: 1.0, lifetime: 1.65, acceleration: -0.42, glow: 1.18, opacity: 0.82, particleCap: 66, particleShape: "ember", motionProfile: "upwardEmber", emissive: true, fadeIn: 0.03, fadeOut: 0.48 },
       controls: ["intensity", "amount", "speed", "size", "directionDeg", "glow", "lifetime", "variance", "turbulence", "acceleration", "fadeIn", "fadeOut", "burstiness", "particleCap"]
     }),
     "living-lights": preset({
       id: "living-lights", name: "Living lights", category: "Nature",
       description: "Autonomous glowing points with wandering paths and irregular pulses.",
+      bestFor: "Fireflies, wisps, cave insects and gentle spirit lights.",
+      avoidFor: "Pollen, dust, embers, sparks, bubbles or object-bound rune magic.",
+      visualSignature: "Few individual glowing cores that pause, wander and pulse like living lights.",
       renderer: "particleField", blendMode: "lighter", geometryTypes: ["ellipse", "polygon", "rectangle"],
       defaultGeometry: { type: "ellipse", x: 500, y: 340, width: 520, height: 260 },
       variants: [
-        variant("forest-fireflies", "Forest fireflies", { primaryColor: "#E8FF73" }),
-        variant("golden-wisps", "Golden wisps", { primaryColor: "#FFD36A", size: 1.5 }),
-        variant("blue-spirit-lights", "Blue spirit lights", { primaryColor: "#73E9FF", glowColor: "#6C87FF" }),
-        variant("cave-glow-insects", "Cave glow insects", { primaryColor: "#9CF2E9", amount: 0.35 })
+        variant("forest-fireflies", "Forest fireflies", { primaryColor: "#EDFF7A", secondaryColor: "#FFF9B8", particleShape: "fireflyCore", amount: 0.26, size: 1.08 }),
+        variant("golden-wisps", "Golden wisps", { primaryColor: "#FFD36A", secondaryColor: "#FFF0A6", size: 1.45, amount: 0.24, oscillation: 1.6 }),
+        variant("blue-spirit-lights", "Blue spirit lights", { primaryColor: "#73E9FF", secondaryColor: "#D8FBFF", glowColor: "#6C87FF", size: 1.28, pulseAmount: 0.22 }),
+        variant("cave-glow-insects", "Cave glow insects", { primaryColor: "#9CF2E9", secondaryColor: "#E4FFF9", amount: 0.24, size: 0.82 })
       ],
-      defaults: { ...preset({}).defaults, amount: 0.28, speed: 0.32, lifetime: 10, oscillation: 1.2, particleCap: 36 },
+      defaults: { ...preset({}).defaults, amount: 0.24, speed: 0.3, size: 1.08, opacity: 0.88, lifetime: 12, oscillation: 1.4, particleCap: 30, glow: 1.35, pulseAmount: 0.28, pulseRate: 0.46, particleShape: "fireflyCore", motionProfile: "livingWander", emissive: true },
       controls: ["intensity", "amount", "speed", "size", "glow", "softness", "lifetime", "variance", "turbulence", "oscillation", "pulseAmount", "pulseRate", "particleCap"]
     }),
     "atmospheric-fog": preset({
       id: "atmospheric-fog", name: "Atmospheric fog", category: "Atmosphere",
       description: "Layered non-repeating mist fields with falloff, drift and feathered masks.",
+      bestFor: "Forest mist, harbor haze, cold temple fog, moonlit fog and distant haze.",
+      avoidFor: "Chimneys, torches, vents, steam sources or any source-bound plume.",
+      visualSignature: "Broad soft horizontal fields with slow layered drift and vertical falloff.",
       renderer: "fogField", layerSlot: "backgroundAtmosphere", geometryTypes: ["rectangle", "ellipse", "polygon"],
       defaultGeometry: { type: "rectangle", x: 500, y: 420, width: 760, height: 260 },
       variants: [
-        variant("low-ground-mist", "Low ground mist"), variant("harbor-haze", "Harbor haze", { tintColor: "#C6D6D7" }),
-        variant("forest-mist", "Forest mist", { tintColor: "#B8CCB0" }), variant("cold-temple-fog", "Cold temple fog", { tintColor: "#B6C9DE" }),
-        variant("distant-atmospheric-haze", "Distant atmospheric haze", { intensity: 0.35, softness: 1.2 }),
-        variant("moonlit-fog", "Moonlit fog", { tintColor: "#A7BCE3", opacity: 0.48 })
+        variant("low-ground-mist", "Low ground mist", { opacity: 0.52, depthBands: 4, speed: 0.12 }),
+        variant("harbor-haze", "Harbor haze", { tintColor: "#C6D6D7", directionDeg: -8, speed: 0.18, opacity: 0.55 }),
+        variant("forest-mist", "Forest mist", { tintColor: "#B8CCB0", opacity: 0.52, softness: 0.88 }),
+        variant("cold-temple-fog", "Cold temple fog", { tintColor: "#B6C9DE", opacity: 0.5, speed: 0.1 }),
+        variant("distant-atmospheric-haze", "Distant atmospheric haze", { intensity: 0.35, softness: 1.2, amount: 0.48, depthBands: 2 }),
+        variant("moonlit-fog", "Moonlit fog", { tintColor: "#A7BCE3", opacity: 0.48, speed: 0.12 })
       ],
+      defaults: { ...preset({}).defaults, amount: 0.72, speed: 0.14, softness: 0.92, opacity: 0.54, turbulence: 0.2, oscillation: 0.16, edgeFeatherPx: 30, depthBands: 4 },
       performance: "Medium",
       recommendedBudget: 96,
       hardCap: 180,
@@ -196,16 +231,20 @@
     "smoke-and-steam": preset({
       id: "smoke-and-steam", name: "Smoke and steam", category: "Smoke and steam",
       description: "Source-driven plumes with rise, widening, wind, turbulence and pulse emission.",
+      bestFor: "Chimneys, torch smoke, harbor smoke, steam vents, fountain mist and source plumes.",
+      avoidFor: "Broad ground fog, pollen, fireflies, water shimmer or object glow.",
+      visualSignature: "Emitter-based plume blobs that rise from a source, widen and fade.",
       renderer: "plumeEmitter", geometryTypes: ["directionalEmitter"],
       defaultGeometry: { type: "directionalEmitter", x: 500, y: 420, directionDeg: -90, spreadDeg: 18, width: 26 },
       variants: [
-        variant("chimney-smoke", "Chimney smoke", { primaryColor: "#7D7A76", lifetime: 7, speed: 0.5 }),
-        variant("thin-torch-smoke", "Thin torch smoke", { primaryColor: "#AAA39A", amount: 0.32, startWidth: 12 }),
-        variant("harbor-smoke", "Harbor smoke", { primaryColor: "#777B7B", windStrength: 0.35 }),
-        variant("steam-vent", "Steam vent", { primaryColor: "#E7EFEF", speed: 1.2, lifetime: 2.4 }),
-        variant("warm-steam-plume", "Warm steam plume", { primaryColor: "#F4E8D6", speed: 0.9, lifetime: 3 }),
-        variant("fountain-mist-plume", "Fountain mist plume", { primaryColor: "#E6FAFF", amount: 0.46, lifetime: 1.5, size: 0.6 })
+        variant("chimney-smoke", "Chimney smoke", { primaryColor: "#625D58", secondaryColor: "#9A948C", lifetime: 7, speed: 0.46, opacity: 0.66, plumeExpansion: 0.98, endWidth: 280 }),
+        variant("thin-torch-smoke", "Thin torch smoke", { primaryColor: "#AAA39A", secondaryColor: "#DAD2C8", amount: 0.38, startWidth: 10, endWidth: 104, opacity: 0.46, lifetime: 3.4, plumeExpansion: 0.54 }),
+        variant("harbor-smoke", "Harbor smoke", { primaryColor: "#707474", secondaryColor: "#B6BDBB", opacity: 0.62, windStrength: 0.44, plumeExpansion: 0.92, directionDeg: -76 }),
+        variant("steam-vent", "Steam vent", { primaryColor: "#ECF6F6", secondaryColor: "#FFFFFF", speed: 1.22, lifetime: 2.2, opacity: 0.48, plumeExpansion: 1.22, softness: 0.95 }),
+        variant("warm-steam-plume", "Warm steam plume", { primaryColor: "#F6E8D3", secondaryColor: "#FFF8EB", speed: 0.88, lifetime: 2.8, opacity: 0.5, plumeExpansion: 1.0 }),
+        variant("fountain-mist-plume", "Fountain mist plume", { primaryColor: "#E6FAFF", secondaryColor: "#FFFFFF", amount: 0.56, lifetime: 1.35, size: 0.66, opacity: 0.54, plumeExpansion: 0.78 })
       ],
+      defaults: { ...preset({}).defaults, amount: 0.68, speed: 0.62, size: 1.08, softness: 0.78, opacity: 0.58, lifetime: 4.8, turbulence: 0.62, fadeIn: 0.06, fadeOut: 0.56, windStrength: 0.18, plumeExpansion: 0.86, pulseRate: 0.24, burstiness: 0.18, particleCap: 92 },
       performance: "Medium",
       recommendedBudget: 90,
       hardCap: 180,
@@ -215,29 +254,38 @@
     "light-beam": preset({
       id: "light-beam", name: "Light beam", category: "Light and fire",
       description: "Directional atmospheric light with soft trapezoid shaping and dust participation.",
+      bestFor: "Window beams, forest sun rays, temple shafts, sacred beams and moon beams.",
+      avoidFor: "Point light glow, smoke, water bands or sharp material glints.",
+      visualSignature: "Directional soft beam body with restrained dust in the light.",
       renderer: "lightBeam", layerSlot: "worldLight", geometryTypes: ["directionalBeam", "polygon"],
-      recommendedBudget: 30,
+      recommendedBudget: 42,
       hardCap: 80,
       defaultGeometry: { type: "directionalBeam", x: 420, y: 80, directionDeg: 70, length: 520, startWidth: 45, endWidth: 260 },
       variants: [
-        variant("window-beam", "Window beam"), variant("forest-sun-rays", "Forest sun rays", { opacity: 0.34 }),
+        variant("window-beam", "Window beam", { opacity: 0.52, glow: 0.7 }), variant("forest-sun-rays", "Forest sun rays", { opacity: 0.46, amount: 0.78 }),
         variant("temple-shaft", "Temple shaft", { primaryColor: "#FFF0B0" }), variant("sacred-beam", "Sacred beam", { primaryColor: "#FFF7C7", glow: 0.8 }),
         variant("moon-beam", "Moon beam", { primaryColor: "#B8D1FF", glowColor: "#879EEA" })
       ],
+      defaults: { ...preset({}).defaults, intensity: 0.78, amount: 0.72, glow: 0.68, softness: 0.72, opacity: 0.5, particleCap: 54 },
       controls: ["intensity", "amount", "speed", "directionDeg", "glow", "softness", "opacity", "startWidth", "endWidth", "turbulence", "edgeFeatherPx", "particleCap"]
     }),
     "water-surface": preset({
       id: "water-surface", name: "Water surface", category: "Water",
       description: "Masked directional shimmer, highlight bands, tint and restrained sparkle.",
+      bestFor: "Harbor water, lakes, canals, basins, fountains and painted water regions.",
+      avoidFor: "Wet stone, glass, metal, crystal sparkle or rare material glints.",
+      visualSignature: "Continuous masked surface-following bands with subtle directional shimmer.",
       renderer: "surfaceShimmer", geometryTypes: ["rectangle", "ellipse", "polygon"],
       defaultGeometry: { type: "polygon", points: [{ x: 200, y: 430 }, { x: 800, y: 430 }, { x: 800, y: 650 }, { x: 200, y: 650 }], cutouts: [] },
       variants: [
-        variant("calm-water", "Calm water"), variant("harbor-water", "Harbor water", { directionDeg: 6, primaryColor: "#A7C8D8" }),
-        variant("moonlit-water", "Moonlit water", { primaryColor: "#AFC8F4", glowColor: "#DDE8FF" }),
-        variant("sunlit-water", "Sunlit water", { primaryColor: "#BFE9EA", glowColor: "#FFF0A6" }),
-        variant("fountain-basin", "Fountain basin", { speed: 1.2, highlightDensity: 0.9 }),
-        variant("dark-canal-water", "Dark canal water", { primaryColor: "#557981", intensity: 0.45 })
+        variant("calm-water", "Calm water", { speed: 0.38, highlightDensity: 0.7, opacity: 0.6 }),
+        variant("harbor-water", "Harbor water", { directionDeg: 6, primaryColor: "#B7DEEC", glowColor: "#F0FBFF", speed: 0.6, highlightDensity: 0.82, opacity: 0.7 }),
+        variant("moonlit-water", "Moonlit water", { primaryColor: "#BCD6FF", glowColor: "#F0F6FF", opacity: 0.68, highlightDensity: 0.66, size: 0.82 }),
+        variant("sunlit-water", "Sunlit water", { primaryColor: "#C7F2F0", glowColor: "#FFF3B0", speed: 0.68, highlightDensity: 0.92, size: 1.14, opacity: 0.72 }),
+        variant("fountain-basin", "Fountain basin", { speed: 1.12, highlightDensity: 1.0, size: 0.86, opacity: 0.78 }),
+        variant("dark-canal-water", "Dark canal water", { primaryColor: "#6B9DA6", glowColor: "#A8D0D2", intensity: 0.62, highlightDensity: 0.62, opacity: 0.56 })
       ],
+      defaults: { ...preset({}).defaults, intensity: 0.82, amount: 0.9, speed: 0.58, size: 0.98, glow: 0.52, softness: 0.72, opacity: 0.68, variance: 0.62, turbulence: 0.28, edgeFeatherPx: 22, highlightDensity: 0.78, particleCap: 82 },
       performance: "Medium",
       recommendedBudget: 72,
       hardCap: 140,
@@ -247,26 +295,36 @@
     "surface-glint": preset({
       id: "surface-glint", name: "Surface glint", category: "Surfaces",
       description: "Localized material-aware highlight sweeps for stone, glass, metal and crystal.",
+      bestFor: "Wet stone, glass, metal, crystal and marble highlights.",
+      avoidFor: "Open water surfaces, broad shimmer, bubbles, mist or fog.",
+      visualSignature: "Rare short material sweeps and pin glints rather than continuous bands.",
       renderer: "surfaceGlint", geometryTypes: ["rectangle", "ellipse", "polygon", "directionalBeam"],
       defaultGeometry: { type: "rectangle", x: 500, y: 380, width: 420, height: 150 },
       variants: [
-        variant("wet-stone", "Wet stone"), variant("glass-sweep", "Glass sweep", { speed: 1.25, amount: 0.28 }),
-        variant("metal-glint", "Metal glint", { amount: 0.18, glow: 0.9 }), variant("crystal-shimmer", "Crystal shimmer", { primaryColor: "#BDEEFF" }),
-        variant("marble-sheen", "Marble sheen", { opacity: 0.28, softness: 1.1 })
+        variant("wet-stone", "Wet stone", { amount: 0.42, speed: 0.9, opacity: 0.72, directionDeg: 4, size: 0.62, glow: 1.05, highlightDensity: 0.72 }),
+        variant("glass-sweep", "Glass sweep", { speed: 1.25, amount: 0.38, size: 1.0, softness: 0.32, opacity: 0.72 }),
+        variant("metal-glint", "Metal glint", { amount: 0.28, glow: 1.12, size: 0.66, opacity: 0.86, highlightDensity: 0.58 }),
+        variant("crystal-shimmer", "Crystal shimmer", { primaryColor: "#C8F4FF", glowColor: "#FFFFFF", amount: 0.38, size: 0.58, opacity: 0.82, highlightDensity: 0.72 }),
+        variant("marble-sheen", "Marble sheen", { opacity: 0.5, softness: 0.86, amount: 0.34, size: 1.2 })
       ],
+      defaults: { ...preset({}).defaults, intensity: 0.92, amount: 0.38, speed: 0.96, size: 0.72, glow: 0.92, softness: 0.36, opacity: 0.72, variance: 0.72, edgeFeatherPx: 8, highlightDensity: 0.66 },
       controls: ["intensity", "amount", "speed", "size", "directionDeg", "glow", "softness", "opacity", "variance", "edgeFeatherPx", "highlightDensity"]
     }),
     "bubbles-and-spray": preset({
       id: "bubbles-and-spray", name: "Bubbles and spray", category: "Water",
       description: "Bounded bubbles, fountain sparkle, spray and fine splash mist.",
+      bestFor: "Fountains, water machines, pipes, underwater regions and local splash points.",
+      avoidFor: "Fireflies, magic motes, pollen, smoke, fog or broad water shimmer.",
+      visualSignature: "Round rising bubbles, bright impact sparkles, arcing droplets or fine mist.",
       renderer: "particleField", geometryTypes: ["pointRadius", "rectangle", "ellipse", "polygon", "directionalEmitter"],
       variants: [
-        variant("rising-bubbles", "Rising bubbles", { primaryColor: "#DDF8FF", acceleration: -0.25 }),
-        variant("underwater-microbubbles", "Underwater microbubbles", { amount: 0.8, size: 0.42 }),
-        variant("fountain-sparkle", "Fountain sparkle", { glow: 0.9, lifetime: 1.8 }),
-        variant("fountain-spray", "Fountain spray", { directionDeg: -90, acceleration: 0.45, speed: 1.3 }),
-        variant("fine-splash-mist", "Fine splash mist", { amount: 0.7, size: 0.35, softness: 1.1 })
+        variant("rising-bubbles", "Rising bubbles", { primaryColor: "#DDF8FF", secondaryColor: "#FFFFFF", particleShape: "bubble", motionProfile: "risingBubble", acceleration: -0.18, amount: 0.58, size: 0.95, glow: 0, opacity: 0.78 }),
+        variant("underwater-microbubbles", "Underwater microbubbles", { primaryColor: "#DDF8FF", particleShape: "bubble", motionProfile: "risingBubble", amount: 0.9, size: 0.42, speed: 0.5, glow: 0, opacity: 0.72 }),
+        variant("fountain-sparkle", "Fountain sparkle", { particleShape: "sparkle", motionProfile: "fountainSpray", emissive: true, glow: 1.0, lifetime: 1.2, amount: 0.52, size: 0.72, speed: 0.92, opacity: 0.9 }),
+        variant("fountain-spray", "Fountain spray", { particleShape: "droplet", motionProfile: "fountainSpray", directionDeg: -90, acceleration: 0.48, speed: 1.26, amount: 0.7, glow: 0.08, opacity: 0.76 }),
+        variant("fine-splash-mist", "Fine splash mist", { particleShape: "softDot", motionProfile: "fountainSpray", amount: 0.72, size: 0.42, softness: 0.95, lifetime: 1.2, opacity: 0.56, glow: 0 })
       ],
+      defaults: { ...preset({}).defaults, amount: 0.62, speed: 0.68, size: 0.86, directionDeg: -90, glow: 0, softness: 0.44, opacity: 0.76, lifetime: 3.0, variance: 0.52, turbulence: 0.42, acceleration: -0.16, fadeIn: 0.04, fadeOut: 0.38, particleCap: 88, particleShape: "bubble", motionProfile: "risingBubble", emissive: false },
       controls: ["intensity", "amount", "speed", "size", "directionDeg", "glow", "softness", "lifetime", "variance", "turbulence", "acceleration", "fadeIn", "fadeOut", "edgeFeatherPx", "particleCap"]
     })
   });
@@ -653,6 +711,16 @@
   function samplePoint(resolved, index) {
     const geometry = resolved.geometry;
     const bounds = geometryBounds(geometry);
+    if (geometry?.type === "directionalEmitter") {
+      const direction = (geometry.directionDeg ?? resolved.directionDeg) * Math.PI / 180;
+      const side = direction + Math.PI / 2;
+      const offset = (hash(resolved.instance.seed, index * 17) - 0.5) * (geometry.width || resolved.startWidth || 24);
+      const jitter = (hash(resolved.instance.seed, index * 17 + 1) - 0.5) * 8;
+      return {
+        x: geometry.x + Math.cos(side) * offset + Math.cos(direction) * jitter,
+        y: geometry.y + Math.sin(side) * offset + Math.sin(direction) * jitter
+      };
+    }
     for (let attempt = 0; attempt < 12; attempt += 1) {
       const x = bounds.x + hash(resolved.instance.seed, index * 31 + attempt * 2) * bounds.width;
       const y = bounds.y + hash(resolved.instance.seed, index * 31 + attempt * 2 + 1) * bounds.height;
@@ -718,26 +786,206 @@
     const geometry = resolved.geometry;
     const bounds = geometryBounds(geometry);
     const center = { x: geometry.x ?? bounds.x + bounds.width / 2, y: geometry.y ?? bounds.y + bounds.height / 2 };
-    const radius = Math.max(25, geometry.radius || Math.max(bounds.width, bounds.height) / 2) * resolved.size * (0.9 + resolved.softness * 0.16);
+    const radius = Math.max(25, geometry.radius || Math.max(bounds.width, bounds.height) / 2) * resolved.size * (0.84 + resolved.softness * 0.12);
     const pulse = 1 + Math.sin(time * resolved.pulseRate * Math.PI * 2 + hash(resolved.instance.seed) * 6.28) * resolved.pulseAmount;
     const flicker = 1 + Math.sin(time * 11.7 + hash(resolved.instance.seed, 3) * 8) * resolved.flickerAmount * 0.35;
     const coreColor = resolved.preset.id === "light-source-enhancement"
       ? mixColor(resolved.primaryColor, "#FF9F43", resolved.warmth * 0.24)
       : resolved.primaryColor;
     const gradient = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, radius * pulse);
-    gradient.addColorStop(0, rgba(coreColor, resolved.opacity * resolved.intensity * 0.82 * flicker));
-    gradient.addColorStop(clamp(0.12 + resolved.softness * 0.08, 0.12, 0.32), rgba(resolved.secondaryColor, resolved.opacity * resolved.intensity * 0.42));
-    gradient.addColorStop(clamp(0.46 + resolved.softness * 0.12, 0.46, 0.78), rgba(resolved.glowColor, resolved.opacity * resolved.glow * 0.2));
+    gradient.addColorStop(0, rgba(coreColor, resolved.opacity * resolved.intensity * 1.0 * flicker));
+    gradient.addColorStop(clamp(0.1 + resolved.softness * 0.07, 0.1, 0.28), rgba(resolved.secondaryColor, resolved.opacity * resolved.intensity * 0.58));
+    gradient.addColorStop(clamp(0.42 + resolved.softness * 0.1, 0.42, 0.7), rgba(resolved.glowColor, resolved.opacity * resolved.glow * 0.32));
     gradient.addColorStop(1, rgba(resolved.glowColor, 0));
     ctx.globalCompositeOperation = resolved.blendMode || resolved.preset.blendMode;
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.arc(center.x, center.y, radius * pulse, 0, Math.PI * 2);
     ctx.fill();
+    const coreRadius = Math.max(5, radius * (resolved.preset.id === "light-source-enhancement" ? 0.12 : 0.09));
+    ctx.fillStyle = rgba(coreColor, resolved.opacity * resolved.intensity * (resolved.preset.id === "light-source-enhancement" ? 0.95 : 0.78));
+    ctx.beginPath();
+    if (resolved.preset.id === "light-source-enhancement") {
+      ctx.ellipse(center.x, center.y - coreRadius * 0.35, coreRadius * 0.62, coreRadius * 1.25, 0, 0, Math.PI * 2);
+    } else {
+      ctx.arc(center.x, center.y, coreRadius, 0, Math.PI * 2);
+    }
+    ctx.fill();
     if (resolved.sparkAmount > 0) {
-      resolved._sparkResolved ||= { ...resolved, amount: resolved.sparkAmount * Math.max(0.2, resolved.amount), particleCap: resolved.particleCap, lifetime: 1.8, acceleration: -0.35 };
+      resolved._sparkResolved ||= {
+        ...resolved,
+        amount: resolved.sparkAmount * Math.max(0.32, resolved.amount) * 1.22,
+        particleCap: Math.min(resolved.particleCap, 52),
+        lifetime: 1.45,
+        speed: Math.max(0.55, resolved.speed),
+        acceleration: -0.38,
+        particleShape: "ember",
+        motionProfile: "upwardEmber",
+        emissive: true,
+        fadeIn: 0.04,
+        fadeOut: 0.58
+      };
       drawParticles(ctx, resolved._sparkResolved, time);
     }
+    if (resolved.preset.id === "magical-glow" && resolved.amount > 0.05) {
+      resolved._moteResolved ||= {
+        ...resolved,
+        amount: Math.min(0.46, resolved.amount * 0.75),
+        particleCap: Math.min(26, resolved.particleCap),
+        lifetime: 8,
+        speed: Math.max(0.16, resolved.speed * 0.72),
+        particleShape: resolved.particleShape || "sparkle",
+        motionProfile: "orbitFocus",
+        emissive: true,
+        geometry: resolved.geometry,
+        fadeIn: 0.28,
+        fadeOut: 0.34
+      };
+      drawParticles(ctx, resolved._moteResolved, time);
+    }
+  }
+
+  function particlePosition(resolved, origin, index, progress, depth, time, angle, life) {
+    const profile = resolved.motionProfile || "windDrift";
+    const side = angle + Math.PI / 2;
+    const distance = progress * life * 34 * resolved.speed;
+    const wander = Math.sin(progress * Math.PI * 2 * (1 + resolved.oscillation) + hash(resolved.instance.seed, index + 300) * 10) * 24 * resolved.turbulence;
+    if (profile === "livingWander") {
+      const pause = 0.72 + 0.28 * Math.max(0, Math.sin(time * 0.8 + index * 1.9));
+      return {
+        x: origin.x + Math.sin(time * (0.24 + depth * 0.12) + index * 3.1) * 38 * resolved.oscillation * pause +
+          Math.sin(time * 0.73 + index) * 8 * resolved.turbulence,
+        y: origin.y + Math.cos(time * (0.2 + depth * 0.08) + index * 2.7) * 26 * resolved.oscillation * pause +
+          Math.cos(time * 0.61 + index * 1.3) * 6 * resolved.turbulence
+      };
+    }
+    if (profile === "orbitFocus") {
+      const bounds = geometryBounds(resolved.geometry);
+      const center = {
+        x: resolved.geometry.x ?? bounds.x + bounds.width / 2,
+        y: resolved.geometry.y ?? bounds.y + bounds.height / 2
+      };
+      const orbit = Math.max(22, Math.min(bounds.width || 120, bounds.height || 120) * (0.28 + hash(resolved.instance.seed, index + 60) * 0.24));
+      const phase = time * resolved.speed * (0.45 + depth * 0.25) + index * 2.4 + hash(resolved.instance.seed, index + 90) * 6.28;
+      return {
+        x: center.x + Math.cos(phase) * orbit + Math.sin(phase * 1.7) * 8 * resolved.turbulence,
+        y: center.y + Math.sin(phase) * orbit * 0.58 + Math.cos(phase * 1.3) * 7 * resolved.turbulence
+      };
+    }
+    if (profile === "upwardEmber") {
+      const heat = 1 - progress;
+      return {
+        x: origin.x + Math.cos(angle) * distance * 0.78 + Math.cos(side) * wander * (0.55 + heat * 0.45),
+        y: origin.y + Math.sin(angle) * distance * 0.86 + Math.sin(side) * wander * 0.52 + resolved.acceleration * progress * progress * 80
+      };
+    }
+    if (profile === "risingBubble") {
+      const rise = progress * life * 26 * Math.max(0.35, resolved.speed);
+      return {
+        x: origin.x + Math.sin(progress * Math.PI * 5 + index) * (7 + resolved.turbulence * 8) + Math.cos(side) * wander * 0.18,
+        y: origin.y - rise + resolved.acceleration * progress * progress * 30
+      };
+    }
+    if (profile === "fountainSpray") {
+      const spray = progress * life * 42 * Math.max(0.3, resolved.speed);
+      return {
+        x: origin.x + Math.cos(angle) * spray + Math.cos(side) * wander * 0.48,
+        y: origin.y + Math.sin(angle) * spray + Math.sin(side) * wander * 0.32 + Math.abs(resolved.acceleration) * progress * progress * 90
+      };
+    }
+    if (profile === "ashDrift") {
+      return {
+        x: origin.x + Math.cos(angle) * distance * 0.75 + Math.cos(side) * wander * 0.65,
+        y: origin.y + Math.sin(angle) * distance * 0.75 + Math.sin(side) * wander * 0.65 + Math.abs(resolved.acceleration) * progress * progress * 70
+      };
+    }
+    return {
+      x: origin.x + Math.cos(angle) * distance + Math.cos(side) * wander,
+      y: origin.y + Math.sin(angle) * distance + Math.sin(side) * wander + resolved.acceleration * progress * progress * 80
+    };
+  }
+
+  function drawParticleMark(ctx, resolved, x, y, radius, alpha, index, progress, angle) {
+    const shape = resolved.particleShape || "softDot";
+    const primary = index % 4 ? resolved.primaryColor : resolved.secondaryColor;
+    ctx.save();
+    ctx.translate(x, y);
+    if (shape === "dustSpeck") {
+      ctx.rotate(angle + (hash(resolved.instance.seed, index + 470) - 0.5) * 1.2);
+      ctx.fillStyle = rgba(primary, alpha * 0.95);
+      ctx.fillRect(-radius * 0.65, -radius * 0.25, radius * 1.3, Math.max(0.7, radius * 0.5));
+    } else if (shape === "elongatedMote") {
+      ctx.rotate(angle + 0.25 + Math.sin(progress * Math.PI * 2 + index) * 0.35);
+      ctx.strokeStyle = rgba(primary, alpha * 0.92);
+      ctx.lineWidth = Math.max(0.85, radius * 0.5);
+      ctx.beginPath();
+      ctx.moveTo(-radius * 1.25, 0);
+      ctx.lineTo(radius * 1.25, 0);
+      ctx.stroke();
+    } else if (shape === "ember") {
+      ctx.rotate(angle + Math.sin(index) * 0.35);
+      const ember = ctx.createRadialGradient(0, -radius * 0.25, 0, 0, 0, radius * 1.7);
+      ember.addColorStop(0, rgba("#FFF4B8", alpha));
+      ember.addColorStop(0.35, rgba(primary, alpha * 0.95));
+      ember.addColorStop(1, rgba(resolved.glowColor, 0));
+      ctx.fillStyle = ember;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * 0.72, radius * 1.35, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (shape === "sparkle") {
+      ctx.strokeStyle = rgba(primary, alpha);
+      ctx.lineWidth = Math.max(0.9, radius * 0.36);
+      ctx.beginPath();
+      ctx.moveTo(-radius * 1.5, 0);
+      ctx.lineTo(radius * 1.5, 0);
+      ctx.moveTo(0, -radius * 1.5);
+      ctx.lineTo(0, radius * 1.5);
+      ctx.stroke();
+      ctx.fillStyle = rgba(resolved.glowColor, alpha * 0.78);
+      ctx.beginPath();
+      ctx.arc(0, 0, Math.max(0.7, radius * 0.45), 0, Math.PI * 2);
+      ctx.fill();
+    } else if (shape === "bubble") {
+      ctx.strokeStyle = rgba(primary, alpha * 0.95);
+      ctx.lineWidth = Math.max(0.9, radius * 0.32);
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 1.15, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = rgba("#FFFFFF", alpha * 0.52);
+      ctx.beginPath();
+      ctx.arc(-radius * 0.36, -radius * 0.42, Math.max(0.45, radius * 0.28), 0, Math.PI * 2);
+      ctx.fill();
+    } else if (shape === "fireflyCore") {
+      const pulse = 0.75 + Math.sin(progress * Math.PI * 2 + index) * 0.25;
+      const firefly = ctx.createRadialGradient(0, 0, 0, 0, 0, radius * (4.8 + resolved.glow));
+      firefly.addColorStop(0, rgba("#FFFFFF", alpha));
+      firefly.addColorStop(0.16, rgba(primary, alpha * Math.min(1.12, pulse + 0.12)));
+      firefly.addColorStop(1, rgba(resolved.glowColor, 0));
+      ctx.fillStyle = firefly;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * (2.8 + resolved.glow), 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = rgba(primary, alpha);
+      ctx.beginPath();
+      ctx.arc(0, 0, Math.max(0.9, radius * 0.64), 0, Math.PI * 2);
+      ctx.fill();
+    } else if (shape === "ashFlake") {
+      ctx.rotate(angle + Math.sin(progress * Math.PI * 4 + index));
+      ctx.fillStyle = rgba(primary, alpha * 0.86);
+      ctx.fillRect(-radius * 0.75, -radius * 0.3, radius * 1.5, Math.max(0.7, radius * 0.6));
+    } else if (shape === "droplet") {
+      ctx.rotate(angle + Math.PI / 2);
+      ctx.fillStyle = rgba(primary, alpha * 0.98);
+      ctx.beginPath();
+      ctx.ellipse(0, 0, radius * 0.5, radius * 1.3, 0, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillStyle = rgba(primary, alpha);
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
   }
 
   function drawParticles(ctx, resolved, time) {
@@ -753,29 +1001,22 @@
       const bands = Math.max(1, Math.round(resolved.depthBands));
       const bandedDepth = bands === 1 ? rawDepth : Math.round(rawDepth * (bands - 1)) / (bands - 1);
       const depth = 0.45 + bandedDepth * 0.8;
-      const distance = progress * life * 34 * resolved.speed;
-      const wander = Math.sin(progress * Math.PI * 2 * (1 + resolved.oscillation) + hash(resolved.instance.seed, index + 300) * 10) * 24 * resolved.turbulence;
-      let x = origin.x + Math.cos(angle) * distance + Math.cos(angle + Math.PI / 2) * wander;
-      let y = origin.y + Math.sin(angle) * distance + Math.sin(angle + Math.PI / 2) * wander + resolved.acceleration * progress * progress * 80;
-      if (resolved.preset.id === "living-lights") {
-        x = origin.x + Math.sin(time * (0.22 + depth * 0.1) + index * 3.1) * 35 * resolved.oscillation;
-        y = origin.y + Math.cos(time * (0.18 + depth * 0.08) + index * 2.7) * 24 * resolved.oscillation;
-      }
+      const position = particlePosition(resolved, origin, index, progress, depth, time, angle, life);
+      const x = position.x;
+      const y = position.y;
       const burstGate = resolved.burstiness > 0
         ? 0.25 + 0.75 * Math.max(0, Math.sin(time * resolved.speed * 3.2 + Math.floor(index / 5) * 1.7))
         : 1;
-      const alpha = fade(progress, resolved.fadeIn, resolved.fadeOut) * resolved.opacity * resolved.intensity * (0.42 + depth * 0.35) * burstGate;
+      const visibilityBoost = resolved.emissive ? 1.18 : 1.08;
+      const alpha = clamp(fade(progress, resolved.fadeIn, resolved.fadeOut) * resolved.opacity * resolved.intensity * (0.46 + depth * 0.38) * burstGate * visibilityBoost, 0, 1);
       const radius = Math.max(0.7, resolved.size * depth * (1.1 + hash(resolved.instance.seed, index + 400) * 2.4));
-      if (resolved.glow > 0) {
-        ctx.fillStyle = rgba(resolved.glowColor, alpha * 0.18 * resolved.glow);
+      if (resolved.emissive && resolved.glow > 0 && resolved.particleShape !== "fireflyCore") {
+        ctx.fillStyle = rgba(resolved.glowColor, alpha * 0.28 * resolved.glow);
         ctx.beginPath();
         ctx.arc(x, y, radius * (2.4 + resolved.glow + resolved.softness * 0.6), 0, Math.PI * 2);
         ctx.fill();
       }
-      ctx.fillStyle = rgba(index % 4 ? resolved.primaryColor : resolved.secondaryColor, alpha);
-      ctx.beginPath();
-      ctx.arc(x, y, radius, 0, Math.PI * 2);
-      ctx.fill();
+      drawParticleMark(ctx, resolved, x, y, radius, alpha, index, progress, angle);
     }
   }
 
@@ -787,22 +1028,39 @@
       for (let layer = 0; layer < layers; layer += 1) {
         const phase = hash(resolved.instance.seed, layer) * Math.PI * 2;
         const layerVariance = 1 + (hash(resolved.instance.seed, layer + 90) - 0.5) * resolved.variance;
-        const drift = time * resolved.speed * (8 + layer * 3) * layerVariance;
+        const drift = time * resolved.speed * (6 + layer * 2.5) * layerVariance;
         const angle = resolved.directionDeg * Math.PI / 180;
-        const gradient = buffer.createLinearGradient(bounds.x, bounds.y, bounds.x, bounds.y + bounds.height);
+        const bandTop = bounds.y + bounds.height * (0.18 + layer / Math.max(1, layers) * 0.44);
+        const bandHeight = bounds.height * (0.38 + hash(resolved.instance.seed, layer + 40) * 0.28);
+        const gradient = buffer.createLinearGradient(bounds.x, bandTop - bandHeight * 0.5, bounds.x, bandTop + bandHeight * 0.5);
         gradient.addColorStop(0, rgba(resolved.tintColor, 0));
-        gradient.addColorStop(0.45, rgba(resolved.tintColor, resolved.opacity * resolved.intensity * resolved.amount * 0.08));
-        gradient.addColorStop(1, rgba(resolved.tintColor, resolved.opacity * resolved.intensity * resolved.amount * (0.14 + layer * 0.025)));
+        gradient.addColorStop(0.38, rgba(resolved.tintColor, resolved.opacity * resolved.intensity * resolved.amount * (0.055 + layer * 0.014)));
+        gradient.addColorStop(0.75, rgba(resolved.tintColor, resolved.opacity * resolved.intensity * resolved.amount * (0.16 + layer * 0.025)));
+        gradient.addColorStop(1, rgba(resolved.tintColor, 0));
         buffer.fillStyle = gradient;
-        buffer.filter = `blur(${Math.max(3, resolved.softness * 14 * q.blur)}px)`;
+        buffer.filter = `blur(${Math.max(4, resolved.softness * 14 * q.blur)}px)`;
         const wave = phase + drift * 0.01 * Math.max(0.1, resolved.oscillation);
         const x = bounds.x - bounds.width * 0.12 +
           Math.cos(angle) * Math.sin(phase + drift * 0.006) * bounds.width * 0.08 +
           Math.sin(wave) * bounds.width * 0.04 * resolved.turbulence;
-        const y = bounds.y +
+        const y = bandTop +
           Math.sin(angle) * Math.sin(phase + drift * 0.005) * bounds.height * 0.05 +
           Math.cos(wave * 0.8) * bounds.height * 0.025 * resolved.turbulence;
-        buffer.fillRect(x, y, bounds.width * 1.24, bounds.height);
+        buffer.beginPath();
+        buffer.moveTo(x, y);
+        buffer.bezierCurveTo(
+          x + bounds.width * 0.32, y - bandHeight * 0.18 + Math.sin(wave) * 18,
+          x + bounds.width * 0.72, y + bandHeight * 0.2 + Math.cos(wave * 0.7) * 14,
+          x + bounds.width * 1.24, y + Math.sin(wave * 0.6) * 10
+        );
+        buffer.lineTo(x + bounds.width * 1.24, y + bandHeight);
+        buffer.bezierCurveTo(
+          x + bounds.width * 0.74, y + bandHeight * 0.78 + Math.cos(wave) * 16,
+          x + bounds.width * 0.3, y + bandHeight * 1.08 + Math.sin(wave * 0.8) * 12,
+          x, y + bandHeight
+        );
+        buffer.closePath();
+        buffer.fill();
       }
     });
   }
@@ -816,17 +1074,23 @@
     for (let index = 0; index < count; index += 1) {
       const life = resolved.lifetime * (0.65 + hash(resolved.instance.seed, index + 3) * 0.7);
       const progress = ((time * resolved.speed + hash(resolved.instance.seed, index + 8) * life) % life) / life;
-      const travel = progress * life * 38;
-      const spread = (geometry.width || resolved.startWidth) * (0.2 + progress * resolved.plumeExpansion);
-      const side = (hash(resolved.instance.seed, index + 11) - 0.5) * spread + Math.sin(progress * 9 + index) * resolved.turbulence * 9;
-      const x = geometry.x + Math.cos(angle) * travel + Math.cos(angle + Math.PI / 2) * side + progress * resolved.windStrength * 80;
-      const y = geometry.y + Math.sin(angle) * travel + Math.sin(angle + Math.PI / 2) * side;
-      const radius = resolved.size * (4 + progress * 15 * resolved.plumeExpansion);
+      const sourceWidth = Math.max(2, geometry.width || resolved.startWidth);
+      const targetWidth = Math.max(sourceWidth, resolved.endWidth || sourceWidth * 5);
+      const sourceOffset = (hash(resolved.instance.seed, index + 13) - 0.5) * sourceWidth;
+      const spreadDeg = ((geometry.spreadDeg || 18) * Math.PI / 180) * (hash(resolved.instance.seed, index + 17) - 0.5);
+      const travel = progress * life * (34 + resolved.speed * 10);
+      const plumeAngle = angle + spreadDeg * (0.25 + progress * 0.75);
+      const width = sourceWidth + (targetWidth - sourceWidth) * progress * resolved.plumeExpansion;
+      const side = sourceOffset * (1 - progress) + (hash(resolved.instance.seed, index + 11) - 0.5) * width +
+        Math.sin(progress * 9 + index) * resolved.turbulence * (7 + progress * 16);
+      const x = geometry.x + Math.cos(plumeAngle) * travel + Math.cos(angle + Math.PI / 2) * side + progress * resolved.windStrength * 92;
+      const y = geometry.y + Math.sin(plumeAngle) * travel + Math.sin(angle + Math.PI / 2) * side;
+      const radius = resolved.size * (sourceWidth * 0.12 + progress * targetWidth * 0.07 + 3);
       const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
       const pulse = resolved.pulseRate > 0
         ? 0.45 + 0.55 * Math.max(0, Math.sin(time * resolved.pulseRate * Math.PI * 2 - index * resolved.burstiness))
         : 1;
-      const alpha = fade(progress, resolved.fadeIn, resolved.fadeOut) * resolved.opacity * resolved.intensity * 0.2 * pulse;
+      const alpha = clamp(fade(progress, resolved.fadeIn, resolved.fadeOut) * resolved.opacity * resolved.intensity * (0.18 + (1 - progress) * 0.13) * pulse, 0, 1);
       gradient.addColorStop(0, rgba(resolved.primaryColor, alpha));
       gradient.addColorStop(clamp(0.45 + resolved.softness * 0.12, 0.45, 0.75), rgba(resolved.secondaryColor, alpha * 0.45));
       gradient.addColorStop(1, rgba(resolved.primaryColor, 0));
@@ -848,11 +1112,11 @@
     const sideY = Math.sin(angle + Math.PI / 2);
     const end = { x: geometry.x + Math.cos(angle) * length, y: geometry.y + Math.sin(angle) * length };
     const gradient = ctx.createLinearGradient(geometry.x, geometry.y, end.x, end.y);
-    gradient.addColorStop(0, rgba(resolved.primaryColor, resolved.opacity * resolved.intensity * (0.42 + resolved.glow * 0.12)));
-    gradient.addColorStop(0.65, rgba(resolved.primaryColor, resolved.opacity * resolved.intensity * 0.18));
+    gradient.addColorStop(0, rgba(resolved.primaryColor, resolved.opacity * resolved.intensity * (0.58 + resolved.glow * 0.16)));
+    gradient.addColorStop(0.65, rgba(resolved.primaryColor, resolved.opacity * resolved.intensity * 0.26));
     gradient.addColorStop(1, rgba(resolved.primaryColor, 0));
     ctx.fillStyle = gradient;
-    ctx.filter = `blur(${resolved.softness * 7 + resolved.edgeFeatherPx * 0.12}px)`;
+    ctx.filter = `blur(${resolved.softness * 5 + resolved.edgeFeatherPx * 0.09}px)`;
     ctx.beginPath();
     ctx.moveTo(geometry.x + sideX * startWidth / 2, geometry.y + sideY * startWidth / 2);
     ctx.lineTo(end.x + sideX * endWidth / 2, end.y + sideY * endWidth / 2);
@@ -879,25 +1143,38 @@
 
   function drawSurface(ctx, resolved, time, glintOnly = false) {
     const bounds = geometryBounds(resolved.geometry);
-    const count = Math.max(2, Math.round((glintOnly ? 9 : 20) * resolved.highlightDensity * resolved.amount *
+    const count = Math.max(2, Math.round((glintOnly ? 7 : 22) * resolved.highlightDensity * resolved.amount *
       (resolved.preset.qualityScale?.[resolved.quality] ?? QUALITY[resolved.quality]?.segments ?? 1)));
     drawWithFeatheredMask(ctx, resolved, (buffer) => {
       buffer.globalCompositeOperation = resolved.blendMode || (glintOnly ? "lighter" : "screen");
-      buffer.filter = `blur(${resolved.softness * 0.8}px)`;
+      buffer.filter = `blur(${glintOnly ? resolved.softness * 0.35 : resolved.softness * 1.1}px)`;
       const angle = resolved.directionDeg * Math.PI / 180;
       for (let index = 0; index < count; index += 1) {
         const speedVariance = 1 + (hash(resolved.instance.seed, index + 120) - 0.5) * resolved.variance;
-        const phase = (time * resolved.speed * speedVariance * (glintOnly ? 0.18 : 0.08) + hash(resolved.instance.seed, index)) % 1;
-        const x = bounds.x + phase * bounds.width + (hash(resolved.instance.seed, index + 90) - 0.5) * bounds.width * 0.2;
+        const phase = (time * resolved.speed * speedVariance * (glintOnly ? 0.14 : 0.09) + hash(resolved.instance.seed, index)) % 1;
+        if (glintOnly && phase > 0.36 + hash(resolved.instance.seed, index + 91) * 0.12) continue;
+        const localPhase = glintOnly ? phase / 0.36 : phase;
+        const x = bounds.x + localPhase * bounds.width + (hash(resolved.instance.seed, index + 90) - 0.5) * bounds.width * (glintOnly ? 0.12 : 0.24);
         const y = bounds.y + hash(resolved.instance.seed, index + 40) * bounds.height + Math.sin(time * resolved.speed + index) * resolved.turbulence * 3;
-        const length = (glintOnly ? 18 : 42) * resolved.size * (0.4 + hash(resolved.instance.seed, index + 60) * (1 + resolved.variance));
+        const length = (glintOnly ? 16 : 54) * resolved.size * (0.4 + hash(resolved.instance.seed, index + 60) * (1 + resolved.variance));
         const glowScale = index % 4 ? 1 : (0.6 + resolved.glow * 0.5);
-        const alpha = resolved.opacity * resolved.intensity * (glintOnly ? 0.35 : 0.2) * Math.sin(phase * Math.PI) * glowScale;
+        const alpha = clamp(resolved.opacity * resolved.intensity * (glintOnly ? 0.72 : 0.3) * Math.sin(localPhase * Math.PI) * glowScale, 0, 1);
         buffer.strokeStyle = rgba(index % 4 ? resolved.primaryColor : resolved.glowColor, alpha);
-        buffer.lineWidth = glintOnly ? 1.4 : 1 + hash(resolved.instance.seed, index + 70) * 2.5;
+        buffer.lineWidth = glintOnly ? Math.max(1, resolved.size * 1.35) : 1.4 + hash(resolved.instance.seed, index + 70) * 3.8;
         buffer.beginPath();
-        buffer.moveTo(x - Math.cos(angle) * length / 2, y - Math.sin(angle) * length / 2);
-        buffer.lineTo(x + Math.cos(angle) * length / 2, y + Math.sin(angle) * length / 2);
+        if (glintOnly) {
+          buffer.moveTo(x - Math.cos(angle) * length / 2, y - Math.sin(angle) * length / 2);
+          buffer.lineTo(x + Math.cos(angle) * length / 2, y + Math.sin(angle) * length / 2);
+        } else {
+          const bow = Math.sin(index * 1.7) * 6 * resolved.turbulence;
+          buffer.moveTo(x - Math.cos(angle) * length / 2, y - Math.sin(angle) * length / 2);
+          buffer.quadraticCurveTo(
+            x + Math.cos(angle + Math.PI / 2) * bow,
+            y + Math.sin(angle + Math.PI / 2) * bow,
+            x + Math.cos(angle) * length / 2,
+            y + Math.sin(angle) * length / 2
+          );
+        }
         buffer.stroke();
       }
     });

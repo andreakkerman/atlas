@@ -2423,8 +2423,6 @@ function completeCurrentSceneChallenges() {
   if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return;
   stopMovement({ invalidateIntent: true });
   state.completedRunes = new Set(level.runes.map((rune) => rune.id));
-  state.answered = Math.max(state.answered, state.totalQuestions || level.runes.length * 4);
-  state.attempts = Math.max(state.attempts, state.totalQuestions || level.runes.length * 4);
   state.screen = "scene";
   state.activeRuneId = null;
   state.selectedChallengeId = null;
@@ -3418,6 +3416,35 @@ function renderEffectControlSection(effect, preset, section, title, open = false
   `;
 }
 
+function sceneEffectBalancedEstimate(effect) {
+  const resolved = window.AtlasSceneEffects.resolve(effect, level, { quality: "balanced", reducedMotion: false });
+  if (!resolved) return 0;
+  const quality = window.AtlasSceneEffects.QUALITY.balanced;
+  const particleCost = Number(resolved.particleCap || 0) * Number(resolved.amount || 0) * quality.particles;
+  const bounds = window.AtlasSceneEffects.geometryBounds(resolved.geometry);
+  const areaFactor = Math.min(2.4, Math.max(0.35, (bounds.width * bounds.height) / 180000));
+  if (resolved.preset.renderer === "particleField") return particleCost;
+  if (resolved.preset.renderer === "glowField") {
+    return 18 + Number(resolved.glow || 0) * 16 + Number(resolved.sparkAmount || 0) * particleCost;
+  }
+  if (resolved.preset.renderer === "fogField") {
+    return areaFactor * 32 + Number(resolved.depthBands || 1) * quality.layers * 24 * Number(resolved.amount || 0) * Number(resolved.softness || 1);
+  }
+  if (resolved.preset.renderer === "plumeEmitter") {
+    return particleCost * 0.9 + Number(resolved.plumeExpansion || 0) * 18 + Number(resolved.turbulence || 0) * 8;
+  }
+  if (resolved.preset.renderer === "lightBeam") {
+    return 26 + particleCost * 0.2 + Number(resolved.softness || 0) * 10;
+  }
+  if (resolved.preset.renderer === "surfaceShimmer") {
+    return areaFactor * 22 + Number(resolved.highlightDensity || 0) * Number(resolved.amount || 0) * quality.segments * 62;
+  }
+  if (resolved.preset.renderer === "surfaceGlint") {
+    return areaFactor * 10 + Number(resolved.highlightDensity || 0) * Number(resolved.amount || 0) * quality.segments * 38;
+  }
+  return particleCost;
+}
+
 function renderEffectLibrary() {
   return window.AtlasSceneEffects.CATEGORIES.map((category) => {
     const presets = Object.values(window.AtlasSceneEffects.PRESETS).filter((preset) => preset.category === category);
@@ -3431,6 +3458,9 @@ function renderEffectLibrary() {
               <span class="effectPresetSwatch" style="--effect-card-color:${preset.colors.primaryColor}"></span>
               <strong>${preset.name}</strong>
               <p>${preset.description}</p>
+              <p><b>Best for:</b> ${preset.bestFor}</p>
+              <p><b>Avoid for:</b> ${preset.avoidFor}</p>
+              <p><b>Looks like:</b> ${preset.visualSignature}</p>
               <small>Placement: ${preset.geometryTypes.join(" / ")} · Performance: ${preset.performance}</small>
               <label>Variant
                 <select data-effect-library-variant="${preset.id}">
@@ -3452,11 +3482,8 @@ function renderSceneEffectsEditorControls() {
   const preset = sceneEffectPreset(effect);
   const variant = preset && window.AtlasSceneEffects.variantById(preset, effect.variantId);
   const group = (level.sceneEffectGroups || []).find((item) => item.id === effect?.groupId);
-  const totalBudget = effects.reduce((sum, item) => {
-    const resolved = window.AtlasSceneEffects.resolve(item, level, { quality: "balanced", reducedMotion: false });
-    return sum + Number(resolved?.particleCap || 0) * Number(resolved?.amount || 0) * window.AtlasSceneEffects.QUALITY.balanced.particles;
-  }, 0);
-  const budgetLevel = totalBudget > 180 ? "High" : totalBudget > 140 ? "Medium" : "Low";
+  const totalBudget = effects.reduce((sum, item) => sum + sceneEffectBalancedEstimate(item), 0);
+  const budgetLevel = totalBudget > 220 ? "High" : totalBudget > 155 ? "Medium" : "Low";
   return `
     <section class="sceneEffectsEditor" data-scene-effects-editor>
       <details class="editorSection effectLibrary" open>
@@ -3465,7 +3492,7 @@ function renderSceneEffectsEditorControls() {
       </details>
       <details class="editorSection" open>
         <summary>Level effects <span>${effects.length}</span></summary>
-        <div class="effectBudget effectBudget${budgetLevel}">iPad budget: ${budgetLevel} · balanced estimate ${Math.round(totalBudget)} particles</div>
+        <div class="effectBudget effectBudget${budgetLevel}">iPad budget: ${budgetLevel} · balanced estimate ${Math.round(totalBudget)} cost</div>
         <div class="editorObjectPicker">
           ${effects.map((item) => `<button type="button" data-select-effect="${item.id}" class="${item.id === effect?.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>`).join("") || "<span>No effects yet.</span>"}
         </div>
@@ -5581,6 +5608,20 @@ window.addEventListener("resize", updateWorldDom);
 
 window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
+    event.preventDefault();
+    sessionReport?.discard();
+    completeCurrentSceneChallenges();
+    return;
+  }
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d") {
+    event.preventDefault();
+    debugOverlayEnabled = !debugOverlayEnabled;
+    if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
+      render();
+    }
+    return;
+  }
   const editingText = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLTextAreaElement;
   if (!editingText && walkPathEditor.effectPolygonDraft && ["Enter", "Escape", "Backspace"].includes(event.key)) {
     event.preventDefault();
@@ -5615,19 +5656,6 @@ window.addEventListener("keydown", (event) => {
     event.preventDefault();
     deleteSelectedEffectVertex();
     return;
-  }
-  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
-    event.preventDefault();
-    sessionReport?.discard();
-    completeCurrentSceneChallenges();
-    return;
-  }
-  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d") {
-    event.preventDefault();
-    debugOverlayEnabled = !debugOverlayEnabled;
-    if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
-      render();
-    }
   }
 });
 
