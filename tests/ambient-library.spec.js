@@ -114,6 +114,64 @@ test.describe("central ambient asset library", () => {
     expect(result.first.body.images).toContain("assets/ambient/animals/owl/owl-open.png");
     expect(result.first.body.images).toContain("assets/ambient/flybys/butterfly/butterfly-a.png");
     expect(result.first.body.audio).toContain("assets/ambient/flybys/common-swift/common-swift-call.mp3");
+    expect(result.first.body.animals).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        key: "animals/owl",
+        openFrame: "assets/ambient/animals/owl/owl-open.png",
+        closedFrame: "assets/ambient/animals/owl/owl-closed.png",
+        sound: "assets/ambient/animals/owl/owl-call.mp3"
+      })
+    ]));
+    expect(result.first.body.flybys).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        key: "flybys/butterfly",
+        frameA: "assets/ambient/flybys/butterfly/butterfly-a.png",
+        frameB: "assets/ambient/flybys/butterfly/butterfly-b.png",
+        sound: ""
+      })
+    ]));
     expect(result.traversalStatus).toBe(404);
+  });
+
+  test("discovers complete two-frame sets with optional audio and reports incomplete folders", async ({ page }, testInfo) => {
+    test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
+    const suffix = testInfo.project.name.replace(/[^A-Za-z0-9_-]/g, "-").toLowerCase();
+    const animalDir = path.join(root, "assets", "ambient", "animals", `codex-test-${suffix}`);
+    const flybyDir = path.join(root, "assets", "ambient", "flybys", `codex-test-${suffix}`);
+    const incompleteDir = path.join(root, "assets", "ambient", "animals", `codex-incomplete-${suffix}`);
+    fs.mkdirSync(animalDir, { recursive: true });
+    fs.mkdirSync(flybyDir, { recursive: true });
+    fs.mkdirSync(incompleteDir, { recursive: true });
+    try {
+      fs.copyFileSync(path.join(root, "assets", "ambient", "animals", "owl", "owl-open.png"), path.join(animalDir, "codex-test-open.png"));
+      fs.copyFileSync(path.join(root, "assets", "ambient", "animals", "owl", "owl-closed.png"), path.join(animalDir, "codex-test-closed.png"));
+      fs.copyFileSync(path.join(root, "assets", "ambient", "animals", "owl", "owl-call.mp3"), path.join(animalDir, "codex-test-call.mp3"));
+      fs.copyFileSync(path.join(root, "assets", "ambient", "flybys", "butterfly", "butterfly-a.png"), path.join(flybyDir, "codex-test-a.png"));
+      fs.copyFileSync(path.join(root, "assets", "ambient", "flybys", "butterfly", "butterfly-b.png"), path.join(flybyDir, "codex-test-b.png"));
+      fs.copyFileSync(path.join(root, "assets", "ambient", "animals", "owl", "owl-open.png"), path.join(incompleteDir, "codex-incomplete-open.png"));
+
+      await page.goto(editorUrl);
+      const payload = await page.evaluate(async () => {
+        const response = await fetch("/__dev/levels/LVL-0001/ambient-assets");
+        return response.json();
+      });
+      expect(payload.animals).toContainEqual(expect.objectContaining({
+        key: `animals/codex-test-${suffix}`,
+        openFrame: `assets/ambient/animals/codex-test-${suffix}/codex-test-open.png`,
+        closedFrame: `assets/ambient/animals/codex-test-${suffix}/codex-test-closed.png`,
+        sound: `assets/ambient/animals/codex-test-${suffix}/codex-test-call.mp3`
+      }));
+      expect(payload.flybys).toContainEqual(expect.objectContaining({
+        key: `flybys/codex-test-${suffix}`,
+        frameA: `assets/ambient/flybys/codex-test-${suffix}/codex-test-a.png`,
+        frameB: `assets/ambient/flybys/codex-test-${suffix}/codex-test-b.png`,
+        sound: ""
+      }));
+      expect(payload.warnings).toContain(`animals/codex-incomplete-${suffix}: expected two animal image frames named open/closed or frame-a/frame-b.`);
+    } finally {
+      fs.rmSync(animalDir, { recursive: true, force: true });
+      fs.rmSync(flybyDir, { recursive: true, force: true });
+      fs.rmSync(incompleteDir, { recursive: true, force: true });
+    }
   });
 });

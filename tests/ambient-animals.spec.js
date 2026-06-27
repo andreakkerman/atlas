@@ -168,6 +168,45 @@ async function clickAmbientAnimal(page, locator) {
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 }
 
+async function hittableAnimalPoint(page, animalId) {
+  const find = async () => page.locator(`[data-ambient-animal='${animalId}']`).evaluate((shell) => {
+    const rect = shell.getBoundingClientRect();
+    const candidates = [
+      [0.5, 0.5],
+      [0.35, 0.55],
+      [0.65, 0.55],
+      [0.5, 0.32],
+      [0.5, 0.72]
+    ];
+    for (const [xRatio, yRatio] of candidates) {
+      const x = rect.left + rect.width * xRatio;
+      const y = rect.top + rect.height * yRatio;
+      const stack = document.elementsFromPoint(x, y);
+      if (stack.some((element) => element.closest?.("[data-animal-drag]")) &&
+          !stack.some((element) => element.closest?.("[data-developer-tools]"))) {
+        return { x, y };
+      }
+    }
+    return null;
+  });
+  let point = await find();
+  if (point) return point;
+  const collapse = page.locator("[data-debug-action='collapse-editor-panel']");
+  if (await collapse.count()) await collapse.click();
+  point = await find();
+  if (point) return point;
+  await page.evaluate((id) => {
+    const animal = window.eval("level.ambientAnimals").find((item) => item.id === id);
+    if (!animal) return;
+    window.eval(`state.worldX = ${Number(animal.x)}`);
+    window.eval("state.cameraX = getDesiredCameraX()");
+    window.eval("updateWorldDom()");
+  }, animalId);
+  point = await find();
+  if (!point) throw new Error(`No hittable drag point for ${animalId}.`);
+  return point;
+}
+
 test.describe("ambient animals", () => {
   test("preloads both frames and renders them in one identical shared transform", async ({ page }) => {
     await startNautilus(page);
@@ -208,16 +247,13 @@ test.describe("ambient animals", () => {
     await expect(page.locator("[data-animal-editor-id='harborSeagull']")).toBeVisible();
 
     const before = await animalGeometry(page);
-    const shell = page.locator("[data-ambient-animal='harborSeagull']");
-    const box = await shell.boundingBox();
-    await page.evaluate(({ clientX, clientY }) => {
-      window.eval("walkPathEditor.draggingAnimalId = 'harborSeagull'");
-      window.eval("updateDraggedAmbientAnimal")(new PointerEvent("pointermove", { clientX, clientY }));
-      window.eval("walkPathEditor.draggingAnimalId = null");
-    }, {
-      clientX: box.x + box.width / 2 + 60,
-      clientY: box.y + box.height / 2 + 24
-    });
+    const point = await hittableAnimalPoint(page, "harborSeagull");
+    await page.mouse.move(point.x, point.y);
+    await page.mouse.down();
+    await page.mouse.move(point.x + 60, point.y + 24, { steps: 4 });
+    await page.mouse.up();
+    const restore = page.locator("[data-debug-action='restore-editor-panel']");
+    if (await restore.count()) await restore.click();
 
     const scale = page.locator("[data-animal-scale='harborSeagull']");
     await scale.fill("0.34");
@@ -232,6 +268,7 @@ test.describe("ambient animals", () => {
     expect(after.sharedFilter).toContain("blur(0.7px)");
     expect(after.open).toEqual(after.closed);
     expect(after.open).toEqual(after.container);
+    expect(await page.locator("[data-select-ambient-id='harborSeagull']").getAttribute("class")).toContain("editorObjectSelected");
   });
 
   test("softness and soundVolume persist in the authored animal schema", async ({ page }) => {
@@ -611,6 +648,54 @@ test.describe("LVL-0001 owl", () => {
 });
 
 test.describe("ambient animal mirror and additions", () => {
+  test("real drag persists changed x/y through Apply and reload", async ({ page }) => {
+    test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
+    const levelPath = path.join(__dirname, "..", "Levels", "LVL-0004", "level.js");
+    const audioPath = path.join(__dirname, "..", "src", "audio-config.js");
+    const draftPath = path.join(__dirname, "..", "Levels", "LVL-0004", "editor.draft.json");
+    const fs = require("fs");
+    const originalLevel = fs.readFileSync(levelPath, "utf8");
+    const originalAudio = fs.readFileSync(audioPath, "utf8");
+    const originalDraft = fs.existsSync(draftPath) ? fs.readFileSync(draftPath, "utf8") : null;
+
+    try {
+      await startNautilus(page, editorRuntimeUrl);
+      await page.keyboard.press("Control+Shift+D");
+      await page.locator("[data-select-ambient-id='nautilusSeagull']").click();
+      const before = await geometryFor(page, "nautilusSeagull");
+      const point = await hittableAnimalPoint(page, "nautilusSeagull");
+      await page.mouse.move(point.x, point.y);
+      await page.mouse.down();
+      await page.mouse.move(point.x + 74, point.y - 32, { steps: 5 });
+      await page.mouse.up();
+      const restore = page.locator("[data-debug-action='restore-editor-panel']");
+      if (await restore.count()) await restore.click();
+      const afterDrag = await geometryFor(page, "nautilusSeagull");
+      expect(afterDrag.x).not.toBe(before.x);
+      expect(afterDrag.y).not.toBe(before.y);
+
+      await page.getByRole("button", { name: "Apply" }).click();
+      await expect(page.getByText("Draft Status: Applied")).toBeVisible();
+      await page.reload();
+      await page.evaluate(async () => {
+        await window.eval("selectLevel")("LVL-0004", { startImmediately: true });
+        window.eval("render")();
+      });
+      await page.keyboard.press("Control+Shift+D");
+      const reloaded = await geometryFor(page, "nautilusSeagull");
+      expect(reloaded.x).toBe(afterDrag.x);
+      expect(reloaded.y).toBe(afterDrag.y);
+    } finally {
+      fs.writeFileSync(levelPath, originalLevel);
+      fs.writeFileSync(audioPath, originalAudio);
+      if (originalDraft === null) {
+        if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
+      } else {
+        fs.writeFileSync(draftPath, originalDraft);
+      }
+    }
+  });
+
   test("real checkbox click updates draft, Apply and reload", async ({ page }) => {
     test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
     const levelPath = path.join(__dirname, "..", "Levels", "LVL-0004", "level.js");

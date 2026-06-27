@@ -126,8 +126,51 @@
     return route;
   }
 
-  function buildPathCache(points) {
-    const samples = smoothControlPoints(points);
+  function flybyMotionProfile(config = {}) {
+    return String(config.motionProfile || "smooth").toLowerCase() === "organic" ? "organic" : "smooth";
+  }
+
+  function organicFlybyOptions(config = {}) {
+    const organic = flybyMotionProfile(config) === "organic";
+    return {
+      profile: organic ? "organic" : "smooth",
+      wobble: organic ? Math.max(0, Number(config.wobble ?? 14) || 0) : 0,
+      speedVariation: organic ? Math.max(0, Math.min(0.45, Number(config.speedVariation ?? 0.14) || 0)) : 0,
+      flutterFrequency: organic ? Math.max(0.1, Number(config.flutterFrequency ?? 2.1) || 2.1) : 0
+    };
+  }
+
+  function organicPhase(seed = "") {
+    let hash = 0;
+    for (const char of String(seed)) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+    return (hash % 6283) / 1000;
+  }
+
+  function organicPathSamples(samples, options, seed = "") {
+    if (options.profile !== "organic" || samples.length < 3 || !options.wobble) return samples;
+    const phase = organicPhase(seed);
+    return samples.map((point, index) => {
+      if (index === 0 || index === samples.length - 1) return point;
+      const before = samples[index - 1];
+      const after = samples[index + 1];
+      const dx = after.x - before.x;
+      const dy = after.y - before.y;
+      const length = Math.max(0.0001, Math.hypot(dx, dy));
+      const progress = index / Math.max(1, samples.length - 1);
+      const envelope = Math.sin(progress * Math.PI);
+      const wave = Math.sin(progress * Math.PI * 2 * options.flutterFrequency + phase);
+      const flutter = Math.sin(progress * Math.PI * 9 + phase * 0.7) * 0.28;
+      const offset = options.wobble * envelope * (wave + flutter);
+      return {
+        x: point.x + (-dy / length) * offset * 0.45,
+        y: point.y + (dx / length) * offset
+      };
+    });
+  }
+
+  function buildPathCache(points, config = {}) {
+    const options = organicFlybyOptions(config);
+    const samples = organicPathSamples(smoothControlPoints(points), options, config.id);
     const cumulative = [0];
     let totalLength = 0;
     for (let index = 1; index < samples.length; index += 1) {
@@ -137,7 +180,16 @@
       );
       cumulative.push(totalLength);
     }
-    return { samples, cumulative, totalLength };
+    return { samples, cumulative, totalLength, motionProfile: options.profile };
+  }
+
+  function organicSpeedFactor(config = {}, elapsed = 0, progress = 0) {
+    const options = organicFlybyOptions(config);
+    if (options.profile !== "organic" || !options.speedVariation) return 1;
+    const phase = organicPhase(config.id);
+    const wave = Math.sin(elapsed * options.flutterFrequency * Math.PI * 2 + phase);
+    const drift = Math.sin(progress * Math.PI * 4 + phase * 0.5) * 0.35;
+    return Math.max(0.55, Math.min(1.45, 1 + options.speedVariation * (wave + drift)));
   }
 
   function pointAtDistance(cache, distance) {
@@ -200,10 +252,16 @@
 
     function cacheFor(config) {
       const key = keyFor(config.id);
-      const signature = JSON.stringify(config.path || []);
+      const signature = JSON.stringify({
+        path: config.path || [],
+        motionProfile: flybyMotionProfile(config),
+        wobble: config.wobble,
+        speedVariation: config.speedVariation,
+        flutterFrequency: config.flutterFrequency
+      });
       const cached = pathCaches.get(key);
       if (cached?.signature === signature) return cached.value;
-      const value = buildPathCache(config.path || []);
+      const value = buildPathCache(config.path || [], config);
       pathCaches.set(key, { signature, value });
       return value;
     }
@@ -369,6 +427,7 @@
         triggerId,
         preview,
         distance: 0,
+        elapsed: 0,
         lastTime: 0,
         progress: 0,
         scaleX: (document.querySelector(".worldTrack")?.getBoundingClientRect().width || getLevel().world.width) / getLevel().world.width,
@@ -439,8 +498,11 @@
         if (!runtime.lastTime) runtime.lastTime = timestamp;
         const delta = Math.max(0, Math.min(0.1, (timestamp - runtime.lastTime) / 1000));
         runtime.lastTime = timestamp;
-        runtime.distance += Math.max(1, Number(config.speed) || 260) * delta;
         const cache = cacheFor(config);
+        runtime.elapsed += delta;
+        runtime.distance += Math.max(1, Number(config.speed) || 260)
+          * organicSpeedFactor(config, runtime.elapsed, runtime.progress)
+          * delta;
         const point = pointAtDistance(cache, runtime.distance);
         runtime.progress = point.progress;
         const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
@@ -525,6 +587,8 @@
     smoothControlPoints,
     buildPathCache,
     pointAtDistance,
+    organicFlybyOptions,
+    organicSpeedFactor,
     volumeEnvelope,
     createFlybyRuntime
   };

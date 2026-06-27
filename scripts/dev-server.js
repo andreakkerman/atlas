@@ -150,6 +150,68 @@ function validateAmbientAsset(levelId, value, label, extensions, optional = fals
 
 const ambientImageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 const ambientAudioExtensions = new Set([".mp3", ".ogg", ".wav"]);
+const flybyMotionProfiles = new Set(["smooth", "organic"]);
+
+function baseNameWithoutExtension(relativePath) {
+  return path.basename(relativePath, path.extname(relativePath)).toLowerCase();
+}
+
+function assetRole(relativePath, roles) {
+  const name = baseNameWithoutExtension(relativePath).replace(/[_\s]+/g, "-");
+  for (const role of roles) {
+    if (name === role || name.endsWith(`-${role}`) || name.includes(`-${role}-`)) return role;
+  }
+  return "";
+}
+
+function discoverAmbientAssetSets(files) {
+  const groups = new Map();
+  for (const relativePath of files) {
+    const parts = relativePath.split("/");
+    const kind = parts[0];
+    if (!["animals", "flybys"].includes(kind) || parts.length < 3) continue;
+    const folder = parts.slice(0, -1).join("/");
+    if (!groups.has(folder)) groups.set(folder, { kind, folder, images: [], audio: [] });
+    const group = groups.get(folder);
+    const extension = path.extname(relativePath).toLowerCase();
+    if (ambientImageExtensions.has(extension)) group.images.push(relativePath);
+    if (ambientAudioExtensions.has(extension)) group.audio.push(relativePath);
+  }
+
+  const result = { animals: [], flybys: [], warnings: [] };
+  const relative = (name) => `assets/ambient/${name}`;
+  const roleFor = (group, roles) => {
+    const byRole = new Map(group.images.map((image) => [assetRole(image, roles), image]).filter(([role]) => role));
+    return byRole;
+  };
+
+  [...groups.values()]
+    .sort((left, right) => left.folder.localeCompare(right.folder, "en", { sensitivity: "base" }))
+    .forEach((group) => {
+      const label = group.folder.split("/").at(-1);
+      const sound = group.audio[0] ? relative(group.audio[0]) : "";
+      if (group.kind === "animals") {
+        const roles = roleFor(group, ["open", "closed", "framea", "frame-a", "a", "frameb", "frame-b", "b"]);
+        const openFrame = roles.get("open") || roles.get("framea") || roles.get("frame-a") || roles.get("a") || "";
+        const closedFrame = roles.get("closed") || roles.get("frameb") || roles.get("frame-b") || roles.get("b") || "";
+        if (openFrame && closedFrame) {
+          result.animals.push({ key: group.folder, label, openFrame: relative(openFrame), closedFrame: relative(closedFrame), sound });
+        } else {
+          result.warnings.push(`${group.folder}: expected two animal image frames named open/closed or frame-a/frame-b.`);
+        }
+      } else {
+        const roles = roleFor(group, ["a", "b", "framea", "frame-a", "frameb", "frame-b"]);
+        const frameA = roles.get("a") || roles.get("framea") || roles.get("frame-a") || "";
+        const frameB = roles.get("b") || roles.get("frameb") || roles.get("frame-b") || "";
+        if (frameA && frameB) {
+          result.flybys.push({ key: group.folder, label, frameA: relative(frameA), frameB: relative(frameB), sound });
+        } else {
+          result.warnings.push(`${group.folder}: expected two flyby image frames named a/b or frame-a/frame-b.`);
+        }
+      }
+    });
+  return result;
+}
 
 function validateAmbientAnimals(value, levelId) {
   if (!Array.isArray(value)) throw new Error("ambientAnimals must be an array.");
@@ -261,6 +323,13 @@ function validateAmbientFlybys(value, levelId) {
       rotateAlongPath: Boolean(flyby.rotateAlongPath),
       maxRotationDeg: number("maxRotationDeg", 0, 180)
     };
+    const motionProfile = flybyMotionProfiles.has(String(flyby.motionProfile || "smooth"))
+      ? String(flyby.motionProfile || "smooth")
+      : "smooth";
+    if (flyby.motionProfile !== undefined || motionProfile === "organic") result.motionProfile = motionProfile;
+    if (flyby.wobble !== undefined || motionProfile === "organic") result.wobble = flyby.wobble === undefined ? 14 : number("wobble", 0, 120);
+    if (flyby.speedVariation !== undefined || motionProfile === "organic") result.speedVariation = flyby.speedVariation === undefined ? 0.14 : number("speedVariation", 0, 0.45);
+    if (flyby.flutterFrequency !== undefined || motionProfile === "organic") result.flutterFrequency = flyby.flutterFrequency === undefined ? 2.1 : number("flutterFrequency", 0.1, 12);
     if (result.intervalMinMs > result.intervalMaxMs) throw new Error(`ambientFlybys[${index}] minimum interval exceeds maximum.`);
     return result;
   });
@@ -561,9 +630,13 @@ async function handleDevRequest(request, response, url) {
         .map((entry) => path.relative(ambientDir, path.join(entry.parentPath || entry.path, entry.name)).replace(/\\/g, "/"))
         .sort((left, right) => left.localeCompare(right, "en", { sensitivity: "base" }));
       const relative = (name) => `assets/ambient/${name}`;
+      const discovered = discoverAmbientAssetSets(files);
       sendJson(response, 200, {
         images: files.filter((name) => ambientImageExtensions.has(path.extname(name).toLowerCase())).map(relative),
-        audio: files.filter((name) => ambientAudioExtensions.has(path.extname(name).toLowerCase())).map(relative)
+        audio: files.filter((name) => ambientAudioExtensions.has(path.extname(name).toLowerCase())).map(relative),
+        animals: discovered.animals,
+        flybys: discovered.flybys,
+        warnings: discovered.warnings
       });
       return true;
     }

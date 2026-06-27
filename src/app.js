@@ -507,7 +507,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     effectDrag: null,
     showEffectGuides: true,
     effectVisibility: "all",
-    assets: { images: [], audio: [] },
+    assets: { images: [], audio: [], animals: [], flybys: [], warnings: [] },
     assetMessage: "",
     pathMode: false,
     selectedPathPoint: 0,
@@ -1755,9 +1755,14 @@ async function refreshAmbientAssets(shouldRender = true, levelId = level?.id) {
     const payload = await requestEditorApi(`/__dev/levels/${encodeURIComponent(id)}/ambient-assets`);
     walkPathEditor.assets = {
       images: payload.images || [],
-      audio: payload.audio || []
+      audio: payload.audio || [],
+      animals: payload.animals || [],
+      flybys: payload.flybys || [],
+      warnings: payload.warnings || []
     };
-    walkPathEditor.assetMessage = `${walkPathEditor.assets.images.length} afbeeldingen, ${walkPathEditor.assets.audio.length} audiobestanden.`;
+    const completeSets = walkPathEditor.assets.animals.length + walkPathEditor.assets.flybys.length;
+    const warningCount = walkPathEditor.assets.warnings.length;
+    walkPathEditor.assetMessage = `${walkPathEditor.assets.images.length} afbeeldingen, ${walkPathEditor.assets.audio.length} audiobestanden, ${completeSets} complete sets${warningCount ? `, ${warningCount} waarschuwingen` : ""}.`;
   } catch (error) {
     walkPathEditor.assetMessage = `Assets laden mislukt. ${error.message}`;
   }
@@ -1796,9 +1801,10 @@ async function addAmbientAnimalFromEditor() {
   const data = new FormData(form);
   const id = String(data.get("id") || "").trim();
   const label = String(data.get("label") || "").trim();
-  const openFrame = String(data.get("openFrame") || "");
-  const closedFrame = String(data.get("closedFrame") || "");
-  const sound = String(data.get("sound") || "");
+  const assetSet = discoveredAssetSetByKey("animal", String(data.get("assetSet") || ""));
+  const openFrame = String(data.get("openFrame") || assetSet?.openFrame || "");
+  const closedFrame = String(data.get("closedFrame") || assetSet?.closedFrame || "");
+  const sound = String(data.get("sound") || assetSet?.sound || "");
   if (!id || !label || !openFrame || !closedFrame) {
     walkPathEditor.message = "ID, label en beide frames zijn verplicht.";
     render();
@@ -1851,9 +1857,10 @@ async function addAmbientFlybyFromEditor() {
   const data = new FormData(form);
   const id = String(data.get("id") || "").trim();
   const label = String(data.get("label") || "").trim();
-  const frameA = String(data.get("frameA") || "");
-  const frameB = String(data.get("frameB") || "");
-  const sound = String(data.get("sound") || "");
+  const assetSet = discoveredAssetSetByKey("flyby", String(data.get("assetSet") || ""));
+  const frameA = String(data.get("frameA") || assetSet?.frameA || "");
+  const frameB = String(data.get("frameB") || assetSet?.frameB || "");
+  const sound = String(data.get("sound") || assetSet?.sound || "");
   if (!id || !label || !frameA || !frameB) {
     walkPathEditor.message = "ID, label en beide flybyframes zijn verplicht.";
     render();
@@ -1895,7 +1902,11 @@ async function addAmbientFlybyFromEditor() {
     saturation: 1,
     soundVolume: 0.65,
     rotateAlongPath: true,
-    maxRotationDeg: 8
+    maxRotationDeg: 8,
+    motionProfile: "smooth",
+    wobble: 14,
+    speedVariation: 0.14,
+    flutterFrequency: 2.1
   };
   setLevelAmbientFlybys([...(level.ambientFlybys || []), flyby]);
   walkPathEditor.selectedObjectType = "flyby";
@@ -1946,10 +1957,14 @@ function updateAmbientFlybySetting(id, field, value) {
   const flyby = flybys.find((item) => item.id === id);
   if (!flyby) return;
   const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath"]);
-  const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey"]);
+  const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile"]);
   if (booleans.has(field)) flyby[field] = Boolean(value);
+  else if (field === "motionProfile") flyby[field] = String(value) === "organic" ? "organic" : "smooth";
   else if (strings.has(field)) flyby[field] = String(value);
   else flyby[field] = Number(value);
+  if (field === "wobble") flyby.wobble = Math.max(0, Number(flyby.wobble) || 0);
+  if (field === "speedVariation") flyby.speedVariation = Math.max(0, Math.min(0.45, Number(flyby.speedVariation) || 0));
+  if (field === "flutterFrequency") flyby.flutterFrequency = Math.max(0.1, Number(flyby.flutterFrequency) || 2.1);
   if (field === "intervalMinMs" && flyby.intervalMinMs > flyby.intervalMaxMs) flyby.intervalMaxMs = flyby.intervalMinMs;
   if (field === "intervalMaxMs" && flyby.intervalMaxMs < flyby.intervalMinMs) flyby.intervalMinMs = flyby.intervalMaxMs;
   if (["intervalMinMs", "intervalMaxMs"].includes(field) && String(flyby.syncKey || "").trim()) {
@@ -2984,15 +2999,42 @@ function assetOptions(items, selected = "", optional = false) {
   }`;
 }
 
+function discoveredAssetSets(type) {
+  const key = type === "flyby" ? "flybys" : "animals";
+  return walkPathEditor.assets[key] || [];
+}
+
+function discoveredAssetSetByKey(type, key) {
+  return discoveredAssetSets(type).find((set) => set.key === key) || null;
+}
+
+function renderAssetSetOptions(type) {
+  const sets = discoveredAssetSets(type);
+  return `<option value="">Manual frames</option>${sets.map((set) => (
+    `<option value="${set.key}">${set.label || set.key}${set.sound ? " + sound" : ""}</option>`
+  )).join("")}`;
+}
+
+function renderAssetWarnings() {
+  const warnings = walkPathEditor.assets.warnings || [];
+  if (!warnings.length) return "";
+  return `<ul class="assetWarningList">${warnings.map((warning) => `<li>${warning}</li>`).join("")}</ul>`;
+}
+
 function renderAmbientAddForm(type) {
   const flyby = type === "flyby";
+  const imagePrefix = flyby ? "assets/ambient/flybys/" : "assets/ambient/animals/";
+  const audioPrefix = imagePrefix;
+  const images = (walkPathEditor.assets.images || []).filter((path) => path.startsWith(imagePrefix));
+  const audio = (walkPathEditor.assets.audio || []).filter((path) => path.startsWith(audioPrefix));
   return `
     <form class="editorAddForm" data-add-${type}-form>
       <label><span>Unique ID</span><input name="id" required pattern="[A-Za-z0-9_-]+" /></label>
       <label><span>Label</span><input name="label" required /></label>
-      <label><span>${flyby ? "Frame A" : "Open frame"}</span><select name="${flyby ? "frameA" : "openFrame"}">${assetOptions(walkPathEditor.assets.images || [])}</select></label>
-      <label><span>${flyby ? "Frame B" : "Closed frame"}</span><select name="${flyby ? "frameB" : "closedFrame"}">${assetOptions(walkPathEditor.assets.images || [])}</select></label>
-      <label><span>Sound</span><select name="sound">${assetOptions(walkPathEditor.assets.audio || [], "", true)}</select></label>
+      <label><span>Discovered set</span><select name="assetSet">${renderAssetSetOptions(type)}</select></label>
+      <label><span>${flyby ? "Frame A" : "Open frame"}</span><select name="${flyby ? "frameA" : "openFrame"}">${assetOptions(images)}</select></label>
+      <label><span>${flyby ? "Frame B" : "Closed frame"}</span><select name="${flyby ? "frameB" : "closedFrame"}">${assetOptions(images)}</select></label>
+      <label><span>Sound</span><select name="sound">${assetOptions(audio, "", true)}</select></label>
       <button type="button" data-debug-action="add-${type}">Add ${flyby ? "ambient flyby" : "ambient animal"}</button>
     </form>
   `;
@@ -3010,6 +3052,16 @@ function renderFlybyField(label, flyby, field, options = {}) {
   `;
 }
 
+function renderFlybyMotionProfile(flyby) {
+  const profile = String(flyby.motionProfile || "smooth");
+  return `
+    <label class="editorField"><span>Motion profile</span><select data-flyby-setting="motionProfile" data-flyby-id="${flyby.id}">
+      <option value="smooth" ${profile === "smooth" ? "selected" : ""}>Smooth</option>
+      <option value="organic" ${profile === "organic" ? "selected" : ""}>Organic</option>
+    </select></label>
+  `;
+}
+
 function renderAmbientEditorControls() {
   const animals = level.ambientAnimals || [];
   const flybys = level.ambientFlybys || [];
@@ -3021,6 +3073,7 @@ function renderAmbientEditorControls() {
       <button type="button" data-debug-action="refresh-assets">Refresh assets</button>
       <span>${walkPathEditor.assetMessage || "Place shared files in assets/ambient/animals or assets/ambient/flybys."}</span>
     </div>
+    ${renderAssetWarnings()}
     <details class="editorSection" open>
       <summary>Ambient animals <span>${animals.length}</span></summary>
       <div class="editorObjectPicker">
@@ -3065,7 +3118,11 @@ function renderAmbientEditorControls() {
             <label class="editorField"><span>Frame A</span><select data-flyby-setting="frameA" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameA)}</select></label>
             <label class="editorField"><span>Frame B</span><select data-flyby-setting="frameB" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameB)}</select></label>
           </details>
-          <details class="editorNestedSection"><summary>Animation</summary>
+          <details class="editorNestedSection" open><summary>Animation</summary>
+            ${renderFlybyMotionProfile(flyby)}
+            ${renderFlybyField("Wobble", flyby, "wobble", { min: 0, max: 80, step: 1, display: (v) => Number(v ?? 14) })}
+            ${renderFlybyField("Speed variation", flyby, "speedVariation", { min: 0, max: 0.45, step: 0.01, display: (v) => Number(v ?? 0.14) })}
+            ${renderFlybyField("Flutter frequency", flyby, "flutterFrequency", { min: 0.1, max: 8, step: 0.1, display: (v) => Number(v ?? 2.1) })}
             ${renderFlybyField("Flap Hz", flyby, "flapFrequencyHz", { min: 0, max: 20, step: 0.5 })}
             ${renderFlybyField("Face flight direction", flyby, "faceFlightDirection", { toggle: true })}
             ${renderFlybyField("Manual mirror", flyby, "mirrorX", { toggle: true })}
@@ -4311,7 +4368,8 @@ function renderAmbientAnimal(animal) {
       class="ambientAnimal ${debugOverlayEnabled && walkPathEditor.enabled ? "ambientAnimalEditable" : ""}"
       style="${ambientAnimalTrackStyle(animal)}"
       type="button"
-      data-ambient-animal="${animal.id}"
+    data-ambient-animal="${animal.id}"
+      ${debugOverlayEnabled && walkPathEditor.enabled ? `data-animal-drag="${animal.id}"` : ""}
       data-animal-type="${animal.type}"
       data-frame="${runtime.frame}"
       data-ready="${ready}"
@@ -5403,17 +5461,20 @@ app.addEventListener("pointerdown", (event) => {
     };
     return;
   }
-  const pointerMarker = event.target.closest("[data-hotspot], [data-rune]");
-  const underlyingAnimalDrag = pointerMarker && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
+  const topEditorDragTarget = event.target.closest("[data-object-drag], [data-walkpath-index]");
+  const underlyingAnimalDrag = !topEditorDragTarget && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)
     ? document.elementsFromPoint(event.clientX, event.clientY)
       .find((element) => element.closest?.("[data-animal-drag]"))
       ?.closest("[data-animal-drag]")
     : null;
-  const animalTarget = event.target.closest("[data-animal-drag]") || underlyingAnimalDrag;
+  const animalTarget = (!topEditorDragTarget && event.target.closest("[data-animal-drag]")) || underlyingAnimalDrag;
   if (animalTarget && walkPathEditor.enabled && debugOverlayEnabled) {
     event.preventDefault();
     event.stopPropagation();
+    animalTarget.setPointerCapture?.(event.pointerId);
     walkPathEditor.draggingAnimalId = animalTarget.dataset.animalDrag;
+    walkPathEditor.selectedObjectType = "animal";
+    walkPathEditor.selectedObjectId = animalTarget.dataset.animalDrag;
     walkPathEditor.draggingObjectId = null;
     walkPathEditor.draggingIndex = null;
     updateDraggedAmbientAnimal(event);

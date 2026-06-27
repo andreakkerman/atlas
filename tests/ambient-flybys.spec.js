@@ -102,6 +102,51 @@ test.describe("ambient flyby runtime", () => {
     expect(result).toMatchObject({ active: 0, timers: 0, audio: 0 });
   });
 
+  test("organic motion profile keeps smooth compatibility while changing path samples", async ({ page }) => {
+    await startItaly(page);
+    const result = await page.evaluate(() => {
+      const build = window.AtlasAmbientSystem.buildPathCache;
+      const path = [
+        { x: -100, y: 160 },
+        { x: 520, y: 80 },
+        { x: 1120, y: 170 }
+      ];
+      const smooth = build(path, { id: "smooth", motionProfile: "smooth" });
+      const organic = build(path, {
+        id: "organic",
+        motionProfile: "organic",
+        wobble: 24,
+        speedVariation: 0.18,
+        flutterFrequency: 2.2
+      });
+      const speedFactor = window.AtlasAmbientSystem.organicSpeedFactor({
+        id: "organic",
+        motionProfile: "organic",
+        speedVariation: 0.18,
+        flutterFrequency: 2.2
+      }, 0.25, 0.4);
+      return {
+        smoothProfile: smooth.motionProfile,
+        organicProfile: organic.motionProfile,
+        sameCount: smooth.samples.length === organic.samples.length,
+        first: { smooth: smooth.samples[0], organic: organic.samples[0] },
+        last: { smooth: smooth.samples.at(-1), organic: organic.samples.at(-1) },
+        middleDelta: Math.hypot(
+          smooth.samples[Math.floor(smooth.samples.length / 2)].x - organic.samples[Math.floor(organic.samples.length / 2)].x,
+          smooth.samples[Math.floor(smooth.samples.length / 2)].y - organic.samples[Math.floor(organic.samples.length / 2)].y
+        ),
+        speedFactor
+      };
+    });
+    expect(result.smoothProfile).toBe("smooth");
+    expect(result.organicProfile).toBe("organic");
+    expect(result.sameCount).toBe(true);
+    expect(result.first.smooth).toEqual(result.first.organic);
+    expect(result.last.smooth).toEqual(result.last.organic);
+    expect(result.middleDelta).toBeGreaterThan(1);
+    expect(result.speedFactor).not.toBe(1);
+  });
+
   test("reduced motion suppresses automatic scheduling", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await startItaly(page);
@@ -154,6 +199,71 @@ test.describe("ambient editor usability", () => {
     await page.getByRole("button", { name: "Fit level" }).click();
     await page.getByRole("button", { name: "Done" }).click();
     await expect(page.locator("[data-flight-path-workspace]")).toHaveCount(0);
+  });
+
+  test("editor exposes and persists organic flyby settings", async ({ page }) => {
+    test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
+    const fs = require("fs");
+    const levelPath = path.join(__dirname, "..", "Levels", "LVL-0016", "level.js");
+    const draftPath = path.join(__dirname, "..", "Levels", "LVL-0016", "editor.draft.json");
+    const originalLevel = fs.readFileSync(levelPath, "utf8");
+    const originalDraft = fs.existsSync(draftPath) ? fs.readFileSync(draftPath, "utf8") : null;
+    try {
+      await startItaly(page, process.env.ATLAS_EDITOR_URL);
+      await page.keyboard.press("Control+Shift+D");
+      await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
+      await page.locator("[data-flyby-setting='motionProfile'][data-flyby-id='italyCommonSwift']").selectOption("organic");
+      await page.locator("[data-flyby-setting='wobble'][data-flyby-id='italyCommonSwift']").fill("18");
+      await page.locator("[data-flyby-setting='wobble'][data-flyby-id='italyCommonSwift']").dispatchEvent("change");
+      await page.locator("[data-flyby-setting='speedVariation'][data-flyby-id='italyCommonSwift']").fill("0.18");
+      await page.locator("[data-flyby-setting='speedVariation'][data-flyby-id='italyCommonSwift']").dispatchEvent("change");
+      await page.locator("[data-flyby-setting='flutterFrequency'][data-flyby-id='italyCommonSwift']").fill("2.2");
+      await page.locator("[data-flyby-setting='flutterFrequency'][data-flyby-id='italyCommonSwift']").dispatchEvent("change");
+      expect(await page.evaluate(() => {
+        const flyby = window.eval("level.ambientFlybys.find((item) => item.id === 'italyCommonSwift')");
+        return {
+          motionProfile: flyby.motionProfile,
+          wobble: flyby.wobble,
+          speedVariation: flyby.speedVariation,
+          flutterFrequency: flyby.flutterFrequency
+        };
+      })).toEqual({
+        motionProfile: "organic",
+        wobble: 18,
+        speedVariation: 0.18,
+        flutterFrequency: 2.2
+      });
+
+      await page.getByRole("button", { name: "Apply" }).click();
+      await expect(page.getByText("Draft Status: Applied")).toBeVisible({ timeout: 10000 });
+      await page.reload();
+      await page.evaluate(async () => {
+        await window.eval("selectLevel")("LVL-0016", { startImmediately: true });
+        window.eval("render")();
+      });
+      const reloaded = await page.evaluate(() => {
+        const flyby = window.eval("level.ambientFlybys.find((item) => item.id === 'italyCommonSwift')");
+        return {
+          motionProfile: flyby.motionProfile,
+          wobble: flyby.wobble,
+          speedVariation: flyby.speedVariation,
+          flutterFrequency: flyby.flutterFrequency
+        };
+      });
+      expect(reloaded).toEqual({
+        motionProfile: "organic",
+        wobble: 18,
+        speedVariation: 0.18,
+        flutterFrequency: 2.2
+      });
+    } finally {
+      fs.writeFileSync(levelPath, originalLevel);
+      if (originalDraft === null) {
+        if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
+      } else {
+        fs.writeFileSync(draftPath, originalDraft);
+      }
+    }
   });
 });
 

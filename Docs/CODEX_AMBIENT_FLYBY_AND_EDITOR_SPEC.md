@@ -132,7 +132,12 @@ Each configured flyby instance should support:
   soundVolume,
 
   rotateAlongPath,
-  maxRotationDeg
+  maxRotationDeg,
+
+  motionProfile,
+  wobble,
+  speedVariation,
+  flutterFrequency
 }
 ```
 
@@ -200,6 +205,13 @@ Requirements:
 Do not implement complex Bézier handles, speed per segment, scale per segment, rotation curves or formation templates.
 
 ---
+
+Optional motion profiles:
+
+- `motionProfile: "smooth"` is the default and preserves the existing smoothed route behavior.
+- `motionProfile: "organic"` adds deterministic irregularity for bats, butterflies and similar flyers.
+- Organic profiles may use `wobble` in world pixels, `speedVariation` from `0` to `0.45`, and `flutterFrequency` in cycles per second.
+- The same two-frame sprite convention still applies; no runtime AI, physics engine or flock model is involved.
 
 ## 7. Flight-path editor mode
 
@@ -471,7 +483,7 @@ and opens:
 http://127.0.0.1:4173/?dev=editor
 ```
 
-Add a safe editor-only local-server endpoint that lists supported files in the current level's `assets/ambient` directory.
+Add a safe editor-only local-server endpoint that lists supported files in the central shared `assets/ambient` directory.
 
 Supported images:
 
@@ -488,14 +500,29 @@ Supported audio:
 
 Requirements:
 
-- only scan the selected level's ambient directory;
+- only scan `assets/ambient/animals/` and `assets/ambient/flybys/`;
 - reject path traversal;
 - no arbitrary filesystem access;
 - return browser-safe relative paths;
 - sort filenames predictably;
 - handle missing or empty folders cleanly;
+- report complete two-frame asset sets and non-blocking warnings for incomplete folders;
 - endpoint is editor-only;
 - normal published runtime never calls it.
+
+Current central naming convention:
+
+```text
+assets/ambient/animals/<name>/<name>-open.png
+assets/ambient/animals/<name>/<name>-closed.png
+assets/ambient/animals/<name>/<name>-call.mp3
+
+assets/ambient/flybys/<name>/<name>-a.png
+assets/ambient/flybys/<name>/<name>-b.png
+assets/ambient/flybys/<name>/<name>-call.mp3
+```
+
+Images may use `.png`, `.jpg`, `.jpeg` or `.webp`. Audio may use `.mp3`, `.ogg` or `.wav` and is optional. Animal image roles may also be expressed as `frame-a`/`frame-b`; flyby image roles may be `a`/`b` or `frame-a`/`frame-b`.
 
 Add `Refresh assets` without reloading the full editor.
 

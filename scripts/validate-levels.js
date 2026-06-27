@@ -522,6 +522,19 @@ function validateAssets(level, entry, levelFolder, label) {
     assertCentralAmbientAsset(flyby.frameA, `${label}.ambientFlybys[${index}].frameA`);
     assertCentralAmbientAsset(flyby.frameB, `${label}.ambientFlybys[${index}].frameB`);
     assertCentralAmbientAsset(flyby.sound, `${label}.ambientFlybys[${index}].sound`, true);
+    const flybyLabel = `${label}.ambientFlybys[${index}]`;
+    if (flyby.motionProfile !== undefined && !["smooth", "organic"].includes(flyby.motionProfile)) {
+      fail(`${flybyLabel}.motionProfile must be "smooth" or "organic".`);
+    }
+    if (flyby.wobble !== undefined && (!Number.isFinite(flyby.wobble) || flyby.wobble < 0)) {
+      fail(`${flybyLabel}.wobble must be zero or greater.`);
+    }
+    if (flyby.speedVariation !== undefined && (!Number.isFinite(flyby.speedVariation) || flyby.speedVariation < 0 || flyby.speedVariation > 0.45)) {
+      fail(`${flybyLabel}.speedVariation must be between 0 and 0.45.`);
+    }
+    if (flyby.flutterFrequency !== undefined && (!Number.isFinite(flyby.flutterFrequency) || flyby.flutterFrequency <= 0)) {
+      fail(`${flybyLabel}.flutterFrequency must be greater than zero.`);
+    }
   });
   assertAssetExists(level.reward?.art, `${label}.reward.art`, levelFolder);
 }
