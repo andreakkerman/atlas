@@ -516,15 +516,18 @@ button {
   z-index: var(--layer-editor-world);
   width: 100%;
   height: 100%;
-  pointer-events: auto;
+  pointer-events: none;
 }
 
 .sceneEffectGuide {
   pointer-events: none;
 }
 
-.sceneEffectGuideInteractive,
-.sceneEffectGuideInteractive * {
+.sceneEffectGuideInteractive [data-effect-shape],
+.sceneEffectGuideInteractive [data-effect-mask-shape],
+.sceneEffectGuideInteractive [data-effect-handle],
+.sceneEffectGuideInteractive [data-effect-vertex],
+.sceneEffectGuideInteractive [data-effect-edge] {
   pointer-events: auto;
 }
 
@@ -1306,9 +1309,9 @@ button {
 }
 
 .effectGuideCenter {
-  fill: #ff5757;
+  fill: #c45cff;
   stroke: #fff7de;
-  stroke-width: 4;
+  stroke-width: 3;
 }
 
 .effectGuideHandle {

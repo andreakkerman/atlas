@@ -930,6 +930,7 @@ test.describe("scene effects editor", () => {
     const originalLevel = fs.readFileSync(levelPath, "utf8");
     const originalDraft = fs.existsSync(draftPath) ? fs.readFileSync(draftPath, "utf8") : null;
     try {
+      if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
       await page.goto(editorUrl);
       await page.evaluate(async () => {
         await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
@@ -959,12 +960,12 @@ test.describe("scene effects editor", () => {
         const response = await fetch("/__dev/levels/LVL-0003/editor-draft");
         const draft = await response.json();
         return {
-          guidesIsObject: draft.audioConfig?.tracks?.guides && !Array.isArray(draft.audioConfig.tracks.guides),
+          hasAudioConfig: Boolean(draft.audioConfig),
           sceneEffectsTopLevel: Array.isArray(draft.sceneEffects),
           audioHasSceneEffects: Boolean(draft.audioConfig?.sceneEffects || draft.audioConfig?.tracks?.sceneEffects)
         };
       });
-      expect(draftAudio).toEqual({ guidesIsObject: true, sceneEffectsTopLevel: true, audioHasSceneEffects: false });
+      expect(draftAudio).toEqual({ hasAudioConfig: false, sceneEffectsTopLevel: true, audioHasSceneEffects: false });
       await page.getByRole("button", { name: "Apply" }).click({ force: true }).catch(() => {});
       await page.waitForTimeout(120);
       if (await page.evaluate(() => window.eval("walkPathEditor.status")) !== "Applied") {

@@ -145,7 +145,8 @@ let walkPathEditor = {
   modified: false,
   message: "",
   busy: false,
-  panelCollapsed: false
+  panelCollapsed: false,
+  audioDirty: false
 };
 
 function createLevelState(selectedLevel) {
@@ -365,8 +366,12 @@ function cloneAudioConfig(config) {
   return JSON.parse(JSON.stringify(config || {}));
 }
 
-function persistedAudioConfig() {
-  const current = cloneAudioConfig(audioConfig || {});
+function editorValuesEqual(left, right) {
+  return JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
+}
+
+function persistedAudioConfigFrom(config) {
+  const current = cloneAudioConfig(config || {});
   return {
     tracks: cloneAudioConfig(originalAudioTracks || current.tracks || {}),
     menu: cloneAudioConfig(current.menu || {}),
@@ -375,16 +380,34 @@ function persistedAudioConfig() {
   };
 }
 
+function persistedAudioConfig() {
+  return persistedAudioConfigFrom(audioConfig);
+}
+
 function persistedLevelEditorPayload() {
-  return {
-    walkPath: authoredWalkPathPoints(level),
-    interactiveObjects: cloneInteractiveObjects(level.interactiveObjects || []),
-    ambientAnimals: cloneAmbientAnimals(level.ambientAnimals || []),
-    ambientFlybys: cloneAmbientFlybys(level.ambientFlybys || []),
-    sceneEffects: cloneSceneEffects(level.sceneEffects || []),
-    sceneEffectGroups: cloneSceneEffectGroups(level.sceneEffectGroups || []),
-    audioConfig: persistedAudioConfig()
-  };
+  const payload = {};
+  const currentWalkPath = authoredWalkPathPoints(level);
+  const currentInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects || []);
+  const currentAmbientAnimals = cloneAmbientAnimals(level.ambientAnimals || []);
+  const currentAmbientFlybys = cloneAmbientFlybys(level.ambientFlybys || []);
+  const currentSceneEffects = cloneSceneEffects(level.sceneEffects || []);
+  const currentSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
+  const currentAudioConfig = persistedAudioConfig();
+  const originalAudioConfig = persistedAudioConfigFrom(walkPathEditor?.originalAudioConfig || {});
+
+  if (!editorValuesEqual(currentWalkPath, walkPathEditor?.originalWalkPath || [])) payload.walkPath = currentWalkPath;
+  if (!editorValuesEqual(currentInteractiveObjects, walkPathEditor?.originalInteractiveObjects || [])) payload.interactiveObjects = currentInteractiveObjects;
+  if (!editorValuesEqual(currentAmbientAnimals, walkPathEditor?.originalAmbientAnimals || [])) payload.ambientAnimals = currentAmbientAnimals;
+  if (!editorValuesEqual(currentAmbientFlybys, walkPathEditor?.originalAmbientFlybys || [])) payload.ambientFlybys = currentAmbientFlybys;
+  if (
+    !editorValuesEqual(currentSceneEffects, walkPathEditor?.originalSceneEffects || []) ||
+    !editorValuesEqual(currentSceneEffectGroups, walkPathEditor?.originalSceneEffectGroups || [])
+  ) {
+    payload.sceneEffects = currentSceneEffects;
+    payload.sceneEffectGroups = currentSceneEffectGroups;
+  }
+  if (walkPathEditor?.audioDirty && !editorValuesEqual(currentAudioConfig, originalAudioConfig)) payload.audioConfig = currentAudioConfig;
+  return payload;
 }
 
 function clampVolume(value) {
@@ -520,7 +543,8 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     modified: false,
     message: EDITOR_DEV_MODE ? "Gebruik Ctrl + Shift + D om levelpunten, objecten of audio te bewerken." : "",
     busy: false,
-    panelCollapsed: false
+    panelCollapsed: false,
+    audioDirty: false
   };
 
   if (!EDITOR_DEV_MODE || !window.location.protocol.startsWith("http")) return;
@@ -1534,9 +1558,14 @@ function pointFromViewportEvent(event, viewportElement) {
 async function persistWalkPathDraft() {
   if (!walkPathEditor.apiAvailable || !level) return;
   try {
+    const payload = persistedLevelEditorPayload();
+    if (!Object.keys(payload).length) {
+      await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
+      return;
+    }
     await requestEditorApi(editorApiUrl("editor-draft"), {
       method: "POST",
-      body: JSON.stringify(persistedLevelEditorPayload())
+      body: JSON.stringify(payload)
     });
   } catch (error) {
     walkPathEditor.status = "Error";
@@ -1551,9 +1580,17 @@ async function applyWalkPathDraft() {
   render();
 
   try {
+    const payload = persistedLevelEditorPayload();
+    if (!Object.keys(payload).length) {
+      await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
+      walkPathEditor.status = "Applied";
+      walkPathEditor.modified = false;
+      walkPathEditor.message = "Geen wijzigingen om toe te passen.";
+      return;
+    }
     await requestEditorApi(editorApiUrl("apply-editor"), {
       method: "POST",
-      body: JSON.stringify(persistedLevelEditorPayload())
+      body: JSON.stringify(payload)
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
@@ -1562,9 +1599,10 @@ async function applyWalkPathDraft() {
     walkPathEditor.originalSceneEffects = cloneSceneEffects(level.sceneEffects || []);
     walkPathEditor.originalSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
     walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
+    walkPathEditor.audioDirty = false;
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
-    walkPathEditor.message = "Opgeslagen in level.js en audio-config.js.";
+    walkPathEditor.message = "Editorwijzigingen opgeslagen.";
   } catch (error) {
     walkPathEditor.status = "Error";
     walkPathEditor.message = `Toepassen mislukt. ${error.message}`;
@@ -1590,6 +1628,7 @@ async function revertWalkPathDraft() {
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
     setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
     setAudioConfig(walkPathEditor.originalAudioConfig);
+    walkPathEditor.audioDirty = false;
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
     walkPathEditor.currentAnimal = null;
@@ -2068,6 +2107,7 @@ function updateAudioDraft(path, value) {
   const nextConfig = cloneAudioConfig(audioConfig);
   setNestedAudioValue(nextConfig, path, value);
   setAudioConfig(nextConfig);
+  walkPathEditor.audioDirty = true;
   walkPathEditor.status = "Modified";
   walkPathEditor.modified = true;
   walkPathEditor.message = "Audio aangepast.";
@@ -3770,7 +3810,7 @@ function renderMaskGuide(effect, options = {}) {
     const center = polygonCenter(points);
     return `<g data-effect-mask-include="${polygonIndex}">
       <path class="effectGuideMaskInclude" data-effect-mask-shape="include" data-effect-polygon-index="${polygonIndex}" d="${geometryPathData(points)}"></path>
-      ${includeEditable ? `<circle class="effectGuideCenter effectGuideMaskMove" cx="${center.x}" cy="${center.y}" r="14" data-effect-handle="mask-move" data-effect-polygon-index="${polygonIndex}"></circle>` : ""}
+      ${includeEditable ? `<circle class="effectGuideCenter effectGuideMaskMove" cx="${center.x}" cy="${center.y}" r="10" data-effect-handle="mask-move" data-effect-polygon-index="${polygonIndex}"></circle>` : ""}
       ${renderEffectPolygonControls(points, "maskInclude", { polygonIndex, editable: includeEditable })}
     </g>`;
   }).join("");
@@ -3778,7 +3818,7 @@ function renderMaskGuide(effect, options = {}) {
     const center = polygonCenter(points);
     return `<g data-effect-mask-cutout="${polygonIndex}">
       <path class="effectGuideMaskCutout" data-effect-mask-shape="cutout" data-effect-polygon-index="${polygonIndex}" d="${geometryPathData(points)}"></path>
-      ${cutoutEditable ? `<circle class="effectGuideCenter effectGuideMaskCutoutMove" cx="${center.x}" cy="${center.y}" r="14" data-effect-handle="mask-cutout-move" data-effect-polygon-index="${polygonIndex}"></circle>` : ""}
+      ${cutoutEditable ? `<circle class="effectGuideCenter effectGuideMaskCutoutMove" cx="${center.x}" cy="${center.y}" r="10" data-effect-handle="mask-cutout-move" data-effect-polygon-index="${polygonIndex}"></circle>` : ""}
       ${renderEffectPolygonControls(points, "maskCutout", { polygonIndex, editable: cutoutEditable })}
     </g>`;
   }).join("");
@@ -3856,7 +3896,7 @@ function renderEffectGeometryWorkspace() {
         <image href="${level.world.background}" x="0" y="0" width="${level.world.width}" height="${level.world.height}" opacity="${walkPathEditor.effectVisibility === "backgroundOnly" ? 1 : .62}" pointer-events="none"></image>
         ${walkPathEditor.effectVisibility === "backgroundOnly" ? "" : `<g data-effect-guide="${effect.id}">
           ${renderEffectGeometryShape(effect, { includeMask: true })}
-          ${scope === "source" ? `<circle class="effectGuideCenter" cx="${center.x}" cy="${center.y}" r="16" data-effect-handle="move"></circle>` : ""}
+          ${scope === "source" ? `<circle class="effectGuideCenter" cx="${center.x}" cy="${center.y}" r="10" data-effect-handle="move"></circle>` : ""}
           <text class="effectGuideLabel" x="${center.x + 24}" y="${center.y - 28}">${effect.label || effect.id}</text>
         </g>`}
         <path class="effectGuideDraftPath" data-effect-draft-path d="${draft?.points?.length ? geometryPathData(draft.points).replace(" Z", "") : ""}"></path>
@@ -4348,7 +4388,7 @@ function renderSceneEffectGuides() {
           const center = effectGeometryCenter(geometry);
           return `<g data-effect-guide="${effect.id}" class="sceneEffectGuideInteractive">
             ${renderEffectGeometryShape(effect, { includeMask: true })}
-            ${(walkPathEditor.effectEditScope || "source") === "source" ? `<circle class="effectGuideCenter" cx="${center.x}" cy="${center.y}" r="17" data-effect-handle="move"></circle>` : ""}
+            ${(walkPathEditor.effectEditScope || "source") === "source" ? `<circle class="effectGuideCenter" cx="${center.x}" cy="${center.y}" r="10" data-effect-handle="move"></circle>` : ""}
             <text class="effectGuideLabel" x="${center.x + 24}" y="${center.y - 28}">${effect.label || effect.id}</text>
           </g>`;
         }

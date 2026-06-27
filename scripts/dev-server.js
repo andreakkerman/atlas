@@ -6,6 +6,7 @@ const { URL } = require("url");
 
 const rootDir = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT || 4173);
+const transientSceneEffectDrafts = new Map();
 
 function loadSceneEffectsApi() {
   const context = { window: {}, console, performance: { now: () => 0 } };
@@ -541,6 +542,12 @@ function writeLevelDefinitionAtomic(levelId, level) {
   fs.renameSync(tempPath, filePath);
 }
 
+function writeTextAtomic(filePath, source) {
+  const tempPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
+  fs.writeFileSync(tempPath, source);
+  fs.renameSync(tempPath, filePath);
+}
+
 function syncLegacyObjectsGeometry(level) {
   if (!Array.isArray(level.objects)) return;
   const walkNodes = new Map((Array.isArray(level.walkPath) ? level.walkPath : []).map((point) => [point.id, point]));
@@ -570,17 +577,215 @@ function syncPlayerStart(level) {
   };
 }
 
+function findMatchingBracket(source, start, openChar, closeChar) {
+  let depth = 0;
+  let inString = false;
+  let quote = "";
+  let escaped = false;
+  let inLineComment = false;
+  let inBlockComment = false;
+
+  for (let index = start; index < source.length; index += 1) {
+    const char = source[index];
+    const next = source[index + 1];
+
+    if (inLineComment) {
+      if (char === "\n") inLineComment = false;
+      continue;
+    }
+
+    if (inBlockComment) {
+      if (char === "*" && next === "/") {
+        inBlockComment = false;
+        index += 1;
+      }
+      continue;
+    }
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === "\\") {
+        escaped = true;
+      } else if (char === quote) {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === "/" && next === "/") {
+      inLineComment = true;
+      index += 1;
+      continue;
+    }
+
+    if (char === "/" && next === "*") {
+      inBlockComment = true;
+      index += 1;
+      continue;
+    }
+
+    if (char === '"' || char === "'" || char === "`") {
+      inString = true;
+      quote = char;
+      continue;
+    }
+
+    if (char === openChar) depth += 1;
+    if (char === closeChar) {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+
+  throw new Error(`Could not find closing ${closeChar}.`);
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function levelObjectRange(source, levelId) {
+  const assignment = `window.SVEN_LEVEL_DEFINITIONS[${JSON.stringify(levelId)}]`;
+  const assignmentIndex = source.indexOf(assignment);
+  if (assignmentIndex === -1) throw new Error(`level.js does not define ${levelId}.`);
+  const start = source.indexOf("{", assignmentIndex);
+  if (start === -1) throw new Error("Could not find the start of the level definition.");
+  return { start, end: findMatchingBracket(source, start, "{", "}") };
+}
+
+function levelRootIndent(source, range) {
+  const match = /\n([ \t]+)(?:"?[A-Za-z_$][\w$-]*"?\s*:)/.exec(source.slice(range.start, range.end));
+  return match?.[1] || "  ";
+}
+
+function findRootPropertyLine(source, levelId, propertyName) {
+  const range = levelObjectRange(source, levelId);
+  const indent = levelRootIndent(source, range);
+  const pattern = new RegExp(`^${escapeRegExp(indent)}(?:"${propertyName}"|${propertyName})\\s*:`, "m");
+  const scopedSource = source.slice(range.start, range.end);
+  const match = pattern.exec(scopedSource);
+  if (!match) return null;
+  return {
+    start: range.start + match.index,
+    keyStart: range.start + match.index + indent.length,
+    indent,
+    objectEnd: range.end
+  };
+}
+
+function findSceneEffectPropertyRange(source, levelId, propertyName) {
+  const match = findRootPropertyLine(source, levelId, propertyName);
+  if (!match) return null;
+
+  const arrayStart = source.indexOf("[", match.keyStart);
+  if (arrayStart === -1) throw new Error(`${propertyName} does not contain an array.`);
+  const arrayEnd = findMatchingBracket(source, arrayStart, "[", "]");
+  let end = arrayEnd + 1;
+  while (source[end] === " " || source[end] === "\t") end += 1;
+  if (source[end] === ",") end += 1;
+  if (source[end] === "\r" && source[end + 1] === "\n") end += 2;
+  else if (source[end] === "\n") end += 1;
+
+  return {
+    start: match.start,
+    end,
+    indent: match.indent
+  };
+}
+
+function formatSceneEffectProperty(propertyName, value, indent) {
+  const formatter = propertyName === "sceneEffectGroups" ? formatSceneEffectGroups : formatSceneEffects;
+  return `${indent}${formatter(value)},\n`;
+}
+
+function removeSceneEffectProperty(source, levelId, propertyName) {
+  const range = findSceneEffectPropertyRange(source, levelId, propertyName);
+  if (!range) return source;
+  return `${source.slice(0, range.start)}${source.slice(range.end)}`;
+}
+
+function replaceSceneEffectProperty(source, levelId, propertyName, value) {
+  const range = findSceneEffectPropertyRange(source, levelId, propertyName);
+  if (!range) return source;
+  return `${source.slice(0, range.start)}${formatSceneEffectProperty(propertyName, value, range.indent)}${source.slice(range.end)}`;
+}
+
+function sceneEffectInsertionPoint(source, levelId) {
+  const rewardMatch = findRootPropertyLine(source, levelId, "reward");
+  if (rewardMatch) {
+    return { index: rewardMatch.start, indent: rewardMatch.indent, beforeObjectEnd: false };
+  }
+
+  const range = levelObjectRange(source, levelId);
+  return { index: range.end, indent: levelRootIndent(source, range), beforeObjectEnd: true };
+}
+
+function insertSceneEffectProperties(source, levelId, entries) {
+  if (!entries.length) return source;
+  const insertion = sceneEffectInsertionPoint(source, levelId);
+  const block = entries
+    .map((entry) => formatSceneEffectProperty(entry.propertyName, entry.value, insertion.indent))
+    .join("");
+
+  if (!insertion.beforeObjectEnd) {
+    return `${source.slice(0, insertion.index)}${block}${source.slice(insertion.index)}`;
+  }
+
+  const before = source.slice(0, insertion.index).replace(/[ \t]*$/, "");
+  const needsComma = before.trimEnd().endsWith(",");
+  const comma = needsComma ? "" : ",";
+  return `${before}${comma}\n${block}${source.slice(insertion.index)}`;
+}
+
+function applySceneEffectSections(levelId, draft) {
+  const filePath = levelPath(levelId);
+  let source = fs.readFileSync(filePath, "utf8");
+  const missing = [];
+
+  for (const entry of [
+    { propertyName: "sceneEffectGroups", value: draft.sceneEffectGroups || [] },
+    { propertyName: "sceneEffects", value: draft.sceneEffects || [] }
+  ]) {
+    if (!entry.value.length) {
+      source = removeSceneEffectProperty(source, levelId, entry.propertyName);
+    } else if (findSceneEffectPropertyRange(source, levelId, entry.propertyName)) {
+      source = replaceSceneEffectProperty(source, levelId, entry.propertyName, entry.value);
+    } else {
+      missing.push(entry);
+    }
+  }
+
+  source = insertSceneEffectProperties(source, levelId, missing);
+  writeTextAtomic(filePath, source);
+}
+
+function isSceneEffectsOnlyDraft(draft) {
+  const levelKeys = ["walkPath", "interactiveObjects", "ambientAnimals", "ambientFlybys", "sceneEffects", "sceneEffectGroups"];
+  const changedKeys = Object.keys(draft).filter((key) => levelKeys.includes(key));
+  return changedKeys.length > 0 && changedKeys.every((key) => key === "sceneEffects" || key === "sceneEffectGroups");
+}
+
 function applyLevelDraft(levelId, draft) {
+  if (isSceneEffectsOnlyDraft(draft)) {
+    applySceneEffectSections(levelId, draft);
+    return;
+  }
+
   const level = loadLevelDefinition(levelId);
-  const hadSceneEffects = Object.prototype.hasOwnProperty.call(level, "sceneEffects");
-  const hadSceneEffectGroups = Object.prototype.hasOwnProperty.call(level, "sceneEffectGroups");
 
   if (draft.walkPath) level.walkPath = draft.walkPath;
   if (draft.interactiveObjects) level.interactiveObjects = draft.interactiveObjects;
   if (draft.ambientAnimals) level.ambientAnimals = draft.ambientAnimals;
   if (draft.ambientFlybys) level.ambientFlybys = draft.ambientFlybys;
-  if (draft.sceneEffects && (draft.sceneEffects.length || hadSceneEffects)) level.sceneEffects = draft.sceneEffects;
-  if (draft.sceneEffectGroups && (draft.sceneEffectGroups.length || hadSceneEffectGroups)) level.sceneEffectGroups = draft.sceneEffectGroups;
+  if (draft.sceneEffects) {
+    if (draft.sceneEffects.length) level.sceneEffects = draft.sceneEffects;
+    else delete level.sceneEffects;
+  }
+  if (draft.sceneEffectGroups) {
+    if (draft.sceneEffectGroups.length) level.sceneEffectGroups = draft.sceneEffectGroups;
+    else delete level.sceneEffectGroups;
+  }
 
   syncPlayerStart(level);
   syncLegacyObjectsGeometry(level);
@@ -641,6 +846,10 @@ async function handleDevRequest(request, response, url) {
       return true;
     }
     if (request.method === "GET" && action === "editor-draft") {
+      if (transientSceneEffectDrafts.has(levelId)) {
+        sendJson(response, 200, transientSceneEffectDrafts.get(levelId));
+        return true;
+      }
       const filePath = draftPath(levelId);
       if (!fs.existsSync(filePath)) {
         sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, ambientFlybys: null, sceneEffects: null, sceneEffectGroups: null, audioConfig: null });
@@ -651,6 +860,7 @@ async function handleDevRequest(request, response, url) {
     }
 
     if (request.method === "DELETE" && action === "editor-draft") {
+      transientSceneEffectDrafts.delete(levelId);
       const filePath = draftPath(levelId);
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       sendJson(response, 200, { ok: true });
@@ -684,20 +894,30 @@ async function handleDevRequest(request, response, url) {
       }
 
       if (action === "editor-draft") {
-        fs.writeFileSync(draftPath(levelId), JSON.stringify({
+        const draftDocument = {
           levelId,
           updatedAt: new Date().toISOString(),
           ...draft
-        }, null, 2));
+        };
+        if (isSceneEffectsOnlyDraft(draft)) {
+          transientSceneEffectDrafts.set(levelId, draftDocument);
+        } else {
+          transientSceneEffectDrafts.delete(levelId);
+          fs.writeFileSync(draftPath(levelId), JSON.stringify(draftDocument, null, 2));
+        }
         sendJson(response, 200, { ok: true, draft: true });
         return true;
       }
 
       if (action === "apply-editor") {
+        const sceneEffectsOnly = isSceneEffectsOnlyDraft(draft);
         if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals || draft.ambientFlybys || draft.sceneEffects || draft.sceneEffectGroups) applyLevelDraft(levelId, draft);
         if (draft.audioConfig) applyAudioConfigDraft(draft.audioConfig);
-        const filePath = draftPath(levelId);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        transientSceneEffectDrafts.delete(levelId);
+        if (!sceneEffectsOnly) {
+          const filePath = draftPath(levelId);
+          if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        }
         sendJson(response, 200, { ok: true, applied: true });
         return true;
       }

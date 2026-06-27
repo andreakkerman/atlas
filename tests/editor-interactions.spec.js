@@ -3,6 +3,7 @@ const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
 const { pathToFileURL } = require("url");
+const vm = require("vm");
 
 const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const editorUrl = `${gameUrl}?dev=editor`;
@@ -83,6 +84,13 @@ function restoreFiles(snapshot) {
 
 function clearDraft(snapshot) {
   if (fs.existsSync(snapshot.draftPath)) fs.unlinkSync(snapshot.draftPath);
+}
+
+function loadLevelFromFile(levelPath, levelId) {
+  const context = { window: { SVEN_LEVEL_DEFINITIONS: {} } };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(levelPath, "utf8"), context, { filename: levelPath });
+  return context.window.SVEN_LEVEL_DEFINITIONS[levelId];
 }
 
 async function applyAndReload(page, levelId) {
@@ -204,6 +212,179 @@ test.describe("developer editor interaction routing", () => {
       status: window.eval("walkPathEditor.status"),
       effects: window.eval("(level.sceneEffects || []).length")
     }))).toEqual({ status: "Reverted", effects: 0 });
+
+    expect(pageErrors).toEqual([]);
+  });
+
+  test("scene-effect-only Apply patches only scene-effect sections and remains idempotent", async ({ page }) => {
+    test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
+    const snapshot = preserveFiles("LVL-0002");
+    const challengeSource = snapshot.levelSource.slice(0, snapshot.levelSource.indexOf('window.SVEN_LEVEL_DEFINITIONS["LVL-0002"]'));
+    try {
+      await openLevelEditor(page, "LVL-0002");
+      const expected = await page.evaluate(async () => {
+        window.eval("addSceneEffect")("light-source-enhancement");
+        const effect = window.eval("level.sceneEffects[0]");
+        effect.overrides = {
+          ...(effect.overrides || {}),
+          primaryColor: "#CC7733",
+          intensity: 0.82
+        };
+        window.eval("commitSceneEffects")(`${effect.id}: persistence test.`);
+        await window.eval("persistWalkPathDraft")();
+        return {
+          sceneEffects: window.eval("cloneSceneEffects(level.sceneEffects)"),
+          sceneEffectGroups: window.eval("cloneSceneEffectGroups(level.sceneEffectGroups || [])"),
+          presetId: effect.presetId,
+          overrides: effect.overrides
+        };
+      });
+
+      await expect.poll(async () => page.evaluate(async () => {
+        const response = await fetch("/__dev/levels/LVL-0002/editor-draft");
+        return Object.keys(await response.json()).sort();
+      })).toEqual(["levelId", "sceneEffectGroups", "sceneEffects", "updatedAt"]);
+
+      await applyAndReload(page, "LVL-0002");
+      const firstAppliedLevel = fs.readFileSync(snapshot.levelPath, "utf8");
+      expect(firstAppliedLevel).toContain(challengeSource);
+      expect(firstAppliedLevel).toContain("sceneEffects:");
+      expect(firstAppliedLevel).not.toContain("audioConfig");
+      expect(fs.readFileSync(snapshot.audioPath, "utf8")).toBe(snapshot.audioSource);
+      expect(fs.readFileSync(snapshot.draftPath, "utf8")).toBe(snapshot.draftSource);
+
+      const parsedLevel = loadLevelFromFile(snapshot.levelPath, "LVL-0002");
+      const reloaded = {
+        count: (parsedLevel.sceneEffects || []).length,
+        presetId: parsedLevel.sceneEffects?.[0]?.presetId,
+        overrides: parsedLevel.sceneEffects?.[0]?.overrides
+      };
+      expect(reloaded).toEqual({
+        count: 1,
+        presetId: expected.presetId,
+        overrides: expected.overrides
+      });
+
+      await page.evaluate(async (payload) => {
+        const response = await fetch("/__dev/levels/LVL-0002/apply-editor", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error((await response.json()).error || "Apply failed");
+      }, {
+        sceneEffects: expected.sceneEffects,
+        sceneEffectGroups: expected.sceneEffectGroups
+      });
+      expect(fs.readFileSync(snapshot.levelPath, "utf8")).toBe(firstAppliedLevel);
+      expect(fs.readFileSync(snapshot.audioPath, "utf8")).toBe(snapshot.audioSource);
+      expect(fs.readFileSync(snapshot.draftPath, "utf8")).toBe(snapshot.draftSource);
+
+      await openLevelEditor(page, "LVL-0002");
+      await page.evaluate(async () => {
+        window.eval("level.sceneEffects = []");
+        window.eval("level.sceneEffectGroups = []");
+        window.eval("commitSceneEffects")("scene effects removed for persistence test.");
+        await window.eval("persistWalkPathDraft")();
+      });
+      await expect.poll(async () => page.evaluate(async () => {
+        const response = await fetch("/__dev/levels/LVL-0002/editor-draft");
+        const draft = await response.json();
+        return {
+          effects: draft.sceneEffects?.length,
+          groups: draft.sceneEffectGroups?.length,
+          keys: Object.keys(draft).sort()
+        };
+      })).toEqual({
+        effects: 0,
+        groups: 0,
+        keys: ["levelId", "sceneEffectGroups", "sceneEffects", "updatedAt"]
+      });
+      await applyAndReload(page, "LVL-0002");
+      const removedLevel = fs.readFileSync(snapshot.levelPath, "utf8");
+      expect(removedLevel).toContain(challengeSource);
+      expect(removedLevel).not.toContain("sceneEffects:");
+      expect(removedLevel).not.toContain("sceneEffectGroups:");
+      expect(fs.readFileSync(snapshot.audioPath, "utf8")).toBe(snapshot.audioSource);
+      expect(fs.readFileSync(snapshot.draftPath, "utf8")).toBe(snapshot.draftSource);
+    } finally {
+      restoreFiles(snapshot);
+    }
+  });
+
+  test("audio-only Apply still persists a dedicated audio draft without touching the level file", async ({ page }) => {
+    test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
+    const snapshot = preserveFiles("LVL-0002");
+    try {
+      clearDraft(snapshot);
+      await openLevelEditor(page, "LVL-0002");
+      const nextVolume = await page.evaluate(async () => {
+        const current = window.eval("audioConfig.levels['LVL-0002'].musicVolume");
+        const next = current === 0.41 ? 0.42 : 0.41;
+        window.eval("updateAudioDraft")("levels.LVL-0002.musicVolume", next);
+        await window.eval("persistWalkPathDraft")();
+        return next;
+      });
+
+      await expect.poll(async () => page.evaluate(async () => {
+        const response = await fetch("/__dev/levels/LVL-0002/editor-draft");
+        return Object.keys(await response.json()).sort();
+      })).toEqual(["audioConfig", "levelId", "updatedAt"]);
+
+      await applyAndReload(page, "LVL-0002");
+      expect(fs.readFileSync(snapshot.levelPath, "utf8")).toBe(snapshot.levelSource);
+      expect(fs.readFileSync(snapshot.audioPath, "utf8")).toContain(`"musicVolume": ${nextVolume}`);
+    } finally {
+      restoreFiles(snapshot);
+    }
+  });
+
+  test("Effects tab keeps empty-world walking while effect handles remain interactive", async ({ page }) => {
+    const pageErrors = await openVikingEditor(page);
+    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.locator("[data-effect-preset-card='light-source-enhancement'] button[data-add-effect]").first().click();
+    await page.locator("[data-select-effect='light-source-enhancement-01']").click();
+    await page.evaluate(() => {
+      const effect = window.eval("level.sceneEffects[0]");
+      effect.geometry.x = 1500;
+      effect.geometry.y = 340;
+      window.eval("sceneEffectRuntime.prepareLevel")(window.eval("level"));
+      window.eval("state.worldX = 700");
+      window.eval("state.worldY = 586");
+      window.eval("state.cameraX = undefined");
+      window.eval("render")();
+    });
+
+    const handle = page.locator(".sceneEffectGuides [data-effect-handle='move']").first();
+    await expect(handle).toBeVisible();
+    const handleStyle = await handle.evaluate((node) => ({
+      radius: Number(node.getAttribute("r")),
+      fill: getComputedStyle(node).fill
+    }));
+    expect(handleStyle.radius).toBeLessThanOrEqual(10);
+    expect(handleStyle.fill).not.toBe("rgb(255, 87, 87)");
+
+    const beforeHandle = await page.evaluate(() => ({ ...window.eval("level.sceneEffects[0].geometry") }));
+    await dragLocator(page, handle, 34, 0);
+    await expect.poll(() => page.evaluate((before) => {
+      const geometry = window.eval("level.sceneEffects[0].geometry");
+      return Math.abs(geometry.x - before.x) > 15;
+    }, beforeHandle)).toBe(true);
+
+    await page.evaluate(() => {
+      window.eval("stopMovement")({ invalidateIntent: true });
+      window.eval("state.worldX = 700");
+      window.eval("state.worldY = 586");
+      window.eval("state.cameraX = undefined");
+      window.eval("render")();
+    });
+    const stageBox = await page.locator("[data-world-stage]").boundingBox();
+    if (!stageBox) throw new Error("World stage was not measurable.");
+    await page.mouse.click(stageBox.x + stageBox.width * 0.22, stageBox.y + stageBox.height * 0.82);
+    await expect.poll(() => page.evaluate(() => {
+      const movement = window.eval("state.movement");
+      return Boolean(movement || window.eval("state.movementIntent"));
+    })).toBe(true);
 
     expect(pageErrors).toEqual([]);
   });
