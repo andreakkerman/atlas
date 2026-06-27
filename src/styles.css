@@ -1301,6 +1301,7 @@ button {
 
 .effectGuideCenter,
 .effectGuideHandle,
+.effectGuideHitTarget,
 .effectGuideVertex,
 .effectGuideEdge {
   cursor: grab;
@@ -1317,7 +1318,13 @@ button {
 .effectGuideHandle {
   fill: #ffd06d;
   stroke: #10201d;
-  stroke-width: 4;
+  stroke-width: 2.5;
+}
+
+.effectGuideHitTarget {
+  fill: rgba(255, 255, 255, 0.001);
+  stroke: transparent;
+  stroke-width: 0;
 }
 
 .effectGuideWidthHandle {

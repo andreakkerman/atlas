@@ -364,6 +364,20 @@ test.describe("developer editor interaction routing", () => {
     expect(handleStyle.radius).toBeLessThanOrEqual(10);
     expect(handleStyle.fill).not.toBe("rgb(255, 87, 87)");
 
+    const radiusHandle = page.locator(".sceneEffectGuides .effectGuideHandle[data-effect-handle='radius']").first();
+    await expect(radiusHandle).toBeVisible();
+    const radiusHandleStyle = await radiusHandle.evaluate((node) => ({
+      radius: Number(node.getAttribute("r")),
+      fill: getComputedStyle(node).fill,
+      strokeWidth: getComputedStyle(node).strokeWidth
+    }));
+    expect(radiusHandleStyle.radius).toBeLessThanOrEqual(8);
+    expect(radiusHandleStyle.fill).toBe("rgb(255, 208, 109)");
+    expect(Number.parseFloat(radiusHandleStyle.strokeWidth)).toBeLessThanOrEqual(2.5);
+
+    const radiusHitTarget = page.locator(".sceneEffectGuides .effectGuideHitTarget[data-effect-handle='radius']").first();
+    await expect(radiusHitTarget).toHaveAttribute("r", "15");
+
     const beforeHandle = await page.evaluate(() => ({ ...window.eval("level.sceneEffects[0].geometry") }));
     await dragLocator(page, handle, 34, 0);
     await expect.poll(() => page.evaluate((before) => {

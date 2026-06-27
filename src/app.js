@@ -3779,6 +3779,14 @@ function geometryPathData(points) {
   return (points || []).map((point, index) => `${index ? "L" : "M"} ${point.x} ${point.y}`).join(" ") + " Z";
 }
 
+function renderEffectGuideHandle(x, y, handle, options = {}) {
+  const className = options.className ? ` ${options.className}` : "";
+  const hitRadius = options.hitRadius ?? 15;
+  const visualRadius = options.visualRadius ?? 8;
+  return `<circle class="effectGuideHitTarget${className}" cx="${x}" cy="${y}" r="${hitRadius}" data-effect-handle="${handle}"></circle>
+    <circle class="effectGuideHandle${className}" cx="${x}" cy="${y}" r="${visualRadius}" data-effect-handle="${handle}"></circle>`;
+}
+
 function renderEffectPolygonControls(points, target, options = {}) {
   const selectedVertex = walkPathEditor.selectedEffectVertex;
   const polygonIndex = options.polygonIndex;
@@ -3849,17 +3857,17 @@ function renderEffectGeometryShape(effect, options = {}) {
   }
   if (geometry.type === "ellipse") return `
     <ellipse class="effectGuideShape" data-effect-shape="source" cx="${geometry.x}" cy="${geometry.y}" rx="${geometry.width / 2}" ry="${geometry.height / 2}"></ellipse>
-    ${sourceEditable ? `<circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y}" r="14" data-effect-handle="resize-x"></circle>
-    <circle class="effectGuideHandle" cx="${geometry.x}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize-y"></circle>
-    <circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize"></circle>` : ""}${mask}`;
+    ${sourceEditable ? `${renderEffectGuideHandle(geometry.x + geometry.width / 2, geometry.y, "resize-x")}
+    ${renderEffectGuideHandle(geometry.x, geometry.y + geometry.height / 2, "resize-y")}
+    ${renderEffectGuideHandle(geometry.x + geometry.width / 2, geometry.y + geometry.height / 2, "resize")}` : ""}${mask}`;
   if (geometry.type === "rectangle") return `
     <rect class="effectGuideShape" data-effect-shape="source" x="${geometry.x - geometry.width / 2}" y="${geometry.y - geometry.height / 2}" width="${geometry.width}" height="${geometry.height}"></rect>
-    ${sourceEditable ? `<circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y}" r="14" data-effect-handle="resize-x"></circle>
-    <circle class="effectGuideHandle" cx="${geometry.x}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize-y"></circle>
-    <circle class="effectGuideHandle" cx="${geometry.x + geometry.width / 2}" cy="${geometry.y + geometry.height / 2}" r="14" data-effect-handle="resize"></circle>` : ""}${mask}`;
+    ${sourceEditable ? `${renderEffectGuideHandle(geometry.x + geometry.width / 2, geometry.y, "resize-x")}
+    ${renderEffectGuideHandle(geometry.x, geometry.y + geometry.height / 2, "resize-y")}
+    ${renderEffectGuideHandle(geometry.x + geometry.width / 2, geometry.y + geometry.height / 2, "resize")}` : ""}${mask}`;
   if (geometry.type === "pointRadius" || geometry.type === "point") return `
     <circle class="effectGuideShape" data-effect-shape="source" cx="${geometry.x}" cy="${geometry.y}" r="${geometry.radius || 28}"></circle>
-    ${sourceEditable && geometry.type === "pointRadius" ? `<circle class="effectGuideHandle" cx="${geometry.x + geometry.radius}" cy="${geometry.y}" r="15" data-effect-handle="radius"></circle>` : ""}${mask}`;
+    ${sourceEditable && geometry.type === "pointRadius" ? renderEffectGuideHandle(geometry.x + geometry.radius, geometry.y, "radius") : ""}${mask}`;
   if (geometry.type === "directionalEmitter" || geometry.type === "directionalBeam") {
     const length = geometry.type === "directionalBeam" ? geometry.length : Math.max(120, (geometry.width || 20) * 6);
     const angle = geometry.directionDeg * Math.PI / 180;
@@ -3870,10 +3878,10 @@ function renderEffectGeometryShape(effect, options = {}) {
     const width = geometry.type === "directionalBeam" ? geometry.startWidth : geometry.width;
     return `
       <line class="effectGuideDirection" data-effect-direction-line x1="${geometry.x}" y1="${geometry.y}" x2="${x}" y2="${y}"></line>
-      ${sourceEditable ? `<circle class="effectGuideHandle" cx="${x}" cy="${y}" r="16" data-effect-handle="direction"></circle>
-      <circle class="effectGuideHandle effectGuideWidthHandle" cx="${geometry.x + sideX * width}" cy="${geometry.y + sideY * width}" r="14" data-effect-handle="${geometry.type === "directionalBeam" ? "start-width" : "width"}"></circle>
-      ${geometry.type === "directionalBeam" ? `<circle class="effectGuideHandle effectGuideWidthHandle" cx="${x + sideX * geometry.endWidth}" cy="${y + sideY * geometry.endWidth}" r="14" data-effect-handle="end-width"></circle>` : ""}
-      ${geometry.type === "directionalEmitter" ? `<circle class="effectGuideHandle effectGuideSpreadHandle" cx="${geometry.x + Math.cos(angle - (geometry.spreadDeg || 0) * Math.PI / 360) * length * 0.55}" cy="${geometry.y + Math.sin(angle - (geometry.spreadDeg || 0) * Math.PI / 360) * length * 0.55}" r="13" data-effect-handle="spread"></circle>` : ""}` : ""}${mask}`;
+      ${sourceEditable ? `${renderEffectGuideHandle(x, y, "direction")}
+      ${renderEffectGuideHandle(geometry.x + sideX * width, geometry.y + sideY * width, geometry.type === "directionalBeam" ? "start-width" : "width", { className: "effectGuideWidthHandle" })}
+      ${geometry.type === "directionalBeam" ? renderEffectGuideHandle(x + sideX * geometry.endWidth, y + sideY * geometry.endWidth, "end-width", { className: "effectGuideWidthHandle" }) : ""}
+      ${geometry.type === "directionalEmitter" ? renderEffectGuideHandle(geometry.x + Math.cos(angle - (geometry.spreadDeg || 0) * Math.PI / 360) * length * 0.55, geometry.y + Math.sin(angle - (geometry.spreadDeg || 0) * Math.PI / 360) * length * 0.55, "spread", { className: "effectGuideSpreadHandle" }) : ""}` : ""}${mask}`;
   }
   return mask;
 }
