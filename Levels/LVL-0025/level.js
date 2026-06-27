@@ -1007,27 +1007,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
     "nextLabel": "Ga verder"
   },
   "spiritLines": {
-    "welcome": "Welkom in mijn werkplaats. Kijk rustig, meet precies en probeer opnieuw.",
-    "moving": "Ik loop met je mee in gedachten: observeren, meten, maken.",
-    "allRunes": "Alle proeven zijn opgelost. De route is vrij.",
-    "reward": "Prachtig werk. Je hebt als een jonge uitvinder gedacht."
+    "welcome": "Florence mengt kleur, lijnen en slimme diepte. Kijk als een kunstenaar.",
+    "moving": "Perspectief begint met één vast punt en rustige ogen.",
+    "allRunes": "De lijnen vallen samen. De route is vrij.",
+    "reward": "Mooi opgebouwd. Het atelier kan trots zijn."
   },
   "guideLines": {
     "welcome": {
       "speaker": "minnie",
-      "text": "Minnie en Moose blijven bij Sven voor hints."
+      "text": "Oeh, Florence! Zelfs de schaduwen lijken hier geschilderd."
     },
     "moving": {
       "speaker": "moose",
-      "text": "Stap voor stap. Eerst kijken, dan rekenen."
+      "text": "Zoek het patroon. Lijnen liegen minder dan verf."
     },
     "allRunes": {
       "speaker": "minnie",
-      "text": "Alle Leonardo-proeven zijn klaar."
+      "text": "Alles past in het plaatje. Letterlijk bijna."
     },
     "reward": {
       "speaker": "moose",
-      "text": "Dat is netjes ontworpen."
+      "text": "Strakke lijnen. Goede diepte."
     }
   },
   "levelSemantics": {
@@ -1043,31 +1043,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
       "id": "LVL-0025-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Nieuwe plek, nieuwe uitvindersogen."
+      "text": "Het atelier ruikt naar verfpotjes, hout en bijna-af tekeningen."
     },
     {
       "id": "LVL-0025-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Kijk naar de vorm, maat en bedoeling."
+      "text": "Let op herhaling. Patronen zijn handige wegwijzers."
     },
     {
       "id": "LVL-0025-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
-      "text": "Mooi, weer een idee scherper."
+      "text": "Dat kreeg ineens kleur. Mooi gedaan, Sven."
     },
     {
       "id": "LVL-0025-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle proeven kloppen. De route is vrij."
+      "text": "Perspectief klopt. Door naar Vinci."
     },
     {
       "id": "LVL-0025-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op."
+      "text": "De atelierdeur blijft dicht. Eerst ontbreekt er nog een lijn."
     }
   ],
   "menu": {
@@ -1077,7 +1077,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
   },
   "intro": [
     "Perspectief en kleur. Leonardo laat Sven onderzoeken wat deze plek bijzonder maakt.",
-    "Minnie en Moose helpen met hints als een opdracht lastig wordt."
+    "Minnie speurt naar kleurvlekken; Moose volgt de lijnen in het atelier."
   ],
   "exitHotspotId": "vinciGate",
   "theme": "Perspectief en kleur",

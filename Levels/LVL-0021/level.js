@@ -1043,27 +1043,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
     "nextLabel": "Ga verder"
   },
   "spiritLines": {
-    "welcome": "Welkom in mijn werkplaats. Kijk rustig, meet precies en probeer opnieuw.",
-    "moving": "Ik loop met je mee in gedachten: observeren, meten, maken.",
-    "allRunes": "Alle proeven zijn opgelost. De route is vrij.",
-    "reward": "Prachtig werk. Je hebt als een jonge uitvinder gedacht."
+    "welcome": "Rome laat licht en schaduw overal sporen achter. Kijk rustig rond.",
+    "moving": "Een eerste ontdekking begint vaak met goed kijken.",
+    "allRunes": "De schaduwen wijzen de route vrij.",
+    "reward": "Mooi gezien. Je eerste vondsten staan stevig."
   },
   "guideLines": {
     "welcome": {
       "speaker": "minnie",
-      "text": "Minnie en Moose blijven bij Sven voor hints."
+      "text": "Zie je hoe het licht langs de stenen glijdt, Sven?"
     },
     "moving": {
       "speaker": "moose",
-      "text": "Stap voor stap. Eerst kijken, dan rekenen."
+      "text": "Rustig speuren. Eerst de plek lezen, dan pas verder."
     },
     "allRunes": {
       "speaker": "minnie",
-      "text": "Alle Leonardo-proeven zijn klaar."
+      "text": "De schaduwplekjes geven ons nu doorgang."
     },
     "reward": {
       "speaker": "moose",
-      "text": "Dat is netjes ontworpen."
+      "text": "Net begin. De route klopt."
     }
   },
   "levelSemantics": {
@@ -1079,31 +1079,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "id": "LVL-0021-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Nieuwe plek, nieuwe uitvindersogen."
+      "text": "Rome glinstert alsof de muren geheime tekeningen bewaren."
     },
     {
       "id": "LVL-0021-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Kijk naar de vorm, maat en bedoeling."
+      "text": "Let op waar het licht valt. Schaduw is ook informatie."
     },
     {
       "id": "LVL-0021-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
-      "text": "Mooi, weer een idee scherper."
+      "text": "Ha, dat vonkje snapte jij sneller dan de zon verschoof."
     },
     {
       "id": "LVL-0021-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle proeven kloppen. De route is vrij."
+      "text": "Alle tekens staan goed. Door naar de volgende poort."
     },
     {
       "id": "LVL-0021-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op."
+      "text": "De Romeinse poort wacht nog. Eerst missen we hier nog een ontdekking."
     }
   ],
   "menu": {
@@ -1113,7 +1113,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
   },
   "intro": [
     "Observatie en licht. Leonardo laat Sven onderzoeken wat deze plek bijzonder maakt.",
-    "Minnie en Moose helpen met hints als een opdracht lastig wordt."
+    "Minnie zoekt de kleine glimmers; Moose houdt de route in de gaten."
   ],
   "exitHotspotId": "procenoGate",
   "theme": "Observatie en licht",

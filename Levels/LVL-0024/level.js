@@ -775,8 +775,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "y": 476,
       "radius": 82,
       "approach": {
-        "x": 738,
-        "y": 621
+        "x": 861,
+        "y": 633
       }
     },
     {
@@ -825,7 +825,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "lockedUntilComplete": true
     }
   ],
-  "ambientAnimals": [],
+  "ambientAnimals": [
+    {
+      "id": "RavenMarche1",
+      "type": "ambient",
+      "openFrame": "assets/ambient/animals/raven/raven-open.png",
+      "closedFrame": "assets/ambient/animals/raven/raven-closed.png",
+      "sound": "assets/ambient/animals/raven/raven-call.mp3",
+      "x": 769,
+      "y": 348,
+      "scale": 0.2,
+      "blinkMinMs": 4000,
+      "blinkMaxMs": 9000,
+      "blinkDurationMs": 100,
+      "doubleBlinkChance": 0.12,
+      "soundCooldownMs": 1500,
+      "label": "RavenMarche1",
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "mirrorX": false
+    }
+  ],
   "ambientFlybys": [],
   "description": "Marche: Vlucht en wind.",
   "storageKey": "lvl-0024-progress",
@@ -846,8 +867,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
     },
     {
       "id": "counterweights-approach",
-      "x": 738,
-      "y": 621,
+      "x": 861,
+      "y": 633,
       "role": "approach"
     },
     {
@@ -1019,27 +1040,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
     "nextLabel": "Ga verder"
   },
   "spiritLines": {
-    "welcome": "Welkom in mijn werkplaats. Kijk rustig, meet precies en probeer opnieuw.",
-    "moving": "Ik loop met je mee in gedachten: observeren, meten, maken.",
-    "allRunes": "Alle proeven zijn opgelost. De route is vrij.",
-    "reward": "Prachtig werk. Je hebt als een jonge uitvinder gedacht."
+    "welcome": "De Marche zet de wind aan het werk. Kijk hoe vleugels reageren.",
+    "moving": "Vliegen is proberen, bijstellen en nog eens proberen.",
+    "allRunes": "De vleugels staan goed. De route is vrij.",
+    "reward": "Knap afgesteld. De wind werkt mee."
   },
   "guideLines": {
     "welcome": {
       "speaker": "minnie",
-      "text": "Minnie en Moose blijven bij Sven voor hints."
+      "text": "Daar! Een ravenveer in de wind. Die wil vast iets vertellen."
     },
     "moving": {
       "speaker": "moose",
-      "text": "Stap voor stap. Eerst kijken, dan rekenen."
+      "text": "Bij vliegen telt elke kleine aanpassing. Saai, maar nuttig."
     },
     "allRunes": {
       "speaker": "minnie",
-      "text": "Alle Leonardo-proeven zijn klaar."
+      "text": "De vleugels voelen klaar. Ik krijg er kriebels van."
     },
     "reward": {
       "speaker": "moose",
-      "text": "Dat is netjes ontworpen."
+      "text": "Stabiel genoeg. Geen noodlanding nodig."
     }
   },
   "levelSemantics": {
@@ -1055,31 +1076,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "id": "LVL-0024-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Nieuwe plek, nieuwe uitvindersogen."
+      "text": "De lucht ruikt hier naar wind, veren en een beetje durf."
     },
     {
       "id": "LVL-0024-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Kijk naar de vorm, maat en bedoeling."
+      "text": "Kijk naar de vleugelstand. Een kleine scheefstand maakt veel uit."
     },
     {
       "id": "LVL-0024-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
-      "text": "Mooi, weer een idee scherper."
+      "text": "Yes, dat klapte bijna als een echte testvleugel."
     },
     {
       "id": "LVL-0024-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle proeven kloppen. De route is vrij."
+      "text": "Vluchtplan klopt. Naar Florence."
     },
     {
       "id": "LVL-0024-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op."
+      "text": "De windpoort houdt dicht. Eerst nog een test netjes afmaken."
     }
   ],
   "menu": {
@@ -1089,7 +1110,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
   },
   "intro": [
     "Vlucht en wind. Leonardo laat Sven onderzoeken wat deze plek bijzonder maakt.",
-    "Minnie en Moose helpen met hints als een opdracht lastig wordt."
+    "Minnie volgt de ravenveren; Moose let op welke aanpassing werkt."
   ],
   "exitHotspotId": "florenceGate",
   "theme": "Vlucht en wind",

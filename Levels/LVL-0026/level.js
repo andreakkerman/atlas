@@ -1269,27 +1269,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
     "badge": "Avontuur voltooid"
   },
   "spiritLines": {
-    "welcome": "Welkom in mijn werkplaats. Kijk rustig, meet precies en probeer opnieuw.",
-    "moving": "Ik loop met je mee in gedachten: observeren, meten, maken.",
-    "allRunes": "Alle proeven zijn opgelost. De route is vrij.",
-    "reward": "Prachtig werk. Je hebt als een jonge uitvinder gedacht."
+    "welcome": "Vinci bewaart de laatste schetsen. Hier komen alle ideeën samen.",
+    "moving": "Een eigen ontwerp groeit uit losse vondsten die goed samenwerken.",
+    "allRunes": "Alles past. De laatste route is vrij.",
+    "reward": "Rustig en sterk bedacht. Dit ontwerp is van jou."
   },
   "guideLines": {
     "welcome": {
       "speaker": "minnie",
-      "text": "Minnie en Moose blijven bij Sven voor hints."
+      "text": "Dit voelt als Leonardo's stille hoekje. Zelfs de tafel luistert."
     },
     "moving": {
       "speaker": "moose",
-      "text": "Stap voor stap. Eerst kijken, dan rekenen."
+      "text": "Combineer wat werkte. Laat de losse onderdelen samenwerken."
     },
     "allRunes": {
       "speaker": "minnie",
-      "text": "Alle Leonardo-proeven zijn klaar."
+      "text": "Sven, het hele werkplaatsplan licht op."
     },
     "reward": {
       "speaker": "moose",
-      "text": "Dat is netjes ontworpen."
+      "text": "Eigen ontwerp. Degelijk afgerond."
     }
   },
   "levelSemantics": {
@@ -1305,31 +1305,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
       "id": "LVL-0026-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Nieuwe plek, nieuwe uitvindersogen."
+      "text": "Vinci is stil, maar overal liggen ideeën te wachten."
     },
     {
       "id": "LVL-0026-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Kijk naar de vorm, maat en bedoeling."
+      "text": "Gebruik wat je al vond. Een finale houdt van overzicht."
     },
     {
       "id": "LVL-0026-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
-      "text": "Mooi, weer een idee scherper."
+      "text": "Daar gaat weer een lampje aan in de werkplaats."
     },
     {
       "id": "LVL-0026-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle proeven kloppen. De route is vrij."
+      "text": "Laatste sluiting open. Netjes gedaan."
     },
     {
       "id": "LVL-0026-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op."
+      "text": "De werkplaatsdeur blijft dicht. Eén onderdeel mist nog."
     }
   ],
   "menu": {
@@ -1339,7 +1339,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
   },
   "intro": [
     "De onvoltooide werkplaats. Leonardo laat Sven onderzoeken wat deze plek bijzonder maakt.",
-    "Minnie en Moose helpen met hints als een opdracht lastig wordt."
+    "Minnie zoekt de vonk in de schetsen; Moose legt de onderdelen op volgorde."
   ],
   "exitHotspotId": "workshopExit",
   "theme": "De onvoltooide werkplaats",

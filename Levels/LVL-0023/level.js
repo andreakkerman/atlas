@@ -1351,27 +1351,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
     "nextLabel": "Ga verder"
   },
   "spiritLines": {
-    "welcome": "Welkom in mijn werkplaats. Kijk rustig, meet precies en probeer opnieuw.",
-    "moving": "Ik loop met je mee in gedachten: observeren, meten, maken.",
-    "allRunes": "Alle proeven zijn opgelost. De route is vrij.",
-    "reward": "Prachtig werk. Je hebt als een jonge uitvinder gedacht."
+    "welcome": "In Umbrie beweegt water alsof het een plan heeft. Volg de stroom.",
+    "moving": "Sluizen werken rustig: kamer voor kamer, stap voor stap.",
+    "allRunes": "Het water staat goed. De doorgang is vrij.",
+    "reward": "Knap gestuurd. Zelfs de waterklok loopt rustig."
   },
   "guideLines": {
     "welcome": {
       "speaker": "minnie",
-      "text": "Minnie en Moose blijven bij Sven voor hints."
+      "text": "Hoor je water, Sven? Het fluistert bij de boot."
     },
     "moving": {
       "speaker": "moose",
-      "text": "Stap voor stap. Eerst kijken, dan rekenen."
+      "text": "Een sluis haast niet. Eerst vullen, dan varen."
     },
     "allRunes": {
       "speaker": "minnie",
-      "text": "Alle Leonardo-proeven zijn klaar."
+      "text": "De stroom helpt mee. Dat is handig nat."
     },
     "reward": {
       "speaker": "moose",
-      "text": "Dat is netjes ontworpen."
+      "text": "Water geregeld. Boot kan door."
     }
   },
   "levelSemantics": {
@@ -1387,31 +1387,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "id": "LVL-0023-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Nieuwe plek, nieuwe uitvindersogen."
+      "text": "Umbrie glanst nat en stil. Die kist weet iets."
     },
     {
       "id": "LVL-0023-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Kijk naar de vorm, maat en bedoeling."
+      "text": "Volg de stroomrichting. Water verklapt volgorde."
     },
     {
       "id": "LVL-0023-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
-      "text": "Mooi, weer een idee scherper."
+      "text": "Plons, weer een geheim boven water."
     },
     {
       "id": "LVL-0023-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle proeven kloppen. De route is vrij."
+      "text": "Sluizen klaar. We varen door."
     },
     {
       "id": "LVL-0023-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op."
+      "text": "De sluis blijft dicht. Hier moet nog iets op niveau komen."
     }
   ],
   "menu": {
@@ -1421,7 +1421,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
   },
   "intro": [
     "Water en stroming. Leonardo laat Sven onderzoeken wat deze plek bijzonder maakt.",
-    "Minnie en Moose helpen met hints als een opdracht lastig wordt."
+    "Minnie speurt naar water; Moose let op de volgorde van de sluizen."
   ],
   "exitHotspotId": "marcheGate",
   "theme": "Water en stroming",

@@ -1037,27 +1037,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
     "nextLabel": "Ga verder"
   },
   "spiritLines": {
-    "welcome": "Welkom in mijn werkplaats. Kijk rustig, meet precies en probeer opnieuw.",
-    "moving": "Ik loop met je mee in gedachten: observeren, meten, maken.",
-    "allRunes": "Alle proeven zijn opgelost. De route is vrij.",
-    "reward": "Prachtig werk. Je hebt als een jonge uitvinder gedacht."
+    "welcome": "Proceno is gebouwd uit steen, maat en geduld. Voel hoe stevig alles staat.",
+    "moving": "Een goede bouwer kijkt naar poorten, bruggen en draagpunten.",
+    "allRunes": "De bouwlijnen kloppen. De weg kan open.",
+    "reward": "Sterk werk. Deze poort zou blijven staan."
   },
   "guideLines": {
     "welcome": {
       "speaker": "minnie",
-      "text": "Minnie en Moose blijven bij Sven voor hints."
+      "text": "Kijk eens, Sven, die stenen lijken bijna op elkaar gestapelde raadsels."
     },
     "moving": {
       "speaker": "moose",
-      "text": "Stap voor stap. Eerst kijken, dan rekenen."
+      "text": "Bij een brug telt volgorde. Eerst steun, dan oversteek."
     },
     "allRunes": {
       "speaker": "minnie",
-      "text": "Alle Leonardo-proeven zijn klaar."
+      "text": "De poort zucht open. Dat klinkt als vooruit."
     },
     "reward": {
       "speaker": "moose",
-      "text": "Dat is netjes ontworpen."
+      "text": "Solide. Geen wiebel te zien."
     }
   },
   "levelSemantics": {
@@ -1073,31 +1073,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
       "id": "LVL-0022-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Nieuwe plek, nieuwe uitvindersogen."
+      "text": "Proceno voelt als een kasteel dat heel lang heeft nagedacht."
     },
     {
       "id": "LVL-0022-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Kijk naar de vorm, maat en bedoeling."
+      "text": "Meet met je ogen: breedte, hoogte, dan pas de sprong."
     },
     {
       "id": "LVL-0022-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
-      "text": "Mooi, weer een idee scherper."
+      "text": "Mooi! Er klikt bijna een steentje tevreden op zijn plek."
     },
     {
       "id": "LVL-0022-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle proeven kloppen. De route is vrij."
+      "text": "Brug getest, poort vrij. Doorlopen."
     },
     {
       "id": "LVL-0022-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op."
+      "text": "De poortbalk blijft liggen. Eerst nog een stuk bouwwerk afronden."
     }
   ],
   "menu": {
@@ -1107,7 +1107,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
   },
   "intro": [
     "Meten en bouwen. Leonardo laat Sven onderzoeken wat deze plek bijzonder maakt.",
-    "Minnie en Moose helpen met hints als een opdracht lastig wordt."
+    "Minnie ziet rare steenvormen; Moose controleert of de brug logisch blijft."
   ],
   "exitHotspotId": "umbriaGate",
   "theme": "Meten en bouwen",
