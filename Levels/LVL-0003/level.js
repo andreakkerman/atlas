@@ -970,6 +970,47 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       challengeId: "gateShield"
     }
   ],
+  sceneEffects: [
+        {
+              id: "water-surface-01",
+              label: "Moonlit water 1",
+              presetId: "water-surface",
+              variantId: "moonlit-water",
+              presetVersion: 1,
+              enabled: true,
+              seed: 2097197072,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "polygon",
+                    points: [
+                          {
+                                x: 951,
+                                y: 374
+                          },
+                          {
+                                x: 1056,
+                                y: 371
+                          },
+                          {
+                                x: 999,
+                                y: 452
+                          },
+                          {
+                                x: 939,
+                                y: 434
+                          }
+                    ],
+                    cutouts: []
+              },
+              overrides: {
+                    intensity: 1,
+                    amount: 1,
+                    glow: 0.64
+              }
+        }
+  ],
   reward: {
     title: "Het schip vertrekt!",
     badge: "Vikinghaven Helper",
