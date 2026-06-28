@@ -119,8 +119,8 @@ window.SVEN_AUDIO_CONFIG = {
     "LVL-0011": {
       "music": "minecraft",
       "ambience": "minecraftLava",
-      "musicVolume": 0.3,
-      "ambienceVolume": 0.9
+      "musicVolume": 0.26,
+      "ambienceVolume": 1
     },
     "LVL-0012": {
       "music": "minecraft",
@@ -175,42 +175,6 @@ window.SVEN_AUDIO_CONFIG = {
       "ambience": "europeRheden",
       "musicVolume": 0.24,
       "ambienceVolume": 0.24
-    },
-    "LVL-0021": {
-      "music": "leonardoLevel",
-      "ambience": "leonardoRome",
-      "musicVolume": 0.27,
-      "ambienceVolume": 0.71
-    },
-    "LVL-0022": {
-      "music": "leonardoLevel",
-      "ambience": "leonardoProceno",
-      "musicVolume": 0.27,
-      "ambienceVolume": 0.87
-    },
-    "LVL-0023": {
-      "music": "leonardoLevel",
-      "ambience": "leonardoUmbria",
-      "musicVolume": 0.26,
-      "ambienceVolume": 0.63
-    },
-    "LVL-0024": {
-      "music": "leonardoLevel",
-      "ambience": "leonardoMarche",
-      "musicVolume": 0.26,
-      "ambienceVolume": 1
-    },
-    "LVL-0025": {
-      "music": "leonardoLevel",
-      "ambience": "leonardoFlorence",
-      "musicVolume": 0.27,
-      "ambienceVolume": 1
-    },
-    "LVL-0026": {
-      "music": "leonardoLevel",
-      "ambience": "leonardoVinci",
-      "musicVolume": 0.25,
-      "ambienceVolume": 0.93
     }
   },
   "volumes": {
