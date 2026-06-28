@@ -1262,6 +1262,47 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
     "name": "Leonardo da Vinci",
     "portrait": "Levels/LVL-0026/assets/leonardo-da-vinci.png"
   },
+  sceneEffects: [
+        {
+              id: "twinkling-stars-01",
+              label: "Twinkling Stars 1",
+              presetId: "twinkling-stars",
+              variantId: "default-twinkling-stars",
+              presetVersion: 1,
+              enabled: true,
+              seed: 2045997900,
+              qualityTier: "auto",
+              layerSlot: "backgroundAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "polygon",
+                    points: [
+                          {
+                                x: 1630,
+                                y: 72
+                          },
+                          {
+                                x: 2159,
+                                y: 55
+                          },
+                          {
+                                x: 2165,
+                                y: 199
+                          },
+                          {
+                                x: 1856,
+                                y: 208
+                          },
+                          {
+                                x: 1555,
+                                y: 183
+                          }
+                    ],
+                    cutouts: []
+              },
+              overrides: {}
+        }
+  ],
   "reward": {
     "title": "Leonardo’s atlas voltooid",
     "line": "Sven heeft gekeken, gemeten, onderzocht en zijn eigen ontwerp voltooid.",
