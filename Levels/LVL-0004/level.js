@@ -753,6 +753,34 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       challengeId: "nautilusLight"
     }
   ],
+  sceneEffects: [
+        {
+              id: "sun-presence-01",
+              label: "Warm day sun 1",
+              presetId: "sun-presence",
+              variantId: "warm-day-sun",
+              presetVersion: 1,
+              enabled: true,
+              seed: 159978023,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 498,
+                    y: 115,
+                    radius: 250
+              },
+              overrides: {
+                    rayEndAngle: 86,
+                    intensity: 0.84,
+                    rayStrength: 0.75,
+                    rayAnimationAmount: 2,
+                    raySpreadBreathing: 2,
+                    rayCount: 12
+              }
+        }
+  ],
   reward: {
     title: "De poort naar de Nautilus opent!",
     badge: "Nautilus Verkenner",
