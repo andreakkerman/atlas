@@ -530,6 +530,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     effectDrag: null,
     showEffectGuides: true,
     effectVisibility: "all",
+    effectControlOpenSections: {},
     assets: { images: [], audio: [], animals: [], flybys: [], warnings: [] },
     assetMessage: "",
     pathMode: false,
@@ -3433,6 +3434,17 @@ function renderEffectColorControl(effect, field, label, inherited = false) {
   `;
 }
 
+function effectControlSectionKey(effect, section) {
+  return `${effect.id}:${section}`;
+}
+
+function isEffectControlSectionOpen(effect, section, defaultOpen = false) {
+  const key = effectControlSectionKey(effect, section);
+  return Object.hasOwn(walkPathEditor.effectControlOpenSections || {}, key)
+    ? Boolean(walkPathEditor.effectControlOpenSections[key])
+    : defaultOpen;
+}
+
 function renderEffectControlSection(effect, preset, section, title, open = false) {
   const group = (level.sceneEffectGroups || []).find((item) => item.id === effect.groupId);
   const fields = preset.controls.filter((field) => window.AtlasSceneEffects.CONTROL_DEFS[field]?.section === section);
@@ -3447,7 +3459,7 @@ function renderEffectControlSection(effect, preset, section, title, open = false
       : "";
   if (!fields.length && !colors) return "";
   return `
-    <details class="editorNestedSection effectControlSection" ${open ? "open" : ""}>
+    <details class="editorNestedSection effectControlSection" data-effect-control-section="${section}" data-effect-id="${effect.id}" ${isEffectControlSectionOpen(effect, section, open) ? "open" : ""}>
       <summary>${title}</summary>
       ${colors}
       ${fields.map((field) => renderEffectNumberControl(effect, field, group?.sharedProperties?.includes(field))).join("")}
@@ -3487,7 +3499,7 @@ function sceneEffectBalancedEstimate(effect) {
 
 function renderEffectLibrary() {
   return window.AtlasSceneEffects.CATEGORIES.map((category) => {
-    const presets = Object.values(window.AtlasSceneEffects.PRESETS).filter((preset) => preset.category === category);
+    const presets = Object.values(window.AtlasSceneEffects.PRESETS).filter((preset) => preset.category === category && !preset.hiddenFromLibrary);
     if (!presets.length) return "";
     return `
       <details class="effectLibraryCategory" ${["Light and fire", "Water"].includes(category) ? "open" : ""}>
@@ -5011,6 +5023,13 @@ function render() {
   const editorPanel = document.querySelector("[data-developer-tools]");
   if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }
+
+app.addEventListener("toggle", (event) => {
+  const section = event.target.closest?.("[data-effect-control-section]");
+  if (!section || !section.dataset.effectId || !section.dataset.effectControlSection) return;
+  walkPathEditor.effectControlOpenSections ||= {};
+  walkPathEditor.effectControlOpenSections[`${section.dataset.effectId}:${section.dataset.effectControlSection}`] = section.open;
+}, true);
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();

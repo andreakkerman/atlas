@@ -216,6 +216,28 @@ test.describe("developer editor interaction routing", () => {
     expect(pageErrors).toEqual([]);
   });
 
+  test("keeps scene effect Advanced settings open after editing an advanced value", async ({ page }) => {
+    const pageErrors = await openVikingEditor(page);
+
+    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
+    await page.locator("[data-effect-preset-card='light-source-enhancement'] button[data-add-effect]").first().click();
+    await page.locator("[data-select-effect='light-source-enhancement-01']").click();
+
+    const advancedSection = page.locator("[data-effect-control-section='advanced']").first();
+    await advancedSection.locator("summary").click();
+    await expect(advancedSection).toHaveAttribute("open", "");
+
+    await page.locator("[data-effect-override='warmth']").fill("0.82");
+    await page.locator("[data-effect-override='warmth']").dispatchEvent("change");
+
+    await expect.poll(() => page.evaluate(() =>
+      window.eval("level.sceneEffects[0].overrides.warmth")
+    )).toBe(0.82);
+    await expect(page.locator("[data-effect-control-section='advanced']").first()).toHaveAttribute("open", "");
+    expect(pageErrors).toEqual([]);
+  });
+
   test("scene-effect-only Apply patches only scene-effect sections and remains idempotent", async ({ page }) => {
     test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
     const snapshot = preserveFiles("LVL-0002");

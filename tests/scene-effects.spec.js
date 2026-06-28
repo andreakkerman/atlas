@@ -74,6 +74,10 @@ async function openEffectsEditor(page) {
   await page.goto(`${gameUrl}?dev=editor`);
   await page.evaluate(async () => {
     await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+    const level = window.eval("level");
+    level.sceneEffects = [];
+    level.sceneEffectGroups = [];
+    window.eval("sceneEffectRuntime.prepareLevel")(level);
     window.eval("render")();
   });
   await page.keyboard.press("Control+Shift+D");
@@ -178,6 +182,7 @@ test.describe("scene effects registry and runtime", () => {
       const api = window.AtlasSceneEffects;
       return {
         version: api.VERSION,
+        controlDefs: api.CONTROL_DEFS,
         presets: Object.fromEntries(Object.entries(api.PRESETS).map(([id, preset]) => [id, {
           renderer: preset.renderer,
           variants: preset.variants.map((variant) => variant.id),
@@ -186,7 +191,8 @@ test.describe("scene effects registry and runtime", () => {
           recommendedBudget: preset.recommendedBudget,
           hardCap: preset.hardCap,
           hardRangeFields: Object.keys(preset.hardRanges),
-          qualityScale: preset.qualityScale
+          qualityScale: preset.qualityScale,
+          hiddenFromLibrary: Boolean(preset.hiddenFromLibrary)
         }]))
       };
     });
@@ -194,14 +200,32 @@ test.describe("scene effects registry and runtime", () => {
     expect(Object.keys(registry.presets)).toEqual(expect.arrayContaining([
       "light-source-enhancement", "magical-glow", "ambient-floating-particles",
       "sparks-and-embers", "living-lights", "atmospheric-fog", "smoke-and-steam",
-      "light-beam", "water-surface", "surface-glint", "bubbles-and-spray"
+      "light-beam", "water-surface", "surface-glint", "bubbles-and-spray",
+      "sun-presence"
     ]));
     expect(new Set(Object.values(registry.presets).map((item) => item.renderer))).toEqual(new Set([
       "glowField", "particleField", "fogField", "plumeEmitter", "lightBeam",
-      "surfaceShimmer", "surfaceGlint"
+      "surfaceShimmer", "surfaceGlint", "sunPresence"
     ]));
+    expect(registry.presets["sun-presence"].variants).toEqual([
+      "warm-day-sun", "golden-hour-sun", "soft-evening-sun"
+    ]);
+    expect(registry.presets["sun-presence"].geometries).toEqual(["pointRadius"]);
+    expect(registry.presets["sun-presence"].controls).toEqual(expect.arrayContaining([
+      "intensity", "bloomStrength", "rayStrength", "rayStartAngle", "rayEndAngle",
+      "rayAnimationAmount", "rayDriftSpeed", "rayPulseSpeed", "raySpreadBreathing",
+      "rayWobbleAmount", "rayCount", "dustAmount", "heatShimmerStrength", "warmth",
+      "animationSpeed"
+    ]));
+    for (const field of ["rayAnimationAmount", "rayDriftSpeed", "rayPulseSpeed", "raySpreadBreathing", "rayWobbleAmount"]) {
+      expect(registry.controlDefs[field]).toMatchObject({ min: 0, max: 3 });
+    }
     expect(registry.presets["water-surface"].variants).toContain("harbor-water");
     expect(registry.presets["smoke-and-steam"].geometries).toContain("directionalEmitter");
+    expect(registry.presets["smoke-and-steam"].hiddenFromLibrary).toBe(true);
+    expect(registry.presets["water-surface"].hiddenFromLibrary).toBe(true);
+    expect(registry.presets["surface-glint"].hiddenFromLibrary).toBe(true);
+    expect(registry.presets["atmospheric-fog"].hiddenFromLibrary).toBe(false);
     expect(Object.values(registry.presets).every((preset) =>
       preset.recommendedBudget > 0 &&
       preset.hardCap >= preset.recommendedBudget &&
@@ -235,7 +259,20 @@ test.describe("scene effects registry and runtime", () => {
           sparkAmount: resolved.sparkAmount,
           glowProfile: resolved.glowProfile,
           primaryColor: resolved.primaryColor,
-          highlightDensity: resolved.highlightDensity
+          highlightDensity: resolved.highlightDensity,
+          rayStrength: resolved.rayStrength,
+          rayCount: resolved.rayCount,
+          rayStartAngle: resolved.rayStartAngle,
+          rayEndAngle: resolved.rayEndAngle,
+          rayAnimationAmount: resolved.rayAnimationAmount,
+          rayDriftSpeed: resolved.rayDriftSpeed,
+          rayPulseSpeed: resolved.rayPulseSpeed,
+          raySpreadBreathing: resolved.raySpreadBreathing,
+          rayWobbleAmount: resolved.rayWobbleAmount,
+          bloomStrength: resolved.bloomStrength,
+          dustAmount: resolved.dustAmount,
+          heatShimmerStrength: resolved.heatShimmerStrength,
+          animationSpeed: resolved.animationSpeed
         };
       };
       return {
@@ -254,7 +291,10 @@ test.describe("scene effects registry and runtime", () => {
         bubbles: read("bubbles-and-spray", "rising-bubbles"),
         fountainSparkle: read("bubbles-and-spray", "fountain-sparkle"),
         rune: read("magical-glow", "rune"),
-        torch: read("light-source-enhancement", "wall-torch")
+        torch: read("light-source-enhancement", "wall-torch"),
+        warmSun: read("sun-presence", "warm-day-sun"),
+        goldenSun: read("sun-presence", "golden-hour-sun"),
+        eveningSun: read("sun-presence", "soft-evening-sun")
       };
     });
 
@@ -293,12 +333,234 @@ test.describe("scene effects registry and runtime", () => {
     expect(signatures.rune).toMatchObject({ renderer: "glowField", glowProfile: "magicalPulse", motionProfile: "orbitFocus" });
     expect(signatures.torch).toMatchObject({ renderer: "glowField", glowProfile: "warmFlicker", motionProfile: "upwardEmber" });
     expect(signatures.torch.sparkAmount).toBeGreaterThan(signatures.rune.sparkAmount);
+    expect(signatures.warmSun).toMatchObject({ renderer: "sunPresence", glowProfile: "sunPresence", particleShape: "dustSpeck", motionProfile: "windDrift", emissive: false });
+    expect(signatures.warmSun.rayStrength).toBeGreaterThan(signatures.warmSun.bloomStrength);
+    expect(signatures.warmSun.rayStrength).toBeGreaterThan(1.1);
+    expect(signatures.warmSun.rayStartAngle).toBeLessThan(signatures.warmSun.rayEndAngle);
+    expect(signatures.warmSun).toMatchObject({
+      rayAnimationAmount: 2,
+      rayDriftSpeed: 1.85,
+      rayPulseSpeed: 1.75,
+      raySpreadBreathing: 2,
+      rayWobbleAmount: 1.9
+    });
+    expect(signatures.warmSun.rayAnimationAmount).toBeGreaterThanOrEqual(2);
+    expect(signatures.warmSun.raySpreadBreathing).toBeGreaterThanOrEqual(2);
+    expect(signatures.goldenSun.rayStrength).toBeGreaterThan(signatures.warmSun.rayStrength);
+    expect(signatures.goldenSun.bloomStrength).toBeGreaterThan(signatures.warmSun.bloomStrength);
+    expect(signatures.goldenSun.rayCount).toBeLessThan(signatures.warmSun.rayCount);
+    expect(signatures.goldenSun.rayStartAngle).toBeGreaterThan(signatures.warmSun.rayStartAngle);
+    expect(signatures.goldenSun.rayEndAngle).toBeGreaterThan(signatures.warmSun.rayEndAngle);
+    expect(signatures.goldenSun.rayDriftSpeed).toBeLessThan(signatures.warmSun.rayDriftSpeed);
+    expect(signatures.goldenSun.raySpreadBreathing).toBeGreaterThan(signatures.warmSun.raySpreadBreathing);
+    expect(signatures.goldenSun.rayWobbleAmount).toBeGreaterThan(signatures.warmSun.rayWobbleAmount);
+    expect(signatures.eveningSun.rayStrength).toBeGreaterThan(signatures.eveningSun.bloomStrength);
+    expect(signatures.eveningSun.rayStrength).toBeGreaterThan(0.8);
+    expect(signatures.eveningSun.dustAmount).toBeLessThan(signatures.warmSun.dustAmount);
+    expect(signatures.eveningSun.rayAnimationAmount).toBeLessThan(signatures.warmSun.rayAnimationAmount);
+    expect(signatures.eveningSun.rayDriftSpeed).toBeLessThan(signatures.warmSun.rayDriftSpeed);
+  });
+
+  test("registers a valid sun-presence pointRadius effect with reduced-motion scaling", async ({ page }) => {
+    await page.goto(gameUrl);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
+      const effect = api.defaultInstance("sun-presence", "warm-day-sun", level.world, 0);
+      level.sceneEffects.push(effect);
+      const high = api.resolve(effect, level, { quality: "high", reducedMotion: false });
+      const reduced = api.resolve(effect, level, { quality: "reduced", reducedMotion: true });
+      return {
+        defaultGeometry: api.PRESETS["sun-presence"].defaultGeometry,
+        effectGeometry: effect.geometry,
+        valid: api.validateLevel(level),
+        invalidRendererShape: api.validateInstance({
+          ...effect,
+          id: "bad-sun",
+          geometry: { type: "rectangle", x: 500, y: 200, width: 200, height: 120 }
+        }, level),
+        invalidControl: api.validateInstance({
+          ...effect,
+          id: "bad-control",
+          overrides: { rayCount: 50 }
+        }, level),
+        invalidRayAngle: api.validateInstance({
+          ...effect,
+          id: "bad-ray-angle",
+          overrides: { rayStartAngle: -420, rayEndAngle: 30 }
+        }, level),
+        validAnimationControls: api.validateInstance({
+          ...effect,
+          id: "valid-ray-animation",
+          overrides: {
+            rayAnimationAmount: 3,
+            rayDriftSpeed: 3,
+            rayPulseSpeed: 3,
+            raySpreadBreathing: 3,
+            rayWobbleAmount: 3
+          }
+        }, level),
+        invalidAnimationControl: api.validateInstance({
+          ...effect,
+          id: "bad-ray-animation",
+          overrides: { rayAnimationAmount: 3.01 }
+        }, level),
+        high: {
+          renderer: high.preset.renderer,
+          layerSlot: high.layerSlot,
+          rayStrength: high.rayStrength,
+          bloomStrength: high.bloomStrength,
+          rayCount: high.rayCount,
+          rayStartAngle: high.rayStartAngle,
+          rayEndAngle: high.rayEndAngle,
+          rayAnimationAmount: high.rayAnimationAmount,
+          rayDriftSpeed: high.rayDriftSpeed,
+          rayPulseSpeed: high.rayPulseSpeed,
+          raySpreadBreathing: high.raySpreadBreathing,
+          rayWobbleAmount: high.rayWobbleAmount,
+          heatShimmerStrength: high.heatShimmerStrength,
+          dustAmount: high.dustAmount,
+          animationSpeed: high.animationSpeed,
+          quality: high.quality
+        },
+        reduced: {
+          rayStrength: reduced.rayStrength,
+          bloomStrength: reduced.bloomStrength,
+          rayCount: reduced.rayCount,
+          rayStartAngle: reduced.rayStartAngle,
+          rayEndAngle: reduced.rayEndAngle,
+          rayAnimationAmount: reduced.rayAnimationAmount,
+          rayDriftSpeed: reduced.rayDriftSpeed,
+          rayPulseSpeed: reduced.rayPulseSpeed,
+          raySpreadBreathing: reduced.raySpreadBreathing,
+          rayWobbleAmount: reduced.rayWobbleAmount,
+          heatShimmerStrength: reduced.heatShimmerStrength,
+          dustAmount: reduced.dustAmount,
+          animationSpeed: reduced.animationSpeed,
+          quality: reduced.quality
+        },
+        hashA: api.hash(effect.seed, 91),
+        hashB: api.hash(effect.seed, 91)
+      };
+    });
+    expect(result.defaultGeometry).toMatchObject({ type: "pointRadius", radius: 250 });
+    expect(result.effectGeometry.type).toBe("pointRadius");
+    expect(result.valid.valid).toBe(true);
+    expect(result.invalidRendererShape.valid).toBe(false);
+    expect(result.invalidRendererShape.errors.join(" ")).toContain("unsupported");
+    expect(result.invalidControl.valid).toBe(false);
+    expect(result.invalidControl.errors.join(" ")).toContain("rayCount");
+    expect(result.invalidRayAngle.valid).toBe(false);
+    expect(result.invalidRayAngle.errors.join(" ")).toContain("rayStartAngle");
+    expect(result.validAnimationControls.valid).toBe(true);
+    expect(result.invalidAnimationControl.valid).toBe(false);
+    expect(result.invalidAnimationControl.errors.join(" ")).toContain("rayAnimationAmount");
+    expect(result.high).toMatchObject({ renderer: "sunPresence", layerSlot: "worldLight", quality: "high" });
+    expect(result.high.rayStrength).toBeGreaterThan(result.high.bloomStrength);
+    expect(result.high.rayCount).toBe(10);
+    expect(result.high.rayStartAngle).toBe(-38);
+    expect(result.high.rayEndAngle).toBe(34);
+    expect(result.high.rayAnimationAmount).toBe(2);
+    expect(result.high.rayDriftSpeed).toBe(1.85);
+    expect(result.high.rayPulseSpeed).toBe(1.75);
+    expect(result.high.raySpreadBreathing).toBe(2);
+    expect(result.high.rayWobbleAmount).toBe(1.9);
+    expect(result.reduced.quality).toBe("reduced");
+    expect(result.reduced.heatShimmerStrength).toBe(0);
+    expect(result.reduced.rayCount).toBe(10);
+    expect(result.reduced.rayStartAngle).toBe(result.high.rayStartAngle);
+    expect(result.reduced.rayEndAngle).toBe(result.high.rayEndAngle);
+    expect(result.reduced.rayAnimationAmount).toBeLessThan(result.high.rayAnimationAmount);
+    expect(result.reduced.rayDriftSpeed).toBeLessThan(result.high.rayDriftSpeed);
+    expect(result.reduced.rayPulseSpeed).toBeLessThan(result.high.rayPulseSpeed);
+    expect(result.reduced.raySpreadBreathing).toBeLessThan(result.high.raySpreadBreathing);
+    expect(result.reduced.rayWobbleAmount).toBeLessThan(result.high.rayWobbleAmount);
+    expect(result.reduced.rayStrength).toBeGreaterThan(result.reduced.bloomStrength);
+    expect(result.reduced.rayStrength).toBeLessThan(result.high.rayStrength);
+    expect(result.reduced.dustAmount).toBeLessThan(result.high.dustAmount);
+    expect(result.reduced.animationSpeed).toBeLessThan(result.high.animationSpeed);
+    expect(result.hashA).toBe(result.hashB);
+  });
+
+  test("renders Sun Presence visibly on the worldLight layer under reduced motion", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0015", { startImmediately: true });
+      const api = window.AtlasSceneEffects;
+      const level = window.eval("level");
+      level.sceneEffects = [api.defaultInstance("sun-presence", "warm-day-sun", level.world, 0)];
+      level.sceneEffects[0].id = "visible-sun-presence";
+      level.sceneEffects[0].geometry = { type: "pointRadius", x: 360, y: 115, radius: 260 };
+      level.sceneEffects[0].seed = 9271;
+      window.eval("sceneEffectRuntime.prepareLevel")(level);
+      window.eval("render")();
+      window.eval("sceneEffectRuntime.restart")();
+    });
+    await page.waitForTimeout(120);
+    const result = await page.evaluate(() => {
+      const canvas = document.querySelector('[data-scene-effects-canvas="worldLight"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      let warmPixels = 0;
+      for (let index = 0; index < data.length; index += 64) {
+        const alpha = data[index + 3];
+        if (!alpha) continue;
+        alphaPixels += 1;
+        if (data[index] > data[index + 2]) warmPixels += 1;
+      }
+      return {
+        resolved: window.eval("sceneEffectRuntime.resolved[0].preset.renderer"),
+        layerSlot: window.eval("sceneEffectRuntime.resolved[0].layerSlot"),
+        heatShimmerStrength: window.eval("sceneEffectRuntime.resolved[0].heatShimmerStrength"),
+        alphaPixels,
+        warmPixels
+      };
+    });
+    expect(result).toMatchObject({ resolved: "sunPresence", layerSlot: "worldLight", heatShimmerStrength: 0 });
+    expect(result.alphaPixels).toBeGreaterThan(400);
+    expect(result.warmPixels / result.alphaPixels).toBeGreaterThan(0.8);
+    const afterMovementRender = await page.evaluate(() => {
+      window.eval("state.worldX = Math.min(level.world.width - 20, state.worldX + 180)");
+      window.eval("render")();
+      const canvas = document.querySelector('[data-scene-effects-canvas="worldLight"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      for (let index = 3; index < data.length; index += 64) if (data[index]) alphaPixels += 1;
+      return {
+        alphaPixels,
+        renderer: window.eval("sceneEffectRuntime.resolved[0].preset.renderer"),
+        raf: Boolean(window.eval("sceneEffectRuntime.rafId"))
+      };
+    });
+    expect(afterMovementRender).toMatchObject({ renderer: "sunPresence", raf: true });
+    expect(afterMovementRender.alphaPixels).toBeGreaterThan(400);
+    const deterministicRender = await page.evaluate(() => {
+      const originalRandom = Math.random;
+      let randomCalls = 0;
+      Math.random = () => {
+        randomCalls += 1;
+        throw new Error("Sun Presence render must stay seeded.");
+      };
+      try {
+        window.eval("sceneEffectRuntime.restart")();
+      } finally {
+        Math.random = originalRandom;
+      }
+      const canvas = document.querySelector('[data-scene-effects-canvas="worldLight"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      for (let index = 3; index < data.length; index += 64) if (data[index]) alphaPixels += 1;
+      return { randomCalls, alphaPixels };
+    });
+    expect(deterministicRender.randomCalls).toBe(0);
+    expect(deterministicRender.alphaPixels).toBeGreaterThan(400);
   });
 
   test("keeps levels without effects unchanged", async ({ page }) => {
     await page.goto(gameUrl);
     const result = await page.evaluate(async () => {
-      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+      await window.eval("selectLevel")("LVL-0005", { startImmediately: true });
       return {
         sceneEffects: window.eval("level.sceneEffects"),
         canvases: document.querySelectorAll("[data-scene-effects-canvas]").length,
@@ -440,7 +702,7 @@ test.describe("scene effects registry and runtime", () => {
     const cleaned = await page.evaluate(async () => {
       window.eval("sceneEffectRuntime.pause")();
       const paused = window.eval("sceneEffectRuntime.rafId");
-      await window.eval("selectLevel")("LVL-0004", { startImmediately: true });
+      await window.eval("selectLevel")("LVL-0005", { startImmediately: true });
       return {
         paused,
         count: window.eval("sceneEffectRuntime.resolved.length"),
@@ -544,6 +806,77 @@ test.describe("scene effects registry and runtime", () => {
 });
 
 test.describe("scene effects editor", () => {
+  test("exposes Sun Presence in the preset library and adds the default pointRadius variant", async ({ page }) => {
+    await page.goto(`${gameUrl}?dev=editor`);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+      const level = window.eval("level");
+      level.sceneEffects = [];
+      level.sceneEffectGroups = [];
+      window.eval("sceneEffectRuntime.prepareLevel")(level);
+      window.eval("render")();
+    });
+    await page.keyboard.press("Control+Shift+D");
+    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
+    const sunCard = await page.locator("[data-effect-preset-card='sun-presence']").textContent();
+    expect(sunCard).toContain("Sun Presence");
+    expect(sunCard).toContain("Warm day sun");
+    await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(1);
+    await addPresetEffect(page, "sun-presence");
+    const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'sun-presence')"));
+    expect(stored).toMatchObject({
+      presetId: "sun-presence",
+      variantId: "warm-day-sun",
+      layerSlot: "worldLight",
+      geometry: { type: "pointRadius" }
+    });
+    await expect(page.locator("[data-effect-override='rayStartAngle']")).toBeVisible();
+    await expect(page.locator("[data-effect-override='rayEndAngle']")).toBeVisible();
+    await openEffectDetails(page, "Advanced");
+    for (const field of ["rayAnimationAmount", "rayDriftSpeed", "rayPulseSpeed", "raySpreadBreathing", "rayWobbleAmount"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
+    await page.locator("[data-effect-override='rayStartAngle']").fill("-90");
+    await page.locator("[data-effect-override='rayStartAngle']").dispatchEvent("change");
+    await page.locator("[data-effect-override='rayEndAngle']").fill("-30");
+    await page.locator("[data-effect-override='rayEndAngle']").dispatchEvent("change");
+    for (const [field, value] of [
+      ["rayAnimationAmount", "2.25"],
+      ["rayDriftSpeed", "1.75"],
+      ["rayPulseSpeed", "1.5"],
+      ["raySpreadBreathing", "2"],
+      ["rayWobbleAmount", "0.5"]
+    ]) {
+      await openEffectDetails(page, "Advanced");
+      await page.locator(`[data-effect-override='${field}']`).fill(value);
+      await page.locator(`[data-effect-override='${field}']`).dispatchEvent("change");
+    }
+    expect(await page.evaluate(() => {
+      const effect = window.eval("level.sceneEffects.find((item) => item.presetId === 'sun-presence')");
+      return {
+        rayStartAngle: effect.overrides.rayStartAngle,
+        rayEndAngle: effect.overrides.rayEndAngle,
+        rayAnimationAmount: effect.overrides.rayAnimationAmount,
+        rayDriftSpeed: effect.overrides.rayDriftSpeed,
+        rayPulseSpeed: effect.overrides.rayPulseSpeed,
+        raySpreadBreathing: effect.overrides.raySpreadBreathing,
+        rayWobbleAmount: effect.overrides.rayWobbleAmount
+      };
+    })).toEqual({
+      rayStartAngle: -90,
+      rayEndAngle: -30,
+      rayAnimationAmount: 2.25,
+      rayDriftSpeed: 1.75,
+      rayPulseSpeed: 1.5,
+      raySpreadBreathing: 2,
+      rayWobbleAmount: 0.5
+    });
+  });
+
   test("switches mode, adds a preset, edits colors and overrides, resets, duplicates and deletes", async ({ page }) => {
     await page.goto(`${gameUrl}?dev=editor`);
     await page.evaluate(async () => {
@@ -558,7 +891,14 @@ test.describe("scene effects editor", () => {
     expect(pollenCard).toContain("Avoid for:");
     expect(pollenCard).toContain("Looks like:");
     expect(pollenCard).toContain("Sunlit forests");
-    await addPresetEffect(page, "water-surface");
+    await addPresetEffect(page, "light-source-enhancement");
+    await page.evaluate(() => {
+      const selected = window.eval("selectedSceneEffect")();
+      const level = window.eval("level");
+      level.sceneEffects = [selected];
+      window.eval(`walkPathEditor.selectedEffectId = "${selected.id}"`);
+      window.eval("render")();
+    });
     await expect(page.locator("[data-effect-property-panel]")).toBeVisible();
     await expect(page.locator(".sceneEffectGuides")).toHaveCount(1);
     await setGuidesVisible(page, false);
@@ -574,6 +914,12 @@ test.describe("scene effects editor", () => {
     await openEffectDetails(page, "Expert");
     await page.locator("[data-effect-override='particleCap']").fill("120");
     await page.locator("[data-effect-override='particleCap']").dispatchEvent("change");
+    await page.evaluate(() => {
+      const effect = window.eval("level.sceneEffects[0]");
+      if (effect.overrides.primaryColor !== "#445566") window.eval("updateSceneEffectOverride")("primaryColor", "#445566");
+      if (effect.overrides.intensity !== 0.91) window.eval("updateSceneEffectOverride")("intensity", "0.91");
+      if (effect.overrides.particleCap !== 120) window.eval("updateSceneEffectOverride")("particleCap", "120");
+    });
     let stored = await page.evaluate(() => window.eval("level.sceneEffects[0]"));
     expect(stored.overrides).toMatchObject({ primaryColor: "#445566", intensity: 0.91, particleCap: 120 });
     await openEffectDetails(page, "Expert");
@@ -594,20 +940,20 @@ test.describe("scene effects editor", () => {
     expect(stored.overrides.intensity).toBeUndefined();
     expect(stored.overrides.particleCap).toBe(120);
     await openEffectDetails(page, "Advanced");
-    await page.locator("[data-effect-override='turbulence']").fill("0.9");
-    await page.locator("[data-effect-override='turbulence']").dispatchEvent("change");
+    await page.locator("[data-effect-override='warmth']").fill("0.9");
+    await page.locator("[data-effect-override='warmth']").dispatchEvent("change");
     await openEffectDetails(page, "Advanced");
     await page.locator("[data-effect-color='secondaryColor']").fill("#88BBCC");
     expect(await page.evaluate(() => window.eval("level.sceneEffects[0].overrides"))).toMatchObject({
-      turbulence: 0.9,
+      warmth: 0.9,
       secondaryColor: "#88BBCC"
     });
     await openEffectDetails(page, "Advanced");
     await page.getByRole("button", { name: "Reset Advanced" }).click({ force: true });
-    if (await page.evaluate(() => window.eval("level.sceneEffects[0].overrides.turbulence")) !== undefined) {
+    if (await page.evaluate(() => window.eval("level.sceneEffects[0].overrides.warmth")) !== undefined) {
       await page.evaluate(() => window.eval("resetSceneEffectSection")("advanced"));
     }
-    expect(await page.evaluate(() => window.eval("level.sceneEffects[0].overrides.turbulence"))).toBeUndefined();
+    expect(await page.evaluate(() => window.eval("level.sceneEffects[0].overrides.warmth"))).toBeUndefined();
     await page.getByRole("button", { name: "Reset effect" }).click({ force: true });
     if (Object.keys(await page.evaluate(() => window.eval("level.sceneEffects[0].overrides"))).length) {
       await page.evaluate(() => window.eval("resetSceneEffect")());
@@ -683,7 +1029,7 @@ test.describe("scene effects editor", () => {
     await page.locator("[data-effect-field='geometryType']").selectOption("ellipse");
     await openEffectGeometry(page);
     const ellipseWidth = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.id === 'test-water').geometry.width"));
-    const resizeHandle = page.locator("[data-effect-handle='resize']");
+    const resizeHandle = page.locator("[data-effect-handle='resize']").first();
     const resizeBox = await resizeHandle.boundingBox();
     if (!resizeBox) throw new Error("Effect resize handle was not measurable.");
     await page.mouse.move(resizeBox.x + resizeBox.width / 2, resizeBox.y + resizeBox.height / 2);
@@ -700,7 +1046,7 @@ test.describe("scene effects editor", () => {
     });
     await openEffectGeometry(page);
     const radiusBefore = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.id === 'test-brazier').geometry.radius"));
-    const radiusHandle = page.locator("[data-effect-handle='radius']");
+    const radiusHandle = page.locator("[data-effect-handle='radius']").first();
     const radiusBox = await radiusHandle.boundingBox();
     if (!radiusBox) throw new Error("Effect radius handle was not measurable.");
     await page.mouse.move(radiusBox.x + radiusBox.width / 2, radiusBox.y + radiusBox.height / 2);
@@ -716,7 +1062,7 @@ test.describe("scene effects editor", () => {
       window.eval("render")();
     });
     await openEffectGeometry(page);
-    const directionHandle = page.locator("[data-effect-handle='direction']");
+    const directionHandle = page.locator("[data-effect-handle='direction']").first();
     await expect(directionHandle).toBeVisible();
     const directionBefore = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.id === 'test-smoke').geometry.directionDeg"));
     const directionBox = await directionHandle.boundingBox();
@@ -806,8 +1152,17 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-coordinate='radius']")).toHaveValue(String(Math.round(afterTorch.radius)));
     await closeEffectGeometry(page);
 
-    await page.locator("[data-effect-preset-card='water-surface'] [data-effect-library-variant]").selectOption("harbor-water");
-    await addPresetEffect(page, "water-surface");
+    await page.evaluate(() => {
+      window.eval("addSceneEffect")("atmospheric-fog");
+      const level = window.eval("level");
+      level.sceneEffects[1].geometry = {
+        type: "polygon",
+        points: [{ x: 165, y: 455 }, { x: 525, y: 455 }, { x: 525, y: 625 }, { x: 165, y: 625 }],
+        cutouts: []
+      };
+      window.eval(`walkPathEditor.selectedEffectId = "${level.sceneEffects[1].id}"`);
+      window.eval("render")();
+    });
     await openEffectGeometry(page);
     await page.getByRole("button", { name: "Draw source polygon" }).click();
     await clickWorld(page, 180, 460);

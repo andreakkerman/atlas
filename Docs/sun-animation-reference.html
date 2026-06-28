@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas Sun Animation</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #061321;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        linear-gradient(to bottom, rgba(25, 95, 160, 0.45), rgba(5, 20, 35, 0.75)),
+        url("A79530E0-37F8-4FDB-9773-003F93CFBF36.jpeg");
+      background-size: cover;
+      background-position: center;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .hint {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      color: rgba(255,255,255,0.65);
+      font: 13px system-ui, sans-serif;
+      background: rgba(0,0,0,0.25);
+      padding: 8px 10px;
+      border-radius: 8px;
+      backdrop-filter: blur(6px);
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <canvas id="sunCanvas"></canvas>
+    <div class="hint">Subtiele zonlaag voor Atlas-levels — canvas overlay</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("sunCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+
+    const particles = [];
+
+    function resize() {
+      dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2));
+      w = window.innerWidth;
+      h = window.innerHeight;
+
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = w + "px";
+      canvas.style.height = h + "px";
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      particles.length = 0;
+      for (let i = 0; i < 85; i++) {
+        particles.push(makeParticle(true));
+      }
+    }
+
+    function makeParticle(initial = false) {
+      return {
+        x: initial ? Math.random() * w : -40 - Math.random() * 120,
+        y: Math.random() * h * 0.75,
+        r: 0.6 + Math.random() * 2.4,
+        speedX: 5 + Math.random() * 14,
+        speedY: -1.2 + Math.random() * 2.4,
+        alpha: 0.04 + Math.random() * 0.13,
+        phase: Math.random() * Math.PI * 2
+      };
+    }
+
+    function drawSoftSun(x, y, t) {
+      const pulse = 1 + Math.sin(t * 0.0018) * 0.035;
+
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+
+      // Very wide warm bloom
+      let g = ctx.createRadialGradient(x, y, 0, x, y, 520 * pulse);
+      g.addColorStop(0.00, "rgba(255, 235, 165, 0.42)");
+      g.addColorStop(0.18, "rgba(255, 200, 95, 0.20)");
+      g.addColorStop(0.42, "rgba(255, 165, 70, 0.08)");
+      g.addColorStop(1.00, "rgba(255, 130, 40, 0.00)");
+
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, 520 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Inner sun core, deliberately soft
+      g = ctx.createRadialGradient(x, y, 0, x, y, 115 * pulse);
+      g.addColorStop(0.00, "rgba(255, 250, 210, 0.58)");
+      g.addColorStop(0.22, "rgba(255, 230, 145, 0.34)");
+      g.addColorStop(0.62, "rgba(255, 180, 80, 0.11)");
+      g.addColorStop(1.00, "rgba(255, 180, 80, 0.00)");
+
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, 115 * pulse, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawRays(x, y, t) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+
+      const rayCount = 12;
+      const baseLength = Math.max(w, h) * 1.05;
+
+      for (let i = 0; i < rayCount; i++) {
+        const angle =
+          -0.25 +
+          i * 0.08 +
+          Math.sin(t * 0.00035 + i * 1.7) * 0.012;
+
+        const spread =
+          0.018 +
+          Math.sin(t * 0.0005 + i) * 0.005;
+
+        const alpha =
+          0.018 +
+          Math.sin(t * 0.0008 + i * 2.1) * 0.009;
+
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+
+        ctx.lineTo(
+          x + Math.cos(angle - spread) * baseLength,
+          y + Math.sin(angle - spread) * baseLength
+        );
+
+        ctx.lineTo(
+          x + Math.cos(angle + spread) * baseLength,
+          y + Math.sin(angle + spread) * baseLength
+        );
+
+        ctx.closePath();
+
+        const g = ctx.createRadialGradient(x, y, 20, x, y, baseLength);
+        g.addColorStop(0.0, `rgba(255, 236, 170, ${alpha * 1.8})`);
+        g.addColorStop(0.32, `rgba(255, 210, 120, ${alpha})`);
+        g.addColorStop(1.0, "rgba(255, 180, 90, 0)");
+
+        ctx.fillStyle = g;
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawHeatShimmer(x, y, t) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+
+      for (let i = 0; i < 7; i++) {
+        const radius = 70 + i * 42 + Math.sin(t * 0.001 + i) * 8;
+        const alpha = 0.025 - i * 0.002;
+
+        ctx.strokeStyle = `rgba(255, 235, 180, ${alpha})`;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+
+        for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.08) {
+          const wobble =
+            Math.sin(a * 5 + t * 0.0012 + i) * 3 +
+            Math.sin(a * 9 - t * 0.0009) * 1.5;
+
+          const px = x + Math.cos(a) * (radius + wobble);
+          const py = y + Math.sin(a) * (radius * 0.72 + wobble);
+
+          if (a === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function drawFloatingDust(t) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+
+      for (const p of particles) {
+        p.x += p.speedX * 0.016;
+        p.y += p.speedY * 0.016 + Math.sin(t * 0.001 + p.phase) * 0.015;
+
+        if (p.x > w + 80 || p.y < -80 || p.y > h + 80) {
+          Object.assign(p, makeParticle(false));
+        }
+
+        const twinkle = 0.65 + Math.sin(t * 0.002 + p.phase) * 0.35;
+        ctx.fillStyle = `rgba(255, 230, 165, ${p.alpha * twinkle})`;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function drawSubtleCloudGlow(x, y, t) {
+      ctx.save();
+      ctx.globalCompositeOperation = "screen";
+
+      for (let i = 0; i < 5; i++) {
+        const cx = x + 190 + i * 85 + Math.sin(t * 0.0003 + i) * 8;
+        const cy = y + 50 + Math.sin(t * 0.0004 + i * 2) * 5;
+
+        const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, 180);
+        g.addColorStop(0, "rgba(255, 220, 150, 0.045)");
+        g.addColorStop(1, "rgba(255, 220, 150, 0)");
+
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 180, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    function render(t) {
+      ctx.clearRect(0, 0, w, h);
+
+      // Position: linksboven, alsof de zon net buiten beeld zit.
+      // Past bij het bestaande licht in het level.
+      const sunX = w * 0.18;
+      const sunY = h * 0.12;
+
+      drawRays(sunX, sunY, t);
+      drawSubtleCloudGlow(sunX, sunY, t);
+      drawSoftSun(sunX, sunY, t);
+      drawHeatShimmer(sunX, sunY, t);
+      drawFloatingDust(t);
+
+      requestAnimationFrame(render);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    requestAnimationFrame(render);
+  </script>
+</body>
+</html>

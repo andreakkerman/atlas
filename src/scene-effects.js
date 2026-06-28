@@ -51,7 +51,20 @@
     burstiness: { label: "Burstiness", min: 0, max: 1, step: 0.01, section: "expert" },
     flickerAmount: { label: "Flicker amount", min: 0, max: 1, step: 0.01, section: "advanced" },
     sparkAmount: { label: "Spark amount", min: 0, max: 1, step: 0.01, section: "advanced" },
-    warmth: { label: "Warmth", min: 0, max: 1, step: 0.01, section: "advanced" }
+    warmth: { label: "Warmth", min: 0, max: 1, step: 0.01, section: "advanced" },
+    bloomStrength: { label: "Bloom strength", min: 0, max: 2, step: 0.01, section: "quick" },
+    rayStrength: { label: "Ray strength", min: 0, max: 2, step: 0.01, section: "quick" },
+    rayCount: { label: "Ray count", min: 4, max: 24, step: 1, section: "advanced" },
+    rayStartAngle: { label: "Ray start angle", min: -360, max: 360, step: 1, section: "quick" },
+    rayEndAngle: { label: "Ray end angle", min: -360, max: 360, step: 1, section: "quick" },
+    rayAnimationAmount: { label: "Ray animation amount", min: 0, max: 3, step: 0.01, section: "advanced" },
+    rayDriftSpeed: { label: "Ray drift speed", min: 0, max: 3, step: 0.01, section: "advanced" },
+    rayPulseSpeed: { label: "Ray pulse speed", min: 0, max: 3, step: 0.01, section: "advanced" },
+    raySpreadBreathing: { label: "Ray spread breathing", min: 0, max: 3, step: 0.01, section: "advanced" },
+    rayWobbleAmount: { label: "Ray wobble amount", min: 0, max: 3, step: 0.01, section: "advanced" },
+    dustAmount: { label: "Dust amount", min: 0, max: 1.5, step: 0.01, section: "advanced" },
+    heatShimmerStrength: { label: "Heat shimmer", min: 0, max: 1.5, step: 0.01, section: "advanced" },
+    animationSpeed: { label: "Animation speed", min: 0, max: 3, step: 0.01, section: "advanced" }
   });
 
   const CATEGORIES = Object.freeze([
@@ -134,6 +147,53 @@
       ],
       defaults: { ...preset({}).defaults, intensity: 0.88, amount: 0.72, glow: 0.88, softness: 0.52, opacity: 0.86, particleCap: 92, glowProfile: "warmFlicker", emissive: true, particleShape: "ember", motionProfile: "upwardEmber" },
       controls: ["intensity", "amount", "speed", "size", "glow", "softness", "flickerAmount", "sparkAmount", "warmth", "pulseRate", "particleCap"]
+    }),
+    "sun-presence": preset({
+      id: "sun-presence", name: "Sun Presence", category: "Light and fire",
+      description: "Cinematic sun bloom with soft core, broad rays, warm air glow, shimmer and quiet sun dust.",
+      bestFor: "Visible sky suns, off-frame daylight sources, golden-hour scenes and warm atmospheric light.",
+      avoidFor: "Torches, magical runes, sparks, smoke, fireflies or tiny object-bound glow.",
+      visualSignature: "Readable warm sun source with directional soft rays, organic shimmer and fine drifting dust.",
+      renderer: "sunPresence", layerSlot: "worldLight", blendMode: "screen", geometryTypes: ["pointRadius"],
+      defaultGeometry: { type: "pointRadius", x: 260, y: 120, radius: 250 },
+      variants: [
+        variant("warm-day-sun", "Warm day sun", { intensity: 0.98, bloomStrength: 0.9, rayStrength: 1.24, rayCount: 10, rayStartAngle: -38, rayEndAngle: 34, rayAnimationAmount: 2, rayDriftSpeed: 1.85, rayPulseSpeed: 1.75, raySpreadBreathing: 2, rayWobbleAmount: 1.9, dustAmount: 0.28, heatShimmerStrength: 0.26, warmth: 0.62, animationSpeed: 0.92 }),
+        variant("golden-hour-sun", "Golden hour sun", { primaryColor: "#FFF0B2", secondaryColor: "#FFC45E", glowColor: "#FF8C3E", intensity: 1.12, bloomStrength: 1.06, rayStrength: 1.58, rayCount: 9, rayStartAngle: -24, rayEndAngle: 54, rayAnimationAmount: 2.35, rayDriftSpeed: 1.55, rayPulseSpeed: 1.65, raySpreadBreathing: 2.4, rayWobbleAmount: 2.2, dustAmount: 0.38, heatShimmerStrength: 0.34, warmth: 0.94, directionDeg: 14, animationSpeed: 0.86 }),
+        variant("soft-evening-sun", "Soft evening sun", { primaryColor: "#FFE1B0", secondaryColor: "#FFB16E", glowColor: "#FF7A68", intensity: 0.78, bloomStrength: 0.72, rayStrength: 0.92, rayCount: 8, rayStartAngle: -30, rayEndAngle: 42, rayAnimationAmount: 1.35, rayDriftSpeed: 1.05, rayPulseSpeed: 1.12, raySpreadBreathing: 1.28, rayWobbleAmount: 1.2, dustAmount: 0.18, heatShimmerStrength: 0.16, warmth: 0.84, opacity: 0.7, directionDeg: 8, animationSpeed: 0.68 })
+      ],
+      defaults: {
+        ...preset({}).defaults,
+        intensity: 0.98, amount: 0.62, speed: 0.42, size: 1, directionDeg: -3,
+        glow: 1.08, softness: 0.9, opacity: 0.82, lifetime: 13, variance: 0.55,
+        turbulence: 0.28, oscillation: 0.24, fadeIn: 0.22, fadeOut: 0.28,
+        particleCap: 64, depthBands: 3, bloomStrength: 0.9, rayStrength: 1.24,
+        rayCount: 10, rayStartAngle: -38, rayEndAngle: 34, rayAnimationAmount: 2,
+        rayDriftSpeed: 1.85, rayPulseSpeed: 1.75, raySpreadBreathing: 2, rayWobbleAmount: 1.9,
+        dustAmount: 0.28, heatShimmerStrength: 0.26, animationSpeed: 0.92,
+        particleShape: "dustSpeck", motionProfile: "windDrift", emissive: false, glowProfile: "sunPresence"
+      },
+      colors: {
+        primaryColor: "#FFF3B7",
+        secondaryColor: "#FFD06B",
+        glowColor: "#FF9B42",
+        tintColor: "#FFE2A0"
+      },
+      performance: "Medium",
+      recommendedBudget: 96,
+      hardCap: 150,
+      qualityScale: { high: 1, balanced: 0.8, reduced: 0.58 },
+      reducedMotion: {
+        speed: 0.1, amount: 0.35, dustAmount: 0.24, heatShimmerStrength: 0,
+        rayStrength: 0.82, animationSpeed: 0.08, pulseAmount: 0.22,
+        rayAnimationAmount: 0.18, rayDriftSpeed: 0.24, rayPulseSpeed: 0.2,
+        raySpreadBreathing: 0.24, rayWobbleAmount: 0.32
+      },
+      controls: [
+        "intensity", "bloomStrength", "rayStrength", "rayStartAngle", "rayEndAngle",
+        "rayCount", "rayAnimationAmount", "rayDriftSpeed", "rayPulseSpeed",
+        "raySpreadBreathing", "rayWobbleAmount", "dustAmount", "heatShimmerStrength",
+        "warmth", "animationSpeed", "opacity", "particleCap"
+      ]
     }),
     "magical-glow": preset({
       id: "magical-glow", name: "Magical glow", category: "Magic",
@@ -230,6 +290,7 @@
     }),
     "smoke-and-steam": preset({
       id: "smoke-and-steam", name: "Smoke and steam", category: "Smoke and steam",
+      hiddenFromLibrary: true,
       description: "Source-driven plumes with rise, widening, wind, turbulence and pulse emission.",
       bestFor: "Chimneys, torch smoke, harbor smoke, steam vents, fountain mist and source plumes.",
       avoidFor: "Broad ground fog, pollen, fireflies, water shimmer or object glow.",
@@ -271,6 +332,7 @@
     }),
     "water-surface": preset({
       id: "water-surface", name: "Water surface", category: "Water",
+      hiddenFromLibrary: true,
       description: "Masked directional shimmer, highlight bands, tint and restrained sparkle.",
       bestFor: "Harbor water, lakes, canals, basins, fountains and painted water regions.",
       avoidFor: "Wet stone, glass, metal, crystal sparkle or rare material glints.",
@@ -294,6 +356,7 @@
     }),
     "surface-glint": preset({
       id: "surface-glint", name: "Surface glint", category: "Surfaces",
+      hiddenFromLibrary: true,
       description: "Localized material-aware highlight sweeps for stone, glass, metal and crystal.",
       bestFor: "Wet stone, glass, metal, crystal and marble highlights.",
       avoidFor: "Open water surfaces, broad shimmer, bubbles, mist or fog.",
@@ -361,6 +424,18 @@
       parseInt(right.slice(offset, offset + 2), 16) * amount
     ).toString(16).padStart(2, "0");
     return `#${channel(1)}${channel(3)}${channel(5)}`.toUpperCase();
+  }
+
+  function normalizeAngleRange(startDeg, endDeg) {
+    let start = Number.isFinite(startDeg) ? startDeg : -38;
+    let end = Number.isFinite(endDeg) ? endDeg : 34;
+    while (end <= start) end += 360;
+    while (end - start > 360) end -= 360;
+    return { start, end };
+  }
+
+  function sunAnimationControl(value, fallback = 1) {
+    return Number.isFinite(value) ? clamp(value, 0, 3) : fallback;
   }
 
   function presetById(id) {
@@ -1180,6 +1255,142 @@
     });
   }
 
+  function drawSunPresence(ctx, resolved, time) {
+    const geometry = resolved.geometry;
+    const q = QUALITY[resolved.quality] || QUALITY.high;
+    const center = { x: geometry.x, y: geometry.y };
+    const radius = Math.max(80, geometry.radius || 220) * resolved.size;
+    const speed = resolved.animationSpeed * Math.max(0.05, resolved.speed);
+    const pulse = 1 + Math.sin(time * speed * 0.36 + hash(resolved.instance.seed, 4) * Math.PI * 2) * 0.026 * resolved.bloomStrength;
+    const bloomRadius = radius * (1.72 + resolved.softness * 0.22) * pulse;
+    const coreRadius = radius * (0.35 + resolved.glow * 0.04) * pulse;
+    const warmCore = mixColor(resolved.primaryColor, "#FFFFFF", 0.22 - resolved.warmth * 0.08);
+    const warmBloom = mixColor(resolved.secondaryColor, resolved.glowColor, resolved.warmth * 0.36);
+
+    ctx.globalCompositeOperation = resolved.blendMode || "screen";
+
+    const bloom = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, bloomRadius);
+    bloom.addColorStop(0, rgba(warmCore, resolved.intensity * resolved.opacity * resolved.bloomStrength * 0.36));
+    bloom.addColorStop(0.18, rgba(resolved.secondaryColor, resolved.intensity * resolved.opacity * resolved.bloomStrength * 0.2));
+    bloom.addColorStop(0.48, rgba(warmBloom, resolved.intensity * resolved.opacity * resolved.bloomStrength * 0.052));
+    bloom.addColorStop(1, rgba(resolved.glowColor, 0));
+    ctx.fillStyle = bloom;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, bloomRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (resolved.rayStrength > 0.01) {
+      const rayCount = Math.max(4, Math.min(24, Math.round(resolved.rayCount * (resolved.preset.qualityScale?.[resolved.quality] ?? q.layers))));
+      const baseLength = radius * (4.25 + resolved.glow * 0.95);
+      const rayRange = normalizeAngleRange(resolved.rayStartAngle, resolved.rayEndAngle);
+      const startAngle = rayRange.start * Math.PI / 180;
+      const fanWidth = (rayRange.end - rayRange.start) * Math.PI / 180;
+      const animationAmount = sunAnimationControl(resolved.rayAnimationAmount);
+      const driftSpeed = sunAnimationControl(resolved.rayDriftSpeed) * animationAmount;
+      const pulseSpeed = sunAnimationControl(resolved.rayPulseSpeed) * animationAmount;
+      const spreadBreathing = sunAnimationControl(resolved.raySpreadBreathing) * animationAmount;
+      const wobbleAmount = sunAnimationControl(resolved.rayWobbleAmount) * animationAmount;
+      for (let index = 0; index < rayCount; index += 1) {
+        const spreadSeed = hash(resolved.instance.seed, index + 110);
+        const phase = hash(resolved.instance.seed, index + 120) * Math.PI * 2;
+        const breathe = Math.sin(time * speed * (0.16 + spreadSeed * 0.1) * driftSpeed + phase);
+        const opacityPulse = Math.sin(time * speed * (0.22 + hash(resolved.instance.seed, index + 130) * 0.12) * pulseSpeed + phase * 1.7);
+        const angle = startAngle + index * (fanWidth / Math.max(1, rayCount - 1)) +
+          Math.sin(time * speed * 0.14 * driftSpeed + index * 1.7 + phase) * 0.048 * wobbleAmount;
+        const spread = 0.038 + hash(resolved.instance.seed, index + 140) * 0.072 * (0.45 + wobbleAmount * 0.55) +
+          breathe * 0.016 * spreadBreathing;
+        const length = baseLength * (0.86 + spreadSeed * 0.58 + Math.max(0, breathe) * 0.08 * animationAmount);
+        const emphasis = index % 3 === 1 ? 1.34 : (index % 3 === 2 ? 0.82 : 1.06);
+        const alpha = resolved.opacity * resolved.intensity * resolved.rayStrength *
+          (0.082 + hash(resolved.instance.seed, index + 170) * 0.076 + opacityPulse * 0.022 * animationAmount) * emphasis;
+        const ray = ctx.createRadialGradient(center.x, center.y, radius * 0.08, center.x, center.y, length);
+        ray.addColorStop(0, rgba(resolved.primaryColor, alpha * 1.28));
+        ray.addColorStop(0.18, rgba(resolved.primaryColor, alpha * 0.96));
+        ray.addColorStop(0.48, rgba(resolved.secondaryColor, alpha * 0.64));
+        ray.addColorStop(1, rgba(resolved.glowColor, 0));
+        ctx.fillStyle = ray;
+        ctx.beginPath();
+        ctx.moveTo(center.x, center.y);
+        ctx.lineTo(center.x + Math.cos(angle - spread) * length, center.y + Math.sin(angle - spread) * length);
+        ctx.lineTo(center.x + Math.cos(angle + spread) * length, center.y + Math.sin(angle + spread) * length);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }
+
+    const cloudCount = Math.max(2, Math.round(5 * (resolved.preset.qualityScale?.[resolved.quality] ?? q.layers)));
+    for (let index = 0; index < cloudCount; index += 1) {
+      const phase = hash(resolved.instance.seed, index + 220) * Math.PI * 2;
+      const cx = center.x + radius * (0.62 + index * 0.28) + Math.sin(time * speed * 0.08 + phase) * radius * 0.035;
+      const cy = center.y + radius * (0.18 + hash(resolved.instance.seed, index + 230) * 0.18) + Math.cos(time * speed * 0.07 + phase) * radius * 0.026;
+      const cloudRadius = radius * (0.54 + hash(resolved.instance.seed, index + 240) * 0.18);
+      const cloud = ctx.createRadialGradient(cx, cy, 0, cx, cy, cloudRadius);
+      cloud.addColorStop(0, rgba(resolved.tintColor, resolved.opacity * resolved.intensity * resolved.bloomStrength * 0.048));
+      cloud.addColorStop(1, rgba(resolved.tintColor, 0));
+      ctx.fillStyle = cloud;
+      ctx.beginPath();
+      ctx.arc(cx, cy, cloudRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    if (resolved.heatShimmerStrength > 0.01) {
+      const rings = Math.max(2, Math.round(7 * (resolved.preset.qualityScale?.[resolved.quality] ?? q.segments)));
+      ctx.lineWidth = Math.max(0.75, resolved.heatShimmerStrength * 1.25);
+      for (let ring = 0; ring < rings; ring += 1) {
+        const ringRadius = radius * (0.28 + ring * 0.16) +
+          Math.sin(time * speed * 0.55 + ring) * radius * 0.018;
+        const alpha = resolved.opacity * resolved.intensity * resolved.heatShimmerStrength * (0.035 - ring * 0.0032);
+        ctx.strokeStyle = rgba(resolved.primaryColor, alpha);
+        ctx.beginPath();
+        for (let step = 0; step <= 64; step += 1) {
+          const angle = step / 64 * Math.PI * 2;
+          const wobble = Math.sin(angle * 5 + time * speed * 0.8 + ring) * radius * 0.012 +
+            Math.sin(angle * 9 - time * speed * 0.55 + ring * 0.4) * radius * 0.006;
+          const x = center.x + Math.cos(angle) * (ringRadius + wobble);
+          const y = center.y + Math.sin(angle) * (ringRadius * 0.72 + wobble);
+          if (step === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    const core = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, coreRadius);
+    core.addColorStop(0, rgba("#FFFFFF", resolved.opacity * resolved.intensity * 0.42));
+    core.addColorStop(0.24, rgba(warmCore, resolved.opacity * resolved.intensity * 0.38));
+    core.addColorStop(0.66, rgba(resolved.secondaryColor, resolved.opacity * resolved.intensity * 0.14));
+    core.addColorStop(1, rgba(resolved.secondaryColor, 0));
+    ctx.fillStyle = core;
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, coreRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    if (resolved.dustAmount > 0.01) {
+      const dustCount = Math.max(0, Math.floor(Math.min(resolved.particleCap, resolved.preset.hardCap) *
+        resolved.dustAmount * (resolved.preset.qualityScale?.[resolved.quality] ?? q.particles)));
+      const dustWidth = radius * 3.3;
+      const dustHeight = radius * 1.7;
+      const drift = time * speed * radius * 0.045;
+      for (let index = 0; index < dustCount; index += 1) {
+        const depth = 0.45 + hash(resolved.instance.seed, index + 310) * 0.8;
+        const cycle = hash(resolved.instance.seed, index + 320);
+        const localX = ((cycle * dustWidth + drift * (0.45 + depth * 0.4)) % dustWidth) - dustWidth * 0.42;
+        const localY = (hash(resolved.instance.seed, index + 330) - 0.5) * dustHeight +
+          Math.sin(time * speed * 0.5 + hash(resolved.instance.seed, index + 340) * Math.PI * 2) * radius * 0.018;
+        const x = center.x + localX;
+        const y = center.y + radius * 0.2 + localY;
+        const distanceFade = clamp(1 - Math.hypot(x - center.x, (y - center.y) * 1.35) / (radius * 2.45), 0, 1);
+        const alpha = resolved.opacity * resolved.intensity * resolved.dustAmount *
+          (0.032 + hash(resolved.instance.seed, index + 350) * 0.05) * (0.3 + distanceFade * 0.7);
+        const dustRadius = Math.max(0.55, resolved.size * (0.7 + depth * 1.7));
+        ctx.fillStyle = rgba(index % 3 ? resolved.primaryColor : resolved.secondaryColor, alpha);
+        ctx.beginPath();
+        ctx.arc(x, y, dustRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
   function drawResolved(ctx, resolved, time) {
     ctx.save();
     ctx.globalAlpha = clamp(resolved.opacity, 0, 1);
@@ -1190,6 +1401,7 @@
     if (resolved.preset.renderer === "lightBeam") drawWithOptionalMask(ctx, resolved, (target) => drawBeam(target, resolved, time));
     if (resolved.preset.renderer === "surfaceShimmer") drawSurface(ctx, resolved, time, false);
     if (resolved.preset.renderer === "surfaceGlint") drawSurface(ctx, resolved, time, true);
+    if (resolved.preset.renderer === "sunPresence") drawWithOptionalMask(ctx, resolved, (target) => drawSunPresence(target, resolved, time));
     ctx.restore();
   }
 
@@ -1288,6 +1500,11 @@
         if (rafId) cancelAnimationFrame(rafId);
         rafId = null;
         return;
+      }
+      if (resolved.some((effect) => effect.preset.renderer === "sunPresence")) {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+        draw(performance.now(), true);
       }
       if (!rafId) rafId = requestAnimationFrame(draw);
     }
