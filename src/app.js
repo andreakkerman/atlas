@@ -11,6 +11,7 @@ const missingTrackedObjectWarnings = new Set();
 const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
 const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "editor";
+const PERFORMANCE_HUD_MODE = new URLSearchParams(window.location.search).get("perf") === "1";
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
 const GUIDE_PURR_KEYS = {
   minnie: ["minnie1", "minnie2"],
@@ -134,6 +135,15 @@ const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getScreen: () => state.screen,
   warn: (message) => console.warn(message)
 });
+const performanceHud = {
+  element: null,
+  rafId: null,
+  lastFrameAt: 0,
+  lastTextAt: 0,
+  sampleIndex: 0,
+  sampleCount: 0,
+  frames: new Float32Array(90)
+};
 
 let walkPathEditor = {
   enabled: EDITOR_DEV_MODE,
@@ -4633,6 +4643,97 @@ function renderScene(options = {}) {
   `;
 }
 
+function performanceHudShouldRun() {
+  if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return false;
+  return PERFORMANCE_HUD_MODE || (EDITOR_DEV_MODE && debugOverlayEnabled);
+}
+
+function ensurePerformanceHudElement() {
+  if (performanceHud.element) return performanceHud.element;
+  const hud = document.createElement("div");
+  hud.className = "performanceHud";
+  hud.dataset.performanceHud = "true";
+  hud.setAttribute("aria-hidden", "true");
+  document.body.append(hud);
+  performanceHud.element = hud;
+  return hud;
+}
+
+function resetPerformanceHudSamples() {
+  performanceHud.lastFrameAt = 0;
+  performanceHud.lastTextAt = 0;
+  performanceHud.sampleIndex = 0;
+  performanceHud.sampleCount = 0;
+  performanceHud.frames.fill(0);
+}
+
+function stopPerformanceHud() {
+  if (performanceHud.rafId) {
+    window.cancelAnimationFrame(performanceHud.rafId);
+    performanceHud.rafId = null;
+  }
+  performanceHud.element?.remove();
+  performanceHud.element = null;
+  resetPerformanceHudSamples();
+}
+
+function updatePerformanceHud(timestamp) {
+  performanceHud.rafId = null;
+  if (!performanceHudShouldRun()) {
+    stopPerformanceHud();
+    return;
+  }
+
+  if (performanceHud.lastFrameAt) {
+    const frameMs = Math.max(0, timestamp - performanceHud.lastFrameAt);
+    performanceHud.frames[performanceHud.sampleIndex] = frameMs;
+    performanceHud.sampleIndex = (performanceHud.sampleIndex + 1) % performanceHud.frames.length;
+    performanceHud.sampleCount = Math.min(performanceHud.sampleCount + 1, performanceHud.frames.length);
+
+    if (timestamp - performanceHud.lastTextAt >= 250) {
+      let total = 0;
+      let worst = 0;
+      for (let index = 0; index < performanceHud.sampleCount; index += 1) {
+        const sample = performanceHud.frames[index];
+        total += sample;
+        if (sample > worst) worst = sample;
+      }
+      const averageFrame = total / Math.max(1, performanceHud.sampleCount);
+      const instantFps = frameMs > 0 ? 1000 / frameMs : 0;
+      const averageFps = averageFrame > 0 ? 1000 / averageFrame : 0;
+      const fx = sceneEffectRuntime.performanceSnapshot?.() || {
+        activeEffects: 0,
+        budget: 0,
+        performance: "None",
+        quality: "auto"
+      };
+      ensurePerformanceHudElement().textContent = [
+        `FPS ${Math.round(instantFps)}`,
+        `AVG ${Math.round(averageFps)}`,
+        `FRAME ${frameMs.toFixed(1)}ms`,
+        `WORST ${Math.round(worst)}ms`,
+        `FX ${fx.performance} ${fx.budget}`,
+        `Q ${fx.quality} (${fx.activeEffects})`
+      ].join("\n");
+      performanceHud.lastTextAt = timestamp;
+    }
+  }
+
+  performanceHud.lastFrameAt = timestamp;
+  performanceHud.rafId = window.requestAnimationFrame(updatePerformanceHud);
+}
+
+function syncPerformanceHud() {
+  if (!performanceHudShouldRun()) {
+    stopPerformanceHud();
+    return;
+  }
+  ensurePerformanceHudElement();
+  if (!performanceHud.rafId) {
+    performanceHud.rafId = window.requestAnimationFrame(updatePerformanceHud);
+  }
+}
+
 function renderLaunch() {
   return `
     <main class="launchScreen">
@@ -5033,6 +5134,7 @@ function render() {
   syncGuideBlinkTimers();
   ambientFlybyRuntime.sync();
   sceneEffectRuntime.sync();
+  syncPerformanceHud();
   const editorPanel = document.querySelector("[data-developer-tools]");
   if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }

@@ -1957,6 +1957,7 @@
     let lastFrame = 0;
     let resolved = [];
     let visibility = { mode: "all", selectedId: null };
+    const performanceRank = { Low: 1, Medium: 2, High: 3 };
 
     function canvases() {
       return [...document.querySelectorAll("[data-scene-effects-canvas]")];
@@ -1964,11 +1965,14 @@
 
     function prepareLevel(selectedLevel) {
       const changedLevel = selectedLevel?.id !== levelId;
-      stop();
       if (changedLevel) {
+        stop();
         paused = false;
         visibility = { mode: "all", selectedId: null };
         previewEpoch = performance.now();
+      } else if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
       }
       levelId = selectedLevel?.id || null;
       const validation = validateLevel(selectedLevel || {});
@@ -2035,11 +2039,9 @@
         rafId = null;
         return;
       }
-      if (resolved.some((effect) => ["sunPresence", "focusedFog", "starField", "waterShimmer"].includes(effect.preset.renderer))) {
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = null;
-        draw(performance.now(), true);
-      }
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      draw(performance.now(), true);
       if (!rafId) rafId = requestAnimationFrame(draw);
     }
 
@@ -2086,8 +2088,22 @@
       levelId = null;
     }
 
+    function performanceSnapshot() {
+      const score = resolved.reduce((total, effect) => total + (effect.preset.recommendedBudget || 0), 0);
+      const label = resolved.reduce((highest, effect) => {
+        const current = effect.preset.performance || "Low";
+        return (performanceRank[current] || 0) > (performanceRank[highest] || 0) ? current : highest;
+      }, "Low");
+      return {
+        activeEffects: resolved.length,
+        budget: Math.round(score),
+        performance: resolved.length ? label : "None",
+        quality: detectQuality()
+      };
+    }
+
     return {
-      prepareLevel, syncResolved, sync, stop, pause, play, restart, generateSeed, setVisibility, dispose,
+      prepareLevel, syncResolved, sync, stop, pause, play, restart, generateSeed, setVisibility, dispose, performanceSnapshot,
       get paused() { return paused; },
       get resolved() { return resolved; },
       get rafId() { return rafId; }

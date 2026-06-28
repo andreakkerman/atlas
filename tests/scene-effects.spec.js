@@ -1580,6 +1580,118 @@ test.describe("scene effects registry and runtime", () => {
     expect(cleaned).toEqual({ paused: null, count: 0, canvases: 0 });
   });
 
+  test("shows the lightweight performance HUD only for editor and perf query modes", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+    });
+    await expect(page.locator("[data-performance-hud]")).toHaveCount(0);
+
+    await page.goto(`${gameUrl}?perf=1`);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+    });
+    await expect(page.locator("[data-performance-hud]")).toBeVisible();
+    await expect(page.locator("[data-performance-hud]")).toContainText("FPS");
+    expect(await page.locator("[data-performance-hud]").evaluate((node) => getComputedStyle(node).pointerEvents)).toBe("none");
+
+    await page.goto(`${gameUrl}?dev=editor`);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+    });
+    await expect(page.locator("[data-performance-hud]")).toHaveCount(0);
+    await page.keyboard.press("Control+Shift+D");
+    await expect(page.locator("[data-performance-hud]")).toBeVisible();
+  });
+
+  test("draws active effect families immediately after sync and canvas remount", async ({ page }) => {
+    await page.goto(gameUrl);
+    const results = await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+      const api = window.AtlasSceneEffects;
+      const level = window.eval("level");
+      const families = [
+        { presetId: "magical-glow", variantId: "rune", geometry: { type: "pointRadius", x: 360, y: 330, radius: 180 } },
+        { presetId: "sun-presence", variantId: "warm-day-sun", geometry: { type: "pointRadius", x: 380, y: 120, radius: 260 } },
+        { presetId: "focused-fog", variantId: "default-focused-fog", geometry: { type: "rectangle", x: 720, y: 520, width: 260, height: 115 } },
+        {
+          presetId: "twinkling-stars",
+          variantId: "default-twinkling-stars",
+          geometry: { type: "polygon", points: [{ x: 120, y: 35 }, { x: 1180, y: 35 }, { x: 1030, y: 285 }, { x: 180, y: 330 }], cutouts: [] }
+        },
+        {
+          presetId: "water-shimmer",
+          variantId: "default-water-shimmer",
+          geometry: { type: "polygon", points: [{ x: 150, y: 440 }, { x: 1080, y: 430 }, { x: 1160, y: 650 }, { x: 120, y: 660 }], cutouts: [] }
+        }
+      ];
+
+      return families.map((family, index) => {
+        const effect = api.defaultInstance(family.presetId, family.variantId, level.world, index);
+        effect.id = `immediate-${family.presetId}`;
+        effect.seed = 12000 + index;
+        effect.geometry = family.geometry;
+        effect.overrides = {};
+        level.sceneEffectGroups = [];
+        level.sceneEffects = [effect];
+        window.eval("sceneEffectRuntime.prepareLevel")(level);
+        window.eval("render")();
+        const resolved = window.eval("sceneEffectRuntime.resolved[0]");
+        const canvas = document.querySelector(`[data-scene-effects-canvas="${resolved.layerSlot}"]`);
+        const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+        let alphaPixels = 0;
+        for (let offset = 3; offset < data.length; offset += 64) if (data[offset]) alphaPixels += 1;
+        return {
+          presetId: family.presetId,
+          renderer: resolved.preset.renderer,
+          layerSlot: resolved.layerSlot,
+          alphaPixels,
+          raf: Boolean(window.eval("sceneEffectRuntime.rafId"))
+        };
+      });
+    });
+
+    expect(results.map((item) => item.renderer)).toEqual(["glowField", "sunPresence", "focusedFog", "starField", "waterShimmer"]);
+    expect(results.every((item) => item.alphaPixels > 0)).toBe(true);
+    expect(results.every((item) => item.raf)).toBe(true);
+  });
+
+  test("keeps effect canvases and resolved seeds stable while Sven walks", async ({ page }) => {
+    await startFixture(page);
+    await page.evaluate(() => {
+      window.eval("beginFreeWalk")({ x: 980, y: 586 });
+    });
+    await page.waitForTimeout(40);
+    const before = await page.evaluate(() => {
+      const canvases = [...document.querySelectorAll("[data-scene-effects-canvas]")];
+      canvases.forEach((canvas, index) => { canvas.__stableCanvasMarker = `${canvas.dataset.sceneEffectsCanvas}-${index}`; });
+      return {
+        markers: canvases.map((canvas) => canvas.__stableCanvasMarker),
+        seeds: window.eval("sceneEffectRuntime.resolved.map((effect) => effect.instance.seed)"),
+        moving: window.eval("state.moving")
+      };
+    });
+    expect(before.moving).toBe(true);
+    await page.waitForTimeout(180);
+    const after = await page.evaluate(() => {
+      const canvases = [...document.querySelectorAll("[data-scene-effects-canvas]")];
+      return {
+        markers: canvases.map((canvas) => canvas.__stableCanvasMarker || null),
+        seeds: window.eval("sceneEffectRuntime.resolved.map((effect) => effect.instance.seed)"),
+        moving: window.eval("state.moving"),
+        alphaPixels: canvases.reduce((sum, canvas) => {
+          const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+          let count = 0;
+          for (let offset = 3; offset < data.length; offset += 256) if (data[offset]) count += 1;
+          return sum + count;
+        }, 0)
+      };
+    });
+    expect(after.markers).toEqual(before.markers);
+    expect(after.seeds).toEqual(before.seeds);
+    expect(after.alphaPixels).toBeGreaterThan(0);
+  });
+
   test("renders every delivered preset family and skips only invalid instances", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.goto(gameUrl);

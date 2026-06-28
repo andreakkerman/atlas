@@ -510,6 +510,25 @@ button {
   z-index: var(--layer-effects-foreground);
 }
 
+.performanceHud {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 85;
+  min-width: 92px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 247, 222, 0.24);
+  border-radius: 6px;
+  background: rgba(10, 16, 15, 0.74);
+  color: #f7ffe8;
+  font-family: "Cascadia Mono", "Consolas", monospace;
+  font-size: 11px;
+  line-height: 1.35;
+  white-space: pre;
+  pointer-events: none;
+  user-select: none;
+}
+
 .sceneEffectGuides {
   position: absolute;
   inset: 0;
