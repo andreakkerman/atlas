@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kleine mistflard Canvas 2D</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #06101c;
+    }
+
+    .level {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 75%, rgba(40, 70, 100, 0.35), transparent 28%),
+        linear-gradient(to bottom, #081b33 0%, #050811 100%);
+    }
+
+    /*
+      Dit is het kleine lokale mistobject.
+      Verplaats deze div naar de gewenste plek in je level.
+    */
+    .mist-object {
+      position: absolute;
+      left: 50%;
+      top: 68%;
+      width: 260px;
+      height: 115px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      overflow: hidden;
+
+      /*
+        Screen maakt witte mist mooier op donkere levels.
+        Zet op normal als het te fel wordt.
+      */
+      mix-blend-mode: screen;
+    }
+
+    .mist-object canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Alleen demo */
+    .demo-label {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      color: rgba(255,255,255,0.55);
+      font: 14px system-ui, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="level">
+    <div class="demo-label">kleine lokale mistflard</div>
+
+    <div class="mist-object">
+      <canvas id="mistCanvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("mistCanvas");
+    const ctx = canvas.getContext("2d", { alpha: true });
+
+    const CONFIG = {
+      width: 260,
+      height: 115,
+
+      // Duidelijkheid van het effect.
+      opacity: 0.92,
+
+      // Beweging. Mist mag leven, maar niet als rook wegschieten.
+      speed: 1.15,
+
+      // Aantal zichtbare wolkjes.
+      puffCount: 7,
+
+      // Kleuren. Iets koel zodat het in het Viking-nachtlevel past.
+      mistCore: "rgba(225, 235, 235,",
+      mistMid: "rgba(160, 180, 190,",
+      mistEdge: "rgba(80, 105, 125,"
+    };
+
+    let dpr = 1;
+    let width = CONFIG.width;
+    let height = CONFIG.height;
+    let last = performance.now();
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const sprites = [];
+    const puffs = [];
+
+    function createPuffSprite(seed) {
+      const sprite = document.createElement("canvas");
+      sprite.width = 120;
+      sprite.height = 70;
+
+      const g = sprite.getContext("2d", { alpha: true });
+
+      let s = seed;
+      function seeded(min, max) {
+        s = Math.sin(s) * 10000;
+        return min + (s - Math.floor(s)) * (max - min);
+      }
+
+      // Alleen bij sprite-generatie blur gebruiken, niet tijdens animatie.
+      g.filter = "blur(5px)";
+
+      // Hoofdvolume
+      for (let i = 0; i < 16; i++) {
+        const x = seeded(22, 98);
+        const y = seeded(20, 52);
+        const rx = seeded(12, 28);
+        const ry = seeded(7, 18);
+        const alpha = seeded(0.08, 0.22);
+
+        const grad = g.createRadialGradient(x, y, 0, x, y, rx);
+        grad.addColorStop(0.00, `${CONFIG.mistCore} ${alpha})`);
+        grad.addColorStop(0.38, `${CONFIG.mistMid} ${alpha * 0.75})`);
+        grad.addColorStop(1.00, `${CONFIG.mistEdge} 0)`);
+
+        g.fillStyle = grad;
+        g.beginPath();
+        g.ellipse(x, y, rx, ry, seeded(-0.3, 0.3), 0, Math.PI * 2);
+        g.fill();
+      }
+
+      // Heldere kern, zodat het effect duidelijk zichtbaar blijft.
+      g.filter = "blur(3px)";
+
+      for (let i = 0; i < 5; i++) {
+        const x = seeded(30, 90);
+        const y = seeded(26, 45);
+        const rx = seeded(10, 20);
+        const ry = seeded(6, 13);
+
+        const grad = g.createRadialGradient(x, y, 0, x, y, rx);
+        grad.addColorStop(0.00, "rgba(245, 250, 245, 0.24)");
+        grad.addColorStop(0.55, "rgba(190, 205, 205, 0.10)");
+        grad.addColorStop(1.00, "rgba(255,255,255,0)");
+
+        g.fillStyle = grad;
+        g.beginPath();
+        g.ellipse(x, y, rx, ry, seeded(-0.25, 0.25), 0, Math.PI * 2);
+        g.fill();
+      }
+
+      g.filter = "none";
+      return sprite;
+    }
+
+    function setupSprites() {
+      sprites.length = 0;
+
+      for (let i = 0; i < 5; i++) {
+        sprites.push(createPuffSprite(40 + i * 19));
+      }
+    }
+
+    function createPuff(index) {
+      const row = index < 3 ? 0 : 1;
+
+      return {
+        sprite: sprites[index % sprites.length],
+
+        x: rand(45, width - 45),
+        y: row === 0
+          ? rand(32, 52)
+          : rand(60, 84),
+
+        baseX: 0,
+        baseY: 0,
+
+        scale: rand(0.58, 0.92),
+        stretch: rand(0.95, 1.35),
+        alpha: rand(0.58, 0.95),
+
+        drift: rand(-8, 8),
+        phase: rand(0, Math.PI * 2),
+        phaseSpeed: rand(0.55, 1.05)
+      };
+    }
+
+    function setupPuffs() {
+      puffs.length = 0;
+
+      for (let i = 0; i < CONFIG.puffCount; i++) {
+        const puff = createPuff(i);
+        puff.baseX = puff.x;
+        puff.baseY = puff.y;
+        puffs.push(puff);
+      }
+    }
+
+    function resize() {
+      const rect = canvas.parentElement.getBoundingClientRect();
+
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.floor(rect.width);
+      height = Math.floor(rect.height);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function draw(now) {
+      ctx.clearRect(0, 0, width, height);
+
+      const time = now * 0.001 * CONFIG.speed;
+
+      // Zachte globale fade aan randen van het lokale object.
+      const edgeGradient = ctx.createLinearGradient(0, 0, width, 0);
+      edgeGradient.addColorStop(0.00, "rgba(255,255,255,0)");
+      edgeGradient.addColorStop(0.15, "rgba(255,255,255,1)");
+      edgeGradient.addColorStop(0.85, "rgba(255,255,255,1)");
+      edgeGradient.addColorStop(1.00, "rgba(255,255,255,0)");
+
+      for (const puff of puffs) {
+        const wave = Math.sin(time * puff.phaseSpeed + puff.phase);
+        const slowWave = Math.sin(time * 0.55 + puff.phase * 1.7);
+
+        const x = puff.baseX + wave * puff.drift + slowWave * 4;
+        const y = puff.baseY + Math.cos(time * puff.phaseSpeed + puff.phase) * 3;
+
+        const breathe = 0.92 + wave * 0.08;
+        const alpha = puff.alpha * CONFIG.opacity * (0.86 + slowWave * 0.14);
+
+        const spriteW = puff.sprite.width * puff.scale * puff.stretch * breathe;
+        const spriteH = puff.sprite.height * puff.scale * (0.96 + slowWave * 0.04);
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        ctx.drawImage(
+          puff.sprite,
+          x - spriteW * 0.5,
+          y - spriteH * 0.5,
+          spriteW,
+          spriteH
+        );
+
+        ctx.restore();
+      }
+
+      // Masker zodat het niet als rechthoekige overlay leest.
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.fillStyle = edgeGradient;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+
+    function animate(now) {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+
+      draw(now);
+
+      requestAnimationFrame(animate);
+    }
+
+    setupSprites();
+    resize();
+    setupPuffs();
+
+    window.addEventListener("resize", resize);
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

@@ -3482,8 +3482,9 @@ function sceneEffectBalancedEstimate(effect) {
   if (resolved.preset.renderer === "fogField") {
     return areaFactor * 32 + Number(resolved.depthBands || 1) * quality.layers * 24 * Number(resolved.amount || 0) * Number(resolved.softness || 1);
   }
-  if (resolved.preset.renderer === "groundFog") {
-    return areaFactor * 42 + Number(resolved.density || 0) * quality.particles * 78 + Number(resolved.bandStrength || 0) * quality.segments * 18;
+  if (resolved.preset.renderer === "focusedFog") {
+    const puffBudget = Math.min(Number(resolved.preset.hardCap || 12), Number(resolved.puffCount || 8)) * Number(resolved.density || 0) * quality.particles;
+    return areaFactor * 10 + puffBudget * 2.8 + Number(resolved.animationAmount || 0) * quality.segments * 4;
   }
   if (resolved.preset.renderer === "starField") {
     return areaFactor * 18 + Number(resolved.density || 0) * Number(resolved.particleCap || 0) * quality.particles * 0.72 + Number(resolved.maxGlints || 0) * 8;

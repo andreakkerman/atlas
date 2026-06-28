@@ -200,12 +200,13 @@ test.describe("scene effects registry and runtime", () => {
     expect(registry.version).toBe(1);
     expect(Object.keys(registry.presets)).toEqual(expect.arrayContaining([
       "light-source-enhancement", "magical-glow", "ambient-floating-particles",
-      "sparks-and-embers", "living-lights", "atmospheric-fog", "ground-fog", "twinkling-stars", "smoke-and-steam",
+      "sparks-and-embers", "living-lights", "atmospheric-fog", "focused-fog", "twinkling-stars", "smoke-and-steam",
       "light-beam", "water-surface", "water-shimmer", "surface-glint", "bubbles-and-spray",
       "sun-presence"
     ]));
+    expect(registry.presets["ground-fog"]).toBeUndefined();
     expect(new Set(Object.values(registry.presets).map((item) => item.renderer))).toEqual(new Set([
-      "glowField", "particleField", "fogField", "groundFog", "starField", "plumeEmitter", "lightBeam",
+      "glowField", "particleField", "fogField", "focusedFog", "starField", "plumeEmitter", "lightBeam",
       "surfaceShimmer", "waterShimmer", "surfaceGlint", "sunPresence"
     ]));
     expect(registry.presets["sun-presence"].variants).toEqual([
@@ -230,19 +231,20 @@ test.describe("scene effects registry and runtime", () => {
     expect(registry.presets["water-shimmer"].geometries).toEqual(["polygon", "rectangle"]);
     expect(registry.presets["surface-glint"].hiddenFromLibrary).toBe(true);
     expect(registry.presets["atmospheric-fog"].hiddenFromLibrary).toBe(true);
-    expect(registry.presets["ground-fog"].hiddenFromLibrary).toBe(false);
-    expect(registry.presets["ground-fog"].variants).toEqual(["default-ground-fog"]);
+    expect(registry.presets["focused-fog"].hiddenFromLibrary).toBe(false);
+    expect(registry.presets["focused-fog"].variants).toEqual(["default-focused-fog"]);
+    expect(registry.presets["focused-fog"].geometries).toEqual(["rectangle", "ellipse"]);
     expect(registry.presets["twinkling-stars"].hiddenFromLibrary).toBe(false);
     expect(registry.presets["twinkling-stars"].variants).toEqual(["default-twinkling-stars"]);
     expect(registry.presets["twinkling-stars"].geometries).toEqual(["polygon", "rectangle"]);
     expect(registry.presets["bubbles-and-spray"].hiddenVariants).toEqual(["fine-splash-mist"]);
-    expect(registry.presets["ground-fog"].controls).toEqual([
-      "intensity", "groundStart", "density", "driftSpeed", "wispScale",
-      "bandStrength", "blurAmount", "animationAmount", "opacity", "edgeFeatherPx"
+    expect(registry.presets["focused-fog"].controls).toEqual([
+      "intensity", "opacity", "density", "puffCount", "speed", "wispScale",
+      "edgeFeatherPx", "driftAmount", "breatheAmount", "animationAmount"
     ]);
     expect(registry.controlDefs.intensity).toMatchObject({ min: 0, max: 3 });
-    expect(registry.controlDefs.groundStart).toMatchObject({ min: 0.45, max: 0.9 });
-    for (const field of ["density", "driftSpeed", "bandStrength", "blurAmount", "animationAmount"]) {
+    expect(registry.controlDefs.puffCount).toMatchObject({ min: 1, max: 12 });
+    for (const field of ["density", "driftAmount", "breatheAmount", "animationAmount"]) {
       expect(registry.controlDefs[field]).toMatchObject({ min: 0, max: 3 });
     }
     expect(registry.controlDefs.wispScale).toMatchObject({ min: 0.5, max: 3 });
@@ -320,12 +322,11 @@ test.describe("scene effects registry and runtime", () => {
           dustAmount: resolved.dustAmount,
           heatShimmerStrength: resolved.heatShimmerStrength,
           animationSpeed: resolved.animationSpeed,
-          groundStart: resolved.groundStart,
           density: resolved.density,
-          driftSpeed: resolved.driftSpeed,
+          puffCount: resolved.puffCount,
+          driftAmount: resolved.driftAmount,
+          breatheAmount: resolved.breatheAmount,
           wispScale: resolved.wispScale,
-          bandStrength: resolved.bandStrength,
-          blurAmount: resolved.blurAmount,
           animationAmount: resolved.animationAmount,
           starSize: resolved.starSize,
           twinkleAmount: resolved.twinkleAmount,
@@ -355,7 +356,7 @@ test.describe("scene effects registry and runtime", () => {
         forgeSparks: read("sparks-and-embers", "forge-sparks"),
         fireflies: read("living-lights", "forest-fireflies"),
         legacyFog: read("atmospheric-fog", "harbor-haze"),
-        groundFog: read("ground-fog", "default-ground-fog"),
+        focusedFog: read("focused-fog", "default-focused-fog"),
         stars: read("twinkling-stars", "default-twinkling-stars"),
         chimneySmoke: read("smoke-and-steam", "chimney-smoke"),
         steam: read("smoke-and-steam", "steam-vent"),
@@ -388,15 +389,14 @@ test.describe("scene effects registry and runtime", () => {
     expect(signatures.forgeSparks.motionProfile).not.toBe(signatures.magicMotes.motionProfile);
 
     expect(signatures.legacyFog.renderer).toBe("fogField");
-    expect(signatures.groundFog).toMatchObject({
-      renderer: "groundFog",
-      variant: "default-ground-fog",
-      groundStart: 0.64,
-      density: 1,
-      driftSpeed: 1.22,
+    expect(signatures.focusedFog).toMatchObject({
+      renderer: "focusedFog",
+      variant: "default-focused-fog",
+      density: 1.28,
+      puffCount: 8,
+      driftAmount: 1,
+      breatheAmount: 1,
       wispScale: 1,
-      bandStrength: 1,
-      blurAmount: 1,
       animationAmount: 1
     });
     expect(signatures.stars).toMatchObject({
@@ -599,46 +599,82 @@ test.describe("scene effects registry and runtime", () => {
     expect(result.hashA).toBe(result.hashB);
   });
 
-  test("registers Ground Fog with safe controls, validation and reduced-motion scaling", async ({ page }) => {
+  test("registers Focused Fog with prominent controls, validation and reduced-motion scaling", async ({ page }) => {
     await page.goto(gameUrl);
     const result = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
-      const effect = api.defaultInstance("ground-fog", "default-ground-fog", level.world, 0);
+      const effect = api.defaultInstance("focused-fog", "default-focused-fog", level.world, 0);
       effect.seed = 44021;
       level.sceneEffects.push(effect);
       const high = api.resolve(effect, level, { quality: "high", reducedMotion: false });
+      const balanced = api.resolve(effect, level, { quality: "balanced", reducedMotion: false });
       const reduced = api.resolve(effect, level, { quality: "reduced", reducedMotion: true });
+      const weak = api.resolve({
+        ...effect,
+        id: "weak-focused-fog",
+        overrides: {
+          intensity: 0.45,
+          opacity: 0.35,
+          density: 0.45,
+          puffCount: 3,
+          animationAmount: 0.25,
+          wispScale: 0.65
+        }
+      }, level, { quality: "high", reducedMotion: false });
+      const puffEstimate = (quality) => {
+        const scale = api.PRESETS["focused-fog"].qualityScale[quality];
+        return Math.max(1, Math.min(12, Math.round(high.puffCount * high.density * scale)));
+      };
       return {
-        defaultGeometry: api.PRESETS["ground-fog"].defaultGeometry,
+        removedGroundFog: api.PRESETS["ground-fog"] === undefined,
+        defaultGeometry: api.PRESETS["focused-fog"].defaultGeometry,
+        performance: api.PRESETS["focused-fog"].performance,
+        recommendedBudget: api.PRESETS["focused-fog"].recommendedBudget,
         effectGeometry: effect.geometry,
         valid: api.validateLevel(level),
         validOverrides: api.validateInstance({
           ...effect,
-          id: "valid-ground-fog-overrides",
+          id: "valid-focused-fog-overrides",
           overrides: {
             intensity: 3,
-            groundStart: 0.45,
+            opacity: 0,
             density: 0,
-            driftSpeed: 0,
+            puffCount: 1,
+            speed: 0,
             wispScale: 3,
-            bandStrength: 3,
-            blurAmount: 3,
+            driftAmount: 0,
+            breatheAmount: 0,
             animationAmount: 0
           }
         }, level),
+        validEllipse: api.validateInstance({
+          ...effect,
+          id: "valid-focused-fog-ellipse",
+          geometry: { type: "ellipse", x: 500, y: 350, width: 260, height: 115 }
+        }, level),
         invalidOverrides: api.validateInstance({
           ...effect,
-          id: "invalid-ground-fog-overrides",
+          id: "invalid-focused-fog-overrides",
           overrides: {
             intensity: 3.01,
-            groundStart: 0.91,
+            opacity: 1.01,
             density: -0.01,
-            driftSpeed: 3.01,
+            puffCount: 13,
+            speed: 3.01,
             wispScale: 0.49,
-            bandStrength: 3.01,
-            blurAmount: 3.01,
+            driftAmount: 3.01,
+            breatheAmount: 3.01,
             animationAmount: 3.01
+          }
+        }, level),
+        invalidPolygon: api.validateInstance({
+          ...effect,
+          id: "invalid-focused-fog-polygon",
+          geometry: {
+            type: "polygon",
+            points: [{ x: 100, y: 100 }, { x: 300, y: 100 }, { x: 300, y: 200 }, { x: 100, y: 200 }],
+            cutouts: []
           }
         }, level),
         legacyValid: api.validateInstance({
@@ -659,19 +695,40 @@ test.describe("scene effects registry and runtime", () => {
           renderer: high.preset.renderer,
           layerSlot: high.layerSlot,
           blendMode: high.preset.blendMode,
-          groundStart: high.groundStart,
+          intensity: high.intensity,
+          opacity: high.opacity,
           density: high.density,
-          driftSpeed: high.driftSpeed,
+          puffCount: high.puffCount,
+          speed: high.speed,
+          driftAmount: high.driftAmount,
+          breatheAmount: high.breatheAmount,
           wispScale: high.wispScale,
-          bandStrength: high.bandStrength,
-          blurAmount: high.blurAmount,
           animationAmount: high.animationAmount,
-          opacity: high.opacity
+          edgeFeatherPx: high.edgeFeatherPx
+        },
+        balanced: {
+          density: balanced.density,
+          puffCount: balanced.puffCount,
+          intensity: balanced.intensity
+        },
+        weak: {
+          intensity: weak.intensity,
+          opacity: weak.opacity,
+          density: weak.density,
+          puffCount: weak.puffCount,
+          animationAmount: weak.animationAmount,
+          wispScale: weak.wispScale
+        },
+        estimatedPuffs: {
+          high: puffEstimate("high"),
+          balanced: puffEstimate("balanced"),
+          reduced: puffEstimate("reduced")
         },
         reduced: {
+          speed: reduced.speed,
           density: reduced.density,
-          driftSpeed: reduced.driftSpeed,
-          bandStrength: reduced.bandStrength,
+          driftAmount: reduced.driftAmount,
+          breatheAmount: reduced.breatheAmount,
           animationAmount: reduced.animationAmount,
           opacity: reduced.opacity
         },
@@ -679,45 +736,62 @@ test.describe("scene effects registry and runtime", () => {
         hashB: api.hash(effect.seed, 417)
       };
     });
-    expect(result.defaultGeometry).toMatchObject({ type: "rectangle", width: 820, height: 300 });
+    expect(result.removedGroundFog).toBe(true);
+    expect(result.defaultGeometry).toMatchObject({ type: "rectangle", width: 260, height: 115 });
     expect(result.effectGeometry.type).toBe("rectangle");
+    expect(result.performance).toBe("Low");
+    expect(result.recommendedBudget).toBeLessThan(50);
     expect(result.valid.valid).toBe(true);
     expect(result.validOverrides.valid).toBe(true);
+    expect(result.validEllipse.valid).toBe(true);
     expect(result.invalidOverrides.valid).toBe(false);
+    expect(result.invalidPolygon.valid).toBe(false);
     expect(result.invalidOverrides.errors.join(" ")).toContain("intensity");
-    expect(result.invalidOverrides.errors.join(" ")).toContain("groundStart");
+    expect(result.invalidOverrides.errors.join(" ")).toContain("puffCount");
     expect(result.legacyValid.valid).toBe(true);
     expect(result.high).toMatchObject({
-      renderer: "groundFog",
+      renderer: "focusedFog",
       layerSlot: "foregroundAtmosphere",
       blendMode: "screen",
-      groundStart: 0.64,
-      density: 1,
-      driftSpeed: 1.22,
+      intensity: 1.45,
+      opacity: 0.94,
+      density: 1.28,
+      puffCount: 8,
+      speed: 1.15,
+      driftAmount: 1,
+      breatheAmount: 1,
       wispScale: 1,
-      bandStrength: 1,
-      blurAmount: 1,
       animationAmount: 1,
-      opacity: 0.95
+      edgeFeatherPx: 26
     });
-    expect(result.reduced.driftSpeed).toBeLessThan(result.high.driftSpeed);
+    expect(result.balanced.density).toBe(result.high.density);
+    expect(result.balanced.puffCount).toBe(result.high.puffCount);
+    expect(result.weak.intensity).toBeLessThan(result.high.intensity);
+    expect(result.weak.opacity).toBeLessThan(result.high.opacity);
+    expect(result.weak.density).toBeLessThan(result.high.density);
+    expect(result.weak.puffCount).toBeLessThan(result.high.puffCount);
+    expect(result.weak.animationAmount).toBeLessThan(result.high.animationAmount);
+    expect(result.estimatedPuffs.high).toBeGreaterThan(result.estimatedPuffs.balanced);
+    expect(result.estimatedPuffs.balanced).toBeGreaterThan(result.estimatedPuffs.reduced);
+    expect(result.reduced.speed).toBeLessThan(result.high.speed);
+    expect(result.reduced.driftAmount).toBeLessThan(result.high.driftAmount);
+    expect(result.reduced.breatheAmount).toBeLessThan(result.high.breatheAmount);
     expect(result.reduced.animationAmount).toBeLessThan(result.high.animationAmount);
     expect(result.reduced.density).toBeLessThan(result.high.density);
-    expect(result.reduced.bandStrength).toBeLessThan(result.high.bandStrength);
-    expect(result.reduced.opacity).toBeGreaterThan(0.8);
+    expect(result.reduced.opacity).toBeGreaterThan(0.9);
     expect(result.hashA).toBe(result.hashB);
   });
 
-  test("renders Ground Fog visibly under reduced motion without runtime random", async ({ page }) => {
+  test("renders Focused Fog visibly under reduced motion without runtime random", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0015", { startImmediately: true });
       const api = window.AtlasSceneEffects;
       const level = window.eval("level");
-      level.sceneEffects = [api.defaultInstance("ground-fog", "default-ground-fog", level.world, 0)];
-      level.sceneEffects[0].id = "visible-ground-fog";
-      level.sceneEffects[0].geometry = { type: "rectangle", x: 720, y: 520, width: 1100, height: 300 };
+      level.sceneEffects = [api.defaultInstance("focused-fog", "default-focused-fog", level.world, 0)];
+      level.sceneEffects[0].id = "visible-focused-fog";
+      level.sceneEffects[0].geometry = { type: "rectangle", x: 720, y: 520, width: 260, height: 115 };
       level.sceneEffects[0].seed = 64017;
       window.eval("sceneEffectRuntime.prepareLevel")(level);
       window.eval("render")();
@@ -738,23 +812,25 @@ test.describe("scene effects registry and runtime", () => {
       return {
         renderer: window.eval("sceneEffectRuntime.resolved[0].preset.renderer"),
         layerSlot: window.eval("sceneEffectRuntime.resolved[0].layerSlot"),
-        driftSpeed: window.eval("sceneEffectRuntime.resolved[0].driftSpeed"),
+        driftAmount: window.eval("sceneEffectRuntime.resolved[0].driftAmount"),
+        breatheAmount: window.eval("sceneEffectRuntime.resolved[0].breatheAmount"),
         animationAmount: window.eval("sceneEffectRuntime.resolved[0].animationAmount"),
         alphaPixels,
         coolPixels
       };
     });
-    expect(result).toMatchObject({ renderer: "groundFog", layerSlot: "foregroundAtmosphere" });
-    expect(result.driftSpeed).toBeLessThan(0.2);
+    expect(result).toMatchObject({ renderer: "focusedFog", layerSlot: "foregroundAtmosphere" });
+    expect(result.driftAmount).toBeLessThan(0.2);
+    expect(result.breatheAmount).toBeLessThan(0.2);
     expect(result.animationAmount).toBeLessThan(0.2);
-    expect(result.alphaPixels).toBeGreaterThan(350);
+    expect(result.alphaPixels).toBeGreaterThan(80);
     expect(result.coolPixels / result.alphaPixels).toBeGreaterThan(0.6);
     const deterministicRender = await page.evaluate(() => {
       const originalRandom = Math.random;
       let randomCalls = 0;
       Math.random = () => {
         randomCalls += 1;
-        throw new Error("Ground Fog render must stay seeded.");
+        throw new Error("Focused Fog render must stay seeded.");
       };
       try {
         window.eval("sceneEffectRuntime.restart")();
@@ -768,7 +844,7 @@ test.describe("scene effects registry and runtime", () => {
       return { randomCalls, alphaPixels };
     });
     expect(deterministicRender.randomCalls).toBe(0);
-    expect(deterministicRender.alphaPixels).toBeGreaterThan(350);
+    expect(deterministicRender.alphaPixels).toBeGreaterThan(80);
   });
 
   test("registers Twinkling Stars with polygon and rectangle geometry, safe controls and reduced-motion scaling", async ({ page }) => {
@@ -1618,7 +1694,8 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
-    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='focused-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(0);
     await addPresetEffect(page, "sun-presence");
     const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'sun-presence')"));
     expect(stored).toMatchObject({
@@ -1670,7 +1747,7 @@ test.describe("scene effects editor", () => {
     });
   });
 
-  test("exposes only Ground Fog as the active fog or mist library option", async ({ page }) => {
+  test("exposes only Focused Fog as the active fog or mist library option", async ({ page }) => {
     await openEffectsEditor(page);
     const library = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
@@ -1700,24 +1777,27 @@ test.describe("scene effects editor", () => {
           smokeAndSteam: Boolean(api.PRESETS["smoke-and-steam"].hiddenFromLibrary),
           waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
           surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
-          sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary)
+          sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary),
+          groundFogRemoved: api.PRESETS["ground-fog"] === undefined
         }
       };
     });
-    expect(library.fogLike.map((preset) => preset.id)).toEqual(["ground-fog"]);
-    expect(library.fogLike[0].variants.map((variant) => variant.id)).toEqual(["default-ground-fog"]);
+    expect(library.fogLike.map((preset) => preset.id)).toEqual(["focused-fog"]);
+    expect(library.fogLike[0].variants.map((variant) => variant.id)).toEqual(["default-focused-fog"]);
     expect(library.fogLike[0].controls).toEqual([
-      "intensity", "groundStart", "density", "driftSpeed", "wispScale",
-      "bandStrength", "blurAmount", "animationAmount", "opacity", "edgeFeatherPx"
+      "intensity", "opacity", "density", "puffCount", "speed", "wispScale",
+      "edgeFeatherPx", "driftAmount", "breatheAmount", "animationAmount"
     ]);
     expect(library.hidden).toEqual({
       atmosphericFog: true,
       smokeAndSteam: true,
       waterSurface: true,
       surfaceGlint: true,
-      sunPresence: false
+      sunPresence: false,
+      groundFogRemoved: true
     });
-    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='focused-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
@@ -1726,21 +1806,31 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
     await expect(page.locator("[data-effect-preset-card='water-shimmer']")).toHaveCount(1);
     await page.locator(".effectLibraryCategory summary").filter({ hasText: "Atmosphere" }).click();
-    await addPresetEffect(page, "ground-fog");
-    const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'ground-fog')"));
+    await addPresetEffect(page, "focused-fog");
+    const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'focused-fog')"));
     expect(stored).toMatchObject({
-      presetId: "ground-fog",
-      variantId: "default-ground-fog",
+      presetId: "focused-fog",
+      variantId: "default-focused-fog",
       layerSlot: "foregroundAtmosphere",
-      geometry: { type: "rectangle" }
+      geometry: { type: "rectangle", width: 260, height: 115 }
     });
-    for (const field of ["intensity", "groundStart", "density", "driftSpeed", "wispScale"]) {
+    for (const field of ["intensity", "opacity", "density", "puffCount", "speed", "wispScale"]) {
       await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
     }
     await openEffectDetails(page, "Advanced");
-    for (const field of ["bandStrength", "blurAmount", "animationAmount"]) {
+    for (const field of ["edgeFeatherPx", "driftAmount", "breatheAmount", "animationAmount"]) {
       await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
     }
+    const cost = await page.evaluate(() => {
+      const effect = window.eval("level.sceneEffects.find((item) => item.presetId === 'focused-fog')");
+      const estimate = window.eval("sceneEffectBalancedEstimate");
+      return {
+        one: estimate(effect),
+        six: Array.from({ length: 6 }, () => estimate(effect)).reduce((sum, value) => sum + value, 0)
+      };
+    });
+    expect(cost.one).toBeLessThan(45);
+    expect(cost.six).toBeLessThan(240);
   });
 
   test("exposes Twinkling Stars in the preset library with sky geometry and controls", async ({ page }) => {
@@ -1758,7 +1848,8 @@ test.describe("scene effects editor", () => {
           smokeAndSteam: Boolean(api.PRESETS["smoke-and-steam"].hiddenFromLibrary),
           surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
           sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary),
-          groundFog: Boolean(api.PRESETS["ground-fog"].hiddenFromLibrary),
+          focusedFog: Boolean(api.PRESETS["focused-fog"].hiddenFromLibrary),
+          groundFogRemoved: api.PRESETS["ground-fog"] === undefined,
           waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
           waterShimmer: Boolean(api.PRESETS["water-shimmer"].hiddenFromLibrary)
         }
@@ -1778,14 +1869,16 @@ test.describe("scene effects editor", () => {
         waterSurface: true,
         surfaceGlint: true,
         sunPresence: false,
-        groundFog: false,
+        focusedFog: false,
+        groundFogRemoved: true,
         waterSurface: true,
         waterShimmer: false
       }
     });
     await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
     await expect(page.locator("[data-effect-preset-card='sun-presence']")).toHaveCount(1);
-    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='focused-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
@@ -1827,7 +1920,8 @@ test.describe("scene effects editor", () => {
           waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
           surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
           sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary),
-          groundFog: Boolean(api.PRESETS["ground-fog"].hiddenFromLibrary),
+          focusedFog: Boolean(api.PRESETS["focused-fog"].hiddenFromLibrary),
+          groundFogRemoved: api.PRESETS["ground-fog"] === undefined,
           twinklingStars: Boolean(api.PRESETS["twinkling-stars"].hiddenFromLibrary)
         }
       };
@@ -1850,7 +1944,8 @@ test.describe("scene effects editor", () => {
         waterSurface: true,
         surfaceGlint: true,
         sunPresence: false,
-        groundFog: false,
+        focusedFog: false,
+        groundFogRemoved: true,
         twinklingStars: false
       }
     });
@@ -1860,7 +1955,8 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='sun-presence']")).toHaveCount(1);
-    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='focused-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
     await addPresetEffect(page, "water-shimmer");
     const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'water-shimmer')"));

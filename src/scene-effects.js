@@ -65,12 +65,11 @@
     dustAmount: { label: "Dust amount", min: 0, max: 1.5, step: 0.01, section: "advanced" },
     heatShimmerStrength: { label: "Heat shimmer", min: 0, max: 1.5, step: 0.01, section: "advanced" },
     animationSpeed: { label: "Animation speed", min: 0, max: 3, step: 0.01, section: "advanced" },
-    groundStart: { label: "Ground start", min: 0.45, max: 0.9, step: 0.01, section: "quick" },
     density: { label: "Density", min: 0, max: 3, step: 0.01, section: "quick" },
-    driftSpeed: { label: "Drift speed", min: 0, max: 3, step: 0.01, section: "quick" },
+    puffCount: { label: "Puff count", min: 1, max: 12, step: 1, section: "quick" },
+    driftAmount: { label: "Drift amount", min: 0, max: 3, step: 0.01, section: "advanced" },
+    breatheAmount: { label: "Breathe amount", min: 0, max: 3, step: 0.01, section: "advanced" },
     wispScale: { label: "Wisp scale", min: 0.5, max: 3, step: 0.01, section: "quick" },
-    bandStrength: { label: "Band strength", min: 0, max: 3, step: 0.01, section: "advanced" },
-    blurAmount: { label: "Blur amount", min: 0, max: 3, step: 0.01, section: "advanced" },
     animationAmount: { label: "Animation amount", min: 0, max: 3, step: 0.01, section: "advanced" },
     starSize: { label: "Star size", min: 0.5, max: 3, step: 0.01, section: "quick" },
     twinkleAmount: { label: "Twinkle amount", min: 0, max: 3, step: 0.01, section: "quick" },
@@ -313,42 +312,41 @@
       qualityScale: { high: 1, balanced: 0.78, reduced: 0.5 },
       controls: ["intensity", "amount", "speed", "directionDeg", "softness", "opacity", "variance", "turbulence", "oscillation", "edgeFeatherPx", "depthBands"]
     }),
-    "ground-fog": preset({
-      id: "ground-fog", name: "Ground Fog", category: "Atmosphere",
-      description: "Layered cool ground mist with rolling bands, drifting wisps and soft foreground presence.",
-      bestFor: "Low rolling mist over paths, forests, temple floors, harbor edges and cool ground atmosphere.",
-      avoidFor: "Chimneys, torch smoke, steam vents, sparks, water shimmer or vertical source plumes.",
-      visualSignature: "Cool bluish-grey ground fade with back, mid and front wisps drifting in horizontal bands.",
-      renderer: "groundFog", layerSlot: "foregroundAtmosphere", blendMode: "screen", geometryTypes: ["rectangle", "ellipse", "polygon"],
-      defaultGeometry: { type: "rectangle", x: 500, y: 470, width: 820, height: 300 },
+    "focused-fog": preset({
+      id: "focused-fog", name: "Focused Fog", category: "Atmosphere",
+      description: "Small local cool mist wisp with soft puffs, horizontal drift and feathered object edges.",
+      bestFor: "Sporadic floor mist, temple corners, forest pockets, Viking-night accents and small atmospheric patches.",
+      avoidFor: "Full-level fog overlays, chimney smoke, steam plumes, particles, fireflies or water glimmers.",
+      visualSignature: "One localized cool mist object with layered soft puffs, breathing motion and faded horizontal edges.",
+      renderer: "focusedFog", layerSlot: "foregroundAtmosphere", blendMode: "screen", geometryTypes: ["rectangle", "ellipse"],
+      defaultGeometry: { type: "rectangle", x: 500, y: 430, width: 260, height: 115 },
       variants: [
-        variant("default-ground-fog", "Ground Fog", {})
+        variant("default-focused-fog", "Focused Fog", {})
       ],
       defaults: {
         ...preset({}).defaults,
-        primaryColor: "#7698B2", secondaryColor: "#3A546E", tintColor: "#7698B2",
-        intensity: 1, opacity: 0.95, amount: 1, speed: 1.22, softness: 1.05,
-        groundStart: 0.64, density: 1, driftSpeed: 1.22, wispScale: 1,
-        bandStrength: 1, blurAmount: 1, animationAmount: 1,
-        edgeFeatherPx: 18, particleCap: 118, depthBands: 3
+        primaryColor: "#E1EBEB", secondaryColor: "#A0B4BE", glowColor: "#F5FAF5", tintColor: "#50697D",
+        intensity: 1.45, opacity: 0.94, density: 1.28, puffCount: 8, speed: 1.15,
+        driftAmount: 1, breatheAmount: 1, wispScale: 1, animationAmount: 1,
+        edgeFeatherPx: 26, particleCap: 8, amount: 1
       },
       colors: {
-        primaryColor: "#7698B2",
-        secondaryColor: "#3A546E",
-        glowColor: "#B7D0E1",
-        tintColor: "#86A8BE"
+        primaryColor: "#E1EBEB",
+        secondaryColor: "#A0B4BE",
+        glowColor: "#F5FAF5",
+        tintColor: "#50697D"
       },
-      performance: "Medium",
-      recommendedBudget: 118,
-      hardCap: 140,
-      qualityScale: { high: 1, balanced: 0.68, reduced: 0.42 },
+      performance: "Low",
+      recommendedBudget: 8,
+      hardCap: 12,
+      qualityScale: { high: 1, balanced: 0.82, reduced: 0.58 },
       reducedMotion: {
-        driftSpeed: 0.08, speed: 0.08, animationAmount: 0.08,
-        bandStrength: 0.72, density: 0.78, opacity: 0.96
+        speed: 0.08, driftAmount: 0.12, breatheAmount: 0.16, animationAmount: 0.12,
+        density: 0.82, opacity: 1
       },
       controls: [
-        "intensity", "groundStart", "density", "driftSpeed", "wispScale",
-        "bandStrength", "blurAmount", "animationAmount", "opacity", "edgeFeatherPx"
+        "intensity", "opacity", "density", "puffCount", "speed", "wispScale",
+        "edgeFeatherPx", "driftAmount", "breatheAmount", "animationAmount"
       ]
     }),
     "twinkling-stars": preset({
@@ -1289,109 +1287,135 @@
     });
   }
 
-  function drawGroundFog(ctx, resolved, time) {
+  function roundedBoundsKey(bounds) {
+    return `${Math.round(bounds.width)}x${Math.round(bounds.height)}:${Math.round(bounds.x)},${Math.round(bounds.y)}`;
+  }
+
+  function createFocusedFogSprite(resolved, spriteIndex) {
+    const sprite = document.createElement("canvas");
+    sprite.width = 120;
+    sprite.height = 70;
+    const target = sprite.getContext("2d", { alpha: true });
+    target.filter = "blur(5px)";
+    for (let mark = 0; mark < 16; mark += 1) {
+      const seedIndex = spriteIndex * 1000 + mark * 23;
+      const x = 22 + hash(resolved.instance.seed, seedIndex + 1) * 76;
+      const y = 20 + hash(resolved.instance.seed, seedIndex + 2) * 32;
+      const rx = 12 + hash(resolved.instance.seed, seedIndex + 3) * 16;
+      const ry = 7 + hash(resolved.instance.seed, seedIndex + 4) * 11;
+      const alpha = 0.08 + hash(resolved.instance.seed, seedIndex + 5) * 0.14;
+      const gradient = target.createRadialGradient(x, y, 0, x, y, rx);
+      gradient.addColorStop(0, rgba(resolved.primaryColor, alpha));
+      gradient.addColorStop(0.38, rgba(resolved.secondaryColor, alpha * 0.75));
+      gradient.addColorStop(1, rgba(resolved.tintColor, 0));
+      target.fillStyle = gradient;
+      target.beginPath();
+      target.ellipse(x, y, rx, ry, (hash(resolved.instance.seed, seedIndex + 6) - 0.5) * 0.6, 0, Math.PI * 2);
+      target.fill();
+    }
+
+    target.filter = "blur(3px)";
+    for (let mark = 0; mark < 5; mark += 1) {
+      const seedIndex = spriteIndex * 1000 + 500 + mark * 29;
+      const x = 30 + hash(resolved.instance.seed, seedIndex + 1) * 60;
+      const y = 26 + hash(resolved.instance.seed, seedIndex + 2) * 19;
+      const rx = 10 + hash(resolved.instance.seed, seedIndex + 3) * 10;
+      const ry = 6 + hash(resolved.instance.seed, seedIndex + 4) * 7;
+      const gradient = target.createRadialGradient(x, y, 0, x, y, rx);
+      gradient.addColorStop(0, rgba(resolved.glowColor, 0.24));
+      gradient.addColorStop(0.55, rgba(resolved.secondaryColor, 0.1));
+      gradient.addColorStop(1, rgba(resolved.glowColor, 0));
+      target.fillStyle = gradient;
+      target.beginPath();
+      target.ellipse(x, y, rx, ry, (hash(resolved.instance.seed, seedIndex + 5) - 0.5) * 0.5, 0, Math.PI * 2);
+      target.fill();
+    }
+    target.filter = "none";
+    return sprite;
+  }
+
+  function focusedFogSprites(resolved) {
+    const key = `${resolved.instance.seed}:${resolved.primaryColor}:${resolved.secondaryColor}:${resolved.glowColor}:${resolved.tintColor}`;
+    if (!resolved._focusedFogSprites || resolved._focusedFogSpriteKey !== key) {
+      resolved._focusedFogSpriteKey = key;
+      resolved._focusedFogSprites = Array.from({ length: 5 }, (_, index) => createFocusedFogSprite(resolved, index));
+    }
+    return resolved._focusedFogSprites;
+  }
+
+  function focusedFogEdgeMask(resolved, bounds) {
+    const key = `${roundedBoundsKey(bounds)}:${Math.round(resolved.edgeFeatherPx)}`;
+    if (!resolved._focusedFogEdgeMask || resolved._focusedFogEdgeMaskKey !== key) {
+      const mask = document.createElement("canvas");
+      mask.width = Math.max(1, Math.ceil(bounds.width));
+      mask.height = Math.max(1, Math.ceil(bounds.height));
+      const target = mask.getContext("2d", { alpha: true });
+      const feather = clamp(resolved.edgeFeatherPx / Math.max(1, bounds.width * 0.5), 0, 0.48);
+      const horizontal = target.createLinearGradient(0, 0, mask.width, 0);
+      horizontal.addColorStop(0, "rgba(255,255,255,0)");
+      horizontal.addColorStop(feather, "rgba(255,255,255,1)");
+      horizontal.addColorStop(1 - feather, "rgba(255,255,255,1)");
+      horizontal.addColorStop(1, "rgba(255,255,255,0)");
+      target.fillStyle = horizontal;
+      target.fillRect(0, 0, mask.width, mask.height);
+      resolved._focusedFogEdgeMask = mask;
+      resolved._focusedFogEdgeMaskKey = key;
+    }
+    return resolved._focusedFogEdgeMask;
+  }
+
+  function drawFocusedFog(ctx, resolved, time) {
     const bounds = geometryBounds(resolved.geometry);
+    if (bounds.x > ctx.canvas.width || bounds.y > ctx.canvas.height || bounds.x + bounds.width < 0 || bounds.y + bounds.height < 0) return;
     const q = QUALITY[resolved.quality] || QUALITY.high;
     const qualityScale = resolved.preset.qualityScale?.[resolved.quality] ?? q.particles;
-    const groundStart = clamp(resolved.groundStart, 0.45, 0.9);
     const intensity = clamp(resolved.intensity, 0, 3);
     const density = clamp(resolved.density, 0, 3);
-    const driftSpeed = clamp(resolved.driftSpeed, 0, 3);
+    const driftAmount = clamp(resolved.driftAmount, 0, 3);
+    const breatheAmount = clamp(resolved.breatheAmount, 0, 3);
     const animationAmount = clamp(resolved.animationAmount, 0, 3);
-    const blur = Math.max(0, resolved.blurAmount) * 8 * q.blur;
-    const primary = resolved.primaryColor || "#7698B2";
-    const deep = resolved.secondaryColor || "#3A546E";
-
+    const spriteCount = focusedFogSprites(resolved);
+    const count = Math.max(1, Math.min(12, Math.round(clamp(resolved.puffCount, 1, 12) * density * qualityScale)));
+    const speed = Math.max(0, resolved.speed) * animationAmount;
+    const alphaBase = clamp(resolved.opacity * intensity, 0, 2.4);
     drawWithFeatheredMask(ctx, resolved, (buffer) => {
       buffer.save();
       buffer.globalCompositeOperation = resolved.blendMode || "screen";
-      buffer.filter = `blur(${blur}px)`;
-
-      const fadeStart = bounds.y + bounds.height * groundStart;
-      const fade = buffer.createLinearGradient(0, fadeStart, 0, bounds.y + bounds.height);
-      fade.addColorStop(0, rgba(deep, 0));
-      fade.addColorStop(0.2, rgba(deep, 0.07 * resolved.opacity * intensity));
-      fade.addColorStop(0.55, rgba(primary, 0.12 * resolved.opacity * intensity));
-      fade.addColorStop(0.85, rgba(primary, 0.1 * resolved.opacity * intensity));
-      fade.addColorStop(1, rgba(deep, 0.035 * resolved.opacity * intensity));
-      buffer.fillStyle = fade;
-      buffer.fillRect(bounds.x, fadeStart, bounds.width, Math.max(0, bounds.y + bounds.height - fadeStart));
-
-      const bandCount = Math.max(1, Math.round(6 * density * qualityScale));
-      const bandAlpha = resolved.opacity * intensity * clamp(resolved.bandStrength, 0, 3);
-      const baseY = bounds.y + bounds.height * 0.77;
-      for (let band = 0; band < bandCount; band += 1) {
-        const phase = hash(resolved.instance.seed, band + 210) * Math.PI * 2;
-        const y = baseY + band * bounds.height * 0.03 +
-          Math.sin(time * 0.28 * animationAmount + phase + band * 1.65) * bounds.height * 0.035;
-        const amp = bounds.height * (0.034 + band * 0.006);
-        const step = Math.max(52, bounds.width * 0.11);
-        buffer.beginPath();
-        for (let x = bounds.x - step; x <= bounds.x + bounds.width + step; x += step) {
-          const local = (x - bounds.x) / Math.max(1, bounds.width);
-          const yy = y +
-            Math.sin(local * 6.2 + time * 0.42 * animationAmount + phase + band) * amp +
-            Math.sin(local * 14.5 - time * 0.23 * animationAmount + phase) * amp * 0.42;
-          if (x <= bounds.x - step + 0.001) buffer.moveTo(x, yy);
-          else buffer.quadraticCurveTo(x - step * 0.5, yy - amp * 0.55, x, yy);
-        }
-        buffer.lineWidth = (18 + band * 6.5) * Math.max(0.5, resolved.wispScale);
-        buffer.lineCap = "round";
-        buffer.strokeStyle = rgba(primary, Math.max(0, 0.038 - band * 0.003) * bandAlpha);
-        buffer.stroke();
+      buffer.filter = "none";
+      for (let index = 0; index < count; index += 1) {
+        const row = index < Math.ceil(count * 0.45) ? 0 : 1;
+        const seedIndex = index * 37;
+        const sprite = spriteCount[index % spriteCount.length];
+        const baseX = bounds.x + bounds.width * (0.18 + hash(resolved.instance.seed, seedIndex + 1) * 0.64);
+        const baseY = bounds.y + bounds.height * (row === 0
+          ? 0.3 + hash(resolved.instance.seed, seedIndex + 2) * 0.18
+          : 0.52 + hash(resolved.instance.seed, seedIndex + 2) * 0.22);
+        const phase = hash(resolved.instance.seed, seedIndex + 3) * Math.PI * 2;
+        const phaseSpeed = 0.55 + hash(resolved.instance.seed, seedIndex + 4) * 0.5;
+        const drift = (hash(resolved.instance.seed, seedIndex + 5) - 0.5) * bounds.width * 0.065 * driftAmount;
+        const wave = Math.sin(time * speed * phaseSpeed + phase);
+        const slowWave = Math.sin(time * speed * 0.55 + phase * 1.7);
+        const breathe = 1 + wave * 0.08 * breatheAmount;
+        const scale = (0.56 + hash(resolved.instance.seed, seedIndex + 6) * 0.36) * resolved.wispScale;
+        const stretch = 0.95 + hash(resolved.instance.seed, seedIndex + 7) * 0.4;
+        const alpha = clamp((0.5 + hash(resolved.instance.seed, seedIndex + 8) * 0.45) * alphaBase * (0.86 + slowWave * 0.14 * breatheAmount), 0, 1.18);
+        const spriteW = sprite.width * scale * stretch * breathe;
+        const spriteH = sprite.height * scale * (0.96 + slowWave * 0.04 * breatheAmount);
+        buffer.save();
+        buffer.globalAlpha = alpha;
+        buffer.drawImage(
+          sprite,
+          baseX + wave * drift + slowWave * bounds.width * 0.015 * driftAmount - spriteW * 0.5,
+          baseY + Math.cos(time * speed * phaseSpeed + phase) * bounds.height * 0.026 * driftAmount - spriteH * 0.5,
+          spriteW,
+          spriteH
+        );
+        buffer.restore();
       }
 
-      const layers = [
-        { key: 0, count: 50, y0: 0.6, y1: 0.82, sx0: 0.75, sx1: 1.3, speed: 0.78, alpha: 0.08 },
-        { key: 1, count: 40, y0: 0.68, y1: 0.9, sx0: 1, sx1: 1.9, speed: 0.95, alpha: 0.105 },
-        { key: 2, count: 28, y0: 0.74, y1: 0.98, sx0: 1.35, sx1: 2.6, speed: 1.18, alpha: 0.125 }
-      ];
-      for (const layer of layers) {
-        const count = Math.max(0, Math.round(layer.count * density * qualityScale));
-        for (let index = 0; index < count; index += 1) {
-          const seedIndex = layer.key * 1000 + index * 37;
-          const scale = layer.sx0 + hash(resolved.instance.seed, seedIndex + 1) * (layer.sx1 - layer.sx0);
-          const radiusX = (110 + hash(resolved.instance.seed, seedIndex + 2) * 180) * scale * resolved.wispScale;
-          const radiusY = (14 + hash(resolved.instance.seed, seedIndex + 3) * 32) * scale * resolved.wispScale;
-          const travel = bounds.width + radiusX * 2.4;
-          const startX = bounds.x - radiusX * 1.2;
-          const base = hash(resolved.instance.seed, seedIndex + 4) * travel;
-          const speed = (5 + hash(resolved.instance.seed, seedIndex + 5) * 15) * driftSpeed * layer.speed;
-          const x = startX + ((base + time * speed) % travel);
-          const yBase = bounds.y + bounds.height * (layer.y0 + hash(resolved.instance.seed, seedIndex + 6) * (layer.y1 - layer.y0));
-          const phase = hash(resolved.instance.seed, seedIndex + 7) * Math.PI * 2;
-          const phaseSpeed = 0.3 + hash(resolved.instance.seed, seedIndex + 8) * 0.52;
-          const breathe = 0.82 + (Math.sin(phase + time * phaseSpeed * animationAmount) * 0.5 + 0.5) * 0.42;
-          const wave = Math.sin(phase + time * 0.45 * animationAmount) * radiusY * 0.3;
-          const alpha = clamp(layer.alpha * resolved.opacity * intensity * breathe * (0.72 + hash(resolved.instance.seed, seedIndex + 9) * 0.56), 0, 0.42);
-          buffer.save();
-          buffer.translate(x, yBase + wave);
-          buffer.rotate(Math.sin(phase * 0.37 + time * 0.05 * animationAmount) * 0.05);
-          buffer.scale(radiusX / 100, radiusY / 100);
-          const wisp = buffer.createRadialGradient(0, 0, 4, 0, 0, 100);
-          wisp.addColorStop(0, rgba(primary, alpha));
-          wisp.addColorStop(0.36, rgba(deep, alpha * 0.75));
-          wisp.addColorStop(0.72, rgba(primary, alpha * 0.32));
-          wisp.addColorStop(1, rgba(primary, 0));
-          buffer.fillStyle = wisp;
-          buffer.beginPath();
-          buffer.ellipse(0, 0, 100, 100, 0, 0, Math.PI * 2);
-          buffer.fill();
-          buffer.restore();
-        }
-      }
-
-      if (resolved.bandStrength > 0) {
-        buffer.filter = `blur(${Math.max(2, blur * 0.5)}px)`;
-        buffer.globalAlpha = 0.52 * clamp(resolved.bandStrength, 0, 3);
-        const foregroundY = bounds.y + bounds.height * 0.9;
-        const foreground = buffer.createLinearGradient(0, foregroundY - bounds.height * 0.08, 0, foregroundY + bounds.height * 0.08);
-        foreground.addColorStop(0, rgba(primary, 0));
-        foreground.addColorStop(0.52, rgba(primary, resolved.opacity * intensity * 0.07));
-        foreground.addColorStop(1, rgba(deep, 0));
-        buffer.fillStyle = foreground;
-        buffer.fillRect(bounds.x, foregroundY - bounds.height * 0.1, bounds.width, bounds.height * 0.22);
-      }
+      buffer.globalCompositeOperation = "destination-in";
+      buffer.globalAlpha = 1;
+      buffer.drawImage(focusedFogEdgeMask(resolved, bounds), bounds.x, bounds.y, bounds.width, bounds.height);
       buffer.restore();
     });
   }
@@ -1904,7 +1928,7 @@
     if (resolved.preset.renderer === "glowField") drawWithOptionalMask(ctx, resolved, (target) => drawGlow(target, resolved, time));
     if (resolved.preset.renderer === "particleField") drawWithOptionalMask(ctx, resolved, (target) => drawParticles(target, resolved, time));
     if (resolved.preset.renderer === "fogField") drawFog(ctx, resolved, time);
-    if (resolved.preset.renderer === "groundFog") drawGroundFog(ctx, resolved, time);
+    if (resolved.preset.renderer === "focusedFog") drawFocusedFog(ctx, resolved, time);
     if (resolved.preset.renderer === "starField") drawStarField(ctx, resolved, time);
     if (resolved.preset.renderer === "waterShimmer") drawWaterShimmer(ctx, resolved, time);
     if (resolved.preset.renderer === "plumeEmitter") drawWithOptionalMask(ctx, resolved, (target) => drawPlume(target, resolved, time));
@@ -2011,7 +2035,7 @@
         rafId = null;
         return;
       }
-      if (resolved.some((effect) => ["sunPresence", "groundFog", "starField", "waterShimmer"].includes(effect.preset.renderer))) {
+      if (resolved.some((effect) => ["sunPresence", "focusedFog", "starField", "waterShimmer"].includes(effect.preset.renderer))) {
         if (rafId) cancelAnimationFrame(rafId);
         rafId = null;
         draw(performance.now(), true);
