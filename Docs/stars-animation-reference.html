@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas Twinkle Stars Canvas</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(55, 75, 120, 0.35), transparent 38%),
+        linear-gradient(to bottom, #07101f 0%, #0b1322 45%, #111827 100%);
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: block;
+    }
+
+    .demo-horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 34%;
+      background:
+        linear-gradient(to top, rgba(2, 6, 14, 0.95), rgba(2, 6, 14, 0));
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene">
+    <canvas id="twinkleCanvas"></canvas>
+    <div class="demo-horizon"></div>
+  </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("twinkleCanvas");
+      const ctx = canvas.getContext("2d", { alpha: true });
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let stars = [];
+      let glints = [];
+
+      const CONFIG = {
+        starCount: 170,
+
+        // Zet lager voor rustiger, hoger voor magischer.
+        twinkleStrength: 0.72,
+
+        // Algemene snelheid. 1 = rustig, 1.4 = duidelijker.
+        speed: 1.15,
+
+        // Sterren vooral in de lucht houden.
+        skyTop: 0.02,
+        skyBottom: 0.72,
+
+        // Zachte fade richting horizon.
+        horizonFadeStart: 0.48,
+
+        // Zeldzame heldere glinsters.
+        glintChancePerSecond: 0.75,
+        maxGlints: 4
+      };
+
+      function rand(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        width = Math.floor(window.innerWidth);
+        height = Math.floor(window.innerHeight);
+
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        createStars();
+      }
+
+      function createStars() {
+        stars = [];
+
+        for (let i = 0; i < CONFIG.starCount; i++) {
+          const yNorm = rand(CONFIG.skyTop, CONFIG.skyBottom);
+
+          // Minder sterren laag bij de horizon.
+          const horizonFactor = 1 - Math.max(0, (yNorm - CONFIG.horizonFadeStart) / (CONFIG.skyBottom - CONFIG.horizonFadeStart));
+
+          const sizeRoll = Math.random();
+          const radius =
+            sizeRoll > 0.96 ? rand(1.45, 2.25) :
+            sizeRoll > 0.82 ? rand(0.85, 1.35) :
+                               rand(0.35, 0.85);
+
+          const isWarm = Math.random() < 0.42;
+
+          stars.push({
+            x: rand(0.02, 0.98),
+            y: yNorm,
+            radius,
+            baseAlpha: rand(0.18, 0.62) * Math.max(0.35, horizonFactor),
+            phase: rand(0, Math.PI * 2),
+            speed: rand(0.55, 1.85),
+            pulseSharpness: rand(1.4, 3.8),
+            glimmer: Math.random() < 0.36,
+            color: isWarm
+              ? { r: 255, g: rand(224, 242), b: rand(178, 210) }
+              : { r: rand(210, 235), g: rand(224, 240), b: 255 }
+          });
+        }
+      }
+
+      function spawnGlint(time) {
+        if (glints.length >= CONFIG.maxGlints) return;
+
+        const star = stars[Math.floor(Math.random() * stars.length)];
+        if (!star || star.radius < 0.85) return;
+
+        glints.push({
+          x: star.x * width,
+          y: star.y * height,
+          birth: time,
+          life: rand(0.45, 0.85),
+          size: rand(8, 18),
+          phase: rand(0, Math.PI * 2),
+          color: star.color
+        });
+      }
+
+      function drawStar(star, time) {
+        const x = star.x * width;
+        const y = star.y * height;
+
+        const waveA = (Math.sin(time * star.speed * CONFIG.speed + star.phase) + 1) * 0.5;
+        const waveB = (Math.sin(time * star.speed * 0.37 * CONFIG.speed + star.phase * 1.7) + 1) * 0.5;
+
+        const pulse = Math.pow(waveA * 0.72 + waveB * 0.28, star.pulseSharpness);
+        const alpha = Math.min(
+          1,
+          star.baseAlpha + pulse * CONFIG.twinkleStrength * (star.glimmer ? 0.72 : 0.28)
+        );
+
+        const r = star.radius * (0.9 + pulse * 0.55);
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Kleine kern
+        ctx.beginPath();
+        ctx.fillStyle = `rgb(${star.color.r}, ${star.color.g}, ${star.color.b})`;
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Zachte halo voor grotere sterren
+        if (star.radius > 0.8) {
+          const haloRadius = r * 4.2;
+          const gradient = ctx.createRadialGradient(x, y, 0, x, y, haloRadius);
+
+          gradient.addColorStop(0, `rgba(${star.color.r}, ${star.color.g}, ${star.color.b}, ${0.28 * alpha})`);
+          gradient.addColorStop(0.45, `rgba(${star.color.r}, ${star.color.g}, ${star.color.b}, ${0.08 * alpha})`);
+          gradient.addColorStop(1, `rgba(${star.color.r}, ${star.color.g}, ${star.color.b}, 0)`);
+
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(x, y, haloRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        ctx.restore();
+      }
+
+      function drawGlints(time) {
+        for (let i = glints.length - 1; i >= 0; i--) {
+          const g = glints[i];
+          const age = time - g.birth;
+          const progress = age / g.life;
+
+          if (progress >= 1) {
+            glints.splice(i, 1);
+            continue;
+          }
+
+          const fade = Math.sin(progress * Math.PI);
+          const size = g.size * (0.65 + progress * 0.55);
+          const alpha = fade * 0.75;
+
+          ctx.save();
+          ctx.translate(g.x, g.y);
+          ctx.rotate(Math.sin(time * 0.8 + g.phase) * 0.12);
+          ctx.globalAlpha = alpha;
+          ctx.strokeStyle = `rgba(${g.color.r}, ${g.color.g}, ${g.color.b}, 1)`;
+          ctx.lineWidth = 1;
+
+          ctx.beginPath();
+          ctx.moveTo(-size, 0);
+          ctx.lineTo(size, 0);
+          ctx.moveTo(0, -size * 0.62);
+          ctx.lineTo(0, size * 0.62);
+          ctx.stroke();
+
+          ctx.globalAlpha = alpha * 0.35;
+          ctx.lineWidth = 0.75;
+
+          ctx.beginPath();
+          ctx.moveTo(-size * 0.45, -size * 0.45);
+          ctx.lineTo(size * 0.45, size * 0.45);
+          ctx.moveTo(size * 0.45, -size * 0.45);
+          ctx.lineTo(-size * 0.45, size * 0.45);
+          ctx.stroke();
+
+          ctx.restore();
+        }
+      }
+
+      let lastTime = performance.now() / 1000;
+      let glintAccumulator = 0;
+
+      function animate(nowMs) {
+        const time = nowMs / 1000;
+        const dt = Math.min(0.05, time - lastTime);
+        lastTime = time;
+
+        ctx.clearRect(0, 0, width, height);
+
+        for (const star of stars) {
+          drawStar(star, time);
+        }
+
+        glintAccumulator += dt * CONFIG.glintChancePerSecond;
+        while (glintAccumulator >= 1) {
+          glintAccumulator -= 1;
+          if (Math.random() < 0.75) spawnGlint(time);
+        }
+
+        drawGlints(time);
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener("resize", resize, { passive: true });
+
+      resize();
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

@@ -186,6 +186,7 @@ test.describe("scene effects registry and runtime", () => {
         presets: Object.fromEntries(Object.entries(api.PRESETS).map(([id, preset]) => [id, {
           renderer: preset.renderer,
           variants: preset.variants.map((variant) => variant.id),
+          hiddenVariants: preset.variants.filter((variant) => variant.hiddenFromLibrary).map((variant) => variant.id),
           controls: preset.controls,
           geometries: preset.geometryTypes,
           recommendedBudget: preset.recommendedBudget,
@@ -199,12 +200,12 @@ test.describe("scene effects registry and runtime", () => {
     expect(registry.version).toBe(1);
     expect(Object.keys(registry.presets)).toEqual(expect.arrayContaining([
       "light-source-enhancement", "magical-glow", "ambient-floating-particles",
-      "sparks-and-embers", "living-lights", "atmospheric-fog", "smoke-and-steam",
+      "sparks-and-embers", "living-lights", "atmospheric-fog", "ground-fog", "twinkling-stars", "smoke-and-steam",
       "light-beam", "water-surface", "surface-glint", "bubbles-and-spray",
       "sun-presence"
     ]));
     expect(new Set(Object.values(registry.presets).map((item) => item.renderer))).toEqual(new Set([
-      "glowField", "particleField", "fogField", "plumeEmitter", "lightBeam",
+      "glowField", "particleField", "fogField", "groundFog", "starField", "plumeEmitter", "lightBeam",
       "surfaceShimmer", "surfaceGlint", "sunPresence"
     ]));
     expect(registry.presets["sun-presence"].variants).toEqual([
@@ -225,7 +226,33 @@ test.describe("scene effects registry and runtime", () => {
     expect(registry.presets["smoke-and-steam"].hiddenFromLibrary).toBe(true);
     expect(registry.presets["water-surface"].hiddenFromLibrary).toBe(true);
     expect(registry.presets["surface-glint"].hiddenFromLibrary).toBe(true);
-    expect(registry.presets["atmospheric-fog"].hiddenFromLibrary).toBe(false);
+    expect(registry.presets["atmospheric-fog"].hiddenFromLibrary).toBe(true);
+    expect(registry.presets["ground-fog"].hiddenFromLibrary).toBe(false);
+    expect(registry.presets["ground-fog"].variants).toEqual(["default-ground-fog"]);
+    expect(registry.presets["twinkling-stars"].hiddenFromLibrary).toBe(false);
+    expect(registry.presets["twinkling-stars"].variants).toEqual(["default-twinkling-stars"]);
+    expect(registry.presets["twinkling-stars"].geometries).toEqual(["polygon", "rectangle"]);
+    expect(registry.presets["bubbles-and-spray"].hiddenVariants).toEqual(["fine-splash-mist"]);
+    expect(registry.presets["ground-fog"].controls).toEqual([
+      "intensity", "groundStart", "density", "driftSpeed", "wispScale",
+      "bandStrength", "blurAmount", "animationAmount", "opacity", "edgeFeatherPx"
+    ]);
+    expect(registry.controlDefs.intensity).toMatchObject({ min: 0, max: 3 });
+    expect(registry.controlDefs.groundStart).toMatchObject({ min: 0.45, max: 0.9 });
+    for (const field of ["density", "driftSpeed", "bandStrength", "blurAmount", "animationAmount"]) {
+      expect(registry.controlDefs[field]).toMatchObject({ min: 0, max: 3 });
+    }
+    expect(registry.controlDefs.wispScale).toMatchObject({ min: 0.5, max: 3 });
+    expect(registry.presets["twinkling-stars"].controls).toEqual([
+      "intensity", "density", "starSize", "twinkleAmount", "twinkleSpeed",
+      "glintChance", "maxGlints", "horizonFadeStart", "animationAmount", "opacity"
+    ]);
+    expect(registry.controlDefs.starSize).toMatchObject({ min: 0.5, max: 3 });
+    for (const field of ["twinkleAmount", "twinkleSpeed", "glintChance"]) {
+      expect(registry.controlDefs[field]).toMatchObject({ min: 0, max: 3 });
+    }
+    expect(registry.controlDefs.maxGlints).toMatchObject({ min: 0, max: 8 });
+    expect(registry.controlDefs.horizonFadeStart).toMatchObject({ min: 0, max: 1 });
     expect(Object.values(registry.presets).every((preset) =>
       preset.recommendedBudget > 0 &&
       preset.hardCap >= preset.recommendedBudget &&
@@ -272,7 +299,20 @@ test.describe("scene effects registry and runtime", () => {
           bloomStrength: resolved.bloomStrength,
           dustAmount: resolved.dustAmount,
           heatShimmerStrength: resolved.heatShimmerStrength,
-          animationSpeed: resolved.animationSpeed
+          animationSpeed: resolved.animationSpeed,
+          groundStart: resolved.groundStart,
+          density: resolved.density,
+          driftSpeed: resolved.driftSpeed,
+          wispScale: resolved.wispScale,
+          bandStrength: resolved.bandStrength,
+          blurAmount: resolved.blurAmount,
+          animationAmount: resolved.animationAmount,
+          starSize: resolved.starSize,
+          twinkleAmount: resolved.twinkleAmount,
+          twinkleSpeed: resolved.twinkleSpeed,
+          glintChance: resolved.glintChance,
+          maxGlints: resolved.maxGlints,
+          horizonFadeStart: resolved.horizonFadeStart
         };
       };
       return {
@@ -283,7 +323,9 @@ test.describe("scene effects registry and runtime", () => {
         embers: read("sparks-and-embers", "floating-embers"),
         forgeSparks: read("sparks-and-embers", "forge-sparks"),
         fireflies: read("living-lights", "forest-fireflies"),
-        fog: read("atmospheric-fog", "harbor-haze"),
+        legacyFog: read("atmospheric-fog", "harbor-haze"),
+        groundFog: read("ground-fog", "default-ground-fog"),
+        stars: read("twinkling-stars", "default-twinkling-stars"),
         chimneySmoke: read("smoke-and-steam", "chimney-smoke"),
         steam: read("smoke-and-steam", "steam-vent"),
         water: read("water-surface", "harbor-water"),
@@ -313,7 +355,30 @@ test.describe("scene effects registry and runtime", () => {
     expect(signatures.embers.motionProfile).not.toBe(signatures.fireflies.motionProfile);
     expect(signatures.forgeSparks.motionProfile).not.toBe(signatures.magicMotes.motionProfile);
 
-    expect(signatures.fog.renderer).toBe("fogField");
+    expect(signatures.legacyFog.renderer).toBe("fogField");
+    expect(signatures.groundFog).toMatchObject({
+      renderer: "groundFog",
+      variant: "default-ground-fog",
+      groundStart: 0.64,
+      density: 1,
+      driftSpeed: 1.22,
+      wispScale: 1,
+      bandStrength: 1,
+      blurAmount: 1,
+      animationAmount: 1
+    });
+    expect(signatures.stars).toMatchObject({
+      renderer: "starField",
+      variant: "default-twinkling-stars",
+      density: 1,
+      starSize: 1,
+      twinkleAmount: 1,
+      twinkleSpeed: 1.15,
+      glintChance: 1,
+      maxGlints: 4,
+      horizonFadeStart: 0.48,
+      animationAmount: 1
+    });
     expect(signatures.chimneySmoke.renderer).toBe("plumeEmitter");
     expect(signatures.steam.renderer).toBe("plumeEmitter");
     expect(signatures.steam.lifetime).toBeLessThan(signatures.chimneySmoke.lifetime);
@@ -480,6 +545,371 @@ test.describe("scene effects registry and runtime", () => {
     expect(result.reduced.dustAmount).toBeLessThan(result.high.dustAmount);
     expect(result.reduced.animationSpeed).toBeLessThan(result.high.animationSpeed);
     expect(result.hashA).toBe(result.hashB);
+  });
+
+  test("registers Ground Fog with safe controls, validation and reduced-motion scaling", async ({ page }) => {
+    await page.goto(gameUrl);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
+      const effect = api.defaultInstance("ground-fog", "default-ground-fog", level.world, 0);
+      effect.seed = 44021;
+      level.sceneEffects.push(effect);
+      const high = api.resolve(effect, level, { quality: "high", reducedMotion: false });
+      const reduced = api.resolve(effect, level, { quality: "reduced", reducedMotion: true });
+      return {
+        defaultGeometry: api.PRESETS["ground-fog"].defaultGeometry,
+        effectGeometry: effect.geometry,
+        valid: api.validateLevel(level),
+        validOverrides: api.validateInstance({
+          ...effect,
+          id: "valid-ground-fog-overrides",
+          overrides: {
+            intensity: 3,
+            groundStart: 0.45,
+            density: 0,
+            driftSpeed: 0,
+            wispScale: 3,
+            bandStrength: 3,
+            blurAmount: 3,
+            animationAmount: 0
+          }
+        }, level),
+        invalidOverrides: api.validateInstance({
+          ...effect,
+          id: "invalid-ground-fog-overrides",
+          overrides: {
+            intensity: 3.01,
+            groundStart: 0.91,
+            density: -0.01,
+            driftSpeed: 3.01,
+            wispScale: 0.49,
+            bandStrength: 3.01,
+            blurAmount: 3.01,
+            animationAmount: 3.01
+          }
+        }, level),
+        legacyValid: api.validateInstance({
+          id: "legacy-fog",
+          label: "Legacy fog",
+          presetId: "atmospheric-fog",
+          variantId: "harbor-haze",
+          presetVersion: 1,
+          enabled: true,
+          seed: 12,
+          qualityTier: "auto",
+          layerSlot: "backgroundAtmosphere",
+          groupId: "",
+          geometry: { type: "rectangle", x: 500, y: 420, width: 700, height: 240 },
+          overrides: { intensity: 0.7 }
+        }, level),
+        high: {
+          renderer: high.preset.renderer,
+          layerSlot: high.layerSlot,
+          blendMode: high.preset.blendMode,
+          groundStart: high.groundStart,
+          density: high.density,
+          driftSpeed: high.driftSpeed,
+          wispScale: high.wispScale,
+          bandStrength: high.bandStrength,
+          blurAmount: high.blurAmount,
+          animationAmount: high.animationAmount,
+          opacity: high.opacity
+        },
+        reduced: {
+          density: reduced.density,
+          driftSpeed: reduced.driftSpeed,
+          bandStrength: reduced.bandStrength,
+          animationAmount: reduced.animationAmount,
+          opacity: reduced.opacity
+        },
+        hashA: api.hash(effect.seed, 417),
+        hashB: api.hash(effect.seed, 417)
+      };
+    });
+    expect(result.defaultGeometry).toMatchObject({ type: "rectangle", width: 820, height: 300 });
+    expect(result.effectGeometry.type).toBe("rectangle");
+    expect(result.valid.valid).toBe(true);
+    expect(result.validOverrides.valid).toBe(true);
+    expect(result.invalidOverrides.valid).toBe(false);
+    expect(result.invalidOverrides.errors.join(" ")).toContain("intensity");
+    expect(result.invalidOverrides.errors.join(" ")).toContain("groundStart");
+    expect(result.legacyValid.valid).toBe(true);
+    expect(result.high).toMatchObject({
+      renderer: "groundFog",
+      layerSlot: "foregroundAtmosphere",
+      blendMode: "screen",
+      groundStart: 0.64,
+      density: 1,
+      driftSpeed: 1.22,
+      wispScale: 1,
+      bandStrength: 1,
+      blurAmount: 1,
+      animationAmount: 1,
+      opacity: 0.95
+    });
+    expect(result.reduced.driftSpeed).toBeLessThan(result.high.driftSpeed);
+    expect(result.reduced.animationAmount).toBeLessThan(result.high.animationAmount);
+    expect(result.reduced.density).toBeLessThan(result.high.density);
+    expect(result.reduced.bandStrength).toBeLessThan(result.high.bandStrength);
+    expect(result.reduced.opacity).toBeGreaterThan(0.8);
+    expect(result.hashA).toBe(result.hashB);
+  });
+
+  test("renders Ground Fog visibly under reduced motion without runtime random", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0015", { startImmediately: true });
+      const api = window.AtlasSceneEffects;
+      const level = window.eval("level");
+      level.sceneEffects = [api.defaultInstance("ground-fog", "default-ground-fog", level.world, 0)];
+      level.sceneEffects[0].id = "visible-ground-fog";
+      level.sceneEffects[0].geometry = { type: "rectangle", x: 720, y: 520, width: 1100, height: 300 };
+      level.sceneEffects[0].seed = 64017;
+      window.eval("sceneEffectRuntime.prepareLevel")(level);
+      window.eval("render")();
+      window.eval("sceneEffectRuntime.restart")();
+    });
+    await page.waitForTimeout(120);
+    const result = await page.evaluate(() => {
+      const canvas = document.querySelector('[data-scene-effects-canvas="foregroundAtmosphere"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      let coolPixels = 0;
+      for (let index = 0; index < data.length; index += 64) {
+        const alpha = data[index + 3];
+        if (!alpha) continue;
+        alphaPixels += 1;
+        if (data[index + 2] >= data[index]) coolPixels += 1;
+      }
+      return {
+        renderer: window.eval("sceneEffectRuntime.resolved[0].preset.renderer"),
+        layerSlot: window.eval("sceneEffectRuntime.resolved[0].layerSlot"),
+        driftSpeed: window.eval("sceneEffectRuntime.resolved[0].driftSpeed"),
+        animationAmount: window.eval("sceneEffectRuntime.resolved[0].animationAmount"),
+        alphaPixels,
+        coolPixels
+      };
+    });
+    expect(result).toMatchObject({ renderer: "groundFog", layerSlot: "foregroundAtmosphere" });
+    expect(result.driftSpeed).toBeLessThan(0.2);
+    expect(result.animationAmount).toBeLessThan(0.2);
+    expect(result.alphaPixels).toBeGreaterThan(350);
+    expect(result.coolPixels / result.alphaPixels).toBeGreaterThan(0.6);
+    const deterministicRender = await page.evaluate(() => {
+      const originalRandom = Math.random;
+      let randomCalls = 0;
+      Math.random = () => {
+        randomCalls += 1;
+        throw new Error("Ground Fog render must stay seeded.");
+      };
+      try {
+        window.eval("sceneEffectRuntime.restart")();
+      } finally {
+        Math.random = originalRandom;
+      }
+      const canvas = document.querySelector('[data-scene-effects-canvas="foregroundAtmosphere"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      for (let index = 3; index < data.length; index += 64) if (data[index]) alphaPixels += 1;
+      return { randomCalls, alphaPixels };
+    });
+    expect(deterministicRender.randomCalls).toBe(0);
+    expect(deterministicRender.alphaPixels).toBeGreaterThan(350);
+  });
+
+  test("registers Twinkling Stars with polygon and rectangle geometry, safe controls and reduced-motion scaling", async ({ page }) => {
+    await page.goto(gameUrl);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
+      const effect = api.defaultInstance("twinkling-stars", "default-twinkling-stars", level.world, 0);
+      effect.seed = 71023;
+      level.sceneEffects.push(effect);
+      const high = api.resolve(effect, level, { quality: "high", reducedMotion: false });
+      const reduced = api.resolve(effect, level, { quality: "reduced", reducedMotion: true });
+      return {
+        defaultGeometry: api.PRESETS["twinkling-stars"].defaultGeometry,
+        effectGeometry: effect.geometry,
+        valid: api.validateLevel(level),
+        validPolygonOverrides: api.validateInstance({
+          ...effect,
+          id: "valid-stars-polygon",
+          geometry: { type: "polygon", points: [{ x: 80, y: 60 }, { x: 900, y: 40 }, { x: 760, y: 360 }, { x: 110, y: 330 }], cutouts: [] },
+          overrides: {
+            intensity: 3,
+            density: 3,
+            starSize: 3,
+            twinkleAmount: 3,
+            twinkleSpeed: 3,
+            glintChance: 3,
+            maxGlints: 8,
+            horizonFadeStart: 1,
+            animationAmount: 0,
+            opacity: 1
+          }
+        }, level),
+        validRectangle: api.validateInstance({
+          ...effect,
+          id: "valid-stars-rectangle",
+          geometry: { type: "rectangle", x: 500, y: 180, width: 800, height: 260 }
+        }, level),
+        invalidGeometry: api.validateInstance({
+          ...effect,
+          id: "invalid-stars-ellipse",
+          geometry: { type: "ellipse", x: 500, y: 180, width: 800, height: 260 }
+        }, level),
+        invalidOverrides: api.validateInstance({
+          ...effect,
+          id: "invalid-stars-overrides",
+          overrides: {
+            density: -0.01,
+            starSize: 0.49,
+            twinkleAmount: 3.01,
+            twinkleSpeed: 3.01,
+            glintChance: 3.01,
+            maxGlints: 9,
+            horizonFadeStart: 1.01,
+            animationAmount: 3.01
+          }
+        }, level),
+        high: {
+          renderer: high.preset.renderer,
+          layerSlot: high.layerSlot,
+          blendMode: high.preset.blendMode,
+          density: high.density,
+          starSize: high.starSize,
+          twinkleAmount: high.twinkleAmount,
+          twinkleSpeed: high.twinkleSpeed,
+          glintChance: high.glintChance,
+          maxGlints: high.maxGlints,
+          horizonFadeStart: high.horizonFadeStart,
+          animationAmount: high.animationAmount,
+          opacity: high.opacity
+        },
+        reduced: {
+          twinkleAmount: reduced.twinkleAmount,
+          twinkleSpeed: reduced.twinkleSpeed,
+          glintChance: reduced.glintChance,
+          animationAmount: reduced.animationAmount,
+          opacity: reduced.opacity
+        },
+        hashA: api.hash(effect.seed, 509),
+        hashB: api.hash(effect.seed, 509)
+      };
+    });
+    expect(result.defaultGeometry.type).toBe("polygon");
+    expect(result.effectGeometry.type).toBe("polygon");
+    expect(result.valid.valid).toBe(true);
+    expect(result.validPolygonOverrides.valid).toBe(true);
+    expect(result.validRectangle.valid).toBe(true);
+    expect(result.invalidGeometry.valid).toBe(false);
+    expect(result.invalidGeometry.errors.join(" ")).toContain("unsupported");
+    expect(result.invalidOverrides.valid).toBe(false);
+    expect(result.invalidOverrides.errors.join(" ")).toContain("density");
+    expect(result.invalidOverrides.errors.join(" ")).toContain("maxGlints");
+    expect(result.high).toMatchObject({
+      renderer: "starField",
+      layerSlot: "backgroundAtmosphere",
+      blendMode: "screen",
+      density: 1,
+      starSize: 1,
+      twinkleAmount: 1,
+      twinkleSpeed: 1.15,
+      glintChance: 1,
+      maxGlints: 4,
+      horizonFadeStart: 0.48,
+      animationAmount: 1,
+      opacity: 0.88
+    });
+    expect(result.reduced.twinkleAmount).toBeLessThan(result.high.twinkleAmount);
+    expect(result.reduced.twinkleSpeed).toBeLessThan(result.high.twinkleSpeed);
+    expect(result.reduced.glintChance).toBeLessThan(result.high.glintChance);
+    expect(result.reduced.animationAmount).toBeLessThan(result.high.animationAmount);
+    expect(result.reduced.opacity).toBeGreaterThan(0.8);
+    expect(result.hashA).toBe(result.hashB);
+  });
+
+  test("renders Twinkling Stars visibly under reduced motion with deterministic polygon clipping", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0018", { startImmediately: true });
+      const api = window.AtlasSceneEffects;
+      const level = window.eval("level");
+      level.sceneEffects = [api.defaultInstance("twinkling-stars", "default-twinkling-stars", level.world, 0)];
+      level.sceneEffects[0].id = "visible-twinkling-stars";
+      level.sceneEffects[0].geometry = {
+        type: "polygon",
+        points: [{ x: 120, y: 35 }, { x: 1180, y: 35 }, { x: 1030, y: 285 }, { x: 180, y: 330 }],
+        cutouts: []
+      };
+      level.sceneEffects[0].seed = 85031;
+      level.sceneEffects[0].overrides = { density: 2.2, intensity: 2.4, starSize: 1.35, glintChance: 3, maxGlints: 8 };
+      window.eval("sceneEffectRuntime.prepareLevel")(level);
+      window.eval("render")();
+      window.eval("sceneEffectRuntime.restart")();
+    });
+    await page.waitForTimeout(120);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const effect = window.eval("level.sceneEffects[0]");
+      const canvas = document.querySelector('[data-scene-effects-canvas="backgroundAtmosphere"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      let outside = 0;
+      let lowerSky = 0;
+      let upperSky = 0;
+      for (let y = 0; y < canvas.height; y += 2) {
+        for (let x = 0; x < canvas.width; x += 2) {
+          const alpha = data[(y * canvas.width + x) * 4 + 3];
+          if (!alpha) continue;
+          alphaPixels += 1;
+          if (!api.pointInsideGeometry({ x, y }, effect.geometry)) outside += 1;
+          if (y > 250) lowerSky += 1;
+          if (y < 160) upperSky += 1;
+        }
+      }
+      return {
+        renderer: window.eval("sceneEffectRuntime.resolved[0].preset.renderer"),
+        layerSlot: window.eval("sceneEffectRuntime.resolved[0].layerSlot"),
+        twinkleAmount: window.eval("sceneEffectRuntime.resolved[0].twinkleAmount"),
+        twinkleSpeed: window.eval("sceneEffectRuntime.resolved[0].twinkleSpeed"),
+        glintChance: window.eval("sceneEffectRuntime.resolved[0].glintChance"),
+        alphaPixels,
+        outside,
+        upperSky,
+        lowerSky
+      };
+    });
+    expect(result).toMatchObject({ renderer: "starField", layerSlot: "backgroundAtmosphere" });
+    expect(result.twinkleAmount).toBeLessThan(0.6);
+    expect(result.twinkleSpeed).toBeLessThan(0.4);
+    expect(result.glintChance).toBeLessThan(1);
+    expect(result.alphaPixels).toBeGreaterThan(80);
+    expect(result.outside / result.alphaPixels).toBeLessThan(0.01);
+    expect(result.upperSky).toBeGreaterThan(result.lowerSky);
+    const deterministicRender = await page.evaluate(() => {
+      const originalRandom = Math.random;
+      let randomCalls = 0;
+      Math.random = () => {
+        randomCalls += 1;
+        throw new Error("Twinkling Stars render must stay seeded.");
+      };
+      try {
+        window.eval("sceneEffectRuntime.restart")();
+      } finally {
+        Math.random = originalRandom;
+      }
+      const canvas = document.querySelector('[data-scene-effects-canvas="backgroundAtmosphere"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      for (let index = 3; index < data.length; index += 64) if (data[index]) alphaPixels += 1;
+      return { randomCalls, alphaPixels };
+    });
+    expect(deterministicRender.randomCalls).toBe(0);
+    expect(deterministicRender.alphaPixels).toBeGreaterThan(80);
   });
 
   test("renders Sun Presence visibly on the worldLight layer under reduced motion", async ({ page }) => {
@@ -825,7 +1255,8 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
-    await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
     await addPresetEffect(page, "sun-presence");
     const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'sun-presence')"));
     expect(stored).toMatchObject({
@@ -875,6 +1306,140 @@ test.describe("scene effects editor", () => {
       raySpreadBreathing: 2,
       rayWobbleAmount: 0.5
     });
+  });
+
+  test("exposes only Ground Fog as the active fog or mist library option", async ({ page }) => {
+    await openEffectsEditor(page);
+    const library = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const visible = Object.values(api.PRESETS)
+        .filter((preset) => !preset.hiddenFromLibrary)
+        .map((preset) => ({
+          id: preset.id,
+          name: preset.name,
+          description: preset.description,
+          bestFor: preset.bestFor,
+          avoidFor: preset.avoidFor,
+          visualSignature: preset.visualSignature,
+          variants: preset.variants
+            .filter((variant) => !variant.hiddenFromLibrary)
+            .map((variant) => ({ id: variant.id, name: variant.name })),
+          controls: preset.controls
+        }));
+      const fogLike = visible.filter((preset) => /fog|mist/i.test([
+        preset.id, preset.name,
+        ...preset.variants.flatMap((variant) => [variant.id, variant.name])
+      ].join(" ")));
+      return {
+        visibleIds: visible.map((preset) => preset.id),
+        fogLike,
+        hidden: {
+          atmosphericFog: Boolean(api.PRESETS["atmospheric-fog"].hiddenFromLibrary),
+          smokeAndSteam: Boolean(api.PRESETS["smoke-and-steam"].hiddenFromLibrary),
+          waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
+          surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
+          sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary)
+        }
+      };
+    });
+    expect(library.fogLike.map((preset) => preset.id)).toEqual(["ground-fog"]);
+    expect(library.fogLike[0].variants.map((variant) => variant.id)).toEqual(["default-ground-fog"]);
+    expect(library.fogLike[0].controls).toEqual([
+      "intensity", "groundStart", "density", "driftSpeed", "wispScale",
+      "bandStrength", "blurAmount", "animationAmount", "opacity", "edgeFeatherPx"
+    ]);
+    expect(library.hidden).toEqual({
+      atmosphericFog: true,
+      smokeAndSteam: true,
+      waterSurface: true,
+      surfaceGlint: true,
+      sunPresence: false
+    });
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='sun-presence']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
+    await page.locator(".effectLibraryCategory summary").filter({ hasText: "Atmosphere" }).click();
+    await addPresetEffect(page, "ground-fog");
+    const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'ground-fog')"));
+    expect(stored).toMatchObject({
+      presetId: "ground-fog",
+      variantId: "default-ground-fog",
+      layerSlot: "foregroundAtmosphere",
+      geometry: { type: "rectangle" }
+    });
+    for (const field of ["intensity", "groundStart", "density", "driftSpeed", "wispScale"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
+    await openEffectDetails(page, "Advanced");
+    for (const field of ["bandStrength", "blurAmount", "animationAmount"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
+  });
+
+  test("exposes Twinkling Stars in the preset library with sky geometry and controls", async ({ page }) => {
+    await openEffectsEditor(page);
+    const library = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const preset = api.PRESETS["twinkling-stars"];
+      return {
+        hidden: Boolean(preset.hiddenFromLibrary),
+        variants: preset.variants.filter((variant) => !variant.hiddenFromLibrary).map((variant) => variant.id),
+        controls: preset.controls,
+        geometries: preset.geometryTypes,
+        hiddenFamilies: {
+          atmosphericFog: Boolean(api.PRESETS["atmospheric-fog"].hiddenFromLibrary),
+          smokeAndSteam: Boolean(api.PRESETS["smoke-and-steam"].hiddenFromLibrary),
+          waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
+          surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
+          sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary),
+          groundFog: Boolean(api.PRESETS["ground-fog"].hiddenFromLibrary)
+        }
+      };
+    });
+    expect(library).toMatchObject({
+      hidden: false,
+      variants: ["default-twinkling-stars"],
+      controls: [
+        "intensity", "density", "starSize", "twinkleAmount", "twinkleSpeed",
+        "glintChance", "maxGlints", "horizonFadeStart", "animationAmount", "opacity"
+      ],
+      geometries: ["polygon", "rectangle"],
+      hiddenFamilies: {
+        atmosphericFog: true,
+        smokeAndSteam: true,
+        waterSurface: true,
+        surfaceGlint: true,
+        sunPresence: false,
+        groundFog: false
+      }
+    });
+    await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='sun-presence']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
+    await page.locator(".effectLibraryCategory summary").filter({ hasText: "Atmosphere" }).click();
+    await addPresetEffect(page, "twinkling-stars");
+    const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'twinkling-stars')"));
+    expect(stored).toMatchObject({
+      presetId: "twinkling-stars",
+      variantId: "default-twinkling-stars",
+      layerSlot: "backgroundAtmosphere",
+      geometry: { type: "polygon" }
+    });
+    for (const field of ["intensity", "density", "starSize", "twinkleAmount", "twinkleSpeed"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
+    await openEffectDetails(page, "Advanced");
+    for (const field of ["glintChance", "maxGlints", "horizonFadeStart", "animationAmount"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
   });
 
   test("switches mode, adds a preset, edits colors and overrides, resets, duplicates and deletes", async ({ page }) => {

@@ -3482,6 +3482,12 @@ function sceneEffectBalancedEstimate(effect) {
   if (resolved.preset.renderer === "fogField") {
     return areaFactor * 32 + Number(resolved.depthBands || 1) * quality.layers * 24 * Number(resolved.amount || 0) * Number(resolved.softness || 1);
   }
+  if (resolved.preset.renderer === "groundFog") {
+    return areaFactor * 42 + Number(resolved.density || 0) * quality.particles * 78 + Number(resolved.bandStrength || 0) * quality.segments * 18;
+  }
+  if (resolved.preset.renderer === "starField") {
+    return areaFactor * 18 + Number(resolved.density || 0) * Number(resolved.particleCap || 0) * quality.particles * 0.72 + Number(resolved.maxGlints || 0) * 8;
+  }
   if (resolved.preset.renderer === "plumeEmitter") {
     return particleCost * 0.9 + Number(resolved.plumeExpansion || 0) * 18 + Number(resolved.turbulence || 0) * 8;
   }
@@ -3516,7 +3522,7 @@ function renderEffectLibrary() {
               <small>Placement: ${preset.geometryTypes.join(" / ")} · Performance: ${preset.performance}</small>
               <label>Variant
                 <select data-effect-library-variant="${preset.id}">
-                  ${preset.variants.map((item) => `<option value="${item.id}">${item.name}</option>`).join("")}
+                  ${preset.variants.filter((item) => !item.hiddenFromLibrary).map((item) => `<option value="${item.id}">${item.name}</option>`).join("")}
                 </select>
               </label>
               <button type="button" data-add-effect="${preset.id}">Add effect</button>

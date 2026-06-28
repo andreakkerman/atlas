@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canvas 2D Grondmist</title>
+  <style>
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #05080d;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+
+      /*
+        Zet hier eventueel je level image:
+        background-image: url("./assets/levels/viking-harbor.png");
+      */
+      background: linear-gradient(to bottom, #071a34 0%, #061021 48%, #05070a 100%);
+      background-size: cover;
+      background-position: center;
+    }
+
+    #mistCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <canvas id="mistCanvas"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("mistCanvas");
+    const ctx = canvas.getContext("2d", { alpha: true });
+
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+
+    const CONFIG = {
+      // Iets duidelijker
+      baseOpacity: 0.95,
+
+      // Mist iets hoger laten beginnen zodat hij net wat aanweziger voelt
+      groundStart: 0.64,
+
+      // Een paar meer wisps voor iets meer body
+      backWisps: 50,
+      midWisps: 40,
+      frontWisps: 28,
+
+      // Ietsiepietsie sneller
+      driftSpeed: 1.22,
+
+      coolMist: "rgba(118, 152, 178, ",
+      deepMist: "rgba(58, 84, 110, "
+    };
+
+    const rand = (min, max) => min + Math.random() * (max - min);
+
+    class Wisp {
+      constructor(layer) {
+        this.layer = layer;
+        this.reset(true);
+      }
+
+      reset(initial = false) {
+        const layerY = {
+          back: [0.60, 0.82],
+          mid: [0.68, 0.90],
+          front: [0.74, 0.98]
+        }[this.layer];
+
+        const layerScale = {
+          back: [0.75, 1.30],
+          mid: [1.00, 1.90],
+          front: [1.35, 2.60]
+        }[this.layer];
+
+        this.x = initial
+          ? rand(-width * 0.12, width * 1.12)
+          : rand(-width * 0.30, -width * 0.08);
+
+        this.y = rand(height * layerY[0], height * layerY[1]);
+
+        this.radiusX = rand(110, 290) * rand(layerScale[0], layerScale[1]);
+        this.radiusY = rand(14, 46) * rand(layerScale[0], layerScale[1]);
+
+        this.speed =
+          rand(5, 20) *
+          CONFIG.driftSpeed *
+          (this.layer === "front" ? 1.18 : this.layer === "mid" ? 0.95 : 0.78);
+
+        this.phase = rand(0, Math.PI * 2);
+        this.phaseSpeed = rand(0.30, 0.82);
+        this.alpha = rand(0.045, 0.135) * CONFIG.baseOpacity;
+      }
+
+      update(dt) {
+        this.x += this.speed * dt;
+        this.phase += this.phaseSpeed * dt;
+
+        const breathing = Math.sin(this.phase) * 0.5 + 0.5;
+        this.currentAlpha = this.alpha * (0.82 + breathing * 0.42);
+
+        if (this.x - this.radiusX > width * 1.25) {
+          this.reset(false);
+        }
+      }
+
+      draw(ctx, time) {
+        const wave = Math.sin(this.phase + time * 0.00045) * this.radiusY * 0.30;
+        const x = this.x;
+        const y = this.y + wave;
+
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Math.sin(this.phase * 0.37) * 0.05);
+        ctx.scale(this.radiusX / 100, this.radiusY / 100);
+
+        const gradient = ctx.createRadialGradient(0, 0, 4, 0, 0, 100);
+        gradient.addColorStop(0.00, `${CONFIG.coolMist}${this.currentAlpha})`);
+        gradient.addColorStop(0.36, `${CONFIG.deepMist}${this.currentAlpha * 0.75})`);
+        gradient.addColorStop(0.72, `${CONFIG.coolMist}${this.currentAlpha * 0.32})`);
+        gradient.addColorStop(1.00, "rgba(0, 0, 0, 0)");
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 100, 100, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    const wisps = [];
+
+    function buildMist() {
+      wisps.length = 0;
+      for (let i = 0; i < CONFIG.backWisps; i++) wisps.push(new Wisp("back"));
+      for (let i = 0; i < CONFIG.midWisps; i++) wisps.push(new Wisp("mid"));
+      for (let i = 0; i < CONFIG.frontWisps; i++) wisps.push(new Wisp("front"));
+    }
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      width = window.innerWidth;
+      height = window.innerHeight;
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      buildMist();
+    }
+
+    function drawGroundFade(ctx) {
+      const start = height * CONFIG.groundStart;
+
+      const fade = ctx.createLinearGradient(0, start, 0, height);
+      fade.addColorStop(0.00, "rgba(20, 40, 60, 0)");
+      fade.addColorStop(0.20, "rgba(62, 95, 122, 0.07)");
+      fade.addColorStop(0.55, "rgba(88, 122, 148, 0.12)");
+      fade.addColorStop(0.85, "rgba(100, 132, 158, 0.10)");
+      fade.addColorStop(1.00, "rgba(40, 58, 76, 0.03)");
+
+      ctx.fillStyle = fade;
+      ctx.fillRect(0, start, width, height - start);
+    }
+
+    function drawRollingBands(ctx, time) {
+      const baseY = height * 0.77;
+
+      for (let i = 0; i < 6; i++) {
+        const y =
+          baseY +
+          i * height * 0.030 +
+          Math.sin(time * 0.00028 + i * 1.65) * 11;
+
+        const amp = 11 + i * 4.5;
+        const step = 88;
+
+        ctx.beginPath();
+
+        for (let x = -90; x <= width + 90; x += step) {
+          const yy =
+            y +
+            Math.sin(x * 0.0062 + time * 0.00042 + i) * amp +
+            Math.sin(x * 0.0145 - time * 0.00023) * amp * 0.42;
+
+          if (x === -90) ctx.moveTo(x, yy);
+          else ctx.quadraticCurveTo(x - step * 0.5, yy - amp * 0.55, x, yy);
+        }
+
+        ctx.lineWidth = 18 + i * 7;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = `rgba(102, 142, 168, ${0.034 - i * 0.003})`;
+        ctx.stroke();
+      }
+    }
+
+    let last = performance.now();
+
+    function animate(now) {
+      const dt = Math.min((now - last) / 1000, 0.033);
+      last = now;
+
+      ctx.clearRect(0, 0, width, height);
+
+      ctx.save();
+      ctx.filter = "blur(8px)";
+
+      drawGroundFade(ctx);
+      drawRollingBands(ctx, now);
+
+      for (const wisp of wisps) {
+        wisp.update(dt);
+        wisp.draw(ctx, now);
+      }
+
+      ctx.restore();
+
+      // Extra subtiele voorgrondband voor wat meer presence
+      ctx.save();
+      ctx.filter = "blur(4px)";
+      ctx.globalAlpha = 0.55;
+      drawRollingBands(ctx, now + 7000);
+      ctx.restore();
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

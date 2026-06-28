@@ -23,7 +23,7 @@
     reduced: { particles: 0.38, layers: 0.45, blur: 0.48, segments: 0.45, updateFps: 24 }
   });
   const CONTROL_DEFS = Object.freeze({
-    intensity: { label: "Intensity", min: 0, max: 1.5, step: 0.01, section: "quick" },
+    intensity: { label: "Intensity", min: 0, max: 3, step: 0.01, section: "quick" },
     amount: { label: "Amount / density", min: 0, max: 2, step: 0.01, section: "quick" },
     speed: { label: "Speed", min: 0, max: 3, step: 0.01, section: "quick" },
     size: { label: "Size", min: 0.1, max: 3, step: 0.01, section: "quick" },
@@ -64,7 +64,20 @@
     rayWobbleAmount: { label: "Ray wobble amount", min: 0, max: 3, step: 0.01, section: "advanced" },
     dustAmount: { label: "Dust amount", min: 0, max: 1.5, step: 0.01, section: "advanced" },
     heatShimmerStrength: { label: "Heat shimmer", min: 0, max: 1.5, step: 0.01, section: "advanced" },
-    animationSpeed: { label: "Animation speed", min: 0, max: 3, step: 0.01, section: "advanced" }
+    animationSpeed: { label: "Animation speed", min: 0, max: 3, step: 0.01, section: "advanced" },
+    groundStart: { label: "Ground start", min: 0.45, max: 0.9, step: 0.01, section: "quick" },
+    density: { label: "Density", min: 0, max: 3, step: 0.01, section: "quick" },
+    driftSpeed: { label: "Drift speed", min: 0, max: 3, step: 0.01, section: "quick" },
+    wispScale: { label: "Wisp scale", min: 0.5, max: 3, step: 0.01, section: "quick" },
+    bandStrength: { label: "Band strength", min: 0, max: 3, step: 0.01, section: "advanced" },
+    blurAmount: { label: "Blur amount", min: 0, max: 3, step: 0.01, section: "advanced" },
+    animationAmount: { label: "Animation amount", min: 0, max: 3, step: 0.01, section: "advanced" },
+    starSize: { label: "Star size", min: 0.5, max: 3, step: 0.01, section: "quick" },
+    twinkleAmount: { label: "Twinkle amount", min: 0, max: 3, step: 0.01, section: "quick" },
+    twinkleSpeed: { label: "Twinkle speed", min: 0, max: 3, step: 0.01, section: "quick" },
+    glintChance: { label: "Glint chance", min: 0, max: 3, step: 0.01, section: "advanced" },
+    maxGlints: { label: "Max glints", min: 0, max: 8, step: 1, section: "advanced" },
+    horizonFadeStart: { label: "Horizon fade start", min: 0, max: 1, step: 0.01, section: "advanced" }
   });
 
   const CATEGORIES = Object.freeze([
@@ -72,8 +85,8 @@
     "Nature", "Surfaces", "Weather", "Shadows"
   ]);
 
-  function variant(id, name, overrides = {}) {
-    return { id, name, overrides };
+  function variant(id, name, overrides = {}, options = {}) {
+    return { id, name, overrides, ...options };
   }
 
   function preset(config) {
@@ -267,6 +280,7 @@
     }),
     "atmospheric-fog": preset({
       id: "atmospheric-fog", name: "Atmospheric fog", category: "Atmosphere",
+      hiddenFromLibrary: true,
       description: "Layered non-repeating mist fields with falloff, drift and feathered masks.",
       bestFor: "Forest mist, harbor haze, cold temple fog, moonlit fog and distant haze.",
       avoidFor: "Chimneys, torches, vents, steam sources or any source-bound plume.",
@@ -287,6 +301,85 @@
       hardCap: 180,
       qualityScale: { high: 1, balanced: 0.78, reduced: 0.5 },
       controls: ["intensity", "amount", "speed", "directionDeg", "softness", "opacity", "variance", "turbulence", "oscillation", "edgeFeatherPx", "depthBands"]
+    }),
+    "ground-fog": preset({
+      id: "ground-fog", name: "Ground Fog", category: "Atmosphere",
+      description: "Layered cool ground mist with rolling bands, drifting wisps and soft foreground presence.",
+      bestFor: "Low rolling mist over paths, forests, temple floors, harbor edges and cool ground atmosphere.",
+      avoidFor: "Chimneys, torch smoke, steam vents, sparks, water shimmer or vertical source plumes.",
+      visualSignature: "Cool bluish-grey ground fade with back, mid and front wisps drifting in horizontal bands.",
+      renderer: "groundFog", layerSlot: "foregroundAtmosphere", blendMode: "screen", geometryTypes: ["rectangle", "ellipse", "polygon"],
+      defaultGeometry: { type: "rectangle", x: 500, y: 470, width: 820, height: 300 },
+      variants: [
+        variant("default-ground-fog", "Ground Fog", {})
+      ],
+      defaults: {
+        ...preset({}).defaults,
+        primaryColor: "#7698B2", secondaryColor: "#3A546E", tintColor: "#7698B2",
+        intensity: 1, opacity: 0.95, amount: 1, speed: 1.22, softness: 1.05,
+        groundStart: 0.64, density: 1, driftSpeed: 1.22, wispScale: 1,
+        bandStrength: 1, blurAmount: 1, animationAmount: 1,
+        edgeFeatherPx: 18, particleCap: 118, depthBands: 3
+      },
+      colors: {
+        primaryColor: "#7698B2",
+        secondaryColor: "#3A546E",
+        glowColor: "#B7D0E1",
+        tintColor: "#86A8BE"
+      },
+      performance: "Medium",
+      recommendedBudget: 118,
+      hardCap: 140,
+      qualityScale: { high: 1, balanced: 0.68, reduced: 0.42 },
+      reducedMotion: {
+        driftSpeed: 0.08, speed: 0.08, animationAmount: 0.08,
+        bandStrength: 0.72, density: 0.78, opacity: 0.96
+      },
+      controls: [
+        "intensity", "groundStart", "density", "driftSpeed", "wispScale",
+        "bandStrength", "blurAmount", "animationAmount", "opacity", "edgeFeatherPx"
+      ]
+    }),
+    "twinkling-stars": preset({
+      id: "twinkling-stars", name: "Twinkling Stars", category: "Atmosphere",
+      description: "Stable night-sky stars with gentle twinkle, layered brightness and rare glints.",
+      bestFor: "Night skies, fantasy horizons, open sky polygons and calm evening adventure scenes.",
+      avoidFor: "Snow, fireflies, drifting dust, magic motes, sparks or object-bound lights.",
+      visualSignature: "Fixed warm and cool pin stars with soft halos, horizon fade and occasional cross glints.",
+      renderer: "starField", layerSlot: "backgroundAtmosphere", blendMode: "screen", geometryTypes: ["polygon", "rectangle"],
+      defaultGeometry: {
+        type: "polygon",
+        points: [{ x: 80, y: 40 }, { x: 920, y: 40 }, { x: 920, y: 360 }, { x: 80, y: 360 }],
+        cutouts: []
+      },
+      variants: [
+        variant("default-twinkling-stars", "Twinkling Stars", {})
+      ],
+      defaults: {
+        ...preset({}).defaults,
+        primaryColor: "#DDEBFF", secondaryColor: "#FFF0C8", glowColor: "#FFFFFF", tintColor: "#AFC8FF",
+        intensity: 1, density: 1, starSize: 1, twinkleAmount: 1, twinkleSpeed: 1.15,
+        glintChance: 1, maxGlints: 4, horizonFadeStart: 0.48, animationAmount: 1,
+        opacity: 0.88, particleCap: 170
+      },
+      colors: {
+        primaryColor: "#DDEBFF",
+        secondaryColor: "#FFF0C8",
+        glowColor: "#FFFFFF",
+        tintColor: "#AFC8FF"
+      },
+      performance: "Medium",
+      recommendedBudget: 110,
+      hardCap: 220,
+      qualityScale: { high: 1, balanced: 0.72, reduced: 0.45 },
+      reducedMotion: {
+        twinkleAmount: 0.22, twinkleSpeed: 0.16, glintChance: 0.28,
+        animationAmount: 0.12, opacity: 1
+      },
+      controls: [
+        "intensity", "density", "starSize", "twinkleAmount", "twinkleSpeed",
+        "glintChance", "maxGlints", "horizonFadeStart", "animationAmount", "opacity"
+      ]
     }),
     "smoke-and-steam": preset({
       id: "smoke-and-steam", name: "Smoke and steam", category: "Smoke and steam",
@@ -385,7 +478,7 @@
         variant("underwater-microbubbles", "Underwater microbubbles", { primaryColor: "#DDF8FF", particleShape: "bubble", motionProfile: "risingBubble", amount: 0.9, size: 0.42, speed: 0.5, glow: 0, opacity: 0.72 }),
         variant("fountain-sparkle", "Fountain sparkle", { particleShape: "sparkle", motionProfile: "fountainSpray", emissive: true, glow: 1.0, lifetime: 1.2, amount: 0.52, size: 0.72, speed: 0.92, opacity: 0.9 }),
         variant("fountain-spray", "Fountain spray", { particleShape: "droplet", motionProfile: "fountainSpray", directionDeg: -90, acceleration: 0.48, speed: 1.26, amount: 0.7, glow: 0.08, opacity: 0.76 }),
-        variant("fine-splash-mist", "Fine splash mist", { particleShape: "softDot", motionProfile: "fountainSpray", amount: 0.72, size: 0.42, softness: 0.95, lifetime: 1.2, opacity: 0.56, glow: 0 })
+        variant("fine-splash-mist", "Fine splash mist", { particleShape: "softDot", motionProfile: "fountainSpray", amount: 0.72, size: 0.42, softness: 0.95, lifetime: 1.2, opacity: 0.56, glow: 0 }, { hiddenFromLibrary: true })
       ],
       defaults: { ...preset({}).defaults, amount: 0.62, speed: 0.68, size: 0.86, directionDeg: -90, glow: 0, softness: 0.44, opacity: 0.76, lifetime: 3.0, variance: 0.52, turbulence: 0.42, acceleration: -0.16, fadeIn: 0.04, fadeOut: 0.38, particleCap: 88, particleShape: "bubble", motionProfile: "risingBubble", emissive: false },
       controls: ["intensity", "amount", "speed", "size", "directionDeg", "glow", "softness", "lifetime", "variance", "turbulence", "acceleration", "fadeIn", "fadeOut", "edgeFeatherPx", "particleCap"]
@@ -1140,6 +1233,221 @@
     });
   }
 
+  function drawGroundFog(ctx, resolved, time) {
+    const bounds = geometryBounds(resolved.geometry);
+    const q = QUALITY[resolved.quality] || QUALITY.high;
+    const qualityScale = resolved.preset.qualityScale?.[resolved.quality] ?? q.particles;
+    const groundStart = clamp(resolved.groundStart, 0.45, 0.9);
+    const intensity = clamp(resolved.intensity, 0, 3);
+    const density = clamp(resolved.density, 0, 3);
+    const driftSpeed = clamp(resolved.driftSpeed, 0, 3);
+    const animationAmount = clamp(resolved.animationAmount, 0, 3);
+    const blur = Math.max(0, resolved.blurAmount) * 8 * q.blur;
+    const primary = resolved.primaryColor || "#7698B2";
+    const deep = resolved.secondaryColor || "#3A546E";
+
+    drawWithFeatheredMask(ctx, resolved, (buffer) => {
+      buffer.save();
+      buffer.globalCompositeOperation = resolved.blendMode || "screen";
+      buffer.filter = `blur(${blur}px)`;
+
+      const fadeStart = bounds.y + bounds.height * groundStart;
+      const fade = buffer.createLinearGradient(0, fadeStart, 0, bounds.y + bounds.height);
+      fade.addColorStop(0, rgba(deep, 0));
+      fade.addColorStop(0.2, rgba(deep, 0.07 * resolved.opacity * intensity));
+      fade.addColorStop(0.55, rgba(primary, 0.12 * resolved.opacity * intensity));
+      fade.addColorStop(0.85, rgba(primary, 0.1 * resolved.opacity * intensity));
+      fade.addColorStop(1, rgba(deep, 0.035 * resolved.opacity * intensity));
+      buffer.fillStyle = fade;
+      buffer.fillRect(bounds.x, fadeStart, bounds.width, Math.max(0, bounds.y + bounds.height - fadeStart));
+
+      const bandCount = Math.max(1, Math.round(6 * density * qualityScale));
+      const bandAlpha = resolved.opacity * intensity * clamp(resolved.bandStrength, 0, 3);
+      const baseY = bounds.y + bounds.height * 0.77;
+      for (let band = 0; band < bandCount; band += 1) {
+        const phase = hash(resolved.instance.seed, band + 210) * Math.PI * 2;
+        const y = baseY + band * bounds.height * 0.03 +
+          Math.sin(time * 0.28 * animationAmount + phase + band * 1.65) * bounds.height * 0.035;
+        const amp = bounds.height * (0.034 + band * 0.006);
+        const step = Math.max(52, bounds.width * 0.11);
+        buffer.beginPath();
+        for (let x = bounds.x - step; x <= bounds.x + bounds.width + step; x += step) {
+          const local = (x - bounds.x) / Math.max(1, bounds.width);
+          const yy = y +
+            Math.sin(local * 6.2 + time * 0.42 * animationAmount + phase + band) * amp +
+            Math.sin(local * 14.5 - time * 0.23 * animationAmount + phase) * amp * 0.42;
+          if (x <= bounds.x - step + 0.001) buffer.moveTo(x, yy);
+          else buffer.quadraticCurveTo(x - step * 0.5, yy - amp * 0.55, x, yy);
+        }
+        buffer.lineWidth = (18 + band * 6.5) * Math.max(0.5, resolved.wispScale);
+        buffer.lineCap = "round";
+        buffer.strokeStyle = rgba(primary, Math.max(0, 0.038 - band * 0.003) * bandAlpha);
+        buffer.stroke();
+      }
+
+      const layers = [
+        { key: 0, count: 50, y0: 0.6, y1: 0.82, sx0: 0.75, sx1: 1.3, speed: 0.78, alpha: 0.08 },
+        { key: 1, count: 40, y0: 0.68, y1: 0.9, sx0: 1, sx1: 1.9, speed: 0.95, alpha: 0.105 },
+        { key: 2, count: 28, y0: 0.74, y1: 0.98, sx0: 1.35, sx1: 2.6, speed: 1.18, alpha: 0.125 }
+      ];
+      for (const layer of layers) {
+        const count = Math.max(0, Math.round(layer.count * density * qualityScale));
+        for (let index = 0; index < count; index += 1) {
+          const seedIndex = layer.key * 1000 + index * 37;
+          const scale = layer.sx0 + hash(resolved.instance.seed, seedIndex + 1) * (layer.sx1 - layer.sx0);
+          const radiusX = (110 + hash(resolved.instance.seed, seedIndex + 2) * 180) * scale * resolved.wispScale;
+          const radiusY = (14 + hash(resolved.instance.seed, seedIndex + 3) * 32) * scale * resolved.wispScale;
+          const travel = bounds.width + radiusX * 2.4;
+          const startX = bounds.x - radiusX * 1.2;
+          const base = hash(resolved.instance.seed, seedIndex + 4) * travel;
+          const speed = (5 + hash(resolved.instance.seed, seedIndex + 5) * 15) * driftSpeed * layer.speed;
+          const x = startX + ((base + time * speed) % travel);
+          const yBase = bounds.y + bounds.height * (layer.y0 + hash(resolved.instance.seed, seedIndex + 6) * (layer.y1 - layer.y0));
+          const phase = hash(resolved.instance.seed, seedIndex + 7) * Math.PI * 2;
+          const phaseSpeed = 0.3 + hash(resolved.instance.seed, seedIndex + 8) * 0.52;
+          const breathe = 0.82 + (Math.sin(phase + time * phaseSpeed * animationAmount) * 0.5 + 0.5) * 0.42;
+          const wave = Math.sin(phase + time * 0.45 * animationAmount) * radiusY * 0.3;
+          const alpha = clamp(layer.alpha * resolved.opacity * intensity * breathe * (0.72 + hash(resolved.instance.seed, seedIndex + 9) * 0.56), 0, 0.42);
+          buffer.save();
+          buffer.translate(x, yBase + wave);
+          buffer.rotate(Math.sin(phase * 0.37 + time * 0.05 * animationAmount) * 0.05);
+          buffer.scale(radiusX / 100, radiusY / 100);
+          const wisp = buffer.createRadialGradient(0, 0, 4, 0, 0, 100);
+          wisp.addColorStop(0, rgba(primary, alpha));
+          wisp.addColorStop(0.36, rgba(deep, alpha * 0.75));
+          wisp.addColorStop(0.72, rgba(primary, alpha * 0.32));
+          wisp.addColorStop(1, rgba(primary, 0));
+          buffer.fillStyle = wisp;
+          buffer.beginPath();
+          buffer.ellipse(0, 0, 100, 100, 0, 0, Math.PI * 2);
+          buffer.fill();
+          buffer.restore();
+        }
+      }
+
+      if (resolved.bandStrength > 0) {
+        buffer.filter = `blur(${Math.max(2, blur * 0.5)}px)`;
+        buffer.globalAlpha = 0.52 * clamp(resolved.bandStrength, 0, 3);
+        const foregroundY = bounds.y + bounds.height * 0.9;
+        const foreground = buffer.createLinearGradient(0, foregroundY - bounds.height * 0.08, 0, foregroundY + bounds.height * 0.08);
+        foreground.addColorStop(0, rgba(primary, 0));
+        foreground.addColorStop(0.52, rgba(primary, resolved.opacity * intensity * 0.07));
+        foreground.addColorStop(1, rgba(deep, 0));
+        buffer.fillStyle = foreground;
+        buffer.fillRect(bounds.x, foregroundY - bounds.height * 0.1, bounds.width, bounds.height * 0.22);
+      }
+      buffer.restore();
+    });
+  }
+
+  function drawStarField(ctx, resolved, time) {
+    const bounds = geometryBounds(resolved.geometry);
+    const q = QUALITY[resolved.quality] || QUALITY.high;
+    const qualityScale = resolved.preset.qualityScale?.[resolved.quality] ?? q.particles;
+    const count = Math.max(0, Math.floor(Math.min(resolved.particleCap, resolved.preset.hardCap) * clamp(resolved.density, 0, 3) * qualityScale));
+    const intensity = clamp(resolved.intensity, 0, 3);
+    const starSize = clamp(resolved.starSize, 0.5, 3);
+    const twinkleAmount = clamp(resolved.twinkleAmount, 0, 3) * clamp(resolved.animationAmount, 0, 3);
+    const twinkleSpeed = clamp(resolved.twinkleSpeed, 0, 3);
+    const horizonFadeStart = clamp(resolved.horizonFadeStart, 0, 1);
+    const skyBottom = 0.88;
+    const maxGlints = Math.max(0, Math.min(8, Math.round(resolved.maxGlints || 0)));
+    const glintChance = clamp(resolved.glintChance, 0, 3);
+
+    ctx.save();
+    pathGeometry(ctx, resolved.geometry);
+    ctx.clip("evenodd");
+    ctx.globalCompositeOperation = resolved.blendMode || "screen";
+
+    for (let index = 0; index < count; index += 1) {
+      const seedIndex = index * 29;
+      const x = bounds.x + (0.02 + hash(resolved.instance.seed, seedIndex + 1) * 0.96) * bounds.width;
+      const yNorm = 0.02 + hash(resolved.instance.seed, seedIndex + 2) * (skyBottom - 0.02);
+      const y = bounds.y + yNorm * bounds.height;
+      const horizonFactor = 1 - clamp((yNorm - horizonFadeStart) / Math.max(0.001, skyBottom - horizonFadeStart), 0, 1);
+      const visibility = Math.max(0.35, horizonFactor);
+      const sizeRoll = hash(resolved.instance.seed, seedIndex + 3);
+      const baseRadius = sizeRoll > 0.96
+        ? 1.45 + hash(resolved.instance.seed, seedIndex + 4) * 0.8
+        : sizeRoll > 0.82
+          ? 0.85 + hash(resolved.instance.seed, seedIndex + 4) * 0.5
+          : 0.35 + hash(resolved.instance.seed, seedIndex + 4) * 0.5;
+      const radius = baseRadius * starSize;
+      const phase = hash(resolved.instance.seed, seedIndex + 5) * Math.PI * 2;
+      const speed = (0.55 + hash(resolved.instance.seed, seedIndex + 6) * 1.3) * twinkleSpeed;
+      const sharpness = 1.4 + hash(resolved.instance.seed, seedIndex + 7) * 2.4;
+      const glimmer = hash(resolved.instance.seed, seedIndex + 8) < 0.36;
+      const waveA = (Math.sin(time * speed + phase) + 1) * 0.5;
+      const waveB = (Math.sin(time * speed * 0.37 + phase * 1.7) + 1) * 0.5;
+      const pulse = Math.pow(waveA * 0.72 + waveB * 0.28, sharpness);
+      const baseAlpha = (0.18 + hash(resolved.instance.seed, seedIndex + 9) * 0.44) * visibility;
+      const alpha = clamp((baseAlpha + pulse * 0.72 * twinkleAmount * (glimmer ? 0.72 : 0.28)) * intensity * resolved.opacity, 0, 1);
+      const starColor = hash(resolved.instance.seed, seedIndex + 10) < 0.42 ? resolved.secondaryColor : resolved.primaryColor;
+      const twinkleRadius = radius * (0.9 + pulse * 0.55 * Math.max(0.2, twinkleAmount));
+
+      ctx.fillStyle = rgba(starColor, alpha);
+      ctx.beginPath();
+      ctx.arc(x, y, twinkleRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (radius > 0.8) {
+        const haloRadius = twinkleRadius * 4.2;
+        const halo = ctx.createRadialGradient(x, y, 0, x, y, haloRadius);
+        halo.addColorStop(0, rgba(starColor, alpha * 0.28));
+        halo.addColorStop(0.45, rgba(starColor, alpha * 0.08));
+        halo.addColorStop(1, rgba(starColor, 0));
+        ctx.fillStyle = halo;
+        ctx.beginPath();
+        ctx.arc(x, y, haloRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    if (maxGlints && glintChance > 0) {
+      const glintSlots = Math.max(0, Math.min(maxGlints, Math.round(maxGlints * qualityScale)));
+      for (let slot = 0; slot < glintSlots; slot += 1) {
+        const period = (3.4 + hash(resolved.instance.seed, 3000 + slot) * 3.2) / Math.max(0.3, glintChance);
+        const phase = hash(resolved.instance.seed, 3100 + slot) * period;
+        const cycle = Math.floor((time + phase) / period);
+        const progress = ((time + phase) % period) / period;
+        const life = 0.16 + hash(resolved.instance.seed, 3200 + slot) * 0.1;
+        if (progress > life) continue;
+        const starIndex = Math.floor(hash(resolved.instance.seed, 3300 + slot * 97 + cycle) * Math.max(1, count));
+        const seedIndex = starIndex * 29;
+        const sizeRoll = hash(resolved.instance.seed, seedIndex + 3);
+        if (sizeRoll <= 0.72) continue;
+        const x = bounds.x + (0.02 + hash(resolved.instance.seed, seedIndex + 1) * 0.96) * bounds.width;
+        const yNorm = 0.02 + hash(resolved.instance.seed, seedIndex + 2) * (skyBottom - 0.02);
+        const y = bounds.y + yNorm * bounds.height;
+        const local = progress / life;
+        const fadeAlpha = Math.sin(local * Math.PI) * 0.75 * intensity * resolved.opacity;
+        const size = (8 + hash(resolved.instance.seed, 3400 + slot) * 10) * starSize * (0.65 + local * 0.55);
+        const starColor = hash(resolved.instance.seed, seedIndex + 10) < 0.42 ? resolved.secondaryColor : resolved.primaryColor;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(Math.sin(time * 0.8 * twinkleSpeed + hash(resolved.instance.seed, 3500 + slot) * Math.PI * 2) * 0.12);
+        ctx.strokeStyle = rgba(starColor, fadeAlpha);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(-size, 0);
+        ctx.lineTo(size, 0);
+        ctx.moveTo(0, -size * 0.62);
+        ctx.lineTo(0, size * 0.62);
+        ctx.stroke();
+        ctx.strokeStyle = rgba(starColor, fadeAlpha * 0.35);
+        ctx.lineWidth = 0.75;
+        ctx.beginPath();
+        ctx.moveTo(-size * 0.45, -size * 0.45);
+        ctx.lineTo(size * 0.45, size * 0.45);
+        ctx.moveTo(size * 0.45, -size * 0.45);
+        ctx.lineTo(-size * 0.45, size * 0.45);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+    ctx.restore();
+  }
+
   function drawPlume(ctx, resolved, time) {
     const geometry = resolved.geometry;
     const count = particleCount(resolved);
@@ -1397,6 +1705,8 @@
     if (resolved.preset.renderer === "glowField") drawWithOptionalMask(ctx, resolved, (target) => drawGlow(target, resolved, time));
     if (resolved.preset.renderer === "particleField") drawWithOptionalMask(ctx, resolved, (target) => drawParticles(target, resolved, time));
     if (resolved.preset.renderer === "fogField") drawFog(ctx, resolved, time);
+    if (resolved.preset.renderer === "groundFog") drawGroundFog(ctx, resolved, time);
+    if (resolved.preset.renderer === "starField") drawStarField(ctx, resolved, time);
     if (resolved.preset.renderer === "plumeEmitter") drawWithOptionalMask(ctx, resolved, (target) => drawPlume(target, resolved, time));
     if (resolved.preset.renderer === "lightBeam") drawWithOptionalMask(ctx, resolved, (target) => drawBeam(target, resolved, time));
     if (resolved.preset.renderer === "surfaceShimmer") drawSurface(ctx, resolved, time, false);
@@ -1501,7 +1811,7 @@
         rafId = null;
         return;
       }
-      if (resolved.some((effect) => effect.preset.renderer === "sunPresence")) {
+      if (resolved.some((effect) => ["sunPresence", "groundFog", "starField"].includes(effect.preset.renderer))) {
         if (rafId) cancelAnimationFrame(rafId);
         rafId = null;
         draw(performance.now(), true);
