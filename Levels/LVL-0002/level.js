@@ -919,6 +919,122 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       challengeId: "shipModel"
     }
   ],
+  sceneEffects: [
+        {
+              id: "light-source-enhancement-01",
+              label: "Wall torch 1",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1867435243,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 359,
+                    y: 357,
+                    radius: 22
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-01-copy",
+              label: "Wall torch 1 copy",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1867435243,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 70,
+                    y: 357,
+                    radius: 29
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-03",
+              label: "Wall torch 3",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1739012846,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1093,
+                    y: 376,
+                    radius: 32
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-04",
+              label: "Wall torch 4",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1267292939,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1810,
+                    y: 357,
+                    radius: 33
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-05",
+              label: "Wall torch 5",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1225945132,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1571,
+                    y: 340,
+                    radius: 14
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-06",
+              label: "Wall torch 6",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 170483010,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 2100,
+                    y: 365,
+                    radius: 33
+              },
+              overrides: {}
+        }
+  ],
   reward: {
     title: "De havendeur opent!",
     badge: "Vriend van de Tempelzaal",
