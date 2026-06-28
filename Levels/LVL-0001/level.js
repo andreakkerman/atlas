@@ -779,6 +779,146 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       challengeId: "wind"
     }
   ],
+  sceneEffects: [
+        {
+              id: "focused-fog-01",
+              label: "Focused Fog 1",
+              presetId: "focused-fog",
+              variantId: "default-focused-fog",
+              presetVersion: 1,
+              enabled: true,
+              seed: 630476710,
+              qualityTier: "auto",
+              layerSlot: "foregroundAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "rectangle",
+                    x: 1009,
+                    y: 395,
+                    width: 458,
+                    height: 94
+              },
+              overrides: {
+                    primaryColor: "#F1F9D2"
+              }
+        },
+        {
+              id: "magical-glow-02",
+              label: "Rune 2",
+              presetId: "magical-glow",
+              variantId: "rune",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1223284576,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 273,
+                    y: 467,
+                    radius: 69
+              },
+              overrides: {}
+        },
+        {
+              id: "magical-glow-03",
+              label: "Rune 3",
+              presetId: "magical-glow",
+              variantId: "rune",
+              presetVersion: 1,
+              enabled: true,
+              seed: 143671633,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1384,
+                    y: 153,
+                    radius: 69
+              },
+              overrides: {}
+        },
+        {
+              id: "magical-glow-04",
+              label: "Rune 4",
+              presetId: "magical-glow",
+              variantId: "rune",
+              presetVersion: 1,
+              enabled: true,
+              seed: 45844646,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1469,
+                    y: 316,
+                    radius: 73
+              },
+              overrides: {}
+        },
+        {
+              id: "magical-glow-05",
+              label: "Rune 5",
+              presetId: "magical-glow",
+              variantId: "rune",
+              presetVersion: 1,
+              enabled: true,
+              seed: 300417825,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 2126,
+                    y: 407,
+                    radius: 66
+              },
+              overrides: {}
+        },
+        {
+              id: "magical-glow-06",
+              label: "Rune 6",
+              presetId: "magical-glow",
+              variantId: "rune",
+              presetVersion: 1,
+              enabled: true,
+              seed: 2049802268,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1849,
+                    y: 355,
+                    radius: 135
+              },
+              overrides: {}
+        },
+        {
+              id: "sun-presence-07",
+              label: "Golden hour sun 7",
+              presetId: "sun-presence",
+              variantId: "golden-hour-sun",
+              presetVersion: 1,
+              enabled: true,
+              seed: 2011289740,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 163,
+                    y: 199,
+                    radius: 134
+              },
+              overrides: {
+                    rayEndAngle: 98
+              }
+        }
+  ],
   reward: {
     title: "De poort gaat open!",
     badge: "Bewaker van de Runenpoort",
