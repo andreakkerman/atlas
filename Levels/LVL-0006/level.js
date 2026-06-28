@@ -682,6 +682,84 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       challengeId: "controlPanel"
     }
   ],
+  sceneEffects: [
+        {
+              id: "light-source-enhancement-01",
+              label: "Lantern 1",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1627557616,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1754,
+                    y: 236,
+                    radius: 69
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-01-copy",
+              label: "Lantern 1 copy",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1627557616,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 2066,
+                    y: 415,
+                    radius: 69
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-03",
+              label: "Lantern 3",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1795836059,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 321,
+                    y: 293,
+                    radius: 52
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-03-copy",
+              label: "Lantern 3 copy",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1795836059,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 198,
+                    y: 101,
+                    radius: 52
+              },
+              overrides: {}
+        }
+  ],
   reward: {
     title: "Het luik opent!",
     badge: "Minisub Piloot",

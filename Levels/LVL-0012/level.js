@@ -693,6 +693,84 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       challengeId: "purplePortal"
     }
   ],
+  sceneEffects: [
+        {
+              id: "light-source-enhancement-01",
+              label: "Wall torch 1",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 576934612,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 382,
+                    y: 322,
+                    radius: 28
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-01-copy",
+              label: "Wall torch 1 copy",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 576934612,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 107,
+                    y: 332,
+                    radius: 28
+              },
+              overrides: {}
+        },
+        {
+              id: "magical-glow-03",
+              label: "Crystal 3",
+              presetId: "magical-glow",
+              variantId: "crystal",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1807472244,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1339,
+                    y: 300,
+                    radius: 102
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-04",
+              label: "Wall torch 4",
+              presetId: "light-source-enhancement",
+              variantId: "wall-torch",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1976442068,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 2076,
+                    y: 313,
+                    radius: 24
+              },
+              overrides: {}
+        }
+  ],
   reward: {
     title: "Sven is terug!",
     badge: "Blokkenpoort Held",

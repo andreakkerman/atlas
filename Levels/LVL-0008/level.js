@@ -675,6 +675,84 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       challengeId: "enderPortal"
     }
   ],
+  sceneEffects: [
+        {
+              id: "sparks-and-embers-01",
+              label: "Floating embers 1",
+              presetId: "sparks-and-embers",
+              variantId: "floating-embers",
+              presetVersion: 1,
+              enabled: true,
+              seed: 425374617,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 118,
+                    y: 249,
+                    radius: 16
+              },
+              overrides: {}
+        },
+        {
+              id: "magical-glow-02",
+              label: "Crystal 2",
+              presetId: "magical-glow",
+              variantId: "crystal",
+              presetVersion: 1,
+              enabled: true,
+              seed: 756653475,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1113,
+                    y: 345,
+                    radius: 120
+              },
+              overrides: {}
+        },
+        {
+              id: "sparks-and-embers-03",
+              label: "Floating embers 3",
+              presetId: "sparks-and-embers",
+              variantId: "floating-embers",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1864127781,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1792,
+                    y: 223,
+                    radius: 16
+              },
+              overrides: {}
+        },
+        {
+              id: "sparks-and-embers-03-copy",
+              label: "Floating embers 3 copy",
+              presetId: "sparks-and-embers",
+              variantId: "floating-embers",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1864127781,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 2120,
+                    y: 230,
+                    radius: 16
+              },
+              overrides: {}
+        }
+  ],
   reward: {
     title: "De kamer ontwaakt!",
     badge: "Blokkenreiziger",

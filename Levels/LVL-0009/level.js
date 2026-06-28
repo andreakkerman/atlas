@@ -687,6 +687,106 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       challengeId: "crystalCase"
     }
   ],
+  sceneEffects: [
+        {
+              id: "magical-glow-01",
+              label: "Sacred 1",
+              presetId: "magical-glow",
+              variantId: "sacred",
+              presetVersion: 1,
+              enabled: true,
+              seed: 319742325,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1103,
+                    y: 324,
+                    radius: 90
+              },
+              overrides: {}
+        },
+        {
+              id: "sparks-and-embers-02",
+              label: "Rising sparks 2",
+              presetId: "sparks-and-embers",
+              variantId: "rising-sparks",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1122872094,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 610,
+                    y: 400,
+                    radius: 24
+              },
+              overrides: {
+                    speed: 0.5,
+                    amount: 0.3
+              }
+        },
+        {
+              id: "sparks-and-embers-03",
+              label: "Floating embers 3",
+              presetId: "sparks-and-embers",
+              variantId: "floating-embers",
+              presetVersion: 1,
+              enabled: true,
+              seed: 100663060,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 29,
+                    y: 350,
+                    radius: 18
+              },
+              overrides: {}
+        },
+        {
+              id: "sparks-and-embers-04",
+              label: "Floating embers 4",
+              presetId: "sparks-and-embers",
+              variantId: "floating-embers",
+              presetVersion: 1,
+              enabled: true,
+              seed: 513691433,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1886,
+                    y: 314,
+                    radius: 17
+              },
+              overrides: {}
+        },
+        {
+              id: "sparks-and-embers-04-copy",
+              label: "Floating embers 4 copy",
+              presetId: "sparks-and-embers",
+              variantId: "floating-embers",
+              presetVersion: 1,
+              enabled: true,
+              seed: 513691433,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 2119,
+                    y: 351,
+                    radius: 17
+              },
+              overrides: {}
+        }
+  ],
   reward: {
     title: "De ijzeren deur opent!",
     badge: "Blokkenzoeker",

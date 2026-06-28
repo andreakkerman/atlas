@@ -772,13 +772,145 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                     radius: 250
               },
               overrides: {
-                    rayEndAngle: 86,
+                    rayEndAngle: 98,
                     intensity: 0.84,
                     rayStrength: 0.75,
-                    rayAnimationAmount: 2,
-                    raySpreadBreathing: 2,
-                    rayCount: 12
+                    rayAnimationAmount: 1.78,
+                    raySpreadBreathing: 1,
+                    rayCount: 12,
+                    rayDriftSpeed: 1,
+                    rayPulseSpeed: 1,
+                    rayWobbleAmount: 1,
+                    animationSpeed: 0.62
               }
+        },
+        {
+              id: "light-source-enhancement-02",
+              label: "Lantern 2",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1209426502,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 137,
+                    y: 292,
+                    radius: 49
+              },
+              overrides: {}
+        },
+        {
+              id: "water-shimmer-03",
+              label: "Water Shimmer 3",
+              presetId: "water-shimmer",
+              variantId: "default-water-shimmer",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1541868200,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "polygon",
+                    points: [
+                          {
+                                x: 810,
+                                y: 388
+                          },
+                          {
+                                x: 906,
+                                y: 386
+                          },
+                          {
+                                x: 935,
+                                y: 498
+                          },
+                          {
+                                x: 839,
+                                y: 478
+                          }
+                    ],
+                    cutouts: []
+              },
+              overrides: {}
+        },
+        {
+              id: "water-shimmer-03-copy",
+              label: "Water Shimmer 3 copy",
+              presetId: "water-shimmer",
+              variantId: "default-water-shimmer",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1541868200,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "polygon",
+                    points: [
+                          {
+                                x: 921,
+                                y: 450
+                          },
+                          {
+                                x: 975,
+                                y: 454
+                          },
+                          {
+                                x: 1115,
+                                y: 521
+                          },
+                          {
+                                x: 936,
+                                y: 498
+                          }
+                    ],
+                    cutouts: []
+              },
+              overrides: {}
+        },
+        {
+              id: "focused-fog-05",
+              label: "Focused Fog 5",
+              presetId: "focused-fog",
+              variantId: "default-focused-fog",
+              presetVersion: 1,
+              enabled: true,
+              seed: 806688055,
+              qualityTier: "auto",
+              layerSlot: "foregroundAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "rectangle",
+                    x: 1073,
+                    y: 222,
+                    width: 288,
+                    height: 116
+              },
+              overrides: {}
+        },
+        {
+              id: "light-source-enhancement-06",
+              label: "Lantern 6",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1759304067,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1794,
+                    y: 368,
+                    radius: 39
+              },
+              overrides: {}
         }
   ],
   reward: {
