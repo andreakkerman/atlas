@@ -77,7 +77,18 @@
     twinkleSpeed: { label: "Twinkle speed", min: 0, max: 3, step: 0.01, section: "quick" },
     glintChance: { label: "Glint chance", min: 0, max: 3, step: 0.01, section: "advanced" },
     maxGlints: { label: "Max glints", min: 0, max: 8, step: 1, section: "advanced" },
-    horizonFadeStart: { label: "Horizon fade start", min: 0, max: 1, step: 0.01, section: "advanced" }
+    horizonFadeStart: { label: "Horizon fade start", min: 0, max: 1, step: 0.01, section: "advanced" },
+    shimmerStrength: { label: "Shimmer strength", min: 0, max: 3, step: 0.01, section: "quick" },
+    waveStrength: { label: "Wave strength", min: 0, max: 3, step: 0.01, section: "quick" },
+    stretchX: { label: "Stretch X", min: 0.5, max: 12, step: 0.01, section: "advanced" },
+    stretchY: { label: "Stretch Y", min: 0.2, max: 2, step: 0.01, section: "advanced" },
+    driftX: { label: "Drift X", min: 0, max: 20, step: 0.1, section: "advanced" },
+    bobY: { label: "Bob Y", min: 0, max: 8, step: 0.1, section: "advanced" },
+    reflectionCenterX: { label: "Reflection center X", min: 0, max: 1, step: 0.01, section: "advanced" },
+    reflectionWidth: { label: "Reflection width", min: 0.05, max: 1, step: 0.01, section: "advanced" },
+    reflectionBias: { label: "Reflection bias", min: 0, max: 1, step: 0.01, section: "advanced" },
+    waveBandCount: { label: "Wave band count", min: 0, max: 20, step: 1, section: "advanced" },
+    waveBandAlpha: { label: "Wave band alpha", min: 0, max: 1, step: 0.01, section: "advanced" }
   });
 
   const CATEGORIES = Object.freeze([
@@ -446,6 +457,51 @@
       hardCap: 140,
       qualityScale: { high: 1, balanced: 0.76, reduced: 0.48 },
       controls: ["intensity", "amount", "speed", "size", "directionDeg", "glow", "softness", "opacity", "variance", "turbulence", "edgeFeatherPx", "highlightDensity", "particleCap"]
+    }),
+    "water-shimmer": preset({
+      id: "water-shimmer", name: "Water Shimmer", category: "Water",
+      description: "Localized water glimmer highlights for small water areas and shaped light reflections.",
+      bestFor: "Small polygons on harbors, canals, ponds, basins, rivers and pools where light catches the water.",
+      avoidFor: "One large full-water overlay, wet stone glints, fountain spray, underwater bubbles, smoke, fog or sky stars.",
+      visualSignature: "Compact reflection-biased sparkle streaks with light wave hints and occasional restrained glints.",
+      renderer: "waterShimmer", layerSlot: "worldAtmosphere", blendMode: "screen", geometryTypes: ["polygon", "rectangle"],
+      defaultGeometry: {
+        type: "polygon",
+        points: [{ x: 120, y: 430 }, { x: 880, y: 430 }, { x: 920, y: 650 }, { x: 90, y: 650 }],
+        cutouts: []
+      },
+      variants: [
+        variant("default-water-shimmer", "Water Shimmer", {})
+      ],
+      defaults: {
+        ...preset({}).defaults,
+        primaryColor: "#BEE2FF", secondaryColor: "#FFEDBE", glowColor: "#FFFFFF", tintColor: "#A8D8FF",
+        intensity: 1, density: 0.55, speed: 1, shimmerStrength: 1.25, waveStrength: 0.45,
+        glintChance: 0.45, maxGlints: 2, stretchX: 7.5, stretchY: 0.52,
+        driftX: 9, bobY: 2.2, reflectionCenterX: 0.5, reflectionWidth: 0.34,
+        reflectionBias: 0.72, waveBandCount: 6, waveBandAlpha: 0.1,
+        animationAmount: 1, opacity: 0.7, edgeFeatherPx: 8, particleCap: 120
+      },
+      colors: {
+        primaryColor: "#BEE2FF",
+        secondaryColor: "#FFEDBE",
+        glowColor: "#FFFFFF",
+        tintColor: "#A8D8FF"
+      },
+      performance: "Low",
+      recommendedBudget: 72,
+      hardCap: 240,
+      qualityScale: { high: 1, balanced: 0.68, reduced: 0.42 },
+      reducedMotion: {
+        speed: 0.08, glintChance: 0.2, animationAmount: 0.1,
+        shimmerStrength: 0.86, waveStrength: 0.72, opacity: 1
+      },
+      controls: [
+        "intensity", "density", "speed", "shimmerStrength", "waveStrength",
+        "glintChance", "maxGlints", "reflectionCenterX", "reflectionWidth",
+        "reflectionBias", "animationAmount", "opacity", "edgeFeatherPx",
+        "stretchX", "stretchY", "driftX", "bobY", "waveBandCount", "waveBandAlpha"
+      ]
     }),
     "surface-glint": preset({
       id: "surface-glint", name: "Surface glint", category: "Surfaces",
@@ -1448,6 +1504,149 @@
     ctx.restore();
   }
 
+  function waterReflectionWeight(xNorm, center, width, bias) {
+    const distance = Math.abs(xNorm - center) / Math.max(0.05, width);
+    const lane = clamp(1 - distance * distance, 0, 1);
+    return (1 - bias) + lane * bias;
+  }
+
+  function drawWaterShimmer(ctx, resolved, time) {
+    const bounds = geometryBounds(resolved.geometry);
+    const q = QUALITY[resolved.quality] || QUALITY.high;
+    const qualityScale = resolved.preset.qualityScale?.[resolved.quality] ?? q.particles;
+    const areaFactor = clamp((bounds.width * bounds.height) / 180000, 0.55, 2.4);
+    const density = clamp(resolved.density, 0, 3);
+    const intensity = clamp(resolved.intensity, 0, 3);
+    const speed = clamp(resolved.speed, 0, 3) * clamp(resolved.animationAmount, 0, 3);
+    const shimmerStrength = clamp(resolved.shimmerStrength, 0, 3);
+    const waveStrength = clamp(resolved.waveStrength, 0, 3);
+    const reflectionCenter = clamp(resolved.reflectionCenterX, 0, 1);
+    const reflectionWidth = clamp(resolved.reflectionWidth, 0.05, 1);
+    const reflectionBias = clamp(resolved.reflectionBias, 0, 1);
+    const sparkleCap = Math.min(resolved.preset.hardCap, Math.max(1, resolved.particleCap || resolved.preset.hardCap));
+    const sparkleCount = Math.max(0, Math.min(sparkleCap, Math.round((72 + areaFactor * 72) * density * qualityScale)));
+    const bandCount = Math.max(0, Math.min(20, Math.round(resolved.waveBandCount * qualityScale)));
+    const glintSlots = Math.max(0, Math.min(8, Math.round(resolved.maxGlints * qualityScale)));
+    const glintChance = clamp(resolved.glintChance, 0, 3);
+    const primary = resolved.primaryColor || "#BEE2FF";
+    const warm = resolved.secondaryColor || "#FFEDBE";
+
+    ctx.save();
+    pathGeometry(ctx, resolved.geometry);
+    ctx.clip("evenodd");
+    ctx.globalCompositeOperation = resolved.blendMode || "screen";
+
+    if (waveStrength > 0 && bandCount > 0) {
+      for (let band = 0; band < bandCount; band += 1) {
+        const t = bandCount === 1 ? 0.5 : band / (bandCount - 1);
+        const yBase = bounds.y + bounds.height * (0.055 + t * 0.86);
+        const phase = hash(resolved.instance.seed, 5000 + band) * Math.PI * 2;
+        const bandSpeed = (0.22 + hash(resolved.instance.seed, 5010 + band) * 0.5) * speed;
+        const amplitude = (3 + t * 8) * waveStrength;
+        const wavelength = bounds.width * (0.18 + hash(resolved.instance.seed, 5020 + band) * 0.24);
+        const thickness = 0.5 + t * 0.8;
+        ctx.globalAlpha = clamp(resolved.waveBandAlpha * resolved.opacity * intensity * waveStrength * (0.5 + t * 0.8), 0, 1);
+        ctx.lineWidth = thickness;
+        ctx.strokeStyle = rgba(primary, 1);
+        ctx.beginPath();
+        const segments = Math.max(18, Math.round(48 * (q.segments || 1)));
+        for (let segment = 0; segment <= segments; segment += 1) {
+          const xNorm = segment / segments;
+          const x = bounds.x + xNorm * bounds.width;
+          const reflect = waterReflectionWeight(xNorm, reflectionCenter, reflectionWidth, reflectionBias);
+          const y = yBase +
+            Math.sin(x / Math.max(1, wavelength) + time * bandSpeed + phase) * amplitude * (0.25 + reflect * 0.85) +
+            Math.sin(x / Math.max(1, wavelength * 0.43) - time * bandSpeed * 1.7 + phase) * amplitude * 0.23;
+          if (segment === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    for (let index = 0; index < sparkleCount; index += 1) {
+      const seedIndex = index * 41;
+      const xNorm = 0.02 + hash(resolved.instance.seed, seedIndex + 1) * 0.96;
+      const yNorm = 0.035 + hash(resolved.instance.seed, seedIndex + 2) * 0.91;
+      const reflect = waterReflectionWeight(xNorm, reflectionCenter, reflectionWidth, reflectionBias);
+      if (hash(resolved.instance.seed, seedIndex + 3) > reflect) continue;
+      const depth = yNorm;
+      const radius = (0.55 + depth * 1.85) * (0.75 + hash(resolved.instance.seed, seedIndex + 4) * 0.5);
+      const phase = hash(resolved.instance.seed, seedIndex + 5) * Math.PI * 2;
+      const sparkleSpeed = (0.7 + hash(resolved.instance.seed, seedIndex + 6) * 1.2) * speed;
+      const sharpness = 1.5 + hash(resolved.instance.seed, seedIndex + 7) * 2.1;
+      const waveA = (Math.sin(time * sparkleSpeed + phase) + 1) * 0.5;
+      const waveB = (Math.sin(time * sparkleSpeed * 0.41 + phase * 2.3) + 1) * 0.5;
+      const pulse = Math.pow(waveA * 0.72 + waveB * 0.28, sharpness);
+      const drift = Math.sin(time * 0.45 * speed + phase) * resolved.driftX * (0.45 + hash(resolved.instance.seed, seedIndex + 8) * 0.8) * (0.45 + depth * 0.7);
+      const bob = Math.sin(time * 1.15 * speed + phase * 1.6) * resolved.bobY * (0.35 + hash(resolved.instance.seed, seedIndex + 9) * 0.8);
+      const x = bounds.x + xNorm * bounds.width + drift;
+      const y = bounds.y + yNorm * bounds.height + bob;
+      const baseAlpha = (0.1 + reflect * 0.32) * (0.65 + depth * 0.45);
+      const alpha = clamp((baseAlpha + pulse * 0.48 * shimmerStrength) * intensity * resolved.opacity * (0.55 + reflect * 0.7), 0, 1);
+      if (alpha <= 0.01) continue;
+      const sparkleColor = hash(resolved.instance.seed, seedIndex + 10) < 0.18 + reflect * 0.12 ? warm : primary;
+      const rx = radius * resolved.stretchX * (0.72 + depth * 0.83) * (1 + pulse * 0.95);
+      const ry = radius * resolved.stretchY * (0.75 + depth * 0.35);
+      const gradient = ctx.createRadialGradient(x, y, 0, x, y, Math.max(1, rx));
+      gradient.addColorStop(0, rgba("#FFFFFF", alpha * 0.95));
+      gradient.addColorStop(0.28, rgba(sparkleColor, alpha * 0.58));
+      gradient.addColorStop(0.68, rgba(sparkleColor, alpha * 0.16));
+      gradient.addColorStop(1, rgba(sparkleColor, 0));
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+      ctx.fill();
+      if (pulse > 0.64 && rx > 5) {
+        ctx.strokeStyle = rgba("#FFFFFF", alpha * 0.55);
+        ctx.lineWidth = Math.max(0.45, ry * 0.42);
+        ctx.beginPath();
+        ctx.moveTo(x - rx * 0.52, y);
+        ctx.lineTo(x + rx * 0.52, y);
+        ctx.stroke();
+      }
+    }
+
+    if (glintChance > 0 && glintSlots > 0) {
+      for (let slot = 0; slot < glintSlots; slot += 1) {
+        const period = (2.8 + hash(resolved.instance.seed, 7000 + slot) * 2.4) / Math.max(0.3, glintChance);
+        const phase = hash(resolved.instance.seed, 7010 + slot) * period;
+        const cycle = Math.floor((time + phase) / period);
+        const progress = ((time + phase) % period) / period;
+        const life = 0.18 + hash(resolved.instance.seed, 7020 + slot) * 0.14;
+        if (progress > life) continue;
+        const seedIndex = Math.floor(hash(resolved.instance.seed, 7030 + slot * 89 + cycle) * Math.max(1, sparkleCount)) * 41;
+        const xNorm = 0.02 + hash(resolved.instance.seed, seedIndex + 1) * 0.96;
+        const reflect = waterReflectionWeight(xNorm, reflectionCenter, reflectionWidth, reflectionBias);
+        if (hash(resolved.instance.seed, 7040 + slot + cycle) > reflect) continue;
+        const yNorm = 0.035 + hash(resolved.instance.seed, seedIndex + 2) * 0.91;
+        const local = progress / life;
+        const fadeAlpha = Math.sin(local * Math.PI) * 0.8 * intensity * resolved.opacity;
+        const drift = Math.sin(time * 0.55 * speed + hash(resolved.instance.seed, 7050 + slot) * Math.PI * 2) * resolved.driftX;
+        const bob = Math.sin(time * 1.2 * speed + hash(resolved.instance.seed, 7060 + slot) * Math.PI * 2) * resolved.bobY;
+        const x = bounds.x + xNorm * bounds.width + drift;
+        const y = bounds.y + yNorm * bounds.height + bob;
+        const sizeX = (10 + yNorm * 18) * (0.85 + local * 0.45);
+        const sizeY = sizeX * 0.2;
+        const glintColor = hash(resolved.instance.seed, seedIndex + 10) < 0.18 + reflect * 0.12 ? warm : primary;
+        ctx.strokeStyle = rgba(glintColor, fadeAlpha);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x - sizeX, y);
+        ctx.lineTo(x + sizeX, y);
+        ctx.stroke();
+        ctx.strokeStyle = rgba(glintColor, fadeAlpha * 0.32);
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(x, y - sizeY);
+        ctx.lineTo(x, y + sizeY);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
   function drawPlume(ctx, resolved, time) {
     const geometry = resolved.geometry;
     const count = particleCount(resolved);
@@ -1707,6 +1906,7 @@
     if (resolved.preset.renderer === "fogField") drawFog(ctx, resolved, time);
     if (resolved.preset.renderer === "groundFog") drawGroundFog(ctx, resolved, time);
     if (resolved.preset.renderer === "starField") drawStarField(ctx, resolved, time);
+    if (resolved.preset.renderer === "waterShimmer") drawWaterShimmer(ctx, resolved, time);
     if (resolved.preset.renderer === "plumeEmitter") drawWithOptionalMask(ctx, resolved, (target) => drawPlume(target, resolved, time));
     if (resolved.preset.renderer === "lightBeam") drawWithOptionalMask(ctx, resolved, (target) => drawBeam(target, resolved, time));
     if (resolved.preset.renderer === "surfaceShimmer") drawSurface(ctx, resolved, time, false);
@@ -1811,7 +2011,7 @@
         rafId = null;
         return;
       }
-      if (resolved.some((effect) => ["sunPresence", "groundFog", "starField"].includes(effect.preset.renderer))) {
+      if (resolved.some((effect) => ["sunPresence", "groundFog", "starField", "waterShimmer"].includes(effect.preset.renderer))) {
         if (rafId) cancelAnimationFrame(rafId);
         rafId = null;
         draw(performance.now(), true);

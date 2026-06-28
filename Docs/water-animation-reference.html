@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atlas Water Shimmer Canvas</title>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #07111f;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 14%, rgba(185, 215, 255, 0.20), transparent 24%),
+        linear-gradient(to bottom, #07111f 0%, #0a1728 42%, #0a1a2c 100%);
+    }
+
+    /*
+      Demo-waterlaag zodat je het effect goed kunt beoordelen.
+      In Atlas gebruik je alleen de canvas-overlay boven je eigen level-art.
+    */
+    .demo-water {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52%;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(160, 210, 255, 0.18), transparent 32%),
+        linear-gradient(to bottom, rgba(21, 68, 104, 0.75), rgba(5, 22, 42, 0.96));
+      overflow: hidden;
+    }
+
+    .demo-water::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          178deg,
+          rgba(255, 255, 255, 0.045) 0px,
+          rgba(255, 255, 255, 0.045) 1px,
+          transparent 1px,
+          transparent 16px
+        );
+      opacity: 0.25;
+      transform: skewY(-1deg);
+    }
+
+    .demo-horizon {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 52%;
+      height: 2px;
+      background: rgba(210, 235, 255, 0.16);
+      box-shadow: 0 0 18px rgba(175, 220, 255, 0.22);
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="scene">
+    <div class="demo-water"></div>
+    <div class="demo-horizon"></div>
+    <canvas id="waterShimmerCanvas"></canvas>
+  </div>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("waterShimmerCanvas");
+      const ctx = canvas.getContext("2d", { alpha: true });
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let sparkles = [];
+      let glints = [];
+      let waveBands = [];
+
+      const CONFIG = {
+        // Effectgebied. In deze demo: onderste helft van het scherm.
+        // In Atlas kun je dit later vervangen door polygon clipping.
+        waterTop: 0.49,
+        waterBottom: 0.96,
+
+        // Algemene hoeveelheid glinsters.
+        density: 1.0,
+
+        // Algemene zichtbaarheid.
+        intensity: 0.78,
+
+        // Animatiesnelheid.
+        speed: 1.0,
+
+        // Horizontale uitrekking van sparkle-streepjes.
+        stretchX: 7.5,
+
+        // Verticale dikte van sparkle-streepjes.
+        stretchY: 0.52,
+
+        // Subtiele beweging.
+        driftX: 9,
+        bobY: 2.2,
+
+        // Reflectiebaan onder maan/lichtbron.
+        reflectionCenterX: 0.5,
+        reflectionWidth: 0.34,
+
+        // Minder glinsters buiten de reflectiebaan.
+        reflectionBias: 0.72,
+
+        // Hoe vaak korte heldere flitsjes ontstaan.
+        glintChancePerSecond: 1.15,
+        maxGlints: 5,
+
+        // Golfbanden.
+        waveBandCount: 13,
+        waveBandAlpha: 0.16,
+
+        // Kleurtemperatuur.
+        coolColor: { r: 190, g: 226, b: 255 },
+        warmColor: { r: 255, g: 237, b: 190 }
+      };
+
+      function mulberry32(seed) {
+        return function () {
+          let t = seed += 0x6D2B79F5;
+          t = Math.imul(t ^ (t >>> 15), t | 1);
+          t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+
+      const random = mulberry32(428931);
+
+      function rand(min, max) {
+        return min + random() * (max - min);
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function clamp01(v) {
+        return Math.max(0, Math.min(1, v));
+      }
+
+      function smoothstep(edge0, edge1, x) {
+        const t = clamp01((x - edge0) / (edge1 - edge0));
+        return t * t * (3 - 2 * t);
+      }
+
+      function reflectionWeight(xNorm) {
+        const center = CONFIG.reflectionCenterX;
+        const widthNorm = CONFIG.reflectionWidth;
+
+        const d = Math.abs(xNorm - center) / widthNorm;
+        return clamp01(1 - d * d);
+      }
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        width = Math.floor(window.innerWidth);
+        height = Math.floor(window.innerHeight);
+
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        createSparkles();
+        createWaveBands();
+      }
+
+      function createSparkles() {
+        sparkles = [];
+
+        const waterHeight = height * (CONFIG.waterBottom - CONFIG.waterTop);
+        const areaFactor = Math.max(0.65, waterHeight / 380);
+        const targetCount = Math.round(145 * CONFIG.density * areaFactor);
+
+        let attempts = 0;
+        const maxAttempts = targetCount * 12;
+
+        while (sparkles.length < targetCount && attempts < maxAttempts) {
+          attempts++;
+
+          const xNorm = rand(0.02, 0.98);
+          const yNorm = rand(CONFIG.waterTop, CONFIG.waterBottom);
+
+          const refl = reflectionWeight(xNorm);
+
+          // Buiten de lichtbaan minder sparkles toelaten.
+          const keepChance = lerp(1 - CONFIG.reflectionBias, 1, refl);
+          if (random() > keepChance) continue;
+
+          const depth = smoothstep(CONFIG.waterTop, CONFIG.waterBottom, yNorm);
+
+          // Dichtbij de camera: iets groter en breder.
+          const size = lerp(0.55, 2.4, depth) * rand(0.75, 1.25);
+          const baseAlpha = lerp(0.10, 0.42, refl) * lerp(0.65, 1.1, depth);
+
+          const warmMix = random() < 0.18 + refl * 0.12;
+
+          sparkles.push({
+            xNorm,
+            yNorm,
+            radius: size,
+            baseAlpha,
+            phase: rand(0, Math.PI * 2),
+            speed: rand(0.7, 1.9),
+            drift: rand(0.45, 1.25),
+            bob: rand(0.35, 1.15),
+            sharpness: rand(1.5, 3.6),
+            color: warmMix ? CONFIG.warmColor : CONFIG.coolColor
+          });
+        }
+      }
+
+      function createWaveBands() {
+        waveBands = [];
+
+        for (let i = 0; i < CONFIG.waveBandCount; i++) {
+          const t = i / Math.max(1, CONFIG.waveBandCount - 1);
+          const yNorm = lerp(CONFIG.waterTop + 0.025, CONFIG.waterBottom - 0.04, t);
+
+          waveBands.push({
+            yNorm,
+            phase: rand(0, Math.PI * 2),
+            speed: rand(0.22, 0.72),
+            amplitude: lerp(3, 11, t),
+            wavelength: lerp(180, 420, random()),
+            alpha: lerp(0.055, CONFIG.waveBandAlpha, t),
+            thickness: lerp(0.5, 1.3, t)
+          });
+        }
+      }
+
+      function drawWaveBand(band, time) {
+        const yBase = band.yNorm * height;
+        const waveSpeed = time * band.speed * CONFIG.speed;
+
+        ctx.save();
+
+        ctx.globalAlpha = band.alpha * CONFIG.intensity;
+        ctx.lineWidth = band.thickness;
+        ctx.strokeStyle = "rgba(205, 232, 255, 1)";
+
+        ctx.beginPath();
+
+        const segments = 72;
+
+        for (let i = 0; i <= segments; i++) {
+          const x = (i / segments) * width;
+
+          const reflect = reflectionWeight(x / width);
+          const shimmerBoost = 0.25 + reflect * 0.85;
+
+          const y =
+            yBase +
+            Math.sin(x / band.wavelength + waveSpeed + band.phase) * band.amplitude * shimmerBoost +
+            Math.sin(x / (band.wavelength * 0.43) - waveSpeed * 1.7 + band.phase) * band.amplitude * 0.23;
+
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      function drawSparkle(s, time) {
+        const depth = smoothstep(CONFIG.waterTop, CONFIG.waterBottom, s.yNorm);
+        const refl = reflectionWeight(s.xNorm);
+
+        const waveA = (Math.sin(time * s.speed * CONFIG.speed + s.phase) + 1) * 0.5;
+        const waveB = (Math.sin(time * s.speed * 0.41 * CONFIG.speed + s.phase * 2.3) + 1) * 0.5;
+        const pulse = Math.pow(waveA * 0.72 + waveB * 0.28, s.sharpness);
+
+        const drift =
+          Math.sin(time * 0.45 * CONFIG.speed + s.phase) *
+          CONFIG.driftX *
+          s.drift *
+          lerp(0.45, 1.15, depth);
+
+        const bob =
+          Math.sin(time * 1.15 * CONFIG.speed + s.phase * 1.6) *
+          CONFIG.bobY *
+          s.bob;
+
+        const x = s.xNorm * width + drift;
+        const y = s.yNorm * height + bob;
+
+        const alpha =
+          (s.baseAlpha + pulse * 0.48) *
+          CONFIG.intensity *
+          lerp(0.55, 1.25, refl);
+
+        if (alpha <= 0.01) return;
+
+        const rx =
+          s.radius *
+          CONFIG.stretchX *
+          lerp(0.72, 1.55, depth) *
+          (1 + pulse * 0.95);
+
+        const ry =
+          s.radius *
+          CONFIG.stretchY *
+          lerp(0.75, 1.1, depth);
+
+        ctx.save();
+
+        ctx.globalCompositeOperation = "lighter";
+        ctx.globalAlpha = alpha;
+
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, rx);
+        gradient.addColorStop(0.00, `rgba(255, 255, 255, 0.95)`);
+        gradient.addColorStop(0.28, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, 0.58)`);
+        gradient.addColorStop(0.68, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, 0.16)`);
+        gradient.addColorStop(1.00, `rgba(${s.color.r}, ${s.color.g}, ${s.color.b}, 0)`);
+
+        ctx.fillStyle = gradient;
+
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Heel dun kernstreepje voor reflectiegevoel.
+        if (pulse > 0.64 && rx > 5) {
+          ctx.globalAlpha = alpha * 0.55;
+          ctx.strokeStyle = `rgba(255, 255, 255, 0.85)`;
+          ctx.lineWidth = Math.max(0.45, ry * 0.42);
+
+          ctx.beginPath();
+          ctx.moveTo(x - rx * 0.52, y);
+          ctx.lineTo(x + rx * 0.52, y);
+          ctx.stroke();
+        }
+
+        ctx.restore();
+      }
+
+      function spawnGlint(time) {
+        if (glints.length >= CONFIG.maxGlints || sparkles.length === 0) return;
+
+        // Kies vaker uit het midden van de reflectiebaan.
+        let chosen = null;
+
+        for (let i = 0; i < 8; i++) {
+          const candidate = sparkles[Math.floor(random() * sparkles.length)];
+          if (!candidate) continue;
+
+          const refl = reflectionWeight(candidate.xNorm);
+          if (random() < refl) {
+            chosen = candidate;
+            break;
+          }
+
+          chosen = candidate;
+        }
+
+        if (!chosen) return;
+
+        const depth = smoothstep(CONFIG.waterTop, CONFIG.waterBottom, chosen.yNorm);
+
+        glints.push({
+          xNorm: chosen.xNorm,
+          yNorm: chosen.yNorm,
+          birth: time,
+          life: rand(0.28, 0.62),
+          size: lerp(10, 28, depth) * rand(0.75, 1.25),
+          phase: rand(0, Math.PI * 2),
+          color: chosen.color
+        });
+      }
+
+      function drawGlints(time) {
+        for (let i = glints.length - 1; i >= 0; i--) {
+          const g = glints[i];
+          const age = time - g.birth;
+          const progress = age / g.life;
+
+          if (progress >= 1) {
+            glints.splice(i, 1);
+            continue;
+          }
+
+          const fade = Math.sin(progress * Math.PI);
+          const x =
+            g.xNorm * width +
+            Math.sin(time * 0.55 * CONFIG.speed + g.phase) * CONFIG.driftX;
+
+          const y =
+            g.yNorm * height +
+            Math.sin(time * 1.2 * CONFIG.speed + g.phase) * CONFIG.bobY;
+
+          const sizeX = g.size * (0.85 + progress * 0.45);
+          const sizeY = g.size * 0.20;
+
+          ctx.save();
+
+          ctx.globalCompositeOperation = "lighter";
+          ctx.globalAlpha = fade * CONFIG.intensity * 0.8;
+          ctx.strokeStyle = `rgba(${g.color.r}, ${g.color.g}, ${g.color.b}, 1)`;
+          ctx.lineWidth = 1;
+
+          ctx.beginPath();
+          ctx.moveTo(x - sizeX, y);
+          ctx.lineTo(x + sizeX, y);
+          ctx.stroke();
+
+          ctx.globalAlpha = fade * CONFIG.intensity * 0.32;
+          ctx.lineWidth = 0.8;
+
+          ctx.beginPath();
+          ctx.moveTo(x, y - sizeY);
+          ctx.lineTo(x, y + sizeY);
+          ctx.stroke();
+
+          ctx.restore();
+        }
+      }
+
+      let lastTime = performance.now() / 1000;
+      let glintAccumulator = 0;
+
+      function animate(nowMs) {
+        const time = nowMs / 1000;
+        const dt = Math.min(0.05, time - lastTime);
+        lastTime = time;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Alleen binnen watergebied tekenen.
+        // Later kun je dit vervangen door polygon ctx.clip().
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(
+          0,
+          CONFIG.waterTop * height,
+          width,
+          (CONFIG.waterBottom - CONFIG.waterTop) * height
+        );
+        ctx.clip();
+
+        for (const band of waveBands) {
+          drawWaveBand(band, time);
+        }
+
+        for (const sparkle of sparkles) {
+          drawSparkle(sparkle, time);
+        }
+
+        glintAccumulator += dt * CONFIG.glintChancePerSecond;
+
+        while (glintAccumulator >= 1) {
+          glintAccumulator -= 1;
+          if (random() < 0.85) spawnGlint(time);
+        }
+
+        drawGlints(time);
+
+        ctx.restore();
+
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener("resize", resize, { passive: true });
+
+      resize();
+      requestAnimationFrame(animate);
+    })();
+  </script>
+</body>
+</html>

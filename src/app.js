@@ -3488,6 +3488,12 @@ function sceneEffectBalancedEstimate(effect) {
   if (resolved.preset.renderer === "starField") {
     return areaFactor * 18 + Number(resolved.density || 0) * Number(resolved.particleCap || 0) * quality.particles * 0.72 + Number(resolved.maxGlints || 0) * 8;
   }
+  if (resolved.preset.renderer === "waterShimmer") {
+    const sparkleBudget = Math.min(Number(resolved.preset.hardCap || 240), Number(resolved.particleCap || 190)) * Number(resolved.density || 0) * quality.particles * 0.62;
+    const waveBudget = Math.min(20, Number(resolved.waveBandCount || 0)) * quality.segments * 4.5;
+    const glintBudget = Math.min(8, Number(resolved.maxGlints || 0)) * 7;
+    return areaFactor * 28 + sparkleBudget + waveBudget + glintBudget;
+  }
   if (resolved.preset.renderer === "plumeEmitter") {
     return particleCost * 0.9 + Number(resolved.plumeExpansion || 0) * 18 + Number(resolved.turbulence || 0) * 8;
   }

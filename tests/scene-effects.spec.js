@@ -201,12 +201,12 @@ test.describe("scene effects registry and runtime", () => {
     expect(Object.keys(registry.presets)).toEqual(expect.arrayContaining([
       "light-source-enhancement", "magical-glow", "ambient-floating-particles",
       "sparks-and-embers", "living-lights", "atmospheric-fog", "ground-fog", "twinkling-stars", "smoke-and-steam",
-      "light-beam", "water-surface", "surface-glint", "bubbles-and-spray",
+      "light-beam", "water-surface", "water-shimmer", "surface-glint", "bubbles-and-spray",
       "sun-presence"
     ]));
     expect(new Set(Object.values(registry.presets).map((item) => item.renderer))).toEqual(new Set([
       "glowField", "particleField", "fogField", "groundFog", "starField", "plumeEmitter", "lightBeam",
-      "surfaceShimmer", "surfaceGlint", "sunPresence"
+      "surfaceShimmer", "waterShimmer", "surfaceGlint", "sunPresence"
     ]));
     expect(registry.presets["sun-presence"].variants).toEqual([
       "warm-day-sun", "golden-hour-sun", "soft-evening-sun"
@@ -225,6 +225,9 @@ test.describe("scene effects registry and runtime", () => {
     expect(registry.presets["smoke-and-steam"].geometries).toContain("directionalEmitter");
     expect(registry.presets["smoke-and-steam"].hiddenFromLibrary).toBe(true);
     expect(registry.presets["water-surface"].hiddenFromLibrary).toBe(true);
+    expect(registry.presets["water-shimmer"].hiddenFromLibrary).toBe(false);
+    expect(registry.presets["water-shimmer"].variants).toEqual(["default-water-shimmer"]);
+    expect(registry.presets["water-shimmer"].geometries).toEqual(["polygon", "rectangle"]);
     expect(registry.presets["surface-glint"].hiddenFromLibrary).toBe(true);
     expect(registry.presets["atmospheric-fog"].hiddenFromLibrary).toBe(true);
     expect(registry.presets["ground-fog"].hiddenFromLibrary).toBe(false);
@@ -253,6 +256,23 @@ test.describe("scene effects registry and runtime", () => {
     }
     expect(registry.controlDefs.maxGlints).toMatchObject({ min: 0, max: 8 });
     expect(registry.controlDefs.horizonFadeStart).toMatchObject({ min: 0, max: 1 });
+    expect(registry.presets["water-shimmer"].controls).toEqual([
+      "intensity", "density", "speed", "shimmerStrength", "waveStrength",
+      "glintChance", "maxGlints", "reflectionCenterX", "reflectionWidth",
+      "reflectionBias", "animationAmount", "opacity", "edgeFeatherPx",
+      "stretchX", "stretchY", "driftX", "bobY", "waveBandCount", "waveBandAlpha"
+    ]);
+    expect(registry.controlDefs.shimmerStrength).toMatchObject({ min: 0, max: 3 });
+    expect(registry.controlDefs.waveStrength).toMatchObject({ min: 0, max: 3 });
+    expect(registry.controlDefs.stretchX).toMatchObject({ min: 0.5, max: 12 });
+    expect(registry.controlDefs.stretchY).toMatchObject({ min: 0.2, max: 2 });
+    expect(registry.controlDefs.driftX).toMatchObject({ min: 0, max: 20 });
+    expect(registry.controlDefs.bobY).toMatchObject({ min: 0, max: 8 });
+    expect(registry.controlDefs.reflectionCenterX).toMatchObject({ min: 0, max: 1 });
+    expect(registry.controlDefs.reflectionWidth).toMatchObject({ min: 0.05, max: 1 });
+    expect(registry.controlDefs.reflectionBias).toMatchObject({ min: 0, max: 1 });
+    expect(registry.controlDefs.waveBandCount).toMatchObject({ min: 0, max: 20 });
+    expect(registry.controlDefs.waveBandAlpha).toMatchObject({ min: 0, max: 1 });
     expect(Object.values(registry.presets).every((preset) =>
       preset.recommendedBudget > 0 &&
       preset.hardCap >= preset.recommendedBudget &&
@@ -312,7 +332,18 @@ test.describe("scene effects registry and runtime", () => {
           twinkleSpeed: resolved.twinkleSpeed,
           glintChance: resolved.glintChance,
           maxGlints: resolved.maxGlints,
-          horizonFadeStart: resolved.horizonFadeStart
+          horizonFadeStart: resolved.horizonFadeStart,
+          shimmerStrength: resolved.shimmerStrength,
+          waveStrength: resolved.waveStrength,
+          stretchX: resolved.stretchX,
+          stretchY: resolved.stretchY,
+          driftX: resolved.driftX,
+          bobY: resolved.bobY,
+          reflectionCenterX: resolved.reflectionCenterX,
+          reflectionWidth: resolved.reflectionWidth,
+          reflectionBias: resolved.reflectionBias,
+          waveBandCount: resolved.waveBandCount,
+          waveBandAlpha: resolved.waveBandAlpha
         };
       };
       return {
@@ -329,6 +360,7 @@ test.describe("scene effects registry and runtime", () => {
         chimneySmoke: read("smoke-and-steam", "chimney-smoke"),
         steam: read("smoke-and-steam", "steam-vent"),
         water: read("water-surface", "harbor-water"),
+        waterShimmer: read("water-shimmer", "default-water-shimmer"),
         glint: read("surface-glint", "wet-stone"),
         bubbles: read("bubbles-and-spray", "rising-bubbles"),
         fountainSparkle: read("bubbles-and-spray", "fountain-sparkle"),
@@ -386,6 +418,26 @@ test.describe("scene effects registry and runtime", () => {
     expect(signatures.steam.opacity).toBeLessThan(signatures.chimneySmoke.opacity);
 
     expect(signatures.water.renderer).toBe("surfaceShimmer");
+    expect(signatures.waterShimmer).toMatchObject({
+      renderer: "waterShimmer",
+      variant: "default-water-shimmer",
+      density: 0.55,
+      speed: 1,
+      shimmerStrength: 1.25,
+      waveStrength: 0.45,
+      glintChance: 0.45,
+      maxGlints: 2,
+      stretchX: 7.5,
+      stretchY: 0.52,
+      driftX: 9,
+      bobY: 2.2,
+      reflectionCenterX: 0.5,
+      reflectionWidth: 0.34,
+      reflectionBias: 0.72,
+      waveBandCount: 6,
+      waveBandAlpha: 0.1,
+      animationAmount: 1
+    });
     expect(signatures.glint.renderer).toBe("surfaceGlint");
     expect(signatures.glint.amount).toBeLessThan(signatures.water.amount);
     expect(signatures.glint.highlightDensity).toBeLessThan(signatures.water.highlightDensity);
@@ -912,6 +964,316 @@ test.describe("scene effects registry and runtime", () => {
     expect(deterministicRender.alphaPixels).toBeGreaterThan(80);
   });
 
+  test("registers Water Shimmer with polygon and rectangle geometry, safe controls and quality caps", async ({ page }) => {
+    await page.goto(gameUrl);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
+      const effect = api.defaultInstance("water-shimmer", "default-water-shimmer", level.world, 0);
+      effect.seed = 92031;
+      level.sceneEffects.push(effect);
+      const high = api.resolve(effect, level, { quality: "high", reducedMotion: false });
+      const reducedQuality = api.resolve({ ...effect, qualityTier: "reduced" }, level, { quality: "high", reducedMotion: false });
+      const reducedMotion = api.resolve(effect, level, { quality: "reduced", reducedMotion: true });
+      const large = api.resolve({
+        ...effect,
+        id: "large-water-shimmer",
+        geometry: { type: "polygon", points: [{ x: 0, y: 0 }, { x: 2200, y: 0 }, { x: 2200, y: 720 }, { x: 0, y: 720 }], cutouts: [] },
+        overrides: { density: 3, maxGlints: 8, waveBandCount: 20 }
+      }, level, { quality: "high", reducedMotion: false });
+      const smallAccent = {
+        ...api.defaultInstance("water-shimmer", "default-water-shimmer", level.world, 4),
+        id: "small-accent-water-shimmer",
+        geometry: { type: "polygon", points: [{ x: 100, y: 510 }, { x: 280, y: 500 }, { x: 300, y: 580 }, { x: 90, y: 590 }], cutouts: [] }
+      };
+      const largeAccent = {
+        ...api.defaultInstance("water-shimmer", "default-water-shimmer", level.world, 5),
+        id: "large-accent-water-shimmer",
+        geometry: { type: "polygon", points: [{ x: 0, y: 350 }, { x: 2000, y: 350 }, { x: 2000, y: 700 }, { x: 0, y: 700 }], cutouts: [] }
+      };
+      const hotLargeAccent = {
+        ...largeAccent,
+        id: "hot-large-accent-water-shimmer",
+        overrides: { density: 3, maxGlints: 8, waveBandCount: 20 }
+      };
+      const estimate = window.eval("sceneEffectBalancedEstimate");
+      return {
+        defaultGeometry: api.PRESETS["water-shimmer"].defaultGeometry,
+        effectGeometry: effect.geometry,
+        metadata: {
+          description: api.PRESETS["water-shimmer"].description,
+          performance: api.PRESETS["water-shimmer"].performance,
+          recommendedBudget: api.PRESETS["water-shimmer"].recommendedBudget
+        },
+        valid: api.validateLevel(level),
+        validPolygonOverrides: api.validateInstance({
+          ...effect,
+          id: "valid-water-shimmer-polygon",
+          geometry: { type: "polygon", points: [{ x: 80, y: 420 }, { x: 900, y: 410 }, { x: 840, y: 650 }, { x: 120, y: 660 }], cutouts: [] },
+          overrides: {
+            intensity: 3,
+            density: 3,
+            speed: 3,
+            shimmerStrength: 3,
+            waveStrength: 3,
+            glintChance: 3,
+            maxGlints: 8,
+            stretchX: 12,
+            stretchY: 2,
+            driftX: 20,
+            bobY: 8,
+            reflectionCenterX: 1,
+            reflectionWidth: 1,
+            reflectionBias: 1,
+            waveBandCount: 20,
+            waveBandAlpha: 1,
+            animationAmount: 0,
+            opacity: 1,
+            edgeFeatherPx: 160
+          }
+        }, level),
+        validRectangle: api.validateInstance({
+          ...effect,
+          id: "valid-water-shimmer-rectangle",
+          geometry: { type: "rectangle", x: 500, y: 530, width: 760, height: 210 }
+        }, level),
+        invalidGeometry: api.validateInstance({
+          ...effect,
+          id: "invalid-water-shimmer-ellipse",
+          geometry: { type: "ellipse", x: 500, y: 530, width: 760, height: 210 }
+        }, level),
+        invalidOverrides: api.validateInstance({
+          ...effect,
+          id: "invalid-water-shimmer-overrides",
+          overrides: {
+            density: -0.01,
+            shimmerStrength: 3.01,
+            waveStrength: 3.01,
+            glintChance: 3.01,
+            maxGlints: 9,
+            stretchX: 12.01,
+            stretchY: 0.19,
+            driftX: 20.1,
+            bobY: 8.1,
+            reflectionCenterX: 1.01,
+            reflectionWidth: 0.04,
+            reflectionBias: 1.01,
+            waveBandCount: 21,
+            waveBandAlpha: 1.01,
+            animationAmount: 3.01
+          }
+        }, level),
+        legacyValid: api.validateInstance({
+          id: "legacy-water",
+          label: "Legacy water",
+          presetId: "water-surface",
+          variantId: "harbor-water",
+          presetVersion: 1,
+          enabled: true,
+          seed: 12,
+          qualityTier: "auto",
+          layerSlot: "worldAtmosphere",
+          groupId: "",
+          geometry: { type: "polygon", points: [{ x: 100, y: 440 }, { x: 800, y: 430 }, { x: 820, y: 640 }, { x: 90, y: 650 }], cutouts: [] },
+          overrides: { intensity: 0.7 }
+        }, level),
+        high: {
+          renderer: high.preset.renderer,
+          layerSlot: high.layerSlot,
+          blendMode: high.preset.blendMode,
+          density: high.density,
+          speed: high.speed,
+          shimmerStrength: high.shimmerStrength,
+          waveStrength: high.waveStrength,
+          glintChance: high.glintChance,
+          maxGlints: high.maxGlints,
+          stretchX: high.stretchX,
+          stretchY: high.stretchY,
+          driftX: high.driftX,
+          bobY: high.bobY,
+          reflectionCenterX: high.reflectionCenterX,
+          reflectionWidth: high.reflectionWidth,
+          reflectionBias: high.reflectionBias,
+          waveBandCount: high.waveBandCount,
+          waveBandAlpha: high.waveBandAlpha,
+          animationAmount: high.animationAmount,
+          opacity: high.opacity,
+          hardCap: high.preset.hardCap
+        },
+        reducedQuality: {
+          quality: reducedQuality.quality,
+          scale: reducedQuality.preset.qualityScale.reduced,
+          hardCap: reducedQuality.preset.hardCap
+        },
+        reducedMotion: {
+          speed: reducedMotion.speed,
+          shimmerStrength: reducedMotion.shimmerStrength,
+          waveStrength: reducedMotion.waveStrength,
+          glintChance: reducedMotion.glintChance,
+          animationAmount: reducedMotion.animationAmount,
+          opacity: reducedMotion.opacity
+        },
+        large: {
+          density: large.density,
+          maxGlints: large.maxGlints,
+          waveBandCount: large.waveBandCount,
+          hardCap: large.preset.hardCap
+        },
+        estimates: {
+          small: estimate(smallAccent),
+          large: estimate(largeAccent),
+          hotLarge: estimate(hotLargeAccent)
+        },
+        hashA: api.hash(effect.seed, 611),
+        hashB: api.hash(effect.seed, 611)
+      };
+    });
+    expect(result.defaultGeometry.type).toBe("polygon");
+    expect(result.effectGeometry.type).toBe("polygon");
+    expect(result.valid.valid).toBe(true);
+    expect(result.validPolygonOverrides.valid).toBe(true);
+    expect(result.validRectangle.valid).toBe(true);
+    expect(result.invalidGeometry.valid).toBe(false);
+    expect(result.invalidGeometry.errors.join(" ")).toContain("unsupported");
+    expect(result.invalidOverrides.valid).toBe(false);
+    expect(result.invalidOverrides.errors.join(" ")).toContain("density");
+    expect(result.invalidOverrides.errors.join(" ")).toContain("reflectionWidth");
+    expect(result.legacyValid.valid).toBe(true);
+    expect(result.metadata.description).toContain("Localized water glimmer");
+    expect(result.metadata.performance).toBe("Low");
+    expect(result.metadata.recommendedBudget).toBeLessThan(100);
+    expect(result.high).toMatchObject({
+      renderer: "waterShimmer",
+      layerSlot: "worldAtmosphere",
+      blendMode: "screen",
+      density: 0.55,
+      speed: 1,
+      shimmerStrength: 1.25,
+      waveStrength: 0.45,
+      glintChance: 0.45,
+      maxGlints: 2,
+      stretchX: 7.5,
+      stretchY: 0.52,
+      driftX: 9,
+      bobY: 2.2,
+      reflectionCenterX: 0.5,
+      reflectionWidth: 0.34,
+      reflectionBias: 0.72,
+      waveBandCount: 6,
+      waveBandAlpha: 0.1,
+      animationAmount: 1,
+      opacity: 0.7,
+      hardCap: 240
+    });
+    expect(result.high.density).toBeLessThan(0.7);
+    expect(result.high.shimmerStrength).toBeGreaterThan(1);
+    expect(result.high.waveStrength).toBeLessThan(0.7);
+    expect(result.high.glintChance).toBeLessThan(0.7);
+    expect(result.high.maxGlints).toBeLessThanOrEqual(2);
+    expect(result.high.waveBandCount).toBeLessThanOrEqual(7);
+    expect(result.estimates.small).toBeLessThan(85);
+    expect(result.estimates.small).toBeLessThan(result.estimates.large);
+    expect(result.estimates.hotLarge).toBeGreaterThan(result.estimates.small);
+    expect(result.estimates.hotLarge).toBeLessThan(360);
+    expect(result.reducedQuality.quality).toBe("reduced");
+    expect(result.reducedQuality.scale).toBeLessThan(1);
+    expect(result.reducedMotion.speed).toBeLessThan(result.high.speed);
+    expect(result.reducedMotion.glintChance).toBeLessThan(result.high.glintChance);
+    expect(result.reducedMotion.animationAmount).toBeLessThan(result.high.animationAmount);
+    expect(result.reducedMotion.shimmerStrength).toBeLessThan(result.high.shimmerStrength);
+    expect(result.reducedMotion.waveStrength).toBeLessThan(result.high.waveStrength);
+    expect(result.reducedMotion.opacity).toBeGreaterThanOrEqual(result.high.opacity);
+    expect(result.reducedMotion.opacity).toBeGreaterThan(0.65);
+    expect(result.large.density).toBe(3);
+    expect(result.large.maxGlints).toBe(8);
+    expect(result.large.waveBandCount).toBe(20);
+    expect(result.large.hardCap).toBe(240);
+    expect(result.hashA).toBe(result.hashB);
+  });
+
+  test("renders Water Shimmer visibly under reduced motion with deterministic polygon clipping", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+      const api = window.AtlasSceneEffects;
+      const level = window.eval("level");
+      level.sceneEffects = [api.defaultInstance("water-shimmer", "default-water-shimmer", level.world, 0)];
+      level.sceneEffects[0].id = "visible-water-shimmer";
+      level.sceneEffects[0].geometry = {
+        type: "polygon",
+        points: [{ x: 150, y: 440 }, { x: 1080, y: 430 }, { x: 1160, y: 650 }, { x: 120, y: 660 }],
+        cutouts: []
+      };
+      level.sceneEffects[0].seed = 93071;
+      level.sceneEffects[0].overrides = { density: 2.4, intensity: 2.4, shimmerStrength: 2.2, waveStrength: 1.8, glintChance: 3, maxGlints: 8, edgeFeatherPx: 0 };
+      window.eval("sceneEffectRuntime.prepareLevel")(level);
+      window.eval("render")();
+      window.eval("sceneEffectRuntime.restart")();
+    });
+    await page.waitForTimeout(120);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const effect = window.eval("level.sceneEffects[0]");
+      const canvas = document.querySelector('[data-scene-effects-canvas="worldAtmosphere"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      let outside = 0;
+      let warmOrCool = 0;
+      for (let y = 0; y < canvas.height; y += 2) {
+        for (let x = 0; x < canvas.width; x += 2) {
+          const offset = (y * canvas.width + x) * 4;
+          const alpha = data[offset + 3];
+          if (!alpha) continue;
+          alphaPixels += 1;
+          if (!api.pointInsideGeometry({ x, y }, effect.geometry)) outside += 1;
+          if (data[offset + 2] >= data[offset] || data[offset] > 220) warmOrCool += 1;
+        }
+      }
+      return {
+        renderer: window.eval("sceneEffectRuntime.resolved[0].preset.renderer"),
+        layerSlot: window.eval("sceneEffectRuntime.resolved[0].layerSlot"),
+        speed: window.eval("sceneEffectRuntime.resolved[0].speed"),
+        glintChance: window.eval("sceneEffectRuntime.resolved[0].glintChance"),
+        animationAmount: window.eval("sceneEffectRuntime.resolved[0].animationAmount"),
+        shimmerStrength: window.eval("sceneEffectRuntime.resolved[0].shimmerStrength"),
+        waveStrength: window.eval("sceneEffectRuntime.resolved[0].waveStrength"),
+        alphaPixels,
+        outside,
+        warmOrCool
+      };
+    });
+    expect(result).toMatchObject({ renderer: "waterShimmer", layerSlot: "worldAtmosphere" });
+    expect(result.speed).toBeLessThan(0.3);
+    expect(result.glintChance).toBeLessThan(1);
+    expect(result.animationAmount).toBeLessThan(0.4);
+    expect(result.shimmerStrength).toBeLessThan(2.2);
+    expect(result.waveStrength).toBeLessThan(1.8);
+    expect(result.alphaPixels).toBeGreaterThan(120);
+    expect(result.outside / result.alphaPixels).toBeLessThan(0.01);
+    expect(result.warmOrCool / result.alphaPixels).toBeGreaterThan(0.5);
+    const deterministicRender = await page.evaluate(() => {
+      const originalRandom = Math.random;
+      let randomCalls = 0;
+      Math.random = () => {
+        randomCalls += 1;
+        throw new Error("Water Shimmer render must stay seeded.");
+      };
+      try {
+        window.eval("sceneEffectRuntime.restart")();
+      } finally {
+        Math.random = originalRandom;
+      }
+      const canvas = document.querySelector('[data-scene-effects-canvas="worldAtmosphere"]');
+      const data = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+      let alphaPixels = 0;
+      for (let index = 3; index < data.length; index += 64) if (data[index]) alphaPixels += 1;
+      return { randomCalls, alphaPixels };
+    });
+    expect(deterministicRender.randomCalls).toBe(0);
+    expect(deterministicRender.alphaPixels).toBeGreaterThan(120);
+  });
+
   test("renders Sun Presence visibly on the worldLight layer under reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto(gameUrl);
@@ -1362,6 +1724,7 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='sun-presence']")).toHaveCount(1);
     await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='water-shimmer']")).toHaveCount(1);
     await page.locator(".effectLibraryCategory summary").filter({ hasText: "Atmosphere" }).click();
     await addPresetEffect(page, "ground-fog");
     const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'ground-fog')"));
@@ -1393,10 +1756,11 @@ test.describe("scene effects editor", () => {
         hiddenFamilies: {
           atmosphericFog: Boolean(api.PRESETS["atmospheric-fog"].hiddenFromLibrary),
           smokeAndSteam: Boolean(api.PRESETS["smoke-and-steam"].hiddenFromLibrary),
-          waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
           surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
           sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary),
-          groundFog: Boolean(api.PRESETS["ground-fog"].hiddenFromLibrary)
+          groundFog: Boolean(api.PRESETS["ground-fog"].hiddenFromLibrary),
+          waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
+          waterShimmer: Boolean(api.PRESETS["water-shimmer"].hiddenFromLibrary)
         }
       };
     });
@@ -1414,7 +1778,9 @@ test.describe("scene effects editor", () => {
         waterSurface: true,
         surfaceGlint: true,
         sunPresence: false,
-        groundFog: false
+        groundFog: false,
+        waterSurface: true,
+        waterShimmer: false
       }
     });
     await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
@@ -1424,6 +1790,7 @@ test.describe("scene effects editor", () => {
     await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
     await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='water-shimmer']")).toHaveCount(1);
     await page.locator(".effectLibraryCategory summary").filter({ hasText: "Atmosphere" }).click();
     await addPresetEffect(page, "twinkling-stars");
     const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'twinkling-stars')"));
@@ -1438,6 +1805,76 @@ test.describe("scene effects editor", () => {
     }
     await openEffectDetails(page, "Advanced");
     for (const field of ["glintChance", "maxGlints", "horizonFadeStart", "animationAmount"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
+  });
+
+  test("exposes Water Shimmer as the only active water surface effect with polygon controls", async ({ page }) => {
+    await openEffectsEditor(page);
+    const library = await page.evaluate(() => {
+      const api = window.AtlasSceneEffects;
+      const preset = api.PRESETS["water-shimmer"];
+      return {
+        hidden: Boolean(preset.hiddenFromLibrary),
+        variants: preset.variants.filter((variant) => !variant.hiddenFromLibrary).map((variant) => variant.id),
+        controls: preset.controls,
+        geometries: preset.geometryTypes,
+        renderer: preset.renderer,
+        oldWaterRenderer: api.PRESETS["water-surface"].renderer,
+        hiddenFamilies: {
+          atmosphericFog: Boolean(api.PRESETS["atmospheric-fog"].hiddenFromLibrary),
+          smokeAndSteam: Boolean(api.PRESETS["smoke-and-steam"].hiddenFromLibrary),
+          waterSurface: Boolean(api.PRESETS["water-surface"].hiddenFromLibrary),
+          surfaceGlint: Boolean(api.PRESETS["surface-glint"].hiddenFromLibrary),
+          sunPresence: Boolean(api.PRESETS["sun-presence"].hiddenFromLibrary),
+          groundFog: Boolean(api.PRESETS["ground-fog"].hiddenFromLibrary),
+          twinklingStars: Boolean(api.PRESETS["twinkling-stars"].hiddenFromLibrary)
+        }
+      };
+    });
+    expect(library).toMatchObject({
+      hidden: false,
+      variants: ["default-water-shimmer"],
+      controls: [
+        "intensity", "density", "speed", "shimmerStrength", "waveStrength",
+        "glintChance", "maxGlints", "reflectionCenterX", "reflectionWidth",
+        "reflectionBias", "animationAmount", "opacity", "edgeFeatherPx",
+        "stretchX", "stretchY", "driftX", "bobY", "waveBandCount", "waveBandAlpha"
+      ],
+      geometries: ["polygon", "rectangle"],
+      renderer: "waterShimmer",
+      oldWaterRenderer: "surfaceShimmer",
+      hiddenFamilies: {
+        atmosphericFog: true,
+        smokeAndSteam: true,
+        waterSurface: true,
+        surfaceGlint: true,
+        sunPresence: false,
+        groundFog: false,
+        twinklingStars: false
+      }
+    });
+    await expect(page.locator("[data-effect-preset-card='water-shimmer']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='water-surface']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='surface-glint']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='smoke-and-steam']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='atmospheric-fog']")).toHaveCount(0);
+    await expect(page.locator("[data-effect-preset-card='sun-presence']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='ground-fog']")).toHaveCount(1);
+    await expect(page.locator("[data-effect-preset-card='twinkling-stars']")).toHaveCount(1);
+    await addPresetEffect(page, "water-shimmer");
+    const stored = await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.presetId === 'water-shimmer')"));
+    expect(stored).toMatchObject({
+      presetId: "water-shimmer",
+      variantId: "default-water-shimmer",
+      layerSlot: "worldAtmosphere",
+      geometry: { type: "polygon" }
+    });
+    for (const field of ["intensity", "density", "speed", "shimmerStrength", "waveStrength"]) {
+      await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
+    }
+    await openEffectDetails(page, "Advanced");
+    for (const field of ["glintChance", "maxGlints", "reflectionCenterX", "reflectionWidth", "reflectionBias", "animationAmount", "stretchX", "stretchY", "driftX", "bobY", "waveBandCount", "waveBandAlpha"]) {
       await expect(page.locator(`[data-effect-override='${field}']`)).toBeVisible();
     }
   });
