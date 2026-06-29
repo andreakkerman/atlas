@@ -85,6 +85,12 @@ let state = {
   screen: "launch"
 };
 
+const MENU_AUTO_ROTATE_MS = 6000;
+const menuCarouselRuntime = {
+  timer: null,
+  paused: false
+};
+
 let audioConfig = cloneAudioConfig(window.SVEN_AUDIO_CONFIG || {});
 const originalAudioTracks = cloneAudioConfig(window.SVEN_AUDIO_CONFIG?.tracks || {});
 const audioState = {
@@ -4752,9 +4758,7 @@ function renderMenu() {
   const menuLevels = visibleLevelCatalog();
   const heroIndex = menuLevels.length ? Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), menuLevels.length - 1) : 0;
   const heroLevel = menuLevels[heroIndex];
-  const supportingLevels = menuLevels.length
-    ? menuLevels.filter((_, index) => index !== heroIndex)
-    : [];
+  const supportingLevels = menuLevels;
   return `
     <main class="menuScreen">
       <button class="progressMenuButton" type="button" data-action="progress">Voortgang</button>
@@ -4784,7 +4788,7 @@ function renderMenu() {
                 `).join("")}
               </div>
               <div class="supportingAdventureGrid">
-                ${supportingLevels.map((item, index) => renderLevelTile(item, index)).join("")}
+                ${supportingLevels.map((item, index) => renderLevelTile(item, index, index === heroIndex)).join("")}
               </div>
             `
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
@@ -4792,6 +4796,58 @@ function renderMenu() {
       </section>
     </main>
   `;
+}
+
+function prefersReducedMotion() {
+  return Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+}
+
+function stopMenuAutoRotation() {
+  if (menuCarouselRuntime.timer) {
+    window.clearTimeout(menuCarouselRuntime.timer);
+    menuCarouselRuntime.timer = null;
+  }
+}
+
+function menuAutoRotationAllowed() {
+  return state.screen === "menu" && !menuCarouselRuntime.paused && !document.hidden && !prefersReducedMotion();
+}
+
+function syncMenuAutoRotation() {
+  stopMenuAutoRotation();
+  if (!menuAutoRotationAllowed()) return;
+  menuCarouselRuntime.timer = window.setTimeout(() => {
+    menuCarouselRuntime.timer = null;
+    changeMenuHero(1, { auto: true });
+  }, MENU_AUTO_ROTATE_MS);
+}
+
+function selectedMenuHeroIndex() {
+  const menuLevels = visibleLevelCatalog();
+  return menuLevels.length ? Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), menuLevels.length - 1) : 0;
+}
+
+function setMenuHeroIndex(menuHeroIndex, options = {}) {
+  const menuLevels = visibleLevelCatalog();
+  if (!menuLevels.length || state.screen !== "menu") return;
+  const nextIndex = (menuHeroIndex + menuLevels.length) % menuLevels.length;
+  const currentIndex = selectedMenuHeroIndex();
+  if (nextIndex === currentIndex) {
+    if (options.manual) syncMenuAutoRotation();
+    return;
+  }
+  state = {
+    ...state,
+    menuHeroIndex: nextIndex,
+    menuHeroTransition: !prefersReducedMotion()
+  };
+  render();
+}
+
+function changeMenuHero(direction, options = {}) {
+  const menuLevels = visibleLevelCatalog();
+  if (!menuLevels.length || state.screen !== "menu") return;
+  setMenuHeroIndex(selectedMenuHeroIndex() + direction, options);
 }
 
 function formatSessionDuration(milliseconds) {
@@ -4947,7 +5003,7 @@ function renderLoading() {
 
 function renderHeroLevelTile(item) {
   return `
-    <article class="levelTile heroLevelTile" data-featured-level="${item.id}">
+    <article class="levelTile heroLevelTile ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" data-featured-level="${item.id}">
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
@@ -4960,10 +5016,10 @@ function renderHeroLevelTile(item) {
   `;
 }
 
-function renderLevelTile(item, index = 0) {
-  const tileClass = index >= 2 ? "levelTile supportingLevelTile wideLevelTile" : "levelTile supportingLevelTile";
+function renderLevelTile(item, index = 0, isActive = false) {
+  const tileClass = `${index >= 2 ? "levelTile supportingLevelTile wideLevelTile" : "levelTile supportingLevelTile"}${isActive ? " activeSupportingLevelTile" : ""}`;
   return `
-    <button class="${tileClass}" type="button" data-level="${item.id}">
+    <button class="${tileClass}" type="button" data-menu-index="${index}" data-menu-tile="${item.id}" aria-pressed="${isActive ? "true" : "false"}">
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
@@ -5176,6 +5232,7 @@ function render() {
   ambientFlybyRuntime.sync();
   sceneEffectRuntime.sync();
   syncPerformanceHud();
+  syncMenuAutoRotation();
   const editorPanel = document.querySelector("[data-developer-tools]");
   if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }
@@ -5186,6 +5243,32 @@ app.addEventListener("toggle", (event) => {
   walkPathEditor.effectControlOpenSections ||= {};
   walkPathEditor.effectControlOpenSections[`${section.dataset.effectId}:${section.dataset.effectControlSection}`] = section.open;
 }, true);
+
+app.addEventListener("pointerover", (event) => {
+  if (state.screen !== "menu" || !event.target.closest?.(".levelGrid")) return;
+  menuCarouselRuntime.paused = true;
+  stopMenuAutoRotation();
+});
+
+app.addEventListener("pointerout", (event) => {
+  if (state.screen !== "menu" || !event.target.closest?.(".levelGrid")) return;
+  if (event.relatedTarget?.closest?.(".levelGrid")) return;
+  menuCarouselRuntime.paused = false;
+  syncMenuAutoRotation();
+});
+
+app.addEventListener("focusin", (event) => {
+  if (state.screen !== "menu" || !event.target.closest?.(".levelGrid")) return;
+  menuCarouselRuntime.paused = true;
+  stopMenuAutoRotation();
+});
+
+app.addEventListener("focusout", (event) => {
+  if (state.screen !== "menu" || !event.target.closest?.(".levelGrid")) return;
+  if (event.relatedTarget?.closest?.(".levelGrid")) return;
+  menuCarouselRuntime.paused = false;
+  syncMenuAutoRotation();
+});
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
@@ -5477,17 +5560,15 @@ app.addEventListener("click", (event) => {
   const levelTarget = event.target.closest("[data-level]");
   if (levelTarget) {
     playSfx("uiClick");
+    stopMenuAutoRotation();
     selectLevel(levelTarget.dataset.level);
     return;
   }
 
   const menuIndexTarget = event.target.closest("[data-menu-index]");
   if (menuIndexTarget) {
-    const menuLevels = visibleLevelCatalog();
-    const menuHeroIndex = Math.min(Math.max(Number(menuIndexTarget.dataset.menuIndex) || 0, 0), Math.max(menuLevels.length - 1, 0));
     playSfx("uiClick");
-    state = { ...state, menuHeroIndex };
-    render();
+    setMenuHeroIndex(Number(menuIndexTarget.dataset.menuIndex) || 0, { manual: true });
     return;
   }
 
@@ -5506,17 +5587,14 @@ app.addEventListener("click", (event) => {
     playSfx("uiClick");
     const action = actionTarget.dataset.action;
     if (action === "launch-enter") {
+      menuCarouselRuntime.paused = false;
       state = { screen: "menu", menuHeroIndex: 0 };
       render();
       return;
     }
     if (action === "menu-previous" || action === "menu-next") {
-      const menuLevels = visibleLevelCatalog();
-      const currentIndex = Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), Math.max(menuLevels.length - 1, 0));
       const direction = action === "menu-next" ? 1 : -1;
-      const menuHeroIndex = menuLevels.length ? (currentIndex + direction + menuLevels.length) % menuLevels.length : 0;
-      state = { ...state, menuHeroIndex };
-      render();
+      changeMenuHero(direction, { manual: true });
       return;
     }
     if (action === "progress") {
@@ -5834,11 +5912,13 @@ window.addEventListener("pointerup", () => {
 
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
+    stopMenuAutoRotation();
     pauseAmbientAnimalTimers();
     ambientFlybyRuntime.stopAll();
     sceneEffectRuntime.stop();
     Object.values(guideBlinkRuntime).forEach(clearGuideBlinkState);
   } else {
+    syncMenuAutoRotation();
     syncAmbientAnimalTimers();
     syncGuideBlinkTimers();
     ambientFlybyRuntime.sync();

@@ -23,7 +23,8 @@ async function startEuropeAdventure(page) {
   await tap(page.getByRole("button", { name: "Start avontuur" }));
   await expect(page.getByRole("button", { name: /De Reis door Europa/ })).toBeVisible();
   await expect(page.getByText("Reis door zeven Europese landen")).toBeVisible();
-  await tap(page.getByRole("button", { name: /De Reis door Europa/ }));
+  await tap(page.locator('[data-menu-tile="LVL-0013"]'));
+  await tap(page.locator(".heroStartButton"));
   await expect(page.getByRole("heading", { name: "Nederland — Het Begin van de Reis" })).toBeVisible();
   await tap(page.getByRole("button", { name: "Start avontuur" }));
   await waitForImages(page);
@@ -793,7 +794,8 @@ test.describe("De Grote Reis door Europa", () => {
     await page.evaluate(() => localStorage.clear());
     await waitForImages(page);
     await tap(page.getByRole("button", { name: "Start avontuur" }));
-    await tap(page.getByRole("button", { name: /De Reis door Europa/ }));
+    await tap(page.locator('[data-menu-tile="LVL-0013"]'));
+    await tap(page.locator(".heroStartButton"));
     await tap(page.getByRole("button", { name: "Start avontuur" }));
     await page.keyboard.press("Control+Shift+D");
 

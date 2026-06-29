@@ -11,7 +11,8 @@ async function startNautilus(page, url = gameUrl) {
   await page.goto(url);
   await page.evaluate(() => localStorage.clear());
   await page.getByRole("button", { name: "Start avontuur" }).click();
-  await page.getByRole("button", { name: /De Nautilus/ }).click();
+  await page.locator('[data-menu-tile="LVL-0004"]').click();
+  await page.locator(".heroStartButton").click();
   await expect(page.getByRole("heading", { name: "De Nautilus" })).toBeVisible();
   await page.getByRole("button", { name: "Start avontuur" }).click();
   await expect(page.getByRole("button", { name: "Meeuw", exact: true })).toBeVisible();
@@ -21,7 +22,7 @@ async function startRunenpoort(page, url = gameUrl) {
   await page.goto(url);
   await page.evaluate(() => localStorage.clear());
   await page.getByRole("button", { name: "Start avontuur" }).click();
-  await page.getByRole("button", { name: /De Runenpoort/ }).click();
+  await page.locator(".heroStartButton").click();
   await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
   await page.getByRole("button", { name: "Start avontuur" }).click();
   await expect(page.getByRole("button", { name: "Uil" })).toBeVisible();
@@ -31,7 +32,7 @@ async function startVikingHarbor(page, url = gameUrl) {
   await page.goto(url);
   await page.evaluate(() => localStorage.clear());
   await page.getByRole("button", { name: "Start avontuur" }).click();
-  await page.getByRole("button", { name: /De Runenpoort/ }).click();
+  await page.locator(".heroStartButton").click();
   await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
   await page.evaluate(async () => {
     await window.eval("selectLevel")("LVL-0003", { startImmediately: true });

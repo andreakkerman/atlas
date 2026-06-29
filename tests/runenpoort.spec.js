@@ -157,7 +157,7 @@ async function startAdventure(page, url = gameUrl) {
   await page.evaluate(() => localStorage.clear());
   await waitForImages(page);
   await enterFromLaunch(page);
-  await tap(page.getByRole("button", { name: /De Runenpoort/ }));
+  await tap(page.locator(".heroStartButton"));
   await waitForImages(page);
   await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
   await tap(page.getByRole("button", { name: "Start avontuur" }));
@@ -563,7 +563,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
     await expect(page.getByText("SVENADVENTURE")).toHaveCount(0);
     await expect(page.getByText("Wat ga je vandaag ontdekken?")).toBeVisible();
-    await expect(page.getByRole("button", { name: /De Runenpoort/ })).toBeVisible();
+    await expect(page.locator('[data-menu-tile="LVL-0001"]')).toBeVisible();
     await expect(page.locator(".heroLevelTile")).toContainText("Verken een vergeten Vikingtempel");
     await expect(page.getByRole("button", { name: /De Nautilus/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Duik in een geheim avontuur/ })).toBeVisible();
@@ -573,11 +573,11 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /Reis door zeven Europese landen/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Leonardo/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Reis door Italië/ })).toBeVisible();
-    await expect(page.getByText("3 plekken", { exact: true })).toBeVisible();
-    await expect(page.getByText("4 plekken", { exact: true })).toBeVisible();
-    await expect(page.getByText("5 plekken", { exact: true })).toBeVisible();
-    await expect(page.getByText("6 plekken", { exact: true })).toBeVisible();
-    await expect(page.getByText("8 plekken", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("3 plekken", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("4 plekken", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("5 plekken", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("6 plekken", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("8 plekken", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
@@ -588,7 +588,8 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /De Netherproef/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Weg Naar Huis/ })).toHaveCount(0);
     await expect(page.locator(".heroLevelTile")).toHaveCount(1);
-    await expect(page.locator(".supportingLevelTile")).toHaveCount(4);
+    await expect(page.locator(".supportingLevelTile")).toHaveCount(5);
+    await expect(page.locator(".activeSupportingLevelTile")).toHaveAttribute("data-menu-tile", "LVL-0001");
     await expect(page.locator(".menuCarouselDot")).toHaveCount(5);
     await expect(page.getByRole("button", { name: "Vorig avontuur" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Volgend avontuur" })).toBeVisible();
@@ -596,7 +597,7 @@ test.describe("SvenAdventure", () => {
       const hero = grid.querySelector(".heroLevelTile").getBoundingClientRect();
       const cards = [...grid.querySelectorAll(".supportingLevelTile")].map((node) => {
         const box = node.getBoundingClientRect();
-        return { x: box.x, y: box.y, width: box.width, height: box.height };
+        return { id: node.dataset.menuTile, x: box.x, y: box.y, width: box.width, height: box.height };
       });
       return {
         hero: { x: hero.x, y: hero.y, width: hero.width, height: hero.height },
@@ -612,11 +613,36 @@ test.describe("SvenAdventure", () => {
     expect(layout.cards[2].y).toBeGreaterThan(layout.cards[0].y + layout.cards[0].height - 2);
     expect(layout.cards[2].width).toBeGreaterThan(layout.cards[0].width * 1.8);
     expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+    expect(layout.cards.map((card) => card.id)).toEqual(["LVL-0001", "LVL-0004", "LVL-0008", "LVL-0013", "LVL-0021"]);
     await page.getByRole("button", { name: "Volgend avontuur" }).click();
     await expect(page.locator(".heroLevelTile")).toContainText("De Nautilus");
-    await page.locator('[data-menu-index="4"]').click();
+    await expect(page.locator(".activeSupportingLevelTile")).toHaveAttribute("data-menu-tile", "LVL-0004");
+    await expect(page.locator(".heroLevelTile")).toHaveClass(/heroLevelTileTransition/);
+    const orderAfterNext = await page.locator(".supportingLevelTile").evaluateAll((nodes) => nodes.map((node) => node.dataset.menuTile));
+    expect(orderAfterNext).toEqual(layout.cards.map((card) => card.id));
+    await page.locator('[data-menu-tile="LVL-0008"]').click();
+    await expect(page.locator(".heroLevelTile")).toContainText("De Blokkenpoort");
+    await expect(page.locator(".activeSupportingLevelTile")).toHaveAttribute("data-menu-tile", "LVL-0008");
+    await page.locator('.menuCarouselDot[data-menu-index="4"]').click();
     await expect(page.locator(".heroLevelTile")).toContainText("Leonardo");
-    await expect(page.locator(".levelTile")).toHaveCount(5);
+    await expect(page.locator(".levelTile")).toHaveCount(6);
+  });
+
+  test("auto-rotates only the hero while keeping adventure tiles stable", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.goto(gameUrl);
+    await enterFromLaunch(page);
+    await expect(page.locator(".heroLevelTile")).toContainText("De Runenpoort");
+    const initialOrder = await page.locator(".supportingLevelTile").evaluateAll((nodes) => nodes.map((node) => node.dataset.menuTile));
+    await page.mouse.move(4, 4);
+
+    await page.waitForTimeout(6300);
+
+    await expect(page.locator(".heroLevelTile")).toContainText("De Nautilus");
+    await expect(page.locator(".activeSupportingLevelTile")).toHaveAttribute("data-menu-tile", "LVL-0004");
+    const orderAfterRotate = await page.locator(".supportingLevelTile").evaluateAll((nodes) => nodes.map((node) => node.dataset.menuTile));
+    expect(orderAfterRotate).toEqual(initialOrder);
+    await expect(page.locator(".heroLevelTile")).toHaveClass(/heroLevelTileTransition/);
   });
 
   test("unlocks audio on the launch screen and does not show launch again on menu return", async ({ page }) => {
@@ -637,7 +663,7 @@ test.describe("SvenAdventure", () => {
       musicKey: "menu"
     });
 
-    await tap(page.getByRole("button", { name: /De Runenpoort/ }));
+    await tap(page.locator(".heroStartButton"));
     await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Terug" }));
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
@@ -752,7 +778,7 @@ test.describe("SvenAdventure", () => {
     await page.evaluate(() => localStorage.clear());
     await waitForImages(page);
     await enterFromLaunch(page);
-    await tap(page.getByRole("button", { name: /De Nautilus/ }));
+    await tap(page.locator('[data-menu-tile="LVL-0004"]'));
     await expect(page.getByRole("heading", { name: "De Nautilus" })).toBeVisible();
     await tap(page.getByRole("button", { name: "Start avontuur" }));
     await expectSpawnAtStartNode(page, "LVL-0004");
@@ -1221,7 +1247,7 @@ test.describe("SvenAdventure", () => {
     await page.goto(gameUrl);
     await waitForImages(page);
     await enterFromLaunch(page);
-    await tap(page.getByRole("button", { name: /De Nautilus/ }));
+    await tap(page.locator('[data-menu-tile="LVL-0004"]'));
     await tap(page.getByRole("button", { name: "Start avontuur" }));
 
     const harborMap = page.getByRole("button", { name: "Havenkaart" });
@@ -1235,7 +1261,7 @@ test.describe("SvenAdventure", () => {
     await page.reload();
     await waitForImages(page);
     await enterFromLaunch(page);
-    await tap(page.getByRole("button", { name: /De Blokkenpoort/ }));
+    await tap(page.locator('[data-menu-tile="LVL-0008"]'));
     await tap(page.getByRole("button", { name: "Start avontuur" }));
 
     const sword = page.getByRole("button", { name: "Diamantzwaard" });
@@ -1393,7 +1419,7 @@ test.describe("SvenAdventure", () => {
     await page.goto(gameUrl);
     await waitForImages(page);
     await enterFromLaunch(page);
-    await tap(page.getByRole("button", { name: /De Nautilus/ }));
+    await tap(page.locator('[data-menu-tile="LVL-0004"]'));
     await tap(page.getByRole("button", { name: "Start avontuur" }));
     await expectBlockedWorldExit(page, {
       exitName: "Steigerpoort",
@@ -1404,7 +1430,7 @@ test.describe("SvenAdventure", () => {
     await page.goto(gameUrl);
     await waitForImages(page);
     await enterFromLaunch(page);
-    await tap(page.getByRole("button", { name: /De Blokkenpoort/ }));
+    await tap(page.locator('[data-menu-tile="LVL-0008"]'));
     await tap(page.getByRole("button", { name: "Start avontuur" }));
     await expectBlockedWorldExit(page, {
       exitName: "Rechterpoort",

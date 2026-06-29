@@ -42,7 +42,8 @@ async function openIntroFromMenu(page) {
   await page.waitForFunction(() => [...document.images].every((image) => image.complete && image.naturalWidth > 0));
   await page.getByRole("button", { name: "Start avontuur" }).click();
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-  await page.getByRole("button", { name: /Leonardo/ }).click();
+  await page.locator('[data-menu-tile="LVL-0021"]').click();
+  await page.locator(".heroStartButton").click();
 }
 
 async function openChallengeAtApproach(page, objectId) {
@@ -90,13 +91,14 @@ test.describe("Leonardo da Vinci adventure", () => {
     await page.evaluate(() => localStorage.clear());
     await page.waitForFunction(() => [...document.images].every((image) => image.complete && image.naturalWidth > 0));
     await page.getByRole("button", { name: "Start avontuur" }).click();
-    const leonardoCard = page.getByRole("button", { name: /Leonardo/ });
+    const leonardoCard = page.locator('[data-menu-tile="LVL-0021"]');
     await expect(leonardoCard).toContainText("Leonardo’s onvoltooide atlas");
     await expect(leonardoCard).toContainText("Reis door Italië en ontdek hoe Leonardo keek, mat, onderzocht en ontwierp.");
     await expect(leonardoCard).toContainText("6 plekken");
     await expect(leonardoCard).not.toContainText("Leonardo da Vinci - Rome");
 
     await leonardoCard.click();
+    await page.locator(".heroStartButton").click();
     await expect(page.getByRole("heading", { name: "Rome" })).toBeVisible();
     await expect(page.locator(".introTheme")).toHaveText("Observatie en licht");
     await expect(page.getByRole("heading", { name: /Rome - Observatie/ })).toHaveCount(0);
@@ -284,7 +286,7 @@ test.describe("Leonardo da Vinci adventure", () => {
     await page.evaluate(() => localStorage.clear());
     await page.waitForFunction(() => [...document.images].every((image) => image.complete && image.naturalWidth > 0));
     await page.getByRole("button", { name: "Start avontuur" }).click();
-    await page.getByRole("button", { name: /De Runenpoort/ }).click();
+    await page.locator(".heroStartButton").click();
     await page.getByRole("button", { name: "Start avontuur" }).click();
     await expect(page.locator(".teamMeta")).toContainText("0/3 runen");
   });

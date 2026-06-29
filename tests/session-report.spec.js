@@ -17,6 +17,10 @@ async function enterMenu(page) {
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
 }
 
+async function startHeroAdventure(page) {
+  await page.locator(".heroStartButton").click();
+}
+
 async function createSyntheticSession(page, start, title = "De Runenpoort") {
   return page.evaluate(({ start, title }) => {
     const report = window.AtlasSessionReport;
@@ -36,7 +40,7 @@ test.describe("Atlas Session Report v0.1", () => {
   test("starts on adventure selection and ends on return to menu", async ({ page }) => {
     await cleanOpen(page);
     await enterMenu(page);
-    await page.getByRole("button", { name: /De Runenpoort/ }).click();
+    await startHeroAdventure(page);
     await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
 
     const active = await page.evaluate(() => window.AtlasSessionReport.getCurrent());
@@ -168,19 +172,19 @@ test.describe("Atlas Session Report v0.1", () => {
   test("does not collect in ordinary Playwright, editor, or debug completion", async ({ page }) => {
     await cleanOpen(page, gameUrl);
     await enterMenu(page);
-    await page.getByRole("button", { name: /De Runenpoort/ }).click();
+    await startHeroAdventure(page);
     await page.getByRole("button", { name: "Terug" }).click();
     expect(await page.evaluate(() => localStorage.getItem("atlas-session-report-v1"))).toBeNull();
 
     await cleanOpen(page, `${gameUrl}?dev=editor&atlasSessionTest=1`);
     await enterMenu(page);
-    await page.getByRole("button", { name: /De Runenpoort/ }).click();
+    await startHeroAdventure(page);
     await page.getByRole("button", { name: "Terug" }).click();
     expect(await page.evaluate(() => localStorage.getItem("atlas-session-report-v1"))).toBeNull();
 
     await cleanOpen(page);
     await enterMenu(page);
-    await page.getByRole("button", { name: /De Runenpoort/ }).click();
+    await startHeroAdventure(page);
     await page.getByRole("button", { name: "Start avontuur" }).click();
     await page.keyboard.press("Control+Shift+L");
     await page.getByRole("button", { name: "Terug naar menu" }).click();
