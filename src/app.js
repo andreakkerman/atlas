@@ -4750,6 +4750,11 @@ function renderLaunch() {
 
 function renderMenu() {
   const menuLevels = visibleLevelCatalog();
+  const heroIndex = menuLevels.length ? Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), menuLevels.length - 1) : 0;
+  const heroLevel = menuLevels[heroIndex];
+  const supportingLevels = menuLevels.length
+    ? menuLevels.filter((_, index) => index !== heroIndex)
+    : [];
   return `
     <main class="menuScreen">
       <button class="progressMenuButton" type="button" data-action="progress">Voortgang</button>
@@ -4761,7 +4766,27 @@ function renderMenu() {
         ${state.error ? `<p class="menuError">${state.error}</p>` : ""}
         ${
           menuLevels.length
-            ? menuLevels.map(renderLevelTile).join("")
+            ? `
+              <div class="featuredAdventureShell">
+                <button class="menuNavButton menuNavButtonPrevious" type="button" data-action="menu-previous" aria-label="Vorig avontuur">‹</button>
+                ${renderHeroLevelTile(heroLevel)}
+                <button class="menuNavButton menuNavButtonNext" type="button" data-action="menu-next" aria-label="Volgend avontuur">›</button>
+              </div>
+              <div class="menuCarouselDots" aria-label="Avontuur kiezen">
+                ${menuLevels.map((item, index) => `
+                  <button
+                    class="menuCarouselDot"
+                    type="button"
+                    data-menu-index="${index}"
+                    aria-label="Toon avontuur ${index + 1}"
+                    aria-current="${index === heroIndex ? "true" : "false"}"
+                  ></button>
+                `).join("")}
+              </div>
+              <div class="supportingAdventureGrid">
+                ${supportingLevels.map((item, index) => renderLevelTile(item, index)).join("")}
+              </div>
+            `
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
         }
       </section>
@@ -4920,9 +4945,25 @@ function renderLoading() {
   `;
 }
 
-function renderLevelTile(item) {
+function renderHeroLevelTile(item) {
   return `
-    <button class="levelTile" type="button" data-level="${item.id}">
+    <article class="levelTile heroLevelTile" data-featured-level="${item.id}">
+      <img src="${item.menu?.illustration}" alt="" />
+      <span class="levelTileShade"></span>
+      <span class="levelTileText">
+        <span class="levelBadge">${item.menu?.badge || item.id}</span>
+        <strong>${item.title}</strong>
+        <span>${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
+        <button class="primaryButton heroStartButton" type="button" data-level="${item.id}" aria-label="${item.title} - Start avontuur">Start avontuur</button>
+      </span>
+    </article>
+  `;
+}
+
+function renderLevelTile(item, index = 0) {
+  const tileClass = index >= 2 ? "levelTile supportingLevelTile wideLevelTile" : "levelTile supportingLevelTile";
+  return `
+    <button class="${tileClass}" type="button" data-level="${item.id}">
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
@@ -5440,6 +5481,16 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  const menuIndexTarget = event.target.closest("[data-menu-index]");
+  if (menuIndexTarget) {
+    const menuLevels = visibleLevelCatalog();
+    const menuHeroIndex = Math.min(Math.max(Number(menuIndexTarget.dataset.menuIndex) || 0, 0), Math.max(menuLevels.length - 1, 0));
+    playSfx("uiClick");
+    state = { ...state, menuHeroIndex };
+    render();
+    return;
+  }
+
   const deleteSessionTarget = event.target.closest("[data-delete-session]");
   if (deleteSessionTarget) {
     const confirmed = window.confirm("Deze gecontroleerde sessie definitief wissen?");
@@ -5455,7 +5506,16 @@ app.addEventListener("click", (event) => {
     playSfx("uiClick");
     const action = actionTarget.dataset.action;
     if (action === "launch-enter") {
-      state = { screen: "menu" };
+      state = { screen: "menu", menuHeroIndex: 0 };
+      render();
+      return;
+    }
+    if (action === "menu-previous" || action === "menu-next") {
+      const menuLevels = visibleLevelCatalog();
+      const currentIndex = Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), Math.max(menuLevels.length - 1, 0));
+      const direction = action === "menu-next" ? 1 : -1;
+      const menuHeroIndex = menuLevels.length ? (currentIndex + direction + menuLevels.length) % menuLevels.length : 0;
+      state = { ...state, menuHeroIndex };
       render();
       return;
     }

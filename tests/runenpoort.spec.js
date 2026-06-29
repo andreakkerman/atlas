@@ -564,7 +564,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByText("SVENADVENTURE")).toHaveCount(0);
     await expect(page.getByText("Wat ga je vandaag ontdekken?")).toBeVisible();
     await expect(page.getByRole("button", { name: /De Runenpoort/ })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Verken een vergeten Vikingtempel/ })).toBeVisible();
+    await expect(page.locator(".heroLevelTile")).toContainText("Verken een vergeten Vikingtempel");
     await expect(page.getByRole("button", { name: /De Nautilus/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Duik in een geheim avontuur/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Blokkenpoort/ })).toBeVisible();
@@ -587,22 +587,36 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /De Strandkamer/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Netherproef/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Weg Naar Huis/ })).toHaveCount(0);
-    await expect(page.locator(".levelTile")).toHaveCount(5);
-    const tiles = await page.locator(".levelTile").evaluateAll((nodes) =>
-      nodes.map((node) => {
+    await expect(page.locator(".heroLevelTile")).toHaveCount(1);
+    await expect(page.locator(".supportingLevelTile")).toHaveCount(4);
+    await expect(page.locator(".menuCarouselDot")).toHaveCount(5);
+    await expect(page.getByRole("button", { name: "Vorig avontuur" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Volgend avontuur" })).toBeVisible();
+    const layout = await page.locator(".levelGrid").evaluate((grid) => {
+      const hero = grid.querySelector(".heroLevelTile").getBoundingClientRect();
+      const cards = [...grid.querySelectorAll(".supportingLevelTile")].map((node) => {
         const box = node.getBoundingClientRect();
         return { x: box.x, y: box.y, width: box.width, height: box.height };
-      })
-    );
-    for (const tile of tiles) {
-      expect(tile.width).toBeGreaterThan(tile.height * 2);
-    }
-    for (let index = 1; index < tiles.length; index += 1) {
-      expect(tiles[index].y).toBeGreaterThan(tiles[index - 1].y + tiles[index - 1].height);
-    }
-    expect(Math.abs(tiles[0].x - tiles[1].x)).toBeLessThan(2);
-    expect(Math.abs(tiles[1].x - tiles[2].x)).toBeLessThan(2);
-    expect(Math.abs(tiles[2].x - tiles[3].x)).toBeLessThan(2);
+      });
+      return {
+        hero: { x: hero.x, y: hero.y, width: hero.width, height: hero.height },
+        cards,
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth
+      };
+    });
+    expect(layout.hero.width).toBeGreaterThan(layout.cards[0].width * 1.8);
+    expect(layout.hero.height).toBeGreaterThan(layout.cards[0].height);
+    expect(Math.abs(layout.cards[0].y - layout.cards[1].y)).toBeLessThan(2);
+    expect(layout.cards[1].x).toBeGreaterThan(layout.cards[0].x + layout.cards[0].width - 2);
+    expect(layout.cards[2].y).toBeGreaterThan(layout.cards[0].y + layout.cards[0].height - 2);
+    expect(layout.cards[2].width).toBeGreaterThan(layout.cards[0].width * 1.8);
+    expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
+    await page.getByRole("button", { name: "Volgend avontuur" }).click();
+    await expect(page.locator(".heroLevelTile")).toContainText("De Nautilus");
+    await page.locator('[data-menu-index="4"]').click();
+    await expect(page.locator(".heroLevelTile")).toContainText("Leonardo");
+    await expect(page.locator(".levelTile")).toHaveCount(5);
   });
 
   test("unlocks audio on the launch screen and does not show launch again on menu return", async ({ page }) => {
