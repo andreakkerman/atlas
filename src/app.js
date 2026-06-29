@@ -150,6 +150,8 @@ const performanceHud = {
   sampleCount: 0,
   frames: new Float32Array(90)
 };
+const KEYBOARD_VIEWPORT_DELTA = 120;
+let keyboardViewportCleanup = null;
 
 let walkPathEditor = {
   enabled: EDITOR_DEV_MODE,
@@ -210,6 +212,54 @@ function createLevelState(selectedLevel) {
     message: initialGuideMessage.text,
     feedback: ""
   };
+}
+
+function activeOpenAnswerInput() {
+  const active = document.activeElement;
+  return active instanceof HTMLInputElement && active.matches("[data-open-answer]") ? active : null;
+}
+
+function updateKeyboardViewportState() {
+  const viewport = window.visualViewport;
+  const layoutHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+  const visualHeight = viewport?.height || layoutHeight;
+  const visualOffsetTop = viewport?.offsetTop || 0;
+  const openAnswer = activeOpenAnswerInput();
+  const keyboardOpen = Boolean(openAnswer && viewport && layoutHeight - visualHeight > KEYBOARD_VIEWPORT_DELTA);
+
+  document.documentElement.style.setProperty("--visual-viewport-height", `${Math.round(visualHeight || layoutHeight)}px`);
+  document.documentElement.style.setProperty("--visual-viewport-offset-top", `${Math.round(visualOffsetTop)}px`);
+  document.body.classList.toggle("keyboard-open", keyboardOpen);
+  app.classList.toggle("keyboard-open", keyboardOpen);
+
+  if (keyboardOpen) {
+    window.requestAnimationFrame(() => {
+      activeOpenAnswerInput()?.scrollIntoView({ block: "center", inline: "nearest" });
+    });
+  }
+}
+
+function installKeyboardViewportTracking() {
+  if (keyboardViewportCleanup) return;
+  const viewport = window.visualViewport;
+  const onViewportChange = () => updateKeyboardViewportState();
+  const onFocusChange = () => window.setTimeout(updateKeyboardViewportState, 0);
+
+  viewport?.addEventListener("resize", onViewportChange);
+  viewport?.addEventListener("scroll", onViewportChange);
+  window.addEventListener("resize", onViewportChange);
+  document.addEventListener("focusin", onFocusChange);
+  document.addEventListener("focusout", onFocusChange);
+
+  keyboardViewportCleanup = () => {
+    viewport?.removeEventListener("resize", onViewportChange);
+    viewport?.removeEventListener("scroll", onViewportChange);
+    window.removeEventListener("resize", onViewportChange);
+    document.removeEventListener("focusin", onFocusChange);
+    document.removeEventListener("focusout", onFocusChange);
+  };
+  window.addEventListener("pagehide", keyboardViewportCleanup, { once: true });
+  updateKeyboardViewportState();
 }
 
 function walkPathNodeById(selectedLevel, nodeId) {
@@ -5925,6 +5975,8 @@ document.addEventListener("visibilitychange", () => {
     sceneEffectRuntime.sync();
   }
 });
+
+installKeyboardViewportTracking();
 
 window.addEventListener("resize", updateWorldDom);
 

@@ -470,6 +470,46 @@ test.describe("De Grote Reis door Europa", () => {
     await expect(page.getByText(/Het antwoord is 56/)).toBeVisible();
   });
 
+  test("keeps open-answer controls usable in a reduced iPad keyboard viewport", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await startEuropeAdventure(page);
+    await page.evaluate(() => { Math.random = () => 0; });
+    await page.getByRole("button", { name: "Windmolen" }).dispatchEvent("click");
+    await expect(page.locator("[data-open-answer]")).toBeVisible();
+
+    await page.locator("[data-open-answer]").focus();
+    await page.evaluate(() => {
+      document.documentElement.style.setProperty("--visual-viewport-height", "360px");
+      document.documentElement.style.setProperty("--visual-viewport-offset-top", "0px");
+      document.body.classList.add("keyboard-open");
+      document.querySelector("#app")?.classList.add("keyboard-open");
+    });
+
+    const layout = await page.evaluate(() => {
+      const panel = document.querySelector(".runeChallengeBox");
+      const input = document.querySelector("[data-open-answer]");
+      const submit = document.querySelector("[data-open-answer-form] button");
+      const panelRect = panel.getBoundingClientRect();
+      const inputRect = input.getBoundingClientRect();
+      const submitRect = submit.getBoundingClientRect();
+      return {
+        panelTop: panelRect.top,
+        panelBottom: panelRect.bottom,
+        inputBottom: inputRect.bottom,
+        submitBottom: submitRect.bottom,
+        submitWidth: submitRect.width,
+        visualHeight: 360,
+        panelScrollable: panel.scrollHeight > panel.clientHeight + 1
+      };
+    });
+
+    expect(layout.panelTop).toBeGreaterThanOrEqual(0);
+    expect(layout.panelBottom).toBeLessThanOrEqual(layout.visualHeight);
+    expect(layout.inputBottom).toBeLessThanOrEqual(layout.visualHeight);
+    expect(layout.submitBottom).toBeLessThanOrEqual(layout.visualHeight);
+    expect(layout.submitWidth).toBeGreaterThan(80);
+  });
+
   test("clears hotspot attention when an authored challenge starts", async ({ page }) => {
     await startEuropeAdventure(page);
     await page.getByRole("button", { name: "Kaaswagen" }).dispatchEvent("click");
@@ -498,6 +538,52 @@ test.describe("De Grote Reis door Europa", () => {
     await tap(page.getByRole("button", { name: "Half acht", exact: true }));
     await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();
     await expect(page.getByText("Ja! Het antwoord is Half acht.")).toBeVisible();
+  });
+
+  test("keeps clock choices reachable above the companion bar in iPad landscape", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      Math.random = () => 0;
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true });
+      window.eval("render")();
+    });
+    await page.getByRole("button", { name: "Oude klokkentoren" }).dispatchEvent("click");
+    await expect(page.locator("[data-clock-visual]")).toBeVisible();
+    await expect(page.locator("[data-choice]")).toHaveCount(4);
+
+    const initialLayout = await page.evaluate(() => {
+      const panel = document.querySelector(".runeChallengeBox");
+      const bar = document.querySelector("[data-adventure-team-bar]").getBoundingClientRect();
+      const portraitTops = [...document.querySelectorAll(".teamPortrait")].map((node) => node.getBoundingClientRect().top);
+      const panelRect = panel.getBoundingClientRect();
+      return {
+        panelBottom: panelRect.bottom,
+        companionTop: Math.min(bar.top, ...portraitTops),
+        panelClientHeight: panel.clientHeight,
+        panelScrollHeight: panel.scrollHeight,
+        viewportHeight: window.innerHeight
+      };
+    });
+
+    expect(initialLayout.panelBottom).toBeLessThanOrEqual(initialLayout.companionTop);
+    expect(initialLayout.panelBottom).toBeLessThanOrEqual(initialLayout.viewportHeight);
+
+    const scrolledLayout = await page.evaluate(() => {
+      const panel = document.querySelector(".runeChallengeBox");
+      panel.scrollTop = panel.scrollHeight;
+      const panelRect = panel.getBoundingClientRect();
+      const buttons = [...document.querySelectorAll("[data-choice]")].map((node) => node.getBoundingClientRect());
+      const lastButton = buttons[buttons.length - 1];
+      return {
+        lastButtonBottom: lastButton.bottom,
+        panelBottom: panelRect.bottom,
+        lastButtonHeight: lastButton.height
+      };
+    });
+
+    expect(scrolledLayout.lastButtonHeight).toBeGreaterThanOrEqual(44);
+    expect(scrolledLayout.lastButtonBottom).toBeLessThanOrEqual(scrolledLayout.panelBottom + 1);
   });
 
   test("matches authored text answers without case sensitivity", async ({ page }) => {
