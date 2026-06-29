@@ -18,7 +18,7 @@ async function enterMenu(page) {
 }
 
 async function startHeroAdventure(page) {
-  await page.locator(".heroStartButton").click();
+  await page.locator(".heroLevelTile").click();
 }
 
 async function createSyntheticSession(page, start, title = "De Runenpoort") {

@@ -85,7 +85,7 @@ let state = {
   screen: "launch"
 };
 
-const MENU_AUTO_ROTATE_MS = 6000;
+const MENU_AUTO_ROTATE_MS = 10000;
 const menuCarouselRuntime = {
   timer: null,
   paused: false
@@ -5053,29 +5053,29 @@ function renderLoading() {
 
 function renderHeroLevelTile(item) {
   return `
-    <article class="levelTile heroLevelTile ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" data-featured-level="${item.id}">
+    <button class="levelTile heroLevelTile ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" type="button" data-level="${item.id}" data-featured-level="${item.id}" aria-label="${item.title} starten">
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
         <span class="levelBadge">${item.menu?.badge || item.id}</span>
         <strong>${item.title}</strong>
-        <span>${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
-        <button class="primaryButton heroStartButton" type="button" data-level="${item.id}" aria-label="${item.title} - Start avontuur">Start avontuur</button>
+        <span class="levelTileDescription">${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
+        <span class="heroStartHint" aria-hidden="true">Tik om te starten</span>
       </span>
-    </article>
+    </button>
   `;
 }
 
 function renderLevelTile(item, index = 0, isActive = false) {
   const tileClass = `${index >= 2 ? "levelTile supportingLevelTile wideLevelTile" : "levelTile supportingLevelTile"}${isActive ? " activeSupportingLevelTile" : ""}`;
   return `
-    <button class="${tileClass}" type="button" data-menu-index="${index}" data-menu-tile="${item.id}" aria-pressed="${isActive ? "true" : "false"}">
+    <button class="${tileClass}" type="button" data-level="${item.id}" data-menu-tile="${item.id}" aria-pressed="${isActive ? "true" : "false"}">
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
         <span class="levelBadge">${item.menu?.badge || item.id}</span>
         <strong>${item.title}</strong>
-        <span>${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
+        <span class="levelTileDescription">${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
       </span>
     </button>
   `;
