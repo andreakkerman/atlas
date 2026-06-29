@@ -1342,6 +1342,43 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
     "name": "Leonardo da Vinci",
     "portrait": "Levels/LVL-0023/assets/leonardo-da-vinci.png"
   },
+  sceneEffects: [
+        {
+              id: "water-shimmer-01",
+              label: "Water Shimmer 1",
+              presetId: "water-shimmer",
+              variantId: "default-water-shimmer",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1166077089,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "polygon",
+                    points: [
+                          {
+                                x: 529,
+                                y: 192
+                          },
+                          {
+                                x: 1529,
+                                y: 183
+                          },
+                          {
+                                x: 1538,
+                                y: 265
+                          },
+                          {
+                                x: 596,
+                                y: 243
+                          }
+                    ],
+                    cutouts: []
+              },
+              overrides: {}
+        }
+  ],
   "reward": {
     "title": "Umbrie afgerond",
     "line": "De volgende Italiaanse werkplaats is bereikbaar.",

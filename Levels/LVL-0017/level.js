@@ -683,6 +683,29 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
       solved: item.solved, challengeId: item.id
     })),
+    sceneEffects: [
+        {
+              id: "bubbles-and-spray-01",
+              label: "Fountain spray 1",
+              presetId: "bubbles-and-spray",
+              variantId: "fountain-spray",
+              presetVersion: 1,
+              enabled: true,
+              seed: 938891233,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 929,
+                    y: 447,
+                    radius: 120
+              },
+              overrides: {
+                    directionDeg: 90
+              }
+        }
+  ],
     reward: {
       title: "De Alpenpoort opent!",
       badge: "Alpenreiziger",

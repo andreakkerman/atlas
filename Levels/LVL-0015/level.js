@@ -659,6 +659,31 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
       solved: item.solved, challengeId: item.id
     })),
+    sceneEffects: [
+        {
+              id: "bubbles-and-spray-02",
+              label: "Fountain spray 2",
+              presetId: "bubbles-and-spray",
+              variantId: "fountain-spray",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1891384614,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 951,
+                    y: 370,
+                    radius: 90
+              },
+              overrides: {
+                    directionDeg: 90,
+                    size: 0.5,
+                    amount: 0.8
+              }
+        }
+  ],
     reward: {
       title: "Het plein geeft de route prijs!",
       badge: "Dorpspleinzoeker",

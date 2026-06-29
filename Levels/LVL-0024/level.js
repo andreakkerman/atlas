@@ -1031,6 +1031,49 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
     "name": "Leonardo da Vinci",
     "portrait": "Levels/LVL-0024/assets/leonardo-da-vinci.png"
   },
+  sceneEffects: [
+        {
+              id: "light-source-enhancement-01",
+              label: "Lantern 1",
+              presetId: "light-source-enhancement",
+              variantId: "lantern",
+              presetVersion: 1,
+              enabled: true,
+              seed: 4120859,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 249,
+                    y: 268,
+                    radius: 63
+              },
+              overrides: {}
+        },
+        {
+              id: "sparks-and-embers-02",
+              label: "Rising sparks 2",
+              presetId: "sparks-and-embers",
+              variantId: "rising-sparks",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1778107921,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1768,
+                    y: 522,
+                    radius: 15
+              },
+              overrides: {
+                    amount: 0.3,
+                    speed: 0.5
+              }
+        }
+  ],
   "reward": {
     "title": "Marche afgerond",
     "line": "De volgende Italiaanse werkplaats is bereikbaar.",

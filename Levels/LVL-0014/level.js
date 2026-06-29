@@ -713,6 +713,62 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
       solved: item.solved, challengeId: item.id
     })),
+    sceneEffects: [
+        {
+              id: "magical-glow-01",
+              label: "Crystal 1",
+              presetId: "magical-glow",
+              variantId: "crystal",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1927280204,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1349,
+                    y: 447,
+                    radius: 120
+              },
+              overrides: {}
+        },
+        {
+              id: "water-shimmer-02",
+              label: "Water Shimmer 2",
+              presetId: "water-shimmer",
+              variantId: "default-water-shimmer",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1292270750,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "polygon",
+                    points: [
+                          {
+                                x: 800,
+                                y: 518
+                          },
+                          {
+                                x: 1240,
+                                y: 557
+                          },
+                          {
+                                x: 1198,
+                                y: 597
+                          },
+                          {
+                                x: 825,
+                                y: 573
+                          }
+                    ],
+                    cutouts: []
+              },
+              overrides: {}
+        }
+  ],
     reward: {
       title: "De klokkenstad wijst de weg!",
       badge: "Klokkenkenner",

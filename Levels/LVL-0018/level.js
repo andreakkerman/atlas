@@ -613,6 +613,49 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
       solved: item.solved, challengeId: item.id
     })),
+    sceneEffects: [
+        {
+              id: "sun-presence-01",
+              label: "Soft evening sun 1",
+              presetId: "sun-presence",
+              variantId: "soft-evening-sun",
+              presetVersion: 1,
+              enabled: true,
+              seed: 236382945,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 1248,
+                    y: 257,
+                    radius: 250
+              },
+              overrides: {
+                    rayEndAngle: 180
+              }
+        },
+        {
+              id: "focused-fog-02",
+              label: "Focused Fog 2",
+              presetId: "focused-fog",
+              variantId: "default-focused-fog",
+              presetVersion: 1,
+              enabled: true,
+              seed: 425908029,
+              qualityTier: "auto",
+              layerSlot: "foregroundAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "rectangle",
+                    x: 1039,
+                    y: 506,
+                    width: 382,
+                    height: 115
+              },
+              overrides: {}
+        }
+  ],
     reward: {
       title: "Het fjordlicht wijst de weg!",
       badge: "Fjordzoeker",

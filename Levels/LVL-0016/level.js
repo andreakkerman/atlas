@@ -779,6 +779,30 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       defaultAction: "activate", intro: item.intro, prompt: item.prompt,
       solved: item.solved, challengeId: item.id
     })),
+    sceneEffects: [
+        {
+              id: "bubbles-and-spray-01",
+              label: "Fountain spray 1",
+              presetId: "bubbles-and-spray",
+              variantId: "fountain-spray",
+              presetVersion: 1,
+              enabled: true,
+              seed: 1589681947,
+              qualityTier: "auto",
+              layerSlot: "worldAtmosphere",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 612,
+                    y: 439,
+                    radius: 75
+              },
+              overrides: {
+                    directionDeg: 90,
+                    size: 0.5
+              }
+        }
+  ],
     reward: {
       title: "De Romeinse route is gevonden!",
       badge: "Romeinseroutezoeker",
