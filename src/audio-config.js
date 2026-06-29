@@ -215,7 +215,7 @@ window.SVEN_AUDIO_CONFIG = {
   },
   "volumes": {
     "master": 0.82,
-    "companionPurr": 0.7,
+    "companionPurr": 0.9,
     "sfx": {
       "uiClick": 0.75,
       "challengeOpen": 0.58,
