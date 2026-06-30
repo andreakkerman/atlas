@@ -1380,6 +1380,8 @@ button {
   box-shadow: 0 0 16px rgba(46, 230, 220, 0.12);
   cursor: pointer;
   font-size: 0;
+  --hotspot-cue-border: rgba(156, 242, 233, 0.14);
+  --hotspot-cue-shadow: rgba(156, 242, 233, 0.46);
 }
 
 .runeHotspot strong,
@@ -1400,13 +1402,15 @@ button {
   opacity: 0.88;
 }
 
-.runeHotspot::after {
+.runeHotspot::after,
+.worldHotspot[data-exit-ready="true"]::after {
   content: "";
   position: absolute;
   inset: 20px;
   border-radius: 50%;
-  border: 1px solid rgba(156, 242, 233, 0.14);
+  border: 1px solid var(--hotspot-cue-border);
   animation: runeBreath 1.8s ease-in-out infinite, runeShimmer 3.2s linear infinite;
+  pointer-events: none;
 }
 
 .worldHotspot {
@@ -1425,6 +1429,16 @@ button {
   box-shadow: 0 0 14px rgba(255, 228, 140, 0.08);
   cursor: pointer;
   font-size: 0;
+  --hotspot-cue-border: rgba(156, 242, 233, 0.14);
+  --hotspot-cue-shadow: rgba(156, 242, 233, 0.46);
+}
+
+.hotspotExitReady {
+  --hotspot-cue-border: rgba(139, 245, 190, 0.22);
+  --hotspot-cue-shadow: rgba(92, 214, 151, 0.42);
+  background:
+    radial-gradient(circle, rgba(116, 232, 174, 0.09), rgba(88, 205, 151, 0.03) 42%, transparent 68%);
+  box-shadow: 0 0 18px rgba(92, 214, 151, 0.14);
 }
 
 .worldHotspot img {
@@ -3174,10 +3188,10 @@ body.keyboard-open .openAnswerControls input {
 @keyframes runeShimmer {
   0%,
   100% {
-    box-shadow: 0 0 0 rgba(156, 242, 233, 0);
+    box-shadow: 0 0 0 transparent;
   }
   45% {
-    box-shadow: 0 0 24px rgba(156, 242, 233, 0.46);
+    box-shadow: 0 0 24px var(--hotspot-cue-shadow);
   }
 }
 

@@ -103,6 +103,10 @@ test.describe("De Grote Reis door Europa", () => {
     await startEuropeAdventure(page);
     const exit = page.getByRole("button", { name: "Reispoort", exact: true });
     const actor = page.locator("[data-actor='sven']");
+    await expect(exit).toHaveAttribute("data-exit-ready", "false");
+    await expect(exit).toHaveAttribute("data-hotspot-cue", "none");
+    await expect(page.getByRole("button", { name: "Windmolen" })).toHaveAttribute("data-hotspot-cue", "challenge");
+    await expect(page.locator(".runeDone")).toHaveCount(0);
     await exit.dispatchEvent("click");
     await expect(actor).toHaveAttribute("data-animation", "walk");
     await expect(page.getByText("De reispoort wacht nog op 3 reistekens. De poort is geduldig. Ik ook.")).toBeVisible({
@@ -135,6 +139,24 @@ test.describe("De Grote Reis door Europa", () => {
 
     await page.keyboard.press("Control+Shift+L");
     await expect(page.getByText("De reispoort is klaar. Engeland is de volgende halte.")).toBeVisible();
+    const readyExit = page.getByRole("button", { name: "Reispoort", exact: true });
+    await expect(readyExit).toHaveAttribute("data-exit-ready", "true");
+    await expect(readyExit).toHaveAttribute("data-hotspot-cue", "exit-ready");
+    await expect(readyExit).toHaveClass(/hotspotExitReady/);
+    const exitCueStyle = await readyExit.evaluate((node) => {
+      const style = getComputedStyle(node);
+      const marker = getComputedStyle(node, "::after");
+      return {
+        border: style.getPropertyValue("--hotspot-cue-border").trim(),
+        shadow: style.getPropertyValue("--hotspot-cue-shadow").trim(),
+        markerBorder: marker.borderTopColor,
+        pointerEvents: marker.pointerEvents
+      };
+    });
+    expect(exitCueStyle.border).toBe("rgba(139, 245, 190, 0.22)");
+    expect(exitCueStyle.shadow).toBe("rgba(92, 214, 151, 0.42)");
+    expect(exitCueStyle.markerBorder).toBe("rgba(139, 245, 190, 0.22)");
+    expect(exitCueStyle.pointerEvents).toBe("none");
 
     await page.getByRole("button", { name: "Reispoort", exact: true }).dispatchEvent("click");
     await expect(page.getByRole("heading", { name: "De reis is begonnen!" })).toBeVisible({ timeout: 30000 });
@@ -142,10 +164,33 @@ test.describe("De Grote Reis door Europa", () => {
     await tap(page.getByRole("button", { name: "Naar Engeland" }));
 
     await expect(page.getByRole("button", { name: "Oude klokkentoren" })).toBeVisible({ timeout: 30000 });
+    await expect(page.getByRole("button", { name: "Collegepoort", exact: true })).toHaveAttribute("data-exit-ready", "false");
     await expect(page.getByRole("button", { name: "Start avontuur" })).toHaveCount(0);
     const levelId = await page.evaluate(() => window.eval("level.id"));
     expect(levelId).toBe("LVL-0014");
     await expectAudioState(page, "europeGrandTour", "europeEngeland");
+  });
+
+  test("marks the exit ready when a completed level is loaded from saved progress", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      localStorage.setItem("atlas-europa-nederland-v1", JSON.stringify({
+        levelId: "LVL-0013",
+        completedAt: "2026-06-30T00:00:00.000Z",
+        answered: 12,
+        firstTryCorrect: 12,
+        attempts: 12
+      }));
+      await window.eval("selectLevel")("LVL-0013", { startImmediately: true });
+      window.eval("render")();
+    });
+
+    const exit = page.getByRole("button", { name: "Reispoort", exact: true });
+    await expect(exit).toHaveAttribute("data-exit-ready", "true");
+    await expect(exit).toHaveAttribute("data-hotspot-cue", "exit-ready");
+    await expect(page.locator(".runeDone")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Windmolen" })).toHaveAttribute("data-hotspot-cue", "challenge");
+    expect(await page.evaluate(() => window.eval("state.completedRunes.size"))).toBe(0);
   });
 
   test("adds flavor-only ambient objects and uses one shared challenger", async ({ page }) => {

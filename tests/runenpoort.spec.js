@@ -195,6 +195,10 @@ async function startAdventure(page, url = gameUrl) {
   expect(activePortrait.x).toBeLessThan(inactivePortrait.x);
   expect(teamCard.height).toBeLessThan(100);
   await expect(page.locator(".runeHotspot")).toHaveText(["", "", ""]);
+  await expect(page.locator(".runeHotspot").first()).toHaveAttribute("data-hotspot-cue", "challenge");
+  await expect(page.locator(".runeDone")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Runenpoort", exact: true })).toHaveAttribute("data-exit-ready", "false");
+  await expect(page.getByRole("button", { name: "Runenpoort", exact: true })).toHaveAttribute("data-hotspot-cue", "none");
   await expect(page.locator("[data-world-stage]")).toBeVisible();
 }
 
@@ -1428,10 +1432,18 @@ test.describe("SvenAdventure", () => {
     await travelToTemple(page);
     await solveChallengeSet(page, { name: "Zonrune" }, "Maak de rune wakker", "Runewachter");
     await expect(page.getByText("1 van de 3 runen klaar. Nog 2 te gaan.")).toBeVisible();
+    await expect(page.locator(".runeDone")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: "Steenrune" })).toHaveAttribute("data-hotspot-cue", "challenge");
+    await expect(page.getByRole("button", { name: "Windrune" })).toHaveAttribute("data-hotspot-cue", "challenge");
+    await expect(page.getByRole("button", { name: "Runenpoort", exact: true })).toHaveAttribute("data-exit-ready", "false");
 
     await solveChallengeSet(page, { name: "Steenrune" }, "Maak de rune wakker", "Runewachter");
     await solveChallengeSet(page, { name: "Windrune" }, "Maak de rune wakker", "Runewachter");
     await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
+    const readyExit = page.getByRole("button", { name: "Runenpoort", exact: true });
+    await expect(readyExit).toHaveAttribute("data-exit-ready", "true");
+    await expect(readyExit).toHaveAttribute("data-hotspot-cue", "exit-ready");
+    await expect(readyExit).toHaveClass(/hotspotExitReady/);
   });
 
   test("keeps Nautilus and Blokkenpoort exits visible and blocks them on arrival", async ({ page }) => {

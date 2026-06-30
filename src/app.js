@@ -175,6 +175,7 @@ function createLevelState(selectedLevel) {
     selectedLevel.spiritLines?.welcome || "Welkom, Sven.",
     "minnie"
   );
+  const levelExitReadyFromSaved = storedLevelIsComplete(selectedLevel);
 
   return {
     screen: "intro",
@@ -199,6 +200,7 @@ function createLevelState(selectedLevel) {
     assistedCompletionAvailable: false,
     challengeGuideMessage: null,
     completedRunes: new Set(),
+    levelExitReadyFromSaved,
     justCompletedRuneId: null,
     totalQuestions: selectedLevel.runes.reduce((sum) => sum + 4, 0),
     answered: 0,
@@ -212,6 +214,15 @@ function createLevelState(selectedLevel) {
     message: initialGuideMessage.text,
     feedback: ""
   };
+}
+
+function storedLevelIsComplete(selectedLevel) {
+  if (!selectedLevel?.storageKey) return false;
+  try {
+    return Boolean(JSON.parse(localStorage.getItem(selectedLevel.storageKey))?.completedAt);
+  } catch {
+    return false;
+  }
 }
 
 function activeOpenAnswerInput() {
@@ -2560,7 +2571,7 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
   const isCompletedExit =
     target.id === (level.exitHotspotId || "templeGate") &&
     action === "activate" &&
-    state.completedRunes.size === level.runes.length;
+    isLevelExitReady();
   if (isCompletedExit) {
     finishInteraction(target, kind, action);
     return;
@@ -2629,7 +2640,7 @@ function finishInteraction(target, kind, action) {
     return;
   }
 
-  if (target.id === exitHotspotId && action === "activate" && state.completedRunes.size === level.runes.length) {
+  if (target.id === exitHotspotId && action === "activate" && isLevelExitReady()) {
     state.moving = false;
     state.svenMood = "idle";
     playSfx("unlock");
@@ -2917,6 +2928,7 @@ function restart() {
   state.questionTracked = false;
   state.assistedCompletionAvailable = false;
   state.completedRunes = new Set();
+  state.levelExitReadyFromSaved = storedLevelIsComplete(level);
   state.seenObjects = new Set();
   state.challengeFailureCounts = {};
   state.challengeGuideMessage = null;
@@ -4562,6 +4574,14 @@ function isTargetVisible(target) {
   return true;
 }
 
+function isLevelExitReady() {
+  return Boolean(
+    level &&
+    state?.completedRunes &&
+    (state.completedRunes.size === level.runes.length || state.levelExitReadyFromSaved)
+  );
+}
+
 function renderHotspot(hotspot) {
   const disabled = state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending;
   const object = interactiveObjectForTarget(hotspot);
@@ -4569,13 +4589,16 @@ function renderHotspot(hotspot) {
     warnMissingTrackedObject(hotspot, "hotspot");
     return "";
   }
+  const isExit = hotspot.id === (level.exitHotspotId || "templeGate");
+  const exitReady = isExit && isLevelExitReady();
   return `
     <button
-      class="worldHotspot hotspot-${object?.type || hotspot.type}"
+      class="worldHotspot hotspot-${object?.type || hotspot.type} ${exitReady ? "hotspotExitReady" : ""}"
       style="${objectTrackStyle(object)}"
       type="button"
       data-hotspot="${hotspot.id}"
       data-object="${object.id}"
+      ${isExit ? `data-exit-hotspot="true" data-exit-ready="${exitReady}" data-hotspot-cue="${exitReady ? "exit-ready" : "none"}"` : ""}
       data-world-center-x="${object.center.x}"
       data-world-center-y="${object.center.y}"
       data-radius="${object.radius}"
@@ -4603,6 +4626,7 @@ function renderRuneHotspot(rune) {
       type="button"
       data-rune="${rune.id}"
       data-object="${object.id}"
+      data-hotspot-cue="${done ? "none" : "challenge"}"
       data-world-center-x="${object.center.x}"
       data-world-center-y="${object.center.y}"
       data-radius="${object.radius}"
@@ -4622,7 +4646,7 @@ function renderReturnToMenuButton() {
 }
 
 function canOpenTempleGate() {
-  if (state.screen !== "scene" || state.completedRunes.size !== level.runes.length) return false;
+  if (state.screen !== "scene" || !isLevelExitReady()) return false;
   const gate = hotspotById(level.exitHotspotId || "templeGate");
   if (!gate) return false;
   return distanceBetween({ x: state.worldX, y: state.worldY }, getApproachPoint(gate)) < 180;
