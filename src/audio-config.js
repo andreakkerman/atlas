@@ -47,8 +47,10 @@ window.SVEN_AUDIO_CONFIG = {
     "guides": {
       "minnie1": "assets/audio/guides/cat_purr_minnie1.mp3",
       "minnie2": "assets/audio/guides/cat_purr_minnie2.mp3",
+      "minnieMeow1": "assets/audio/guides/cat_miauw_minnie1.mp3",
       "moose1": "assets/audio/guides/cat_purr_moose1.mp3",
-      "moose2": "assets/audio/guides/cat_purr_moose2.mp3"
+      "moose2": "assets/audio/guides/cat_purr_moose2.mp3",
+      "mooseMeow1": "assets/audio/guides/cat_miauw_moose1.mp3"
     }
   },
   "menu": {

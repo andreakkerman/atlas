@@ -14,8 +14,8 @@ const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") =
 const PERFORMANCE_HUD_MODE = new URLSearchParams(window.location.search).get("perf") === "1";
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
 const GUIDE_PURR_KEYS = {
-  minnie: ["minnie1", "minnie2"],
-  moose: ["moose1", "moose2"]
+  minnie: ["minnie1", "minnie2", "minnieMeow1"],
+  moose: ["moose1", "moose2", "mooseMeow1"]
 };
 const SFX_LABELS = {
   uiClick: "UI click",
