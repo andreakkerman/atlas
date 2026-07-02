@@ -397,12 +397,12 @@ function validateAudioConfig(value) {
       throw new Error(`audioConfig.levels.${levelId} must be an object.`);
     }
     if (!music[config.music]) throw new Error(`audioConfig.levels.${levelId}.music references missing track: ${config.music}`);
-    if (!ambience[config.ambience]) {
+    if (config.ambience !== null && !ambience[config.ambience]) {
       throw new Error(`audioConfig.levels.${levelId}.ambience references missing track: ${config.ambience}`);
     }
     levels[levelId] = {
       music: String(config.music),
-      ambience: String(config.ambience),
+      ambience: config.ambience === null ? null : String(config.ambience),
       musicVolume: validateVolume(config.musicVolume, `audioConfig.levels.${levelId}.musicVolume`),
       ambienceVolume: validateVolume(config.ambienceVolume, `audioConfig.levels.${levelId}.ambienceVolume`)
     };

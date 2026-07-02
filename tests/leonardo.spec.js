@@ -105,7 +105,8 @@ test.describe("Leonardo da Vinci adventure", () => {
   test("registers the six-level chain, assets, audio, anchors, variants and clocks", () => {
     const { manifest, audio, levels } = loadLeonardoLevels();
     const manifestIds = manifest.levels.map((level) => level.id);
-    expect(manifestIds.slice(-6)).toEqual(leonardoIds);
+    const leonardoStart = manifestIds.indexOf(leonardoIds[0]);
+    expect(manifestIds.slice(leonardoStart, leonardoStart + leonardoIds.length)).toEqual(leonardoIds);
     expect(manifest.levels.find((level) => level.id === "LVL-0021").hiddenFromMenu).toBeFalsy();
     for (let index = 1; index < leonardoIds.length; index += 1) {
       const entry = manifest.levels.find((level) => level.id === leonardoIds[index]);

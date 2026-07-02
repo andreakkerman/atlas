@@ -6,7 +6,8 @@ window.SVEN_AUDIO_CONFIG = {
       "nautilus": "assets/audio/music/nautilus.mp3",
       "minecraft": "assets/audio/music/minecraft.mp3",
       "europeGrandTour": "assets/audio/music/europe_grand_tour.mp3",
-      "leonardoLevel": "assets/audio/music/leonardo-level.mp3"
+      "leonardoLevel": "assets/audio/music/leonardo-level.mp3",
+      "egyptAdventure": "assets/audio/music/egypt_adventure.mp3"
     },
     "ambience": {
       "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
@@ -33,7 +34,9 @@ window.SVEN_AUDIO_CONFIG = {
       "leonardoUmbria": "assets/audio/ambience/leonardo/umbria.mp3",
       "leonardoMarche": "assets/audio/ambience/leonardo/marche.mp3",
       "leonardoFlorence": "assets/audio/ambience/leonardo/florence.mp3",
-      "leonardoVinci": "assets/audio/ambience/leonardo/vinci.mp3"
+      "leonardoVinci": "assets/audio/ambience/leonardo/vinci.mp3",
+      "egyptPyramidBuild": "assets/audio/ambience/egypt/pyramid_build.mp3",
+      "egyptAbuSimbel": "assets/audio/ambience/egypt/abu_simbel.mp3"
     },
     "sfx": {
       "uiClick": "assets/audio/sfx/ui-click.mp3",
@@ -213,6 +216,36 @@ window.SVEN_AUDIO_CONFIG = {
       "ambience": "leonardoVinci",
       "musicVolume": 0.24,
       "ambienceVolume": 0.3
+    },
+    "LVL-0027": {
+      "music": "egyptAdventure",
+      "ambience": null,
+      "musicVolume": 0.24,
+      "ambienceVolume": 0
+    },
+    "LVL-0028": {
+      "music": "egyptAdventure",
+      "ambience": "egyptPyramidBuild",
+      "musicVolume": 0.27,
+      "ambienceVolume": 0.91
+    },
+    "LVL-0029": {
+      "music": "egyptAdventure",
+      "ambience": null,
+      "musicVolume": 0.24,
+      "ambienceVolume": 0
+    },
+    "LVL-0030": {
+      "music": "egyptAdventure",
+      "ambience": "egyptAbuSimbel",
+      "musicVolume": 0.24,
+      "ambienceVolume": 0.3
+    },
+    "LVL-0031": {
+      "music": "egyptAdventure",
+      "ambience": null,
+      "musicVolume": 0.24,
+      "ambienceVolume": 0
     }
   },
   "volumes": {

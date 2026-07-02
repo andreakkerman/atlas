@@ -328,6 +328,69 @@ window.SVEN_LEVEL_MANIFEST = {
         badge: "Finale",
         detail: "Water, licht, codex, vleugel en ontwerp"
       }
+    },
+    {
+      id: "LVL-0027",
+      title: "Cairo Museum",
+      subtitle: "Een stille zaal met een sarcofaag die Sven naar oud Egypte trekt.",
+      script: "Levels/LVL-0027/level.js",
+      menu: {
+        illustration: "Levels/LVL-0027/assets/cairo_museum.png",
+        badge: "5 plekken",
+        detail: "Museum, piramidebouw, grafkamer, Abu Simbel en terugkeer"
+      }
+    },
+    {
+      id: "LVL-0028",
+      title: "Pyramid Build at Giza",
+      subtitle: "Meten, slepen en bouwen bij de Grote Piramide.",
+      script: "Levels/LVL-0028/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0027",
+      menu: {
+        illustration: "Levels/LVL-0028/assets/pyramid_build.png",
+        badge: "Verbonden gebied",
+        detail: "Meetinstrument, bouwtafel, sleden en kraan"
+      }
+    },
+    {
+      id: "LVL-0029",
+      title: "Tutanchamon Tomb",
+      subtitle: "Een mysterieuze grafkamer vol stille aanwijzingen.",
+      script: "Levels/LVL-0029/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0028",
+      menu: {
+        illustration: "Levels/LVL-0029/assets/tutanchamon_tomb.png",
+        badge: "Verbonden gebied",
+        detail: "Wandreliëf, kruiken, schat en altaar"
+      }
+    },
+    {
+      id: "LVL-0030",
+      title: "Abu Simbel",
+      subtitle: "De oude tempel en de scarabee die Sven terug kan brengen.",
+      script: "Levels/LVL-0030/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0029",
+      menu: {
+        illustration: "Levels/LVL-0030/assets/abu_simbel.png",
+        badge: "Verbonden gebied",
+        detail: "Tempelbeelden, zonnewijzer en scarabee"
+      }
+    },
+    {
+      id: "LVL-0031",
+      title: "Cairo Museum Return",
+      subtitle: "Sven is terug in de rustige museumzaal.",
+      script: "Levels/LVL-0031/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0030",
+      menu: {
+        illustration: "Levels/LVL-0031/assets/cairo_museum_return.png",
+        badge: "Finale",
+        detail: "Rustige museumzaal, scarabee en uitgang"
+      }
     }
   ]
 };

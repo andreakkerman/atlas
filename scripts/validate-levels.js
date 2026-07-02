@@ -363,7 +363,9 @@ function validateAudioConfig(manifest) {
       return;
     }
     validateRequiredString(levelAudio.music, `audioConfig.levels.${entry.id}.music`);
-    validateRequiredString(levelAudio.ambience, `audioConfig.levels.${entry.id}.ambience`);
+    if (levelAudio.ambience !== null) {
+      validateRequiredString(levelAudio.ambience, `audioConfig.levels.${entry.id}.ambience`);
+    }
     if (isNonEmptyString(levelAudio.music) && !musicKeys.has(levelAudio.music)) {
       fail(`audioConfig.levels.${entry.id}.music references missing music track: ${levelAudio.music}`);
     }
