@@ -26,6 +26,16 @@ function loadLeonardoLevels() {
   };
 }
 
+function activeChallengeObjectCount(levels) {
+  return levels.reduce((sum, level) => {
+    const authored = new Map((level.learningChallenges || []).map((challenge) => [challenge.id, challenge]));
+    return sum + (level.runes || []).filter((rune) => {
+      if (rune.challengeId) return authored.get(rune.challengeId)?.active !== false;
+      return true;
+    }).length;
+  }, 0);
+}
+
 async function startLevel(page, levelId) {
   await page.goto(gameUrl);
   await page.evaluate(async (id) => {
@@ -86,6 +96,8 @@ async function completeWithShortcutAndExit(page, exitId, exitName, rewardHeading
 
 test.describe("Leonardo da Vinci adventure", () => {
   test("shows the correct adventure menu identity and separated Rome intro", async ({ page }) => {
+    const { levels } = loadLeonardoLevels();
+    const expectedChallengeCount = activeChallengeObjectCount(levels);
     await page.goto(gameUrl);
     await page.evaluate(() => localStorage.clear());
     await page.waitForFunction(() => [...document.images].every((image) => image.complete && image.naturalWidth > 0));
@@ -93,7 +105,7 @@ test.describe("Leonardo da Vinci adventure", () => {
     const leonardoCard = page.locator('[data-menu-tile="LVL-0021"]');
     await expect(leonardoCard).toContainText("Leonardo’s onvoltooide atlas");
     await expect(leonardoCard).toContainText("Reis door Italië en ontdek hoe Leonardo keek, mat, onderzocht en ontwierp.");
-    await expect(leonardoCard).toContainText("6 plekken");
+    await expect(leonardoCard).toContainText(`6 plaatsen · ${expectedChallengeCount} opdrachten`);
     await expect(leonardoCard).not.toContainText("Leonardo da Vinci - Rome");
 
     await leonardoCard.click();

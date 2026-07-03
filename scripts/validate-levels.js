@@ -700,6 +700,9 @@ function validateReferences(level, objects, nodeIds, label) {
         .forEach((field) => validateRequiredString(challenge[field], `${challengeLabel}.${field}`));
       if (authoredChallenges.has(challenge.id)) fail(`${challengeLabel}.id is duplicated: ${challenge.id}`);
       authoredChallenges.set(challenge.id, challenge);
+      if (challenge.active !== undefined && typeof challenge.active !== "boolean") {
+        fail(`${challengeLabel}.active must be boolean when provided.`);
+      }
       if (!objects.has(challenge.anchorId)) fail(`${challengeLabel}.anchorId references missing object: ${challenge.anchorId}`);
       if (challenge.challengeCharacterId !== level.challengeCharacter?.id) {
         fail(`${challengeLabel}.challengeCharacterId must match level.challengeCharacter.id.`);

@@ -130,6 +130,25 @@ function validateInteractiveObjects(value) {
   });
 }
 
+function validateLearningChallenges(value) {
+  if (!Array.isArray(value)) throw new Error("learningChallenges must be an array.");
+  const ids = new Set();
+  return value.map((challenge, index) => {
+    if (!challenge || typeof challenge !== "object" || Array.isArray(challenge)) {
+      throw new Error(`learningChallenges[${index}] must be an object.`);
+    }
+    if (typeof challenge.id !== "string" || !challenge.id.trim()) {
+      throw new Error(`learningChallenges[${index}].id must be a non-empty string.`);
+    }
+    if (ids.has(challenge.id)) throw new Error(`Duplicate learningChallenges id: ${challenge.id}`);
+    ids.add(challenge.id);
+    if (challenge.active !== undefined && typeof challenge.active !== "boolean") {
+      throw new Error(`learningChallenges[${index}].active must be boolean when provided.`);
+    }
+    return JSON.parse(JSON.stringify(challenge));
+  });
+}
+
 function ambientLibraryDir() {
   return path.join(rootDir, "assets", "ambient");
 }
@@ -761,7 +780,7 @@ function applySceneEffectSections(levelId, draft) {
 }
 
 function isSceneEffectsOnlyDraft(draft) {
-  const levelKeys = ["walkPath", "interactiveObjects", "ambientAnimals", "ambientFlybys", "sceneEffects", "sceneEffectGroups"];
+  const levelKeys = ["walkPath", "interactiveObjects", "learningChallenges", "ambientAnimals", "ambientFlybys", "sceneEffects", "sceneEffectGroups"];
   const changedKeys = Object.keys(draft).filter((key) => levelKeys.includes(key));
   return changedKeys.length > 0 && changedKeys.every((key) => key === "sceneEffects" || key === "sceneEffectGroups");
 }
@@ -776,6 +795,7 @@ function applyLevelDraft(levelId, draft) {
 
   if (draft.walkPath) level.walkPath = draft.walkPath;
   if (draft.interactiveObjects) level.interactiveObjects = draft.interactiveObjects;
+  if (draft.learningChallenges) level.learningChallenges = draft.learningChallenges;
   if (draft.ambientAnimals) level.ambientAnimals = draft.ambientAnimals;
   if (draft.ambientFlybys) level.ambientFlybys = draft.ambientFlybys;
   if (draft.sceneEffects) {
@@ -852,7 +872,7 @@ async function handleDevRequest(request, response, url) {
       }
       const filePath = draftPath(levelId);
       if (!fs.existsSync(filePath)) {
-        sendJson(response, 200, { walkPath: null, interactiveObjects: null, ambientAnimals: null, ambientFlybys: null, sceneEffects: null, sceneEffectGroups: null, audioConfig: null });
+        sendJson(response, 200, { walkPath: null, interactiveObjects: null, learningChallenges: null, ambientAnimals: null, ambientFlybys: null, sceneEffects: null, sceneEffectGroups: null, audioConfig: null });
         return true;
       }
       sendJson(response, 200, JSON.parse(fs.readFileSync(filePath, "utf8")));
@@ -874,6 +894,9 @@ async function handleDevRequest(request, response, url) {
       if (body.interactiveObjects !== undefined) {
         draft.interactiveObjects = validateInteractiveObjects(body.interactiveObjects);
       }
+      if (body.learningChallenges !== undefined) {
+        draft.learningChallenges = validateLearningChallenges(body.learningChallenges);
+      }
       if (body.ambientAnimals !== undefined) {
         draft.ambientAnimals = validateAmbientAnimals(body.ambientAnimals, levelId);
       }
@@ -889,7 +912,7 @@ async function handleDevRequest(request, response, url) {
         if (new Set(ids).size !== ids.length) throw new Error("Configured ambient instance IDs must be unique.");
       }
       if (body.audioConfig !== undefined) draft.audioConfig = validateAudioConfig(body.audioConfig);
-      if (!draft.walkPath && !draft.interactiveObjects && !draft.ambientAnimals && !draft.ambientFlybys && !draft.sceneEffects && !draft.sceneEffectGroups && !draft.audioConfig) {
+      if (!draft.walkPath && !draft.interactiveObjects && !draft.learningChallenges && !draft.ambientAnimals && !draft.ambientFlybys && !draft.sceneEffects && !draft.sceneEffectGroups && !draft.audioConfig) {
         throw new Error("Request must include level editor data.");
       }
 
@@ -911,7 +934,7 @@ async function handleDevRequest(request, response, url) {
 
       if (action === "apply-editor") {
         const sceneEffectsOnly = isSceneEffectsOnlyDraft(draft);
-        if (draft.walkPath || draft.interactiveObjects || draft.ambientAnimals || draft.ambientFlybys || draft.sceneEffects || draft.sceneEffectGroups) applyLevelDraft(levelId, draft);
+        if (draft.walkPath || draft.interactiveObjects || draft.learningChallenges || draft.ambientAnimals || draft.ambientFlybys || draft.sceneEffects || draft.sceneEffectGroups) applyLevelDraft(levelId, draft);
         if (draft.audioConfig) applyAudioConfigDraft(draft.audioConfig);
         transientSceneEffectDrafts.delete(levelId);
         if (!sceneEffectsOnly) {

@@ -579,11 +579,11 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /Reis door zeven Europese landen/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Leonardo/ })).toBeVisible();
     await expect(page.getByRole("button", { name: /Reis door Italië/ })).toBeVisible();
-    await expect(page.locator(".supportingAdventureGrid").getByText("3 plekken", { exact: true })).toBeVisible();
-    await expect(page.locator(".supportingAdventureGrid").getByText("4 plekken", { exact: true })).toBeVisible();
-    await expect(page.locator(".supportingAdventureGrid").getByText("5 plekken", { exact: true })).toBeVisible();
-    await expect(page.locator(".supportingAdventureGrid").getByText("6 plekken", { exact: true })).toBeVisible();
-    await expect(page.locator(".supportingAdventureGrid").getByText("8 plekken", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("3 plaatsen · 11 opdrachten", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("4 plaatsen · 12 opdrachten", { exact: true })).toBeVisible();
+    await expect(page.locator(".supportingAdventureGrid").getByText("5 plaatsen · 15 opdrachten", { exact: true })).toBeVisible();
+    await expect(page.locator('[data-menu-tile="LVL-0021"] .levelBadge')).toContainText(/6 plaatsen · \d+ opdrachten/);
+    await expect(page.locator(".supportingAdventureGrid").getByText("8 plaatsen · 24 opdrachten", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
@@ -594,9 +594,9 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: /De Netherproef/ })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /De Weg Naar Huis/ })).toHaveCount(0);
     await expect(page.locator(".heroLevelTile")).toHaveCount(1);
-    await expect(page.locator(".supportingLevelTile")).toHaveCount(5);
+    await expect(page.locator(".supportingLevelTile")).toHaveCount(6);
     await expect(page.locator(".activeSupportingLevelTile")).toHaveAttribute("data-menu-tile", "LVL-0001");
-    await expect(page.locator(".menuCarouselDot")).toHaveCount(5);
+    await expect(page.locator(".menuCarouselDot")).toHaveCount(6);
     await expect(page.getByRole("button", { name: "Vorig avontuur" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Volgend avontuur" })).toBeVisible();
     const layout = await page.locator(".levelGrid").evaluate((grid) => {
@@ -619,7 +619,7 @@ test.describe("SvenAdventure", () => {
     expect(layout.cards[2].y).toBeGreaterThan(layout.cards[0].y + layout.cards[0].height - 2);
     expect(layout.cards[2].width).toBeGreaterThan(layout.cards[0].width * 1.8);
     expect(layout.scrollWidth).toBeLessThanOrEqual(layout.clientWidth);
-    expect(layout.cards.map((card) => card.id)).toEqual(["LVL-0001", "LVL-0004", "LVL-0008", "LVL-0013", "LVL-0021"]);
+    expect(layout.cards.map((card) => card.id)).toEqual(["LVL-0001", "LVL-0004", "LVL-0008", "LVL-0013", "LVL-0021", "LVL-0027"]);
     await page.getByRole("button", { name: "Volgend avontuur" }).click();
     await expect(page.locator(".heroLevelTile")).toContainText("De Nautilus");
     await expect(page.locator(".activeSupportingLevelTile")).toHaveAttribute("data-menu-tile", "LVL-0004");
@@ -630,7 +630,7 @@ test.describe("SvenAdventure", () => {
     await page.locator('.menuCarouselDot[data-menu-index="4"]').click();
     await expect(page.locator(".heroLevelTile")).toContainText("Leonardo");
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
-    await expect(page.locator(".levelTile")).toHaveCount(6);
+    await expect(page.locator(".levelTile")).toHaveCount(7);
   });
 
   test("starts adventures directly from hero and supporting menu tiles", async ({ page }) => {

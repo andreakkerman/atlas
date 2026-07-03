@@ -121,7 +121,7 @@ test.describe("Egypt adventure", () => {
     await page.getByRole("button", { name: "Start avontuur" }).click();
     const egyptCard = page.locator('[data-menu-tile="LVL-0027"]');
     await expect(egyptCard).toContainText("Cairo Museum");
-    await expect(egyptCard).toContainText("5 plekken");
+    await expect(egyptCard).toContainText("5 plaatsen · 20 opdrachten");
 
     await startLevel(page, "LVL-0028");
     await page.evaluate(() => { Math.random = () => 0; });

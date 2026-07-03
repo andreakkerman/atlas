@@ -90,6 +90,11 @@ const menuCarouselRuntime = {
   timer: null,
   paused: false
 };
+const menuAdventureStats = {
+  loading: false,
+  loaded: false,
+  byRoot: {}
+};
 
 let audioConfig = cloneAudioConfig(window.SVEN_AUDIO_CONFIG || {});
 const originalAudioTracks = cloneAudioConfig(window.SVEN_AUDIO_CONFIG?.tracks || {});
@@ -202,7 +207,7 @@ function createLevelState(selectedLevel) {
     completedRunes: new Set(),
     levelExitReadyFromSaved,
     justCompletedRuneId: null,
-    totalQuestions: selectedLevel.runes.reduce((sum) => sum + 4, 0),
+    totalQuestions: activeRunes(selectedLevel).reduce((sum) => sum + 4, 0),
     answered: 0,
     firstTryCorrect: 0,
     attempts: 0,
@@ -219,7 +224,13 @@ function createLevelState(selectedLevel) {
 function storedLevelIsComplete(selectedLevel) {
   if (!selectedLevel?.storageKey) return false;
   try {
-    return Boolean(JSON.parse(localStorage.getItem(selectedLevel.storageKey))?.completedAt);
+    const stored = JSON.parse(localStorage.getItem(selectedLevel.storageKey));
+    if (!stored?.completedAt) return false;
+    const currentSignature = activeChallengeSignature(selectedLevel);
+    if (stored.activeChallengeSignature) {
+      return stored.activeChallengeSignature === currentSignature;
+    }
+    return !hasInactiveLearningChallenges(selectedLevel);
   } catch {
     return false;
   }
@@ -439,6 +450,10 @@ function cloneInteractiveObjects(objects) {
   }));
 }
 
+function cloneLearningChallenges(challenges) {
+  return JSON.parse(JSON.stringify(challenges || []));
+}
+
 function cloneAudioConfig(config) {
   return JSON.parse(JSON.stringify(config || {}));
 }
@@ -465,6 +480,7 @@ function persistedLevelEditorPayload() {
   const payload = {};
   const currentWalkPath = authoredWalkPathPoints(level);
   const currentInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects || []);
+  const currentLearningChallenges = cloneLearningChallenges(level.learningChallenges || []);
   const currentAmbientAnimals = cloneAmbientAnimals(level.ambientAnimals || []);
   const currentAmbientFlybys = cloneAmbientFlybys(level.ambientFlybys || []);
   const currentSceneEffects = cloneSceneEffects(level.sceneEffects || []);
@@ -474,6 +490,7 @@ function persistedLevelEditorPayload() {
 
   if (!editorValuesEqual(currentWalkPath, walkPathEditor?.originalWalkPath || [])) payload.walkPath = currentWalkPath;
   if (!editorValuesEqual(currentInteractiveObjects, walkPathEditor?.originalInteractiveObjects || [])) payload.interactiveObjects = currentInteractiveObjects;
+  if (!editorValuesEqual(currentLearningChallenges, walkPathEditor?.originalLearningChallenges || [])) payload.learningChallenges = currentLearningChallenges;
   if (!editorValuesEqual(currentAmbientAnimals, walkPathEditor?.originalAmbientAnimals || [])) payload.ambientAnimals = currentAmbientAnimals;
   if (!editorValuesEqual(currentAmbientFlybys, walkPathEditor?.originalAmbientFlybys || [])) payload.ambientFlybys = currentAmbientFlybys;
   if (
@@ -536,6 +553,10 @@ function setLevelInteractiveObjects(objects) {
   level.interactiveObjects = cloneInteractiveObjects(objects);
 }
 
+function setLevelLearningChallenges(challenges) {
+  level.learningChallenges = cloneLearningChallenges(challenges);
+}
+
 function setLevelAmbientAnimals(animals) {
   level.ambientAnimals = cloneAmbientAnimals(animals);
   resetAmbientAnimalTimers();
@@ -578,6 +599,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     apiAvailable: false,
     originalWalkPath: cloneWalkPath(authoredWalkPathPoints(selectedLevel)),
     originalInteractiveObjects: cloneInteractiveObjects(selectedLevel.interactiveObjects || []),
+    originalLearningChallenges: cloneLearningChallenges(selectedLevel.learningChallenges || []),
     originalAmbientAnimals: cloneAmbientAnimals(selectedLevel.ambientAnimals || []),
     originalAmbientFlybys: cloneAmbientFlybys(selectedLevel.ambientFlybys || []),
     originalSceneEffects: cloneSceneEffects(selectedLevel.sceneEffects || []),
@@ -589,10 +611,12 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     draggingAnimalId: null,
     currentPoint: null,
     currentObject: null,
+    currentChallenge: null,
     currentAnimal: null,
     currentFlyby: null,
     selectedObjectType: (selectedLevel.ambientAnimals || []).length ? "animal" : "flyby",
     selectedObjectId: selectedLevel.ambientAnimals?.[0]?.id || selectedLevel.ambientFlybys?.[0]?.id || null,
+    selectedChallengeId: selectedLevel.runes?.[0]?.id || null,
     editorMode: "objects",
     selectedEffectId: selectedLevel.sceneEffects?.[0]?.id || null,
     effectGeometryMode: false,
@@ -638,6 +662,9 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     if (Array.isArray(draft.interactiveObjects)) {
       selectedLevel.interactiveObjects = cloneInteractiveObjects(draft.interactiveObjects);
     }
+    if (Array.isArray(draft.learningChallenges)) {
+      selectedLevel.learningChallenges = cloneLearningChallenges(draft.learningChallenges);
+    }
     if (Array.isArray(draft.ambientAnimals)) {
       selectedLevel.ambientAnimals = cloneAmbientAnimals(draft.ambientAnimals);
     }
@@ -656,7 +683,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     if (draft.audioConfig) {
       setAudioConfig(draft.audioConfig);
     }
-    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.ambientAnimals) || Array.isArray(draft.ambientFlybys) || Array.isArray(draft.sceneEffects) || Array.isArray(draft.sceneEffectGroups) || draft.audioConfig) {
+    if (Array.isArray(draft.walkPath) || Array.isArray(draft.interactiveObjects) || Array.isArray(draft.learningChallenges) || Array.isArray(draft.ambientAnimals) || Array.isArray(draft.ambientFlybys) || Array.isArray(draft.sceneEffects) || Array.isArray(draft.sceneEffectGroups) || draft.audioConfig) {
       walkPathEditor.status = "Modified";
       walkPathEditor.modified = true;
       walkPathEditor.message = "Draft geladen. Test veilig verder.";
@@ -1672,12 +1699,16 @@ async function applyWalkPathDraft() {
     });
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
+    walkPathEditor.originalLearningChallenges = cloneLearningChallenges(level.learningChallenges || []);
     walkPathEditor.originalAmbientAnimals = cloneAmbientAnimals(level.ambientAnimals || []);
     walkPathEditor.originalAmbientFlybys = cloneAmbientFlybys(level.ambientFlybys || []);
     walkPathEditor.originalSceneEffects = cloneSceneEffects(level.sceneEffects || []);
     walkPathEditor.originalSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
     walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
     walkPathEditor.audioDirty = false;
+    if (payload.learningChallenges) {
+      await refreshMenuAdventureStats({ render: false });
+    }
     walkPathEditor.status = "Applied";
     walkPathEditor.modified = false;
     walkPathEditor.message = "Editorwijzigingen opgeslagen.";
@@ -1702,6 +1733,7 @@ async function revertWalkPathDraft() {
     }
     setLevelWalkPath(walkPathEditor.originalWalkPath);
     setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
+    setLevelLearningChallenges(walkPathEditor.originalLearningChallenges);
     setLevelAmbientAnimals(walkPathEditor.originalAmbientAnimals);
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
     setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
@@ -1709,6 +1741,7 @@ async function revertWalkPathDraft() {
     walkPathEditor.audioDirty = false;
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
+    walkPathEditor.currentChallenge = null;
     walkPathEditor.currentAnimal = null;
     walkPathEditor.currentFlyby = null;
     walkPathEditor.status = "Reverted";
@@ -1840,6 +1873,42 @@ function updateAmbientAnimalSetting(animalId, field, value) {
   walkPathEditor.modified = true;
   walkPathEditor.message = `${animal.id}: ${field} ${animal[field]}`;
   setLevelAmbientAnimals(animals);
+  persistWalkPathDraft();
+  render();
+}
+
+function selectChallengeForEditor(runeId) {
+  if (!walkPathEditor.enabled || !level) return;
+  const rune = runeById(runeId);
+  if (!rune) return;
+  walkPathEditor.selectedChallengeId = rune.id;
+  walkPathEditor.currentChallenge = learningChallengeForRune(rune) || rune;
+  walkPathEditor.currentObject = interactiveObjectForTarget(rune) || null;
+  walkPathEditor.currentPoint = null;
+  walkPathEditor.currentAnimal = null;
+  walkPathEditor.currentFlyby = null;
+  walkPathEditor.message = `${rune.name || rune.id}: ${isRuneActive(rune) ? "Actief" : "Inactief"}.`;
+  render();
+}
+
+function updateLearningChallengeActive(challengeId, active) {
+  if (!walkPathEditor.enabled || !level) return;
+  const challenges = cloneLearningChallenges(level.learningChallenges || []);
+  const challenge = challenges.find((item) => item.id === challengeId);
+  if (!challenge) return;
+  if (active) {
+    delete challenge.active;
+  } else {
+    challenge.active = false;
+  }
+  setLevelLearningChallenges(challenges);
+  const rune = (level.runes || []).find((item) => item.challengeId === challengeId);
+  walkPathEditor.selectedChallengeId = rune?.id || walkPathEditor.selectedChallengeId;
+  walkPathEditor.currentChallenge = challenge;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = `${rune?.name || challenge.id}: ${active ? "Actief" : "Inactief"}.`;
+  invalidateMenuAdventureStats();
   persistWalkPathDraft();
   render();
 }
@@ -2292,6 +2361,105 @@ function hotspotById(id) {
   return level.hotspots.find((hotspot) => hotspot.id === id);
 }
 
+function learningChallengeById(id, selectedLevel = level) {
+  return (selectedLevel?.learningChallenges || []).find((challenge) => challenge.id === id) || null;
+}
+
+function learningChallengeForRune(rune, selectedLevel = level) {
+  if (!rune?.challengeId) return null;
+  return learningChallengeById(rune.challengeId, selectedLevel);
+}
+
+function learningChallengesForRune(rune, selectedLevel = level) {
+  if (!rune) return [];
+  if (rune.challengeId) return [learningChallengeForRune(rune, selectedLevel)].filter(Boolean);
+  if (Array.isArray(rune.challengeIds)) {
+    return rune.challengeIds.map((id) => learningChallengeById(id, selectedLevel)).filter(Boolean);
+  }
+  return [];
+}
+
+function isLearningChallengeActive(challenge) {
+  return !challenge || challenge.active !== false;
+}
+
+function hasInactiveLearningChallenges(selectedLevel = level) {
+  return (selectedLevel?.learningChallenges || []).some((challenge) => challenge.active === false);
+}
+
+function isRuneActive(rune, selectedLevel = level) {
+  const linkedChallenges = learningChallengesForRune(rune, selectedLevel);
+  if (rune?.challengeId) return isLearningChallengeActive(linkedChallenges[0]);
+  if (Array.isArray(rune?.challengeIds)) return linkedChallenges.some(isLearningChallengeActive);
+  return Boolean(rune);
+}
+
+function activeRunes(selectedLevel = level) {
+  return (selectedLevel?.runes || []).filter((rune) => isRuneActive(rune, selectedLevel));
+}
+
+function requiredRuneCount(selectedLevel = level) {
+  return activeRunes(selectedLevel).length;
+}
+
+function activeChallengeSignature(selectedLevel = level) {
+  return activeRunes(selectedLevel).map((rune) => rune.id).join("|");
+}
+
+function completedActiveRuneCount() {
+  if (!state?.completedRunes) return 0;
+  return activeRunes().filter((rune) => state.completedRunes.has(rune.id)).length;
+}
+
+function adventureLevelEntries(rootEntry) {
+  if (!rootEntry) return [];
+  const entries = [];
+  const queue = [rootEntry];
+  const seen = new Set();
+  while (queue.length) {
+    const entry = queue.shift();
+    if (!entry || seen.has(entry.id)) continue;
+    seen.add(entry.id);
+    entries.push(entry);
+    levelCatalog
+      .filter((item) => item.connectedFrom === entry.id)
+      .forEach((item) => queue.push(item));
+  }
+  return entries;
+}
+
+async function ensureMenuAdventureStats() {
+  if (menuAdventureStats.loaded || menuAdventureStats.loading) return;
+  await refreshMenuAdventureStats();
+}
+
+function invalidateMenuAdventureStats() {
+  menuAdventureStats.loaded = false;
+}
+
+async function refreshMenuAdventureStats(options = {}) {
+  if (menuAdventureStats.loading) return;
+  menuAdventureStats.loading = true;
+  try {
+    const nextStats = {};
+    for (const rootEntry of visibleLevelCatalog()) {
+      const entries = adventureLevelEntries(rootEntry);
+      const levels = await Promise.all(entries.map((entry) => loadLevelDefinition(entry)));
+      nextStats[rootEntry.id] = {
+        placeCount: entries.length,
+        challengeCount: levels.reduce((sum, selectedLevel) => sum + requiredRuneCount(selectedLevel), 0)
+      };
+    }
+    menuAdventureStats.byRoot = nextStats;
+    menuAdventureStats.loaded = true;
+    if (options.render !== false && state.screen === "menu") render();
+  } catch (error) {
+    console.warn(`[Atlas] Menu-opdrachten konden niet worden geteld: ${error.message}`);
+  } finally {
+    menuAdventureStats.loading = false;
+  }
+}
+
 function answerFor(question) {
   return question.answer ?? question.a * question.b;
 }
@@ -2307,7 +2475,8 @@ function shuffleQuestions(questions) {
 
 function selectChallengeQuestions(rune) {
   if (rune.challengeId) {
-    const challenge = level.learningChallenges?.find((item) => item.id === rune.challengeId);
+    const challenge = learningChallengeForRune(rune);
+    if (!isLearningChallengeActive(challenge)) return [];
     return (challenge?.questions || []).map((slot) => ({
       ...slot,
       variants: [...(slot.variants || [])]
@@ -2316,7 +2485,8 @@ function selectChallengeQuestions(rune) {
   if (Array.isArray(rune.challengeIds)) {
     return rune.challengeIds
       .map((id) => level.learningChallenges?.find((challenge) => challenge.id === id))
-      .filter(Boolean);
+      .filter(Boolean)
+      .filter(isLearningChallengeActive);
   }
   return shuffleQuestions(rune.questions).slice(0, 4);
 }
@@ -2474,6 +2644,8 @@ function saveCompletion() {
   const payload = {
     levelId: level.id,
     completedAt: new Date().toISOString(),
+    activeChallengeSignature: activeChallengeSignature(level),
+    activeChallengeIds: activeRunes(level).map((rune) => rune.id),
     answered: state.answered,
     firstTryCorrect: state.firstTryCorrect,
     attempts: state.attempts
@@ -2520,7 +2692,7 @@ function beginInteraction(target, kind) {
 }
 
 function selectChallenge(target) {
-  if (!target || state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending) return;
+  if (!target || !isRuneActive(target) || state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending) return;
   state.selectedChallengeId = target.id;
   if (!state.completedRunes.has(target.id)) {
     emitCompanionEvent("HOTSPOT_ATTENTION_FIRST", {
@@ -2540,7 +2712,7 @@ function inspectAmbientTarget(target) {
 function completeCurrentSceneChallenges() {
   if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return;
   stopMovement({ invalidateIntent: true });
-  state.completedRunes = new Set(level.runes.map((rune) => rune.id));
+  state.completedRunes = new Set(activeRunes().map((rune) => rune.id));
   state.screen = "scene";
   state.activeRuneId = null;
   state.selectedChallengeId = null;
@@ -2554,8 +2726,8 @@ function completeCurrentSceneChallenges() {
   state.feedback = "";
   state.svenMood = "idle";
   emitCompanionEvent("PATH_UNLOCKED", {
-    completedCount: state.completedRunes.size,
-    totalCount: level.runes.length
+    completedCount: completedActiveRuneCount(),
+    totalCount: requiredRuneCount()
   });
   render();
 }
@@ -2653,8 +2825,8 @@ function finishInteraction(target, kind, action) {
     state.svenMood = "idle";
     emitCompanionEvent("EXIT_BLOCKED", {
       objectId: target.objectId || target.id,
-      completedCount: state.completedRunes.size,
-      totalCount: level.runes.length
+      completedCount: completedActiveRuneCount(),
+      totalCount: requiredRuneCount()
     });
     render();
     return;
@@ -2689,6 +2861,7 @@ function beginFreeWalk(point) {
 
 function openRuneChallenge(id) {
   const rune = runeById(id);
+  if (!isRuneActive(rune)) return;
   const authored = Boolean(rune.challengeId) || Array.isArray(rune.challengeIds);
   playSfx("challengeOpen");
   state.screen = "challenge";
@@ -2825,17 +2998,17 @@ function nextQuestion() {
   state.challengeGuideMessage = null;
   state.screen = "scene";
 
-  if (state.completedRunes.size === level.runes.length) {
+  if (completedActiveRuneCount() === requiredRuneCount()) {
     emitCompanionEvent("PATH_UNLOCKED", {
-      completedCount: state.completedRunes.size,
-      totalCount: level.runes.length
+      completedCount: completedActiveRuneCount(),
+      totalCount: requiredRuneCount()
     });
   } else {
     emitCompanionEvent("LEVEL_PROGRESS_MILESTONE", {
       objectId: rune.objectId,
       challengeId: rune.id,
-      completedCount: state.completedRunes.size,
-      totalCount: level.runes.length
+      completedCount: completedActiveRuneCount(),
+      totalCount: requiredRuneCount()
     });
   }
 
@@ -3179,6 +3352,125 @@ function renderFlybyMotionProfile(flyby) {
   `;
 }
 
+function previewText(value) {
+  if (Array.isArray(value)) return value.join(", ");
+  if (value && typeof value === "object") return JSON.stringify(value);
+  return value === undefined || value === null || value === "" ? "n.v.t." : String(value);
+}
+
+function challengeVariantEntries(challenge) {
+  return (challenge?.questions || []).flatMap((slot) => slot.variants || []);
+}
+
+function challengeTypeSummary(challenge) {
+  const counts = challengeVariantEntries(challenge).reduce((result, variant) => {
+    const key = variant.family || variant.domain || variant.answerMode || "onbekend";
+    result.set(key, (result.get(key) || 0) + 1);
+    return result;
+  }, new Map());
+  const labelFor = (key) => ({
+    math: "rekenen",
+    spelling: "spelling",
+    reading: "lezen"
+  })[key] || key.replace(/_/g, " ");
+  return [...counts.entries()].map(([key, count]) => `${count} ${labelFor(key)}`).join(" · ") || "geen varianten";
+}
+
+function challengeHasClockVisual(challenge) {
+  return challengeVariantEntries(challenge).some((variant) => variant.visual?.type === "clock");
+}
+
+function selectedEditorRune() {
+  const runes = level?.runes || [];
+  return runes.find((rune) => rune.id === walkPathEditor.selectedChallengeId) || runes[0] || null;
+}
+
+function renderChallengeVariantPreview(variant, index) {
+  const visual = variant.visual;
+  return `
+    <article class="challengeVariantPreview" data-challenge-variant="${variant.id || index}">
+      <header>
+        <strong>Variant ${index + 1}${variant.id ? ` · ${previewText(variant.id)}` : ""}</strong>
+        <span>${previewText(variant.family || variant.domain || "type onbekend")} · ${previewText(variant.answerMode || "open")}</span>
+      </header>
+      <p><strong>Vraag</strong> ${previewText(variant.prompt)}</p>
+      <p><strong>Antwoord</strong> ${previewText(answerFor(variant))}</p>
+      ${variant.choices ? `<p><strong>Keuzes</strong> ${previewText(variant.choices)}</p>` : ""}
+      ${visual ? `<p><strong>Visual</strong> ${previewText(visual.type)}${visual.type === "clock" ? ` · uur ${previewText(visual.hour)} · minuut ${previewText(visual.minute)}` : ""}</p>` : ""}
+      <p><strong>Minnie hint</strong> ${previewText(variant.hintMinnie)}</p>
+      <p><strong>Moose hint</strong> ${previewText(variant.hintMoose)}</p>
+      <p><strong>Uitleg</strong> ${previewText(variant.explanation)}</p>
+    </article>
+  `;
+}
+
+function renderChallengeContentPreview(challenge, rune) {
+  if (!challenge) return `
+    <section class="challengePreviewPanel" data-challenge-preview>
+      <strong>Opdracht</strong>
+      <p>Geen gekoppelde authored challenge voor ${rune?.name || rune?.id || "deze hotspot"}.</p>
+    </section>
+  `;
+  const slots = challenge.questions || [];
+  const variants = challengeVariantEntries(challenge);
+  const active = isLearningChallengeActive(challenge);
+  const character = challenge.challengeCharacterId || level.challengeCharacter?.id || "";
+  return `
+    <section class="challengePreviewPanel" data-challenge-preview="${challenge.id}">
+      <header class="challengePreviewHeader">
+        <div>
+          <strong>${rune?.name || challenge.id}</strong>
+          <span>${challenge.id} · ${active ? "Actief" : "Inactief"}</span>
+        </div>
+        <label class="editorToggle challengeActiveToggle">
+          <input type="checkbox" data-challenge-active="${challenge.id}" ${active ? "checked" : ""} />
+          <span>Challenge actief</span>
+          <strong>${active ? "Actief" : "Inactief"}</strong>
+        </label>
+      </header>
+      <div class="challengePreviewSummary">
+        <span>${slots.length} vragen · ${variants.length} varianten</span>
+        <span>${challengeTypeSummary(challenge)}</span>
+        <span>${character ? `Personage ${character}` : "Geen personage"}</span>
+        <span>${challengeHasClockVisual(challenge) ? "Bevat klokvisuals" : "Geen klokvisuals"}</span>
+      </div>
+      <div class="challengeSlotList">
+        ${slots.map((slot, slotIndex) => `
+          <details class="editorNestedSection challengeSlotPreview" open>
+            <summary>Vraag ${slotIndex + 1} <span>${slot.id || ""}</span></summary>
+            ${(slot.variants || []).map(renderChallengeVariantPreview).join("") || "<p>Geen varianten.</p>"}
+          </details>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function renderChallengeEditorControls() {
+  const runes = level.runes || [];
+  const selectedRune = selectedEditorRune();
+  const selectedChallenge = learningChallengeForRune(selectedRune);
+  const activeCount = activeRunes().length;
+  return `
+    <details class="editorSection" open data-challenge-editor>
+      <summary>Opdrachten <span>${activeCount}/${runes.length} actief</span></summary>
+      <div class="editorObjectPicker challengeObjectPicker">
+        ${runes.map((rune) => {
+          const challenge = learningChallengeForRune(rune);
+          const active = isRuneActive(rune);
+          return `<button
+            type="button"
+            data-select-challenge="${rune.id}"
+            class="${selectedRune?.id === rune.id ? "editorObjectSelected" : ""} ${!active ? "editorChallengeInactive" : ""}"
+            aria-label="Selecteer opdracht ${rune.name || rune.id}"
+          >${rune.name || rune.id}<span>${active ? "Actief" : "Inactief"}</span>${challenge ? "" : "<span>legacy</span>"}</button>`;
+        }).join("") || "<span>Geen opdrachten.</span>"}
+      </div>
+      ${renderChallengeContentPreview(selectedChallenge, selectedRune)}
+    </details>
+  `;
+}
+
 function renderAmbientEditorControls() {
   const animals = level.ambientAnimals || [];
   const flybys = level.ambientFlybys || [];
@@ -3191,6 +3483,7 @@ function renderAmbientEditorControls() {
       <span>${walkPathEditor.assetMessage || "Place shared files in assets/ambient/animals or assets/ambient/flybys."}</span>
     </div>
     ${renderAssetWarnings()}
+    ${renderChallengeEditorControls()}
     <details class="editorSection" open>
       <summary>Ambient animals <span>${animals.length}</span></summary>
       <div class="editorObjectPicker">
@@ -4578,7 +4871,7 @@ function isLevelExitReady() {
   return Boolean(
     level &&
     state?.completedRunes &&
-    (state.completedRunes.size === level.runes.length || state.levelExitReadyFromSaved)
+    completedActiveRuneCount() >= requiredRuneCount()
   );
 }
 
@@ -4610,10 +4903,13 @@ function renderHotspot(hotspot) {
 }
 
 function renderRuneHotspot(rune) {
-  const done = state.completedRunes.has(rune.id);
+  const active = isRuneActive(rune);
+  const editorPreview = EDITOR_DEV_MODE && debugOverlayEnabled;
+  if (!active && !editorPreview) return "";
+  const done = active && state.completedRunes.has(rune.id);
   const justCompleted = state.justCompletedRuneId === rune.id;
-  const selected = state.selectedChallengeId === rune.id;
-  const disabled = state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending;
+  const selected = state.selectedChallengeId === rune.id || (editorPreview && walkPathEditor.selectedChallengeId === rune.id);
+  const disabled = state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending || (!active && !editorPreview);
   const object = interactiveObjectForTarget(rune);
   if (!object) {
     warnMissingTrackedObject(rune, "rune");
@@ -4621,12 +4917,13 @@ function renderRuneHotspot(rune) {
   }
   return `
     <button
-      class="runeHotspot ${done ? "runeDone" : ""} ${selected ? "runeSelected" : ""} ${justCompleted ? "runeJustCompleted" : ""}"
+      class="runeHotspot ${done ? "runeDone" : ""} ${selected ? "runeSelected" : ""} ${justCompleted ? "runeJustCompleted" : ""} ${!active ? "runeInactive" : ""}"
       style="${objectTrackStyle(object)}"
       type="button"
       data-rune="${rune.id}"
       data-object="${object.id}"
-      data-hotspot-cue="${done ? "none" : "challenge"}"
+      data-hotspot-cue="${active && !done ? "challenge" : "none"}"
+      data-challenge-active="${active}"
       data-world-center-x="${object.center.x}"
       data-world-center-y="${object.center.y}"
       data-radius="${object.radius}"
@@ -4653,14 +4950,15 @@ function canOpenTempleGate() {
 }
 
 function renderDialogue() {
-  const done = state.completedRunes.size;
+  const done = completedActiveRuneCount();
+  const total = requiredRuneCount();
   const companionName = level.companion?.name || level.spiritName;
   const companionPortrait = level.companion?.portrait || "assets/sven-stage.png";
   return `
     <section class="dialogue" aria-live="polite">
       <img class="portrait" src="${companionPortrait}" alt="De ${companionName}" />
       <div class="speech">
-        <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${level.runes.length} runen</p>
+        <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${total} runen</p>
         <p>${state.message}</p>
       </div>
     </section>
@@ -4696,7 +4994,8 @@ function renderGuidePortrait([id, guide], activeSpeaker) {
 }
 
 function renderAdventureTeamBar() {
-  const done = state.completedRunes.size;
+  const done = completedActiveRuneCount();
+  const total = requiredRuneCount();
   const guideMessage = state.guideMessage || normalizeGuideMessage(state.message, "minnie");
   const activeGuide = (level.guides || {})[guideMessage.speaker] || { name: "Minnie" };
   return `
@@ -4707,7 +5006,7 @@ function renderAdventureTeamBar() {
       <div class="teamSpeech">
         <p class="teamSpeaker">${activeGuide.name}</p>
         <p class="teamMessage">${guideMessage.text}</p>
-        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${level.runes.length} ${level.progressLabelPlural || "runen"}</p>
+        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${total} ${level.progressLabelPlural || "runen"}</p>
       </div>
     </section>
   `;
@@ -4829,6 +5128,7 @@ function renderLaunch() {
 }
 
 function renderMenu() {
+  ensureMenuAdventureStats();
   const menuLevels = visibleLevelCatalog();
   const heroIndex = menuLevels.length ? Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), menuLevels.length - 1) : 0;
   const heroLevel = menuLevels[heroIndex];
@@ -5075,13 +5375,20 @@ function renderLoading() {
   `;
 }
 
+function adventureMenuBadge(item) {
+  const stats = menuAdventureStats.byRoot[item.id];
+  if (!stats) return item.menu?.badge || item.id;
+  const placeLabel = stats.placeCount === 1 ? "plaats" : "plaatsen";
+  return `${stats.placeCount} ${placeLabel} · ${stats.challengeCount} opdrachten`;
+}
+
 function renderHeroLevelTile(item) {
   return `
     <button class="levelTile heroLevelTile ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" type="button" data-level="${item.id}" data-featured-level="${item.id}" aria-label="${item.title} starten">
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
-        <span class="levelBadge">${item.menu?.badge || item.id}</span>
+        <span class="levelBadge">${adventureMenuBadge(item)}</span>
         <strong>${item.title}</strong>
         <span class="levelTileDescription">${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
         <span class="heroStartHint" aria-hidden="true">Tik om te starten</span>
@@ -5097,7 +5404,7 @@ function renderLevelTile(item, index = 0, isActive = false) {
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
       <span class="levelTileText">
-        <span class="levelBadge">${item.menu?.badge || item.id}</span>
+        <span class="levelBadge">${adventureMenuBadge(item)}</span>
         <strong>${item.title}</strong>
         <span class="levelTileDescription">${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
       </span>
@@ -5225,7 +5532,7 @@ function renderCorrect() {
 function renderReward() {
   const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
   const progressLabel = level.progressLabelPlural || "runen";
-  const rewardBadge = level.reward?.badge || `${state.completedRunes.size}/${level.runes.length} ${progressLabel}`;
+  const rewardBadge = level.reward?.badge || `${completedActiveRuneCount()}/${requiredRuneCount()} ${progressLabel}`;
   return `
     <main class="rewardScreen">
       <img class="rewardArt" src="${level.reward.art}" alt="Sven voor de geopende tempelpoort" />
@@ -5362,6 +5669,13 @@ app.addEventListener("click", (event) => {
     sceneEffectRuntime.setVisibility("all", walkPathEditor.selectedEffectId);
     walkPathEditor.effectVisibility = "all";
     render();
+    return;
+  }
+  const challengeSelector = event.target.closest("[data-select-challenge]");
+  if (challengeSelector) {
+    event.preventDefault();
+    event.stopPropagation();
+    selectChallengeForEditor(challengeSelector.dataset.selectChallenge);
     return;
   }
   const addEffectTarget = event.target.closest("[data-add-effect]");
@@ -5702,6 +6016,10 @@ app.addEventListener("click", (event) => {
 
   const runeTarget = event.target.closest("[data-rune]");
   if (runeTarget) {
+    if (EDITOR_DEV_MODE && debugOverlayEnabled && walkPathEditor.enabled) {
+      selectChallengeForEditor(runeTarget.dataset.rune);
+      return;
+    }
     playSfx("uiClick");
     selectChallenge(runeById(runeTarget.dataset.rune));
     return;
@@ -5748,6 +6066,11 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  const challengeActive = event.target.closest("[data-challenge-active]");
+  if (challengeActive) {
+    updateLearningChallengeActive(challengeActive.dataset.challengeActive, challengeActive.checked);
+    return;
+  }
   const effectOverride = event.target.closest("[data-effect-override]");
   if (effectOverride) {
     updateSceneEffectOverride(effectOverride.dataset.effectOverride, effectOverride.value);

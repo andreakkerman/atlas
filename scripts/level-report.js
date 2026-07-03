@@ -72,6 +72,15 @@ function reportLevel(loaded) {
     return counts;
   }, {});
   const authoredById = new Map((level.learningChallenges || []).map((challenge) => [challenge.id, challenge]));
+  const isChallengeActive = (challenge) => !challenge || challenge.active !== false;
+  const activeChallengeObjects = (level.runes || []).filter((rune) => {
+    if (rune.challengeId) return isChallengeActive(authoredById.get(rune.challengeId));
+    if (Array.isArray(rune.challengeIds)) {
+      return rune.challengeIds.some((id) => isChallengeActive(authoredById.get(id)));
+    }
+    return true;
+  }).length;
+  const inactiveChallengeObjects = (level.runes?.length || 0) - activeChallengeObjects;
   const challengeCount = (level.runes || []).reduce((sum, rune) => {
     if (rune.challengeId) return sum + (authoredById.get(rune.challengeId)?.questions?.length || 0);
     return sum + (rune.challengeIds?.length || rune.questions?.length || 0);
@@ -112,6 +121,8 @@ function reportLevel(loaded) {
   console.log("");
   console.log("Challenges:");
   console.log(`* rune count: ${level.runes?.length || 0}`);
+  console.log(`* active challenge objects: ${activeChallengeObjects}`);
+  if (inactiveChallengeObjects) console.log(`* inactive challenge objects: ${inactiveChallengeObjects}`);
   console.log(`* question count: ${challengeCount}`);
   if (variantCount) console.log(`* authored variant count: ${variantCount}`);
   console.log("");
