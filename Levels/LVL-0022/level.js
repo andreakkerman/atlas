@@ -508,7 +508,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "gateMechanism",

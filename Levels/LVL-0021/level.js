@@ -210,7 +210,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "mechanicalModel",
@@ -677,8 +678,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "id": "opticsTable",
       "type": "challenge",
       "name": "Optiektafel",
-      "x": 458,
-      "y": 407,
+      "x": 455,
+      "y": 408,
       "radius": 52,
       "approach": {
         "x": 520,
@@ -898,8 +899,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "id": "opticsTable",
       "type": "rune",
       "center": {
-        "x": 458,
-        "y": 407
+        "x": 455,
+        "y": 408
       },
       "radius": 52,
       "approachNode": "opticsTable-approach",
@@ -1034,31 +1035,31 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
     "name": "Leonardo da Vinci",
     "portrait": "Levels/LVL-0021/assets/leonardo-da-vinci.png"
   },
-  sceneEffects: [
-        {
-              id: "sun-presence-01",
-              label: "Golden hour sun 1",
-              presetId: "sun-presence",
-              variantId: "golden-hour-sun",
-              presetVersion: 1,
-              enabled: true,
-              seed: 979362520,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 1221,
-                    y: 229,
-                    radius: 250
-              },
-              overrides: {
-                    rayStartAngle: 50,
-                    rayEndAngle: 200,
-                    rayStrength: 0.5,
-                    rayCount: 16
-              }
-        }
+  "sceneEffects": [
+    {
+      "id": "sun-presence-01",
+      "label": "Golden hour sun 1",
+      "presetId": "sun-presence",
+      "variantId": "golden-hour-sun",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 979362520,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 1221,
+        "y": 229,
+        "radius": 250
+      },
+      "overrides": {
+        "rayStartAngle": 50,
+        "rayEndAngle": 200,
+        "rayStrength": 0.5,
+        "rayCount": 16
+      }
+    }
   ],
   "reward": {
     "title": "Rome afgerond",

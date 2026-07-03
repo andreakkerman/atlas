@@ -365,7 +365,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "pigmentTable",
