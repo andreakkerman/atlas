@@ -219,7 +219,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "tabletCase",
@@ -702,7 +703,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     }
   ],
   "objects": [
@@ -961,45 +963,45 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
     "name": "Nebu",
     "portrait": "Levels/LVL-0027/assets/nebu.png"
   },
-  sceneEffects: [
-        {
-              id: "light-source-enhancement-01",
-              label: "Wall torch 1",
-              presetId: "light-source-enhancement",
-              variantId: "wall-torch",
-              presetVersion: 1,
-              enabled: true,
-              seed: 1877720153,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 1562,
-                    y: 491,
-                    radius: 21
-              },
-              overrides: {}
-        },
-        {
-              id: "light-source-enhancement-01-copy",
-              label: "Wall torch 1 copy",
-              presetId: "light-source-enhancement",
-              variantId: "wall-torch",
-              presetVersion: 1,
-              enabled: true,
-              seed: 1877720153,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 1894,
-                    y: 501,
-                    radius: 21
-              },
-              overrides: {}
-        }
+  "sceneEffects": [
+    {
+      "id": "light-source-enhancement-01",
+      "label": "Wall torch 1",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 1877720153,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 1562,
+        "y": 491,
+        "radius": 21
+      },
+      "overrides": {}
+    },
+    {
+      "id": "light-source-enhancement-01-copy",
+      "label": "Wall torch 1 copy",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 1877720153,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 1894,
+        "y": 501,
+        "radius": 21
+      },
+      "overrides": {}
+    }
   ],
   "reward": {
     "title": "De sarcofaag opent",

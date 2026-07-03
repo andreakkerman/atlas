@@ -380,7 +380,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0031"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "boatDisplay",

@@ -960,7 +960,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     }
   ],
   "objects": [

@@ -359,7 +359,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "lockChambers",

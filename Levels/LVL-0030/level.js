@@ -219,7 +219,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "sundial",
@@ -599,7 +600,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "templePanel",

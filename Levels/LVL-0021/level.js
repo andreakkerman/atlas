@@ -670,7 +670,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     }
   ],
   "objects": [

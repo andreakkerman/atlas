@@ -219,7 +219,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "canopicJars",
@@ -541,7 +542,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "altarTable",
@@ -961,64 +963,64 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
     "name": "Nebu",
     "portrait": "Levels/LVL-0029/assets/nebu.png"
   },
-  sceneEffects: [
-        {
-              id: "light-source-enhancement-01",
-              label: "Wall torch 1",
-              presetId: "light-source-enhancement",
-              variantId: "wall-torch",
-              presetVersion: 1,
-              enabled: true,
-              seed: 831246026,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 49,
-                    y: 337,
-                    radius: 27
-              },
-              overrides: {}
-        },
-        {
-              id: "light-source-enhancement-01-copy",
-              label: "Wall torch 1 copy",
-              presetId: "light-source-enhancement",
-              variantId: "wall-torch",
-              presetVersion: 1,
-              enabled: true,
-              seed: 831246026,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 339,
-                    y: 385,
-                    radius: 27
-              },
-              overrides: {}
-        },
-        {
-              id: "light-source-enhancement-01-copy-copy",
-              label: "Wall torch 1 copy copy",
-              presetId: "light-source-enhancement",
-              variantId: "wall-torch",
-              presetVersion: 1,
-              enabled: true,
-              seed: 831246026,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 927,
-                    y: 313,
-                    radius: 27
-              },
-              overrides: {}
-        }
+  "sceneEffects": [
+    {
+      "id": "light-source-enhancement-01",
+      "label": "Wall torch 1",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 831246026,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 49,
+        "y": 337,
+        "radius": 27
+      },
+      "overrides": {}
+    },
+    {
+      "id": "light-source-enhancement-01-copy",
+      "label": "Wall torch 1 copy",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 831246026,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 339,
+        "y": 385,
+        "radius": 27
+      },
+      "overrides": {}
+    },
+    {
+      "id": "light-source-enhancement-01-copy-copy",
+      "label": "Wall torch 1 copy copy",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 831246026,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 927,
+        "y": 313,
+        "radius": 27
+      },
+      "overrides": {}
+    }
   ],
   "reward": {
     "title": "De grafkamer wijst verder",
