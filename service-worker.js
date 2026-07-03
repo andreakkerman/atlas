@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v13";
+const CACHE_NAME = "svenadventure-static-v14";
 const CORE_ASSETS = [
   "./",
   "index.html",
