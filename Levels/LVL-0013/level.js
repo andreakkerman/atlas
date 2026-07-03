@@ -188,7 +188,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "cheeseCart",
@@ -832,64 +833,64 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "challengeId": "canalClock"
     }
   ],
-  sceneEffects: [
-        {
-              id: "sun-presence-01",
-              label: "Golden hour sun 1",
-              presetId: "sun-presence",
-              variantId: "golden-hour-sun",
-              presetVersion: 1,
-              enabled: true,
-              seed: 133310047,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 1606,
-                    y: 212,
-                    radius: 103
-              },
-              overrides: {
-                    rayEndAngle: 191,
-                    rayStartAngle: -35
-              }
-        },
-        {
-              id: "water-shimmer-02",
-              label: "Water Shimmer 2",
-              presetId: "water-shimmer",
-              variantId: "default-water-shimmer",
-              presetVersion: 1,
-              enabled: true,
-              seed: 511872641,
-              qualityTier: "auto",
-              layerSlot: "worldAtmosphere",
-              groupId: "",
-              geometry: {
-                    type: "polygon",
-                    points: [
-                          {
-                                x: 1262,
-                                y: 505
-                          },
-                          {
-                                x: 1299,
-                                y: 502
-                          },
-                          {
-                                x: 1408,
-                                y: 563
-                          },
-                          {
-                                x: 1250,
-                                y: 563
-                          }
-                    ],
-                    cutouts: []
-              },
-              overrides: {}
-        }
+  "sceneEffects": [
+    {
+      "id": "sun-presence-01",
+      "label": "Golden hour sun 1",
+      "presetId": "sun-presence",
+      "variantId": "golden-hour-sun",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 133310047,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 1606,
+        "y": 212,
+        "radius": 103
+      },
+      "overrides": {
+        "rayEndAngle": 191,
+        "rayStartAngle": -35
+      }
+    },
+    {
+      "id": "water-shimmer-02",
+      "label": "Water Shimmer 2",
+      "presetId": "water-shimmer",
+      "variantId": "default-water-shimmer",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 511872641,
+      "qualityTier": "auto",
+      "layerSlot": "worldAtmosphere",
+      "groupId": "",
+      "geometry": {
+        "type": "polygon",
+        "points": [
+          {
+            "x": 1262,
+            "y": 505
+          },
+          {
+            "x": 1299,
+            "y": 502
+          },
+          {
+            "x": 1408,
+            "y": 563
+          },
+          {
+            "x": 1250,
+            "y": 563
+          }
+        ],
+        "cutouts": []
+      },
+      "overrides": {}
+    }
   ],
   "reward": {
     "title": "De reis is begonnen!",
@@ -962,19 +963,15 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "flapFrequencyHz": 8,
       "faceFlightDirection": true,
       "mirrorX": false,
-      "intervalMinMs": 5000,
-      "intervalMaxMs": 25000,
+      "intervalMinMs": 18000,
+      "intervalMaxMs": 35000,
       "syncKey": "NLvlinders",
       "startDelayMs": 0,
       "softness": 0,
       "saturation": 1,
       "soundVolume": 0.65,
       "rotateAlongPath": true,
-      "maxRotationDeg": 8,
-      "motionProfile": "organic",
-      "wobble": 15,
-      "speedVariation": 0.15,
-      "flutterFrequency": 2.1
+      "maxRotationDeg": 8
     },
     {
       "id": "NLButterfly01-copy",
@@ -1037,19 +1034,15 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "flapFrequencyHz": 8,
       "faceFlightDirection": true,
       "mirrorX": false,
-      "intervalMinMs": 5000,
-      "intervalMaxMs": 25000,
+      "intervalMinMs": 18000,
+      "intervalMaxMs": 35000,
       "syncKey": "NLvlinders",
       "startDelayMs": 0,
       "softness": 0,
       "saturation": 1,
       "soundVolume": 0.65,
       "rotateAlongPath": true,
-      "maxRotationDeg": 8,
-      "motionProfile": "organic",
-      "wobble": 14,
-      "speedVariation": 0.14,
-      "flutterFrequency": 2.1
+      "maxRotationDeg": 8
     }
   ]
 };
