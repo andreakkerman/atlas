@@ -579,8 +579,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     }
   ],
   "challengeArt": "Levels/LVL-0017/assets/atlas-de-reiziger.png",

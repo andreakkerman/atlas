@@ -188,8 +188,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "cheeseCart",

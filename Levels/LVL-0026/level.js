@@ -210,8 +210,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "opticalTable",
@@ -740,8 +739,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "designBoard",
@@ -960,8 +958,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     }
   ],
   "objects": [
@@ -997,8 +994,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
       "y": 403,
       "radius": 68,
       "approach": {
-        "x": 984,
-        "y": 564
+        "x": 974,
+        "y": 575
       }
     },
     {
@@ -1074,8 +1071,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
     },
     {
       "id": "centralCodex-approach",
-      "x": 984,
-      "y": 564,
+      "x": 974,
+      "y": 575,
       "role": "approach"
     },
     {

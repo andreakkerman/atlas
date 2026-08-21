@@ -764,6 +764,29 @@ button {
   place-items: center;
 }
 
+.atlasLoadingCard {
+  width: min(440px, calc(100vw - 40px));
+  padding: 28px;
+  border: 1px solid rgba(255, 231, 166, .32);
+  border-radius: 14px;
+  background: rgba(11, 24, 21, .92);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .38);
+  text-align: center;
+}
+
+.atlasLoadingSpinner {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin: 8px auto 14px;
+  border: 3px solid rgba(255, 231, 166, .22);
+  border-top-color: #ffe7a6;
+  border-radius: 50%;
+  animation: atlasLoadingSpin .75s linear infinite;
+}
+
+@keyframes atlasLoadingSpin { to { transform: rotate(360deg); } }
+
 .gameShell {
   position: fixed;
   inset: 0;
@@ -2448,10 +2471,10 @@ button {
 .svenInWorld {
   position: absolute;
   z-index: var(--layer-sven);
-  --sven-direction: 1;
+  --sven-scale: 1;
   width: auto;
   height: clamp(168px, 24dvh, 218px);
-  transform: translate(-50%, -100%) scaleX(var(--sven-direction));
+  transform: translate(-50%, -100%);
   transform-origin: 50% 100%;
   transition: none;
   filter: drop-shadow(0 14px 9px rgba(0, 0, 0, 0.35));
@@ -2463,10 +2486,12 @@ button {
   display: block;
   width: auto;
   height: 100%;
+  transform: scale(var(--sven-scale));
+  transform-origin: 50% 100%;
 }
 
 .sven-facing-left {
-  --sven-direction: -1;
+  --sven-facing: left;
 }
 
 .sven-idle {
@@ -2495,6 +2520,139 @@ button {
 
 .sven-arrived {
   animation: none;
+}
+
+.levelTileLocked {
+  cursor: not-allowed;
+  filter: saturate(.48) brightness(.72);
+}
+
+.levelTileLocked:hover,
+.levelTileLocked:focus-visible {
+  transform: none;
+}
+
+.levelLockIndicator {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 231, 166, .7);
+  border-radius: 50%;
+  background: rgba(12, 20, 19, .88);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .38);
+  font-size: 1.15rem;
+}
+
+.worldEditorLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(4, 12, 12, .76);
+  backdrop-filter: blur(10px);
+}
+
+.worldEditorPanel {
+  width: min(1180px, 100%);
+  max-height: calc(100dvh - 36px);
+  overflow: auto;
+  border: 1px solid rgba(255, 231, 166, .28);
+  border-radius: 14px;
+  color: #effbf7;
+  background: linear-gradient(145deg, rgba(19, 39, 36, .98), rgba(8, 24, 23, .99));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .58);
+}
+
+.worldEditorHeader,
+.worldEditorToolbar,
+.worldEditorFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, .09);
+}
+
+.worldEditorHeader h2,
+.worldLevelInspector h3 { margin: 2px 0 0; }
+.worldEditorHeader p,
+.worldEditorFooter p { margin: 0; }
+.worldEditorHeader > button { font-size: 1.7rem; }
+.worldEditorToolbar label { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+.worldEditorToolbar select { min-width: 260px; }
+
+.worldEditorBody {
+  display: grid;
+  grid-template-columns: minmax(310px, .9fr) minmax(420px, 1.4fr);
+  min-height: 460px;
+}
+
+.worldCompositionList {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  margin: 0;
+  padding: 18px;
+  border-right: 1px solid rgba(255, 255, 255, .09);
+  list-style: none;
+}
+
+.worldCompositionList li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, .035);
+}
+
+.worldCompositionList li.selected { border-color: rgba(46, 230, 220, .72); background: rgba(46, 230, 220, .09); }
+.worldCompositionList li.disabled { opacity: .58; }
+.worldLevelSelect { display: grid; gap: 2px; min-width: 0; text-align: left; background: transparent; border: 0; color: inherit; }
+.worldLevelSelect strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.worldLevelSelect span { color: #a8c8c1; font-size: .77rem; }
+.worldEnabledToggle { display: flex; gap: 5px; align-items: center; font-size: .78rem; }
+.worldOrderButtons { display: flex; gap: 4px; }
+.worldOrderButtons button { min-width: 32px; min-height: 32px; }
+
+.worldLevelInspector { padding: 22px; overflow: auto; }
+.atlasLevelTuning { display: grid; gap: 16px; margin: 16px 0; }
+.atlasBackgroundControl { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; }
+.atlasBackgroundControl strong { width: 100%; }
+.atlasCurrentAsset { flex: 1 1 260px; overflow-wrap: anywhere; color: #c8dfd9; font-size: .82rem; }
+.atlasFileButton { position: relative; display: inline-flex; padding: 9px 12px; border: 1px solid rgba(46, 230, 220, .4); border-radius: 7px; cursor: pointer; font-weight: 800; }
+.atlasFileButton input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.atlasFileButton.disabled { opacity: .48; cursor: not-allowed; }
+.atlasTuningGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.atlasConfigField { display: grid; gap: 5px; font-size: .8rem; font-weight: 750; }
+.atlasConfigField input { width: 100%; min-width: 0; }
+.atlasVisualAdjustments,
+.atlasLocomotionAdjustments { padding: 10px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 8px; }
+.atlasVisualColumns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+.atlasVisualColumns fieldset { display: grid; gap: 8px; margin: 0; border-color: rgba(255, 255, 255, .12); }
+.atlasLocomotionGroups { display: grid; gap: 12px; margin-top: 12px; }
+.atlasLocomotionGroups fieldset { margin: 0; border-color: rgba(255, 255, 255, .12); }
+.atlasLocomotionGroups legend { padding: 0 6px; font-weight: 800; }
+.atlasConfigField em { color: #8ed6ff; font-size: .68rem; font-style: normal; letter-spacing: .04em; }
+.worldEditorFooter { position: sticky; bottom: 0; border-top: 1px solid rgba(255, 255, 255, .09); border-bottom: 0; background: rgba(8, 24, 23, .98); }
+
+@media (max-width: 800px) {
+  .worldEditorBody { grid-template-columns: 1fr; }
+  .worldCompositionList { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .09); }
+  .atlasTuningGrid,
+  .atlasVisualColumns { grid-template-columns: 1fr; }
+  .worldEditorToolbar,
+  .worldEditorFooter { align-items: stretch; flex-direction: column; }
 }
 
 .dialogue {
@@ -3312,63 +3470,63 @@ body.keyboard-open .openAnswerControls input {
 @keyframes svenIdle {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-2px) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(-2px);
   }
 }
 
 @keyframes svenStep {
   0% {
-    transform: translateX(-50%) translateY(0) rotate(-2deg) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0) rotate(-2deg);
   }
   100% {
-    transform: translateX(-50%) translateY(-5px) rotate(2deg) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(-5px) rotate(2deg);
   }
 }
 
 @keyframes svenThink {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0) rotate(0deg) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0) rotate(0deg);
   }
   35% {
-    transform: translateX(-52%) translateY(-1px) rotate(-2deg) scaleX(var(--sven-direction));
+    transform: translateX(-52%) translateY(-1px) rotate(-2deg);
   }
   70% {
-    transform: translateX(-48%) translateY(0) rotate(2deg) scaleX(var(--sven-direction));
+    transform: translateX(-48%) translateY(0) rotate(2deg);
   }
 }
 
 @keyframes svenAttend {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0) rotate(0deg) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateX(-50%) translateY(-1px) rotate(1deg) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(-1px) rotate(1deg);
   }
 }
 
 @keyframes svenCelebrate {
   0% {
-    transform: translateX(-50%) translateY(0) scale(1) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0) scale(1);
   }
   42% {
-    transform: translateX(-50%) translateY(-18px) scale(1.07) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(-18px) scale(1.07);
   }
   100% {
-    transform: translateX(-50%) translateY(0) scale(1) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0) scale(1);
   }
 }
 
 @keyframes svenArrive {
   0% {
-    transform: translateX(-50%) translateY(-4px) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(-4px);
   }
   100% {
-    transform: translateX(-50%) translateY(0) scaleX(var(--sven-direction));
+    transform: translateX(-50%) translateY(0);
   }
 }
 

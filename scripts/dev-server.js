@@ -36,7 +36,7 @@ function readBody(request) {
     let body = "";
     request.on("data", (chunk) => {
       body += chunk;
-      if (body.length > 2_000_000) {
+      if (body.length > 30_000_000) {
         reject(new Error("Request body is too large."));
         request.destroy();
       }
@@ -128,6 +128,108 @@ function validateInteractiveObjects(value) {
     }
     return next;
   });
+}
+
+function worldConfigPath() {
+  return path.join(rootDir, "Levels", "world-config.js");
+}
+
+function loadLevelCatalog() {
+  const manifestPath = path.join(rootDir, "Levels", "manifest.js");
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(manifestPath, "utf8"), context, { filename: manifestPath });
+  return context.window.SVEN_LEVEL_MANIFEST?.levels || [];
+}
+
+function catalogRootId(levelId, catalog) {
+  const byId = new Map(catalog.map((entry) => [entry.id, entry]));
+  let current = byId.get(levelId);
+  const seen = new Set();
+  while (current?.connectedFrom && !seen.has(current.id)) {
+    seen.add(current.id);
+    current = byId.get(current.connectedFrom);
+  }
+  return current?.id || null;
+}
+
+function normalizeWorldConfig(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("World config must be an object.");
+  const result = { version: 1, worlds: {}, levels: {}, locomotion: {} };
+  const catalog = loadLevelCatalog();
+  const catalogById = new Map(catalog.map((entry) => [entry.id, entry]));
+  Object.entries(value.worlds || {}).forEach(([worldId, world]) => {
+    if (!catalogById.has(worldId) || catalogById.get(worldId).connectedFrom) throw new Error(`Unknown world: ${worldId}`);
+    const order = Array.isArray(world.order) ? world.order : [];
+    const uniqueOrder = [...new Set(order.map(String))];
+    uniqueOrder.forEach((levelId) => {
+      if (catalogRootId(levelId, catalog) !== worldId) throw new Error(`Level ${levelId} does not belong to ${worldId}.`);
+    });
+    const enabled = {};
+    Object.entries(world.enabled || {}).forEach(([levelId, isEnabled]) => {
+      if (catalogRootId(levelId, catalog) !== worldId) throw new Error(`Level ${levelId} does not belong to ${worldId}.`);
+      if (isEnabled === false) enabled[levelId] = false;
+    });
+    result.worlds[worldId] = { order: uniqueOrder, enabled };
+  });
+  Object.entries(value.levels || {}).forEach(([levelId, settings]) => {
+    if (!catalogById.has(levelId)) throw new Error(`Unknown level settings: ${levelId}`);
+    if (!settings || typeof settings !== "object" || Array.isArray(settings)) throw new Error(`Invalid settings for ${levelId}`);
+    const next = {};
+    const ranges = {
+      spriteScale: [0.5, 1.8], movementSpeed: [80, 520], animationSpeed: [0.5, 1.8],
+      backgroundBrightness: [0.5, 1.5], backgroundContrast: [0.5, 1.5], backgroundSaturation: [0, 2],
+      backgroundWarmth: [-1, 1], backgroundTint: [-1, 1], svenBrightness: [0.5, 1.5],
+      svenContrast: [0.5, 1.5], svenSaturation: [0, 2], svenWarmth: [-1, 1], svenTint: [-1, 1]
+    };
+    Object.entries(ranges).forEach(([key, [min, max]]) => {
+      if (settings[key] === undefined) return;
+      const number = Number(settings[key]);
+      if (!Number.isFinite(number) || number < min || number > max) throw new Error(`${levelId}.${key} is out of range.`);
+      next[key] = number;
+    });
+    if (settings.backgroundOverride !== undefined) {
+      const background = String(settings.backgroundOverride).replace(/\\/g, "/");
+      if (!background.startsWith(`Levels/${levelId}/assets/`) || background.includes("..")) {
+        throw new Error(`${levelId}.backgroundOverride must reference its level assets folder.`);
+      }
+      next.backgroundOverride = background;
+    }
+    result.levels[levelId] = next;
+  });
+  const locomotionRanges = {
+    fromIdleMovement: [0.1, 2], loopMovement: [0.1, 2], toIdleMovement: [0.05, 1.5],
+    toIdleMaxDistance: [1, 200], turnMovement: [0.1, 2], stopEntryDistance: [1, 250],
+    shortMoveThreshold: [1, 300], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
+    toIdleAnimationSpeed: [0.25, 3], turnAnimationSpeed: [0.25, 3],
+    arrivalDynamicSpeedMin: [0.25, 2], arrivalDynamicSpeedMax: [0.25, 3],
+    blinkMinimumInterval: [250, 30000], blinkMaximumInterval: [250, 60000]
+  };
+  Object.entries(locomotionRanges).forEach(([key, [min, max]]) => {
+    if (value.locomotion?.[key] === undefined) return;
+    const number = Number(value.locomotion[key]);
+    if (!Number.isFinite(number) || number < min || number > max) throw new Error(`locomotion.${key} is out of range.`);
+    result.locomotion[key] = number;
+  });
+  if ((result.locomotion.arrivalDynamicSpeedMin ?? 0) > (result.locomotion.arrivalDynamicSpeedMax ?? Infinity)) {
+    throw new Error("Arrival Dynamic Speed Min cannot exceed Max.");
+  }
+  if ((result.locomotion.blinkMinimumInterval ?? 0) > (result.locomotion.blinkMaximumInterval ?? Infinity)) {
+    throw new Error("Blink Minimum Interval cannot exceed Max.");
+  }
+  return result;
+}
+
+function loadWorldConfig() {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync(worldConfigPath(), "utf8"), context, { filename: worldConfigPath() });
+  return normalizeWorldConfig(context.window.SVEN_WORLD_CONFIG || {});
+}
+
+function writeWorldConfig(config) {
+  const source = `window.SVEN_WORLD_CONFIG = ${JSON.stringify(config, null, 2)};\n`;
+  writeTextAtomic(worldConfigPath(), source);
 }
 
 function validateLearningChallenges(value) {
@@ -830,6 +932,49 @@ function applyAudioConfigDraft(audioConfig) {
 async function handleDevRequest(request, response, url) {
   if (url.pathname === "/__dev/status") {
     sendJson(response, 200, { ok: true, feature: "level-editor" });
+    return true;
+  }
+
+  if (url.pathname === "/__dev/world-config") {
+    try {
+      if (request.method === "GET") {
+        sendJson(response, 200, loadWorldConfig());
+        return true;
+      }
+      if (request.method === "POST") {
+        const config = normalizeWorldConfig(JSON.parse(await readBody(request) || "{}"));
+        writeWorldConfig(config);
+        sendJson(response, 200, { ok: true, config });
+        return true;
+      }
+      sendJson(response, 405, { error: "Method not allowed." });
+    } catch (error) {
+      sendJson(response, 400, { error: error.message });
+    }
+    return true;
+  }
+
+  const backgroundMatch = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/background$/);
+  if (backgroundMatch) {
+    const levelId = String(backgroundMatch[1]).replace(/[^A-Za-z0-9_-]/g, "");
+    try {
+      if (request.method !== "POST" || !fs.existsSync(levelDir(levelId))) throw new Error("Level not found or method not allowed.");
+      const body = JSON.parse(await readBody(request) || "{}");
+      const extension = path.extname(String(body.filename || "")).toLowerCase();
+      if (![".png", ".jpg", ".jpeg", ".webp"].includes(extension)) throw new Error("Choose a PNG, JPG, or WebP image.");
+      const match = String(body.data || "").match(/^data:image\/(?:png|jpeg|webp);base64,(.+)$/);
+      if (!match) throw new Error("Invalid image upload.");
+      const bytes = Buffer.from(match[1], "base64");
+      if (!bytes.length || bytes.length > 20_000_000) throw new Error("Image must be between 1 byte and 20 MB.");
+      const base = path.basename(String(body.filename), extension).replace(/[^A-Za-z0-9_-]+/g, "-").replace(/^-|-$/g, "") || "background";
+      const filename = `${base}-atlas-${Date.now()}${extension === ".jpeg" ? ".jpg" : extension}`;
+      const assetsDir = path.join(levelDir(levelId), "assets");
+      fs.mkdirSync(assetsDir, { recursive: true });
+      fs.writeFileSync(path.join(assetsDir, filename), bytes, { flag: "wx" });
+      sendJson(response, 200, { ok: true, path: `Levels/${levelId}/assets/${filename}` });
+    } catch (error) {
+      sendJson(response, 400, { error: error.message });
+    }
     return true;
   }
 

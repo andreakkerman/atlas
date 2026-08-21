@@ -360,8 +360,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "deerStatue",

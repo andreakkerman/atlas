@@ -26,7 +26,7 @@
         return Promise.reject(new Error(`Unsupported image: ${key}`));
       }
       if (images.has(key)) return images.get(key);
-      const promise = new Promise((resolve, reject) => {
+      const decodeSource = (source, objectUrl = null) => new Promise((resolve, reject) => {
         const element = new Image();
         let settled = false;
         const fail = () => {
@@ -38,23 +38,34 @@
           if (settled) return;
           try {
             if (typeof element.decode === "function") await element.decode();
+            if (!element.complete || !element.naturalWidth) throw new Error(`Image decoded without renderable pixels: ${key}`);
             settled = true;
+            if (objectUrl) element._atlasObjectUrl = objectUrl;
             resolve(element);
           } catch {
-            if (element.complete && element.naturalWidth) {
-              settled = true;
-              resolve(element);
-            } else {
-              fail();
-            }
+            fail();
           }
         };
         element.decoding = "sync";
         element.addEventListener("load", finish, { once: true });
         element.addEventListener("error", fail, { once: true });
-        element.src = key;
+        element.src = source;
         if (element.complete && element.naturalWidth) finish();
-      }).catch((error) => {
+      });
+      const useObjectUrl = window.location?.protocol === "http:" || window.location?.protocol === "https:";
+      const promise = (useObjectUrl
+        ? window.fetch(key).then((response) => {
+          if (!response.ok) throw new Error(`Image request failed (${response.status}): ${key}`);
+          return response.blob();
+        }).then((blob) => {
+          const objectUrl = window.URL.createObjectURL(blob);
+          return decodeSource(objectUrl, objectUrl).catch((error) => {
+            window.URL.revokeObjectURL(objectUrl);
+            throw error;
+          });
+        })
+        : decodeSource(key)
+      ).catch((error) => {
         warn(error.message);
         throw error;
       });
@@ -97,14 +108,26 @@
       return promise;
     }
 
+    function releaseImage(path) {
+      const promise = images.get(path);
+      images.delete(path);
+      promise?.then((element) => {
+        if (element?._atlasObjectUrl) window.URL.revokeObjectURL(element._atlasObjectUrl);
+      }).catch(() => {});
+    }
+
     function invalidate(paths = []) {
       paths.map(normalizedAssetPath).filter(Boolean).forEach((path) => {
-        images.delete(path);
+        releaseImage(path);
         audio.delete(path);
       });
     }
 
-    return { images, audio, image, sound, invalidate, normalize: normalizedAssetPath };
+    function releaseImages(paths = []) {
+      paths.map(normalizedAssetPath).filter(Boolean).forEach(releaseImage);
+    }
+
+    return { images, audio, image, sound, invalidate, releaseImages, normalize: normalizedAssetPath };
   }
 
   function smoothControlPoints(points, iterations = 3) {

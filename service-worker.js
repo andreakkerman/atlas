@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v14";
+const CACHE_NAME = "svenadventure-static-v17";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -6,10 +6,15 @@ const CORE_ASSETS = [
   "src/styles.css",
   "src/session-report.js",
   "src/ambient-system.js",
+  "src/asset-readiness.js",
   "src/scene-effects.js",
+  "src/atlas-world.js",
+  "src/locomotion.js",
   "src/app.js",
   "src/audio-config.js",
   "Levels/manifest.js",
+  "Levels/world-config.js",
+  "assets/characters/sven/idle/frame_001.png",
   "assets/branding/launch-hero.png",
   "assets/branding/icon-180.png",
   "assets/branding/icon-192.png",
@@ -60,6 +65,7 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(event.request.url);
   const refreshable = /\/Levels\/[^/]+\/level\.js$/.test(url.pathname) ||
+    /\/Levels\/world-config\.js$/.test(url.pathname) ||
     /\/assets\/ambient\//.test(url.pathname) ||
     /\/assets\/guides\/(?:minnie_blink|moose_blink)\.png$/.test(url.pathname);
 

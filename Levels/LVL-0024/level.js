@@ -216,8 +216,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "counterweights",

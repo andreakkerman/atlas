@@ -49,8 +49,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
   "player": {
     "startNode": "left-door-start",
     "start": {
-      "x": 327,
-      "y": 612
+      "x": 336,
+      "y": 626
     }
   },
   "interactiveObjects": [
@@ -102,36 +102,36 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
   "walkPath": [
     {
       "id": "left-door-start",
-      "x": 327,
-      "y": 612
+      "x": 336,
+      "y": 626
     },
     {
       "id": "chart-approach",
-      "x": 652,
-      "y": 564,
+      "x": 663,
+      "y": 590,
       "role": "approach"
     },
     {
       "id": "salon-center-left",
-      "x": 872,
-      "y": 582
+      "x": 883,
+      "y": 590
     },
     {
       "id": "porthole-approach",
-      "x": 1088,
-      "y": 570,
+      "x": 1082,
+      "y": 591,
       "role": "approach"
     },
     {
       "id": "desk-approach",
-      "x": 1498,
-      "y": 574,
+      "x": 1513,
+      "y": 596,
       "role": "approach"
     },
     {
       "id": "right-door-approach",
-      "x": 1836,
-      "y": 630,
+      "x": 1835,
+      "y": 641,
       "role": "approach"
     }
   ],

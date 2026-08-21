@@ -752,8 +752,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "y": 333,
       "radius": 60,
       "approach": {
-        "x": 1451,
-        "y": 590
+        "x": 1453,
+        "y": 598
       }
     },
     {
@@ -764,8 +764,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "y": 422,
       "radius": 112,
       "approach": {
-        "x": 1915,
-        "y": 588
+        "x": 1939,
+        "y": 595
       },
       "targetLevel": "LVL-0030",
       "lockedUntilComplete": true
@@ -811,14 +811,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
     },
     {
       "id": "altarTable-approach",
-      "x": 1451,
-      "y": 590,
+      "x": 1453,
+      "y": 598,
       "role": "approach"
     },
     {
       "id": "tombSarcophagus-approach",
-      "x": 1915,
-      "y": 588,
+      "x": 1939,
+      "y": 595,
       "role": "approach"
     }
   ],

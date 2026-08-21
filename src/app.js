@@ -1,6 +1,7 @@
 const app = document.querySelector("#app");
 const levelCatalog = window.SVEN_LEVEL_MANIFEST?.levels || [];
-const visibleLevelCatalog = () => levelCatalog.filter((item) => !item.hiddenFromMenu);
+const worldResolver = window.AtlasWorld.createWorldResolver(levelCatalog, window.SVEN_WORLD_CONFIG);
+const visibleLevelCatalog = () => worldResolver.rootEntries().filter((item) => worldResolver.enabledEntries(item.id).length);
 const sessionReport = window.AtlasSessionReport;
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 let level = null;
@@ -50,36 +51,12 @@ const IMMEDIATE_COMPANION_EVENTS = new Set([
   "EXIT_BLOCKED",
   "PATH_UNLOCKED"
 ]);
-const ACTOR_ANIMATIONS = {
-  idle: {
-    folder: "assets/characters/sven/idle-right",
-    frames: 1,
-    fps: 1,
-    loop: true
-  },
-  walk: {
-    folder: "assets/characters/sven/walk-right",
-    frames: 24,
-    fps: 15,
-    loop: true
-  },
-  interact: {
-    folder: "assets/characters/sven/interact-right",
-    frames: 12,
-    fps: 12,
-    loop: false,
-    transitionTo: "idle"
-  }
-};
-
-const actorPlayback = {
-  requestedState: "idle",
-  visualState: "idle",
-  frameIndex: 0,
-  lastFrameAt: 0,
-  rafId: null,
-  failedSources: new Set()
-};
+const actorPlayback = { failedSources: new Set() };
+let actorPreloadError = null;
+const actorPreloadPromise = window.AtlasLocomotion.preloadAll().catch((error) => {
+  actorPreloadError = error;
+  return null;
+});
 
 let state = {
   screen: "launch"
@@ -127,10 +104,14 @@ const guideBlinkRuntime = {
   minnie: { ready: false, timer: null, sequenceTimers: new Set(), frame: "open", blinking: false },
   moose: { ready: false, timer: null, sequenceTimers: new Set(), frame: "open", blinking: false }
 };
-const GUIDE_BLINK_PATHS = {
-  minnie: "assets/guides/minnie_blink.png",
-  moose: "assets/guides/moose_blink.png"
-};
+const GUIDE_BLINK_PATHS = window.SVEN_GUIDE_BLINK_ASSETS || {};
+let levelLoadSequence = 0;
+const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
+  loadImage: (src) => assetCache.image(src),
+  preloadSven: () => preloadActorAnimations(),
+  releaseImages: (paths) => assetCache.releaseImages(paths),
+  persistentPaths: Object.values(GUIDE_BLINK_PATHS)
+});
 const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
@@ -171,6 +152,92 @@ let walkPathEditor = {
   panelCollapsed: false,
   audioDirty: false
 };
+let worldEditor = {
+  open: false,
+  apiAvailable: false,
+  selectedWorldId: visibleLevelCatalog()[0]?.id || null,
+  selectedLevelId: null,
+  dirty: false,
+  busy: false,
+  message: ""
+};
+
+function levelTuning(levelId = level?.id) {
+  const settings = worldResolver.levelSettings(levelId);
+  return {
+    spriteScale: clamp(Number(settings.spriteScale ?? 1), 0.5, 1.8),
+    movementSpeed: clamp(Number(settings.movementSpeed ?? 250), 80, 520),
+    animationSpeed: clamp(Number(settings.animationSpeed ?? 1), 0.5, 1.8),
+    backgroundBrightness: clamp(Number(settings.backgroundBrightness ?? 1), 0.5, 1.5),
+    backgroundContrast: clamp(Number(settings.backgroundContrast ?? 1), 0.5, 1.5),
+    backgroundSaturation: clamp(Number(settings.backgroundSaturation ?? 1), 0, 2),
+    backgroundWarmth: clamp(Number(settings.backgroundWarmth ?? 0), -1, 1),
+    backgroundTint: clamp(Number(settings.backgroundTint ?? 0), -1, 1),
+    svenBrightness: clamp(Number(settings.svenBrightness ?? 1), 0.5, 1.5),
+    svenContrast: clamp(Number(settings.svenContrast ?? 1), 0.5, 1.5),
+    svenSaturation: clamp(Number(settings.svenSaturation ?? 1), 0, 2),
+    svenWarmth: clamp(Number(settings.svenWarmth ?? 0), -1, 1),
+    svenTint: clamp(Number(settings.svenTint ?? 0), -1, 1)
+  };
+}
+
+function locomotionTuning() {
+  return worldResolver.locomotionSettings();
+}
+
+function visualFilter(kind, levelId = level?.id) {
+  const tuning = levelTuning(levelId);
+  const prefix = kind === "background" ? "background" : "sven";
+  const warmth = tuning[`${prefix}Warmth`];
+  const tint = tuning[`${prefix}Tint`];
+  return [
+    `brightness(${tuning[`${prefix}Brightness`]})`,
+    `contrast(${tuning[`${prefix}Contrast`]})`,
+    `saturate(${tuning[`${prefix}Saturation`]})`,
+    `sepia(${Math.abs(warmth) * 0.14})`,
+    `hue-rotate(${warmth * -12 + tint * 18}deg)`
+  ].join(" ");
+}
+
+const locomotion = window.AtlasLocomotion.createController({
+  getAnimationSpeed: () => levelTuning().animationSpeed,
+  getConfig: () => locomotionTuning(),
+  onState: (locomotionState, facing) => {
+    if (state?.screen && facing) state.svenFacing = facing;
+    const actor = document.querySelector("[data-actor='sven']");
+    const shell = document.querySelector("[data-actor-shell='sven']");
+    const legacyState = locomotionState === "idle" || locomotionState === "idleBlink" ? "idle" : "walk";
+    if (actor) {
+      actor.dataset.animation = legacyState;
+      actor.dataset.locomotionState = locomotionState;
+    }
+    if (shell) shell.dataset.locomotionState = locomotionState;
+  },
+  onFrame: (locomotionState, frameIndex, src) => {
+    const decodedActor = window.AtlasLocomotion.decodedImages.get(src);
+    if (!decodedActor) {
+      console.error(`[Atlas] Refused non-ready Sven frame: ${src}`);
+      return;
+    }
+    const currentActor = document.querySelector("[data-actor='sven']");
+    const mount = document.querySelector("[data-actor-mount='sven']");
+    if (!currentActor && !mount) return;
+    const actor = decodedActor;
+    actor.className = "svenSprite";
+    actor.alt = "Sven";
+    actor.draggable = false;
+    actor.decoding = "sync";
+    actor.style.filter = visualFilter("sven");
+    actor.dataset.animation = locomotionState === "idle" || locomotionState === "idleBlink" ? "idle" : "walk";
+    actor.dataset.locomotionState = locomotionState;
+    actor.dataset.frame = String(frameIndex + 1);
+    actor.dataset.worldX = String(Math.round(state.worldX || 0));
+    actor.dataset.worldY = String(Math.round(state.worldY || 0));
+    actor.dataset.actor = "sven";
+    if (currentActor !== actor) (currentActor || mount).replaceWith(actor);
+  }
+});
+locomotion.onIdle(() => finishMovementIfReady());
 
 function createLevelState(selectedLevel) {
   const startPoint = getPlayerStartPoint(selectedLevel);
@@ -654,6 +721,13 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
   try {
     await requestEditorApi("/__dev/status");
     walkPathEditor.apiAvailable = true;
+    worldEditor.apiAvailable = true;
+    if (!worldEditor.dirty) {
+      const config = await requestEditorApi("/__dev/world-config");
+      worldResolver.setConfig(config);
+      window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+      normalizeLevel(selectedLevel);
+    }
     walkPathEditor.message = "Dev server actief.";
     const draft = await requestEditorApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/editor-draft`);
     if (Array.isArray(draft.walkPath)) {
@@ -739,30 +813,167 @@ function densifyWalkGraph(authoredNodes) {
 }
 
 function normalizeLevel(selectedLevel) {
+  selectedLevel.__atlasDefaultBackground ||= selectedLevel.world.background;
+  const settings = worldResolver.levelSettings(selectedLevel.id);
+  selectedLevel.world.background = settings.backgroundOverride || selectedLevel.__atlasDefaultBackground;
   selectedLevel.player.start = getPlayerStartPoint(selectedLevel);
   selectedLevel.walkGraph = deriveWalkGraph(selectedLevel);
   return selectedLevel;
 }
 
+async function prepareWorldEditor() {
+  worldEditor.open = true;
+  worldEditor.selectedWorldId ||= visibleLevelCatalog()[0]?.id || worldResolver.rootEntries()[0]?.id || null;
+  worldEditor.selectedLevelId ||= worldResolver.orderedEntries(worldEditor.selectedWorldId)[0]?.id || null;
+  if (!EDITOR_DEV_MODE || !window.location.protocol.startsWith("http")) {
+    worldEditor.apiAvailable = false;
+    worldEditor.message = "Start npm run dev:editor om wereldinstellingen op te slaan.";
+    return;
+  }
+  worldEditor.busy = true;
+  worldEditor.message = "Wereldconfiguratie laden...";
+  render();
+  try {
+    await requestEditorApi("/__dev/status");
+    const config = await requestEditorApi("/__dev/world-config");
+    worldResolver.setConfig(config);
+    window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+    worldEditor.apiAvailable = true;
+    worldEditor.message = "Wereldconfiguratie geladen.";
+    invalidateMenuAdventureStats();
+  } catch (error) {
+    worldEditor.apiAvailable = false;
+    worldEditor.message = error.message;
+  } finally {
+    worldEditor.busy = false;
+    render();
+  }
+}
+
+function markWorldConfigDirty(message = "Niet-opgeslagen wijzigingen.") {
+  window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+  worldEditor.dirty = true;
+  worldEditor.message = message;
+  invalidateMenuAdventureStats();
+}
+
+async function saveWorldConfig() {
+  if (!worldEditor.apiAvailable || worldEditor.busy) return false;
+  worldEditor.busy = true;
+  worldEditor.message = "Wereldconfiguratie opslaan...";
+  render();
+  try {
+    const payload = await persistWorldConfigRequest();
+    worldResolver.setConfig(payload.config);
+    window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+    worldEditor.dirty = false;
+    worldEditor.message = "Wereldconfiguratie opgeslagen.";
+    await refreshMenuAdventureStats({ render: false });
+    return true;
+  } catch (error) {
+    worldEditor.message = `Opslaan mislukt. ${error.message}`;
+    return false;
+  } finally {
+    worldEditor.busy = false;
+    render();
+  }
+}
+
+function persistWorldConfigRequest() {
+  return requestEditorApi("/__dev/world-config", {
+    method: "POST",
+    body: JSON.stringify(worldResolver.getConfig())
+  });
+}
+
+function updateLevelSetting(levelId, key, value) {
+  const numericRanges = {
+    spriteScale: [0.5, 1.8], movementSpeed: [80, 520], animationSpeed: [0.5, 1.8],
+    backgroundBrightness: [0.5, 1.5], backgroundContrast: [0.5, 1.5], backgroundSaturation: [0, 2],
+    backgroundWarmth: [-1, 1], backgroundTint: [-1, 1], svenBrightness: [0.5, 1.5],
+    svenContrast: [0.5, 1.5], svenSaturation: [0, 2], svenWarmth: [-1, 1], svenTint: [-1, 1]
+  };
+  const range = numericRanges[key];
+  const numericValue = Number(value);
+  const nextValue = range ? clamp(Number.isFinite(numericValue) ? numericValue : levelTuning(levelId)[key], range[0], range[1]) : value;
+  worldResolver.updateLevelSettings(levelId, { [key]: nextValue });
+  if (level?.id === levelId) normalizeLevel(level);
+  markWorldConfigDirty(`${levelId}: ${key} aangepast.`);
+  applyLiveTuningDom(levelId);
+}
+
+const GLOBAL_LOCOMOTION_RANGES = {
+  fromIdleMovement: [0.1, 2], loopMovement: [0.1, 2], toIdleMovement: [0.05, 1.5],
+  toIdleMaxDistance: [1, 200], turnMovement: [0.1, 2], stopEntryDistance: [1, 250],
+  shortMoveThreshold: [1, 300], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
+  toIdleAnimationSpeed: [0.25, 3], turnAnimationSpeed: [0.25, 3],
+  arrivalDynamicSpeedMin: [0.25, 2], arrivalDynamicSpeedMax: [0.25, 3],
+  blinkMinimumInterval: [250, 30000], blinkMaximumInterval: [250, 60000]
+};
+
+function updateLocomotionSetting(key, value) {
+  const range = GLOBAL_LOCOMOTION_RANGES[key];
+  if (!range) return;
+  const current = locomotionTuning();
+  let nextValue = clamp(Number.isFinite(Number(value)) ? Number(value) : current[key], range[0], range[1]);
+  if (key === "arrivalDynamicSpeedMin") nextValue = Math.min(nextValue, current.arrivalDynamicSpeedMax);
+  if (key === "arrivalDynamicSpeedMax") nextValue = Math.max(nextValue, current.arrivalDynamicSpeedMin);
+  if (key === "blinkMinimumInterval") nextValue = Math.min(nextValue, current.blinkMaximumInterval);
+  if (key === "blinkMaximumInterval") nextValue = Math.max(nextValue, current.blinkMinimumInterval);
+  worldResolver.updateLocomotionSettings({ [key]: nextValue });
+  markWorldConfigDirty(`Sven locomotion (Global): ${key} aangepast.`);
+  return nextValue;
+}
+
+function applyLiveTuningDom(levelId) {
+  if (level?.id !== levelId) return;
+  const tuning = levelTuning(levelId);
+  const shell = document.querySelector("[data-actor-shell='sven']");
+  const actor = document.querySelector("[data-actor='sven']");
+  const background = document.querySelector(".worldArt, .introBackdrop");
+  if (shell) shell.style.setProperty("--sven-scale", tuning.spriteScale);
+  if (actor) actor.style.filter = visualFilter("sven", levelId);
+  if (background) background.style.filter = visualFilter("background", levelId);
+}
+
+async function importLevelBackground(levelId, file) {
+  if (!file || !worldEditor.apiAvailable || worldEditor.busy) return;
+  worldEditor.busy = true;
+  worldEditor.message = "Achtergrond importeren...";
+  render();
+  try {
+    const data = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error("Afbeelding kon niet worden gelezen."));
+      reader.readAsDataURL(file);
+    });
+    const uploaded = await requestEditorApi(`/__dev/levels/${encodeURIComponent(levelId)}/background`, {
+      method: "POST",
+      body: JSON.stringify({ filename: file.name, data })
+    });
+    worldResolver.updateLevelSettings(levelId, { backgroundOverride: uploaded.path });
+    markWorldConfigDirty(`${levelId}: achtergrond geïmporteerd. Klik Opslaan om te bevestigen.`);
+    if (level?.id === levelId) normalizeLevel(level);
+  } catch (error) {
+    worldEditor.message = `Importeren mislukt. ${error.message}`;
+  } finally {
+    worldEditor.busy = false;
+    render();
+  }
+}
+
 function frameSrc(animationName, frameIndex) {
-  const animation = ACTOR_ANIMATIONS[animationName] || ACTOR_ANIMATIONS.idle;
-  const number = String(frameIndex + 1).padStart(2, "0");
-  return `${animation.folder}/frame-${number}.png`;
+  return window.AtlasLocomotion.frameUrl(animationName, frameIndex);
 }
 
 function actorStateForMood() {
-  if (state.svenMood === "walking") return "walk";
-  if (["arrived", "activating", "looking", "talking"].includes(state.svenMood)) return "interact";
-  return "idle";
+  return locomotion.snapshot().state;
 }
 
-function preloadActorAnimations() {
-  Object.values(ACTOR_ANIMATIONS).forEach((animation) => {
-    for (let index = 0; index < animation.frames; index += 1) {
-      const image = new Image();
-      image.src = frameSrc(Object.keys(ACTOR_ANIMATIONS).find((key) => ACTOR_ANIMATIONS[key] === animation), index);
-    }
-  });
+async function preloadActorAnimations() {
+  await actorPreloadPromise;
+  if (actorPreloadError) throw actorPreloadError;
 }
 
 function preloadMenuAssets() {
@@ -778,21 +989,14 @@ function preloadMenuAssets() {
 }
 
 function preloadLevelAssets(selectedLevel) {
-  [
-    selectedLevel.world.background,
-    selectedLevel.menu?.illustration,
-    selectedLevel.companion?.portrait,
-    selectedLevel.challengeCharacter?.portrait,
-    ...Object.values(selectedLevel.guides || {}).map((guide) => guide.portrait),
-    ...(selectedLevel.ambientAnimals || []).flatMap((animal) => [animal.openFrame, animal.closedFrame]),
-    ...(selectedLevel.ambientFlybys || []).flatMap((flyby) => [flyby.frameA, flyby.frameB]),
-    selectedLevel.challengeArt,
-    selectedLevel.reward?.art
-  ]
-    .filter(Boolean)
-    .forEach((src) => {
-      assetCache.image(src).catch(() => {});
-    });
+  return criticalAssetsForLevel(selectedLevel);
+}
+
+function criticalAssetsForLevel(selectedLevel) {
+  return window.AtlasAssetReadiness.collectCriticalAssets(selectedLevel, { guideBlinkPaths: GUIDE_BLINK_PATHS });
+}
+
+function preloadLevelSounds(selectedLevel) {
   (selectedLevel.ambientAnimals || []).map((animal) => animal.sound).filter(Boolean)
     .forEach((src) => assetCache.sound(src).catch(() => {}));
   (selectedLevel.ambientFlybys || []).map((flyby) => flyby.sound).filter(Boolean)
@@ -803,8 +1007,17 @@ function loadAndDecodeImage(src) {
   return assetCache.image(src);
 }
 
+function readyAssetSrc(path) {
+  const normalized = assetCache.normalize(path);
+  const image = assetReadiness.snapshot()?.images.get(normalized);
+  return image?._atlasObjectUrl || normalized;
+}
+
 async function preloadAmbientAnimals(selectedLevel) {
   const animals = selectedLevel.ambientAnimals || [];
+  ambientAnimalRuntime.loaded.clear();
+  ambientAnimalRuntime.openReady.clear();
+  ambientAnimalRuntime.closedReady.clear();
   ambientAnimalRuntime.levelId = selectedLevel.id;
   await Promise.all(animals.map(async (animal) => {
     const key = `${selectedLevel.id}:${animal.id}`;
@@ -863,7 +1076,7 @@ function setGuideBlinkFrame(guideId, frame) {
   runtime.frame = frame;
   const image = document.querySelector(`[data-guide-image="${guideId}"]`);
   if (image) image.src = frame === "closed" && runtime.ready
-    ? GUIDE_BLINK_PATHS[guideId]
+    ? readyAssetSrc(GUIDE_BLINK_PATHS[guideId])
     : image.dataset.openSrc;
 }
 
@@ -1235,18 +1448,25 @@ function loadLevelDefinition(entry) {
 }
 
 async function selectLevel(id, options = {}) {
+  const loadSequence = ++levelLoadSequence;
   const entry = levelCatalog.find((item) => item.id === id) || levelCatalog[0];
   if (!entry) return false;
+  if (!worldResolver.isEnabled(entry.id) && !options.allowDisabledForEditor) {
+    state = { screen: "menu", error: "Deze plek is uitgeschakeld in de wereldeditor." };
+    render();
+    return false;
+  }
 
   if (!options.deferRender) {
-    state = { screen: "loading", message: "Avontuur laden..." };
+    state = { screen: "loading", message: "Avontuur en Sven voorbereiden..." };
     render();
   }
 
   let selectedLevel;
   try {
-    selectedLevel = await loadLevelDefinition(entry);
+    [selectedLevel] = await Promise.all([loadLevelDefinition(entry), preloadActorAnimations()]);
   } catch (error) {
+    if (loadSequence !== levelLoadSequence) return false;
     state = { screen: "menu", error: error.message };
     render();
     return false;
@@ -1257,9 +1477,50 @@ async function selectLevel(id, options = {}) {
   sceneEffectRuntime.dispose();
   resetAmbientAnimalTimers();
   await prepareWalkPathEditorForLevel(selectedLevel);
-  level = normalizeLevel(selectedLevel);
-  preloadAmbientAnimals(level);
-  ambientFlybyRuntime.prepareLevel(level);
+  if (loadSequence !== levelLoadSequence) return false;
+  const nextLevel = normalizeLevel(selectedLevel);
+  let assetPlan;
+  try {
+    assetPlan = await assetReadiness.prepare(nextLevel, { guideBlinkPaths: GUIDE_BLINK_PATHS });
+  } catch (error) {
+    if (
+      nextLevel.world.background !== nextLevel.__atlasDefaultBackground &&
+      String(error.message || error).includes(nextLevel.world.background)
+    ) {
+      console.warn(`[Atlas] Background override failed before reveal: ${nextLevel.world.background}. Using ${nextLevel.__atlasDefaultBackground}.`);
+      nextLevel.world.background = nextLevel.__atlasDefaultBackground;
+      try {
+        assetPlan = await assetReadiness.prepare(nextLevel, { guideBlinkPaths: GUIDE_BLINK_PATHS });
+      } catch (fallbackError) {
+        if (loadSequence !== levelLoadSequence) return false;
+        state = { screen: "menu", error: fallbackError.message || String(fallbackError) };
+        render();
+        return false;
+      }
+    } else {
+      if (loadSequence !== levelLoadSequence) return false;
+      state = { screen: "menu", error: error.message || String(error) };
+      render();
+      return false;
+    }
+  }
+  if (loadSequence !== levelLoadSequence || !assetReadiness.isCurrent(assetPlan)) {
+    assetReadiness.discard(assetPlan);
+    return false;
+  }
+  level = nextLevel;
+  await Promise.all([
+    preloadAmbientAnimals(level),
+    ambientFlybyRuntime.prepareLevel(level)
+  ]);
+  if (loadSequence !== levelLoadSequence || !assetReadiness.isCurrent(assetPlan)) {
+    assetReadiness.discard(assetPlan);
+    return false;
+  }
+  assetPlan.failed.forEach((failure) => console.warn(
+    `[Atlas] Optional visual disabled before level reveal: ${failure.path} (${failure.kinds.join(", ")})`
+  ));
+  assetReadiness.activate(assetPlan);
   sceneEffectRuntime.prepareLevel(level);
   const adventure = adventureEntryFor(entry);
   sessionReport?.startOrVisitLevel({
@@ -1270,32 +1531,68 @@ async function selectLevel(id, options = {}) {
   });
   walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
   state = createLevelState(level);
+  state.criticalAssetsReady = true;
   if (options.startImmediately) {
     state.screen = "scene";
+    if (options.recordStart !== false) recordLevelStarted(entry.id);
     emitCompanionEvent("LEVEL_ENTER");
   }
   document.title = level.title;
-  preloadLevelAssets(level);
+  preloadLevelSounds(level);
   if (!options.deferRender) render();
   return true;
 }
 
 function adventureEntryFor(entry) {
-  let current = entry;
-  const seen = new Set();
-  while (current?.connectedFrom && !seen.has(current.id)) {
-    seen.add(current.id);
-    current = levelCatalog.find((item) => item.id === current.connectedFrom) || current;
+  return levelCatalog.find((item) => item.id === worldResolver.rootIdFor(entry.id)) || entry;
+}
+
+function effectiveLockedLevelIds() {
+  return window.AtlasWorld.lockedLevelIds(worldResolver.allEnabledIds(), {
+    location: window.location,
+    storage: window.localStorage
+  });
+}
+
+function isLevelRecentlyLocked(levelId) {
+  return effectiveLockedLevelIds().has(levelId);
+}
+
+function recordLevelStarted(levelId) {
+  if (!levelId) return;
+  window.AtlasWorld.recordRecent(levelId, window.localStorage);
+}
+
+async function startLevelFromMenu(levelId) {
+  if (!worldResolver.isEnabled(levelId)) {
+    state = { ...state, error: "Deze plek is uitgeschakeld in de wereldeditor." };
+    render();
+    return false;
   }
-  return current || entry;
+  if (isLevelRecentlyLocked(levelId)) {
+    state = { ...state, error: "Speel eerst twee andere plekken voordat je hier terugkeert." };
+    render();
+    return false;
+  }
+  return selectLevel(levelId);
+}
+
+function resolvedNextLevelId(levelId = level?.id) {
+  return worldResolver.nextEnabled(levelId)?.id || null;
 }
 
 function returnToMenu() {
+  levelLoadSequence += 1;
+  assetReadiness.supersede();
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
   sceneEffectRuntime.dispose();
   resetAmbientAnimalTimers();
   ambientAnimalRuntime.levelId = null;
+  ambientAnimalRuntime.loaded.clear();
+  ambientAnimalRuntime.openReady.clear();
+  ambientAnimalRuntime.closedReady.clear();
+  assetReadiness.releaseActive();
   sessionReport?.end("menu");
   level = null;
   walkNodesById = new Map();
@@ -1304,53 +1601,8 @@ function returnToMenu() {
   render();
 }
 
-function requestActorAnimation(animationName) {
-  const next = ACTOR_ANIMATIONS[animationName] ? animationName : "idle";
-  actorPlayback.requestedState = next;
-  if (actorPlayback.visualState !== next) {
-    actorPlayback.visualState = next;
-    actorPlayback.frameIndex = 0;
-    actorPlayback.lastFrameAt = 0;
-  }
-  if (!actorPlayback.rafId) {
-    actorPlayback.rafId = window.requestAnimationFrame(updateActorAnimation);
-  }
-}
-
-function setActorFrame() {
-  const actor = document.querySelector("[data-actor='sven']");
-  if (!actor) return;
-
-  const src = frameSrc(actorPlayback.visualState, actorPlayback.frameIndex);
-  actor.dataset.animation = actorPlayback.visualState;
-  actor.dataset.frame = String(actorPlayback.frameIndex + 1);
-  actor.src = actorPlayback.failedSources.has(src) ? ACTOR_FALLBACK_SRC : src;
-}
-
-function updateActorAnimation(timestamp) {
-  actorPlayback.rafId = null;
-  if (!document.querySelector("[data-actor='sven']")) return;
-
-  const animation = ACTOR_ANIMATIONS[actorPlayback.visualState] || ACTOR_ANIMATIONS.idle;
-  const frameDuration = 1000 / animation.fps;
-
-  if (!actorPlayback.lastFrameAt) {
-    actorPlayback.lastFrameAt = timestamp;
-    setActorFrame();
-  } else if (timestamp - actorPlayback.lastFrameAt >= frameDuration) {
-    actorPlayback.lastFrameAt = timestamp;
-    if (actorPlayback.frameIndex < animation.frames - 1) {
-      actorPlayback.frameIndex += 1;
-    } else if (animation.loop) {
-      actorPlayback.frameIndex = 0;
-    } else {
-      requestActorAnimation(animation.transitionTo || "idle");
-      return;
-    }
-    setActorFrame();
-  }
-
-  actorPlayback.rafId = window.requestAnimationFrame(updateActorAnimation);
+function requestActorAnimation() {
+  locomotion.attach();
 }
 
 function clamp(value, min, max) {
@@ -1688,6 +1940,11 @@ async function applyWalkPathDraft() {
     const payload = persistedLevelEditorPayload();
     if (!Object.keys(payload).length) {
       await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
+      if (worldEditor.dirty) {
+        const savedConfig = await persistWorldConfigRequest();
+        worldResolver.setConfig(savedConfig.config);
+        worldEditor.dirty = false;
+      }
       walkPathEditor.status = "Applied";
       walkPathEditor.modified = false;
       walkPathEditor.message = "Geen wijzigingen om toe te passen.";
@@ -1697,6 +1954,11 @@ async function applyWalkPathDraft() {
       method: "POST",
       body: JSON.stringify(payload)
     });
+    if (worldEditor.dirty) {
+      const savedConfig = await persistWorldConfigRequest();
+      worldResolver.setConfig(savedConfig.config);
+      worldEditor.dirty = false;
+    }
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
     walkPathEditor.originalLearningChallenges = cloneLearningChallenges(level.learningChallenges || []);
@@ -2268,6 +2530,7 @@ function stopMovement(options = {}) {
   }
   state.movement = null;
   state.moving = false;
+  if (options.invalidateIntent) locomotion.setIntent(null);
   if (options.invalidateIntent && Number.isInteger(state.interactionToken)) {
     state.interactionToken += 1;
     state.movementIntent = null;
@@ -2288,27 +2551,88 @@ function movementIntentIsCurrent(token) {
 function walkRoute(points, onArrive, intentToken = state.interactionToken) {
   stopMovement();
   state.moving = true;
-
-  if (!points.length) {
-    state.svenMood = "arrived";
-    render();
-    if (movementIntentIsCurrent(intentToken)) onArrive();
-    return;
-  }
-
   state.svenMood = "walking";
   state.movement = {
-    points,
+    points: points.map((point) => ({ x: point.x, y: point.y })),
     index: 0,
     lastTime: 0,
-    speed: 250,
+    travelSpeed: levelTuning().movementSpeed,
+    stopping: false,
+    shortMove: false,
+    stopDistanceTravelled: 0,
+    phaseHistory: [],
+    positionComplete: !points.length,
     onArrive,
     intentToken,
     rafId: null
   };
 
   render();
+  if (!points.length) {
+    locomotion.setIntent(null);
+    finishMovementIfReady();
+    return;
+  }
+  const distance = remainingRouteDistance(state.movement);
+  state.movement.shortMove = distance <= locomotionTuning().shortMoveThreshold;
+  locomotion.setIntent(movementDirectionTo(points[0]), {
+    playbackSpeed: state.movement.shortMove
+      ? clamp(locomotion.stateDuration(`walk${movementDirectionTo(points[0]) === "left" ? "Left" : "Right"}FromIdle`) / Math.max(120, distance / Math.max(1, state.movement.travelSpeed * locomotionTuning().fromIdleMovement) * 1000), 0.25, 1.5)
+      : 1
+  });
   state.movement.rafId = window.requestAnimationFrame(stepMovement);
+}
+
+function movementDirectionTo(point) {
+  return point.x < state.worldX ? "left" : "right";
+}
+
+function remainingRouteDistance(movement) {
+  if (!movement || movement.positionComplete) return 0;
+  let total = distanceBetween({ x: state.worldX, y: state.worldY }, movement.points[movement.index]);
+  for (let index = movement.index; index < movement.points.length - 1; index += 1) {
+    total += distanceBetween(movement.points[index], movement.points[index + 1]);
+  }
+  return total;
+}
+
+function beginDestinationStop(movement, remainingDistance) {
+  if (movement.stopping) return;
+  const nextPoint = movement.points[movement.index];
+  const direction = nextPoint
+    ? movementDirectionTo(nextPoint)
+    : locomotion.snapshot().facing;
+  const config = locomotionTuning();
+  const cappedDistance = Math.min(remainingDistance, config.toIdleMaxDistance);
+  const nominalDuration = locomotion.stopDuration(direction, 1);
+  const stopPhysicalSpeed = Math.max(1, movement.travelSpeed * config.toIdleMovement);
+  const desiredDuration = (cappedDistance / stopPhysicalSpeed) * 1000;
+  const playbackSpeed = clamp(
+    nominalDuration / Math.max(1, desiredDuration),
+    config.arrivalDynamicSpeedMin,
+    config.arrivalDynamicSpeedMax
+  );
+  movement.stopping = true;
+  movement.stopStartDistance = remainingDistance;
+  movement.stopMaxDistance = cappedDistance;
+  movement.stopPlaybackSpeed = playbackSpeed;
+  locomotion.setIntent(null, { playbackSpeed });
+  movement.phaseHistory.push({
+    state: locomotion.snapshot().state,
+    x: state.worldX,
+    remaining: remainingDistance
+  });
+}
+
+function finishMovementIfReady() {
+  const movement = state?.movement;
+  if (!movement?.positionComplete || locomotion.snapshot().state !== "idle") return;
+  const onArrive = movement.onArrive;
+  const intentToken = movement.intentToken;
+  state.movement = null;
+  state.svenMood = "idle";
+  updateWorldDom();
+  if (movementIntentIsCurrent(intentToken)) onArrive();
 }
 
 function stepMovement(timestamp) {
@@ -2316,7 +2640,33 @@ function stepMovement(timestamp) {
   if (!movement) return;
 
   if (!movement.lastTime) movement.lastTime = timestamp;
-  let remaining = ((timestamp - movement.lastTime) / 1000) * movement.speed;
+  let routeRemaining = remainingRouteDistance(movement);
+  const direction = movementDirectionTo(movement.points[movement.index]);
+  const config = locomotionTuning();
+  const locomotionSnapshot = locomotion.snapshot();
+  movement.phaseHistory.push({ state: locomotionSnapshot.state, x: state.worldX, remaining: routeRemaining });
+  if (movement.phaseHistory.length > 500) movement.phaseHistory.shift();
+  if (!movement.stopping && !movement.shortMove) {
+    const stopPhysicalSpeed = movement.travelSpeed * config.toIdleMovement;
+    const stopCapacity = stopPhysicalSpeed * (locomotion.stopDuration(direction, config.arrivalDynamicSpeedMin) / 1000);
+    const stopStartDistance = Math.min(config.stopEntryDistance, config.toIdleMaxDistance, stopCapacity);
+    if (routeRemaining <= stopStartDistance) beginDestinationStop(movement, routeRemaining);
+    else locomotion.setIntent(direction);
+  }
+  const phase = locomotion.snapshot().phase;
+  const movementMultipliers = {
+    fromIdle: config.fromIdleMovement,
+    loop: config.loopMovement,
+    toIdle: config.toIdleMovement,
+    turn: config.turnMovement
+  };
+  const movementAllowed = window.AtlasLocomotion.isMovementState(locomotion.snapshot().state);
+  let remaining = movementAllowed
+    ? ((timestamp - movement.lastTime) / 1000) * movement.travelSpeed * (movementMultipliers[phase] || 0)
+    : 0;
+  if (movement.stopping) {
+    remaining = Math.min(remaining, Math.max(0, movement.stopMaxDistance - movement.stopDistanceTravelled));
+  }
   movement.lastTime = timestamp;
 
   while (remaining > 0 && state.movement) {
@@ -2324,6 +2674,7 @@ function stepMovement(timestamp) {
     const dx = target.x - state.worldX;
     const dy = target.y - state.worldY;
     const distance = Math.hypot(dx, dy);
+    const stepDistance = Math.min(distance, remaining);
 
     if (distance <= remaining || distance < 0.5) {
       setSvenWorldPosition(target);
@@ -2331,13 +2682,14 @@ function stepMovement(timestamp) {
       remaining -= distance;
 
       if (movement.index >= movement.points.length) {
-        const onArrive = movement.onArrive;
-        const intentToken = movement.intentToken;
-        state.movement = null;
+        movement.positionComplete = true;
         updateWorldDom();
-        if (movementIntentIsCurrent(intentToken)) onArrive();
+        if (movement.shortMove) locomotion.completeArrival();
+        else if (!movement.stopping) beginDestinationStop(movement, 0);
+        finishMovementIfReady();
         return;
       }
+      if (!movement.stopping) locomotion.setIntent(movementDirectionTo(movement.points[movement.index]));
     } else {
       setSvenWorldPosition({
         x: state.worldX + (dx / distance) * remaining,
@@ -2345,6 +2697,18 @@ function stepMovement(timestamp) {
       });
       remaining = 0;
     }
+    if (movement.stopping) movement.stopDistanceTravelled += stepDistance;
+  }
+
+  if (state.movement && remainingRouteDistance(movement) < 0.5) {
+    const destination = movement.points.at(-1);
+    setSvenWorldPosition(destination);
+    movement.index = movement.points.length;
+    movement.positionComplete = true;
+    if (movement.shortMove) locomotion.completeArrival();
+    else if (!movement.stopping) beginDestinationStop(movement, 0);
+    finishMovementIfReady();
+    if (!state.movement) return;
   }
 
   updateWorldDom();
@@ -2412,20 +2776,7 @@ function completedActiveRuneCount() {
 }
 
 function adventureLevelEntries(rootEntry) {
-  if (!rootEntry) return [];
-  const entries = [];
-  const queue = [rootEntry];
-  const seen = new Set();
-  while (queue.length) {
-    const entry = queue.shift();
-    if (!entry || seen.has(entry.id)) continue;
-    seen.add(entry.id);
-    entries.push(entry);
-    levelCatalog
-      .filter((item) => item.connectedFrom === entry.id)
-      .forEach((item) => queue.push(item));
-  }
-  return entries;
+  return rootEntry ? worldResolver.enabledEntries(rootEntry.id) : [];
 }
 
 async function ensureMenuAdventureStats() {
@@ -2660,6 +3011,7 @@ function getAccuracy() {
 
 function continueIntro() {
   state.screen = "scene";
+  recordLevelStarted(level.id);
   state.guidePriority = 0;
   state.companionQueue = [];
   emitCompanionEvent("LEVEL_ENTER");
@@ -2737,28 +3089,9 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
   if (Math.abs(targetCenter.x - state.worldX) > 2) {
     state.svenFacing = targetCenter.x < state.worldX ? "left" : "right";
   }
-  state.svenMood = "arrived";
-  render();
-
-  const isCompletedExit =
-    target.id === (level.exitHotspotId || "templeGate") &&
-    action === "activate" &&
-    isLevelExitReady();
-  if (isCompletedExit) {
-    finishInteraction(target, kind, action);
-    return;
-  }
-
-  window.setTimeout(() => {
-    if (!state.moving || !movementIntentIsCurrent(interactionToken)) return;
-    state.svenMood = action === "look" ? "looking" : action === "talk" ? "talking" : "activating";
-    render();
-
-    window.setTimeout(() => {
-      if (!state.moving || !movementIntentIsCurrent(interactionToken)) return;
-      finishInteraction(target, kind, action);
-    }, action === "activate" || action === "travel" ? 820 : 560);
-  }, 180);
+  if (!state.moving || !movementIntentIsCurrent(interactionToken)) return;
+  state.svenMood = "idle";
+  finishInteraction(target, kind, action);
 }
 
 function finishInteraction(target, kind, action) {
@@ -2870,7 +3203,7 @@ function openRuneChallenge(id) {
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
-  state.svenMood = "activating";
+  state.svenMood = "idle";
   state.challengeFailureCounts[id] = 0;
   state.challengeGuideMessage = authored ? { speaker: "minnie", text: "" } : null;
   if (authored) {
@@ -3056,7 +3389,7 @@ async function transitionToReward(target) {
 }
 
 async function continueToNextLevel() {
-  const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
+  const nextLevelId = resolvedNextLevelId();
   if (!nextLevelId || state.sceneTransitionPending) return;
 
   stopMovement({ invalidateIntent: true });
@@ -4596,6 +4929,83 @@ function nudgeSelectedEffect(dx, dy) {
   updateEffectGeometry(`${effect.label}: nudged ${dx}, ${dy}.`);
 }
 
+function renderLevelTuningControls(levelId, options = {}) {
+  const tuning = levelTuning(levelId);
+  const globalTuning = locomotionTuning();
+  const settings = worldResolver.levelSettings(levelId);
+  const numberControl = (label, key, value, min, max, step) => `
+    <label class="atlasConfigField"><span>${label}</span><input type="number" min="${min}" max="${max}" step="${step}" value="${value}" data-level-setting="${key}" data-level-id="${levelId}"></label>
+  `;
+  const globalControl = (label, key, value, min, max, step, factor = 1) => `
+    <label class="atlasConfigField"><span>${label} <em>(Global)</em></span><input type="number" min="${min}" max="${max}" step="${step}" value="${Number(value * factor).toFixed(step < 1 ? 2 : 0).replace(/\.00$/, "")}" data-locomotion-setting="${key}" data-value-factor="${factor}"></label>
+  `;
+  return `
+    <div class="atlasLevelTuning" data-level-tuning="${levelId}">
+      ${options.background === false ? "" : `
+        <div class="atlasBackgroundControl">
+          <strong>Background</strong>
+          <span class="atlasCurrentAsset">${settings.backgroundOverride || "Default level background"}</span>
+          <label class="atlasFileButton ${worldEditor.apiAvailable ? "" : "disabled"}">
+            Choose image
+            <input type="file" accept="image/png,image/jpeg,image/webp" data-background-file="${levelId}" ${worldEditor.apiAvailable ? "" : "disabled"}>
+          </label>
+          <button type="button" data-config-action="reset-background" data-level-id="${levelId}" ${settings.backgroundOverride ? "" : "disabled"}>Reset to default</button>
+        </div>
+      `}
+      <div class="atlasTuningGrid">
+        ${numberControl("Sprite Scale (Level)", "spriteScale", tuning.spriteScale, 0.5, 1.8, 0.05)}
+        ${numberControl("Movement Speed (Level)", "movementSpeed", tuning.movementSpeed, 80, 520, 10)}
+        ${numberControl("Animation Speed (Level)", "animationSpeed", tuning.animationSpeed, 0.5, 1.8, 0.05)}
+      </div>
+      <details class="atlasVisualAdjustments" data-editor-panel-key="simple-visual-controls">
+        <summary>Simple visual controls</summary>
+        <div class="atlasVisualColumns">
+          <fieldset><legend>Background</legend>
+            ${numberControl("Brightness", "backgroundBrightness", tuning.backgroundBrightness, 0.5, 1.5, 0.05)}
+            ${numberControl("Contrast", "backgroundContrast", tuning.backgroundContrast, 0.5, 1.5, 0.05)}
+            ${numberControl("Saturation", "backgroundSaturation", tuning.backgroundSaturation, 0, 2, 0.05)}
+            ${numberControl("Warmth", "backgroundWarmth", tuning.backgroundWarmth, -1, 1, 0.05)}
+            ${numberControl("Tint", "backgroundTint", tuning.backgroundTint, -1, 1, 0.05)}
+          </fieldset>
+          <fieldset><legend>Sven</legend>
+            ${numberControl("Brightness", "svenBrightness", tuning.svenBrightness, 0.5, 1.5, 0.05)}
+            ${numberControl("Contrast", "svenContrast", tuning.svenContrast, 0.5, 1.5, 0.05)}
+            ${numberControl("Saturation", "svenSaturation", tuning.svenSaturation, 0, 2, 0.05)}
+            ${numberControl("Warmth", "svenWarmth", tuning.svenWarmth, -1, 1, 0.05)}
+            ${numberControl("Tint", "svenTint", tuning.svenTint, -1, 1, 0.05)}
+          </fieldset>
+        </div>
+      </details>
+      <details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
+        <summary>Sven Locomotion</summary>
+        <div class="atlasLocomotionGroups">
+          <fieldset><legend>Global — Movement</legend><div class="atlasTuningGrid">
+            ${globalControl("From Idle Movement %", "fromIdleMovement", globalTuning.fromIdleMovement, 10, 200, 5, 100)}
+            ${globalControl("Loop Movement %", "loopMovement", globalTuning.loopMovement, 10, 200, 5, 100)}
+            ${globalControl("To Idle Movement %", "toIdleMovement", globalTuning.toIdleMovement, 5, 150, 5, 100)}
+            ${globalControl("To Idle Max Distance", "toIdleMaxDistance", globalTuning.toIdleMaxDistance, 1, 200, 1)}
+            ${globalControl("Turn Movement %", "turnMovement", globalTuning.turnMovement, 10, 200, 5, 100)}
+            ${globalControl("Stop Entry Distance", "stopEntryDistance", globalTuning.stopEntryDistance, 1, 250, 1)}
+            ${globalControl("Short Move Threshold", "shortMoveThreshold", globalTuning.shortMoveThreshold, 1, 300, 1)}
+          </div></fieldset>
+          <fieldset><legend>Global — Animation</legend><div class="atlasTuningGrid">
+            ${globalControl("From Idle Animation Speed", "fromIdleAnimationSpeed", globalTuning.fromIdleAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Loop Animation Speed", "loopAnimationSpeed", globalTuning.loopAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("To Idle Animation Speed", "toIdleAnimationSpeed", globalTuning.toIdleAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Turn Animation Speed", "turnAnimationSpeed", globalTuning.turnAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Arrival Dynamic Speed Min", "arrivalDynamicSpeedMin", globalTuning.arrivalDynamicSpeedMin, 0.25, 2, 0.05)}
+            ${globalControl("Arrival Dynamic Speed Max", "arrivalDynamicSpeedMax", globalTuning.arrivalDynamicSpeedMax, 0.25, 3, 0.05)}
+          </div></fieldset>
+          <fieldset><legend>Global — Idle</legend><div class="atlasTuningGrid">
+            ${globalControl("Blink Minimum Interval (ms)", "blinkMinimumInterval", globalTuning.blinkMinimumInterval, 250, 30000, 250)}
+            ${globalControl("Blink Maximum Interval (ms)", "blinkMaximumInterval", globalTuning.blinkMaximumInterval, 250, 60000, 250)}
+          </div></fieldset>
+        </div>
+      </details>
+    </div>
+  `;
+}
+
 function renderDeveloperToolsPanel() {
   if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
   if (walkPathEditor.pathMode || walkPathEditor.effectGeometryMode) return "";
@@ -4671,6 +5081,7 @@ function renderDeveloperToolsPanel() {
             ? `${point.id}: ${point.x}, ${point.y}`
             : "Drag a path point or object."
       }</span>
+      <details class="editorSection" open><summary>Sven &amp; background</summary>${renderLevelTuningControls(level.id)}</details>
       ${renderAmbientEditorControls()}
       <details class="editorSection" open><summary>Audio</summary>${renderAudioEditorControls()}</details>` : renderSceneEffectsEditorControls()}
       <div class="walkPathEditorActions">
@@ -4739,7 +5150,7 @@ function renderWorldStage() {
         class="worldTrack"
         style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
       >
-        <img class="worldArt" src="${level.world.background}" alt="Een doorlopend bospad naar de Vikingtempel" />
+        <img class="worldArt" src="${readyAssetSrc(level.world.background)}" data-asset-path="${level.world.background}" style="filter:${visualFilter("background")}" alt="Een doorlopend bospad naar de Vikingtempel" />
         <div class="forestMist"></div>
         ${renderSceneEffectCanvases()}
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
@@ -4751,18 +5162,9 @@ function renderWorldStage() {
         <span
           class="${svenClasses}"
           data-actor-shell="sven"
-          style="left:${actorPosition.x}%; top:${actorPosition.y}%"
+          style="left:${actorPosition.x}%; top:${actorPosition.y}%; --sven-scale:${levelTuning().spriteScale}"
         >
-          <img
-            class="svenSprite"
-            src="${frameSrc(actorStateForMood(), 0)}"
-            alt="Sven"
-            data-actor="sven"
-            data-animation="${actorStateForMood()}"
-            data-frame="1"
-            data-world-x="${Math.round(state.worldX)}"
-            data-world-y="${Math.round(state.worldY)}"
-          />
+          <span class="svenSpriteMount" data-actor-mount="sven" aria-hidden="true"></span>
         </span>
       </div>
       ${renderFlightPathWorkspace()}
@@ -4810,13 +5212,15 @@ function renderSceneEffectGuides() {
 
 function renderAmbientFlyby(flyby) {
   const ready = ambientFlybyRuntime.readiness.get(`${level.id}:${flyby.id}`);
+  if (!ready?.frameA) return "";
+  const frameB = ready.frameB ? flyby.frameB : flyby.frameA;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
       <span class="ambientFlybyFrames">
-        <img class="ambientFlybyFrame ambientFlybyFrameA" src="${flyby.frameA}" alt="" draggable="false" decoding="sync"/>
-        <img class="ambientFlybyFrame ambientFlybyFrameB" src="${flyby.frameB}" alt="" draggable="false" decoding="sync"/>
+        <img class="ambientFlybyFrame ambientFlybyFrameA" src="${readyAssetSrc(flyby.frameA)}" alt="" draggable="false" decoding="sync"/>
+        <img class="ambientFlybyFrame ambientFlybyFrameB" src="${readyAssetSrc(frameB)}" alt="" draggable="false" decoding="sync"/>
       </span>
     </span>
   `;
@@ -4832,7 +5236,10 @@ function ambientAnimalTrackStyle(animal) {
 }
 
 function renderAmbientAnimal(animal) {
-  const ready = ambientAnimalRuntime.loaded.has(`${level.id}:${animal.id}`);
+  const key = `${level.id}:${animal.id}`;
+  if (!ambientAnimalRuntime.openReady.has(key)) return "";
+  const ready = ambientAnimalRuntime.loaded.has(key);
+  const closedFrame = ambientAnimalRuntime.closedReady.has(key) ? animal.closedFrame : animal.openFrame;
   const runtime = animalRuntimeState(animal);
   return `
     <button
@@ -4855,8 +5262,8 @@ function renderAmbientAnimal(animal) {
       aria-label="${animal.label || "Dier"}"
     >
       <span class="ambientAnimalFrames" ${debugOverlayEnabled && walkPathEditor.enabled ? `data-animal-drag="${animal.id}"` : ""}>
-        <img class="ambientAnimalFrame ambientAnimalOpen" src="${animal.openFrame}" alt="" draggable="false" decoding="sync" />
-        <img class="ambientAnimalFrame ambientAnimalClosed" src="${animal.closedFrame}" alt="" draggable="false" decoding="sync" />
+        <img class="ambientAnimalFrame ambientAnimalOpen" src="${readyAssetSrc(animal.openFrame)}" alt="" draggable="false" decoding="sync" />
+        <img class="ambientAnimalFrame ambientAnimalClosed" src="${readyAssetSrc(closedFrame)}" alt="" draggable="false" decoding="sync" />
       </span>
       ${debugOverlayEnabled && walkPathEditor.enabled ? `<span class="ambientAnimalAnchor" aria-hidden="true"></span>` : ""}
     </button>
@@ -4956,7 +5363,7 @@ function renderDialogue() {
   const companionPortrait = level.companion?.portrait || "assets/sven-stage.png";
   return `
     <section class="dialogue" aria-live="polite">
-      <img class="portrait" src="${companionPortrait}" alt="De ${companionName}" />
+      <img class="portrait" src="${readyAssetSrc(companionPortrait)}" alt="De ${companionName}" />
       <div class="speech">
         <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${total} runen</p>
         <p>${state.message}</p>
@@ -4986,8 +5393,8 @@ function renderGuidePortrait([id, guide], activeSpeaker) {
       aria-label="${guide.name} laten spinnen"
       ${active ? 'aria-current="true"' : ""}
     >
-      <img src="${guideBlinkRuntime[id]?.frame === "closed" && guideBlinkRuntime[id]?.ready ? GUIDE_BLINK_PATHS[id] : guide.portrait}"
-        data-guide-image="${id}" data-open-src="${guide.portrait}" alt="${guide.name}" />
+      <img src="${readyAssetSrc(guideBlinkRuntime[id]?.frame === "closed" && guideBlinkRuntime[id]?.ready ? GUIDE_BLINK_PATHS[id] : guide.portrait)}"
+        data-guide-image="${id}" data-open-src="${readyAssetSrc(guide.portrait)}" alt="${guide.name}" />
       <figcaption>${guide.name}</figcaption>
     </figure>
   `;
@@ -5127,6 +5534,60 @@ function renderLaunch() {
   `;
 }
 
+function renderWorldManagementPanel() {
+  if (!worldEditor.open) return "";
+  const roots = worldResolver.rootEntries();
+  const selectedRoot = roots.find((entry) => entry.id === worldEditor.selectedWorldId) || roots[0];
+  if (!selectedRoot) return "";
+  worldEditor.selectedWorldId = selectedRoot.id;
+  const entries = worldResolver.orderedEntries(selectedRoot.id);
+  if (!entries.some((entry) => entry.id === worldEditor.selectedLevelId)) worldEditor.selectedLevelId = entries[0]?.id || null;
+  const selectedLevel = entries.find((entry) => entry.id === worldEditor.selectedLevelId);
+  const readonly = !worldEditor.apiAvailable || worldEditor.busy;
+  return `
+    <div class="worldEditorLayer" role="dialog" aria-modal="true" aria-labelledby="world-editor-title">
+      <aside class="worldEditorPanel" data-world-editor>
+        <header class="worldEditorHeader">
+          <div><p class="eyebrow">Developer Tools</p><h2 id="world-editor-title">World &amp; Level Management</h2></div>
+          <button type="button" data-config-action="close-world-editor" aria-label="Wereldeditor sluiten">×</button>
+        </header>
+        <div class="worldEditorToolbar">
+          <label>World
+            <select data-world-editor-select>
+              ${roots.map((root) => `<option value="${root.id}" ${root.id === selectedRoot.id ? "selected" : ""}>${root.title}</option>`).join("")}
+            </select>
+          </label>
+          <span>${worldResolver.enabledEntries(selectedRoot.id).length}/${entries.length} places enabled</span>
+        </div>
+        <div class="worldEditorBody">
+          <ol class="worldCompositionList" aria-label="Places in configured order">
+            ${entries.map((entry, index) => `
+              <li class="${entry.id === selectedLevel?.id ? "selected" : ""} ${worldResolver.isEnabled(entry.id) ? "" : "disabled"}">
+                <button type="button" class="worldLevelSelect" data-config-action="select-world-level" data-level-id="${entry.id}">
+                  <strong>${entry.title}</strong><span>${entry.id}</span>
+                </button>
+                <label class="worldEnabledToggle"><input type="checkbox" data-world-enabled="${entry.id}" ${worldResolver.isEnabled(entry.id) ? "checked" : ""} ${readonly ? "disabled" : ""}> Enabled</label>
+                <div class="worldOrderButtons">
+                  <button type="button" data-config-action="move-world-level" data-level-id="${entry.id}" data-delta="-1" ${readonly || index === 0 ? "disabled" : ""} aria-label="${entry.title} omhoog">↑</button>
+                  <button type="button" data-config-action="move-world-level" data-level-id="${entry.id}" data-delta="1" ${readonly || index === entries.length - 1 ? "disabled" : ""} aria-label="${entry.title} omlaag">↓</button>
+                </div>
+              </li>
+            `).join("")}
+          </ol>
+          <section class="worldLevelInspector">
+            ${selectedLevel ? `<p class="eyebrow">${selectedLevel.id}</p><h3>${selectedLevel.title}</h3>${renderLevelTuningControls(selectedLevel.id)}` : ""}
+            <button type="button" class="secondaryButton" data-config-action="open-level-editor" data-level-id="${selectedLevel?.id || ""}" ${selectedLevel ? "" : "disabled"}>Open Level Editor</button>
+          </section>
+        </div>
+        <footer class="worldEditorFooter">
+          <p aria-live="polite">${worldEditor.message}</p>
+          <button type="button" class="primaryButton" data-config-action="save-world-config" ${readonly || !worldEditor.dirty ? "disabled" : ""}>Save world configuration</button>
+        </footer>
+      </aside>
+    </div>
+  `;
+}
+
 function renderMenu() {
   ensureMenuAdventureStats();
   const menuLevels = visibleLevelCatalog();
@@ -5168,6 +5629,7 @@ function renderMenu() {
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
         }
       </section>
+      ${renderWorldManagementPanel()}
     </main>
   `;
 }
@@ -5366,10 +5828,12 @@ function renderProgress() {
 
 function renderLoading() {
   return `
-    <main class="menuScreen loadingScreen">
-      <section class="menuHeader">
+    <main class="menuScreen loadingScreen" aria-busy="true" aria-live="polite">
+      <section class="menuHeader atlasLoadingCard">
         <p class="eyebrow">Atlas</p>
+        <span class="atlasLoadingSpinner" aria-hidden="true"></span>
         <h1>${state.message || "Laden..."}</h1>
+        <p>Beelden worden klaargezet voor vloeiende weergave.</p>
       </section>
     </main>
   `;
@@ -5383,26 +5847,32 @@ function adventureMenuBadge(item) {
 }
 
 function renderHeroLevelTile(item) {
+  const launchEntry = worldResolver.firstEnabled(item.id);
+  const locked = launchEntry && isLevelRecentlyLocked(launchEntry.id);
   return `
-    <button class="levelTile heroLevelTile ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" type="button" data-level="${item.id}" data-featured-level="${item.id}" aria-label="${item.title} starten">
+    <button class="levelTile heroLevelTile ${locked ? "levelTileLocked" : ""} ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" type="button" data-level="${launchEntry?.id || ""}" data-featured-level="${item.id}" aria-label="${item.title} ${locked ? "tijdelijk vergrendeld" : "starten"}" ${locked ? "aria-disabled=\"true\"" : ""}>
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
+      ${locked ? `<span class="levelLockIndicator" aria-hidden="true">🔒</span>` : ""}
       <span class="levelTileText">
         <span class="levelBadge">${adventureMenuBadge(item)}</span>
         <strong>${item.title}</strong>
         <span class="levelTileDescription">${item.subtitle || item.menu?.detail || "Nieuw avontuur"}</span>
-        <span class="heroStartHint" aria-hidden="true">Tik om te starten</span>
+        <span class="heroStartHint" aria-hidden="true">${locked ? "Speel eerst twee andere plekken" : "Tik om te starten"}</span>
       </span>
     </button>
   `;
 }
 
 function renderLevelTile(item, index = 0, isActive = false) {
-  const tileClass = `${index >= 2 ? "levelTile supportingLevelTile wideLevelTile" : "levelTile supportingLevelTile"}${isActive ? " activeSupportingLevelTile" : ""}`;
+  const launchEntry = worldResolver.firstEnabled(item.id);
+  const locked = launchEntry && isLevelRecentlyLocked(launchEntry.id);
+  const tileClass = `${index >= 2 ? "levelTile supportingLevelTile wideLevelTile" : "levelTile supportingLevelTile"}${isActive ? " activeSupportingLevelTile" : ""}${locked ? " levelTileLocked" : ""}`;
   return `
-    <button class="${tileClass}" type="button" data-level="${item.id}" data-menu-tile="${item.id}" aria-pressed="${isActive ? "true" : "false"}">
+    <button class="${tileClass}" type="button" data-level="${launchEntry?.id || ""}" data-menu-tile="${item.id}" aria-pressed="${isActive ? "true" : "false"}" ${locked ? "aria-disabled=\"true\"" : ""}>
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
+      ${locked ? `<span class="levelLockIndicator" aria-hidden="true">🔒</span>` : ""}
       <span class="levelTileText">
         <span class="levelBadge">${adventureMenuBadge(item)}</span>
         <strong>${item.title}</strong>
@@ -5416,7 +5886,7 @@ function renderIntro() {
   const theme = level.theme || level.subtitle;
   return `
     <main class="introScreen">
-      <img class="introBackdrop" src="${level.world.background}" alt="${level.title}" />
+      <img class="introBackdrop" src="${readyAssetSrc(level.world.background)}" data-asset-path="${level.world.background}" style="filter:${visualFilter("background")}" alt="${level.title}" />
       <section class="introPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.title}</h1>
@@ -5454,7 +5924,7 @@ function renderChallenge() {
       <div class="runeFocusSpark" aria-hidden="true"></div>
       <div class="challengeBox runeChallengeBox ${question.visual?.type === "clock" ? "clockChallengeBox" : ""}">
         <div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
-          <img class="challengeCharacterPortrait" src="${challengeCharacter.portrait}" alt="${challengeCharacter.name}" />
+          <img class="challengeCharacterPortrait" src="${readyAssetSrc(challengeCharacter.portrait)}" alt="${challengeCharacter.name}" />
           <div class="challengeCharacterSpeech">
             <p class="eyebrow">${
               authored
@@ -5530,12 +6000,12 @@ function renderCorrect() {
 }
 
 function renderReward() {
-  const nextLevelId = level.reward?.nextLevelId || level.nextLevelId;
+  const nextLevelId = resolvedNextLevelId();
   const progressLabel = level.progressLabelPlural || "runen";
   const rewardBadge = level.reward?.badge || `${completedActiveRuneCount()}/${requiredRuneCount()} ${progressLabel}`;
   return `
     <main class="rewardScreen">
-      <img class="rewardArt" src="${level.reward.art}" alt="Sven voor de geopende tempelpoort" />
+      <img class="rewardArt" src="${readyAssetSrc(level.reward.art)}" alt="Sven voor de geopende tempelpoort" />
       <section class="rewardPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.reward.title}</h1>
@@ -5569,9 +6039,60 @@ function renderTransition() {
   `;
 }
 
+function captureEditorUiState() {
+  const roots = ["[data-developer-tools]", "[data-world-editor]"];
+  const result = { roots: {}, details: [] };
+  roots.forEach((selector) => {
+    const root = document.querySelector(selector);
+    if (root) result.roots[selector] = root.scrollTop;
+  });
+  const occurrences = new Map();
+  document.querySelectorAll("[data-developer-tools] details, [data-world-editor] details").forEach((details) => {
+    const base = details.dataset.editorPanelKey || details.querySelector(":scope > summary")?.textContent?.trim() || "details";
+    const index = occurrences.get(base) || 0;
+    occurrences.set(base, index + 1);
+    result.details.push({ base, index, open: details.open });
+  });
+  const active = document.activeElement;
+  if (active?.matches?.("[data-level-setting], [data-locomotion-setting]")) {
+    result.focus = {
+      levelId: active.dataset.levelId || "",
+      key: active.dataset.levelSetting || active.dataset.locomotionSetting,
+      global: Boolean(active.dataset.locomotionSetting),
+      start: active.selectionStart,
+      end: active.selectionEnd
+    };
+  }
+  return result;
+}
+
+function restoreEditorUiState(saved) {
+  Object.entries(saved.roots || {}).forEach(([selector, scrollTop]) => {
+    const root = document.querySelector(selector);
+    if (root) root.scrollTop = scrollTop;
+  });
+  const occurrences = new Map();
+  document.querySelectorAll("[data-developer-tools] details, [data-world-editor] details").forEach((details) => {
+    const base = details.dataset.editorPanelKey || details.querySelector(":scope > summary")?.textContent?.trim() || "details";
+    const index = occurrences.get(base) || 0;
+    occurrences.set(base, index + 1);
+    const prior = saved.details?.find((item) => item.base === base && item.index === index);
+    if (prior) details.open = prior.open;
+  });
+  if (saved.focus) {
+    const selector = saved.focus.global
+      ? `[data-locomotion-setting="${CSS.escape(saved.focus.key)}"]`
+      : `[data-level-setting="${CSS.escape(saved.focus.key)}"][data-level-id="${CSS.escape(saved.focus.levelId)}"]`;
+    const input = document.querySelector(selector);
+    input?.focus({ preventScroll: true });
+    if (input?.setSelectionRange && saved.focus.start !== null) input.setSelectionRange(saved.focus.start, saved.focus.end);
+  }
+}
+
 function render() {
-  const editorScrollTop = document.querySelector("[data-developer-tools]")?.scrollTop || 0;
+  const editorUiState = captureEditorUiState();
   app.dataset.screen = state.screen;
+  app.dataset.criticalAssetsReady = String(Boolean(state.criticalAssetsReady));
   if (state.screen === "launch") {
     app.innerHTML = renderLaunch();
   } else if (state.screen === "menu") {
@@ -5594,17 +6115,25 @@ function render() {
     app.innerHTML = renderScene();
   }
 
+  if (document.querySelector("[data-actor-mount='sven']")) requestActorAnimation();
   const actor = document.querySelector("[data-actor='sven']");
-  if (actor) {
+  if (actor && actor.dataset.errorGuard !== "true") {
+    actor.dataset.errorGuard = "true";
     actor.addEventListener("error", () => {
       actorPlayback.failedSources.add(actor.getAttribute("src"));
       actor.src = ACTOR_FALLBACK_SRC;
     });
-    requestActorAnimation(actorStateForMood());
-  } else if (actorPlayback.rafId) {
-    window.cancelAnimationFrame(actorPlayback.rafId);
-    actorPlayback.rafId = null;
   }
+
+  document.querySelectorAll(".worldArt, .introBackdrop").forEach((background) => {
+    background.addEventListener("error", () => {
+      const fallback = level?.__atlasDefaultBackground;
+      if (!fallback || background.getAttribute("src") === fallback) return;
+      console.warn(`[Atlas] Background override failed for ${level.id}: ${background.getAttribute("src")}. Using ${fallback}.`);
+      background.src = fallback;
+      level.world.background = fallback;
+    }, { once: true });
+  });
 
   updateWorldDom();
   syncAudioForState();
@@ -5614,8 +6143,7 @@ function render() {
   sceneEffectRuntime.sync();
   syncPerformanceHud();
   syncMenuAutoRotation();
-  const editorPanel = document.querySelector("[data-developer-tools]");
-  if (editorPanel) editorPanel.scrollTop = editorScrollTop;
+  restoreEditorUiState(editorUiState);
 }
 
 app.addEventListener("toggle", (event) => {
@@ -5653,6 +6181,42 @@ app.addEventListener("focusout", (event) => {
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const configActionTarget = event.target.closest("[data-config-action]");
+  if (configActionTarget) {
+    event.preventDefault();
+    event.stopPropagation();
+    const action = configActionTarget.dataset.configAction;
+    const levelId = configActionTarget.dataset.levelId;
+    if (action === "close-world-editor") {
+      worldEditor.open = false;
+      debugOverlayEnabled = false;
+      render();
+    }
+    if (action === "select-world-level") {
+      worldEditor.selectedLevelId = levelId;
+      render();
+    }
+    if (action === "move-world-level") {
+      if (worldResolver.moveLevel(worldEditor.selectedWorldId, levelId, Number(configActionTarget.dataset.delta))) {
+        markWorldConfigDirty("Plaatsvolgorde aangepast.");
+        render();
+      }
+    }
+    if (action === "reset-background") {
+      worldResolver.updateLevelSettings(levelId, { backgroundOverride: undefined });
+      if (level?.id === levelId) {
+        level.world.background = level.__atlasDefaultBackground;
+      }
+      markWorldConfigDirty(`${levelId}: standaardachtergrond hersteld.`);
+      render();
+    }
+    if (action === "save-world-config") saveWorldConfig();
+    if (action === "open-level-editor" && levelId) {
+      worldEditor.open = false;
+      selectLevel(levelId, { startImmediately: true, allowDisabledForEditor: true, recordStart: false });
+    }
+    return;
+  }
   const editorMode = event.target.closest(".editorModeTabs button[data-editor-mode]");
   if (editorMode) {
     event.preventDefault();
@@ -5949,7 +6513,7 @@ app.addEventListener("click", (event) => {
   if (levelTarget) {
     playSfx("uiClick");
     stopMenuAutoRotation();
-    selectLevel(levelTarget.dataset.level);
+    startLevelFromMenu(levelTarget.dataset.level);
     return;
   }
 
@@ -6038,6 +6602,17 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const levelSetting = event.target.closest("[data-level-setting]");
+  if (levelSetting) {
+    updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
+    return;
+  }
+  const locomotionSetting = event.target.closest("[data-locomotion-setting]");
+  if (locomotionSetting) {
+    const factor = Number(locomotionSetting.dataset.valueFactor || 1);
+    updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor);
+    return;
+  }
   const effectColor = event.target.closest("[data-effect-color]");
   if (effectColor) {
     updateSceneEffectOverride(effectColor.dataset.effectColor, effectColor.value);
@@ -6066,6 +6641,37 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  const worldSelect = event.target.closest("[data-world-editor-select]");
+  if (worldSelect) {
+    worldEditor.selectedWorldId = worldSelect.value;
+    worldEditor.selectedLevelId = worldResolver.orderedEntries(worldSelect.value)[0]?.id || null;
+    render();
+    return;
+  }
+  const enabledToggle = event.target.closest("[data-world-enabled]");
+  if (enabledToggle) {
+    worldResolver.setEnabled(worldEditor.selectedWorldId, enabledToggle.dataset.worldEnabled, enabledToggle.checked);
+    markWorldConfigDirty(`${enabledToggle.dataset.worldEnabled}: ${enabledToggle.checked ? "enabled" : "disabled"}.`);
+    render();
+    return;
+  }
+  const levelSetting = event.target.closest("[data-level-setting]");
+  if (levelSetting) {
+    updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
+    return;
+  }
+  const locomotionSetting = event.target.closest("[data-locomotion-setting]");
+  if (locomotionSetting) {
+    const factor = Number(locomotionSetting.dataset.valueFactor || 1);
+    const nextValue = updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor);
+    if (nextValue !== undefined) locomotionSetting.value = String(nextValue * factor);
+    return;
+  }
+  const backgroundFile = event.target.closest("[data-background-file]");
+  if (backgroundFile) {
+    importLevelBackground(backgroundFile.dataset.backgroundFile, backgroundFile.files?.[0]);
+    return;
+  }
   const challengeActive = event.target.closest("[data-challenge-active]");
   if (challengeActive) {
     updateLearningChallengeActive(challengeActive.dataset.challengeActive, challengeActive.checked);
@@ -6337,6 +6943,17 @@ window.addEventListener("keydown", (event) => {
   }
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "d") {
     event.preventDefault();
+    if (state.screen === "menu") {
+      if (worldEditor.open) {
+        worldEditor.open = false;
+        debugOverlayEnabled = false;
+        render();
+      } else {
+        debugOverlayEnabled = true;
+        prepareWorldEditor();
+      }
+      return;
+    }
     debugOverlayEnabled = !debugOverlayEnabled;
     if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
       render();

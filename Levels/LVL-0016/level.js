@@ -187,8 +187,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "romanFountain",
@@ -505,8 +504,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
   "player": {
     "startNode": "left-start",
     "start": {
-      "x": 184,
-      "y": 645
+      "x": 149,
+      "y": 659
     }
   },
   "interactiveObjects": [
@@ -727,13 +726,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
   "walkPath": [
     {
       "id": "left-start",
-      "x": 184,
-      "y": 645
+      "x": 149,
+      "y": 659
     },
     {
       "id": "colosseum-approach",
       "x": 443,
-      "y": 636,
+      "y": 642,
       "role": "approach"
     },
     {
