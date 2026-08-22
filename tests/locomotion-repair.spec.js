@@ -40,7 +40,7 @@ async function runMove(page, distance) {
 test.describe("state-coupled Sven locomotion", () => {
   test.setTimeout(60_000);
 
-  for (const [name, distance] of [["very short", 30], ["moderate", 180], ["long", 520]]) {
+  for (const [name, distance] of [["very short", 30], ["moderate", 180], ["moderate left", -180], ["long", 520]]) {
     test(`${name} move keeps idle stationary and arrives coherently`, async ({ page }) => {
       await enterLevel(page);
       const result = await runMove(page, distance);
@@ -115,9 +115,9 @@ test.describe("state-coupled Sven locomotion", () => {
         window.eval("stopMovement")({ invalidateIntent: true });
         window.eval("locomotion.completeArrival")();
         game.worldX = 200;
-        resolver.updateLocomotionSettings({ fromIdleMovement: multiplier, shortMoveThreshold: 1 });
+        resolver.updateLocomotionSettings({ fromIdleMovement: multiplier, fromIdleAnimationSpeed: 0.25, shortMoveThreshold: 1 });
         window.eval("walkRoute")([{ x: 700, y: game.worldY }], () => {}, window.eval("replaceMovementIntent")({ type: "tuning" }));
-        await new Promise((resolve) => setTimeout(resolve, 220));
+        await new Promise((resolve) => setTimeout(resolve, 600));
         const travelled = game.worldX - 200;
         window.eval("stopMovement")({ invalidateIntent: true });
         window.eval("locomotion.completeArrival")();
@@ -192,14 +192,22 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     await expect(movement).toBeFocused();
     await expect(locomotionPanel).toHaveAttribute("open", "");
 
-    for (const [key, value] of [["toIdleMovement", "47"], ["toIdleMaxDistance", "49"], ["stopEntryDistance", "61"], ["loopAnimationSpeed", "1.1"]]) {
+    await expect(panel.locator('[data-locomotion-setting="fromIdleMovement"]')).toHaveAttribute("min", "0");
+    await expect(panel.locator('[data-locomotion-setting="toIdleMovement"]')).toHaveAttribute("min", "0");
+    for (const [key, value] of [
+      ["fromIdleMovement", "0"], ["toIdleMovement", "0"], ["toIdleMaxDistance", "49"],
+      ["stopEntryDistance", "61"], ["loopAnimationSpeed", "1.1"], ["shortMoveThreshold", "95"],
+      ["shortMoveAnimationSpeed", "2.4"], ["shortMoveStartFrame", "20"], ["shortMoveMaxFromIdleAnimation", "35"]
+    ]) {
       const input = panel.locator(`[data-locomotion-setting="${key}"]`);
+      await input.focus();
+      const scrollBeforeChange = await panel.evaluate((element) => element.scrollTop);
       await input.fill(value);
       await expect(input).toBeFocused();
       await expect(locomotionPanel).toHaveAttribute("open", "");
+      const scrollAfterChange = await panel.evaluate((element) => element.scrollTop);
+      expect(Math.abs(scrollAfterChange - scrollBeforeChange)).toBeLessThan(8);
     }
-    const scrollAfter = await panel.evaluate((element) => element.scrollTop);
-    expect(Math.abs(scrollAfter - scrollBefore)).toBeLessThan(8);
     await page.screenshot({ path: path.join(__dirname, "..", "test-results", "atlas-sven-locomotion-editor.png"), fullPage: false });
 
     await panel.getByRole("button", { name: "Apply" }).click();
@@ -213,7 +221,27 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     const otherPanel = page.locator("[data-developer-tools]");
     await otherPanel.locator('[data-editor-panel-key="sven-locomotion"] summary').click();
     await expect(otherPanel.locator('[data-locomotion-setting="toIdleMaxDistance"]')).toHaveValue("49");
+    await expect(otherPanel.locator('[data-locomotion-setting="fromIdleMovement"]')).toHaveValue("0");
+    await expect(otherPanel.locator('[data-locomotion-setting="toIdleMovement"]')).toHaveValue("0");
+    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveThreshold"]')).toHaveValue("95");
+    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveMovement"]')).toHaveCount(0);
+    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveAnimationSpeed"]')).toHaveValue("2.40");
+    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveStartFrame"]')).toHaveValue("20");
+    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveMaxFromIdleAnimation"]')).toHaveValue("35");
     await expect(otherPanel.locator('[data-level-setting="movementSpeed"]')).not.toHaveValue("310");
+
+    const migration = await page.evaluate(async () => {
+      const config = await fetch("/__dev/world-config").then((response) => response.json());
+      config.locomotion.shortMoveMovement = 1.75;
+      const response = await fetch("/__dev/world-config", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(config)
+      });
+      const payload = await response.json();
+      return { status: response.status, hasOldSetting: Object.hasOwn(payload.config.locomotion, "shortMoveMovement") };
+    });
+    expect(migration).toEqual({ status: 200, hasOldSetting: false });
   } finally {
     fs.writeFileSync(configPath, originalConfig);
   }

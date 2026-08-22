@@ -903,9 +903,10 @@ function updateLevelSetting(levelId, key, value) {
 }
 
 const GLOBAL_LOCOMOTION_RANGES = {
-  fromIdleMovement: [0.1, 2], loopMovement: [0.1, 2], toIdleMovement: [0.05, 1.5],
+  fromIdleMovement: [0, 2], loopMovement: [0.1, 2], toIdleMovement: [0, 1.5],
   toIdleMaxDistance: [1, 200], turnMovement: [0.1, 2], stopEntryDistance: [1, 250],
-  shortMoveThreshold: [1, 300], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
+  shortMoveThreshold: [1, 300], shortMoveAnimationSpeed: [0.25, 4], shortMoveStartFrame: [0, 0.8],
+  shortMoveMaxFromIdleAnimation: [0.05, 1], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
   toIdleAnimationSpeed: [0.25, 3], turnAnimationSpeed: [0.25, 3],
   arrivalDynamicSpeedMin: [0.25, 2], arrivalDynamicSpeedMax: [0.25, 3],
   blinkMinimumInterval: [250, 30000], blinkMaximumInterval: [250, 60000]
@@ -2550,17 +2551,46 @@ function movementIntentIsCurrent(token) {
 
 function walkRoute(points, onArrive, intentToken = state.interactionToken) {
   stopMovement();
+  const destination = points.at(-1);
+  const directDistance = destination
+    ? Math.hypot(destination.x - state.worldX, destination.y - state.worldY)
+    : 0;
+  if (!destination || directDistance <= 0.5) {
+    locomotion.completeArrival();
+    state.moving = false;
+    state.svenMood = "idle";
+    if (movementIntentIsCurrent(intentToken)) onArrive();
+    updateWorldDom();
+    return;
+  }
+  const horizontalDistance = Math.abs(destination.x - state.worldX);
+  const config = locomotionTuning();
+  const shortMove = horizontalDistance > 0.5 && horizontalDistance <= config.shortMoveThreshold;
+  const shortDirection = destination.x > state.worldX ? "right" : "left";
+  const shortToIdleShare = config.toIdleMovement / Math.max(0.0001, config.fromIdleMovement + config.toIdleMovement);
+  const shortToIdleDistance = shortMove
+    ? Math.min(horizontalDistance, config.toIdleMaxDistance, horizontalDistance * shortToIdleShare)
+    : 0;
   state.moving = true;
   state.svenMood = "walking";
   state.movement = {
-    points: points.map((point) => ({ x: point.x, y: point.y })),
+    points: (shortMove ? [destination] : points).map((point) => ({ x: point.x, y: point.y })),
     index: 0,
     lastTime: 0,
     travelSpeed: levelTuning().movementSpeed,
     stopping: false,
-    shortMove: false,
+    shortMove,
+    shortDirection: shortMove ? shortDirection : null,
+    shortDistance: shortMove ? horizontalDistance : 0,
+    shortFromIdleDistance: shortMove ? horizontalDistance - shortToIdleDistance : 0,
+    shortToIdleDistance,
+    shortToIdleStarted: false,
+    shortMaxFrame: null,
+    shortFromFrameStart: null,
+    shortToIdleFrameLimit: null,
     stopDistanceTravelled: 0,
     phaseHistory: [],
+    motionHistory: [],
     positionComplete: !points.length,
     onArrive,
     intentToken,
@@ -2573,13 +2603,23 @@ function walkRoute(points, onArrive, intentToken = state.interactionToken) {
     finishMovementIfReady();
     return;
   }
-  const distance = remainingRouteDistance(state.movement);
-  state.movement.shortMove = distance <= locomotionTuning().shortMoveThreshold;
-  locomotion.setIntent(movementDirectionTo(points[0]), {
-    playbackSpeed: state.movement.shortMove
-      ? clamp(locomotion.stateDuration(`walk${movementDirectionTo(points[0]) === "left" ? "Left" : "Right"}FromIdle`) / Math.max(120, distance / Math.max(1, state.movement.travelSpeed * locomotionTuning().fromIdleMovement) * 1000), 0.25, 1.5)
-      : 1
-  });
+  if (shortMove) {
+    const animationState = `walk${shortDirection === "left" ? "Left" : "Right"}FromIdle`;
+    const frameCount = window.AtlasLocomotion.ANIMATIONS[animationState].frames;
+    const distanceFraction = horizontalDistance / Math.max(1, config.shortMoveThreshold);
+    const usedFraction = Math.min(distanceFraction, config.shortMoveMaxFromIdleAnimation);
+    const frameStart = Math.min(frameCount - 1, Math.floor((frameCount - 1) * config.shortMoveStartFrame));
+    const frameSpan = Math.max(0, Math.floor((frameCount - 1) * usedFraction));
+    state.movement.shortFromFrameStart = frameStart;
+    state.movement.shortMaxFrame = Math.min(frameCount - 1, frameStart + frameSpan);
+    locomotion.startTransitionWindow("fromIdle", shortDirection, {
+      animationSpeedMultiplier: config.shortMoveAnimationSpeed,
+      frameStart,
+      frameLimit: state.movement.shortMaxFrame
+    });
+  } else {
+    locomotion.setIntent(movementDirectionTo(points[0]));
+  }
   state.movement.rafId = window.requestAnimationFrame(stepMovement);
 }
 
@@ -2624,6 +2664,24 @@ function beginDestinationStop(movement, remainingDistance) {
   });
 }
 
+function beginShortToIdle(movement) {
+  if (movement.shortToIdleStarted) return;
+  movement.shortToIdleStarted = true;
+  const config = locomotionTuning();
+  const stateName = `walk${movement.shortDirection === "left" ? "Left" : "Right"}ToIdle`;
+  const frameCount = window.AtlasLocomotion.ANIMATIONS[stateName].frames;
+  const distanceFraction = movement.shortToIdleDistance <= 0
+    ? 0
+    : Math.min(1, movement.shortToIdleDistance / Math.max(0.0001, config.toIdleMaxDistance));
+  const frameSpan = Math.max(0, Math.floor((frameCount - 1) * 0.5 * distanceFraction));
+  movement.shortToIdleFrameLimit = frameSpan;
+  locomotion.startTransitionWindow("toIdle", movement.shortDirection, {
+    animationSpeedMultiplier: config.shortMoveAnimationSpeed,
+    frameStart: 0,
+    frameLimit: frameSpan
+  });
+}
+
 function finishMovementIfReady() {
   const movement = state?.movement;
   if (!movement?.positionComplete || locomotion.snapshot().state !== "idle") return;
@@ -2635,18 +2693,34 @@ function finishMovementIfReady() {
   if (movementIntentIsCurrent(intentToken)) onArrive();
 }
 
+function recordPhysicalMovement(movement, previousX) {
+  if (state.worldX === previousX) return;
+  const motionState = locomotion.snapshot();
+  movement.motionHistory.push({
+    fromX: previousX,
+    toX: state.worldX,
+    state: motionState.state,
+    frameIndex: motionState.frameIndex,
+    facing: motionState.facing
+  });
+  if (movement.motionHistory.length > 500) movement.motionHistory.shift();
+}
+
 function stepMovement(timestamp) {
   const movement = state.movement;
   if (!movement) return;
 
   if (!movement.lastTime) movement.lastTime = timestamp;
   let routeRemaining = remainingRouteDistance(movement);
-  const direction = movementDirectionTo(movement.points[movement.index]);
+  const nextPoint = movement.points[movement.index];
+  const direction = nextPoint ? movementDirectionTo(nextPoint) : locomotion.snapshot().facing;
   const config = locomotionTuning();
   const locomotionSnapshot = locomotion.snapshot();
   movement.phaseHistory.push({ state: locomotionSnapshot.state, x: state.worldX, remaining: routeRemaining });
   if (movement.phaseHistory.length > 500) movement.phaseHistory.shift();
-  if (!movement.stopping && !movement.shortMove) {
+  if (movement.shortMove && !movement.shortToIdleStarted && routeRemaining <= movement.shortToIdleDistance + 0.001) {
+    beginShortToIdle(movement);
+  } else if (!movement.stopping && !movement.shortMove) {
     const stopPhysicalSpeed = movement.travelSpeed * config.toIdleMovement;
     const stopCapacity = stopPhysicalSpeed * (locomotion.stopDuration(direction, config.arrivalDynamicSpeedMin) / 1000);
     const stopStartDistance = Math.min(config.stopEntryDistance, config.toIdleMaxDistance, stopCapacity);
@@ -2661,11 +2735,15 @@ function stepMovement(timestamp) {
     turn: config.turnMovement
   };
   const movementAllowed = window.AtlasLocomotion.isMovementState(locomotion.snapshot().state);
+  const movementMultiplier = movementMultipliers[phase] || 0;
   let remaining = movementAllowed
-    ? ((timestamp - movement.lastTime) / 1000) * movement.travelSpeed * (movementMultipliers[phase] || 0)
+    ? ((timestamp - movement.lastTime) / 1000) * movement.travelSpeed * movementMultiplier
     : 0;
   if (movement.stopping) {
     remaining = Math.min(remaining, Math.max(0, movement.stopMaxDistance - movement.stopDistanceTravelled));
+  }
+  if (movement.shortMove && !movement.shortToIdleStarted) {
+    remaining = Math.min(remaining, Math.max(0, routeRemaining - movement.shortToIdleDistance));
   }
   movement.lastTime = timestamp;
 
@@ -2675,9 +2753,11 @@ function stepMovement(timestamp) {
     const dy = target.y - state.worldY;
     const distance = Math.hypot(dx, dy);
     const stepDistance = Math.min(distance, remaining);
+    const previousX = state.worldX;
 
     if (distance <= remaining || distance < 0.5) {
       setSvenWorldPosition(target);
+      recordPhysicalMovement(movement, previousX);
       movement.index += 1;
       remaining -= distance;
 
@@ -2695,6 +2775,7 @@ function stepMovement(timestamp) {
         x: state.worldX + (dx / distance) * remaining,
         y: state.worldY + (dy / distance) * remaining
       });
+      recordPhysicalMovement(movement, previousX);
       remaining = 0;
     }
     if (movement.stopping) movement.stopDistanceTravelled += stepDistance;
@@ -2702,7 +2783,9 @@ function stepMovement(timestamp) {
 
   if (state.movement && remainingRouteDistance(movement) < 0.5) {
     const destination = movement.points.at(-1);
+    const previousX = state.worldX;
     setSvenWorldPosition(destination);
+    recordPhysicalMovement(movement, previousX);
     movement.index = movement.points.length;
     movement.positionComplete = true;
     if (movement.shortMove) locomotion.completeArrival();
@@ -4980,13 +5063,18 @@ function renderLevelTuningControls(levelId, options = {}) {
         <summary>Sven Locomotion</summary>
         <div class="atlasLocomotionGroups">
           <fieldset><legend>Global — Movement</legend><div class="atlasTuningGrid">
-            ${globalControl("From Idle Movement %", "fromIdleMovement", globalTuning.fromIdleMovement, 10, 200, 5, 100)}
+            ${globalControl("From Idle Movement %", "fromIdleMovement", globalTuning.fromIdleMovement, 0, 200, 5, 100)}
             ${globalControl("Loop Movement %", "loopMovement", globalTuning.loopMovement, 10, 200, 5, 100)}
-            ${globalControl("To Idle Movement %", "toIdleMovement", globalTuning.toIdleMovement, 5, 150, 5, 100)}
+            ${globalControl("To Idle Movement %", "toIdleMovement", globalTuning.toIdleMovement, 0, 150, 5, 100)}
             ${globalControl("To Idle Max Distance", "toIdleMaxDistance", globalTuning.toIdleMaxDistance, 1, 200, 1)}
             ${globalControl("Turn Movement %", "turnMovement", globalTuning.turnMovement, 10, 200, 5, 100)}
             ${globalControl("Stop Entry Distance", "stopEntryDistance", globalTuning.stopEntryDistance, 1, 250, 1)}
+          </div></fieldset>
+          <fieldset><legend>Global — Short Moves</legend><div class="atlasTuningGrid">
             ${globalControl("Short Move Threshold", "shortMoveThreshold", globalTuning.shortMoveThreshold, 1, 300, 1)}
+            ${globalControl("Short Move Animation Speed", "shortMoveAnimationSpeed", globalTuning.shortMoveAnimationSpeed, 0.25, 4, 0.05)}
+            ${globalControl("Short Move Start Frame %", "shortMoveStartFrame", globalTuning.shortMoveStartFrame, 0, 80, 5, 100)}
+            ${globalControl("Short Move Max From-Idle Animation %", "shortMoveMaxFromIdleAnimation", globalTuning.shortMoveMaxFromIdleAnimation, 5, 100, 5, 100)}
           </div></fieldset>
           <fieldset><legend>Global — Animation</legend><div class="atlasTuningGrid">
             ${globalControl("From Idle Animation Speed", "fromIdleAnimationSpeed", globalTuning.fromIdleAnimationSpeed, 0.25, 3, 0.05)}

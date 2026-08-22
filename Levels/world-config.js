@@ -42,13 +42,13 @@ window.SVEN_WORLD_CONFIG = {
       "spriteScale": 1.1
     },
     "LVL-0013": {
-      "spriteScale": 1.25
+      "spriteScale": 1.6
     },
     "LVL-0016": {
-      "spriteScale": 1.05
+      "spriteScale": 1.3
     },
     "LVL-0017": {
-      "spriteScale": 1.25
+      "spriteScale": 1.45
     },
     "LVL-0020": {
       "spriteScale": 1.65
@@ -60,7 +60,16 @@ window.SVEN_WORLD_CONFIG = {
       "spriteScale": 1.1
     },
     "LVL-0029": {
-      "spriteScale": 1.3
+      "spriteScale": 1.4
+    },
+    "LVL-0019": {
+      "spriteScale": 1.25
+    },
+    "LVL-0027": {
+      "spriteScale": 1.25
+    },
+    "LVL-0031": {
+      "spriteScale": 1.1
     }
   },
   "locomotion": {
@@ -68,6 +77,10 @@ window.SVEN_WORLD_CONFIG = {
     "toIdleMovement": 0.05,
     "toIdleMaxDistance": 5,
     "stopEntryDistance": 35,
+    "shortMoveThreshold": 25,
+    "shortMoveAnimationSpeed": 3,
+    "shortMoveStartFrame": 0.25,
+    "shortMoveMaxFromIdleAnimation": 0.35,
     "fromIdleAnimationSpeed": 2,
     "blinkMinimumInterval": 1000,
     "blinkMaximumInterval": 3000

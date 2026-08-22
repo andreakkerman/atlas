@@ -198,9 +198,10 @@ function normalizeWorldConfig(value) {
     result.levels[levelId] = next;
   });
   const locomotionRanges = {
-    fromIdleMovement: [0.1, 2], loopMovement: [0.1, 2], toIdleMovement: [0.05, 1.5],
+    fromIdleMovement: [0, 2], loopMovement: [0.1, 2], toIdleMovement: [0, 1.5],
     toIdleMaxDistance: [1, 200], turnMovement: [0.1, 2], stopEntryDistance: [1, 250],
-    shortMoveThreshold: [1, 300], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
+    shortMoveThreshold: [1, 300], shortMoveAnimationSpeed: [0.25, 4], shortMoveStartFrame: [0, 0.8],
+    shortMoveMaxFromIdleAnimation: [0.05, 1], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
     toIdleAnimationSpeed: [0.25, 3], turnAnimationSpeed: [0.25, 3],
     arrivalDynamicSpeedMin: [0.25, 2], arrivalDynamicSpeedMax: [0.25, 3],
     blinkMinimumInterval: [250, 30000], blinkMaximumInterval: [250, 60000]

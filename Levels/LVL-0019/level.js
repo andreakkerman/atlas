@@ -661,8 +661,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
     },
     {
       "id": "maypole-approach",
-      "x": 1113,
-      "y": 608,
+      "x": 1111,
+      "y": 616,
       "role": "approach"
     },
     {

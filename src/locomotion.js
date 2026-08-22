@@ -24,6 +24,9 @@
     turnMovement: 0.78,
     stopEntryDistance: 56,
     shortMoveThreshold: 90,
+    shortMoveAnimationSpeed: 2,
+    shortMoveStartFrame: 0.2,
+    shortMoveMaxFromIdleAnimation: 0.45,
     fromIdleAnimationSpeed: 1.1,
     loopAnimationSpeed: 1,
     toIdleAnimationSpeed: 1.15,
@@ -121,6 +124,9 @@
     let startedAt = 0;
     let lastFrame = -1;
     let stateSpeed = 1;
+    let statePhaseSpeedMultiplier = 1;
+    let stateFrameStart = 0;
+    let stateFrameLimit = null;
     let rafId = null;
     let blinkTimer = null;
     const idleListeners = new Set();
@@ -129,7 +135,7 @@
     const getAnimationSpeed = () => Math.max(0.1, Number(options.getAnimationSpeed?.() || 1));
     const effectiveAnimationSpeed = (forState = state) => Math.max(
       0.1,
-      getAnimationSpeed() * phaseAnimationSpeed(getConfig(), forState) * stateSpeed
+      getAnimationSpeed() * phaseAnimationSpeed(getConfig(), forState) * statePhaseSpeedMultiplier * stateSpeed
     );
     const emitState = () => options.onState?.(state, facing);
     const emitFrame = (frame) => options.onFrame?.(state, frame, frameUrl(state, frame));
@@ -151,17 +157,26 @@
       }, delay);
     }
 
-    function transition(next, speed = 1, timestamp = global.performance?.now?.() || Date.now()) {
+    function transition(next, speed = 1, timestamp = global.performance?.now?.() || Date.now(), transitionOptions = {}) {
       if (!ANIMATIONS[next]) next = "idle";
       state = next;
       stateSpeed = Math.max(0.1, Number(speed) || 1);
+      statePhaseSpeedMultiplier = Number.isFinite(Number(transitionOptions.phaseSpeedMultiplier))
+        ? Math.max(0.1, Number(transitionOptions.phaseSpeedMultiplier))
+        : 1;
+      stateFrameStart = Number.isInteger(transitionOptions.frameStart)
+        ? Math.max(0, Math.min(ANIMATIONS[next].frames - 1, transitionOptions.frameStart))
+        : 0;
+      stateFrameLimit = Number.isInteger(transitionOptions.frameLimit)
+        ? Math.max(stateFrameStart, Math.min(ANIMATIONS[next].frames - 1, transitionOptions.frameLimit))
+        : null;
       startedAt = timestamp;
-      lastFrame = -1;
+      lastFrame = stateFrameStart;
       const direction = ANIMATIONS[state].direction;
       if (direction) facing = direction;
       if (state !== "idle") clearBlinkTimer();
       emitState();
-      emitFrame(0);
+      emitFrame(stateFrameStart);
       if (state === "idle") {
         idleListeners.forEach((listener) => listener());
         scheduleBlink();
@@ -192,14 +207,15 @@
       const animation = ANIMATIONS[state];
       const elapsed = Math.max(0, timestamp - startedAt);
       const frameFloat = elapsed / (FRAME_MS / effectiveAnimationSpeed());
-      const frame = animation.loop
+      const rawFrame = animation.loop
         ? Math.floor(frameFloat) % animation.frames
-        : Math.min(animation.frames - 1, Math.floor(frameFloat));
+        : Math.min(animation.frames - 1, stateFrameStart + Math.floor(frameFloat));
+      const frame = stateFrameLimit === null ? rawFrame : Math.min(rawFrame, stateFrameLimit);
       if (frame !== lastFrame) {
         lastFrame = frame;
         emitFrame(frame);
       }
-      if (!animation.loop && frameFloat >= animation.frames) complete(timestamp);
+      if (!animation.loop && stateFrameLimit === null && frameFloat >= animation.frames) complete(timestamp);
       ensureRunning();
     }
 
@@ -211,7 +227,12 @@
       desiredDirection = direction === "left" || direction === "right" ? direction : null;
       if (desiredDirection) {
         clearBlinkTimer();
-        if (state === "idle" || state === "idleBlink") return transition(directionState("walk", desiredDirection) + "FromIdle", intentOptions.playbackSpeed || 1);
+        if (state === "idle" || state === "idleBlink") return transition(
+          directionState("walk", desiredDirection) + "FromIdle",
+          intentOptions.playbackSpeed || 1,
+          undefined,
+          intentOptions
+        );
         if (state.endsWith("ToIdle")) {
           if (facing !== desiredDirection) return transition(facing === "left" ? "turnLeftToRight" : "turnRightToLeft");
           return transition(directionState("walk", desiredDirection) + "Loop");
@@ -223,6 +244,22 @@
       }
       if (state === "idle" || state === "idleBlink") return transition("idle");
       if (!state.endsWith("ToIdle")) transition(directionState("walk", facing) + "ToIdle", intentOptions.playbackSpeed || 1);
+    }
+
+    function startTransitionWindow(phase, direction, windowOptions = {}) {
+      const normalizedDirection = direction === "left" ? "left" : "right";
+      desiredDirection = phase === "fromIdle" ? normalizedDirection : null;
+      clearBlinkTimer();
+      transition(
+        directionState("walk", normalizedDirection) + (phase === "toIdle" ? "ToIdle" : "FromIdle"),
+        1,
+        undefined,
+        {
+          phaseSpeedMultiplier: windowOptions.animationSpeedMultiplier,
+          frameStart: windowOptions.frameStart,
+          frameLimit: windowOptions.frameLimit
+        }
+      );
     }
 
     function attach() {
@@ -242,6 +279,9 @@
       startedAt = 0;
       lastFrame = 0;
       stateSpeed = 1;
+      statePhaseSpeedMultiplier = 1;
+      stateFrameStart = 0;
+      stateFrameLimit = null;
       attach();
     }
 
@@ -260,6 +300,7 @@
 
     return {
       setIntent,
+      startTransitionWindow,
       attach,
       reset,
       transition,
@@ -275,6 +316,9 @@
           facing,
           frameIndex: Math.max(0, lastFrame),
           stateSpeed,
+          phaseSpeedMultiplier: statePhaseSpeedMultiplier,
+          frameStart: stateFrameStart,
+          frameLimit: stateFrameLimit,
           elapsed,
           duration,
           progress: ANIMATIONS[state].loop ? 0 : Math.min(1, elapsed / Math.max(1, duration))

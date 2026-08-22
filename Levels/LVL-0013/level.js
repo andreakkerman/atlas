@@ -649,14 +649,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
     },
     {
       "id": "clock-approach",
-      "x": 1638,
-      "y": 595,
+      "x": 1646,
+      "y": 603,
       "role": "approach"
     },
     {
       "id": "gate-approach",
-      "x": 2001,
-      "y": 580,
+      "x": 2011,
+      "y": 603,
       "role": "approach"
     }
   ],

@@ -737,14 +737,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
     },
     {
       "id": "fountain-approach",
-      "x": 625,
-      "y": 640,
+      "x": 628,
+      "y": 644,
       "role": "approach"
     },
     {
       "id": "gelato-approach",
-      "x": 1046,
-      "y": 642,
+      "x": 1048,
+      "y": 645,
       "role": "approach"
     },
     {

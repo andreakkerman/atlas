@@ -17,8 +17,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
   },
   "player": {
     "start": {
-      "x": 309,
-      "y": 565
+      "x": 301,
+      "y": 572
     },
     "scale": 0.47,
     "startNode": "start"
@@ -682,8 +682,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "y": 408,
       "radius": 52,
       "approach": {
-        "x": 520,
-        "y": 548
+        "x": 525,
+        "y": 562
       }
     },
     {
@@ -694,8 +694,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "y": 389,
       "radius": 74,
       "approach": {
-        "x": 1360,
-        "y": 548
+        "x": 1374,
+        "y": 577
       }
     },
     {
@@ -706,8 +706,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "y": 418,
       "radius": 58,
       "approach": {
-        "x": 1029,
-        "y": 556
+        "x": 1028,
+        "y": 570
       }
     },
     {
@@ -718,8 +718,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "y": 422,
       "radius": 48,
       "approach": {
-        "x": 1660,
-        "y": 573
+        "x": 1663,
+        "y": 588
       }
     },
     {
@@ -731,7 +731,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "radius": 70,
       "approach": {
         "x": 1866,
-        "y": 565
+        "y": 591
       },
       "targetLevel": "LVL-0022",
       "lockedUntilComplete": true
@@ -860,37 +860,37 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
   "walkPath": [
     {
       "id": "start",
-      "x": 309,
-      "y": 565
+      "x": 301,
+      "y": 572
     },
     {
       "id": "opticsTable-approach",
-      "x": 520,
-      "y": 548,
+      "x": 525,
+      "y": 562,
       "role": "approach"
     },
     {
       "id": "centralCodex-approach",
-      "x": 1029,
-      "y": 556,
+      "x": 1028,
+      "y": 570,
       "role": "approach"
     },
     {
       "id": "mechanicalModel-approach",
-      "x": 1360,
-      "y": 548,
+      "x": 1374,
+      "y": 577,
       "role": "approach"
     },
     {
       "id": "engineeringTable-approach",
-      "x": 1660,
-      "y": 573,
+      "x": 1663,
+      "y": 588,
       "role": "approach"
     },
     {
       "id": "procenoGate-approach",
       "x": 1866,
-      "y": 565,
+      "y": 591,
       "role": "approach"
     }
   ],
