@@ -26,8 +26,38 @@ window.SVEN_WORLD_CONFIG = {
     }
   },
   "levels": {
+    "LVL-0001": {
+      "emissiveGlow": {
+        "enabled": true,
+        "intensity": 0.69,
+        "radius": 8,
+        "sensitivity": 0.5
+      }
+    },
+    "LVL-0002": {
+      "emissiveGlow": {
+        "enabled": true,
+        "intensity": 0.77,
+        "radius": 8,
+        "sensitivity": 0.5
+      }
+    },
+    "LVL-0003": {
+      "emissiveGlow": {
+        "enabled": true,
+        "intensity": 0.74,
+        "radius": 8,
+        "sensitivity": 0.5
+      }
+    },
     "LVL-0004": {
-      "spriteScale": 1.4
+      "spriteScale": 1.4,
+      "emissiveGlow": {
+        "enabled": true,
+        "intensity": 0.7,
+        "radius": 8,
+        "sensitivity": 0.5
+      }
     },
     "LVL-0005": {
       "spriteScale": 1.65

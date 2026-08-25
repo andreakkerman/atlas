@@ -13,6 +13,7 @@ const ACTOR_FALLBACK_SRC = "assets/sven-stage.png";
 const DERIVED_WALK_SEGMENT_LENGTH = 90;
 const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "editor";
 const PERFORMANCE_HUD_MODE = new URLSearchParams(window.location.search).get("perf") === "1";
+const DIRECT_DEV_LEVEL_ID = EDITOR_DEV_MODE ? new URLSearchParams(window.location.search).get("level") : null;
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
 const GUIDE_PURR_KEYS = {
   minnie: ["minnie1", "minnie2", "minnieMeow1"],
@@ -127,6 +128,35 @@ const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getScreen: () => state.screen,
   warn: (message) => console.warn(message)
 });
+let graphicsSettingsOpen = false;
+let voxelTuningOpen = false;
+let voxelRendererStatus = { status: "idle", ready: false, supported: Boolean(window.navigator?.gpu) };
+const voxelRenderer = window.AtlasVoxelRenderer.createRuntime({
+  getLevel: () => level,
+  getCameraX: () => level ? getCameraX() : 0,
+  getViewportWorldWidth: () => state?.viewportWorldWidth,
+  onStatus: (snapshot) => {
+    voxelRendererStatus = snapshot;
+    document.querySelectorAll("[data-voxel-runtime-status]").forEach((element) => {
+      element.textContent = voxelRuntimeStatusLabel();
+      element.dataset.status = snapshot.status;
+    });
+    const liveMetrics = {
+      grid: snapshot.grid?.join(" × ") || "—",
+      sprites: String(snapshot.sprites || 0),
+      fps: `${snapshot.fps?.toFixed?.(0) || "0"} fps`,
+      cpu: `${snapshot.averageMs?.toFixed?.(2) || "0.00"} ms avg`
+    };
+    Object.entries(liveMetrics).forEach(([key, value]) => {
+      document.querySelectorAll(`[data-voxel-metric="${key}"]`).forEach((element) => { element.textContent = value; });
+    });
+  }
+});
+const emissiveGlowRenderer = window.AtlasEmissiveGlow.createRuntime({
+  getLevel: () => level,
+  getRenderer: () => voxelRenderer.getSettings().renderer,
+  getSettings: (levelId) => worldResolver.levelSettings(levelId).emissiveGlow
+});
 const performanceHud = {
   element: null,
   rafId: null,
@@ -181,6 +211,10 @@ function levelTuning(levelId = level?.id) {
   };
 }
 
+function emissiveGlowTuning(levelId = level?.id) {
+  return window.AtlasEmissiveGlow.normalizeSettings(worldResolver.levelSettings(levelId).emissiveGlow);
+}
+
 function locomotionTuning() {
   return worldResolver.locomotionSettings();
 }
@@ -211,7 +245,11 @@ const locomotion = window.AtlasLocomotion.createController({
       actor.dataset.animation = legacyState;
       actor.dataset.locomotionState = locomotionState;
     }
-    if (shell) shell.dataset.locomotionState = locomotionState;
+    if (shell) {
+      shell.dataset.locomotionState = locomotionState;
+      shell.classList.toggle("sven-facing-left", facing === "left");
+      shell.classList.toggle("sven-facing-right", facing === "right");
+    }
   },
   onFrame: (locomotionState, frameIndex, src) => {
     const decodedActor = window.AtlasLocomotion.decodedImages.get(src);
@@ -231,6 +269,8 @@ const locomotion = window.AtlasLocomotion.createController({
     actor.dataset.animation = locomotionState === "idle" || locomotionState === "idleBlink" ? "idle" : "walk";
     actor.dataset.locomotionState = locomotionState;
     actor.dataset.frame = String(frameIndex + 1);
+    actor.dataset.assetPath = src;
+    actor.dataset.resolvedFacing = state.svenFacing;
     actor.dataset.worldX = String(Math.round(state.worldX || 0));
     actor.dataset.worldY = String(Math.round(state.worldY || 0));
     actor.dataset.actor = "sven";
@@ -525,6 +565,10 @@ function cloneAudioConfig(config) {
   return JSON.parse(JSON.stringify(config || {}));
 }
 
+function cloneOptionalConfig(config) {
+  return config === undefined ? undefined : JSON.parse(JSON.stringify(config));
+}
+
 function editorValuesEqual(left, right) {
   return JSON.stringify(left ?? null) === JSON.stringify(right ?? null);
 }
@@ -672,6 +716,9 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     originalSceneEffects: cloneSceneEffects(selectedLevel.sceneEffects || []),
     originalSceneEffectGroups: cloneSceneEffectGroups(selectedLevel.sceneEffectGroups || []),
     originalAudioConfig: cloneAudioConfig(audioConfig),
+    originalEmissiveGlow: cloneOptionalConfig(worldResolver.levelSettings(selectedLevel.id).emissiveGlow),
+    emissiveGlowDirty: false,
+    worldDirtyBeforeEmissiveGlow: false,
     draggingIndex: null,
     draggingObjectId: null,
     draggingObjectMode: null,
@@ -727,6 +774,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
       worldResolver.setConfig(config);
       window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
       normalizeLevel(selectedLevel);
+      walkPathEditor.originalEmissiveGlow = cloneOptionalConfig(worldResolver.levelSettings(selectedLevel.id).emissiveGlow);
     }
     walkPathEditor.message = "Dev server actief.";
     const draft = await requestEditorApi(`/__dev/levels/${encodeURIComponent(selectedLevel.id)}/editor-draft`);
@@ -886,6 +934,15 @@ function persistWorldConfigRequest() {
   });
 }
 
+function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
+  const persistedGlow = payload?.config?.levels?.[level?.id]?.emissiveGlow;
+  if (expectedEmissiveGlow !== undefined && !editorValuesEqual(persistedGlow, expectedEmissiveGlow)) {
+    throw new Error("De editorserver heeft Emissive Glow niet opgeslagen. Herstart npm run dev:editor en klik opnieuw op Apply.");
+  }
+  worldResolver.setConfig(payload.config);
+  window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+}
+
 function updateLevelSetting(levelId, key, value) {
   const numericRanges = {
     spriteScale: [0.5, 1.8], movementSpeed: [80, 520], animationSpeed: [0.5, 1.8],
@@ -900,6 +957,31 @@ function updateLevelSetting(levelId, key, value) {
   if (level?.id === levelId) normalizeLevel(level);
   markWorldConfigDirty(`${levelId}: ${key} aangepast.`);
   applyLiveTuningDom(levelId);
+}
+
+function updateEmissiveGlowSetting(levelId, key, value) {
+  const current = emissiveGlowTuning(levelId);
+  const next = { ...current };
+  if (key === "enabled") next.enabled = Boolean(value);
+  if (key === "intensity") next.intensity = clamp(Number(value), 0, 1.25);
+  if (key === "radius") next.radius = clamp(Number(value), 2, 24);
+  if (key === "sensitivity") next.sensitivity = clamp(Number(value), 0, 1);
+  if (!walkPathEditor.emissiveGlowDirty) walkPathEditor.worldDirtyBeforeEmissiveGlow = worldEditor.dirty;
+  worldResolver.updateLevelSettings(levelId, { emissiveGlow: next });
+  walkPathEditor.emissiveGlowDirty = !editorValuesEqual(next, walkPathEditor.originalEmissiveGlow);
+  if (walkPathEditor.emissiveGlowDirty) {
+    markWorldConfigDirty(`${levelId}: Emissive Glow ${key} aangepast.`);
+    markEditorModified(`Emissive Glow: ${key} aangepast.`);
+  } else {
+    worldEditor.dirty = walkPathEditor.worldDirtyBeforeEmissiveGlow;
+    if (!Object.keys(persistedLevelEditorPayload()).length) {
+      walkPathEditor.status = "Clean";
+      walkPathEditor.modified = false;
+      walkPathEditor.message = "Geen niet-toegepaste wijzigingen.";
+    }
+  }
+  if (level?.id === levelId) emissiveGlowRenderer.sync();
+  return next;
 }
 
 const GLOBAL_LOCOMOTION_RANGES = {
@@ -1588,6 +1670,8 @@ function returnToMenu() {
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
   sceneEffectRuntime.dispose();
+  voxelRenderer.dispose();
+  emissiveGlowRenderer.dispose();
   resetAmbientAnimalTimers();
   ambientAnimalRuntime.levelId = null;
   ambientAnimalRuntime.loaded.clear();
@@ -1721,6 +1805,7 @@ function updateWorldDom() {
   if (areaName) {
     areaName.textContent = getAreaName();
   }
+  voxelRenderer.invalidate();
 }
 
 function routeTo(target) {
@@ -1939,16 +2024,25 @@ async function applyWalkPathDraft() {
 
   try {
     const payload = persistedLevelEditorPayload();
+    const emissiveGlowDirty = Boolean(walkPathEditor.emissiveGlowDirty);
+    const stagedEmissiveGlow = emissiveGlowDirty
+      ? cloneOptionalConfig(worldResolver.levelSettings(level.id).emissiveGlow)
+      : undefined;
     if (!Object.keys(payload).length) {
       await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
       if (worldEditor.dirty) {
         const savedConfig = await persistWorldConfigRequest();
-        worldResolver.setConfig(savedConfig.config);
+        acceptPersistedWorldConfig(savedConfig, stagedEmissiveGlow);
         worldEditor.dirty = false;
+      }
+      if (emissiveGlowDirty) {
+        walkPathEditor.originalEmissiveGlow = cloneOptionalConfig(worldResolver.levelSettings(level.id).emissiveGlow);
+        walkPathEditor.emissiveGlowDirty = false;
+        walkPathEditor.worldDirtyBeforeEmissiveGlow = false;
       }
       walkPathEditor.status = "Applied";
       walkPathEditor.modified = false;
-      walkPathEditor.message = "Geen wijzigingen om toe te passen.";
+      walkPathEditor.message = emissiveGlowDirty ? "Editorwijzigingen opgeslagen." : "Geen wijzigingen om toe te passen.";
       return;
     }
     await requestEditorApi(editorApiUrl("apply-editor"), {
@@ -1957,7 +2051,7 @@ async function applyWalkPathDraft() {
     });
     if (worldEditor.dirty) {
       const savedConfig = await persistWorldConfigRequest();
-      worldResolver.setConfig(savedConfig.config);
+      acceptPersistedWorldConfig(savedConfig, stagedEmissiveGlow);
       worldEditor.dirty = false;
     }
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
@@ -1968,6 +2062,9 @@ async function applyWalkPathDraft() {
     walkPathEditor.originalSceneEffects = cloneSceneEffects(level.sceneEffects || []);
     walkPathEditor.originalSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
     walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
+    walkPathEditor.originalEmissiveGlow = cloneOptionalConfig(worldResolver.levelSettings(level.id).emissiveGlow);
+    walkPathEditor.emissiveGlowDirty = false;
+    walkPathEditor.worldDirtyBeforeEmissiveGlow = false;
     walkPathEditor.audioDirty = false;
     if (payload.learningChallenges) {
       await refreshMenuAdventureStats({ render: false });
@@ -2001,6 +2098,13 @@ async function revertWalkPathDraft() {
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
     setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
     setAudioConfig(walkPathEditor.originalAudioConfig);
+    if (walkPathEditor.emissiveGlowDirty) {
+      worldResolver.updateLevelSettings(level.id, { emissiveGlow: cloneOptionalConfig(walkPathEditor.originalEmissiveGlow) });
+      worldEditor.dirty = walkPathEditor.worldDirtyBeforeEmissiveGlow;
+      walkPathEditor.emissiveGlowDirty = false;
+      walkPathEditor.worldDirtyBeforeEmissiveGlow = false;
+      emissiveGlowRenderer.sync();
+    }
     walkPathEditor.audioDirty = false;
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
@@ -2747,7 +2851,7 @@ function stepMovement(timestamp) {
   }
   movement.lastTime = timestamp;
 
-  while (remaining > 0 && state.movement) {
+  while (remaining > 0 && state.movement && movement.index < movement.points.length) {
     const target = movement.points[movement.index];
     const dx = target.x - state.worldX;
     const dy = target.y - state.worldY;
@@ -5014,6 +5118,7 @@ function nudgeSelectedEffect(dx, dy) {
 
 function renderLevelTuningControls(levelId, options = {}) {
   const tuning = levelTuning(levelId);
+  const emissiveGlow = emissiveGlowTuning(levelId);
   const globalTuning = locomotionTuning();
   const settings = worldResolver.levelSettings(levelId);
   const numberControl = (label, key, value, min, max, step) => `
@@ -5058,6 +5163,21 @@ function renderLevelTuningControls(levelId, options = {}) {
             ${numberControl("Tint", "svenTint", tuning.svenTint, -1, 1, 0.05)}
           </fieldset>
         </div>
+      </details>
+      <details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
+        <summary>Emissive Glow</summary>
+        <fieldset class="atlasEmissiveGlowControls">
+          <label class="atlasToggleField"><input type="checkbox" data-emissive-setting="enabled" data-level-id="${levelId}" ${emissiveGlow.enabled ? "checked" : ""}> <span>Enabled</span></label>
+          <label class="graphicsRange">Intensity <output data-emissive-output="intensity">${emissiveGlow.intensity.toFixed(2)}</output>
+            <input type="range" min="0" max="1.25" step="0.01" value="${emissiveGlow.intensity}" data-emissive-setting="intensity" data-level-id="${levelId}">
+          </label>
+          <label class="graphicsRange">Radius <output data-emissive-output="radius">${emissiveGlow.radius.toFixed(1)}</output>
+            <input type="range" min="2" max="24" step="0.5" value="${emissiveGlow.radius}" data-emissive-setting="radius" data-level-id="${levelId}">
+          </label>
+          <label class="graphicsRange">Sensitivity <output data-emissive-output="sensitivity">${emissiveGlow.sensitivity.toFixed(2)}</output>
+            <input type="range" min="0" max="1" step="0.01" value="${emissiveGlow.sensitivity}" data-emissive-setting="sensitivity" data-level-id="${levelId}">
+          </label>
+        </fieldset>
       </details>
       <details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
         <summary>Sven Locomotion</summary>
@@ -5225,6 +5345,8 @@ function renderFlightPathWorkspace() {
 }
 
 function renderWorldStage() {
+  const renderer = voxelRenderer.getSettings().renderer;
+  const emissiveGlow = window.AtlasEmissiveGlow.normalizeSettings(worldResolver.levelSettings(level.id).emissiveGlow);
   const actorPosition = worldToScreen({ x: state.worldX, y: state.worldY }, "track");
   const svenClasses = [
     "svenInWorld",
@@ -5233,12 +5355,14 @@ function renderWorldStage() {
   ].join(" ");
 
   return `
-    <section class="stageViewport" aria-label="Verbonden wereld" data-world-stage>
+    <section class="stageViewport" aria-label="Verbonden wereld" data-world-stage data-renderer="${renderer}">
+      ${renderer === "voxel" ? `<canvas class="voxelViewportCanvas" data-voxel-canvas aria-label="WebGPU voxelwereld"></canvas>` : ""}
       <div
         class="worldTrack"
         style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
       >
         <img class="worldArt" src="${readyAssetSrc(level.world.background)}" data-asset-path="${level.world.background}" style="filter:${visualFilter("background")}" alt="Een doorlopend bospad naar de Vikingtempel" />
+        <canvas class="emissiveGlowCanvas" data-emissive-glow-canvas aria-hidden="true" ${renderer === "illustrated" && emissiveGlow.enabled ? "" : "hidden"}></canvas>
         <div class="forestMist"></div>
         ${renderSceneEffectCanvases()}
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
@@ -5431,12 +5555,126 @@ function renderRuneHotspot(rune) {
 
 function renderReturnToMenuButton() {
   return `
-    <button class="menuReturnButton" type="button" data-action="menu" aria-label="Terug naar menu">
-      Menu
-    </button>
+    <nav class="gameplayTopControls" aria-label="Spelbesturing">
+      <button class="menuReturnButton" type="button" data-action="menu" aria-label="Terug naar menu">Menu</button>
+      <button class="graphicsSettingsButton" type="button" data-graphics-action="toggle" aria-expanded="${graphicsSettingsOpen}" aria-label="Grafische instellingen">Graphics</button>
+    </nav>
   `;
 }
 
+function voxelRuntimeStatusLabel() {
+  const status = voxelRendererStatus.status;
+  if (status === "ready") {
+    const grid = voxelRendererStatus.grid?.join(" × ") || "—";
+    return `Voxel · WebGPU actief · ${grid} voxels · ${voxelRendererStatus.fps?.toFixed?.(0) || "0"} fps`;
+  }
+  if (["loading-assets", "requesting-adapter", "compiling-pipelines", "canvas-handoff", "rendering-first-frame"].includes(status)) return "WebGPU wordt voorbereid…";
+  if (status === "unavailable" || status === "device-lost" || status === "frame-error") return voxelRendererStatus.error || "WebGPU is niet beschikbaar.";
+  return "Illustrated actief";
+}
+
+function renderGraphicsSettings() {
+  if (!graphicsSettingsOpen) return "";
+  const settings = voxelRenderer.getSettings();
+  const descriptions = {
+    illustrated: "De oorspronkelijke geïllustreerde 2D Atlas-presentatie.",
+    voxel: "WebGPU voxel rendering with depth-aware world geometry, high-fidelity voxel sprites and emissive effects."
+  };
+  return `
+    <section class="graphicsSettingsPopover" data-graphics-settings role="dialog" aria-label="Grafische instellingen">
+      <header><div><span class="settingsEyebrow">Presentation</span><h2>Graphics</h2></div><button type="button" data-graphics-action="close" aria-label="Sluiten">×</button></header>
+      <fieldset>
+        <legend>Renderer</legend>
+        <div class="segmentedControl">
+          <button type="button" data-renderer-choice="illustrated" aria-pressed="${settings.renderer === "illustrated"}">Illustrated</button>
+          <button type="button" data-renderer-choice="voxel" aria-pressed="${settings.renderer === "voxel"}">Voxel</button>
+        </div>
+      </fieldset>
+      <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
+      ${settings.renderer === "voxel" ? `<label class="graphicsSelect">Graphics quality
+        <select data-graphics-quality>
+          ${Object.keys(window.AtlasVoxelRenderer.PRESETS).map((quality) => `<option value="${quality}" ${settings.quality === quality ? "selected" : ""}>${quality[0].toUpperCase()}${quality.slice(1)}</option>`).join("")}
+          <option value="custom" ${settings.quality === "custom" ? "selected" : ""}>Custom</option>
+        </select>
+      </label>
+      <label class="graphicsRange">Voxel blockiness <output>${Math.round(settings.voxelSize)} px</output>
+        <input type="range" min="1" max="10" step="1" value="${settings.voxelSize}" data-voxel-setting="voxelSize" />
+      </label>` : ""}
+      <p class="voxelRuntimeStatus" data-voxel-runtime-status data-status="${voxelRendererStatus.status}">${voxelRuntimeStatusLabel()}</p>
+      ${settings.renderer === "voxel" ? `<button class="openVoxelTuningButton" type="button" data-voxel-action="open">Advanced voxel tuning</button>` : ""}
+      ${settings.renderer === "voxel" ? `<p class="graphicsHint">Ctrl + Shift + V opent de uitgebreide voxel tuning.</p>` : ""}
+    </section>
+  `;
+}
+
+const VOXEL_SETTING_HELP = Object.freeze({
+  voxelSize: "Controls world voxel resolution. Lower values preserve finer artwork but cost more GPU work; higher values look chunkier and can reveal a grid.",
+  spriteVoxelScale: "Controls entity sampling density. Lower values simplify sprites; higher values keep Sven and animals cleaner but add GPU work.",
+  blockGap: "Controls spacing between voxel faces. Lower values keep surfaces continuous; excessive spacing creates graph-paper seams.",
+  renderScale: "Controls WebGPU render resolution. Lower values improve performance; higher values sharpen the final image and increase GPU cost.",
+  depthStrength: "Controls separation between near and far artwork. Low values look flatter; high values add depth but can over-separate layers.",
+  parallax: "Controls static horizontal separation between depth layers. Low values stay flatter; high values make voxel relief more pronounced.",
+  perspective: "Controls the fixed vertical relief pitch. Low values stay front-on; high values reveal more top and side surfaces.",
+  ambientLight: "Sets the minimum scene illumination. Low values deepen shadows; high values flatten the lighting.",
+  lightIntensity: "Controls directional key-light strength. High values add form but can clip bright surfaces.",
+  lightAzimuth: "Rotates the key light horizontally, changing which voxel sides receive light.",
+  lightElevation: "Raises or lowers the key light. Low angles emphasize long side shading; high angles light top faces.",
+  ambientOcclusion: "Darkens depth discontinuities and cavities. Excessive values make artwork dirty or noisy.",
+  fog: "Adds depth-based atmospheric blending. Higher values separate distance but can wash out authored colour.",
+  saturation: "Adjusts final colour intensity. Low values mute colour; high values can oversaturate emissive artwork.",
+  exposure: "Adjusts final scene brightness. High values can clip highlights; low values can hide source detail.",
+  effectGlow: "Controls emission from authored fire, runes and magical effect layers. Zero removes the emissive lift; higher values strengthen luminous colour and GPU cost remains effectively unchanged."
+});
+
+function voxelRangeControl(label, key, min, max, step, value, suffix = "") {
+  const controlId = `voxel-${key}`;
+  const helpId = `${controlId}-help`;
+  return `<div class="voxelRangeControl"><div class="voxelRangeHeader"><label for="${controlId}">${label}</label><button type="button" class="voxelInfoButton" data-voxel-help="${key}" aria-label="Info over ${label}" aria-expanded="false" aria-describedby="${helpId}">i</button><output data-voxel-output="${key}">${Number(value).toFixed(step < 0.1 ? 2 : step < 1 ? 1 : 0)}${suffix}</output></div><p class="voxelHelpPopover" id="${helpId}" role="tooltip">${VOXEL_SETTING_HELP[key]}</p><input id="${controlId}" type="range" min="${min}" max="${max}" step="${step}" value="${value}" data-voxel-setting="${key}" /></div>`;
+}
+
+function renderVoxelTuningPanel() {
+  if (!voxelTuningOpen) return "";
+  const settings = voxelRenderer.getSettings();
+  const snapshot = voxelRenderer.snapshot();
+  return `
+    <aside class="voxelTuningPanel" data-voxel-tuning-panel aria-label="Voxel tuning">
+      <header><div><span class="settingsEyebrow">Atlas rendering lab</span><h2>Voxel tuning</h2></div><button type="button" data-voxel-action="close" aria-label="Sluiten">×</button></header>
+      <div class="voxelPanelScroll">
+        <section><h3>Representation</h3><p class="voxelSectionDescription">Controls independent world and sprite resolution, spacing and final render sharpness.</p>
+          ${voxelRangeControl("Voxel size", "voxelSize", 1, 10, 1, settings.voxelSize, " px")}
+          ${voxelRangeControl("Sprite density", "spriteVoxelScale", 0.5, 4, 0.05, settings.spriteVoxelScale)}
+          ${voxelRangeControl("Block spacing", "blockGap", 0, 0.8, 0.005, settings.blockGap)}
+          ${voxelRangeControl("Render scale", "renderScale", 0.5, 3, 0.05, settings.renderScale)}
+        </section>
+        <section><h3>Depth &amp; form</h3><p class="voxelSectionDescription">Controls static depth separation and voxel relief; gameplay movement does not drive these values.</p>
+          ${voxelRangeControl("Depth strength", "depthStrength", 0, 0.9, 0.01, settings.depthStrength)}
+          ${voxelRangeControl("Horizontal parallax", "parallax", 0, 0.14, 0.002, settings.parallax)}
+          ${voxelRangeControl("Relief pitch", "perspective", -0.02, 0.14, 0.002, settings.perspective)}
+        </section>
+        <section><h3>Light &amp; atmosphere</h3><p class="voxelSectionDescription">Controls the accepted illumination, colour and depth treatment without a second grading pipeline.</p>
+          ${voxelRangeControl("Ambient light", "ambientLight", 0.1, 1.5, 0.02, settings.ambientLight)}
+          ${voxelRangeControl("Key intensity", "lightIntensity", 0, 2.5, 0.02, settings.lightIntensity)}
+          ${voxelRangeControl("Key azimuth", "lightAzimuth", -3.14, 3.14, 0.02, settings.lightAzimuth)}
+          ${voxelRangeControl("Key elevation", "lightElevation", 0.05, 1.5, 0.02, settings.lightElevation)}
+          ${voxelRangeControl("Ambient occlusion", "ambientOcclusion", 0, 1, 0.01, settings.ambientOcclusion)}
+          ${voxelRangeControl("Depth fog", "fog", 0, 0.65, 0.01, settings.fog)}
+          ${voxelRangeControl("Saturation", "saturation", 0.5, 1.5, 0.01, settings.saturation)}
+          ${voxelRangeControl("Exposure", "exposure", 0.55, 1.6, 0.01, settings.exposure)}
+        </section>
+        <section><h3>Authored effects</h3><p class="voxelSectionDescription">Adds emission only to Atlas effect canvases such as runes, fire and magic; ordinary world and sprite artwork is unaffected.</p>
+          ${voxelRangeControl("Effect emission", "effectGlow", 0, 1.5, 0.01, settings.effectGlow)}
+        </section>
+        <section><h3>Inspection</h3><p class="voxelSectionDescription">Shows source buffers and live workload for the selected renderer.</p>
+          <label class="voxelSelect"><span>View</span><select data-voxel-debug-view>
+            ${[["final","Final render"],["original","Original source"],["depth","Depth map"],["geometry","Voxel normals"],["lighting","Lighting"]].map(([value,label]) => `<option value="${value}" ${settings.debugView === value ? "selected" : ""}>${label}</option>`).join("")}
+          </select></label>
+          <dl class="voxelMetrics"><div><dt>Backend</dt><dd>WebGPU</dd></div><div><dt>Depth</dt><dd>${snapshot.depthMap?.split("/").pop() || "Neutral / inferred"}</dd></div><div><dt>Grid</dt><dd data-voxel-metric="grid">${snapshot.grid?.join(" × ") || "—"}</dd></div><div><dt>Voxel sprites</dt><dd data-voxel-metric="sprites">${snapshot.sprites || 0}</dd></div><div><dt>Frame cadence</dt><dd data-voxel-metric="fps">${snapshot.fps?.toFixed?.(0) || "0"} fps</dd></div><div><dt>CPU prepare</dt><dd data-voxel-metric="cpu">${snapshot.averageMs?.toFixed?.(2) || "0.00"} ms avg</dd></div></dl>
+        </section>
+      </div>
+      <footer><button type="button" data-voxel-action="reset">Reset defaults</button><span>Live · saved automatically</span></footer>
+    </aside>
+  `;
+}
 function canOpenTempleGate() {
   if (state.screen !== "scene" || !isLevelExitReady()) return false;
   const gate = hotspotById(level.exitHotspotId || "templeGate");
@@ -5508,11 +5746,16 @@ function renderAdventureTeamBar() {
 }
 
 function renderScene(options = {}) {
+  const renderer = voxelRenderer.getSettings().renderer;
+  const voxelReadyClass = renderer === "voxel" && voxelRendererStatus.ready && voxelRendererStatus.renderer === renderer ? "voxelReady" : "";
+  const rendererModeClass = renderer === "voxel" ? "voxelMode" : "classicMode";
   return `
-    <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""}">
+    <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""} ${rendererModeClass} ${voxelReadyClass}" data-active-renderer="${renderer}">
       ${renderReturnToMenuButton()}
       ${renderWorldStage()}
       ${options.hideTeamBar ? "" : renderAdventureTeamBar()}
+      ${renderGraphicsSettings()}
+      ${renderVoxelTuningPanel()}
     </main>
   `;
 }
@@ -5581,13 +5824,15 @@ function updatePerformanceHud(timestamp) {
         performance: "None",
         quality: "auto"
       };
+      const voxels = voxelRenderer.snapshot();
       ensurePerformanceHudElement().textContent = [
         `FPS ${Math.round(instantFps)}`,
         `AVG ${Math.round(averageFps)}`,
         `FRAME ${frameMs.toFixed(1)}ms`,
         `WORST ${Math.round(worst)}ms`,
         `FX ${fx.performance} ${fx.budget}`,
-        `Q ${fx.quality} (${fx.activeEffects})`
+        `Q ${fx.quality} (${fx.activeEffects})`,
+        voxelRenderer.getSettings().renderer === "voxel" ? `Voxel ${voxels.grid.join("x")} ${voxels.averageMs.toFixed(1)}ms` : "VOX off"
       ].join("\n");
       performanceHud.lastTextAt = timestamp;
     }
@@ -6179,6 +6424,10 @@ function restoreEditorUiState(saved) {
 
 function render() {
   const editorUiState = captureEditorUiState();
+  const retainedVoxelCanvas = app.querySelector("[data-voxel-canvas]");
+  const retainedVoxelLevel = retainedVoxelCanvas?.dataset.voxelLevel;
+  const retainedEmissiveCanvas = app.querySelector("[data-emissive-glow-canvas]");
+  const retainedEmissiveLevel = retainedEmissiveCanvas?.dataset.emissiveLevel;
   app.dataset.screen = state.screen;
   app.dataset.criticalAssetsReady = String(Boolean(state.criticalAssetsReady));
   if (state.screen === "launch") {
@@ -6202,6 +6451,19 @@ function render() {
   } else {
     app.innerHTML = renderScene();
   }
+
+  const replacementVoxelCanvas = app.querySelector("[data-voxel-canvas]");
+  if (retainedVoxelCanvas && replacementVoxelCanvas && (!retainedVoxelLevel || retainedVoxelLevel === level?.id)) {
+    replacementVoxelCanvas.replaceWith(retainedVoxelCanvas);
+  }
+  const activeVoxelCanvas = app.querySelector("[data-voxel-canvas]");
+  if (activeVoxelCanvas && level?.id) activeVoxelCanvas.dataset.voxelLevel = level.id;
+  const replacementEmissiveCanvas = app.querySelector("[data-emissive-glow-canvas]");
+  if (retainedEmissiveCanvas && replacementEmissiveCanvas && (!retainedEmissiveLevel || retainedEmissiveLevel === level?.id)) {
+    replacementEmissiveCanvas.replaceWith(retainedEmissiveCanvas);
+  }
+  const activeEmissiveCanvas = app.querySelector("[data-emissive-glow-canvas]");
+  if (activeEmissiveCanvas && level?.id) activeEmissiveCanvas.dataset.emissiveLevel = level.id;
 
   if (document.querySelector("[data-actor-mount='sven']")) requestActorAnimation();
   const actor = document.querySelector("[data-actor='sven']");
@@ -6229,6 +6491,8 @@ function render() {
   syncGuideBlinkTimers();
   ambientFlybyRuntime.sync();
   sceneEffectRuntime.sync();
+  voxelRenderer.sync();
+  emissiveGlowRenderer.sync();
   syncPerformanceHud();
   syncMenuAutoRotation();
   restoreEditorUiState(editorUiState);
@@ -6269,6 +6533,51 @@ app.addEventListener("focusout", (event) => {
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const graphicsAction = event.target.closest("[data-graphics-action]");
+  if (graphicsAction) {
+    event.preventDefault();
+    event.stopPropagation();
+    graphicsSettingsOpen = graphicsAction.dataset.graphicsAction === "toggle" ? !graphicsSettingsOpen : false;
+    render();
+    return;
+  }
+  const rendererChoice = event.target.closest("[data-renderer-choice]");
+  if (rendererChoice) {
+    event.preventDefault();
+    event.stopPropagation();
+    voxelRenderer.updateSettings({ renderer: rendererChoice.dataset.rendererChoice });
+    if (rendererChoice.dataset.rendererChoice !== "voxel") voxelTuningOpen = false;
+    render();
+    return;
+  }
+  const voxelAction = event.target.closest("[data-voxel-action]");
+  if (voxelAction) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (voxelAction.dataset.voxelAction === "close") voxelTuningOpen = false;
+    if (voxelAction.dataset.voxelAction === "open") voxelTuningOpen = true;
+    if (voxelAction.dataset.voxelAction === "reset") voxelRenderer.reset();
+    render();
+    return;
+  }
+  const voxelHelp = event.target.closest("[data-voxel-help]");
+  if (voxelHelp) {
+    event.preventDefault();
+    event.stopPropagation();
+    const control = voxelHelp.closest(".voxelRangeControl");
+    const willOpen = !control.classList.contains("voxelHelpOpen");
+    document.querySelectorAll(".voxelRangeControl.voxelHelpOpen").forEach((item) => {
+      item.classList.remove("voxelHelpOpen");
+      item.querySelector("[data-voxel-help]")?.setAttribute("aria-expanded", "false");
+    });
+    control.classList.toggle("voxelHelpOpen", willOpen);
+    voxelHelp.setAttribute("aria-expanded", String(willOpen));
+    return;
+  }
+  if (event.target.closest("[data-graphics-settings], [data-voxel-tuning-panel]")) {
+    event.stopPropagation();
+    return;
+  }
   const configActionTarget = event.target.closest("[data-config-action]");
   if (configActionTarget) {
     event.preventDefault();
@@ -6690,6 +6999,27 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const emissiveSetting = event.target.closest("[data-emissive-setting]");
+  if (emissiveSetting && emissiveSetting.dataset.emissiveSetting !== "enabled") {
+    const key = emissiveSetting.dataset.emissiveSetting;
+    const next = updateEmissiveGlowSetting(emissiveSetting.dataset.levelId, key, emissiveSetting.value);
+    document.querySelectorAll(`[data-emissive-output="${CSS.escape(key)}"]`).forEach((output) => {
+      output.textContent = key === "radius" ? next[key].toFixed(1) : next[key].toFixed(2);
+    });
+    return;
+  }
+  const voxelSetting = event.target.closest("[data-voxel-setting]");
+  if (voxelSetting) {
+    const key = voxelSetting.dataset.voxelSetting;
+    const value = Number(voxelSetting.value);
+    voxelRenderer.updateSettings({ [key]: value, quality: "custom" });
+    document.querySelectorAll("[data-graphics-quality]").forEach((select) => { select.value = "custom"; });
+    document.querySelectorAll(`[data-voxel-output="${CSS.escape(key)}"]`).forEach((output) => {
+      const suffix = key === "voxelSize" ? " px" : "";
+      output.textContent = `${value.toFixed(Number(voxelSetting.step) < 0.1 ? 2 : Number(voxelSetting.step) < 1 ? 1 : 0)}${suffix}`;
+    });
+    return;
+  }
   const levelSetting = event.target.closest("[data-level-setting]");
   if (levelSetting) {
     updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
@@ -6729,6 +7059,24 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  const emissiveSetting = event.target.closest("[data-emissive-setting]");
+  if (emissiveSetting) {
+    const key = emissiveSetting.dataset.emissiveSetting;
+    updateEmissiveGlowSetting(emissiveSetting.dataset.levelId, key, key === "enabled" ? emissiveSetting.checked : emissiveSetting.value);
+    if (key === "enabled") render();
+    return;
+  }
+  const graphicsQuality = event.target.closest("[data-graphics-quality]");
+  if (graphicsQuality) {
+    voxelRenderer.updateSettings({ quality: graphicsQuality.value });
+    render();
+    return;
+  }
+  const voxelDebugView = event.target.closest("[data-voxel-debug-view]");
+  if (voxelDebugView) {
+    voxelRenderer.updateSettings({ debugView: voxelDebugView.value });
+    return;
+  }
   const worldSelect = event.target.closest("[data-world-editor-select]");
   if (worldSelect) {
     worldEditor.selectedWorldId = worldSelect.value;
@@ -7007,6 +7355,7 @@ document.addEventListener("visibilitychange", () => {
     pauseAmbientAnimalTimers();
     ambientFlybyRuntime.stopAll();
     sceneEffectRuntime.stop();
+    voxelRenderer.stop();
     Object.values(guideBlinkRuntime).forEach(clearGuideBlinkState);
   } else {
     syncMenuAutoRotation();
@@ -7014,6 +7363,8 @@ document.addEventListener("visibilitychange", () => {
     syncGuideBlinkTimers();
     ambientFlybyRuntime.sync();
     sceneEffectRuntime.sync();
+    voxelRenderer.sync();
+    emissiveGlowRenderer.sync();
   }
 });
 
@@ -7023,6 +7374,15 @@ window.addEventListener("resize", updateWorldDom);
 
 window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();
+  if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "v") {
+    event.preventDefault();
+    if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
+      voxelTuningOpen = !voxelTuningOpen;
+      if (voxelTuningOpen && voxelRenderer.getSettings().renderer === "illustrated") voxelRenderer.updateSettings({ renderer: "voxel" });
+      render();
+    }
+    return;
+  }
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
     event.preventDefault();
     sessionReport?.discard();
@@ -7097,3 +7457,8 @@ preloadMenuAssets();
 preloadGuideBlinkAssets();
 registerServiceWorker();
 render();
+if (DIRECT_DEV_LEVEL_ID) {
+  selectLevel(DIRECT_DEV_LEVEL_ID, { startImmediately: true, recordStart: false, allowDisabledForEditor: true }).catch((error) => {
+    console.error(`[Atlas] Direct development level failed: ${error?.message || error}`);
+  });
+}

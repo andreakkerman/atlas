@@ -195,6 +195,18 @@ function normalizeWorldConfig(value) {
       }
       next.backgroundOverride = background;
     }
+    if (settings.emissiveGlow !== undefined) {
+      const glow = settings.emissiveGlow;
+      if (!glow || typeof glow !== "object" || Array.isArray(glow)) throw new Error(`${levelId}.emissiveGlow must be an object.`);
+      const intensity = Number(glow.intensity);
+      const radius = Number(glow.radius);
+      const sensitivity = Number(glow.sensitivity);
+      if (typeof glow.enabled !== "boolean") throw new Error(`${levelId}.emissiveGlow.enabled must be boolean.`);
+      if (!Number.isFinite(intensity) || intensity < 0 || intensity > 1.25) throw new Error(`${levelId}.emissiveGlow.intensity is out of range.`);
+      if (!Number.isFinite(radius) || radius < 2 || radius > 24) throw new Error(`${levelId}.emissiveGlow.radius is out of range.`);
+      if (!Number.isFinite(sensitivity) || sensitivity < 0 || sensitivity > 1) throw new Error(`${levelId}.emissiveGlow.sensitivity is out of range.`);
+      next.emissiveGlow = { enabled: glow.enabled, intensity, radius, sensitivity };
+    }
     result.levels[levelId] = next;
   });
   const locomotionRanges = {

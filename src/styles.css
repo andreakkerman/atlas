@@ -819,6 +819,45 @@ button {
   background: rgba(12, 28, 26, 0.82);
 }
 
+.gameplayTopControls {
+  position: fixed;
+  left: max(12px, calc(env(safe-area-inset-left) + 12px));
+  top: max(12px, calc(env(safe-area-inset-top) + 12px));
+  z-index: var(--layer-world-ui);
+  display: flex;
+  gap: 8px;
+}
+
+.gameplayTopControls .menuReturnButton,
+.graphicsSettingsButton {
+  position: static;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 231, 166, 0.34);
+  border-radius: 8px;
+  color: #fff7de;
+  background: rgba(10, 18, 16, 0.66);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 900;
+  backdrop-filter: blur(12px);
+}
+
+.graphicsSettingsButton::before {
+  content: "◆";
+  margin-right: 6px;
+  color: var(--teal);
+  font-size: 0.65rem;
+}
+
+.graphicsSettingsButton:hover,
+.graphicsSettingsButton:focus-visible {
+  outline: 2px solid rgba(46, 230, 220, 0.72);
+  outline-offset: 2px;
+  background: rgba(12, 28, 26, 0.84);
+}
+
 .topbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
@@ -902,6 +941,389 @@ button {
 
 .sceneEffectsCanvas[data-scene-effects-canvas="foregroundAtmosphere"] {
   z-index: var(--layer-effects-foreground);
+}
+
+.emissiveGlowCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: var(--layer-background);
+  mix-blend-mode: plus-lighter;
+}
+
+.emissiveGlowCanvas[hidden] {
+  display: none;
+}
+
+.voxelViewportCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 39;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  background: transparent;
+  transition: none;
+}
+
+
+.voxelReady .voxelViewportCanvas {
+  opacity: 1;
+}
+
+.voxelReady .worldArt,
+.voxelReady .forestMist,
+.voxelReady .sceneEffectsCanvas,
+.voxelReady .ambientAnimalFrames,
+.voxelReady .ambientFlybyFrames,
+.voxelReady [data-actor='sven'] {
+  opacity: 0 !important;
+}
+
+.voxelReady .ambientAnimal {
+  opacity: 1;
+}
+
+.graphicsSettingsPopover {
+  position: fixed;
+  top: max(60px, calc(env(safe-area-inset-top) + 60px));
+  left: max(12px, calc(env(safe-area-inset-left) + 12px));
+  z-index: 65;
+  width: min(340px, calc(100vw - 24px));
+  padding: 16px;
+  border: 1px solid rgba(255, 224, 145, 0.34);
+  border-radius: 12px;
+  background: linear-gradient(160deg, rgba(12, 30, 28, 0.97), rgba(8, 17, 17, 0.96));
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.48), inset 0 1px rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(18px);
+}
+
+.graphicsSettingsPopover header,
+.voxelTuningPanel header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 231, 166, 0.14);
+}
+
+.graphicsSettingsPopover h2,
+.voxelTuningPanel h2 {
+  margin: 1px 0 0;
+  color: #fff3cb;
+  font-size: 1.25rem;
+}
+
+.settingsEyebrow {
+  color: #78e4db;
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.graphicsSettingsPopover header button,
+.voxelTuningPanel header button {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(255, 231, 166, 0.22);
+  border-radius: 7px;
+  color: #fff3cb;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.graphicsSettingsPopover fieldset {
+  margin: 14px 0;
+  padding: 0;
+  border: 0;
+}
+
+.graphicsSettingsPopover legend,
+.graphicsSelect,
+.graphicsRange {
+  color: rgba(255, 247, 222, 0.78);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.segmentedControl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 7px;
+  padding: 4px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.segmentedControl button {
+  min-height: 36px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: rgba(255, 247, 222, 0.68);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.segmentedControl button[aria-pressed='true'] {
+  border-color: rgba(89, 232, 216, 0.46);
+  color: #f7ffed;
+  background: linear-gradient(145deg, rgba(25, 115, 105, 0.78), rgba(20, 77, 75, 0.82));
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.graphicsSelect,
+.graphicsRange {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+  margin: 13px 0;
+}
+
+.graphicsSelect select,
+.voxelSelect select {
+  grid-column: 1 / -1;
+  min-height: 38px;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 231, 166, 0.22);
+  border-radius: 7px;
+  color: #fff7de;
+  background: #102523;
+}
+
+.graphicsRange output {
+  color: #89ede2;
+}
+
+.graphicsRange input {
+  grid-column: 1 / -1;
+  width: 100%;
+  accent-color: #47d9cb;
+}
+
+.voxelRuntimeStatus {
+  margin: 14px 0 5px;
+  padding: 9px 10px;
+  border: 1px solid rgba(90, 222, 207, 0.18);
+  border-radius: 7px;
+  color: #bdf7ef;
+  background: rgba(18, 94, 85, 0.15);
+  font-size: 0.7rem;
+}
+
+.voxelRuntimeStatus[data-status='unavailable'],
+.voxelRuntimeStatus[data-status='device-lost'] {
+  border-color: rgba(246, 174, 101, 0.28);
+  color: #ffd4a3;
+  background: rgba(120, 63, 20, 0.18);
+}
+
+.graphicsHint {
+  margin: 7px 0 0;
+  color: rgba(255, 247, 222, 0.46);
+  font-size: 0.68rem;
+}
+
+.rendererTechnicalDescription {
+  margin: -5px 0 13px;
+  color: rgba(219, 250, 244, 0.62);
+  font-size: 0.69rem;
+  line-height: 1.45;
+}
+
+.openVoxelTuningButton {
+  width: 100%;
+  min-height: 36px;
+  margin-top: 4px;
+  border: 1px solid rgba(71, 217, 203, 0.28);
+  border-radius: 7px;
+  color: #cafff8;
+  background: rgba(36, 128, 119, 0.16);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.openVoxelTuningButton:hover,
+.openVoxelTuningButton:focus-visible {
+  border-color: rgba(71, 217, 203, 0.68);
+  background: rgba(36, 128, 119, 0.28);
+}
+
+.voxelTuningPanel {
+  position: fixed;
+  inset: 0 0 0 auto;
+  z-index: var(--layer-editor-controls);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(400px, 92vw);
+  padding: 18px;
+  border-left: 1px solid rgba(255, 225, 150, 0.32);
+  color: #fff7de;
+  background: linear-gradient(160deg, rgba(9, 25, 24, 0.985), rgba(6, 14, 15, 0.985));
+  box-shadow: -24px 0 70px rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(20px);
+  animation: voxelPanelEnter 180ms ease-out both;
+}
+
+@keyframes voxelPanelEnter {
+  from { transform: translateX(24px); opacity: 0; }
+}
+
+.voxelPanelScroll {
+  overflow: auto;
+  padding: 4px 3px 18px 0;
+  scrollbar-color: rgba(83, 221, 206, 0.42) transparent;
+}
+
+.voxelTuningPanel section {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid rgba(255, 231, 166, 0.12);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.voxelControlHelp {
+  margin: -4px 0 14px;
+  color: rgba(220, 255, 248, 0.62);
+  font-size: 0.69rem;
+  line-height: 1.45;
+}
+
+.voxelSectionDescription {
+  margin: -6px 0 13px;
+  color: rgba(220, 255, 248, 0.55);
+  font-size: 0.67rem;
+  line-height: 1.4;
+}
+
+.voxelTuningPanel h3 {
+  margin: 0 0 12px;
+  color: #7ce5da;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.voxelRangeControl {
+  position: relative;
+  margin: 10px 0;
+  color: rgba(255, 247, 222, 0.74);
+  font-size: 0.71rem;
+  font-weight: 700;
+}
+
+.voxelRangeHeader {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 22px auto;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+
+.voxelInfoButton {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(108, 230, 216, 0.3);
+  border-radius: 50%;
+  color: #9bf4e9;
+  background: rgba(34, 115, 107, 0.16);
+  cursor: help;
+  font: 800 0.66rem/1 system-ui, sans-serif;
+}
+
+.voxelInfoButton:hover,
+.voxelInfoButton:focus-visible,
+.voxelInfoButton[aria-expanded='true'] {
+  border-color: rgba(126, 242, 228, 0.72);
+  background: rgba(45, 151, 140, 0.34);
+  outline: none;
+}
+
+.voxelHelpPopover {
+  position: absolute;
+  z-index: 4;
+  top: 23px;
+  right: 0;
+  display: none;
+  width: min(286px, calc(100vw - 64px));
+  margin: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(103, 226, 213, 0.3);
+  border-radius: 7px;
+  color: rgba(244, 255, 250, 0.9);
+  background: rgba(7, 26, 25, 0.98);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
+  font-size: 0.67rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.voxelRangeControl:has(.voxelInfoButton:hover) .voxelHelpPopover,
+.voxelRangeControl:has(.voxelInfoButton:focus-visible) .voxelHelpPopover,
+.voxelRangeControl.voxelHelpOpen .voxelHelpPopover {
+  display: block;
+}
+
+.voxelTuningPanel output {
+  color: #8bece2;
+  font-family: "Cascadia Mono", "Consolas", monospace;
+}
+
+.voxelRangeControl > input[type='range'] {
+  width: 100%;
+  accent-color: #47d9cb;
+}
+
+.voxelMetrics {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 0;
+}
+
+.voxelMetrics div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.69rem;
+}
+
+.voxelMetrics dt { color: rgba(255, 247, 222, 0.46); }
+.voxelMetrics dd { margin: 0; color: #d9fff8; text-align: right; }
+
+.voxelTuningPanel footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 231, 166, 0.14);
+  color: rgba(255, 247, 222, 0.42);
+  font-size: 0.67rem;
+}
+
+.voxelTuningPanel footer button {
+  padding: 8px 11px;
+  border: 1px solid rgba(255, 221, 142, 0.24);
+  border-radius: 7px;
+  color: #ffe9b4;
+  background: rgba(255, 231, 166, 0.06);
+  cursor: pointer;
 }
 
 .performanceHud {

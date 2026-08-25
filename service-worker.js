@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v17";
+const CACHE_NAME = "svenadventure-static-v82";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -8,6 +8,8 @@ const CORE_ASSETS = [
   "src/ambient-system.js",
   "src/asset-readiness.js",
   "src/scene-effects.js",
+  "src/voxel-renderer.js",
+  "src/emissive-glow.js",
   "src/atlas-world.js",
   "src/locomotion.js",
   "src/app.js",
