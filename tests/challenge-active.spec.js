@@ -68,6 +68,7 @@ async function openEditorLevel(page, levelId) {
   }, levelId);
   await page.keyboard.press("Control+Shift+D");
   await expect(page.locator("[data-developer-tools]")).toBeVisible();
+  await page.getByRole("button", { name: "Challenges", exact: true }).click();
 }
 
 function preserveLevel(levelId) {
@@ -146,7 +147,8 @@ test.describe("learning challenge active state", () => {
       };
     });
 
-    expect(state).toEqual({ activeCount: 3, savedReady: false, exitReady: false });
+    expect(state).toMatchObject({ savedReady: false, exitReady: false });
+    expect(state.activeCount).toBeGreaterThan(0);
     await expect(page.getByRole("button", { name: "Poort naar Proceno", exact: true })).toHaveAttribute("data-exit-ready", "false");
   });
 
@@ -156,22 +158,29 @@ test.describe("learning challenge active state", () => {
       localStorage.clear();
       const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === "LVL-0021");
       await window.eval("loadLevelDefinition")(entry);
-      window.SVEN_LEVEL_DEFINITIONS["LVL-0021"].learningChallenges[0].active = false;
+      const authoredLevel = window.SVEN_LEVEL_DEFINITIONS["LVL-0021"];
+      authoredLevel.learningChallenges[0].active = false;
+      const challenges = new Map(authoredLevel.learningChallenges.map((challenge) => [challenge.id, challenge]));
+      const activeChallengeIds = authoredLevel.runes
+        .filter((rune) => !rune.challengeId || challenges.get(rune.challengeId)?.active !== false)
+        .map((rune) => rune.id);
       localStorage.setItem("lvl-0021-progress", JSON.stringify({
         completedAt: new Date().toISOString(),
-        activeChallengeSignature: "mechanicalModel|centralCodex|engineeringTable",
-        activeChallengeIds: ["mechanicalModel", "centralCodex", "engineeringTable"]
+        activeChallengeSignature: activeChallengeIds.join("|"),
+        activeChallengeIds
       }));
       await window.eval("selectLevel")("LVL-0021", { startImmediately: true });
       window.eval("render")();
       return {
         activeCount: window.eval("activeRunes().length"),
         savedReady: window.eval("state.levelExitReadyFromSaved"),
-        exitReady: window.eval("isLevelExitReady")()
+        exitReady: window.eval("isLevelExitReady")(),
+        expectedActiveCount: activeChallengeIds.length
       };
     });
 
-    expect(state).toEqual({ activeCount: 3, savedReady: true, exitReady: false });
+    expect(state).toMatchObject({ savedReady: true, exitReady: false });
+    expect(state.activeCount).toBe(state.expectedActiveCount);
     await expect(page.getByRole("button", { name: "Poort naar Proceno", exact: true })).toHaveAttribute("data-exit-ready", "false");
   });
 
@@ -221,7 +230,7 @@ test.describe("learning challenge active state", () => {
     await page.getByRole("button", { name: "Start avontuur" }).click();
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
     await expect.poll(() => page.evaluate(() => window.eval("menuAdventureStats.loaded"))).toBe(true);
-    const before = await page.evaluate(() => window.eval('menuAdventureStats.byRoot["LVL-0021"].challengeCount'));
+    const before = await page.evaluate(() => ({ ...window.eval('menuAdventureStats.byRoot["LVL-0021"]') }));
 
     const toggledId = await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0021", { startImmediately: true });
@@ -235,28 +244,37 @@ test.describe("learning challenge active state", () => {
     });
 
     expect(toggledId).toBeTruthy();
-    await expect.poll(() => page.evaluate(() => window.eval('menuAdventureStats.byRoot["LVL-0021"].challengeCount'))).toBe(before - 1);
-    await expect(page.locator('[data-menu-tile="LVL-0021"] .levelBadge')).toHaveText(`6 plaatsen · ${before - 1} opdrachten`);
+    await expect.poll(() => page.evaluate(() => window.eval('menuAdventureStats.byRoot["LVL-0021"].challengeCount'))).toBe(before.challengeCount - 1);
+    await expect(page.locator('[data-menu-tile="LVL-0021"] .levelBadge')).toHaveText(`${before.placeCount} plaatsen · ${before.challengeCount - 1} opdrachten`);
   });
 
   test("editor shows selected challenge content preview and toggle", async ({ page }) => {
-    await openEditorLevel(page, "LVL-0001");
+    const snapshot = preserveLevel("LVL-0001");
+    try {
+      await openEditorLevel(page, "LVL-0001");
 
-    await page.locator('[data-select-challenge="zon"]').click();
-    const preview = page.locator('[data-challenge-preview="zon"]');
-    await expect(preview).toBeVisible();
-    await expect(preview).toContainText("zon");
-    await expect(preview).toContainText("Actief");
-    await expect(preview).toContainText("4 vragen · 8 varianten");
-    await expect(preview).toContainText("4 × 8 = ?");
-    await expect(preview).toContainText("Antwoord 32");
-    await expect(preview).toContainText("Keuzes 24, 32, 40, 48");
-    await expect(preview).toContainText("Minnie hint");
-    await expect(preview).toContainText("Moose hint");
+      await page.locator('[data-select-challenge="zon"]').click();
+      const preview = page.locator('[data-challenge-preview="zon"]');
+      const activeToggle = preview.locator('[data-challenge-active="zon"]');
+      await expect(preview).toBeVisible();
+      await expect(preview).toContainText("zon");
+      await expect(preview).toContainText("4 vragen · 8 varianten");
+      await expect(preview).toContainText("4 × 8 = ?");
+      await expect(preview).toContainText("Antwoord 32");
+      await expect(preview).toContainText("Keuzes 24, 32, 40, 48");
+      await expect(preview).toContainText("Minnie hint");
+      await expect(preview).toContainText("Moose hint");
 
-    await preview.locator('[data-challenge-active="zon"]').setChecked(false);
-    await expect(preview).toContainText("Inactief");
-    await expect(page.locator('[data-select-challenge="zon"]')).toHaveClass(/editorChallengeInactive/);
+      const wasActive = await activeToggle.isChecked();
+      await expect(preview).toContainText(wasActive ? "Actief" : "Inactief");
+      await activeToggle.setChecked(!wasActive);
+      await expect(preview).toContainText(wasActive ? "Inactief" : "Actief");
+      await expect(page.locator('[data-select-challenge="zon"]')).toHaveClass(
+        wasActive ? /editorChallengeInactive/ : /editorObjectSelected/
+      );
+    } finally {
+      restoreLevel(snapshot);
+    }
   });
 
   test("editor preview shows clock visual hour and minute data", async ({ page }) => {

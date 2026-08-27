@@ -33,6 +33,15 @@
     });
     add(level?.challengeCharacter?.portrait, "challenge-portrait", true);
     add(level?.challengeArt, "challenge-art", true);
+    const characters = new Map((global.ATLAS_CHARACTER_MANIFEST?.characters || []).map((character) => [character.id, character]));
+    (level?.learningChallenges || []).forEach((challenge) => {
+      const presentationType = String(challenge?.presentationType || challenge?.type || "standard").toLowerCase();
+      if (presentationType !== "npc") return;
+      const character = characters.get(challenge.npc?.characterId || challenge.characterId);
+      if (!character) return;
+      add(character.portrait, "npc-portrait", true, challenge.id);
+      Object.values(character.animations || {}).flat().forEach((frame) => add(frame, "npc-animation", true, challenge.id));
+    });
     add(level?.reward?.art, "reward-art", true);
     return [...assets.values()];
   }
@@ -45,11 +54,24 @@
     let active = null;
     let prepareSequence = 0;
 
+    async function mapConcurrent(items, limit, operation) {
+      const results = new Array(items.length);
+      let cursor = 0;
+      const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+        while (cursor < items.length) {
+          const index = cursor++;
+          results[index] = await operation(items[index], index);
+        }
+      });
+      await Promise.all(workers);
+      return results;
+    }
+
     async function prepare(level, prepareOptions = {}) {
       const sequence = ++prepareSequence;
       const assets = collectCriticalAssets(level, prepareOptions);
       await preloadSven();
-      const results = await Promise.all(assets.map(async (asset) => {
+      const results = await mapConcurrent(assets, Math.max(1, Number(options.imageDecodeConcurrency || 16)), async (asset) => {
         try {
           const image = await loadImage(asset.path);
           if (!image || !image.complete || !image.naturalWidth) throw new Error(`Image is not render-ready: ${asset.path}`);
@@ -58,7 +80,7 @@
           if (asset.required) throw new Error(`Critical image failed: ${asset.path}. ${error.message || error}`);
           return { ...asset, image: null, ready: false, error: error.message || String(error) };
         }
-      }));
+      });
       const images = new Map(results.filter((item) => item.ready).map((item) => [item.path, item.image]));
       return {
         sequence,

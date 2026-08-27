@@ -99,6 +99,7 @@ test.describe("global render layers", () => {
 
     await startLayerScene(page, editorUrl);
     await page.keyboard.press("Control+Shift+D");
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click({ force: true }).catch(() => {});
     await page.getByRole("button", { name: "Edit flight path" }).click({ force: true }).catch(() => {});
     if (await page.locator("[data-flight-path-workspace]").count() === 0) {

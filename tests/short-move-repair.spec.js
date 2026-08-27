@@ -202,7 +202,7 @@ test.describe("unified short-distance locomotion phases", () => {
       const rune = window.eval("activeRunes()[0]");
       const approach = window.eval("getApproachPoint")(rune);
       const game = window.eval("state");
-      game.worldX = approach.x - 40;
+      game.worldX = approach.x - 20;
       game.worldY = approach.y;
       window.eval("render")();
       window.eval("selectChallenge")(rune);

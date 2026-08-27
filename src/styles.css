@@ -22,6 +22,7 @@
   --layer-effects-world: 25;
   --layer-ambient-animals: 30;
   --layer-effects-light: 35;
+  --layer-npc: 38;
   --layer-sven: 40;
   --layer-effects-foreground: 45;
   --layer-world-ui: 50;
@@ -1073,6 +1074,30 @@ button {
   background: transparent;
   cursor: pointer;
   font-weight: 900;
+}
+
+.localAtlasReset {
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 8px 10px 8px 14px;
+  border: 1px dashed rgba(156, 242, 233, 0.24);
+  border-radius: 8px;
+  color: rgba(156, 242, 233, 0.66);
+  background: rgba(7, 22, 20, 0.58);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.localAtlasReset .secondaryButton {
+  min-height: 34px;
+  margin: 0;
+  padding: 7px 10px;
+  color: rgba(255, 247, 222, 0.84);
+  font-size: 0.76rem;
+  box-shadow: none;
 }
 
 .segmentedControl button[aria-pressed='true'] {
@@ -2175,6 +2200,68 @@ button {
   stroke-width: 3;
 }
 
+.editorModeTabs {
+  position: sticky;
+  top: -10px;
+  z-index: 2;
+  padding: 8px 0;
+  background: rgba(10, 18, 16, 0.96);
+}
+
+.editorModeTabs button {
+  flex: 1 1 110px;
+}
+
+.challengePresentationControls,
+.npcCharacterEditor,
+.npcCharacterEditorEmpty {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(156, 242, 233, 0.24);
+  border-radius: 7px;
+  background: rgba(46, 230, 220, 0.05);
+}
+
+.challengePresentationControls .editorField,
+.npcCharacterEditor .editorField,
+.npcEditorField {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(130px, 1.2fr) auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.challengePresentationControls select,
+.npcCharacterEditor input,
+.npcCharacterEditor select {
+  min-width: 0;
+  width: 100%;
+}
+
+.npcCharacterEditor > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.npcCharacterEditor > header div {
+  display: grid;
+  gap: 3px;
+}
+
+.npcCharacterEditor > header img {
+  width: 58px;
+  height: 58px;
+  object-fit: cover;
+  border: 1px solid rgba(156, 242, 233, 0.45);
+  border-radius: 7px;
+}
+
+.npcEditorField input { min-width: 0; accent-color: var(--teal); }
+.npcEditorField output { min-width: 54px; text-align: right; font-variant-numeric: tabular-nums; }
+
 .effectGuideHandle {
   fill: #ffd06d;
   stroke: #10201d;
@@ -2912,6 +2999,47 @@ button {
   transform-origin: 50% 100%;
 }
 
+.npcChallengeHotspot {
+  position: absolute;
+  z-index: var(--layer-npc);
+  width: clamp(92px, 14dvh, 142px);
+  height: clamp(154px, 23dvh, 232px);
+  padding: 0;
+  transform: translate(-50%, -100%) scale(var(--npc-scale));
+  transform-origin: 50% 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  filter: brightness(var(--npc-brightness)) drop-shadow(0 13px 9px rgba(0, 0, 0, 0.34));
+}
+
+.npcFacingLayer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(var(--npc-facing));
+  transform-origin: 50% 100%;
+}
+
+.npcChallengeHotspot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transform: none;
+}
+
+.npcChallengeHotspot:hover,
+.npcChallengeHotspot:focus-visible,
+.npcChallengeSelected {
+  outline: 2px solid rgba(156, 242, 233, 0.8);
+  outline-offset: 6px;
+  border-radius: 42%;
+}
+
+.npcChallengeInactive { opacity: 0.48; filter: grayscale(0.8) brightness(var(--npc-brightness)); }
+
 .sven-facing-left {
   --sven-facing: left;
 }
@@ -3586,6 +3714,18 @@ button {
   color: #fff0bc;
 }
 
+.npcPrerequisiteMessage {
+  margin: 18px 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 208, 109, 0.44);
+  border-radius: 8px;
+  color: #fff0bc;
+  background: rgba(255, 208, 109, 0.09);
+  font-size: clamp(1rem, 2.2vw, 1.18rem);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
 .sum {
   margin: 8px 0 18px;
   font-size: clamp(1.55rem, 7vw, 3rem);
@@ -4070,7 +4210,7 @@ body.keyboard-open .openAnswerControls input {
     max-height: none;
   }
 
-  .walkPathEditorPanel[data-current-editor-mode="effects"] {
+  .walkPathEditorPanel[data-current-editor-mode="graphics"] {
     width: min(420px, 52vw);
   }
 }
@@ -4380,3 +4520,150 @@ body.keyboard-open .openAnswerControls input {
     min-width: 0;
   }
 }
+
+/* NPC encounters: identity and artwork lead; Standard challenge styling is untouched. */
+.npcChallengeLayer {
+  inset: 0;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(24px, env(safe-area-inset-left));
+  background: linear-gradient(180deg, rgba(6, 17, 17, 0.28), rgba(6, 17, 17, 0.72));
+}
+
+.npcChallengeLayer .runeFocusSpark,
+.npcChallengeLayer .runeChallengeBox::before { display: none; }
+
+.npcChallengeLayer .npcEncounterCard {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.68fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(24px, 4vw, 48px);
+  width: min(900px, 100%);
+  min-height: 360px;
+  max-height: calc(var(--visual-viewport-height) - 48px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid rgba(227, 199, 137, 0.64);
+  border-radius: 22px;
+  background: radial-gradient(ellipse at 8% 35%, rgba(64, 134, 131, 0.24), transparent 55%), linear-gradient(125deg, rgba(25, 47, 45, 0.98), rgba(10, 25, 26, 0.98));
+  box-shadow: 0 26px 90px rgba(0, 0, 0, 0.52), inset 0 1px rgba(255, 239, 193, 0.12);
+  text-align: left;
+}
+
+.npcEncounterHeader { display: contents; }
+.npcPortraitFrame {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  position: relative;
+  border-bottom: 1px solid rgba(227, 199, 137, 0.32);
+  background: radial-gradient(ellipse, rgba(100, 204, 194, 0.16), transparent 70%);
+}
+
+.npcPortraitFrame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.3));
+}
+
+.npcEncounterIdentity { grid-column: 2; min-width: 0; align-self: end; padding-bottom: 22px; }
+.npcQuestionProgress {
+  margin: 0 0 8px;
+  color: #d8bd86;
+  font-size: 0.8rem;
+  font-weight: 850;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.npcChallengeLayer .npcEncounterIdentity h2 {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 3.6vw, 3rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.npcEncounterBody { grid-column: 2; min-width: 0; align-self: start; }
+.npcEncounterBody .sum,
+.npcEncounterBody .npcPrerequisiteMessage {
+  margin: 0 0 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #f3f4ed;
+  font-size: clamp(1.25rem, 2.2vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.npcEncounterBody .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.npcEncounterBody .choices .answerStone {
+  min-width: 0;
+  min-height: 58px;
+  padding: 14px 16px;
+  border: 1px solid rgba(156, 242, 233, 0.48);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #284c49, #1b3736);
+  box-shadow: 0 3px 0 #071d1b;
+  color: #fff;
+  font-size: 1.3rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-shadow: none;
+}
+.npcEncounterBody .choices .answerStone:active { background: #376760; transform: translateY(2px); }
+@media (hover: hover) {
+  .npcEncounterBody .answerStone:hover { border-color: #dcce9c; background: #315951; }
+}
+.npcEncounterBody :is(button, input):focus-visible { outline: 3px solid #ffe4a1; outline-offset: 4px; }
+.npcEncounterBody :is(.primaryButton, .secondaryButton, input) { min-height: 52px; }
+.npcEncounterBody .openAnswerControls { grid-template-columns: minmax(0, 1fr) auto; }
+.npcEncounterBody .openAnswerControls input { width: 100%; font-size: 1.45rem; }
+.npcEncounterBody .authoredClock { width: clamp(150px, 23dvh, 200px); margin: 0 auto 20px; }
+.npcEncounterBody .feedback { min-height: 0; margin: 0 0 24px; line-height: 1.45; }
+.npcEncounterBody .challengeFeedback,
+.npcRetryHint {
+  margin: 20px 0 0;
+  padding: 14px 16px;
+  border-left: 3px solid #d8bd86;
+  border-radius: 0 10px 10px 0;
+  background: rgba(216, 189, 134, 0.08);
+  color: #f5ead1;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.npcRetryHint strong { color: #e5c78f; font-size: 0.85rem; }
+.npcRetryHint p { margin: 4px 0 0; }
+.npcEncounterBody .assistedCompletionButton { margin-top: 16px; }
+.npcCorrectTitle { margin: 0 0 14px; color: #baf7df; font-size: 1.5rem; }
+.npcCorrectTitle span { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-right: 8px; border-radius: 50%; background: rgba(108, 232, 189, 0.13); }
+
+@media (orientation: portrait), (max-width: 650px) {
+  .npcChallengeLayer .npcEncounterCard {
+    grid-template-columns: 112px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    gap: 24px;
+    width: min(620px, 100%);
+    min-height: 0;
+    padding: clamp(20px, 4vw, 32px);
+  }
+  .npcPortraitFrame { grid-row: 1; border-bottom: 0; }
+  .npcPortraitFrame img { max-height: 150px; }
+  .npcEncounterIdentity { align-self: center; padding-bottom: 0; }
+  .npcEncounterBody { grid-column: 1 / -1; border-top: 1px solid rgba(227, 199, 137, 0.2); padding-top: 24px; }
+  .npcEncounterBody .sum, .npcEncounterBody .npcPrerequisiteMessage { font-size: 1.4rem; }
+}
+
+@media (max-width: 430px) {
+  .npcChallengeLayer { padding: 16px; }
+  .npcChallengeLayer .npcEncounterCard { grid-template-columns: 84px minmax(0, 1fr); gap: 16px; }
+  .npcEncounterBody .openAnswerControls { grid-template-columns: 1fr; }
+  .npcEncounterBody .choices .answerStone { padding: 12px 8px; font-size: 1.1rem; }
+}
+
+body.keyboard-open .npcChallengeLayer .npcEncounterCard { min-height: 0; }
+body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px; }

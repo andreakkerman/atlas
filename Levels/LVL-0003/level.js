@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   "exitHotspotId": "departureGate",
   "exitActionLabel": "Vertrek",
   "challengeLabel": "Havenproef",
-  "challengeCompleteLabel": "Maak de haven klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "havenproeven",
   "menu": {
@@ -113,8 +113,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "id": "gateShield",
       "type": "rune",
       "center": {
-        "x": 1516,
-        "y": 448
+        "x": 1674,
+        "y": 584
       },
       "radius": 62,
       "approachNode": "gate-shield-approach",
@@ -157,20 +157,20 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     },
     {
       "id": "crate-approach",
-      "x": 1399,
-      "y": 558,
+      "x": 1228,
+      "y": 576,
       "role": "approach"
     },
     {
       "id": "gate-shield-approach",
-      "x": 1499,
-      "y": 566,
+      "x": 1599,
+      "y": 590,
       "role": "approach"
     },
     {
       "id": "right-gate-approach",
-      "x": 1980,
-      "y": 575,
+      "x": 2001,
+      "y": 591,
       "role": "approach"
     }
   ],
@@ -258,19 +258,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "gateShield",
       "speaker": "minnie",
-      "text": "Het poortschild gloeit blauw. De tekens lijken op een telpatroon."
+      "text": "Deze havenproef vraagt om een scherp oog. We kijken samen."
     },
     {
       "id": "harbor-progress",
       "event": "LEVEL_PROGRESS_MILESTONE",
       "speaker": "moose",
-      "text": "{completed} van de {total} havenproeven klaar. Nog {remaining}."
+      "text": "{completed} van de {total} havenproeven voltooid. Nog {remainingChallenges} te doen."
     },
     {
       "id": "harbor-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De vertrekpoort blijft dicht. Eerst nog {remaining} havenproeven."
+      "text": "De vertrekpoort wacht nog. Eerst nog {remainingChallenges} afronden."
     },
     {
       "id": "harbor-complete",
@@ -282,7 +282,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "id": "harbor-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "minnie",
-      "text": "Alles staat klaar! De vertrekpoort kan nu open."
+      "text": "Je kunt verder! Op naar de vertrekpoort."
     }
   ],
   "areas": [
@@ -821,6 +821,20 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "id": "gateShield",
       "anchorId": "gateShield",
       "challengeCharacterId": "havenmeester-eivar",
+      "presentationType": "npc",
+      "requiresAllOtherChallenges": true,
+      "unlocksLevelProgression": true,
+      "npc": {
+        "characterId": "eivar",
+        "displayName": "Eivar",
+        "scale": 1.73,
+        "facing": "native",
+        "brightness": 0.9,
+        "idleIntervalMinMs": 1750,
+        "idleIntervalMaxMs": 5000,
+        "playbackRate": 1,
+        "successIdleBeatMs": 650
+      },
       "questions": [
         {
           "id": "gateShield-slot-1",
@@ -1162,7 +1176,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "presetId": "magical-glow",
       "variantId": "rune",
       "presetVersion": 1,
-      "enabled": true,
+      "enabled": false,
       "seed": 920381187,
       "qualityTier": "auto",
       "layerSlot": "worldLight",

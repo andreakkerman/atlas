@@ -1098,7 +1098,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
       "id": "LVL-0022-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De poortbalk blijft liggen. Eerst nog een stuk bouwwerk afronden."
+      "text": "De poortbalk blijft liggen. Eerst nog {remainingChallenges} afronden."
     }
   ],
   "menu": {

@@ -193,7 +193,7 @@ test.describe("Atlas WebGPU voxel presentation", () => {
         { timeout: 20_000 }
       ).toMatch(/ready|unavailable/);
       const capability = await page.evaluate(() => window.eval("voxelRenderer.snapshot")());
-      test.skip(capability.status === "unavailable", capability.error || "No WebGPU adapter is available in headless Chromium.");
+      test.skip(["api-unavailable", "adapter-unavailable", "device-initialization-failed"].includes(capability.status), capability.error || "No WebGPU device is available in headless Chromium.");
       await expect(page.locator(".gameShell.voxelReady")).toBeVisible();
       await page.waitForTimeout(700);
       const snapshot = await page.evaluate(() => window.eval("voxelRenderer.snapshot")());

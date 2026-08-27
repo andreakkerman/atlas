@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
   "exitHotspotId": "mountainGate",
   "exitActionLabel": "Naar Noorwegen",
   "challengeLabel": "Reisproef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "reistekens",
   "menu": {
@@ -774,7 +774,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
       "id": "at-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De Alpenpoort mist nog {remaining} reistekens. Bergen geven niets cadeau."
+      "text": "De Alpenpoort wacht nog op {remainingChallenges}. Bergen geven niets cadeau."
     },
     {
       "id": "at-unlocked",

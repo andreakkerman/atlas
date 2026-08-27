@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
   "exitHotspotId": "romanGate",
   "exitActionLabel": "Naar Oostenrijk",
   "challengeLabel": "Reisproef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "reistekens",
   "menu": {
@@ -874,7 +874,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
       "id": "it-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De Romeinse poort mist nog {remaining} reistekens. Oude bouw, strenge regels."
+      "text": "De Romeinse poort wacht nog op {remainingChallenges}. Oude bouw, strenge regels."
     },
     {
       "id": "it-unlocked",

@@ -472,7 +472,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
   exitHotspotId: "ironDoor",
   exitActionLabel: "Naar het strand",
   challengeLabel: "Blokkenproef",
-  challengeCompleteLabel: "Maak het teken wakker",
+  challengeCompleteLabel: "Opdracht afronden",
   choiceHint: "Kies het juiste antwoord.",
   progressLabelPlural: "tekens",
   menu: {
@@ -622,7 +622,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       id: "awakened-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De ijzeren deur blijft dicht. Eerst nog {remaining} bloktekens."
+      text: "De ijzeren deur blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       id: "awakened-unlocked",

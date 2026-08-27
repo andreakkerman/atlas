@@ -14,6 +14,8 @@ const DERIVED_WALK_SEGMENT_LENGTH = 90;
 const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "editor";
 const PERFORMANCE_HUD_MODE = new URLSearchParams(window.location.search).get("perf") === "1";
 const DIRECT_DEV_LEVEL_ID = EDITOR_DEV_MODE ? new URLSearchParams(window.location.search).get("level") : null;
+const LOCAL_ATLAS_RESET_HOSTNAME = "127.0.0.1";
+const LOCAL_ATLAS_CACHE_PREFIX = "svenadventure-";
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
 const GUIDE_PURR_KEYS = {
   minnie: ["minnie1", "minnie2", "minnieMeow1"],
@@ -113,6 +115,7 @@ const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
   releaseImages: (paths) => assetCache.releaseImages(paths),
   persistentPaths: Object.values(GUIDE_BLINK_PATHS)
 });
+const npcEditorReadyImages = new Map();
 const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
@@ -311,7 +314,7 @@ function createLevelState(selectedLevel) {
     questionTracked: false,
     assistedCompletionAvailable: false,
     challengeGuideMessage: null,
-    completedRunes: new Set(),
+    completedRunes: storedCompletedRunes(selectedLevel),
     levelExitReadyFromSaved,
     justCompletedRuneId: null,
     totalQuestions: activeRunes(selectedLevel).reduce((sum) => sum + 4, 0),
@@ -340,6 +343,18 @@ function storedLevelIsComplete(selectedLevel) {
     return !hasInactiveLearningChallenges(selectedLevel);
   } catch {
     return false;
+  }
+}
+
+function storedCompletedRunes(selectedLevel) {
+  if (!selectedLevel?.storageKey) return new Set();
+  try {
+    const stored = JSON.parse(localStorage.getItem(selectedLevel.storageKey));
+    if (stored?.activeChallengeSignature !== activeChallengeSignature(selectedLevel)) return new Set();
+    const activeIds = new Set(activeRunes(selectedLevel).map((rune) => rune.id));
+    return new Set((stored?.completedRuneIds || []).filter((id) => activeIds.has(id)));
+  } catch {
+    return new Set();
   }
 }
 
@@ -450,13 +465,14 @@ function momentMatchesContext(moment, context) {
 }
 
 function formatCompanionText(text, context = {}) {
-  const completed = Number(context.completedCount ?? state.completedRunes?.size ?? 0);
-  const total = Number(context.totalCount ?? level?.runes?.length ?? 0);
-  const remaining = Math.max(0, total - completed);
+  const completed = Number(context.completedCount ?? completedActiveRuneCount());
+  const total = Number(context.totalCount ?? requiredRuneCount());
+  const remaining = Math.max(0, Number(context.remainingCount ?? total - completed));
   return String(text || "")
     .replaceAll("{completed}", String(completed))
     .replaceAll("{total}", String(total))
-    .replaceAll("{remaining}", String(remaining));
+    .replaceAll("{remaining}", String(remaining))
+    .replaceAll("{remainingChallenges}", `${remaining} ${remaining === 1 ? "opdracht" : "opdrachten"}`);
 }
 
 function authoredCompanionMoments(eventName, context = {}) {
@@ -482,7 +498,25 @@ function queueCompanionMoment(moment) {
 }
 
 function emitCompanionEvent(eventName, context = {}) {
-  const moments = authoredCompanionMoments(eventName, context);
+  const remaining = requiredRuneCount() - completedActiveRuneCount();
+  const exitReady = isLevelExitReady();
+  if (eventName === "PATH_UNLOCKED" && !exitReady) return;
+  if (eventName === "EXIT_BLOCKED" && exitReady) return;
+  if (eventName === "EXIT_BLOCKED") context = { ...context, remainingCount: remainingProgressionChallengeCount() };
+  let moments = authoredCompanionMoments(eventName, context);
+  // An available route need not mean every optional challenge is complete.
+  if (eventName === "PATH_UNLOCKED" && remaining > 0) {
+    moments = [{ speaker: "moose", text: formatCompanionText("Je kunt verder. Hier kun je nog {remainingChallenges} doen.") }];
+  }
+  if (!moments.length) {
+    const fallback = {
+      LEVEL_PROGRESS_MILESTONE: { speaker: "minnie", text: "Goed gedaan! {completed} van de {total} opdrachten voltooid. Nog {remainingChallenges} te doen." },
+      EXIT_BLOCKED: { speaker: "moose", text: "Je kunt nog niet verder. Eerst nog {remainingChallenges} afronden." },
+      PATH_UNLOCKED: { speaker: "minnie", text: "Alle opdrachten zijn voltooid. Je kunt verder!" },
+      CHALLENGE_SUCCESS: { speaker: "moose", text: "Deze opdracht is al voltooid. Goed gedaan." }
+    }[eventName];
+    if (fallback) moments = [{ ...fallback, text: formatCompanionText(fallback.text, context) }];
+  }
   if (!moments.length) return;
 
   const priority = COMPANION_EVENT_PRIORITY[eventName] ?? 0;
@@ -731,7 +765,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     selectedObjectType: (selectedLevel.ambientAnimals || []).length ? "animal" : "flyby",
     selectedObjectId: selectedLevel.ambientAnimals?.[0]?.id || selectedLevel.ambientFlybys?.[0]?.id || null,
     selectedChallengeId: selectedLevel.runes?.[0]?.id || null,
-    editorMode: "objects",
+    editorMode: "characters",
     selectedEffectId: selectedLevel.sceneEffects?.[0]?.id || null,
     effectGeometryMode: false,
     effectEditScope: "source",
@@ -1093,7 +1127,249 @@ function loadAndDecodeImage(src) {
 function readyAssetSrc(path) {
   const normalized = assetCache.normalize(path);
   const image = assetReadiness.snapshot()?.images.get(normalized);
-  return image?._atlasObjectUrl || normalized;
+  const editorImage = npcEditorReadyImages.get(normalized);
+  return image?._atlasObjectUrl || editorImage?._atlasObjectUrl || normalized;
+}
+
+async function preloadNpcCharacter(character) {
+  if (!character) throw new Error("Kies eerst een geldig NPC-personage.");
+  const paths = [character.portrait, ...Object.values(character.animations || {}).flat()].filter(Boolean);
+  await Promise.all(paths.map(async (path) => {
+    const image = await assetCache.image(path);
+    npcEditorReadyImages.set(assetCache.normalize(path), image);
+  }));
+  return character;
+}
+
+function atlasCharacters() {
+  return window.ATLAS_CHARACTER_MANIFEST?.characters || [];
+}
+
+function atlasCharacterById(id) {
+  return atlasCharacters().find((character) => character.id === id) || null;
+}
+
+function challengePresentationType(challenge) {
+  return String(challenge?.presentationType || challenge?.type || "standard").toLowerCase() === "npc" ? "npc" : "standard";
+}
+
+function npcChallengeForRune(rune, selectedLevel = level) {
+  const challenge = learningChallengeForRune(rune, selectedLevel);
+  return challengePresentationType(challenge) === "npc" ? challenge : null;
+}
+
+function npcConfigForChallenge(challenge) {
+  const npc = challenge?.npc || {};
+  return {
+    characterId: npc.characterId || "",
+    displayName: npc.displayName || "",
+    scale: clamp(Number(npc.scale ?? 1), 0.35, 2.5),
+    // Legacy Left/Right labels did not describe the artwork; only an explicit mirror flips it.
+    facing: npc.facing === "mirrored" ? "mirrored" : "native",
+    brightness: clamp(Number(npc.brightness ?? 1), 0.4, 1.6),
+    idleIntervalMinMs: clamp(Number(npc.idleIntervalMinMs ?? 7000), 1000, 60000),
+    idleIntervalMaxMs: clamp(Number(npc.idleIntervalMaxMs ?? 13000), 1000, 90000),
+    playbackRate: clamp(Number(npc.playbackRate ?? 1), 0.25, 3),
+    successIdleBeatMs: clamp(Number(npc.successIdleBeatMs ?? 650), 0, 4000)
+  };
+}
+
+function npcCharacterForChallenge(challenge) {
+  return atlasCharacterById(npcConfigForChallenge(challenge).characterId);
+}
+
+function npcDisplayName(challenge, character = npcCharacterForChallenge(challenge)) {
+  return npcConfigForChallenge(challenge).displayName || character?.name || "NPC";
+}
+
+function npcFacingScale(challenge) {
+  return npcConfigForChallenge(challenge).facing === "mirrored" ? -1 : 1;
+}
+
+const npcAnimationRuntime = {
+  entries: new Map(),
+  rafId: 0,
+  frameRate: 12
+};
+
+function npcIdleVariantNames(character) {
+  return Object.keys(character?.animations || {})
+    .map((name) => ({ name, match: name.match(/^idle_animation_([1-9]\d*)$/) }))
+    .filter((item) => item.match && character.animations[item.name]?.length)
+    .sort((left, right) => Number(left.match[1]) - Number(right.match[1]) || left.name.localeCompare(right.name))
+    .map((item) => item.name);
+}
+
+function npcAnimationFrames(entry, animation = entry.animation) {
+  if (animation === "completed") {
+    return entry.character.animations?.idle_to_pass?.length
+      ? entry.character.animations.idle_to_pass
+      : (entry.character.animations?.idle || []);
+  }
+  return entry.character.animations?.[animation] || [];
+}
+
+function setNpcAnimation(entry, name, now, once = false) {
+  const frames = entry.character.animations?.[name] || [];
+  if (!frames.length) return false;
+  entry.animation = name;
+  entry.frameIndex = 0;
+  entry.once = once;
+  entry.completed = false;
+  entry.completeAfterPass = false;
+  entry.returnAfterFrame = false;
+  entry.nextFrameAt = now;
+  entry.element.dataset.npcAnimation = name;
+  return true;
+}
+
+function setNpcCompleted(entry) {
+  const frames = npcAnimationFrames(entry, "completed");
+  entry.animation = "completed";
+  entry.frameIndex = Math.max(0, frames.length - 1);
+  entry.once = false;
+  entry.completed = true;
+  entry.completeAfterPass = false;
+  entry.returnAfterFrame = false;
+  entry.successDueAt = null;
+  entry.variantDueAt = Number.POSITIVE_INFINITY;
+  entry.nextFrameAt = Number.POSITIVE_INFINITY;
+  entry.element.dataset.npcAnimation = "completed";
+  setNpcFrame(entry);
+}
+
+function setNpcFrame(entry) {
+  const frames = npcAnimationFrames(entry);
+  const frame = frames[entry.frameIndex] || entry.character.animations?.idle?.[0];
+  const image = entry.element.querySelector("[data-npc-sprite]");
+  if (!image || !frame) return;
+  const src = readyAssetSrc(frame);
+  if (image.getAttribute("src") !== src) image.src = src;
+  image.dataset.assetPath = frame;
+  image.dataset.frame = String(entry.frameIndex + 1);
+}
+
+function scheduleNpcIdleVariant(entry, now) {
+  const config = npcConfigForChallenge(entry.challenge);
+  const min = Math.min(config.idleIntervalMinMs, config.idleIntervalMaxMs);
+  const max = Math.max(config.idleIntervalMinMs, config.idleIntervalMaxMs);
+  entry.variantDueAt = now + min + Math.random() * (max - min);
+}
+
+function npcAnimationStep(now) {
+  npcAnimationRuntime.rafId = 0;
+  let active = false;
+  npcAnimationRuntime.entries.forEach((entry, key) => {
+    if (!entry.element.isConnected) {
+      npcAnimationRuntime.entries.delete(key);
+      return;
+    }
+    if (entry.completed) return;
+    active = true;
+    const config = npcConfigForChallenge(entry.challenge);
+    if (entry.successDueAt !== null && now >= entry.successDueAt) {
+      entry.successDueAt = null;
+      if (setNpcAnimation(entry, "idle_to_pass", now, true)) entry.completeAfterPass = true;
+      else setNpcCompleted(entry);
+    }
+    if (entry.animation === "idle" && now >= entry.variantDueAt) {
+      const variants = npcIdleVariantNames(entry.character);
+      if (variants.length) setNpcAnimation(entry, variants[Math.floor(Math.random() * variants.length)], now, true);
+      scheduleNpcIdleVariant(entry, now);
+    }
+    if (now < entry.nextFrameAt) return;
+    if (entry.returnAfterFrame) {
+      if (entry.animation === "idle_to_pass" && entry.completeAfterPass) {
+        setNpcCompleted(entry);
+        return;
+      }
+      setNpcAnimation(entry, "idle", now);
+      scheduleNpcIdleVariant(entry, now);
+    }
+    setNpcFrame(entry);
+    const frames = npcAnimationFrames(entry);
+    const frameMs = 1000 / (npcAnimationRuntime.frameRate * config.playbackRate);
+    entry.nextFrameAt = now + frameMs;
+    if (frames.length <= 1) {
+      if (entry.once) entry.returnAfterFrame = true;
+      return;
+    }
+    if (entry.frameIndex < frames.length - 1) {
+      entry.frameIndex += 1;
+      return;
+    }
+    if (entry.once) {
+      entry.returnAfterFrame = true;
+    } else {
+      entry.frameIndex = 0;
+    }
+  });
+  if (active) npcAnimationRuntime.rafId = requestAnimationFrame(npcAnimationStep);
+}
+
+function syncNpcAnimations() {
+  const mounted = new Set();
+  document.querySelectorAll("[data-npc-challenge]").forEach((element) => {
+    const rune = runeById(element.dataset.npcChallenge);
+    const challenge = npcChallengeForRune(rune);
+    const character = npcCharacterForChallenge(challenge);
+    if (!challenge || !character) return;
+    const key = `${level.id}:${rune.id}`;
+    mounted.add(key);
+    const existing = npcAnimationRuntime.entries.get(key);
+    const completed = state.completedRunes.has(rune.id);
+    if (existing?.animation && Number.isFinite(existing.frameIndex)) {
+      existing.element = element;
+      existing.challenge = challenge;
+      existing.character = character;
+      if (!completed && existing.completed) {
+        const now = performance.now();
+        setNpcAnimation(existing, "idle", now);
+        scheduleNpcIdleVariant(existing, now);
+      } else if (completed && existing.successDueAt === null && existing.animation !== "idle_to_pass" && !existing.completed) {
+        setNpcCompleted(existing);
+      } else {
+        element.dataset.npcAnimation = existing.animation;
+        setNpcFrame(existing);
+      }
+      return;
+    }
+    const now = performance.now();
+    const successDueAt = existing?.successDueAt ?? null;
+    const entry = { element, challenge, character, animation: "idle", frameIndex: 0, once: false, completed: false, nextFrameAt: now, variantDueAt: now, successDueAt };
+    if (completed && successDueAt === null) setNpcCompleted(entry);
+    else {
+      setNpcAnimation(entry, "idle", now);
+      entry.successDueAt = successDueAt;
+      scheduleNpcIdleVariant(entry, now);
+    }
+    npcAnimationRuntime.entries.set(key, entry);
+    if (!entry.completed) setNpcFrame(entry);
+  });
+  npcAnimationRuntime.entries.forEach((entry, key) => {
+    if (!mounted.has(key)) npcAnimationRuntime.entries.delete(key);
+  });
+  const hasActiveAnimations = [...npcAnimationRuntime.entries.values()].some((entry) => !entry.completed);
+  if (hasActiveAnimations && !npcAnimationRuntime.rafId) npcAnimationRuntime.rafId = requestAnimationFrame(npcAnimationStep);
+  if (!hasActiveAnimations && npcAnimationRuntime.rafId) {
+    cancelAnimationFrame(npcAnimationRuntime.rafId);
+    npcAnimationRuntime.rafId = 0;
+  }
+}
+
+function queueNpcSuccessAnimation(runeId) {
+  const challenge = npcChallengeForRune(runeById(runeId));
+  if (!challenge) return;
+  const key = `${level.id}:${runeId}`;
+  const entry = npcAnimationRuntime.entries.get(key);
+  const due = performance.now() + npcConfigForChallenge(challenge).successIdleBeatMs;
+  if (entry) {
+    setNpcAnimation(entry, "idle", performance.now());
+    entry.successDueAt = due;
+  } else {
+    npcAnimationRuntime.entries.set(key, { element: { isConnected: false }, challenge, character: npcCharacterForChallenge(challenge), successDueAt: due });
+  }
+  if (!npcAnimationRuntime.rafId) npcAnimationRuntime.rafId = requestAnimationFrame(npcAnimationStep);
 }
 
 async function preloadAmbientAnimals(selectedLevel) {
@@ -1591,10 +1867,9 @@ async function selectLevel(id, options = {}) {
     assetReadiness.discard(assetPlan);
     return false;
   }
-  level = nextLevel;
   await Promise.all([
-    preloadAmbientAnimals(level),
-    ambientFlybyRuntime.prepareLevel(level)
+    preloadAmbientAnimals(nextLevel),
+    ambientFlybyRuntime.prepareLevel(nextLevel)
   ]);
   if (loadSequence !== levelLoadSequence || !assetReadiness.isCurrent(assetPlan)) {
     assetReadiness.discard(assetPlan);
@@ -1604,30 +1879,94 @@ async function selectLevel(id, options = {}) {
     `[Atlas] Optional visual disabled before level reveal: ${failure.path} (${failure.kinds.join(", ")})`
   ));
   assetReadiness.activate(assetPlan);
-  sceneEffectRuntime.prepareLevel(level);
+  sceneEffectRuntime.prepareLevel(nextLevel);
   const adventure = adventureEntryFor(entry);
   sessionReport?.startOrVisitLevel({
     adventureId: adventure.id,
     adventureTitle: adventure.title,
     levelId: entry.id,
-    levelTitle: level.title
+    levelTitle: nextLevel.title
   });
-  walkNodesById = new Map(level.walkGraph.nodes.map((node) => [node.id, node]));
-  state = createLevelState(level);
-  state.criticalAssetsReady = true;
+  const nextState = createLevelState(nextLevel);
+  nextState.criticalAssetsReady = true;
   if (options.startImmediately) {
-    state.screen = "scene";
+    nextState.screen = "scene";
+  }
+  level = nextLevel;
+  state = nextState;
+  walkNodesById = new Map(nextLevel.walkGraph.nodes.map((node) => [node.id, node]));
+  if (options.startImmediately) {
     if (options.recordStart !== false) recordLevelStarted(entry.id);
     emitCompanionEvent("LEVEL_ENTER");
   }
-  document.title = level.title;
-  preloadLevelSounds(level);
+  document.title = nextLevel.title;
+  preloadLevelSounds(nextLevel);
   if (!options.deferRender) render();
   return true;
 }
 
 function adventureEntryFor(entry) {
   return levelCatalog.find((item) => item.id === worldResolver.rootIdFor(entry.id)) || entry;
+}
+
+function localAtlasResetAvailable(locationLike = window.location) {
+  return String(locationLike?.hostname || "").toLowerCase() === LOCAL_ATLAS_RESET_HOSTNAME;
+}
+
+function isAtlasOwnedStorageKey(key) {
+  const normalized = String(key || "").toLowerCase();
+  return normalized.startsWith("atlas.") ||
+    normalized.startsWith("atlas-") ||
+    normalized.startsWith("svenadventure-") ||
+    /^lvl-\d{4}-/.test(normalized);
+}
+
+function clearAtlasOwnedWebStorage(storage) {
+  if (!storage) return [];
+  const removed = Array.from({ length: storage.length }, (_unused, index) => storage.key(index))
+    .filter((key) => isAtlasOwnedStorageKey(key));
+  removed.forEach((key) => {
+    storage.removeItem(key);
+  });
+  return removed;
+}
+
+async function clearLocalAtlasCaches() {
+  if (!window.caches?.keys) return [];
+  const names = await window.caches.keys();
+  const owned = names.filter((name) => name.startsWith(LOCAL_ATLAS_CACHE_PREFIX));
+  await Promise.all(owned.map((name) => window.caches.delete(name)));
+  return owned;
+}
+
+async function unregisterLocalAtlasServiceWorkers() {
+  if (!navigator.serviceWorker?.getRegistrations) return 0;
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  const owned = registrations.filter((registration) => {
+    const worker = registration.active || registration.waiting || registration.installing;
+    if (!worker?.scriptURL) return false;
+    const scriptUrl = new URL(worker.scriptURL, window.location.href);
+    return scriptUrl.origin === window.location.origin && /\/service-worker\.js$/.test(scriptUrl.pathname);
+  });
+  await Promise.all(owned.map((registration) => registration.unregister()));
+  return owned.length;
+}
+
+async function resetLocalAtlasData() {
+  if (!localAtlasResetAvailable()) return false;
+  const confirmed = window.confirm(
+    "Reset local Atlas data?\n\nThis removes local progress and cached development data, then reloads Atlas."
+  );
+  if (!confirmed) return false;
+
+  clearAtlasOwnedWebStorage(window.localStorage);
+  clearAtlasOwnedWebStorage(window.sessionStorage);
+  await Promise.allSettled([
+    clearLocalAtlasCaches(),
+    unregisterLocalAtlasServiceWorkers()
+  ]);
+  window.location.reload();
+  return true;
 }
 
 function effectiveLockedLevelIds() {
@@ -2217,7 +2556,37 @@ function updateAmbientAnimalScale(animalId, value) {
   walkPathEditor.message = `${animal.id}: x ${animal.x}, y ${animal.y}, schaal ${animal.scale.toFixed(2)}`;
   setLevelAmbientAnimals(animals);
   persistWalkPathDraft();
-  render();
+  updateAmbientAnimalDom(animal);
+}
+
+function updateAmbientAnimalDom(animal) {
+  const shell = document.querySelector(`[data-ambient-animal="${CSS.escape(animal.id)}"]`);
+  if (shell) {
+    shell.style.cssText = ambientAnimalTrackStyle(animal);
+    shell.dataset.scale = String(animal.scale);
+    shell.dataset.worldX = String(animal.x);
+    shell.dataset.worldY = String(animal.y);
+    shell.dataset.softness = String(animal.softness ?? 0);
+    shell.dataset.saturation = String(animal.saturation ?? 1);
+    shell.dataset.soundVolume = String(clampVolume(animal.soundVolume ?? 1));
+    shell.dataset.mirrorX = String(Boolean(animal.mirrorX));
+  }
+  document.querySelectorAll(`[data-animal-scale="${CSS.escape(animal.id)}"]`).forEach((input) => {
+    input.value = String(animal.scale);
+    const output = input.closest("label")?.querySelector("output");
+    if (output) output.textContent = Number(animal.scale).toFixed(2);
+  });
+  for (const field of ["softness", "saturation", "soundVolume", "mirrorX"]) {
+    document.querySelectorAll(`[data-animal-setting="${field}"][data-animal-id="${CSS.escape(animal.id)}"]`).forEach((input) => {
+      if (field === "mirrorX") input.checked = Boolean(animal.mirrorX);
+      else input.value = String(animal[field]);
+      const output = input.closest("label")?.querySelector("output");
+      if (output && field !== "mirrorX") output.textContent = field === "soundVolume"
+        ? `${Math.round(clampVolume(animal[field]) * 100)}%`
+        : Number(animal[field]).toFixed(2);
+    });
+  }
+  voxelRenderer.invalidate();
 }
 
 function updateAmbientAnimalSetting(animalId, field, value) {
@@ -2241,7 +2610,7 @@ function updateAmbientAnimalSetting(animalId, field, value) {
   walkPathEditor.message = `${animal.id}: ${field} ${animal[field]}`;
   setLevelAmbientAnimals(animals);
   persistWalkPathDraft();
-  render();
+  updateAmbientAnimalDom(animal);
 }
 
 function selectChallengeForEditor(runeId) {
@@ -2278,6 +2647,114 @@ function updateLearningChallengeActive(challengeId, active) {
   invalidateMenuAdventureStats();
   persistWalkPathDraft();
   render();
+}
+
+function commitLearningChallengeEditorUpdate(challenges, challenge, message, options = {}) {
+  setLevelLearningChallenges(challenges);
+  const rune = (level.runes || []).find((item) => item.challengeId === challenge.id);
+  walkPathEditor.selectedChallengeId = rune?.id || walkPathEditor.selectedChallengeId;
+  walkPathEditor.currentChallenge = challenge;
+  walkPathEditor.status = "Modified";
+  walkPathEditor.modified = true;
+  walkPathEditor.message = message;
+  persistWalkPathDraft();
+  if (options.render !== false) render();
+}
+
+function refreshChallengePresentationDom(challenge) {
+  const editorPanel = document.querySelector("[data-developer-tools]");
+  const editorScrollTop = editorPanel?.scrollTop || 0;
+  const rune = (level.runes || []).find((item) => item.challengeId === challenge.id);
+  const preview = document.querySelector("[data-challenge-preview]");
+  if (preview && rune && walkPathEditor.selectedChallengeId === rune.id) {
+    preview.outerHTML = renderChallengeContentPreview(challenge, rune);
+  }
+  const marker = rune ? document.querySelector(`[data-rune="${CSS.escape(rune.id)}"]`) : null;
+  const replacement = rune ? renderRuneHotspot(rune).trim() : "";
+  if (marker && replacement) marker.outerHTML = replacement;
+  updateWorldDom();
+  syncNpcAnimations();
+  voxelRenderer.sync();
+  if (editorPanel) editorPanel.scrollTop = editorScrollTop;
+}
+
+async function updateChallengePresentation(challengeId, presentationType) {
+  const challenges = cloneLearningChallenges(level.learningChallenges || []);
+  const challenge = challenges.find((item) => item.id === challengeId);
+  if (!challenge) return;
+  const nextType = presentationType === "npc" ? "npc" : "standard";
+  if (nextType === "npc") {
+    challenge.npc ||= {};
+    challenge.npc.characterId ||= atlasCharacters()[0]?.id || "";
+    const character = atlasCharacterById(challenge.npc.characterId);
+    try {
+      await preloadNpcCharacter(character);
+    } catch (error) {
+      walkPathEditor.message = `NPC-assets laden mislukt: ${error.message}`;
+      render();
+      return;
+    }
+  }
+  challenge.presentationType = nextType;
+  commitLearningChallengeEditorUpdate(challenges, challenge, `${challenge.id}: ${nextType === "npc" ? "NPC" : "Standard"}.`, { render: false });
+  refreshChallengePresentationDom(challenge);
+}
+
+async function updateChallengeNpcCharacter(challengeId, characterId) {
+  const character = atlasCharacterById(characterId);
+  try {
+    await preloadNpcCharacter(character);
+  } catch (error) {
+    walkPathEditor.message = `NPC-assets laden mislukt: ${error.message}`;
+    render();
+    return;
+  }
+  const challenges = cloneLearningChallenges(level.learningChallenges || []);
+  const challenge = challenges.find((item) => item.id === challengeId);
+  if (!challenge) return;
+  challenge.npc ||= {};
+  challenge.npc.characterId = characterId;
+  commitLearningChallengeEditorUpdate(challenges, challenge, `${challenge.id}: personage ${character.name}.`, { render: false });
+  refreshChallengePresentationDom(challenge);
+}
+
+function updateChallengeBoolean(challengeId, field, value) {
+  if (!["requiresAllOtherChallenges", "unlocksLevelProgression"].includes(field)) return;
+  const challenges = cloneLearningChallenges(level.learningChallenges || []);
+  const challenge = challenges.find((item) => item.id === challengeId);
+  if (!challenge) return;
+  challenge[field] = Boolean(value);
+  commitLearningChallengeEditorUpdate(challenges, challenge, `${challenge.id}: ${field} ${value ? "aan" : "uit"}.`, { render: false });
+}
+
+function updateChallengeNpcSetting(challengeId, field, value) {
+  const allowed = new Set(["displayName", "scale", "facing", "brightness", "idleIntervalMinMs", "idleIntervalMaxMs", "playbackRate", "successIdleBeatMs"]);
+  if (!allowed.has(field)) return;
+  const challenges = cloneLearningChallenges(level.learningChallenges || []);
+  const challenge = challenges.find((item) => item.id === challengeId);
+  if (!challenge) return;
+  challenge.npc ||= {};
+  challenge.npc[field] = ["displayName", "facing"].includes(field) ? String(value) : Number(value);
+  const normalized = npcConfigForChallenge(challenge);
+  if (!["displayName", "facing"].includes(field)) challenge.npc[field] = normalized[field];
+  commitLearningChallengeEditorUpdate(challenges, challenge, `${challenge.id}: ${field} aangepast.`, { render: false });
+  const rune = (level.runes || []).find((item) => item.challengeId === challengeId);
+  const runtimeEntry = rune ? npcAnimationRuntime.entries.get(`${level.id}:${rune.id}`) : null;
+  if (runtimeEntry) runtimeEntry.challenge = challenge;
+  const shell = rune ? document.querySelector(`[data-npc-challenge="${CSS.escape(rune.id)}"]`) : null;
+  if (shell) {
+    shell.style.setProperty("--npc-scale", normalized.scale);
+    shell.style.setProperty("--npc-brightness", normalized.brightness);
+    shell.style.setProperty("--npc-facing", npcFacingScale(challenge));
+    shell.dataset.npcFacing = normalized.facing;
+    shell.dataset.npcFacingScale = String(npcFacingScale(challenge));
+    if (field === "displayName") {
+      shell.setAttribute("aria-label", `Praat met ${npcDisplayName(challenge)}`);
+    }
+  }
+  document.querySelectorAll(`[data-npc-output="${CSS.escape(field)}"]`).forEach((output) => {
+    output.textContent = String(normalized[field]);
+  });
 }
 
 function deleteAmbientAnimal(animalId) {
@@ -2962,6 +3439,24 @@ function completedActiveRuneCount() {
   return activeRunes().filter((rune) => state.completedRunes.has(rune.id)).length;
 }
 
+function requiresAllOtherChallenges(challenge) {
+  return challenge?.requiresAllOtherChallenges === true;
+}
+
+function isChallengePrerequisiteLocked(rune) {
+  const challenge = learningChallengeForRune(rune);
+  if (!requiresAllOtherChallenges(challenge)) return false;
+  return activeRunes().some((other) => other.id !== rune.id && !state.completedRunes.has(other.id));
+}
+
+function remainingProgressionChallengeCount() {
+  const active = activeRunes();
+  const gates = active.filter((rune) => learningChallengeForRune(rune)?.unlocksLevelProgression === true);
+  const required = !gates.length || gates.some((rune) => !state.completedRunes.has(rune.id) && requiresAllOtherChallenges(learningChallengeForRune(rune)))
+    ? active : gates;
+  return required.filter((rune) => !state.completedRunes.has(rune.id)).length;
+}
+
 function adventureLevelEntries(rootEntry) {
   return rootEntry ? worldResolver.enabledEntries(rootEntry.id) : [];
 }
@@ -3184,6 +3679,7 @@ function saveCompletion() {
     completedAt: new Date().toISOString(),
     activeChallengeSignature: activeChallengeSignature(level),
     activeChallengeIds: activeRunes(level).map((rune) => rune.id),
+    completedRuneIds: activeRunes(level).filter((rune) => state.completedRunes.has(rune.id)).map((rune) => rune.id),
     answered: state.answered,
     firstTryCorrect: state.firstTryCorrect,
     attempts: state.attempts
@@ -3276,9 +3772,27 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
   if (Math.abs(targetCenter.x - state.worldX) > 2) {
     state.svenFacing = targetCenter.x < state.worldX ? "left" : "right";
   }
-  if (!state.moving || !movementIntentIsCurrent(interactionToken)) return;
+  if (!movementIntentIsCurrent(interactionToken)) return;
+  state.moving = false;
   state.svenMood = "idle";
   finishInteraction(target, kind, action);
+}
+
+function saveChallengeProgress() {
+  if (!level?.storageKey) return;
+  let previous = {};
+  try { previous = JSON.parse(localStorage.getItem(level.storageKey)) || {}; } catch {}
+  localStorage.setItem(level.storageKey, JSON.stringify({
+    ...previous,
+    levelId: level.id,
+    activeChallengeSignature: activeChallengeSignature(level),
+    activeChallengeIds: activeRunes(level).map((rune) => rune.id),
+    completedRuneIds: activeRunes(level).filter((rune) => state.completedRunes.has(rune.id)).map((rune) => rune.id),
+    answered: state.answered,
+    firstTryCorrect: state.firstTryCorrect,
+    attempts: state.attempts,
+    updatedAt: new Date().toISOString()
+  }));
 }
 
 function finishInteraction(target, kind, action) {
@@ -3386,7 +3900,8 @@ function openRuneChallenge(id) {
   playSfx("challengeOpen");
   state.screen = "challenge";
   state.activeRuneId = id;
-  state.activeQuestions = selectChallengeQuestions(rune);
+  state.challengePrerequisiteLocked = isChallengePrerequisiteLocked(rune);
+  state.activeQuestions = state.challengePrerequisiteLocked ? [] : selectChallengeQuestions(rune);
   state.questionIndex = 0;
   state.selectedWrong = false;
   state.questionTracked = false;
@@ -3402,7 +3917,23 @@ function openRuneChallenge(id) {
     challengeId: rune.id
   });
   state.feedback = authored ? "" : rune.intro;
-  trackCurrentSessionQuestion();
+  if (!state.challengePrerequisiteLocked) trackCurrentSessionQuestion();
+  render();
+}
+
+function closeChallenge() {
+  if (!['challenge', 'correct'].includes(state.screen)) return;
+  state.screen = "scene";
+  state.activeRuneId = null;
+  state.activeQuestions = [];
+  state.questionIndex = 0;
+  state.selectedWrong = false;
+  state.questionTracked = false;
+  state.assistedCompletionAvailable = false;
+  state.challengePrerequisiteLocked = false;
+  state.challengeGuideMessage = null;
+  state.feedback = "";
+  state.svenMood = "idle";
   render();
 }
 
@@ -3496,7 +4027,7 @@ function nextQuestion() {
       if (state.challengeGuideMessage) setGuideMessage(state.challengeGuideMessage, state.challengeGuideMessage.speaker);
       state.feedback = "";
     } else {
-      state.feedback = "De rune wil nog een som.";
+      state.feedback = "Op naar de volgende vraag.";
     }
     state.screen = "challenge";
     trackCurrentSessionQuestion();
@@ -3505,6 +4036,7 @@ function nextQuestion() {
   }
 
   state.completedRunes.add(rune.id);
+  saveChallengeProgress();
   playSfx("challengeComplete");
   state.justCompletedRuneId = rune.id;
   state.activeRuneId = null;
@@ -3516,9 +4048,10 @@ function nextQuestion() {
   state.svenMood = "celebrating";
   state.feedback = "";
   state.challengeGuideMessage = null;
+  state.challengePrerequisiteLocked = false;
   state.screen = "scene";
 
-  if (completedActiveRuneCount() === requiredRuneCount()) {
+  if (isLevelExitReady()) {
     emitCompanionEvent("PATH_UNLOCKED", {
       completedCount: completedActiveRuneCount(),
       totalCount: requiredRuneCount()
@@ -3533,6 +4066,7 @@ function nextQuestion() {
   }
 
   render();
+  queueNpcSuccessAnimation(rune.id);
 }
 
 function showReward() {
@@ -3935,6 +4469,9 @@ function renderChallengeContentPreview(challenge, rune) {
   const variants = challengeVariantEntries(challenge);
   const active = isLearningChallengeActive(challenge);
   const character = challenge.challengeCharacterId || level.challengeCharacter?.id || "";
+  const presentationType = challengePresentationType(challenge);
+  const npcConfig = npcConfigForChallenge(challenge);
+  const object = interactiveObjectForTarget(rune);
   return `
     <section class="challengePreviewPanel" data-challenge-preview="${challenge.id}">
       <header class="challengePreviewHeader">
@@ -3948,6 +4485,20 @@ function renderChallengeContentPreview(challenge, rune) {
           <strong>${active ? "Actief" : "Inactief"}</strong>
         </label>
       </header>
+      <div class="challengePresentationControls" data-challenge-presentation-controls="${challenge.id}">
+        <label class="editorField"><span>Type</span><select data-challenge-presentation="${challenge.id}">
+          <option value="standard" ${presentationType === "standard" ? "selected" : ""}>Standard</option>
+          <option value="npc" ${presentationType === "npc" ? "selected" : ""}>NPC</option>
+        </select></label>
+        ${presentationType === "npc" ? `
+          <label class="editorField"><span>NPC character</span><select data-npc-character="${challenge.id}">
+            ${atlasCharacters().map((item) => `<option value="${item.id}" ${item.id === npcConfig.characterId ? "selected" : ""}>${item.name}</option>`).join("")}
+          </select></label>
+        ` : ""}
+        <label class="editorToggle"><input type="checkbox" data-challenge-boolean="requiresAllOtherChallenges" data-challenge-id="${challenge.id}" ${challenge.requiresAllOtherChallenges === true ? "checked" : ""}><span>Requires all other active challenges first</span></label>
+        <label class="editorToggle"><input type="checkbox" data-challenge-boolean="unlocksLevelProgression" data-challenge-id="${challenge.id}" ${challenge.unlocksLevelProgression === true ? "checked" : ""}><span>Enables level progression</span></label>
+        <span data-challenge-position>${object ? `World position ${object.center.x}, ${object.center.y} · approach ${object.approachNode || "direct"}` : "No world object"}</span>
+      </div>
       <div class="challengePreviewSummary">
         <span>${slots.length} vragen · ${variants.length} varianten</span>
         <span>${challengeTypeSummary(challenge)}</span>
@@ -3962,6 +4513,30 @@ function renderChallengeContentPreview(challenge, rune) {
           </details>
         `).join("")}
       </div>
+    </section>
+  `;
+}
+
+function renderNpcCharacterEditorControls() {
+  const rune = selectedEditorRune();
+  const challenge = npcChallengeForRune(rune);
+  if (!challenge) return `<section class="npcCharacterEditorEmpty"><strong>NPC instances</strong><p>Select an NPC challenge in Challenges to tune its character here.</p></section>`;
+  const character = npcCharacterForChallenge(challenge);
+  const config = npcConfigForChallenge(challenge);
+  const range = (label, field, min, max, step, value = config[field]) => `
+    <label class="npcEditorField"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${value}" data-npc-setting="${field}" data-challenge-id="${challenge.id}"><output data-npc-output="${field}">${value}</output></label>
+  `;
+  return `
+    <section class="npcCharacterEditor" data-npc-character-editor="${challenge.id}">
+      <header><div><strong>${npcDisplayName(challenge, character)}</strong><span>${character?.id || "No discovered character"} · ${rune?.name || challenge.id}</span></div>${character?.portrait ? `<img src="${readyAssetSrc(character.portrait)}" alt="">` : ""}</header>
+      <label class="editorField"><span>Display name</span><input value="${config.displayName}" placeholder="${character?.name || "NPC"}" data-npc-setting="displayName" data-challenge-id="${challenge.id}"></label>
+      <label class="editorField"><span>Facing</span><select data-npc-setting="facing" data-challenge-id="${challenge.id}"><option value="native" ${config.facing === "native" ? "selected" : ""}>Native</option><option value="mirrored" ${config.facing === "mirrored" ? "selected" : ""}>Mirrored</option></select></label>
+      ${range("Scale", "scale", 0.35, 2.5, 0.01)}
+      ${range("Brightness", "brightness", 0.4, 1.6, 0.01)}
+      ${range("Playback speed", "playbackRate", 0.25, 3, 0.05)}
+      ${range("Idle interval min (ms)", "idleIntervalMinMs", 1000, 60000, 250)}
+      ${range("Idle interval max (ms)", "idleIntervalMaxMs", 1000, 90000, 250)}
+      ${range("Success idle beat (ms)", "successIdleBeatMs", 0, 4000, 50)}
     </section>
   `;
 }
@@ -3991,9 +4566,11 @@ function renderChallengeEditorControls() {
   `;
 }
 
-function renderAmbientEditorControls() {
+function renderAmbientEditorControls(options = {}) {
   const animals = level.ambientAnimals || [];
   const flybys = level.ambientFlybys || [];
+  const includeAnimals = options.animals !== false;
+  const includeFlybys = options.flybys !== false;
   const animal = animals.find((item) => walkPathEditor.selectedObjectType === "animal" && item.id === walkPathEditor.selectedObjectId);
   const flyby = flybys.find((item) => walkPathEditor.selectedObjectType === "flyby" && item.id === walkPathEditor.selectedObjectId);
   const syncMembers = flyby?.syncKey ? flybys.filter((item) => item.syncKey === flyby.syncKey) : [];
@@ -4003,8 +4580,7 @@ function renderAmbientEditorControls() {
       <span>${walkPathEditor.assetMessage || "Place shared files in assets/ambient/animals or assets/ambient/flybys."}</span>
     </div>
     ${renderAssetWarnings()}
-    ${renderChallengeEditorControls()}
-    <details class="editorSection" open>
+    ${includeAnimals ? `<details class="editorSection" open data-editor-panel-key="ambient-animals">
       <summary>Ambient animals <span>${animals.length}</span></summary>
       <div class="editorObjectPicker">
         ${animals.map((item) => `<button type="button" aria-label="Selecteer ${item.label || item.id}" data-select-ambient-type="animal" data-select-ambient-id="${item.id}" class="${animal?.id === item.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>${animal?.id === item.id ? "" : `<input class="editorLegacyControl" type="checkbox" data-animal-setting="mirrorX" data-animal-id="${item.id}" ${item.mirrorX ? "checked" : ""}/>`}`).join("") || "<span>Geen dieren.</span>"}
@@ -4026,8 +4602,8 @@ function renderAmbientEditorControls() {
           </div>
         </div>` : ""}
       <details class="editorNestedSection"><summary>Add ambient animal</summary>${renderAmbientAddForm("animal")}</details>
-    </details>
-    <details class="editorSection" open>
+    </details>` : ""}
+    ${includeFlybys ? `<details class="editorSection" open data-editor-panel-key="ambient-flybys">
       <summary>Ambient flybys <span>${flybys.length}</span></summary>
       <div class="editorObjectPicker">
         ${flybys.map((item) => `<button type="button" aria-label="Selecteer ${item.label || item.id}" data-select-ambient-type="flyby" data-select-ambient-id="${item.id}" class="${flyby?.id === item.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>`).join("") || "<span>Geen flybys.</span>"}
@@ -4077,7 +4653,7 @@ function renderAmbientEditorControls() {
           </details>
         </div>` : ""}
       <details class="editorNestedSection"><summary>Add ambient flyby</summary>${renderAmbientAddForm("flyby")}</details>
-    </details>
+    </details>` : ""}
   `;
 }
 
@@ -4115,7 +4691,7 @@ function addSceneEffect(presetId, variantId) {
   instance.id = uniqueSceneEffectId(instance.id);
   level.sceneEffects = [...(level.sceneEffects || []), instance];
   walkPathEditor.selectedEffectId = instance.id;
-  walkPathEditor.editorMode = "effects";
+  walkPathEditor.editorMode = "graphics";
   walkPathEditor.effectEditScope = "source";
   walkPathEditor.selectedEffectVertex = null;
   walkPathEditor.effectPolygonDraft = null;
@@ -5121,6 +5697,8 @@ function renderLevelTuningControls(levelId, options = {}) {
   const emissiveGlow = emissiveGlowTuning(levelId);
   const globalTuning = locomotionTuning();
   const settings = worldResolver.levelSettings(levelId);
+  const includeCharacters = options.scope !== "graphics";
+  const includeGraphics = options.scope !== "characters";
   const numberControl = (label, key, value, min, max, step) => `
     <label class="atlasConfigField"><span>${label}</span><input type="number" min="${min}" max="${max}" step="${step}" value="${value}" data-level-setting="${key}" data-level-id="${levelId}"></label>
   `;
@@ -5129,7 +5707,7 @@ function renderLevelTuningControls(levelId, options = {}) {
   `;
   return `
     <div class="atlasLevelTuning" data-level-tuning="${levelId}">
-      ${options.background === false ? "" : `
+      ${!includeGraphics || options.background === false ? "" : `
         <div class="atlasBackgroundControl">
           <strong>Background</strong>
           <span class="atlasCurrentAsset">${settings.backgroundOverride || "Default level background"}</span>
@@ -5140,31 +5718,31 @@ function renderLevelTuningControls(levelId, options = {}) {
           <button type="button" data-config-action="reset-background" data-level-id="${levelId}" ${settings.backgroundOverride ? "" : "disabled"}>Reset to default</button>
         </div>
       `}
-      <div class="atlasTuningGrid">
+      ${includeCharacters ? `<div class="atlasTuningGrid">
         ${numberControl("Sprite Scale (Level)", "spriteScale", tuning.spriteScale, 0.5, 1.8, 0.05)}
         ${numberControl("Movement Speed (Level)", "movementSpeed", tuning.movementSpeed, 80, 520, 10)}
         ${numberControl("Animation Speed (Level)", "animationSpeed", tuning.animationSpeed, 0.5, 1.8, 0.05)}
-      </div>
+      </div>` : ""}
       <details class="atlasVisualAdjustments" data-editor-panel-key="simple-visual-controls">
         <summary>Simple visual controls</summary>
         <div class="atlasVisualColumns">
-          <fieldset><legend>Background</legend>
+          ${includeGraphics ? `<fieldset><legend>Background</legend>
             ${numberControl("Brightness", "backgroundBrightness", tuning.backgroundBrightness, 0.5, 1.5, 0.05)}
             ${numberControl("Contrast", "backgroundContrast", tuning.backgroundContrast, 0.5, 1.5, 0.05)}
             ${numberControl("Saturation", "backgroundSaturation", tuning.backgroundSaturation, 0, 2, 0.05)}
             ${numberControl("Warmth", "backgroundWarmth", tuning.backgroundWarmth, -1, 1, 0.05)}
             ${numberControl("Tint", "backgroundTint", tuning.backgroundTint, -1, 1, 0.05)}
-          </fieldset>
-          <fieldset><legend>Sven</legend>
+          </fieldset>` : ""}
+          ${includeCharacters ? `<fieldset><legend>Sven</legend>
             ${numberControl("Brightness", "svenBrightness", tuning.svenBrightness, 0.5, 1.5, 0.05)}
             ${numberControl("Contrast", "svenContrast", tuning.svenContrast, 0.5, 1.5, 0.05)}
             ${numberControl("Saturation", "svenSaturation", tuning.svenSaturation, 0, 2, 0.05)}
             ${numberControl("Warmth", "svenWarmth", tuning.svenWarmth, -1, 1, 0.05)}
             ${numberControl("Tint", "svenTint", tuning.svenTint, -1, 1, 0.05)}
-          </fieldset>
+          </fieldset>` : ""}
         </div>
       </details>
-      <details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
+      ${includeGraphics ? `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
         <summary>Emissive Glow</summary>
         <fieldset class="atlasEmissiveGlowControls">
           <label class="atlasToggleField"><input type="checkbox" data-emissive-setting="enabled" data-level-id="${levelId}" ${emissiveGlow.enabled ? "checked" : ""}> <span>Enabled</span></label>
@@ -5178,8 +5756,8 @@ function renderLevelTuningControls(levelId, options = {}) {
             <input type="range" min="0" max="1" step="0.01" value="${emissiveGlow.sensitivity}" data-emissive-setting="sensitivity" data-level-id="${levelId}">
           </label>
         </fieldset>
-      </details>
-      <details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
+      </details>` : ""}
+      ${includeCharacters ? `<details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
         <summary>Sven Locomotion</summary>
         <div class="atlasLocomotionGroups">
           <fieldset><legend>Global — Movement</legend><div class="atlasTuningGrid">
@@ -5209,7 +5787,7 @@ function renderLevelTuningControls(levelId, options = {}) {
             ${globalControl("Blink Maximum Interval (ms)", "blinkMaximumInterval", globalTuning.blinkMaximumInterval, 250, 60000, 250)}
           </div></fieldset>
         </div>
-      </details>
+      </details>` : ""}
     </div>
   `;
 }
@@ -5263,35 +5841,25 @@ function renderDeveloperToolsPanel() {
       </div>
       <span class="developerToolMode">Current Mode: Level Editing</span>
       <span class="${statusClass}">Draft Status: ${walkPathEditor.status}</span>
-      <nav class="editorModeTabs" aria-label="Editor mode">
-        <button type="button" data-editor-mode="objects" class="${walkPathEditor.editorMode === "objects" ? "editorObjectSelected" : ""}">Objects</button>
-        <button type="button" data-editor-mode="effects" class="${walkPathEditor.editorMode === "effects" ? "editorObjectSelected" : ""}">Effects</button>
+      <nav class="editorModeTabs" aria-label="Editor sections">
+        <button type="button" data-editor-mode="characters" class="${walkPathEditor.editorMode === "characters" ? "editorObjectSelected" : ""}">Characters</button>
+        <button type="button" data-editor-mode="challenges" class="${walkPathEditor.editorMode === "challenges" ? "editorObjectSelected" : ""}">Challenges</button>
+        <button type="button" data-editor-mode="graphics" class="${walkPathEditor.editorMode === "graphics" ? "editorObjectSelected" : ""}">Graphics</button>
       </nav>
       <p>Real files change only when Apply is pressed.</p>
-      ${walkPathEditor.editorMode === "objects" ? `
-      <span>How to use:</span>
-      <ol>
-        <li>Drag walkPath points</li>
-        <li>Drag object centers or radius handles</li>
-        <li>Drag animals; adjust their shared scale</li>
-        <li>Preview animal blink or sound</li>
-        <li>Adjust audio volumes</li>
-        <li>Test movement</li>
-        <li>Apply saves level and audio files</li>
-        <li>Revert restores the saved path, objects and audio</li>
-      </ol>
-      <span>${
-        animal
-          ? `${animal.id}: ${animal.x}, ${animal.y}, schaal ${Number(animal.scale).toFixed(2)}`
-          : object
-          ? `${object.id}: ${object.center.x}, ${object.center.y}, radius ${object.radius}`
-          : point
-            ? `${point.id}: ${point.x}, ${point.y}`
-            : "Drag a path point or object."
-      }</span>
-      <details class="editorSection" open><summary>Sven &amp; background</summary>${renderLevelTuningControls(level.id)}</details>
-      ${renderAmbientEditorControls()}
-      <details class="editorSection" open><summary>Audio</summary>${renderAudioEditorControls()}</details>` : renderSceneEffectsEditorControls()}
+      ${walkPathEditor.editorMode === "characters" ? `
+        <details class="editorSection" open data-editor-panel-key="characters-sven"><summary>Sven</summary>${renderLevelTuningControls(level.id, { scope: "characters" })}</details>
+        ${renderNpcCharacterEditorControls()}
+        ${renderAmbientEditorControls({ animals: true, flybys: false })}
+      ` : walkPathEditor.editorMode === "challenges" ? `
+        <p>Drag the selected challenge marker or its linked object guides in the world to adjust its existing position and approach point.</p>
+        ${renderChallengeEditorControls()}
+      ` : `
+        <details class="editorSection" open data-editor-panel-key="graphics-level"><summary>Level rendering</summary>${renderLevelTuningControls(level.id, { scope: "graphics" })}</details>
+        ${renderAmbientEditorControls({ animals: false, flybys: true })}
+        <details class="editorSection" open data-editor-panel-key="graphics-audio"><summary>Audio</summary>${renderAudioEditorControls()}</details>
+        ${renderSceneEffectsEditorControls()}
+      `}
       <div class="walkPathEditorActions">
         <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
         <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
@@ -5394,7 +5962,7 @@ function renderSceneEffectCanvases() {
 }
 
 function renderSceneEffectGuides() {
-  if (!EDITOR_DEV_MODE || !debugOverlayEnabled || walkPathEditor.editorMode !== "effects" || walkPathEditor.effectGeometryMode || !walkPathEditor.showEffectGuides) return "";
+  if (!EDITOR_DEV_MODE || !debugOverlayEnabled || walkPathEditor.editorMode !== "graphics" || walkPathEditor.effectGeometryMode || !walkPathEditor.showEffectGuides) return "";
   const effects = (level.sceneEffects || []).filter((effect) => effect.enabled !== false);
   return `
     <svg class="sceneEffectGuides" viewBox="0 0 ${level.world.width} ${level.world.height}" preserveAspectRatio="none" data-effect-geometry-surface="scene" aria-hidden="true">
@@ -5487,11 +6055,10 @@ function isTargetVisible(target) {
 }
 
 function isLevelExitReady() {
-  return Boolean(
-    level &&
-    state?.completedRunes &&
-    completedActiveRuneCount() >= requiredRuneCount()
-  );
+  if (!level || !state?.completedRunes) return false;
+  const explicitlyProgressing = activeRunes().filter((rune) => learningChallengeForRune(rune)?.unlocksLevelProgression === true);
+  if (explicitlyProgressing.length) return explicitlyProgressing.every((rune) => state.completedRunes.has(rune.id));
+  return completedActiveRuneCount() >= requiredRuneCount();
 }
 
 function renderHotspot(hotspot) {
@@ -5534,6 +6101,43 @@ function renderRuneHotspot(rune) {
     warnMissingTrackedObject(rune, "rune");
     return "";
   }
+  const npcChallenge = npcChallengeForRune(rune);
+  const npcCharacter = npcCharacterForChallenge(npcChallenge);
+  if (npcChallenge && npcCharacter) {
+    const config = npcConfigForChallenge(npcChallenge);
+    const center = worldToScreen(object.center, "track");
+    const completedFrames = npcCharacter.animations?.idle_to_pass?.length
+      ? npcCharacter.animations.idle_to_pass
+      : (npcCharacter.animations?.idle || []);
+    const initialFrame = done
+      ? completedFrames.at(-1)
+      : (npcCharacter.animations?.idle?.[0] || "");
+    return `
+      <button
+        class="runeHotspot npcChallengeHotspot ${done ? "runeDone npcChallengeDone" : ""} ${selected ? "runeSelected npcChallengeSelected" : ""} ${!active ? "runeInactive npcChallengeInactive" : ""}"
+        style="left:${center.x}%; top:${center.y}%; --npc-scale:${config.scale}; --npc-brightness:${config.brightness}; --npc-facing:${npcFacingScale(npcChallenge)}"
+        type="button"
+        data-rune="${rune.id}"
+        data-object="${object.id}"
+        data-npc-challenge="${rune.id}"
+        data-character-id="${npcCharacter.id}"
+        data-npc-animation="${done ? "completed" : "idle"}"
+        data-npc-facing="${config.facing}"
+        data-npc-facing-scale="${npcFacingScale(npcChallenge)}"
+        data-challenge-active="${active}"
+        data-hotspot-cue="${active && !done ? "challenge" : "none"}"
+        data-world-center-x="${object.center.x}"
+        data-world-center-y="${object.center.y}"
+        data-approach-node="${object.approachNode || ""}"
+        aria-label="Praat met ${npcDisplayName(npcChallenge, npcCharacter)}"
+        ${disabled ? "disabled" : ""}
+      >
+        <span class="npcFacingLayer" data-npc-facing-layer aria-hidden="true">
+          <img src="${readyAssetSrc(initialFrame)}" data-npc-sprite data-asset-path="${initialFrame}" data-frame="${done ? completedFrames.length : 1}" alt="" draggable="false" decoding="sync" />
+        </span>
+      </button>
+    `;
+  }
   return `
     <button
       class="runeHotspot ${done ? "runeDone" : ""} ${selected ? "runeSelected" : ""} ${justCompleted ? "runeJustCompleted" : ""} ${!active ? "runeInactive" : ""}"
@@ -5569,7 +6173,7 @@ function voxelRuntimeStatusLabel() {
     return `Voxel · WebGPU actief · ${grid} voxels · ${voxelRendererStatus.fps?.toFixed?.(0) || "0"} fps`;
   }
   if (["loading-assets", "requesting-adapter", "compiling-pipelines", "canvas-handoff", "rendering-first-frame"].includes(status)) return "WebGPU wordt voorbereid…";
-  if (status === "unavailable" || status === "device-lost" || status === "frame-error") return voxelRendererStatus.error || "WebGPU is niet beschikbaar.";
+  if (["api-unavailable", "adapter-unavailable", "device-initialization-failed", "renderer-capability-unavailable", "renderer-initialization-failed", "device-lost", "frame-error"].includes(status)) return voxelRendererStatus.error || "Voxel kon niet worden gestart.";
   return "Illustrated actief";
 }
 
@@ -5691,7 +6295,7 @@ function renderDialogue() {
     <section class="dialogue" aria-live="polite">
       <img class="portrait" src="${readyAssetSrc(companionPortrait)}" alt="De ${companionName}" />
       <div class="speech">
-        <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${total} runen</p>
+        <p class="speaker">${level.spiritName} · <span data-area-name>${getAreaName()}</span> · ${done}/${total} opdrachten voltooid</p>
         <p>${state.message}</p>
       </div>
     </section>
@@ -5739,7 +6343,7 @@ function renderAdventureTeamBar() {
       <div class="teamSpeech">
         <p class="teamSpeaker">${activeGuide.name}</p>
         <p class="teamMessage">${guideMessage.text}</p>
-        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${total} ${level.progressLabelPlural || "runen"}</p>
+        <p class="teamMeta"><span data-area-name>${getAreaName()}</span> - ${done}/${total} opdrachten voltooid${isLevelExitReady() ? " · Je kunt verder" : ""}</p>
       </div>
     </section>
   `;
@@ -5961,6 +6565,12 @@ function renderMenu() {
             `
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
         }
+        ${localAtlasResetAvailable() ? `
+          <aside class="localAtlasReset" data-local-atlas-reset aria-label="Local development">
+            <span>Local development</span>
+            <button class="secondaryButton" type="button" data-action="reset-local-atlas">Reset local Atlas data</button>
+          </aside>
+        ` : ""}
       </section>
       ${renderWorldManagementPanel()}
     </main>
@@ -6232,8 +6842,44 @@ function renderIntro() {
   `;
 }
 
+// One identity treatment for every NPC encounter state; Standard cards stay separate.
+function renderNpcEncounterHeader(character, titleId, progress = "") {
+  return `<header class="npcEncounterHeader" data-challenge-character="${character.id}">
+    <div class="npcPortraitFrame"><img class="challengeCharacterPortrait" src="${readyAssetSrc(character.portrait)}" alt="${character.name}" /></div>
+    <div class="npcEncounterIdentity">
+      ${progress ? `<p class="npcQuestionProgress">${progress}</p>` : ""}
+      <h2 id="${titleId}">${character.name}</h2>
+    </div>
+  </header>`;
+}
+
 function renderChallenge() {
   const rune = runeById(state.activeRuneId);
+  const linkedChallenge = learningChallengeForRune(rune);
+  const npc = challengePresentationType(linkedChallenge) === "npc";
+  if (state.challengePrerequisiteLocked) {
+    const object = interactiveObjectForTarget(rune);
+    const anchor = objectScreenAnchor(object);
+    const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
+    const character = getChallengeCharacter();
+    const name = character.name;
+    return `
+      ${renderScene({ hideTeamBar: true })}
+      <section class="modalLayer runeLayer ${panelClass} authoredChallengeLayer ${npc ? "npcChallengeLayer" : ""}" style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px" role="dialog" aria-modal="true" aria-labelledby="challenge-title">
+        <div class="runeFocusSpark" aria-hidden="true"></div>
+        <div class="challengeBox runeChallengeBox npcLockedChallengeBox ${npc ? "npcEncounterCard" : ""}" data-challenge-locked="true" ${npc ? 'data-npc-locked="true"' : ""}>
+          ${npc ? renderNpcEncounterHeader(character, "challenge-title") : `<div class="challengeHeader" data-challenge-character="${character?.id || "npc"}">
+            <img class="challengeCharacterPortrait" src="${readyAssetSrc(character?.portrait || "")}" alt="${name}" />
+            <div class="challengeCharacterSpeech"><p class="eyebrow">${name}</p><h2 id="challenge-title">${rune.name}</h2></div>
+          </div>`}
+          ${npc ? '<div class="npcEncounterBody">' : ""}
+          <p class="npcPrerequisiteMessage">Rond eerst de andere opdrachten hier af. ${npc ? `Kom daarna terug bij ${name}.` : "Daarna kun je met deze opdracht beginnen."}</p>
+          <button class="secondaryButton" type="button" data-action="close-challenge">Sluiten</button>
+          ${npc ? "</div>" : ""}
+        </div>
+      </section>
+    `;
+  }
   const questions = currentChallengeQuestions();
   const question = questions[state.questionIndex];
   const choices = makeChoices(question);
@@ -6244,29 +6890,29 @@ function renderChallenge() {
   const anchor = objectScreenAnchor(object);
   const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
   const challengeCharacter = getChallengeCharacter();
-  const challengeLabel = level.challengeLabel || "Rune";
   return `
-    ${renderScene({ hideTeamBar: !authored })}
+    ${renderScene({ hideTeamBar: npc || !authored })}
     <section
-      class="modalLayer runeLayer ${panelClass} ${authored ? "authoredChallengeLayer" : ""}"
+      class="modalLayer runeLayer ${panelClass} ${authored ? "authoredChallengeLayer" : ""} ${npc ? "npcChallengeLayer" : ""}"
       style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
       role="dialog"
       aria-modal="true"
       aria-labelledby="challenge-title"
     >
       <div class="runeFocusSpark" aria-hidden="true"></div>
-      <div class="challengeBox runeChallengeBox ${question.visual?.type === "clock" ? "clockChallengeBox" : ""}">
-        <div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
+      <div class="challengeBox runeChallengeBox ${question.visual?.type === "clock" ? "clockChallengeBox" : ""} ${npc ? "npcEncounterCard" : ""}" ${npc ? `data-npc-answer-state="${state.selectedWrong ? "retry" : "unanswered"}"` : ""}>
+        ${npc ? renderNpcEncounterHeader(challengeCharacter, "challenge-title", `Vraag ${number} van ${total}`) : `<div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
           <img class="challengeCharacterPortrait" src="${readyAssetSrc(challengeCharacter.portrait)}" alt="${challengeCharacter.name}" />
           <div class="challengeCharacterSpeech">
             <p class="eyebrow">${
               authored
                 ? challengeCharacter.name
-                : `${challengeCharacter.name} - ${challengeLabel} ${number}/${total}`
+                : `${challengeCharacter.name} - Vraag ${number}/${total}`
             }</p>
             <h2 id="challenge-title">${rune.name}</h2>
           </div>
-        </div>
+        </div>`}
+        ${npc ? '<div class="npcEncounterBody">' : ""}
         <p class="sum ${authored && question.presentation === "story" ? "storyPrompt" : ""}">
           ${authored ? question.prompt : `Hoeveel is ${question.a} x ${question.b}?`}
         </p>
@@ -6284,18 +6930,25 @@ function renderChallenge() {
                 ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
               </div>`
         }
-        ${authored && state.feedback ? `<p class="feedback challengeFeedback" aria-live="polite">${state.feedback}</p>` : ""}
+        ${npc && state.selectedWrong && !state.feedback && state.guideMessage?.text ? `<aside class="npcRetryHint" aria-live="polite"><strong>${level.guides?.[state.guideMessage.speaker]?.name || "Tip"}</strong><p>${state.guideMessage.text}</p></aside>` : ""}
+        ${(authored || npc) && state.feedback ? `<p class="feedback challengeFeedback" aria-live="polite">${state.feedback}</p>` : ""}
         ${
           state.assistedCompletionAvailable
             ? `<button class="secondaryButton assistedCompletionButton" type="button" data-action="assisted-complete">Samen afronden</button>`
             : ""
         }
+        ${npc ? "</div>" : ""}
       </div>
     </section>
   `;
 }
 
 function getChallengeCharacter() {
+  const activeChallenge = learningChallengeForRune(runeById(state.activeRuneId));
+  if (challengePresentationType(activeChallenge) === "npc") {
+    const character = npcCharacterForChallenge(activeChallenge);
+    if (character) return { ...character, name: npcDisplayName(activeChallenge, character) };
+  }
   return level.challengeCharacter || level.companion || {
     id: "runewachter",
     name: level.spiritName || "Runewachter",
@@ -6305,6 +6958,7 @@ function getChallengeCharacter() {
 
 function renderCorrect() {
   const rune = runeById(state.activeRuneId);
+  const npc = challengePresentationType(learningChallengeForRune(rune)) === "npc";
   const lastQuestion = state.questionIndex === currentChallengeQuestions().length - 1;
   const object = interactiveObjectForTarget(rune);
   const anchor = objectScreenAnchor(object);
@@ -6313,20 +6967,20 @@ function renderCorrect() {
   return `
     ${renderScene({ hideTeamBar: true })}
     <section
-      class="modalLayer runeLayer ${panelClass}"
+      class="modalLayer runeLayer ${panelClass} ${npc ? "npcChallengeLayer" : ""}"
       style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
       role="dialog"
       aria-modal="true"
       aria-labelledby="correct-title"
     >
       <div class="runeFocusSpark runeFocusCorrect" aria-hidden="true"></div>
-      <div class="challengeBox runeChallengeBox successBox">
-        <div class="runeBurst" aria-hidden="true"></div>
-        <h2 id="correct-title">Goed zo!</h2>
+      <div class="challengeBox runeChallengeBox successBox ${npc ? "npcEncounterCard" : ""}" ${npc ? 'data-npc-answer-state="correct"' : ""}>
+        ${npc ? `${renderNpcEncounterHeader(getChallengeCharacter(), "correct-title", `Vraag ${state.questionIndex + 1} van ${currentChallengeQuestions().length}`)}<div class="npcEncounterBody"><h3 class="npcCorrectTitle"><span aria-hidden="true">✓</span> Goed zo!</h3>` : `<div class="runeBurst" aria-hidden="true"></div><h2 id="correct-title">Goed zo!</h2>`}
         <p class="feedback">${state.feedback}</p>
         <button class="primaryButton" type="button" data-action="next-question">
-          ${lastQuestion ? level.challengeCompleteLabel || "Maak de rune wakker" : level.nextQuestionLabel || "Volgende som"}
+          ${lastQuestion ? level.challengeCompleteLabel || "Opdracht afronden" : "Volgende vraag"}
         </button>
+        ${npc ? "</div>" : ""}
       </div>
     </section>
   `;
@@ -6334,24 +6988,25 @@ function renderCorrect() {
 
 function renderReward() {
   const nextLevelId = resolvedNextLevelId();
-  const progressLabel = level.progressLabelPlural || "runen";
-  const rewardBadge = level.reward?.badge || `${completedActiveRuneCount()}/${requiredRuneCount()} ${progressLabel}`;
+  const nextLabel = level.reward.nextLevelId === nextLevelId && level.reward.nextLabel
+    ? level.reward.nextLabel : "Naar het volgende gebied";
+  const rewardBadge = level.reward?.badge || `${completedActiveRuneCount()}/${requiredRuneCount()} opdrachten voltooid`;
   return `
     <main class="rewardScreen">
-      <img class="rewardArt" src="${readyAssetSrc(level.reward.art)}" alt="Sven voor de geopende tempelpoort" />
+      <img class="rewardArt" src="${readyAssetSrc(level.reward.art)}" alt="${level.reward.title}" />
       <section class="rewardPanel">
         <p class="eyebrow">${level.id}</p>
         <h1>${level.reward.title}</h1>
         <p>${level.reward.line}</p>
         <div class="badge">${rewardBadge}</div>
         <div class="stats">
-          <span>${state.answered} opdrachten</span>
+          <span>${state.answered} vragen beantwoord</span>
           <span>${getAccuracy()}% in één keer goed</span>
           <span>${state.attempts} pogingen</span>
         </div>
         ${
           nextLevelId
-            ? `<button class="primaryButton" type="button" data-action="next-level">${level.reward.nextLabel || "Verder"}</button>`
+            ? `<button class="primaryButton" type="button" data-action="next-level">${nextLabel}</button>`
             : `<button class="primaryButton" type="button" data-action="menu">Menu</button>`
         }
         <button class="secondaryButton" type="button" data-action="${nextLevelId ? "menu" : "restart"}">${nextLevelId ? "Menu" : "Speel nog een keer"}</button>
@@ -6489,6 +7144,7 @@ function render() {
   syncAudioForState();
   syncAmbientAnimalTimers();
   syncGuideBlinkTimers();
+  syncNpcAnimations();
   ambientFlybyRuntime.sync();
   sceneEffectRuntime.sync();
   voxelRenderer.sync();
@@ -6691,12 +7347,12 @@ app.addEventListener("click", (event) => {
     return;
   }
   const effectHandleClick = event.target.closest("[data-effect-handle]");
-  if (effectHandleClick && walkPathEditor.editorMode === "effects") {
+  if (effectHandleClick && walkPathEditor.editorMode === "graphics") {
     event.preventDefault();
     event.stopPropagation();
     return;
   }
-  if (event.target.closest(".sceneEffectGuides") && walkPathEditor.editorMode === "effects") {
+  if (event.target.closest(".sceneEffectGuides") && walkPathEditor.editorMode === "graphics") {
     event.preventDefault();
     event.stopPropagation();
     return;
@@ -6951,10 +7607,15 @@ app.addEventListener("click", (event) => {
       render();
       return;
     }
+    if (action === "reset-local-atlas") {
+      resetLocalAtlasData().catch((error) => console.error(`[Atlas] Local reset failed: ${error?.message || error}`));
+      return;
+    }
     if (action === "intro-next") continueIntro();
     if (action === "companion-next") advanceCompanionDialogue();
     if (action === "menu") returnToMenu();
     if (action === "next-question") nextQuestion();
+    if (action === "close-challenge") closeChallenge();
     if (action === "assisted-complete") completeQuestionWithHelp();
     if (action === "reward") showReward();
     if (action === "next-level") continueToNextLevel();
@@ -6999,6 +7660,11 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const npcSetting = event.target.closest("[data-npc-setting]");
+  if (npcSetting && npcSetting.tagName !== "SELECT") {
+    updateChallengeNpcSetting(npcSetting.dataset.challengeId, npcSetting.dataset.npcSetting, npcSetting.value);
+    return;
+  }
   const emissiveSetting = event.target.closest("[data-emissive-setting]");
   if (emissiveSetting && emissiveSetting.dataset.emissiveSetting !== "enabled") {
     const key = emissiveSetting.dataset.emissiveSetting;
@@ -7059,6 +7725,26 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  const challengePresentation = event.target.closest("[data-challenge-presentation]");
+  if (challengePresentation) {
+    updateChallengePresentation(challengePresentation.dataset.challengePresentation, challengePresentation.value);
+    return;
+  }
+  const npcCharacter = event.target.closest("[data-npc-character]");
+  if (npcCharacter) {
+    updateChallengeNpcCharacter(npcCharacter.dataset.npcCharacter, npcCharacter.value);
+    return;
+  }
+  const challengeBoolean = event.target.closest("[data-challenge-boolean]");
+  if (challengeBoolean) {
+    updateChallengeBoolean(challengeBoolean.dataset.challengeId, challengeBoolean.dataset.challengeBoolean, challengeBoolean.checked);
+    return;
+  }
+  const npcSetting = event.target.closest("select[data-npc-setting]");
+  if (npcSetting) {
+    updateChallengeNpcSetting(npcSetting.dataset.challengeId, npcSetting.dataset.npcSetting, npcSetting.value);
+    return;
+  }
   const emissiveSetting = event.target.closest("[data-emissive-setting]");
   if (emissiveSetting) {
     const key = emissiveSetting.dataset.emissiveSetting;
@@ -7177,7 +7863,7 @@ app.addEventListener("change", (event) => {
 app.addEventListener("pointerdown", (event) => {
   ensureAudioUnlocked();
   const effectHandle = event.target.closest("[data-effect-handle]");
-  if (effectHandle && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "effects")) {
+  if (effectHandle && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "graphics")) {
     event.preventDefault();
     event.stopPropagation();
     effectHandle.setPointerCapture?.(event.pointerId);
@@ -7189,7 +7875,7 @@ app.addEventListener("pointerdown", (event) => {
     return;
   }
   const effectVertex = event.target.closest("[data-effect-vertex]");
-  if (effectVertex && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "effects")) {
+  if (effectVertex && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "graphics")) {
     event.preventDefault();
     event.stopPropagation();
     effectVertex.setPointerCapture?.(event.pointerId);
@@ -7217,7 +7903,7 @@ app.addEventListener("pointerdown", (event) => {
     };
     return;
   }
-  if (event.target.closest(".sceneEffectGuides") && walkPathEditor.editorMode === "effects") {
+  if (event.target.closest(".sceneEffectGuides") && walkPathEditor.editorMode === "graphics") {
     event.preventDefault();
     event.stopPropagation();
     return;
@@ -7428,12 +8114,12 @@ window.addEventListener("keydown", (event) => {
     );
     return;
   }
-  if (!editingText && walkPathEditor.editorMode === "effects" && event.ctrlKey && event.key.toLowerCase() === "c") {
+  if (!editingText && walkPathEditor.editorMode === "graphics" && event.ctrlKey && event.key.toLowerCase() === "c") {
     event.preventDefault();
     copySceneEffect();
     return;
   }
-  if (!editingText && walkPathEditor.editorMode === "effects" && event.ctrlKey && event.key.toLowerCase() === "v") {
+  if (!editingText && walkPathEditor.editorMode === "graphics" && event.ctrlKey && event.key.toLowerCase() === "v") {
     event.preventDefault();
     pasteSceneEffect();
     return;

@@ -1370,7 +1370,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
       "id": "LVL-0026-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De werkplaatsdeur blijft dicht. Eén onderdeel mist nog."
+      "text": "De werkplaatsdeur wacht nog. Eerst nog {remainingChallenges} afronden."
     }
   ],
   "menu": {

@@ -508,7 +508,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
     exitHotspotId: exit.id,
     exitActionLabel: "Naar Zweden",
     challengeLabel: "Reisproef",
-    challengeCompleteLabel: "Maak de route klaar",
+    challengeCompleteLabel: "Opdracht afronden",
     choiceHint: "Kies het juiste antwoord.",
     progressLabelPlural: "reistekens",
     menu: { illustration: asset, badge: "Verbonden gebied", detail: "Een fjordhaven onder het avondlicht" },
@@ -599,7 +599,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         challengeId: item.id, speaker: "moose", text: item.already
       })),
       { id: "no-progress", event: "LEVEL_PROGRESS_MILESTONE", speaker: "minnie", text: "Het fjordlicht tekent de route steeds verder over het water." },
-      { id: "no-blocked", event: "EXIT_BLOCKED", speaker: "moose", text: "De fjordpoort mist nog {remaining} reistekens. De rode deur blijft nors." },
+      { id: "no-blocked", event: "EXIT_BLOCKED", speaker: "moose", text: "De fjordpoort wacht nog op {remainingChallenges}. De rode deur blijft nors." },
       { id: "no-unlocked", event: "PATH_UNLOCKED", speaker: "moose", text: "De fjordpoort is open. Zweden ligt verderop." },
       { id: "no-complete", event: "ADVENTURE_COMPLETE", speaker: "minnie", text: "Dag fjordlicht! Het Zweedse dorp wacht." }
     ],

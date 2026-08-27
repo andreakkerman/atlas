@@ -32,6 +32,9 @@ module.exports = defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     reducedMotion: "reduce",
+    // Prevent an installed app worker from outliving emulated mobile contexts or
+    // serving a stale asset graph while a local editor build is under test.
+    serviceWorkers: "block",
   },
 
   /* Configure projects for major browsers */

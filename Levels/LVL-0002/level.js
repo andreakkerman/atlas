@@ -829,13 +829,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       id: "temple-progress",
       event: "LEVEL_PROGRESS_MILESTONE",
       speaker: "moose",
-      text: "{completed} van de {total} tempelproeven klaar. Nog {remaining}."
+      text: "{completed} van de {total} tempelproeven voltooid. Nog {remainingChallenges} te doen."
     },
     {
       id: "temple-exit-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De havendeur blijft dicht. Eerst nog {remaining} proeven."
+      text: "De havendeur wacht nog. Eerst nog {remainingChallenges} afronden."
     },
     {
       id: "temple-complete",
@@ -847,7 +847,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
       id: "temple-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "minnie",
-      text: "Alle proeven zijn klaar! De havendeur kan nu open."
+      text: "Je kunt verder! De havendeur kan nu open."
     }
   ],
   areas: [

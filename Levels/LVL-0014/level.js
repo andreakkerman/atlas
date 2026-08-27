@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
   "exitHotspotId": "collegeGate",
   "exitActionLabel": "Naar Frankrijk",
   "challengeLabel": "Reisproef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "reistekens",
   "menu": {
@@ -805,7 +805,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
       "id": "uk-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De collegepoort mist nog {remaining} reistekens. Oude poorten haasten zich nooit."
+      "text": "De collegepoort wacht nog op {remainingChallenges}. Oude poorten haasten zich nooit."
     },
     {
       "id": "uk-unlocked",

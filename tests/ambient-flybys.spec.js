@@ -162,6 +162,7 @@ test.describe("ambient editor usability", () => {
   test("panel scrolls, sections collapse, and flight points remain editable off-screen", async ({ page }) => {
     await startItaly(page, editorUrl);
     await page.keyboard.press("Control+Shift+D");
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
     const panel = page.locator("[data-developer-tools]");
     const scroll = await panel.evaluate((node) => {
@@ -211,6 +212,7 @@ test.describe("ambient editor usability", () => {
     try {
       await startItaly(page, process.env.ATLAS_EDITOR_URL);
       await page.keyboard.press("Control+Shift+D");
+      await page.getByRole("button", { name: "Graphics", exact: true }).click();
       await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
       await page.locator("[data-flyby-setting='motionProfile'][data-flyby-id='italyCommonSwift']").selectOption("organic");
       await page.locator("[data-flyby-setting='wobble'][data-flyby-id='italyCommonSwift']").fill("18");

@@ -1111,14 +1111,42 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
     {
       "id": "LVL-0021-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "opticsTable",
       "speaker": "moose",
       "text": "Let op waar het licht valt. Schaduw is ook informatie."
+    },
+    {
+      "id": "LVL-0021-mechanical-model-attention",
+      "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "mechanicalModel",
+      "speaker": "minnie",
+      "text": "Dat mechanische model lijkt klaar om zijn geheim te laten zien."
+    },
+    {
+      "id": "LVL-0021-central-codex-attention",
+      "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "centralCodex",
+      "speaker": "moose",
+      "text": "De codex ligt open. Kijk goed hoe Leonardo zijn ideeën ordende."
+    },
+    {
+      "id": "LVL-0021-engineering-table-attention",
+      "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "engineeringTable",
+      "speaker": "minnie",
+      "text": "Op die bouwtafel wacht een ontwerp dat nog afgemaakt wil worden."
     },
     {
       "id": "LVL-0021-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "minnie",
       "text": "Ha, dat vonkje snapte jij sneller dan de zon verschoof."
+    },
+    {
+      "id": "LVL-0021-progress",
+      "event": "LEVEL_PROGRESS_MILESTONE",
+      "speaker": "moose",
+      "text": "De atlas krijgt vorm. Nog even nauwkeurig verder onderzoeken."
     },
     {
       "id": "LVL-0021-exit",
@@ -1130,7 +1158,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "id": "LVL-0021-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De Romeinse poort wacht nog. Eerst missen we hier nog een ontdekking."
+      "text": "De Romeinse poort wacht nog. Eerst nog {remainingChallenges} afronden."
+    },
+    {
+      "id": "LVL-0021-complete",
+      "event": "ADVENTURE_COMPLETE",
+      "speaker": "minnie",
+      "text": "Leonardo's eerste atlasblad is af. Op naar de volgende ontdekking!"
     }
   ],
   "menu": {

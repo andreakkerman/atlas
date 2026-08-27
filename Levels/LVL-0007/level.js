@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
   "exitHotspotId": "surfaceGate",
   "exitActionLabel": "Naar buiten",
   "challengeLabel": "Eilandproef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "eilandproeven",
   "menu": {
@@ -230,7 +230,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       "id": "island-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De eilandpoort wacht nog. Eerst nog {remaining} routeproeven."
+      "text": "De eilandpoort wacht nog. Eerst nog {remainingChallenges}."
     },
     {
       "id": "island-unlocked",

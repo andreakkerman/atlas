@@ -40,7 +40,7 @@ async function runMove(page, distance) {
 test.describe("state-coupled Sven locomotion", () => {
   test.setTimeout(60_000);
 
-  for (const [name, distance] of [["very short", 30], ["moderate", 180], ["moderate left", -180], ["long", 520]]) {
+  for (const [name, distance] of [["very short", 20], ["moderate", 180], ["moderate left", -180], ["long", 520]]) {
     test(`${name} move keeps idle stationary and arrives coherently`, async ({ page }) => {
       await enterLevel(page);
       const result = await runMove(page, distance);
@@ -175,18 +175,22 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     const panel = page.locator("[data-developer-tools]");
     await expect(panel).toBeVisible();
 
-    const visual = panel.locator('[data-editor-panel-key="simple-visual-controls"]');
-    const locomotionPanel = panel.locator('[data-editor-panel-key="sven-locomotion"]');
-    await visual.locator("summary").click();
-    await locomotionPanel.locator("summary").click();
+    await panel.getByRole("button", { name: "Graphics", exact: true }).click();
+    const graphicsVisual = panel.locator('[data-editor-panel-key="simple-visual-controls"]');
+    await graphicsVisual.evaluate((element) => { element.open = true; });
     await panel.evaluate((element) => { element.scrollTop = 420; });
     const scrollBefore = await panel.evaluate((element) => element.scrollTop);
 
     for (const [key, value] of [["backgroundBrightness", "1.1"], ["backgroundContrast", "1.15"], ["backgroundWarmth", "0.1"]]) {
       const input = panel.locator(`[data-level-setting="${key}"]`);
       await input.fill(value);
-      await expect(visual).toHaveAttribute("open", "");
+      await expect(graphicsVisual).toHaveAttribute("open", "");
     }
+    await panel.getByRole("button", { name: "Characters", exact: true }).click();
+    const characterVisual = panel.locator('[data-editor-panel-key="simple-visual-controls"]');
+    const locomotionPanel = panel.locator('[data-editor-panel-key="sven-locomotion"]');
+    await characterVisual.evaluate((element) => { element.open = true; });
+    await locomotionPanel.evaluate((element) => { element.open = true; });
     const movement = panel.locator('[data-level-setting="movementSpeed"]');
     await movement.fill("310");
     await expect(movement).toBeFocused();
@@ -212,7 +216,7 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
 
     await panel.getByRole("button", { name: "Apply" }).click();
     await expect(panel).toContainText("Applied", { timeout: 15_000 });
-    await expect(visual).toHaveAttribute("open", "");
+    await expect(characterVisual).toHaveAttribute("open", "");
     await expect(locomotionPanel).toHaveAttribute("open", "");
 
     await page.reload();

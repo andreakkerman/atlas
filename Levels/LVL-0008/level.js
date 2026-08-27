@@ -460,7 +460,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
   exitHotspotId: "rightGate",
   exitActionLabel: "Door de poort",
   challengeLabel: "Blokkenproef",
-  challengeCompleteLabel: "Maak het teken wakker",
+  challengeCompleteLabel: "Opdracht afronden",
   choiceHint: "Kies het juiste antwoord.",
   progressLabelPlural: "tekens",
   menu: {
@@ -598,19 +598,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       id: "sealed-solved",
       event: "CHALLENGE_SUCCESS",
       speaker: "moose",
-      text: "Dat teken is klaar. De kamer kraakt goedkeurend."
+      text: "Deze opdracht is voltooid. De kamer kraakt goedkeurend."
     },
     {
       id: "sealed-progress",
       event: "LEVEL_PROGRESS_MILESTONE",
       speaker: "minnie",
-      text: "Nog een teken wakker. Het paarse licht groeit."
+      text: "Weer een opdracht voltooid. Het paarse licht groeit."
     },
     {
       id: "sealed-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De rechterpoort blijft dicht. Eerst nog {remaining} bloktekens."
+      text: "De rechterpoort blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       id: "sealed-unlocked",

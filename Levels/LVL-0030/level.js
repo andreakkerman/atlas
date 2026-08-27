@@ -30,7 +30,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
     "maxY": 635
   },
   "challengeLabel": "Egyptische proef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "ontdekkingen",
   "challengeCharacter": {
@@ -1090,7 +1090,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "LVL-0030-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De scarabee blijft stil. We missen nog een tempelspoor."
+      "text": "De scarabee blijft stil. Eerst nog {remainingChallenges} afronden."
     }
   ],
   "menu": {

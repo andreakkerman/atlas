@@ -1067,7 +1067,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
       "id": "LVL-0025-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De atelierdeur blijft dicht. Eerst ontbreekt er nog een lijn."
+      "text": "De atelierdeur wacht nog. Eerst nog {remainingChallenges} afronden."
     }
   ],
   "menu": {

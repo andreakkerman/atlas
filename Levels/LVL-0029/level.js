@@ -30,7 +30,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
     "maxY": 635
   },
   "challengeLabel": "Egyptische proef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "ontdekkingen",
   "challengeCharacter": {
@@ -1091,7 +1091,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "LVL-0029-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Nog even niet. De kamer houdt nog een aanwijzing vast."
+      "text": "Nog even niet. Eerst nog {remainingChallenges} afronden."
     }
   ],
   "menu": {

@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
   "exitHotspotId": "escapeHatch",
   "exitActionLabel": "Ontsnappen",
   "challengeLabel": "Hangarproef",
-  "challengeCompleteLabel": "Maak het luik klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "hangarproeven",
   "menu": {
@@ -235,7 +235,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       "id": "minisub-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Het luik blijft dicht. Eerst nog {remaining} controles."
+      "text": "Het luik blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       "id": "minisub-unlocked",

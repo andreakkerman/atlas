@@ -4,24 +4,24 @@ window.SVEN_WORLD_CONFIG = {
     "LVL-0013": {
       "order": [],
       "enabled": {
-        "LVL-0014": false,
-        "LVL-0015": false,
-        "LVL-0018": false,
-        "LVL-0020": false
+        "LVL-0014": true,
+        "LVL-0015": true,
+        "LVL-0018": true,
+        "LVL-0020": true
       }
     },
     "LVL-0008": {
       "order": [],
       "enabled": {
-        "LVL-0012": false
+        "LVL-0012": true
       }
     },
     "LVL-0021": {
       "order": [],
       "enabled": {
-        "LVL-0022": false,
-        "LVL-0023": false,
-        "LVL-0025": false
+        "LVL-0022": true,
+        "LVL-0023": true,
+        "LVL-0025": true
       }
     }
   },

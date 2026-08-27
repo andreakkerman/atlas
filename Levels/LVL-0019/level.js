@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
   "exitHotspotId": "harborGate",
   "exitActionLabel": "Terug naar Rheden",
   "challengeLabel": "Reisproef",
-  "challengeCompleteLabel": "Maak de thuisroute klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "reistekens",
   "menu": {
@@ -780,7 +780,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
       "id": "se-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De havenpoort mist nog {remaining} reistekens. Thuis loopt niet weg."
+      "text": "De havenpoort wacht nog op {remainingChallenges}. Thuis loopt niet weg."
     },
     {
       "id": "se-unlocked",

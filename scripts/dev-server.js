@@ -3,6 +3,7 @@ const http = require("http");
 const path = require("path");
 const vm = require("vm");
 const { URL } = require("url");
+const { writeManifest: writeCharacterManifest } = require("./generate-character-manifest");
 
 const rootDir = path.resolve(__dirname, "..");
 const port = Number(process.env.PORT || 4173);
@@ -668,18 +669,28 @@ function loadLevelDefinition(levelId) {
   return level;
 }
 
+function replaceFileAtomic(tempPath, filePath) {
+  try {
+    fs.renameSync(tempPath, filePath);
+  } catch (error) {
+    if (!['EPERM', 'EEXIST'].includes(error?.code)) throw error;
+    fs.copyFileSync(tempPath, filePath);
+    fs.unlinkSync(tempPath);
+  }
+}
+
 function writeLevelDefinitionAtomic(levelId, level) {
   const filePath = levelPath(levelId);
   const source = `window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};\n\nwindow.SVEN_LEVEL_DEFINITIONS[${JSON.stringify(levelId)}] = ${JSON.stringify(level, null, 2)};\n`;
   const tempPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
   fs.writeFileSync(tempPath, source);
-  fs.renameSync(tempPath, filePath);
+  replaceFileAtomic(tempPath, filePath);
 }
 
 function writeTextAtomic(filePath, source) {
   const tempPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
   fs.writeFileSync(tempPath, source);
-  fs.renameSync(tempPath, filePath);
+  replaceFileAtomic(tempPath, filePath);
 }
 
 function syncLegacyObjectsGeometry(level) {
@@ -1129,6 +1140,7 @@ function contentType(filePath) {
 function serveStatic(response, url) {
   const decoded = decodeURIComponent(url.pathname);
   const relative = decoded === "/" ? "index.html" : decoded.replace(/^\/+/, "");
+  if (relative.replace(/\\/g, "/") === "assets/characters/manifest.js") writeCharacterManifest();
   const filePath = path.resolve(rootDir, relative);
   if (!filePath.startsWith(rootDir + path.sep)) {
     sendText(response, 403, "Forbidden");
@@ -1156,5 +1168,6 @@ const server = http.createServer(async (request, response) => {
 });
 
 server.listen(port, "127.0.0.1", () => {
+  writeCharacterManifest();
   console.log(`SvenAdventure dev server: http://127.0.0.1:${port}/?dev=editor`);
 });

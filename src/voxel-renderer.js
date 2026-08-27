@@ -272,6 +272,7 @@
     let cadenceCount = 0;
     let lastGrid = [0, 0];
     let lastSpriteCount = 0;
+    const gpuCapabilities = global.AtlasWebGPUCapabilities;
 
     const debugIndex = () => ({ final: 0, original: 1, depth: 2, lighting: 3, geometry: 4 })[settings.debugView] || 0;
     const gpuUsage = global.GPUTextureUsage || { TEXTURE_BINDING: 4, COPY_DST: 2, RENDER_ATTACHMENT: 16 };
@@ -306,6 +307,7 @@
       const cadenceMs = cadenceCount ? cadenceTotal / cadenceCount : 0;
       return {
         supported: Boolean(global.navigator?.gpu),
+        failureCategory: error?.atlasWebGPUCategory || null,
         ready: ready && presented,
         status,
         error: error?.message || null,
@@ -324,18 +326,22 @@
 
     async function initializeDevice() {
       if (device && pipelines) return device;
-      if (!global.navigator?.gpu) throw new Error("WebGPU is not available in this browser.");
       status = "requesting-adapter";
       report();
-      adapter = await global.navigator.gpu.requestAdapter({ powerPreference: "high-performance" });
-      if (!adapter) throw new Error("No WebGPU adapter is available.");
-      device = await adapter.requestDevice();
+      if (!gpuCapabilities) throw new Error("Atlas WebGPU capability broker is unavailable.");
+      try {
+        device = await gpuCapabilities.requestDevice("voxel");
+        adapter = global.__ATLAS_WEBGPU_SESSION__?.adapter || null;
+      } catch (caught) {
+        throw caught;
+      }
       status = "compiling-pipelines";
       report();
       device.lost.then((info) => {
         error = new Error(`WebGPU device lost: ${info.message || info.reason}`);
         status = "device-lost";
         ready = false;
+        gpuCapabilities.forgetDevice(device);
         device = null;
         report();
       });
@@ -366,7 +372,13 @@
         const alpha = device.createRenderPipeline({ ...common, label: `${label} atmospheric alpha`, depthStencil: { ...common.depthStencil, depthWriteEnabled: false, depthCompare: "always" }, fragment: { module, entryPoint: "fragmentMain", targets: [{ format, blend }] } });
         return { opaque, alpha };
       };
-      pipelines = createCubePipelines(voxelModule, "Atlas Voxel");
+      try {
+        pipelines = createCubePipelines(voxelModule, "Atlas Voxel");
+      } catch (caught) {
+        const pipelineError = new Error(`Voxel pipeline initialization failed: ${caught?.message || caught}`, { cause: caught });
+        pipelineError.atlasWebGPUCategory = "renderer-initialization-failed";
+        throw pipelineError;
+      }
       return device;
     }
 
@@ -544,6 +556,10 @@
         entries.push({ color, rect: normalized, layerDepth, mirror, key: fallbackKey });
       };
       const actor = document.querySelector("[data-actor='sven']");
+      document.querySelectorAll("[data-npc-challenge] [data-npc-sprite]").forEach((npc) => {
+        const shell = npc.closest("[data-npc-challenge]");
+        add(npc, shell, 0.9, Number(shell?.dataset.npcFacingScale) < 0, `npc:${shell?.dataset.npcChallenge || "unknown"}`);
+      });
       // Sven's locomotion controller already resolves dedicated left/right frame assets.
       // Mirroring here used to invert the resolved visual and produced apparent moonwalking.
       add(actor, actor, 0.94, false, "actor:sven");
@@ -694,7 +710,14 @@
         schedule();
       } catch (caught) {
         error = caught instanceof Error ? caught : new Error(String(caught));
-        status = "unavailable";
+        const category = error.atlasWebGPUCategory;
+        status = category === "api-unavailable"
+          ? "api-unavailable"
+          : category === "adapter-unavailable"
+            ? "adapter-unavailable"
+            : category === "device-initialization-failed"
+              ? "device-initialization-failed"
+              : "renderer-initialization-failed";
         ready = false;
         report();
         console.warn(`[Atlas Voxel] ${error.message}`);

@@ -106,12 +106,23 @@ async function applyAndReload(page, levelId) {
 test.describe("developer editor interaction routing", () => {
   test("keeps Objects and Effects controls functional through real delegated clicks and pointer drags", async ({ page }) => {
     const pageErrors = await openVikingEditor(page);
+    const persistedEffectCount = loadLevelFromFile(
+      path.join(root, "Levels", "LVL-0003", "level.js"),
+      "LVL-0003"
+    ).sceneEffects?.length || 0;
 
     const stateBefore = await page.evaluate(() => ({
       movement: window.eval("state.movement"),
       svenX: window.eval("state.worldX"),
       svenY: window.eval("state.worldY")
     }));
+
+    await page.evaluate(() => {
+      window.eval("level.sceneEffects = []");
+      window.eval("level.sceneEffectGroups = []");
+      window.eval("sceneEffectRuntime.prepareLevel")(window.eval("level"));
+      window.eval("render")();
+    });
 
     await page.locator("details.editorSection summary").filter({ hasText: "Ambient animals" }).first().click();
     await expect(page.locator("details.editorSection").filter({ hasText: "Ambient animals" })).not.toHaveAttribute("open", "");
@@ -155,7 +166,7 @@ test.describe("developer editor interaction routing", () => {
       return object.radius > before;
     }, objectBefore.radius)).toBe(true);
 
-    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
     await page.locator("[data-scene-effects-editor] details.editorSection summary").filter({ hasText: "Effect preset library" }).first().click();
     await expect(page.locator("[data-scene-effects-editor] details.editorSection").filter({ hasText: "Effect preset library" })).not.toHaveAttribute("open", "");
@@ -195,15 +206,15 @@ test.describe("developer editor interaction routing", () => {
     expect(afterGuideClick).toEqual({ movementUnchanged: true, svenUnchanged: true });
 
     for (let index = 0; index < 2; index += 1) {
-      await page.getByRole("button", { name: "Objects", exact: true }).click();
+      await page.getByRole("button", { name: "Characters", exact: true }).click();
       await expect(page.getByRole("button", { name: "Preview blink" }).first()).toBeVisible();
-      await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
       await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
     }
 
     await page.locator("[data-effect-preset-card='light-source-enhancement'] button[data-add-effect]").first().click();
     await expect.poll(() => page.evaluate(() => window.eval("(level.sceneEffects || []).length"))).toBe(2);
-    await page.getByRole("button", { name: "Objects", exact: true }).click();
+      await page.getByRole("button", { name: "Characters", exact: true }).click();
     await page.getByRole("button", { name: "Preview blink" }).first().click();
     await expect.poll(() => page.evaluate(() => window.__editorInteractionCounts.blink)).toBe(2);
 
@@ -211,7 +222,7 @@ test.describe("developer editor interaction routing", () => {
     await expect.poll(() => page.evaluate(() => ({
       status: window.eval("walkPathEditor.status"),
       effects: window.eval("(level.sceneEffects || []).length")
-    }))).toEqual({ status: "Reverted", effects: 0 });
+    }))).toEqual({ status: "Reverted", effects: persistedEffectCount });
 
     expect(pageErrors).toEqual([]);
   });
@@ -219,7 +230,7 @@ test.describe("developer editor interaction routing", () => {
   test("keeps scene effect Advanced settings open after editing an advanced value", async ({ page }) => {
     const pageErrors = await openVikingEditor(page);
 
-    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
     await page.locator("[data-effect-preset-card='light-source-enhancement'] button[data-add-effect]").first().click();
     await page.locator("[data-select-effect='light-source-enhancement-01']").click();
@@ -245,6 +256,9 @@ test.describe("developer editor interaction routing", () => {
     try {
       await openLevelEditor(page, "LVL-0002");
       const expected = await page.evaluate(async () => {
+        window.eval("level.sceneEffects = []");
+        window.eval("level.sceneEffectGroups = []");
+        window.eval("sceneEffectRuntime.prepareLevel")(window.eval("level"));
         window.eval("addSceneEffect")("light-source-enhancement");
         const effect = window.eval("level.sceneEffects[0]");
         effect.overrides = {
@@ -363,7 +377,7 @@ test.describe("developer editor interaction routing", () => {
 
   test("Effects tab keeps empty-world walking while effect handles remain interactive", async ({ page }) => {
     const pageErrors = await openVikingEditor(page);
-    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await page.locator("[data-effect-preset-card='light-source-enhancement'] button[data-add-effect]").first().click();
     await page.locator("[data-select-effect='light-source-enhancement-01']").click();
     await page.evaluate(() => {
@@ -517,9 +531,10 @@ test.describe("developer editor interaction routing", () => {
         window.eval("state.cameraX = undefined");
         window.eval("render")();
       });
-      await page.getByRole("button", { name: "Effects", exact: true }).click();
+      await page.getByRole("button", { name: "Graphics", exact: true }).click();
       await page.locator("[data-effect-preset-card='light-source-enhancement'] button[data-add-effect]").first().click();
-      await page.getByRole("button", { name: "Objects", exact: true }).click();
+      const selectedEffectId = await page.evaluate(() => window.eval("walkPathEditor.selectedEffectId"));
+      await page.getByRole("button", { name: "Characters", exact: true }).click();
       await page.locator('[data-debug-action="collapse-editor-panel"]').click();
       await expect(page.locator("[data-developer-tools]")).toHaveCount(0);
       await expect(page.getByRole("button", { name: "Editor" })).toBeVisible();
@@ -538,7 +553,7 @@ test.describe("developer editor interaction routing", () => {
 
       await page.getByRole("button", { name: "Editor" }).click();
       await expect(page.locator("[data-developer-tools]")).toBeVisible();
-      await expect(page.locator("[data-developer-tools]")).toHaveAttribute("data-current-editor-mode", "objects");
+      await expect(page.locator("[data-developer-tools]")).toHaveAttribute("data-current-editor-mode", "characters");
       const restored = await page.evaluate((initial) => {
         const point = window.eval("level.walkPath.find((item) => item.id === 'procenoGate-approach')");
         return {
@@ -554,7 +569,7 @@ test.describe("developer editor interaction routing", () => {
         currentPoint: "procenoGate-approach",
         status: "Modified",
         modified: true,
-        selectedEffectId: "light-source-enhancement-01",
+        selectedEffectId,
         moved: true
       });
 

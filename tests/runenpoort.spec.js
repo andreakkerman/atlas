@@ -58,7 +58,7 @@ const blokkenpoortScenes = [
     title: "De Blokkenpoort",
     startButton: /De Blokkenpoort/,
     challenges: ["Diamantzwaard", "Creepermasker", "Donkere poort"],
-    finalButton: "Maak het teken wakker",
+    finalButton: "Opdracht afronden",
     unlockLine: "De rechterpoort reageert. Nu netjes verder.",
     exitName: "Rechterpoort",
     rewardHeading: "De kamer ontwaakt!",
@@ -70,7 +70,7 @@ const blokkenpoortScenes = [
     levelId: "LVL-0009",
     title: "De Ontwaakte Kamer",
     challenges: ["Wereldkaart", "Open boek", "Kristalkast"],
-    finalButton: "Maak het teken wakker",
+    finalButton: "Opdracht afronden",
     unlockLine: "De deur geeft mee. Voorzichtig door.",
     exitName: "IJzeren deur",
     rewardHeading: "De ijzeren deur opent!",
@@ -82,7 +82,7 @@ const blokkenpoortScenes = [
     levelId: "LVL-0010",
     title: "De Strandkamer",
     challenges: ["Schatkaart", "Zandkasteel", "Houten boot"],
-    finalButton: "Maak het strandteken wakker",
+    finalButton: "Opdracht afronden",
     unlockLine: "De stenen deur is klaar. Warm wordt het wel.",
     exitName: "Stenen deur",
     rewardHeading: "De stranddeur opent!",
@@ -94,7 +94,7 @@ const blokkenpoortScenes = [
     levelId: "LVL-0011",
     title: "De Netherproef",
     challenges: ["Brouwtafel", "Netherbol", "Lavakaart"],
-    finalButton: "Maak het teken wakker",
+    finalButton: "Opdracht afronden",
     unlockLine: "De deur naar boven opent. Mooi moment om te gaan.",
     exitName: "Oppervlaktedeur",
     rewardHeading: "De deur naar boven opent!",
@@ -106,7 +106,7 @@ const blokkenpoortScenes = [
     levelId: "LVL-0012",
     title: "De Weg Naar Huis",
     challenges: ["Thuiskaart", "Betovertafel", "Paars portaal"],
-    finalButton: "Maak het laatste teken wakker",
+    finalButton: "Opdracht afronden",
     unlockLine: "De uitgang is klaar. Tijd om naar huis te gaan.",
     exitName: "Uitgang naar huis",
     rewardHeading: "Sven is terug!",
@@ -167,7 +167,7 @@ async function startAdventure(page, url = gameUrl) {
   await expect(page.getByRole("button", { name: "Verder" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Het bos in" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Kijk" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Praat" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Praat", exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Activeer" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Pad naar de tempel" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Runewachter" })).toHaveCount(0);
@@ -183,7 +183,7 @@ async function startAdventure(page, url = gameUrl) {
   await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Sven loopt");
   await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Runewachter");
   await expect(page.locator(".teamMeta")).toContainText("Bos");
-  await expect(page.locator(".teamMeta")).toContainText("0/3 runen");
+  await expect(page.locator(".teamMeta")).toContainText("0/3 opdrachten voltooid");
   await expect(page.locator('[data-guide="minnie"] img')).toBeVisible();
   await expect(page.locator('[data-guide="moose"] img')).toBeVisible();
   await expect(page.locator('[data-guide="minnie"]')).toHaveAttribute("data-active", "true");
@@ -403,6 +403,7 @@ async function getCurrentQuestion(page) {
 }
 
 async function answerCurrentQuestion(page, options = {}) {
+  const npc = await page.locator(".npcEncounterCard").count() > 0;
   const { prompt, correct, answerMode, authored } = await getCurrentQuestion(page);
   await expect(page.getByText(prompt)).toBeVisible();
 
@@ -430,19 +431,24 @@ async function answerCurrentQuestion(page, options = {}) {
   if (authored) {
     await expect(page.getByText(`Ja! Het antwoord is ${correct}.`)).toBeVisible();
   }
-  await expect(page.locator("[data-challenge-character]")).toHaveCount(0);
+  await expect(page.locator("[data-challenge-character]")).toHaveCount(npc ? 1 : 0);
 }
 
 async function openChallengePoint(page, challengeName) {
-  const target = page.getByRole("button", { name: challengeName });
+  const npcButtonNames = {
+    Windrune: "Praat met Freya",
+    Poortschild: "Praat met Eivar"
+  };
+  const target = page.getByRole("button", { name: npcButtonNames[challengeName] || challengeName, exact: true });
   await tap(target);
-  await expect(page.getByRole("heading", { name: challengeName })).toBeVisible({ timeout: 22000 });
+  await expect(page.getByRole("heading", { name: npcButtonNames[challengeName]?.replace("Praat met ", "") || challengeName, exact: true })).toBeVisible({ timeout: 22000 });
 }
 
 async function solveChallengeSet(page, challenge, finalButtonName, challengerName, options = {}) {
   await openChallengePoint(page, challenge.name);
-  await expect(page.getByRole("heading", { name: challenge.name })).toBeVisible();
-  await expect(page.locator("[data-challenge-character]")).toContainText(challengerName);
+  const encounterName = { Windrune: "Freya", Poortschild: "Eivar" }[challenge.name];
+  await expect(page.getByRole("heading", { name: encounterName || challenge.name, exact: true })).toBeVisible();
+  await expect(page.locator("[data-challenge-character]")).toContainText(encounterName || challengerName);
 
   for (let questionIndex = 0; questionIndex < 4; questionIndex += 1) {
     await answerCurrentQuestion(page, {
@@ -450,7 +456,7 @@ async function solveChallengeSet(page, challenge, finalButtonName, challengerNam
     });
 
     const isLastQuestion = questionIndex === 3;
-    const nextButton = page.getByRole("button", { name: isLastQuestion ? finalButtonName : "Volgende som" });
+    const nextButton = page.getByRole("button", { name: isLastQuestion ? finalButtonName : "Volgende vraag" });
     await nextButton.scrollIntoViewIfNeeded();
     await tap(nextButton);
   }
@@ -475,10 +481,14 @@ async function playFullAdventure(page) {
 
   for (const [runeIndex, rune] of runes.entries()) {
     await openChallengePoint(page, rune.name);
-    await expect(page.getByRole("heading", { name: rune.name })).toBeVisible();
-    await expect(page.locator("[data-challenge-character='runewachter']")).toBeVisible();
-    await expect(page.locator("[data-challenge-character='runewachter']")).toContainText("Runewachter");
-    await expect(page.locator("[data-challenge-character='runewachter'] img")).toHaveAttribute("src", /viking-spirit\.png/);
+    await expect(page.getByRole("heading", { name: rune.name === "Windrune" ? "Freya" : rune.name, exact: true })).toBeVisible();
+    const characterId = rune.name === "Windrune" ? "freya" : "runewachter";
+    const characterName = rune.name === "Windrune" ? "Freya" : "Runewachter";
+    const portraitPattern = rune.name === "Windrune" ? /characters\/freya\/portrait\.png/ : /viking-spirit\.png/;
+    const challengeCharacter = page.locator(`[data-challenge-character='${characterId}']`);
+    await expect(challengeCharacter).toBeVisible();
+    await expect(challengeCharacter).toContainText(characterName);
+    await expect(challengeCharacter.locator("img")).toHaveAttribute("src", portraitPattern);
     await expect(page.getByText(`Laat de ${rune.name} ontwaken.`)).toHaveCount(0);
     await expect(page.locator("[data-adventure-team-bar]")).toBeVisible();
 
@@ -488,7 +498,7 @@ async function playFullAdventure(page) {
       });
 
       const isLastQuestion = questionIndex === 3;
-      const nextButton = page.getByRole("button", { name: isLastQuestion ? "Maak de rune wakker" : "Volgende som" });
+      const nextButton = page.getByRole("button", { name: isLastQuestion ? "Opdracht afronden" : "Volgende vraag" });
       await nextButton.scrollIntoViewIfNeeded();
       await tap(nextButton);
 
@@ -515,7 +525,7 @@ async function playFullAdventure(page) {
     }
   }
 
-  await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
+  await expect(page.getByText("Je kunt verder! Op naar de tempel.")).toBeVisible();
   await expect(page.locator('[data-object="templeGate"]')).toBeVisible();
   await expect(page.locator('[data-adventure-team-bar] [data-action="reward"]')).toHaveCount(0);
   await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -781,7 +791,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Havenmeester Eivar");
 
     for (const challenge of harborChallenges) {
-      await solveChallengeSet(page, challenge, "Maak de haven klaar", "Havenmeester Eivar");
+      await solveChallengeSet(page, challenge, "Opdracht afronden", "Havenmeester Eivar");
     }
 
     await expect(page.getByText("Alles staat klaar! De vertrekpoort kan nu open.")).toBeVisible();
@@ -810,7 +820,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.locator("[data-adventure-team-bar]")).not.toContainText("Kapitein Nemo");
 
     for (const challenge of nautilusHarborChallenges) {
-      await solveChallengeSet(page, challenge, "Maak de toegang klaar", "Kapitein Nemo");
+      await solveChallengeSet(page, challenge, "Opdracht afronden", "Kapitein Nemo");
     }
 
     await expect(page.getByText("Alles klopt. Sven mag naar de Nautilus.")).toBeVisible();
@@ -834,7 +844,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: "Duikpak" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0006");
     for (const challenge of nautilusMiniSubChallenges) {
-      await solveChallengeSet(page, challenge, "Maak het luik klaar", "Kapitein Nemo");
+      await solveChallengeSet(page, challenge, "Opdracht afronden", "Kapitein Nemo");
     }
 
     await expect(page.getByText("De druk klopt. Het luik kan veilig open.")).toBeVisible();
@@ -846,7 +856,7 @@ test.describe("SvenAdventure", () => {
     await expect(page.getByRole("button", { name: "Sloep" })).toBeVisible();
     await expectSpawnAtStartNode(page, "LVL-0007");
     for (const challenge of nautilusIslandChallenges) {
-      await solveChallengeSet(page, challenge, "Maak de route klaar", "Kapitein Nemo");
+      await solveChallengeSet(page, challenge, "Opdracht afronden", "Kapitein Nemo");
     }
 
     await expect(page.getByText("De route klopt. Sven kan naar buiten.")).toBeVisible();
@@ -1311,7 +1321,7 @@ test.describe("SvenAdventure", () => {
     await travelToTemple(page);
 
     for (const challenge of runes) {
-      await solveChallengeSet(page, challenge, "Maak de rune wakker", "Runewachter");
+      await solveChallengeSet(page, challenge, "Opdracht afronden", "Runewachter");
     }
     await triggerWorldExit(page, "Runenpoort", "De poort gaat open!");
     await tap(page.getByRole("button", { name: "De tempel in" }));
@@ -1342,11 +1352,12 @@ test.describe("SvenAdventure", () => {
     await startAdventure(page);
     await travelToTemple(page);
 
-    await tap(page.getByRole("button", { name: "Windrune" }));
-    await expect(page.getByText("De Windrune suist zacht. Ik denk dat ze op een antwoord wacht.")).toBeVisible();
+    await tap(page.getByRole("button", { name: "Praat met Freya", exact: true }));
+    await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", /walk/);
+    expect(await page.evaluate(() => window.eval("state.selectedChallengeId"))).toBe("wind");
     await clickWalkableGround(page, 0.35);
     await waitForIdle(page);
-    await expect(page.getByRole("heading", { name: "Windrune" })).toHaveCount(0);
+    await expect(page.getByRole("dialog", { name: "Freya", exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => window.eval("state.selectedChallengeId"))).toBeNull();
   });
 
@@ -1425,21 +1436,21 @@ test.describe("SvenAdventure", () => {
     await expectBlockedWorldExit(page, {
       exitName: "Runenpoort",
       exitId: "templeGate",
-      blockedText: "De poort zit dicht. Eerst nog 3 runen."
+      blockedText: "De poort wacht nog. Eerst nog 3 opdrachten afronden."
     });
 
     await startAdventure(page);
     await travelToTemple(page);
-    await solveChallengeSet(page, { name: "Zonrune" }, "Maak de rune wakker", "Runewachter");
-    await expect(page.getByText("1 van de 3 runen klaar. Nog 2 te gaan.")).toBeVisible();
+    await solveChallengeSet(page, { name: "Zonrune" }, "Opdracht afronden", "Runewachter");
+    await expect(page.getByText("1 van de 3 opdrachten voltooid. Nog 2 opdrachten te doen.")).toBeVisible();
     await expect(page.locator(".runeDone")).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Steenrune" })).toHaveAttribute("data-hotspot-cue", "challenge");
-    await expect(page.getByRole("button", { name: "Windrune" })).toHaveAttribute("data-hotspot-cue", "challenge");
+    await expect(page.getByRole("button", { name: "Praat met Freya", exact: true })).toHaveAttribute("data-hotspot-cue", "challenge");
     await expect(page.getByRole("button", { name: "Runenpoort", exact: true })).toHaveAttribute("data-exit-ready", "false");
 
-    await solveChallengeSet(page, { name: "Steenrune" }, "Maak de rune wakker", "Runewachter");
-    await solveChallengeSet(page, { name: "Windrune" }, "Maak de rune wakker", "Runewachter");
-    await expect(page.getByText("Alle drie de runen gloeien! De poort kan nu open.")).toBeVisible();
+    await solveChallengeSet(page, { name: "Steenrune" }, "Opdracht afronden", "Runewachter");
+    await solveChallengeSet(page, { name: "Windrune" }, "Opdracht afronden", "Freya");
+    await expect(page.getByText("Je kunt verder! Op naar de tempel.")).toBeVisible();
     const readyExit = page.getByRole("button", { name: "Runenpoort", exact: true });
     await expect(readyExit).toHaveAttribute("data-exit-ready", "true");
     await expect(readyExit).toHaveAttribute("data-hotspot-cue", "exit-ready");
@@ -1455,7 +1466,7 @@ test.describe("SvenAdventure", () => {
     await expectBlockedWorldExit(page, {
       exitName: "Steigerpoort",
       exitId: "boardingGate",
-      blockedText: "De steigerpoort blijft dicht. Eerst nog 3 havenproeven."
+      blockedText: "De steigerpoort blijft dicht. Eerst nog 3 opdrachten."
     });
 
     await page.goto(gameUrl);
@@ -1466,7 +1477,7 @@ test.describe("SvenAdventure", () => {
     await expectBlockedWorldExit(page, {
       exitName: "Rechterpoort",
       exitId: "rightGate",
-      blockedText: "De rechterpoort blijft dicht. Eerst nog 3 bloktekens."
+      blockedText: "De rechterpoort blijft dicht. Eerst nog 3 opdrachten."
     });
   });
 
@@ -1476,7 +1487,7 @@ test.describe("SvenAdventure", () => {
     await openChallengePoint(page, "Zonrune");
 
     await expect(page.locator("[data-challenge-character='runewachter'] img")).toBeVisible();
-    await expect(page.getByText(/Runewachter - Rune 1\/4/)).toBeVisible();
+    await expect(page.getByText(/Runewachter - Vraag 1\/4/)).toBeVisible();
     await expect(page.getByRole("heading", { name: "Zonrune" })).toBeVisible();
     await expect(page.locator(".sum")).toBeVisible();
     await expect(page.locator(".choices button")).toHaveCount(4);
@@ -1491,18 +1502,18 @@ test.describe("SvenAdventure", () => {
     await travelToTemple(page);
 
     await openChallengePoint(page, "Zonrune");
-    await expect(page.getByText(/Runewachter - Rune 1\/4/)).toBeVisible();
+    await expect(page.getByText(/Runewachter - Vraag 1\/4/)).toBeVisible();
 
     for (let index = 1; index <= 3; index += 1) {
       await answerCurrentQuestion(page);
-      await expect(page.getByRole("button", { name: "Volgende som" })).toBeVisible();
-      await tap(page.getByRole("button", { name: "Volgende som" }));
-      await expect(page.getByText(new RegExp(`Runewachter - Rune ${index + 1}/4`))).toBeVisible();
+      await expect(page.getByRole("button", { name: "Volgende vraag" })).toBeVisible();
+      await tap(page.getByRole("button", { name: "Volgende vraag" }));
+      await expect(page.getByText(new RegExp(`Runewachter - Vraag ${index + 1}/4`))).toBeVisible();
     }
 
     await answerCurrentQuestion(page);
-    await expect(page.getByRole("button", { name: "Maak de rune wakker" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Volgende som" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Opdracht afronden" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Volgende vraag" })).toHaveCount(0);
   });
 
   test("randomizes question order between fresh challenge sessions", async ({ page }) => {

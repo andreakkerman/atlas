@@ -276,10 +276,10 @@ test.describe("Leonardo da Vinci adventure", () => {
       await expect.poll(() => page.evaluate(() => window.eval("level").id)).toBe(scene.id);
       await completeWithShortcutAndExit(page, scene.exitId, scene.exitName, scene.reward);
       await expect(page.locator(".rewardScreen")).toContainText("De volgende Italiaanse werkplaats is bereikbaar.");
-      await expect(page.locator(".stats")).toContainText("opdrachten");
+      await expect(page.locator(".stats")).toContainText("vragen beantwoord");
       await expect(page.locator(".stats")).toContainText("in één keer goed");
       await expect(page.locator(".stats")).toContainText("pogingen");
-      await expect(page.locator(".stats")).not.toContainText(/^\s*0 opdrachten/m);
+      await expect(page.locator(".stats")).not.toContainText("opdrachten");
       await expect(page.getByRole("button", { name: "Ga verder" })).toBeVisible();
       await page.getByRole("button", { name: "Ga verder" }).click();
       await expect.poll(() => page.evaluate(() => window.eval("level").id)).toBe(scene.next);
@@ -292,13 +292,13 @@ test.describe("Leonardo da Vinci adventure", () => {
     await expect(page.getByRole("button", { name: "Speel nog een keer" })).toBeVisible();
   });
 
-  test("keeps Runenpoort rune wording unchanged", async ({ page }) => {
+  test("uses generic challenge counts in Runenpoort too", async ({ page }) => {
     await page.goto(gameUrl);
     await page.evaluate(() => localStorage.clear());
     await page.waitForFunction(() => [...document.images].every((image) => image.complete && image.naturalWidth > 0));
     await page.getByRole("button", { name: "Start avontuur" }).click();
     await page.locator(".heroLevelTile").click();
     await page.getByRole("button", { name: "Start avontuur" }).click();
-    await expect(page.locator(".teamMeta")).toContainText("0/3 runen");
+    await expect(page.locator(".teamMeta")).toContainText("0/3 opdrachten voltooid");
   });
 });

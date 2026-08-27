@@ -496,7 +496,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
   exitHotspotId: "stoneDoor",
   exitActionLabel: "Naar de Nether",
   challengeLabel: "Strandproef",
-  challengeCompleteLabel: "Maak het strandteken wakker",
+  challengeCompleteLabel: "Opdracht afronden",
   choiceHint: "Kies het juiste antwoord.",
   progressLabelPlural: "strandtekens",
   menu: {
@@ -640,13 +640,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       id: "beach-progress",
       event: "LEVEL_PROGRESS_MILESTONE",
       speaker: "minnie",
-      text: "Het strandteken gloeit. De deur merkt het ook."
+      text: "Weer een stap verder. Het strand heeft nog meer te ontdekken."
     },
     {
       id: "beach-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De stenen deur blijft dicht. Eerst nog {remaining} strandtekens."
+      text: "De stenen deur blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       id: "beach-unlocked",

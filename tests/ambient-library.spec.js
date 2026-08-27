@@ -31,11 +31,10 @@ test.describe("central ambient asset library", () => {
   test("reuses central swift assets while keeping England and Italy metadata independent", async ({ page }) => {
     await page.goto(gameUrl);
     const result = await page.evaluate(async () => {
-      for (const id of ["LVL-0014", "LVL-0016"]) {
-        await window.eval("selectLevel")(id, { startImmediately: true });
-      }
-      const england = window.SVEN_LEVEL_DEFINITIONS["LVL-0014"].ambientFlybys[0];
-      const italy = window.SVEN_LEVEL_DEFINITIONS["LVL-0016"].ambientFlybys[0];
+      await window.eval("selectLevel")("LVL-0014", { startImmediately: true, allowDisabledForEditor: true });
+      const england = structuredClone(window.eval("level.ambientFlybys[0]"));
+      await window.eval("selectLevel")("LVL-0016", { startImmediately: true, allowDisabledForEditor: true });
+      const italy = structuredClone(window.eval("level.ambientFlybys[0]"));
       return {
         england: {
           assets: [england.frameA, england.frameB, england.sound],

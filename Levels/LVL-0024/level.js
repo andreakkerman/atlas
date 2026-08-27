@@ -1143,7 +1143,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "id": "LVL-0024-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De windpoort houdt dicht. Eerst nog een test netjes afmaken."
+      "text": "De windpoort blijft dicht. Eerst nog {remainingChallenges} afronden."
     }
   ],
   "menu": {

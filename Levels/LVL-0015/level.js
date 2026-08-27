@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
   "exitHotspotId": "villageGate",
   "exitActionLabel": "Naar Italië",
   "challengeLabel": "Reisproef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "reistekens",
   "menu": {
@@ -751,7 +751,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
       "id": "fr-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De dorpspoort mist nog {remaining} reistekens. Hij blijft koppig Frans dicht."
+      "text": "De dorpspoort wacht nog op {remainingChallenges}. Hij blijft koppig Frans dicht."
     },
     {
       "id": "fr-unlocked",

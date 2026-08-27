@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
   "exitHotspotId": "travelGate",
   "exitActionLabel": "Naar Engeland",
   "challengeLabel": "Reisproef",
-  "challengeCompleteLabel": "Maak de route klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "reistekens",
   "menu": {
@@ -762,7 +762,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "id": "nl-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De reispoort wacht nog op {remaining} reistekens. De poort is geduldig. Ik ook."
+      "text": "De reispoort wacht nog op {remainingChallenges}. De poort is geduldig. Ik ook."
     },
     {
       "id": "nl-unlocked",

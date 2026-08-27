@@ -81,7 +81,7 @@ async function openEffectsEditor(page) {
     window.eval("render")();
   });
   await page.keyboard.press("Control+Shift+D");
-  await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
   await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
 }
 
@@ -1797,7 +1797,7 @@ test.describe("scene effects editor", () => {
       window.eval("render")();
     });
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
     const sunCard = await page.locator("[data-effect-preset-card='sun-presence']").textContent();
     expect(sunCard).toContain("Sun Presence");
@@ -2094,7 +2094,7 @@ test.describe("scene effects editor", () => {
       window.eval("render")();
     });
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
     const pollenCard = await page.locator("[data-effect-preset-card='ambient-floating-particles']").textContent();
     expect(pollenCard).toContain("Best for:");
@@ -2220,7 +2220,7 @@ test.describe("scene effects editor", () => {
   test("edits polygon vertices and cutouts, directional handles, nudging and preview lifecycle", async ({ page }) => {
     await startFixture(page, { editor: true });
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
     await openEffectGeometry(page);
     await expect(page.locator("[data-effect-geometry-workspace]")).toBeVisible();
     await expect(page.locator("[data-effect-vertex]")).toHaveCount(8);
@@ -2499,10 +2499,13 @@ test.describe("scene effects editor", () => {
       await page.goto(editorUrl);
       await page.evaluate(async () => {
         await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
+        window.eval("level.sceneEffects = []");
+        window.eval("level.sceneEffectGroups = []");
+        window.eval("sceneEffectRuntime.prepareLevel")(window.eval("level"));
         window.eval("render")();
       });
       await page.keyboard.press("Control+Shift+D");
-      await page.getByRole("button", { name: "Effects", exact: true }).click();
+    await page.getByRole("button", { name: "Graphics", exact: true }).click();
       await addPresetEffect(page, "light-source-enhancement");
       await page.locator("[data-effect-color='primaryColor']").fill("#CC7733");
       await page.locator("[data-effect-override='intensity']").fill("0.83");

@@ -342,12 +342,12 @@ test.describe("ambient animals", () => {
     });
 
     const animal = page.getByRole("button", { name: "Meeuw", exact: true });
-    await animal.click();
-    await animal.click();
+    await animal.click({ force: true });
+    await animal.click({ force: true });
     expect(await page.evaluate(() => window.__animalAudioPlays)).toBe(1);
 
     await page.evaluate(() => window.__animalAudios[0].finish());
-    await animal.click();
+    await animal.click({ force: true });
     expect(await page.evaluate(() => window.__animalAudioPlays)).toBe(1);
   });
 

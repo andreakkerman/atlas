@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   "exitHotspotId": "boardingGate",
   "exitActionLabel": "Aan boord",
   "challengeLabel": "Nautilusproef",
-  "challengeCompleteLabel": "Maak de toegang klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "proeven",
   "menu": {
@@ -273,7 +273,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "id": "nautilus-harbor-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De steigerpoort blijft dicht. Eerst nog {remaining} havenproeven."
+      "text": "De steigerpoort blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       "id": "nautilus-harbor-unlocked",

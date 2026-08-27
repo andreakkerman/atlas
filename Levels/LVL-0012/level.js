@@ -478,7 +478,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
   exitHotspotId: "homeExit",
   exitActionLabel: "Naar huis",
   challengeLabel: "Thuisproef",
-  challengeCompleteLabel: "Maak het laatste teken wakker",
+  challengeCompleteLabel: "Opdracht afronden",
   choiceHint: "Kies het juiste antwoord.",
   progressLabelPlural: "laatste tekens",
   menu: {
@@ -628,7 +628,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0012"] = {
       id: "home-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De uitgang wacht nog. Eerst nog {remaining} bloktekens."
+      text: "De uitgang wacht nog. Eerst nog {remainingChallenges}."
     },
     {
       id: "home-unlocked",

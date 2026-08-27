@@ -71,13 +71,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   "interactiveObjects": [
     {
       "id": "forestRune",
-      "objectId": "forestRune",
       "type": "ambient",
       "center": {
         "x": 273,
         "y": 468
       },
       "radius": 48,
+      "objectId": "forestRune",
       "approachNode": "forest-rune-approach",
       "label": "Bosrune"
     },
@@ -107,8 +107,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "id": "wind",
       "type": "rune",
       "center": {
-        "x": 2127,
-        "y": 407
+        "x": 1750,
+        "y": 485
       },
       "radius": 45,
       "approachNode": "wind-rune-approach",
@@ -116,13 +116,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     },
     {
       "id": "templeGate",
-      "objectId": "templeGate",
       "type": "gate",
       "center": {
         "x": 1849,
         "y": 354
       },
       "radius": 104,
+      "objectId": "templeGate",
       "approachNode": "gate-step-upper",
       "label": "Runenpoort"
     }
@@ -161,36 +161,36 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     },
     {
       "id": "sun-rune-approach",
-      "x": 1308,
-      "y": 547,
+      "x": 1300,
+      "y": 541,
       "role": "approach"
     },
     {
       "id": "stone-rune-approach",
-      "x": 1452,
-      "y": 570,
+      "x": 1417,
+      "y": 567,
       "role": "approach"
     },
     {
       "id": "temple-approach",
-      "x": 1620,
-      "y": 588
+      "x": 1522,
+      "y": 584
     },
     {
       "id": "gate-step-low",
-      "x": 1692,
-      "y": 562
-    },
-    {
-      "id": "gate-step-upper",
-      "x": 1770,
-      "y": 483,
-      "role": "approach"
+      "x": 1624,
+      "y": 573
     },
     {
       "id": "wind-rune-approach",
-      "x": 1888,
-      "y": 485,
+      "x": 1685,
+      "y": 542,
+      "role": "approach"
+    },
+    {
+      "id": "gate-step-upper",
+      "x": 1847,
+      "y": 481,
       "role": "approach"
     }
   ],
@@ -202,9 +202,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   "spiritName": "Runewachter",
   "spiritLines": {
     "welcome": "Welkom, Sven. Volg het pad naar de tempel.",
-    "chooseRune": "Kies een rune en activeer hem.",
+    "chooseRune": "Kies een opdracht om te beginnen.",
     "moving": "Let op het pad tussen de wortels.",
-    "allRunes": "Alle runen gloeien. De tempel wordt wakker!",
+    "allRunes": "Je kunt verder. De tempel wacht op je!",
     "reward": "Goed gedaan, Sven. Jij hebt de Runenpoort geopend."
   },
   "guideLines": {
@@ -234,11 +234,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
     },
     "runeSolved": {
       "speaker": "minnie",
-      "text": "Yes! De rune wordt wakker."
+      "text": "Yes! Weer een opdracht voltooid."
     },
     "allRunes": {
       "speaker": "moose",
-      "text": "Alle runen gloeien. Nu voorzichtig naar de poort."
+      "text": "Je kunt verder. Nu voorzichtig naar de poort."
     },
     "reward": {
       "speaker": "moose",
@@ -286,19 +286,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "wind",
       "speaker": "minnie",
-      "text": "De Windrune suist zacht. Ik denk dat ze op een antwoord wacht."
+      "text": "Ik ben benieuwd wat we bij deze opdracht ontdekken."
     },
     {
       "id": "runenpoort-progress",
       "event": "LEVEL_PROGRESS_MILESTONE",
       "speaker": "moose",
-      "text": "{completed} van de {total} runen klaar. Nog {remaining} te gaan."
+      "text": "{completed} van de {total} opdrachten voltooid. Nog {remainingChallenges} te doen."
     },
     {
       "id": "runenpoort-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De poort zit dicht. Eerst nog {remaining} runen."
+      "text": "De poort wacht nog. Eerst nog {remainingChallenges} afronden."
     },
     {
       "id": "runenpoort-complete",
@@ -310,7 +310,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "id": "runenpoort-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "minnie",
-      "text": "Alle drie de runen gloeien! De poort kan nu open."
+      "text": "Je kunt verder! Op naar de tempel."
     }
   ],
   "areas": [
@@ -343,8 +343,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "type": "gate",
       "name": "Runenpoort",
       "defaultAction": "activate",
-      "look": "De poort zit dicht. Drie runen houden hem vast.",
-      "activate": "De poort wacht op drie wakkere runen."
+      "look": "Achter deze oude poort ligt de tempel.",
+      "activate": "Hier gaat de route naar de tempel verder."
     }
   ],
   "learningChallenges": [
@@ -668,6 +668,20 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "id": "wind",
       "anchorId": "wind",
       "challengeCharacterId": "runewachter",
+      "presentationType": "npc",
+      "requiresAllOtherChallenges": true,
+      "unlocksLevelProgression": true,
+      "npc": {
+        "characterId": "freya",
+        "displayName": "Freya",
+        "scale": 0.92,
+        "facing": "native",
+        "brightness": 1,
+        "idleIntervalMinMs": 2500,
+        "idleIntervalMaxMs": 4500,
+        "playbackRate": 1,
+        "successIdleBeatMs": 650
+      },
       "questions": [
         {
           "id": "wind-slot-1",
@@ -944,7 +958,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "presetId": "magical-glow",
       "variantId": "rune",
       "presetVersion": 1,
-      "enabled": true,
+      "enabled": false,
       "seed": 300417825,
       "qualityTier": "auto",
       "layerSlot": "worldLight",

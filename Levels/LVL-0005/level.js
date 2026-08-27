@@ -224,13 +224,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       "id": "salon-progress",
       "event": "LEVEL_PROGRESS_MILESTONE",
       "speaker": "minnie",
-      "text": "Nog eentje wakker. De salon voelt minder geheimzinnig."
+      "text": "Weer een opdracht voltooid. De salon voelt minder geheimzinnig."
     },
     {
       "id": "salon-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De ronde deur blijft dicht. Eerst nog {remaining} salonproeven."
+      "text": "De ronde deur blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       "id": "salon-unlocked",

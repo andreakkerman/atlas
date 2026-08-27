@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
   "exitHotspotId": "surfaceDoor",
   "exitActionLabel": "Naar boven",
   "challengeLabel": "Netherproef",
-  "challengeCompleteLabel": "Maak het teken wakker",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "nethertokens",
   "menu": {
@@ -218,7 +218,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       "id": "nether-solved",
       "event": "CHALLENGE_SUCCESS",
       "speaker": "moose",
-      "text": "Dat teken is klaar. De lava mag rustig blijven."
+      "text": "Deze opdracht is voltooid. De lava mag rustig blijven."
     },
     {
       "id": "nether-progress",
@@ -230,7 +230,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       "id": "nether-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De deur naar boven blijft dicht. Eerst nog {remaining} nethertokens."
+      "text": "De deur naar boven blijft dicht. Eerst nog {remainingChallenges}."
     },
     {
       "id": "nether-unlocked",

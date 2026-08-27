@@ -10,7 +10,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
   "exitHotspotId": "forestGate",
   "exitActionLabel": "Rond de reis af",
   "challengeLabel": "Thuiskomstproef",
-  "challengeCompleteLabel": "Maak de thuiskomst klaar",
+  "challengeCompleteLabel": "Opdracht afronden",
   "choiceHint": "Kies het juiste antwoord.",
   "progressLabelPlural": "thuiskomsttekens",
   "menu": {
@@ -710,7 +710,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
       "id": "rh-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Het bospad wacht nog op {remaining} thuiskomsttekens. Thuis heeft geen haast."
+      "text": "Het bospad wacht nog op {remainingChallenges}. Thuis heeft geen haast."
     },
     {
       "id": "rh-unlocked",

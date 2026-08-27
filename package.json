@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "generate:characters": "node scripts/generate-character-manifest.js",
+    "predev:editor": "npm run generate:characters",
+    "pretest:e2e": "npm run generate:characters",
     "test:e2e": "playwright test",
     "dev:editor": "node scripts/dev-server.js",
     "dev:walkpath": "node scripts/dev-server.js",

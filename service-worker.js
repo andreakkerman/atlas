@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v82";
+const CACHE_NAME = "svenadventure-static-v86";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   "src/ambient-system.js",
   "src/asset-readiness.js",
   "src/scene-effects.js",
+  "src/webgpu-capabilities.js",
   "src/voxel-renderer.js",
   "src/emissive-glow.js",
   "src/atlas-world.js",
@@ -16,6 +17,7 @@ const CORE_ASSETS = [
   "src/audio-config.js",
   "Levels/manifest.js",
   "Levels/world-config.js",
+  "assets/characters/manifest.js",
   "assets/characters/sven/idle/frame_001.png",
   "assets/branding/launch-hero.png",
   "assets/branding/icon-180.png",
@@ -62,18 +64,22 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-  if (new URL(event.request.url).searchParams.get("dev") === "editor") return;
+  const requestUrl = new URL(event.request.url);
+  const referrerUrl = event.request.referrer ? new URL(event.request.referrer) : null;
+  if (requestUrl.searchParams.get("dev") === "editor" || referrerUrl?.searchParams.get("dev") === "editor") return;
   if (event.request.url.includes("/__dev/")) return;
 
   const url = new URL(event.request.url);
   const refreshable = /\/Levels\/[^/]+\/level\.js$/.test(url.pathname) ||
     /\/Levels\/world-config\.js$/.test(url.pathname) ||
+    /\/assets\/characters\/manifest\.js$/.test(url.pathname) ||
+    /\/assets\/characters\/[^/]+\/(?:portrait\.png|idle(?:_animation_[1-9]\d*|_to_pass)?\/)/.test(url.pathname) ||
     /\/assets\/ambient\//.test(url.pathname) ||
     /\/assets\/guides\/(?:minnie_blink|moose_blink)\.png$/.test(url.pathname);
 
   if (refreshable) {
     event.respondWith(
-      fetch(event.request).then((response) => {
+      fetch(event.request, { cache: "no-store" }).then((response) => {
         if (response.ok && response.type === "basic") {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
