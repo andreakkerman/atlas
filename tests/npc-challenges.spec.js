@@ -27,6 +27,136 @@ async function start(page, levelId = "LVL-0001", editor = false) {
 }
 
 test.describe("NPC challenge presentation", () => {
+  test("normalizes shared appearance without changing legacy defaults or producing invalid filters", async ({ page }) => {
+    await start(page);
+    const result = await page.evaluate(() => {
+      const api = window.AtlasCharacterAppearance;
+      return {
+        neutral: api.normalize({}, "npc"),
+        legacy: [0.4, 1.6].map((brightness) => api.normalize({ brightness }, "npc").brightness),
+        invalid: api.normalize({ brightness: NaN, contrast: Infinity, saturation: "invalid", warmth: -Infinity, tint: undefined }, "npc"),
+        extremes: api.normalize({ brightness: 999, contrast: -999, saturation: 999, warmth: -999, tint: 999 }, "npc"),
+        filters: ["npc", "sven"].map((kind) => api.filter({ brightness: NaN, tint: Infinity }, kind)),
+        existing: window.eval("npcConfigForChallenge")({ npc: { brightness: 1.23 } })
+      };
+    });
+    const neutral = { brightness: 1, contrast: 1, saturation: 1, warmth: 0, tint: 0 };
+    expect(result.neutral).toEqual(neutral);
+    expect(result.invalid).toEqual(neutral);
+    expect(result.legacy).toEqual([0.4, 1.6]);
+    expect(result.existing).toMatchObject({ ...neutral, brightness: 1.23 });
+    expect(result.extremes).toEqual({ brightness: 1.6, contrast: 0.5, saturation: 2, warmth: -1, tint: 1 });
+    expect(result.filters).toEqual(Array(2).fill("brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)"));
+  });
+
+  for (const fixture of [
+    { levelId: "LVL-0001", runeId: "wind", name: "Freya" },
+    { levelId: "LVL-0003", runeId: "gateShield", name: "Eivar" }
+  ]) test(`shares controls and preserves ${fixture.name} appearance, editor identity and persisted animation states`, async ({ page }) => {
+    test.setTimeout(60_000);
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+    await start(page, fixture.levelId, true);
+    await page.keyboard.press("Control+Shift+D");
+    await page.getByRole("button", { name: "Challenges", exact: true }).click();
+    await page.locator(`[data-select-challenge='${fixture.runeId}']`).click();
+    await page.getByRole("button", { name: "Characters", exact: true }).click();
+    const panel = page.locator("[data-developer-tools]");
+    const labels = ["Brightness", "Contrast", "Saturation", "Warmth", "Tint"];
+    const values = [1.23, 1.25, 0.55, 0.65, -0.45];
+    for (const kind of ["sven", "npc"]) {
+      const group = page.locator(`[data-character-visuals='${kind}']`);
+      await expect(group.locator("label > span")).toHaveText(labels);
+      await expect(group.locator("input")).toHaveCount(5);
+      await expect(group.getByText("Scale", { exact: true })).toHaveCount(0);
+    }
+    await expect(page.locator("[data-editor-panel-key='sven-general']")).toContainText("Movement Speed");
+    await expect(page.locator(`[data-editor-panel-key='npc-general-${fixture.runeId}']`)).toContainText("Playback speed");
+    const baseline = await page.evaluate(() => ({ ...window.eval("levelTuning")() }));
+    let draft = {};
+    if (process.env.ATLAS_EDITOR_URL) {
+      await page.route("**/__dev/levels/*/editor-draft", async (route) => {
+        if (route.request().method() === "POST") draft = route.request().postDataJSON();
+        await route.fulfill({ json: draft });
+      });
+      await page.evaluate(() => window.eval("walkPathEditor.apiAvailable = true"));
+    }
+    await page.evaluate(() => {
+      window.characterQaNodes = [...document.querySelectorAll("[data-developer-tools], [data-character-visuals], [data-npc-character-editor], [data-npc-challenge], [data-character-visuals] input")];
+    });
+    for (let index = 0; index < labels.length; index += 1) {
+      for (const kind of ["sven", "npc"]) {
+        const input = page.locator(`[data-character-visuals='${kind}']`).getByRole("slider", { name: labels[index], exact: true });
+        // WebKit scrolls focused controls asynchronously; measure after that navigation,
+        // so this assertion isolates the edit itself rather than moving between groups.
+        await input.scrollIntoViewIfNeeded();
+        await input.focus();
+        await page.evaluate(() => new Promise(requestAnimationFrame));
+        const scroll = await panel.evaluate((element) => element.scrollTop);
+        await input.fill(String(values[index]));
+        await expect(input).toBeFocused();
+        expect(await panel.evaluate((element) => element.scrollTop)).toBe(scroll);
+        await expect(input.locator("..").locator("output")).toHaveText(values[index].toFixed(2));
+      }
+    }
+    const expected = "brightness(1.23) contrast(1.25) saturate(0.55) sepia(0.091) hue-rotate(-15.9deg)";
+    const npc = page.locator(`[data-npc-challenge='${fixture.runeId}']`);
+    expect(await npc.evaluate((element) => element.style.getPropertyValue("--npc-appearance"))).toBe(expected);
+    expect(await page.locator("[data-actor='sven']").evaluate((element) => element.style.filter)).toBe(expected);
+    expect(await page.evaluate(() => window.characterQaNodes.every((node) => node.isConnected))).toBe(true);
+    await expect(panel).toHaveAttribute("data-current-editor-mode", "characters");
+    expect(await page.evaluate(() => window.eval("walkPathEditor.selectedChallengeId"))).toBe(fixture.runeId);
+    // A collapsed sibling remains collapsed while keyboard slider interaction continues.
+    await page.locator(`[data-editor-panel-key='npc-general-${fixture.runeId}'] > summary`).click();
+    const saturation = page.locator("[data-npc-setting='saturation']");
+    await saturation.press("ArrowRight");
+    await expect(saturation).toHaveValue("0.6");
+    await saturation.press("ArrowLeft");
+    await expect(page.locator(`[data-editor-panel-key='npc-general-${fixture.runeId}']`)).not.toHaveAttribute("open", "");
+    const appearance = Object.fromEntries(labels.map((label, index) => [label.toLowerCase(), values[index]]));
+    expect(await page.evaluate((id) => window.eval("learningChallengeById")(id).npc, fixture.runeId)).toMatchObject(appearance);
+    expect(await page.evaluate(() => window.eval("levelTuning")())).toMatchObject({ spriteScale: baseline.spriteScale, movementSpeed: baseline.movementSpeed, animationSpeed: baseline.animationSpeed });
+
+    const states = await page.evaluate(({ levelId, runeId }) => {
+      const entry = window.eval("npcAnimationRuntime.entries").get(`${levelId}:${runeId}`);
+      const shell = entry.element;
+      const result = [];
+      const capture = () => result.push({ animation: shell.dataset.npcAnimation, filter: getComputedStyle(shell).filter, connected: shell.isConnected });
+      window.eval("setNpcAnimation")(entry, "idle", performance.now(), false);
+      window.eval("setNpcFrame")(entry);
+      capture();
+      for (const name of window.eval("npcIdleVariantNames")(entry.character)) {
+        window.eval("setNpcAnimation")(entry, name, performance.now(), true);
+        window.eval("setNpcFrame")(entry);
+        capture();
+      }
+      window.eval("setNpcAnimation")(entry, "idle", performance.now(), false);
+      window.eval("setNpcFrame")(entry);
+      capture();
+      window.eval("setNpcAnimation")(entry, "idle_to_pass", performance.now(), true);
+      window.eval("setNpcFrame")(entry);
+      capture();
+      window.eval("setNpcCompleted")(entry);
+      capture();
+      return result;
+    }, fixture);
+    expect(states[0].animation).toBe("idle");
+    expect(states[1].animation).toMatch(/^idle_animation_/);
+    expect(states.at(-2).animation).toBe("idle_to_pass");
+    expect(states.at(-1).animation).toBe("completed");
+    expect(states.every((state) => state.connected && state.filter === states[0].filter)).toBe(true);
+    expect(states[0].filter).toContain(expected);
+    if (process.env.ATLAS_EDITOR_URL) {
+      await expect.poll(() => draft.learningChallenges?.find((item) => item.id === fixture.runeId)?.npc).toMatchObject(appearance);
+      await page.reload();
+      await page.evaluate(async (id) => window.eval("selectLevel")(id, { startImmediately: true }), fixture.levelId);
+      expect(await page.evaluate((id) => window.eval("learningChallengeById")(id).npc, fixture.runeId)).toMatchObject(appearance);
+      expect(await npc.evaluate((element) => element.style.getPropertyValue("--npc-appearance"))).toBe(expected);
+    }
+    expect(errors).toEqual([]);
+  });
+
   test("keeps Standard defaults and converts both ways without moving or losing content", async ({ page }) => {
     await start(page, "LVL-0001", true);
     await page.keyboard.press("Control+Shift+D");

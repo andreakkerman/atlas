@@ -136,6 +136,9 @@ let voxelTuningOpen = false;
 let voxelRendererStatus = { status: "idle", ready: false, supported: Boolean(window.navigator?.gpu) };
 const voxelRenderer = window.AtlasVoxelRenderer.createRuntime({
   getLevel: () => level,
+  getCharacterAppearance: (key) => key === "actor:sven"
+    ? window.AtlasCharacterAppearance.normalize(levelTuning(), "sven", "sven")
+    : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))) : null,
   getCameraX: () => level ? getCameraX() : 0,
   getViewportWorldWidth: () => state?.viewportWorldWidth,
   onStatus: (snapshot) => {
@@ -206,11 +209,7 @@ function levelTuning(levelId = level?.id) {
     backgroundSaturation: clamp(Number(settings.backgroundSaturation ?? 1), 0, 2),
     backgroundWarmth: clamp(Number(settings.backgroundWarmth ?? 0), -1, 1),
     backgroundTint: clamp(Number(settings.backgroundTint ?? 0), -1, 1),
-    svenBrightness: clamp(Number(settings.svenBrightness ?? 1), 0.5, 1.5),
-    svenContrast: clamp(Number(settings.svenContrast ?? 1), 0.5, 1.5),
-    svenSaturation: clamp(Number(settings.svenSaturation ?? 1), 0, 2),
-    svenWarmth: clamp(Number(settings.svenWarmth ?? 0), -1, 1),
-    svenTint: clamp(Number(settings.svenTint ?? 0), -1, 1)
+    ...window.AtlasCharacterAppearance.settings(settings, "sven", "sven")
   };
 }
 
@@ -224,6 +223,7 @@ function locomotionTuning() {
 
 function visualFilter(kind, levelId = level?.id) {
   const tuning = levelTuning(levelId);
+  if (kind !== "background") return window.AtlasCharacterAppearance.filter(window.AtlasCharacterAppearance.normalize(tuning, "sven", "sven"));
   const prefix = kind === "background" ? "background" : "sven";
   const warmth = tuning[`${prefix}Warmth`];
   const tint = tuning[`${prefix}Tint`];
@@ -981,8 +981,9 @@ function updateLevelSetting(levelId, key, value) {
   const numericRanges = {
     spriteScale: [0.5, 1.8], movementSpeed: [80, 520], animationSpeed: [0.5, 1.8],
     backgroundBrightness: [0.5, 1.5], backgroundContrast: [0.5, 1.5], backgroundSaturation: [0, 2],
-    backgroundWarmth: [-1, 1], backgroundTint: [-1, 1], svenBrightness: [0.5, 1.5],
-    svenContrast: [0.5, 1.5], svenSaturation: [0, 2], svenWarmth: [-1, 1], svenTint: [-1, 1]
+    backgroundWarmth: [-1, 1], backgroundTint: [-1, 1],
+    ...Object.fromEntries(window.AtlasCharacterAppearance.fields("sven").map(({ key, min, max }) =>
+      [window.AtlasCharacterAppearance.settingKey(key, "sven"), [min, max]]))
   };
   const range = numericRanges[key];
   const numericValue = Number(value);
@@ -991,6 +992,10 @@ function updateLevelSetting(levelId, key, value) {
   if (level?.id === levelId) normalizeLevel(level);
   markWorldConfigDirty(`${levelId}: ${key} aangepast.`);
   applyLiveTuningDom(levelId);
+  document.querySelectorAll(`[data-character-visuals="sven"] [data-level-setting="${CSS.escape(key)}"][data-level-id="${CSS.escape(levelId)}"]`).forEach((input) => {
+    input.value = String(nextValue);
+    input.parentElement.querySelector("output").textContent = Number(nextValue).toFixed(2);
+  });
 }
 
 function updateEmissiveGlowSetting(levelId, key, value) {
@@ -1166,7 +1171,7 @@ function npcConfigForChallenge(challenge) {
     scale: clamp(Number(npc.scale ?? 1), 0.35, 2.5),
     // Legacy Left/Right labels did not describe the artwork; only an explicit mirror flips it.
     facing: npc.facing === "mirrored" ? "mirrored" : "native",
-    brightness: clamp(Number(npc.brightness ?? 1), 0.4, 1.6),
+    ...window.AtlasCharacterAppearance.normalize(npc, "npc"),
     idleIntervalMinMs: clamp(Number(npc.idleIntervalMinMs ?? 7000), 1000, 60000),
     idleIntervalMaxMs: clamp(Number(npc.idleIntervalMaxMs ?? 13000), 1000, 90000),
     playbackRate: clamp(Number(npc.playbackRate ?? 1), 0.25, 3),
@@ -2728,7 +2733,7 @@ function updateChallengeBoolean(challengeId, field, value) {
 }
 
 function updateChallengeNpcSetting(challengeId, field, value) {
-  const allowed = new Set(["displayName", "scale", "facing", "brightness", "idleIntervalMinMs", "idleIntervalMaxMs", "playbackRate", "successIdleBeatMs"]);
+  const allowed = new Set(["displayName", "scale", "facing", ...window.AtlasCharacterAppearance.controls.map(({ key }) => key), "idleIntervalMinMs", "idleIntervalMaxMs", "playbackRate", "successIdleBeatMs"]);
   if (!allowed.has(field)) return;
   const challenges = cloneLearningChallenges(level.learningChallenges || []);
   const challenge = challenges.find((item) => item.id === challengeId);
@@ -2745,6 +2750,7 @@ function updateChallengeNpcSetting(challengeId, field, value) {
   if (shell) {
     shell.style.setProperty("--npc-scale", normalized.scale);
     shell.style.setProperty("--npc-brightness", normalized.brightness);
+    shell.style.setProperty("--npc-appearance", window.AtlasCharacterAppearance.filter(normalized, "npc"));
     shell.style.setProperty("--npc-facing", npcFacingScale(challenge));
     shell.dataset.npcFacing = normalized.facing;
     shell.dataset.npcFacingScale = String(npcFacingScale(challenge));
@@ -2752,8 +2758,9 @@ function updateChallengeNpcSetting(challengeId, field, value) {
       shell.setAttribute("aria-label", `Praat met ${npcDisplayName(challenge)}`);
     }
   }
-  document.querySelectorAll(`[data-npc-output="${CSS.escape(field)}"]`).forEach((output) => {
-    output.textContent = String(normalized[field]);
+  document.querySelectorAll(`[data-npc-character-editor="${CSS.escape(challengeId)}"] [data-npc-output="${CSS.escape(field)}"]`).forEach((output) => {
+    output.textContent = output.closest("[data-character-visuals]") ? Number(normalized[field]).toFixed(2) : String(normalized[field]);
+    output.parentElement.querySelector("input").value = String(normalized[field]);
   });
 }
 
@@ -4517,6 +4524,20 @@ function renderChallengeContentPreview(challenge, rune) {
   `;
 }
 
+function renderCharacterVisualControls(kind, values, id) {
+  const appearance = window.AtlasCharacterAppearance;
+  const normalized = appearance.normalize(values, kind, kind === "sven" ? "sven" : "");
+  return `<details class="editorNestedSection characterControlGroup" open data-character-visuals="${kind}" data-editor-panel-key="${kind}-visual-${id}">
+    <summary>Visual controls</summary>
+    ${appearance.fields(kind).map(({ key, label, min, max, step }) => {
+      const attributes = kind === "sven"
+        ? `data-level-setting="${appearance.settingKey(key, "sven")}" data-level-id="${id}"`
+        : `data-npc-setting="${key}" data-challenge-id="${id}"`;
+      return `<label class="characterVisualField"><span>${label}</span><input type="range" min="${min}" max="${max}" step="${step}" value="${normalized[key]}" ${attributes}><output ${kind === "npc" ? `data-npc-output="${key}"` : ""}>${normalized[key].toFixed(2)}</output></label>`;
+    }).join("")}
+  </details>`;
+}
+
 function renderNpcCharacterEditorControls() {
   const rune = selectedEditorRune();
   const challenge = npcChallengeForRune(rune);
@@ -4529,14 +4550,16 @@ function renderNpcCharacterEditorControls() {
   return `
     <section class="npcCharacterEditor" data-npc-character-editor="${challenge.id}">
       <header><div><strong>${npcDisplayName(challenge, character)}</strong><span>${character?.id || "No discovered character"} · ${rune?.name || challenge.id}</span></div>${character?.portrait ? `<img src="${readyAssetSrc(character.portrait)}" alt="">` : ""}</header>
+      <details class="editorNestedSection characterControlGroup" open data-editor-panel-key="npc-general-${challenge.id}"><summary>General</summary>
       <label class="editorField"><span>Display name</span><input value="${config.displayName}" placeholder="${character?.name || "NPC"}" data-npc-setting="displayName" data-challenge-id="${challenge.id}"></label>
       <label class="editorField"><span>Facing</span><select data-npc-setting="facing" data-challenge-id="${challenge.id}"><option value="native" ${config.facing === "native" ? "selected" : ""}>Native</option><option value="mirrored" ${config.facing === "mirrored" ? "selected" : ""}>Mirrored</option></select></label>
       ${range("Scale", "scale", 0.35, 2.5, 0.01)}
-      ${range("Brightness", "brightness", 0.4, 1.6, 0.01)}
       ${range("Playback speed", "playbackRate", 0.25, 3, 0.05)}
       ${range("Idle interval min (ms)", "idleIntervalMinMs", 1000, 60000, 250)}
       ${range("Idle interval max (ms)", "idleIntervalMaxMs", 1000, 90000, 250)}
       ${range("Success idle beat (ms)", "successIdleBeatMs", 0, 4000, 50)}
+      </details>
+      ${renderCharacterVisualControls("npc", config, challenge.id)}
     </section>
   `;
 }
@@ -5718,12 +5741,12 @@ function renderLevelTuningControls(levelId, options = {}) {
           <button type="button" data-config-action="reset-background" data-level-id="${levelId}" ${settings.backgroundOverride ? "" : "disabled"}>Reset to default</button>
         </div>
       `}
-      ${includeCharacters ? `<div class="atlasTuningGrid">
+      ${includeCharacters ? `<details class="editorNestedSection characterControlGroup" open data-editor-panel-key="sven-general"><summary>General</summary><div class="atlasTuningGrid">
         ${numberControl("Sprite Scale (Level)", "spriteScale", tuning.spriteScale, 0.5, 1.8, 0.05)}
         ${numberControl("Movement Speed (Level)", "movementSpeed", tuning.movementSpeed, 80, 520, 10)}
         ${numberControl("Animation Speed (Level)", "animationSpeed", tuning.animationSpeed, 0.5, 1.8, 0.05)}
-      </div>` : ""}
-      <details class="atlasVisualAdjustments" data-editor-panel-key="simple-visual-controls">
+      </div></details>${renderCharacterVisualControls("sven", tuning, levelId)}` : ""}
+      ${includeGraphics ? `<details class="atlasVisualAdjustments" data-editor-panel-key="simple-visual-controls">
         <summary>Simple visual controls</summary>
         <div class="atlasVisualColumns">
           ${includeGraphics ? `<fieldset><legend>Background</legend>
@@ -5733,15 +5756,8 @@ function renderLevelTuningControls(levelId, options = {}) {
             ${numberControl("Warmth", "backgroundWarmth", tuning.backgroundWarmth, -1, 1, 0.05)}
             ${numberControl("Tint", "backgroundTint", tuning.backgroundTint, -1, 1, 0.05)}
           </fieldset>` : ""}
-          ${includeCharacters ? `<fieldset><legend>Sven</legend>
-            ${numberControl("Brightness", "svenBrightness", tuning.svenBrightness, 0.5, 1.5, 0.05)}
-            ${numberControl("Contrast", "svenContrast", tuning.svenContrast, 0.5, 1.5, 0.05)}
-            ${numberControl("Saturation", "svenSaturation", tuning.svenSaturation, 0, 2, 0.05)}
-            ${numberControl("Warmth", "svenWarmth", tuning.svenWarmth, -1, 1, 0.05)}
-            ${numberControl("Tint", "svenTint", tuning.svenTint, -1, 1, 0.05)}
-          </fieldset>` : ""}
         </div>
-      </details>
+      </details>` : ""}
       ${includeGraphics ? `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
         <summary>Emissive Glow</summary>
         <fieldset class="atlasEmissiveGlowControls">
@@ -6115,7 +6131,7 @@ function renderRuneHotspot(rune) {
     return `
       <button
         class="runeHotspot npcChallengeHotspot ${done ? "runeDone npcChallengeDone" : ""} ${selected ? "runeSelected npcChallengeSelected" : ""} ${!active ? "runeInactive npcChallengeInactive" : ""}"
-        style="left:${center.x}%; top:${center.y}%; --npc-scale:${config.scale}; --npc-brightness:${config.brightness}; --npc-facing:${npcFacingScale(npcChallenge)}"
+        style="left:${center.x}%; top:${center.y}%; --npc-scale:${config.scale}; --npc-brightness:${config.brightness}; --npc-appearance:${window.AtlasCharacterAppearance.filter(config, "npc")}; --npc-facing:${npcFacingScale(npcChallenge)}"
         type="button"
         data-rune="${rune.id}"
         data-object="${object.id}"

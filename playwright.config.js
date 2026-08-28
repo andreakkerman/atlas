@@ -43,6 +43,11 @@ module.exports = defineConfig({
       name: "desktop-chromium",
       use: {
         ...devices["Desktop Chrome"],
+        // Opt in to the full Chromium GPU path for HTTP rendering regressions.
+        ...(process.env.ATLAS_WEBGPU_QA === "1" ? {
+          channel: "chromium",
+          launchOptions: { args: ["--enable-unsafe-webgpu"] }
+        } : {}),
         viewport: { width: 1280, height: 800 }
       },
     },

@@ -65,6 +65,83 @@ function pngLuminance(buffer) {
 }
 
 test.describe("Atlas WebGPU voxel presentation", () => {
+  test("keeps shared character appearance in GPU uniforms across NPC frames and live edits", async ({ page }, testInfo) => {
+    test.skip(!process.env.ATLAS_EDITOR_URL || testInfo.project.name !== "desktop-chromium", "Desktop HTTP WebGPU integration run.");
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+    await page.route("**/__dev/levels/*/editor-draft", (route) => route.fulfill({ json: {} }));
+    await page.goto(`${runtimeUrl}${runtimeUrl.includes("?") ? "&" : "?"}dev=editor`);
+    test.skip(!(await page.evaluate(() => Boolean(navigator.gpu))), "WebGPU unavailable.");
+    await page.evaluate(() => {
+      window.characterUniforms = {};
+      const writeBuffer = GPUQueue.prototype.writeBuffer;
+      GPUQueue.prototype.writeBuffer = function(buffer, offset, data, ...rest) {
+        if (data instanceof Float32Array && data.length === 44 && data[28] === 1) {
+          const key = Math.abs(data[32] - 0.9) < 0.001 ? "npc" : Math.abs(data[32] - 0.94) < 0.001 ? "sven" : null;
+          if (key) window.characterUniforms[key] = [...data.slice(36, 41)];
+        }
+        return writeBuffer.call(this, buffer, offset, data, ...rest);
+      };
+      window.eval("voxelRenderer.updateSettings")({ renderer: "voxel", quality: "low" });
+    });
+    for (const fixture of [{ levelId: "LVL-0001", runeId: "wind" }, { levelId: "LVL-0003", runeId: "gateShield" }]) {
+      await page.evaluate(async ({ levelId, runeId }) => {
+        await window.eval("selectLevel")(levelId, { startImmediately: true });
+        window.eval("walkPathEditor.apiAvailable = false");
+        const game = window.eval("state");
+        const point = window.eval("getApproachPoint")(window.eval("runeById")(runeId));
+        game.worldX = point.x;
+        game.worldY = point.y;
+        game.cameraX = window.eval("getDesiredCameraX")();
+        window.eval("render")();
+      }, fixture);
+      await expect.poll(() => page.evaluate(() => window.eval("voxelRenderer.snapshot")().status), { timeout: 20000 }).toMatch(/ready|unavailable|failed/);
+      const status = await page.evaluate(() => window.eval("voxelRenderer.snapshot")());
+      test.skip(["api-unavailable", "adapter-unavailable", "device-initialization-failed"].includes(status.status), status.error || "WebGPU device unavailable.");
+      await expect(page.locator(".gameShell.voxelReady")).toBeVisible();
+      await page.evaluate(({ runeId }) => {
+        const values = { brightness: 1.23, contrast: 1.25, saturation: 0.55, warmth: 0.65, tint: -0.45 };
+        for (const [key, value] of Object.entries(values)) {
+          window.eval("updateChallengeNpcSetting")(runeId, key, value);
+          window.eval("updateLevelSetting")(window.eval("level.id"), `sven${key[0].toUpperCase()}${key.slice(1)}`, value);
+        }
+      }, fixture);
+      const expected = [1.23, 1.25, 0.55, 0.091, -15.9 * Math.PI / 180];
+      for (const kind of ["npc", "sven"]) await expect.poll(async () => {
+        const actual = await page.evaluate((key) => window.characterUniforms[key], kind);
+        return actual?.every((value, index) => Math.abs(value - expected[index]) < 0.00001);
+      }).toBe(true);
+      const states = await page.evaluate(({ levelId, runeId }) => {
+        const entry = window.eval("npcAnimationRuntime.entries").get(`${levelId}:${runeId}`);
+        return ["idle", ...window.eval("npcIdleVariantNames")(entry.character), "idle", "idle_to_pass", "completed"];
+      }, fixture);
+      for (const animation of states) {
+        await page.evaluate(({ levelId, runeId, animation }) => {
+          const entry = window.eval("npcAnimationRuntime.entries").get(`${levelId}:${runeId}`);
+          if (animation === "completed") window.eval("setNpcCompleted")(entry);
+          else {
+            window.eval("setNpcAnimation")(entry, animation, performance.now(), animation !== "idle");
+            window.eval("setNpcFrame")(entry);
+          }
+          delete window.characterUniforms.npc;
+        }, { ...fixture, animation });
+        await expect.poll(async () => (await page.evaluate(() => window.characterUniforms.npc))?.map((value) => Number(value.toFixed(5)))).toEqual(expected.map((value) => Number(value.toFixed(5))));
+      }
+      // A live change reaches the existing canvas and changes the rendered NPC pixels.
+      const canvas = page.locator("[data-voxel-canvas]");
+      await canvas.evaluate((element) => { element.dataset.appearanceIdentity = "stable"; });
+      const before = await page.locator(`[data-npc-challenge='${fixture.runeId}']`).screenshot();
+      await page.evaluate((runeId) => window.eval("updateChallengeNpcSetting")(runeId, "brightness", 0.4), fixture.runeId);
+      await expect.poll(() => page.evaluate(() => window.characterUniforms.npc[0])).toBeCloseTo(0.4);
+      const after = await page.locator(`[data-npc-challenge='${fixture.runeId}']`).screenshot();
+      expect(pngLuminance(after).mean).toBeLessThan(pngLuminance(before).mean);
+      await expect(canvas).toHaveAttribute("data-appearance-identity", "stable");
+      await page.screenshot({ path: testInfo.outputPath(`${fixture.levelId}-character-appearance-voxel.png`) });
+    }
+    expect(errors).toEqual([]);
+  });
+
   test("publishes accepted Voxel presets with deterministic two-renderer migration", async ({ page }) => {
     await page.goto(fileUrl);
     const api = await page.evaluate(() => {
@@ -231,7 +308,7 @@ test.describe("Atlas WebGPU voxel presentation", () => {
     const baseline = pngLuminance(await page.screenshot());
     await page.evaluate(() => {
       const state = window.eval("state");
-      window.eval("walkRoute")([{ x: state.player.x + 84, y: state.player.y }], () => {});
+      window.eval("walkRoute")([{ x: state.worldX + 84, y: state.worldY }], () => {});
     });
     const frames = [];
     for (let index = 0; index < 18; index += 1) frames.push(pngLuminance(await page.screenshot()));

@@ -41,6 +41,8 @@
       p6: vec4f,
       p7: vec4f,
       p8: vec4f,
+      appearance: vec4f,
+      hue: vec4f,
     };
     @group(0) @binding(0) var<uniform> u: Uniforms;
     @group(0) @binding(1) var colorTexture: texture_2d<f32>;
@@ -115,8 +117,28 @@
 
     fn luminance(c: vec3f) -> f32 { return dot(c, vec3f(0.2126, 0.7152, 0.0722)); }
 
+    // Match the ordered CSS brightness/contrast/saturate/sepia/hue filters.
+    // Neutral uniforms leave all non-character materials untouched.
+    fn characterColor(source: vec3f) -> vec3f {
+      if (all(u.appearance == vec4f(1.0, 1.0, 1.0, 0.0)) && u.hue.x == 0.0) { return source; }
+      var c = clamp(source * u.appearance.x, vec3f(0.0), vec3f(1.0));
+      c = clamp((c - vec3f(0.5)) * u.appearance.y + vec3f(0.5), vec3f(0.0), vec3f(1.0));
+      let grey = vec3f(dot(c, vec3f(0.213, 0.715, 0.072)));
+      c = clamp(mix(grey, c, u.appearance.z), vec3f(0.0), vec3f(1.0));
+      let sepia = vec3f(dot(c, vec3f(0.393, 0.769, 0.189)), dot(c, vec3f(0.349, 0.686, 0.168)), dot(c, vec3f(0.272, 0.534, 0.131)));
+      c = clamp(mix(c, sepia, u.appearance.w), vec3f(0.0), vec3f(1.0));
+      let co = cos(u.hue.x);
+      let si = sin(u.hue.x);
+      return clamp(vec3f(
+        dot(c, vec3f(0.213 + co * 0.787 - si * 0.213, 0.715 - co * 0.715 - si * 0.715, 0.072 - co * 0.072 + si * 0.928)),
+        dot(c, vec3f(0.213 - co * 0.213 + si * 0.143, 0.715 + co * 0.285 + si * 0.140, 0.072 - co * 0.072 - si * 0.283)),
+        dot(c, vec3f(0.213 - co * 0.213 - si * 0.787, 0.715 - co * 0.715 + si * 0.715, 0.072 + co * 0.928 + si * 0.072))
+      ), vec3f(0.0), vec3f(1.0));
+    }
+
     @fragment fn fragmentMain(input: VertexOut) -> @location(0) vec4f {
-      let source = textureSample(colorTexture, atlasSampler, input.uv);
+      let raw = textureSample(colorTexture, atlasSampler, input.uv);
+      let source = vec4f(characterColor(raw.rgb), raw.a);
       if (u.p7.x > 0.5 && source.a < u.p7.w) { discard; }
       if (u.p7.z == 1.0) { return source; }
       if (u.p7.z == 2.0) { return vec4f(vec3f(input.depth), 1.0); }
@@ -470,7 +492,7 @@
     }
 
     function writeUniforms(config, targetBuffer) {
-      const data = new Float32Array(36);
+      const data = new Float32Array(44);
       data.set([canvas.width, canvas.height, config.gridX, config.gridY], 0);
       data.set([config.cameraStart, config.cameraSpan, config.time, 0], 4);
       data.set([settings.depthStrength, settings.parallax, settings.perspective, settings.blockGap], 8);
@@ -482,6 +504,9 @@
       data.set([Math.cos(azimuth) * Math.cos(elevation), -Math.sin(elevation), Math.abs(Math.sin(azimuth) * Math.cos(elevation)) + 0.3, settings.ambientLight], 24);
       data.set([config.mode, config.hasDepth ? 1 : 0, debugIndex(), config.alphaCut ?? 0.06], 28);
       data.set([config.layerDepth ?? 0.5, settings.lightIntensity, config.mirror ? -1 : 1, settings.effectGlow], 32);
+      const appearance = global.AtlasCharacterAppearance.filterParameters(config.appearance, config.characterKind);
+      data.set(appearance.slice(0, 4), 36);
+      data[40] = appearance[4] * Math.PI / 180;
       device.queue.writeBuffer(targetBuffer, 0, data);
     }
 
@@ -553,7 +578,9 @@
           rect.width / stageRect.width,
           rect.height / stageRect.height
         ];
-        entries.push({ color, rect: normalized, layerDepth, mirror, key: fallbackKey });
+        entries.push({ color, rect: normalized, layerDepth, mirror, key: fallbackKey,
+          appearance: options.getCharacterAppearance?.(fallbackKey),
+          characterKind: fallbackKey.startsWith("npc:") ? "npc" : "sven" });
       };
       const actor = document.querySelector("[data-actor='sven']");
       document.querySelectorAll("[data-npc-challenge] [data-npc-sprite]").forEach((npc) => {
@@ -639,7 +666,7 @@
         const spriteBlock = settings.voxelSize / settings.spriteVoxelScale;
         const spriteGridX = Math.max(3, Math.ceil(sprite.rect[2] * canvas.width / spriteBlock));
         const spriteGridY = Math.max(4, Math.ceil(sprite.rect[3] * canvas.height / spriteBlock));
-        drawGrid(pass, { color: sprite.color, depth: neutralDepthTexture(), gridX: spriteGridX, gridY: spriteGridY, rect: sprite.rect, uvRect: sprite.mirror ? [1, 0, -1, 1] : [0, 0, 1, 1], cameraStart, cameraSpan, time: timestamp / 1000, mode: 1, alpha: true, hasDepth: false, layerDepth: sprite.layerDepth, mirror: sprite.mirror, alphaCut: 0.08 });
+        drawGrid(pass, { color: sprite.color, appearance: sprite.appearance, characterKind: sprite.characterKind, depth: neutralDepthTexture(), gridX: spriteGridX, gridY: spriteGridY, rect: sprite.rect, uvRect: sprite.mirror ? [1, 0, -1, 1] : [0, 0, 1, 1], cameraStart, cameraSpan, time: timestamp / 1000, mode: 1, alpha: true, hasDepth: false, layerDepth: sprite.layerDepth, mirror: sprite.mirror, alphaCut: 0.08 });
       });
       drawEffects(["foregroundAtmosphere"]);
       pass.end();

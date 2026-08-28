@@ -187,7 +187,7 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
       await expect(graphicsVisual).toHaveAttribute("open", "");
     }
     await panel.getByRole("button", { name: "Characters", exact: true }).click();
-    const characterVisual = panel.locator('[data-editor-panel-key="simple-visual-controls"]');
+    const characterVisual = panel.locator('[data-character-visuals="sven"]');
     const locomotionPanel = panel.locator('[data-editor-panel-key="sven-locomotion"]');
     await characterVisual.evaluate((element) => { element.open = true; });
     await locomotionPanel.evaluate((element) => { element.open = true; });

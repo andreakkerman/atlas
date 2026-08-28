@@ -2262,6 +2262,17 @@ button {
 .npcEditorField input { min-width: 0; accent-color: var(--teal); }
 .npcEditorField output { min-width: 54px; text-align: right; font-variant-numeric: tabular-nums; }
 
+.characterControlGroup > summary { margin-bottom: 10px; }
+.characterControlGroup > label + label { margin-top: 8px; }
+.characterVisualField {
+  display: grid;
+  grid-template-columns: minmax(85px, 0.8fr) minmax(90px, 1.2fr) 54px;
+  align-items: center;
+  gap: 8px;
+}
+.characterVisualField input { width: 100%; min-width: 0; accent-color: var(--teal); }
+.characterVisualField output { text-align: right; font-variant-numeric: tabular-nums; }
+
 .effectGuideHandle {
   fill: #ffd06d;
   stroke: #10201d;
@@ -3010,7 +3021,7 @@ button {
   border: 0;
   background: transparent;
   cursor: pointer;
-  filter: brightness(var(--npc-brightness)) drop-shadow(0 13px 9px rgba(0, 0, 0, 0.34));
+  filter: var(--npc-appearance, brightness(var(--npc-brightness))) drop-shadow(0 13px 9px rgba(0, 0, 0, 0.34));
 }
 
 .npcFacingLayer {
@@ -3038,7 +3049,7 @@ button {
   border-radius: 42%;
 }
 
-.npcChallengeInactive { opacity: 0.48; filter: grayscale(0.8) brightness(var(--npc-brightness)); }
+.npcChallengeInactive { opacity: 0.48; filter: grayscale(0.8) var(--npc-appearance, brightness(var(--npc-brightness))); }
 
 .sven-facing-left {
   --sven-facing: left;
