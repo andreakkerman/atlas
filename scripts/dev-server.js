@@ -18,6 +18,7 @@ function loadSceneEffectsApi() {
 }
 
 const sceneEffectsApi = loadSceneEffectsApi();
+const cinematicSettingsApi = require("../src/cinematic-settings.js");
 
 function sendJson(response, status, payload) {
   response.writeHead(status, {
@@ -207,6 +208,10 @@ function normalizeWorldConfig(value) {
       if (!Number.isFinite(radius) || radius < 2 || radius > 24) throw new Error(`${levelId}.emissiveGlow.radius is out of range.`);
       if (!Number.isFinite(sensitivity) || sensitivity < 0 || sensitivity > 1) throw new Error(`${levelId}.emissiveGlow.sensitivity is out of range.`);
       next.emissiveGlow = { enabled: glow.enabled, intensity, radius, sensitivity };
+    }
+    if (settings.cinematicLighting !== undefined) {
+      if (!settings.cinematicLighting || typeof settings.cinematicLighting !== "object" || Array.isArray(settings.cinematicLighting)) throw new Error(`${levelId}.cinematicLighting must be an object.`);
+      next.cinematicLighting = cinematicSettingsApi.normalize(settings.cinematicLighting);
     }
     result.levels[levelId] = next;
   });

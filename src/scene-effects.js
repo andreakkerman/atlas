@@ -1987,6 +1987,7 @@
       const quality = detectQuality();
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       resolved = (current?.sceneEffects || [])
+        .filter((effect) => options.shouldRenderEffect?.(effect) !== false)
         .filter((effect) => effect?.enabled !== false && validateInstance(effect, current).valid)
         .filter((effect) => {
           if (visibility.mode === "selectedHidden") return effect.id !== visibility.selectedId;

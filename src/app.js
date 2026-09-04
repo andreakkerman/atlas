@@ -129,6 +129,7 @@ const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
 const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
+  shouldRenderEffect: (effect) => voxelRenderer.getSettings().renderer !== "cinematic" || !window.AtlasCinematicSettings.replacedPresets.has(effect.presetId),
   warn: (message) => console.warn(message)
 });
 let graphicsSettingsOpen = false;
@@ -162,6 +163,44 @@ const emissiveGlowRenderer = window.AtlasEmissiveGlow.createRuntime({
   getLevel: () => level,
   getRenderer: () => voxelRenderer.getSettings().renderer,
   getSettings: (levelId) => worldResolver.levelSettings(levelId).emissiveGlow
+});
+const cinematicOriginals = new Map();
+let cinematicStatus = { status: "idle", ready: false };
+const cinematicCueInteraction = { hoveredId: null, pressedId: null };
+const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
+  getLevel: () => level,
+  getRenderer: () => voxelRenderer.getSettings().renderer,
+  getSettings: (id) => worldResolver.levelSettings(id).cinematicLighting,
+  getGameplayCues: () => cinematicGameplayCues(),
+  getCameraX: () => level ? getCameraX() : 0,
+  getViewportWorldWidth: () => state.viewportWorldWidth,
+  getBackgroundAppearance: () => window.AtlasCharacterAppearance.normalize(levelTuning(), "sven", "background"),
+  getCharacterAppearance: (key) => key === "actor:sven"
+    ? window.AtlasCharacterAppearance.normalize(levelTuning(), "sven", "sven")
+    : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))) : null,
+  getGroundingShadow: (key) => key === "actor:sven"
+    ? window.AtlasCinematicSettings.normalize(worldResolver.levelSettings(level.id).cinematicLighting).characters.groundingShadow !== false
+    : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))).groundingShadow : false,
+  onStatus: (snapshot) => {
+    cinematicStatus = snapshot;
+    const message = snapshot.error ? `Cinematic Lighting unavailable: ${snapshot.error}` : `Cinematic Lighting · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
+    document.querySelectorAll("[data-cinematic-status]").forEach(node => { node.textContent = message; node.dataset.status = snapshot.status; });
+    document.querySelectorAll("[data-cinematic-error]").forEach(node => { node.textContent = snapshot.error ? message : ""; node.hidden = !snapshot.error; });
+  }
+});
+const cinematicEditor = window.AtlasCinematicEditor.createEditor({
+  getLevel: () => level,
+  getSettings: () => worldResolver.levelSettings(level?.id).cinematicLighting,
+  getRenderer: () => voxelRenderer.getSettings().renderer,
+  getCameraX: () => getCameraX(),
+  getViewportWorldWidth: () => state.viewportWorldWidth,
+  setSettings: (settings) => {
+    if (!cinematicOriginals.has(level.id)) cinematicOriginals.set(level.id, { settings: cloneOptionalConfig(worldResolver.levelSettings(level.id).cinematicLighting), worldDirty: worldEditor.dirty });
+    worldResolver.updateLevelSettings(level.id, { cinematicLighting: settings });
+    markWorldConfigDirty(`${level.id}: Cinematic Lighting aangepast.`);
+    markEditorModified("Cinematic Lighting aangepast. Apply slaat dit level op.");
+    if (voxelRenderer.getSettings().renderer === "cinematic") cinematicRenderer.sync();
+  }
 });
 const performanceHud = {
   element: null,
@@ -969,12 +1008,17 @@ function persistWorldConfigRequest() {
 }
 
 function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
+  const expectedCinematic = worldResolver.levelSettings(level?.id).cinematicLighting;
+  if (expectedCinematic && !editorValuesEqual(window.AtlasCinematicSettings.normalize(payload?.config?.levels?.[level?.id]?.cinematicLighting), window.AtlasCinematicSettings.normalize(expectedCinematic))) {
+    throw new Error("Cinematic Lighting was not saved. Restart the editor server and Apply again.");
+  }
   const persistedGlow = payload?.config?.levels?.[level?.id]?.emissiveGlow;
   if (expectedEmissiveGlow !== undefined && !editorValuesEqual(persistedGlow, expectedEmissiveGlow)) {
     throw new Error("De editorserver heeft Emissive Glow niet opgeslagen. Herstart npm run dev:editor en klik opnieuw op Apply.");
   }
   worldResolver.setConfig(payload.config);
   window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+  cinematicOriginals.delete(level?.id);
 }
 
 function updateLevelSetting(levelId, key, value) {
@@ -1171,6 +1215,7 @@ function npcConfigForChallenge(challenge) {
     scale: clamp(Number(npc.scale ?? 1), 0.35, 2.5),
     // Legacy Left/Right labels did not describe the artwork; only an explicit mirror flips it.
     facing: npc.facing === "mirrored" ? "mirrored" : "native",
+    groundingShadow: npc.groundingShadow !== false,
     ...window.AtlasCharacterAppearance.normalize(npc, "npc"),
     idleIntervalMinMs: clamp(Number(npc.idleIntervalMinMs ?? 7000), 1000, 60000),
     idleIntervalMaxMs: clamp(Number(npc.idleIntervalMaxMs ?? 13000), 1000, 90000),
@@ -1815,6 +1860,11 @@ async function selectLevel(id, options = {}) {
   const loadSequence = ++levelLoadSequence;
   const entry = levelCatalog.find((item) => item.id === id) || levelCatalog[0];
   if (!entry) return false;
+  if (!worldResolver.entryIsAvailable(entry)) {
+    state = { screen: "menu", error: "Deze ontwikkelplek is alleen lokaal beschikbaar." };
+    render();
+    return false;
+  }
   if (!worldResolver.isEnabled(entry.id) && !options.allowDisabledForEditor) {
     state = { screen: "menu", error: "Deze plek is uitgeschakeld in de wereldeditor." };
     render();
@@ -1885,13 +1935,15 @@ async function selectLevel(id, options = {}) {
   ));
   assetReadiness.activate(assetPlan);
   sceneEffectRuntime.prepareLevel(nextLevel);
-  const adventure = adventureEntryFor(entry);
-  sessionReport?.startOrVisitLevel({
-    adventureId: adventure.id,
-    adventureTitle: adventure.title,
-    levelId: entry.id,
-    levelTitle: nextLevel.title
-  });
+  if (!entry.developerOnly) {
+    const adventure = adventureEntryFor(entry);
+    sessionReport?.startOrVisitLevel({
+      adventureId: adventure.id,
+      adventureTitle: adventure.title,
+      levelId: entry.id,
+      levelTitle: nextLevel.title
+    });
+  }
   const nextState = createLevelState(nextLevel);
   nextState.criticalAssetsReady = true;
   if (options.startImmediately) {
@@ -1899,6 +1951,8 @@ async function selectLevel(id, options = {}) {
   }
   level = nextLevel;
   state = nextState;
+  cinematicCueInteraction.hoveredId = null;
+  cinematicCueInteraction.pressedId = null;
   walkNodesById = new Map(nextLevel.walkGraph.nodes.map((node) => [node.id, node]));
   if (options.startImmediately) {
     if (options.recordStart !== false) recordLevelStarted(entry.id);
@@ -1987,6 +2041,7 @@ function isLevelRecentlyLocked(levelId) {
 
 function recordLevelStarted(levelId) {
   if (!levelId) return;
+  if (levelCatalog.find((entry) => entry.id === levelId)?.developerOnly) return;
   window.AtlasWorld.recordRecent(levelId, window.localStorage);
 }
 
@@ -2015,6 +2070,7 @@ function returnToMenu() {
   ambientFlybyRuntime.stopAll();
   sceneEffectRuntime.dispose();
   voxelRenderer.dispose();
+  cinematicRenderer.dispose();
   emissiveGlowRenderer.dispose();
   resetAmbientAnimalTimers();
   ambientAnimalRuntime.levelId = null;
@@ -2024,6 +2080,8 @@ function returnToMenu() {
   assetReadiness.releaseActive();
   sessionReport?.end("menu");
   level = null;
+  cinematicCueInteraction.hoveredId = null;
+  cinematicCueInteraction.pressedId = null;
   walkNodesById = new Map();
   state = { screen: "menu" };
   document.title = "Atlas";
@@ -2442,6 +2500,13 @@ async function revertWalkPathDraft() {
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
     setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
     setAudioConfig(walkPathEditor.originalAudioConfig);
+    if (cinematicOriginals.has(level.id)) {
+      const original = cinematicOriginals.get(level.id);
+      worldResolver.updateLevelSettings(level.id, { cinematicLighting: original.settings });
+      worldEditor.dirty = original.worldDirty;
+      cinematicOriginals.delete(level.id);
+      cinematicRenderer.sync();
+    }
     if (walkPathEditor.emissiveGlowDirty) {
       worldResolver.updateLevelSettings(level.id, { emissiveGlow: cloneOptionalConfig(walkPathEditor.originalEmissiveGlow) });
       worldEditor.dirty = walkPathEditor.worldDirtyBeforeEmissiveGlow;
@@ -2544,9 +2609,11 @@ function updateDraggedAmbientAnimal(event) {
   walkPathEditor.status = "Modified";
   walkPathEditor.modified = true;
   walkPathEditor.message = `${animal.id}: x ${animal.x}, y ${animal.y}, schaal ${animal.scale}`;
-  setLevelAmbientAnimals(animals);
+  // Position-only dragging must keep the live DOM/capture stable. Rebuilding the
+  // whole world here replaced the pointer target between move events.
+  level.ambientAnimals = animals;
   persistWalkPathDraft();
-  render();
+  updateAmbientAnimalDom(animal);
 }
 
 function updateAmbientAnimalScale(animalId, value) {
@@ -2680,6 +2747,8 @@ function refreshChallengePresentationDom(challenge) {
   updateWorldDom();
   syncNpcAnimations();
   voxelRenderer.sync();
+  cinematicRenderer.sync();
+  cinematicEditor.updateGuideCamera();
   if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }
 
@@ -2733,13 +2802,13 @@ function updateChallengeBoolean(challengeId, field, value) {
 }
 
 function updateChallengeNpcSetting(challengeId, field, value) {
-  const allowed = new Set(["displayName", "scale", "facing", ...window.AtlasCharacterAppearance.controls.map(({ key }) => key), "idleIntervalMinMs", "idleIntervalMaxMs", "playbackRate", "successIdleBeatMs"]);
+  const allowed = new Set(["displayName", "scale", "facing", "groundingShadow", ...window.AtlasCharacterAppearance.controls.map(({ key }) => key), "idleIntervalMinMs", "idleIntervalMaxMs", "playbackRate", "successIdleBeatMs"]);
   if (!allowed.has(field)) return;
   const challenges = cloneLearningChallenges(level.learningChallenges || []);
   const challenge = challenges.find((item) => item.id === challengeId);
   if (!challenge) return;
   challenge.npc ||= {};
-  challenge.npc[field] = ["displayName", "facing"].includes(field) ? String(value) : Number(value);
+  challenge.npc[field] = field === "groundingShadow" ? Boolean(value) : ["displayName", "facing"].includes(field) ? String(value) : Number(value);
   const normalized = npcConfigForChallenge(challenge);
   if (!["displayName", "facing"].includes(field)) challenge.npc[field] = normalized[field];
   commitLearningChallengeEditorUpdate(challenges, challenge, `${challenge.id}: ${field} aangepast.`, { render: false });
@@ -2779,6 +2848,8 @@ function markEditorModified(message) {
   walkPathEditor.status = "Modified";
   walkPathEditor.modified = true;
   walkPathEditor.message = message;
+  const draftStatus = document.querySelector("[data-developer-tools] [data-editor-draft-status]");
+  if (draftStatus) { draftStatus.className = "walkPathStatusModified"; draftStatus.textContent = "Draft Status: Modified"; }
   persistWalkPathDraft();
 }
 
@@ -3754,6 +3825,7 @@ function inspectAmbientTarget(target) {
 function completeCurrentSceneChallenges() {
   if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return;
   stopMovement({ invalidateIntent: true });
+  state.devCompletionActive = true;
   state.completedRunes = new Set(activeRunes().map((rune) => rune.id));
   state.screen = "scene";
   state.activeRuneId = null;
@@ -4080,8 +4152,10 @@ function showReward() {
   playSfx("adventureComplete");
   emitCompanionEvent("ADVENTURE_COMPLETE");
   state.screen = "reward";
-  sessionReport?.completeLevel(level.id);
-  saveCompletion();
+  if (!state.devCompletionActive) {
+    sessionReport?.completeLevel(level.id);
+    saveCompletion();
+  }
   render();
 }
 
@@ -4162,6 +4236,7 @@ function restart() {
   state.questionTracked = false;
   state.assistedCompletionAvailable = false;
   state.completedRunes = new Set();
+  state.devCompletionActive = false;
   state.levelExitReadyFromSaved = storedLevelIsComplete(level);
   state.seenObjects = new Set();
   state.challengeFailureCounts = {};
@@ -4553,6 +4628,7 @@ function renderNpcCharacterEditorControls() {
       <details class="editorNestedSection characterControlGroup" open data-editor-panel-key="npc-general-${challenge.id}"><summary>General</summary>
       <label class="editorField"><span>Display name</span><input value="${config.displayName}" placeholder="${character?.name || "NPC"}" data-npc-setting="displayName" data-challenge-id="${challenge.id}"></label>
       <label class="editorField"><span>Facing</span><select data-npc-setting="facing" data-challenge-id="${challenge.id}"><option value="native" ${config.facing === "native" ? "selected" : ""}>Native</option><option value="mirrored" ${config.facing === "mirrored" ? "selected" : ""}>Mirrored</option></select></label>
+      <label class="editorField"><span>Grounding Shadow</span><input type="checkbox" data-npc-setting="groundingShadow" data-challenge-id="${challenge.id}" ${config.groundingShadow ? "checked" : ""}></label>
       ${range("Scale", "scale", 0.35, 2.5, 0.01)}
       ${range("Playback speed", "playbackRate", 0.25, 3, 0.05)}
       ${range("Idle interval min (ms)", "idleIntervalMinMs", 1000, 60000, 250)}
@@ -5715,9 +5791,28 @@ function nudgeSelectedEffect(dx, dy) {
   updateEffectGeometry(`${effect.label}: nudged ${dx}, ${dy}.`);
 }
 
+function renderEmissiveGlowControls(levelId) {
+  const emissiveGlow = emissiveGlowTuning(levelId);
+  return `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
+    <summary>Emissive Glow (Illustrated)</summary>
+    <p>This legacy artwork glow is used only by Illustrated Mode. Cinematic Mode uses Effects → Emissive / bloom.</p>
+    <fieldset class="atlasEmissiveGlowControls">
+      <label class="atlasToggleField"><input type="checkbox" data-emissive-setting="enabled" data-level-id="${levelId}" ${emissiveGlow.enabled ? "checked" : ""}> <span>Enabled</span></label>
+      <label class="graphicsRange">Intensity <output data-emissive-output="intensity">${emissiveGlow.intensity.toFixed(2)}</output>
+        <input type="range" min="0" max="1.25" step="0.01" value="${emissiveGlow.intensity}" data-emissive-setting="intensity" data-level-id="${levelId}">
+      </label>
+      <label class="graphicsRange">Radius <output data-emissive-output="radius">${emissiveGlow.radius.toFixed(1)}</output>
+        <input type="range" min="2" max="24" step="0.5" value="${emissiveGlow.radius}" data-emissive-setting="radius" data-level-id="${levelId}">
+      </label>
+      <label class="graphicsRange">Sensitivity <output data-emissive-output="sensitivity">${emissiveGlow.sensitivity.toFixed(2)}</output>
+        <input type="range" min="0" max="1" step="0.01" value="${emissiveGlow.sensitivity}" data-emissive-setting="sensitivity" data-level-id="${levelId}">
+      </label>
+    </fieldset>
+  </details>`;
+}
+
 function renderLevelTuningControls(levelId, options = {}) {
   const tuning = levelTuning(levelId);
-  const emissiveGlow = emissiveGlowTuning(levelId);
   const globalTuning = locomotionTuning();
   const settings = worldResolver.levelSettings(levelId);
   const includeCharacters = options.scope !== "graphics";
@@ -5747,7 +5842,8 @@ function renderLevelTuningControls(levelId, options = {}) {
         ${numberControl("Animation Speed (Level)", "animationSpeed", tuning.animationSpeed, 0.5, 1.8, 0.05)}
       </div></details>${renderCharacterVisualControls("sven", tuning, levelId)}` : ""}
       ${includeGraphics ? `<details class="atlasVisualAdjustments" data-editor-panel-key="simple-visual-controls">
-        <summary>Simple visual controls</summary>
+        <summary>Base artwork appearance</summary>
+        <p>Shared starting appearance for Illustrated Mode and the artwork entering Cinematic Mode. Cinematic Global Grading is applied afterward.</p>
         <div class="atlasVisualColumns">
           ${includeGraphics ? `<fieldset><legend>Background</legend>
             ${numberControl("Brightness", "backgroundBrightness", tuning.backgroundBrightness, 0.5, 1.5, 0.05)}
@@ -5757,21 +5853,6 @@ function renderLevelTuningControls(levelId, options = {}) {
             ${numberControl("Tint", "backgroundTint", tuning.backgroundTint, -1, 1, 0.05)}
           </fieldset>` : ""}
         </div>
-      </details>` : ""}
-      ${includeGraphics ? `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
-        <summary>Emissive Glow</summary>
-        <fieldset class="atlasEmissiveGlowControls">
-          <label class="atlasToggleField"><input type="checkbox" data-emissive-setting="enabled" data-level-id="${levelId}" ${emissiveGlow.enabled ? "checked" : ""}> <span>Enabled</span></label>
-          <label class="graphicsRange">Intensity <output data-emissive-output="intensity">${emissiveGlow.intensity.toFixed(2)}</output>
-            <input type="range" min="0" max="1.25" step="0.01" value="${emissiveGlow.intensity}" data-emissive-setting="intensity" data-level-id="${levelId}">
-          </label>
-          <label class="graphicsRange">Radius <output data-emissive-output="radius">${emissiveGlow.radius.toFixed(1)}</output>
-            <input type="range" min="2" max="24" step="0.5" value="${emissiveGlow.radius}" data-emissive-setting="radius" data-level-id="${levelId}">
-          </label>
-          <label class="graphicsRange">Sensitivity <output data-emissive-output="sensitivity">${emissiveGlow.sensitivity.toFixed(2)}</output>
-            <input type="range" min="0" max="1" step="0.01" value="${emissiveGlow.sensitivity}" data-emissive-setting="sensitivity" data-level-id="${levelId}">
-          </label>
-        </fieldset>
       </details>` : ""}
       ${includeCharacters ? `<details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
         <summary>Sven Locomotion</summary>
@@ -5856,7 +5937,7 @@ function renderDeveloperToolsPanel() {
         <button type="button" data-debug-action="collapse-editor-panel" aria-label="Editorpaneel inklappen">Minimize</button>
       </div>
       <span class="developerToolMode">Current Mode: Level Editing</span>
-      <span class="${statusClass}">Draft Status: ${walkPathEditor.status}</span>
+      <span class="${statusClass}" data-editor-draft-status>Draft Status: ${walkPathEditor.status}</span>
       <nav class="editorModeTabs" aria-label="Editor sections">
         <button type="button" data-editor-mode="characters" class="${walkPathEditor.editorMode === "characters" ? "editorObjectSelected" : ""}">Characters</button>
         <button type="button" data-editor-mode="challenges" class="${walkPathEditor.editorMode === "challenges" ? "editorObjectSelected" : ""}">Challenges</button>
@@ -5871,9 +5952,12 @@ function renderDeveloperToolsPanel() {
         <p>Drag the selected challenge marker or its linked object guides in the world to adjust its existing position and approach point.</p>
         ${renderChallengeEditorControls()}
       ` : `
+        ${cinematicEditor.render()}
         <details class="editorSection" open data-editor-panel-key="graphics-level"><summary>Level rendering</summary>${renderLevelTuningControls(level.id, { scope: "graphics" })}</details>
         ${renderAmbientEditorControls({ animals: false, flybys: true })}
         <details class="editorSection" open data-editor-panel-key="graphics-audio"><summary>Audio</summary>${renderAudioEditorControls()}</details>
+        <h3>Illustrated effects</h3>
+        ${renderEmissiveGlowControls(level.id)}
         ${renderSceneEffectsEditorControls()}
       `}
       <div class="walkPathEditorActions">
@@ -5941,6 +6025,7 @@ function renderWorldStage() {
   return `
     <section class="stageViewport" aria-label="Verbonden wereld" data-world-stage data-renderer="${renderer}">
       ${renderer === "voxel" ? `<canvas class="voxelViewportCanvas" data-voxel-canvas aria-label="WebGPU voxelwereld"></canvas>` : ""}
+      ${renderer === "cinematic" ? `<canvas class="cinematicViewportCanvas" data-cinematic-canvas data-cinematic-level="${level.id}" aria-label="WebGPU Cinematic Lighting"></canvas><p class="cinematicError" data-cinematic-error role="alert" hidden></p>` : ""}
       <div
         class="worldTrack"
         style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
@@ -5963,6 +6048,7 @@ function renderWorldStage() {
           <span class="svenSpriteMount" data-actor-mount="sven" aria-hidden="true"></span>
         </span>
       </div>
+      ${renderer === "cinematic" ? cinematicEditor.renderGuides() : ""}
       ${renderFlightPathWorkspace()}
       ${renderEffectGeometryWorkspace()}
       ${renderDeveloperToolsPanel()}
@@ -6075,6 +6161,36 @@ function isLevelExitReady() {
   const explicitlyProgressing = activeRunes().filter((rune) => learningChallengeForRune(rune)?.unlocksLevelProgression === true);
   if (explicitlyProgressing.length) return explicitlyProgressing.every((rune) => state.completedRunes.has(rune.id));
   return completedActiveRuneCount() >= requiredRuneCount();
+}
+
+// Visual projection of the existing progression state, never a second state machine.
+function cinematicGameplayCues() {
+  if(!level || !state?.completedRunes)return [];
+  const cues=[];
+  for(const rune of level.runes) {
+    if(!isRuneActive(rune))continue;
+    const object=interactiveObjectForTarget(rune);if(!object)continue;
+    const done=state.completedRunes.has(rune.id),locked=!done&&isChallengePrerequisiteLocked(rune);
+    const id=`challenge-${rune.id}`;
+    cues.push({id,x:object.center.x,y:object.center.y,radius:Math.min(65,Math.max(22,object.radius || 32)),state:done?"completed":locked?"locked":"available",interaction:cinematicCueInteraction.pressedId===id?"pressed":cinematicCueInteraction.hoveredId===id?"hover":"idle",color:done?"#ffd27b":locked?"#b18b52":"#57e8df",intensity:done?0.5:locked?0.25:1.1});
+  }
+  const exit=hotspotById(level.exitHotspotId || "templeGate"),object=exit&&interactiveObjectForTarget(exit);
+  if(object){const open=isLevelExitReady(),id=`exit-${exit.id}`;cues.push({id,x:object.center.x,y:object.center.y,radius:Math.min(90,Math.max(32,object.radius || 60)),state:open?"open":"locked",interaction:cinematicCueInteraction.pressedId===id?"pressed":cinematicCueInteraction.hoveredId===id?"hover":"idle",color:open?"#70f5d6":"#b18b52",intensity:open?1.3:0.25});}
+  return cues;
+}
+
+function cinematicCueIdForTarget(target) {
+  const rune = target?.closest?.("[data-rune]");
+  if (rune) return `challenge-${rune.dataset.rune}`;
+  const exit = target?.closest?.("[data-exit-hotspot='true']");
+  return exit ? `exit-${exit.dataset.hotspot}` : null;
+}
+
+function updateCinematicCueInteraction(kind, id) {
+  const key = kind === "pressed" ? "pressedId" : "hoveredId";
+  if (cinematicCueInteraction[key] === id) return;
+  cinematicCueInteraction[key] = id;
+  if (voxelRenderer.getSettings().renderer === "cinematic") cinematicRenderer.sync();
 }
 
 function renderHotspot(hotspot) {
@@ -6198,7 +6314,8 @@ function renderGraphicsSettings() {
   const settings = voxelRenderer.getSettings();
   const descriptions = {
     illustrated: "De oorspronkelijke geïllustreerde 2D Atlas-presentatie.",
-    voxel: "WebGPU voxel rendering with depth-aware world geometry, high-fidelity voxel sprites and emissive effects."
+    voxel: "WebGPU voxel rendering with depth-aware world geometry, high-fidelity voxel sprites and emissive effects.",
+    cinematic: "Experimental WebGPU lighting over the original artwork. Author per-level effects in Developer Tools → Graphics → Cinematic Lighting."
   };
   return `
     <section class="graphicsSettingsPopover" data-graphics-settings role="dialog" aria-label="Grafische instellingen">
@@ -6207,10 +6324,17 @@ function renderGraphicsSettings() {
         <legend>Renderer</legend>
         <div class="segmentedControl">
           <button type="button" data-renderer-choice="illustrated" aria-pressed="${settings.renderer === "illustrated"}">Illustrated</button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Experimental</legend>
+        <div class="segmentedControl">
           <button type="button" data-renderer-choice="voxel" aria-pressed="${settings.renderer === "voxel"}">Voxel</button>
+          <button type="button" data-renderer-choice="cinematic" aria-pressed="${settings.renderer === "cinematic"}">Cinematic Lighting</button>
         </div>
       </fieldset>
       <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
+      ${settings.renderer === "cinematic" ? `<p data-cinematic-status>${cinematicStatus.error || cinematicStatus.status}</p>` : ""}
       ${settings.renderer === "voxel" ? `<label class="graphicsSelect">Graphics quality
         <select data-graphics-quality>
           ${Object.keys(window.AtlasVoxelRenderer.PRESETS).map((quality) => `<option value="${quality}" ${settings.quality === quality ? "selected" : ""}>${quality[0].toUpperCase()}${quality.slice(1)}</option>`).join("")}
@@ -6220,7 +6344,7 @@ function renderGraphicsSettings() {
       <label class="graphicsRange">Voxel blockiness <output>${Math.round(settings.voxelSize)} px</output>
         <input type="range" min="1" max="10" step="1" value="${settings.voxelSize}" data-voxel-setting="voxelSize" />
       </label>` : ""}
-      <p class="voxelRuntimeStatus" data-voxel-runtime-status data-status="${voxelRendererStatus.status}">${voxelRuntimeStatusLabel()}</p>
+      ${settings.renderer !== "cinematic" ? `<p class="voxelRuntimeStatus" data-voxel-runtime-status data-status="${voxelRendererStatus.status}">${voxelRuntimeStatusLabel()}</p>` : ""}
       ${settings.renderer === "voxel" ? `<button class="openVoxelTuningButton" type="button" data-voxel-action="open">Advanced voxel tuning</button>` : ""}
       ${settings.renderer === "voxel" ? `<p class="graphicsHint">Ctrl + Shift + V opent de uitgebreide voxel tuning.</p>` : ""}
     </section>
@@ -6368,7 +6492,7 @@ function renderAdventureTeamBar() {
 function renderScene(options = {}) {
   const renderer = voxelRenderer.getSettings().renderer;
   const voxelReadyClass = renderer === "voxel" && voxelRendererStatus.ready && voxelRendererStatus.renderer === renderer ? "voxelReady" : "";
-  const rendererModeClass = renderer === "voxel" ? "voxelMode" : "classicMode";
+  const rendererModeClass = renderer === "voxel" ? "voxelMode" : renderer === "cinematic" ? "cinematicMode" : "classicMode";
   return `
     <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""} ${rendererModeClass} ${voxelReadyClass}" data-active-renderer="${renderer}">
       ${renderReturnToMenuButton()}
@@ -6965,6 +7089,8 @@ function getChallengeCharacter() {
     const character = npcCharacterForChallenge(activeChallenge);
     if (character) return { ...character, name: npcDisplayName(activeChallenge, character) };
   }
+  const manifestCharacter = atlasCharacterById(activeChallenge?.challengeCharacterId || level.challengeCharacter?.id);
+  if (manifestCharacter) return { ...manifestCharacter, name: level.challengeCharacter?.name || manifestCharacter.name };
   return level.challengeCharacter || level.companion || {
     id: "runewachter",
     name: level.spiritName || "Runewachter",
@@ -7058,6 +7184,7 @@ function captureEditorUiState() {
     result.details.push({ base, index, open: details.open });
   });
   const active = document.activeElement;
+  if(active?.matches?.('[data-cinematic-setting]')) result.cinematicFocus={section:active.dataset.cinematicSection,key:active.dataset.cinematicSetting};
   if (active?.matches?.("[data-level-setting], [data-locomotion-setting]")) {
     result.focus = {
       levelId: active.dataset.levelId || "",
@@ -7091,10 +7218,12 @@ function restoreEditorUiState(saved) {
     input?.focus({ preventScroll: true });
     if (input?.setSelectionRange && saved.focus.start !== null) input.setSelectionRange(saved.focus.start, saved.focus.end);
   }
+  if(saved.cinematicFocus) document.querySelector(`[data-cinematic-section="${CSS.escape(saved.cinematicFocus.section)}"][data-cinematic-setting="${CSS.escape(saved.cinematicFocus.key)}"]`)?.focus({preventScroll:true});
 }
 
 function render() {
   const editorUiState = captureEditorUiState();
+  const retainedCinematicCanvas = app.querySelector("[data-cinematic-canvas]");
   const retainedVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   const retainedVoxelLevel = retainedVoxelCanvas?.dataset.voxelLevel;
   const retainedEmissiveCanvas = app.querySelector("[data-emissive-glow-canvas]");
@@ -7123,6 +7252,8 @@ function render() {
     app.innerHTML = renderScene();
   }
 
+  const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas]");
+  if (retainedCinematicCanvas && replacementCinematicCanvas && retainedCinematicCanvas.dataset.cinematicLevel === level?.id) replacementCinematicCanvas.replaceWith(retainedCinematicCanvas);
   const replacementVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   if (retainedVoxelCanvas && replacementVoxelCanvas && (!retainedVoxelLevel || retainedVoxelLevel === level?.id)) {
     replacementVoxelCanvas.replaceWith(retainedVoxelCanvas);
@@ -7164,6 +7295,8 @@ function render() {
   ambientFlybyRuntime.sync();
   sceneEffectRuntime.sync();
   voxelRenderer.sync();
+  cinematicRenderer.sync();
+  cinematicEditor.updateGuides();
   emissiveGlowRenderer.sync();
   syncPerformanceHud();
   syncMenuAutoRotation();
@@ -7418,7 +7551,11 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     const animal = level?.ambientAnimals?.find((item) => item.id === animalTarget.dataset.ambientAnimal);
-    if (animal) playAmbientAnimalSound(animal);
+    if (animal && walkPathEditor.enabled && debugOverlayEnabled) {
+      walkPathEditor.selectedObjectType = "animal";
+      walkPathEditor.selectedObjectId = animal.id;
+      render();
+    } else if (animal) playAmbientAnimalSound(animal);
     return;
   }
   if (event.target.closest("[data-walkpath-index]") || event.target.closest("[data-object-drag]")) {
@@ -7677,7 +7814,7 @@ app.addEventListener("click", (event) => {
 
 app.addEventListener("input", (event) => {
   const npcSetting = event.target.closest("[data-npc-setting]");
-  if (npcSetting && npcSetting.tagName !== "SELECT") {
+  if (npcSetting && npcSetting.tagName !== "SELECT" && npcSetting.type !== "checkbox") {
     updateChallengeNpcSetting(npcSetting.dataset.challengeId, npcSetting.dataset.npcSetting, npcSetting.value);
     return;
   }
@@ -7756,9 +7893,9 @@ app.addEventListener("change", (event) => {
     updateChallengeBoolean(challengeBoolean.dataset.challengeId, challengeBoolean.dataset.challengeBoolean, challengeBoolean.checked);
     return;
   }
-  const npcSetting = event.target.closest("select[data-npc-setting]");
+  const npcSetting = event.target.closest("select[data-npc-setting], input[type='checkbox'][data-npc-setting]");
   if (npcSetting) {
-    updateChallengeNpcSetting(npcSetting.dataset.challengeId, npcSetting.dataset.npcSetting, npcSetting.value);
+    updateChallengeNpcSetting(npcSetting.dataset.challengeId, npcSetting.dataset.npcSetting, npcSetting.type === "checkbox" ? npcSetting.checked : npcSetting.value);
     return;
   }
   const emissiveSetting = event.target.closest("[data-emissive-setting]");
@@ -7878,6 +8015,9 @@ app.addEventListener("change", (event) => {
 
 app.addEventListener("pointerdown", (event) => {
   ensureAudioUnlocked();
+  updateCinematicCueInteraction("pressed", cinematicCueIdForTarget(event.target));
+  // Form controls must not pick a world/animal drag handle behind the panel.
+  if (event.target.closest("[data-developer-tools]")) return;
   const effectHandle = event.target.closest("[data-effect-handle]");
   if (effectHandle && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "graphics")) {
     event.preventDefault();
@@ -7965,7 +8105,6 @@ app.addEventListener("pointerdown", (event) => {
     walkPathEditor.selectedObjectId = animalTarget.dataset.animalDrag;
     walkPathEditor.draggingObjectId = null;
     walkPathEditor.draggingIndex = null;
-    updateDraggedAmbientAnimal(event);
     return;
   }
   const objectTarget = event.target.closest("[data-object-drag]");
@@ -8034,6 +8173,8 @@ window.addEventListener("pointermove", (event) => {
 });
 
 window.addEventListener("pointerup", () => {
+  const finishedAnimalDrag = Boolean(walkPathEditor.draggingAnimalId);
+  updateCinematicCueInteraction("pressed", null);
   if (walkPathEditor.effectDrag && walkPathEditor.effectDrag.type !== "pan") {
     const effect = selectedSceneEffect();
     if (effect) {
@@ -8049,6 +8190,7 @@ window.addEventListener("pointerup", () => {
   walkPathEditor.draggingAnimalId = null;
   walkPathEditor.draggingFlybyPoint = null;
   walkPathEditor.pathPan = null;
+  if (finishedAnimalDrag) render();
 });
 
 document.addEventListener("visibilitychange", () => {
@@ -8058,6 +8200,7 @@ document.addEventListener("visibilitychange", () => {
     ambientFlybyRuntime.stopAll();
     sceneEffectRuntime.stop();
     voxelRenderer.stop();
+    cinematicRenderer.stop();
     Object.values(guideBlinkRuntime).forEach(clearGuideBlinkState);
   } else {
     syncMenuAutoRotation();
@@ -8066,8 +8209,26 @@ document.addEventListener("visibilitychange", () => {
     ambientFlybyRuntime.sync();
     sceneEffectRuntime.sync();
     voxelRenderer.sync();
+    cinematicRenderer.sync();
     emissiveGlowRenderer.sync();
   }
+});
+
+app.addEventListener("pointerover", (event) => {
+  const id = cinematicCueIdForTarget(event.target);
+  if (id) updateCinematicCueInteraction("hovered", id);
+});
+
+app.addEventListener("pointerout", (event) => {
+  const id = cinematicCueIdForTarget(event.target);
+  if (id && cinematicCueIdForTarget(event.relatedTarget) !== id) {
+    updateCinematicCueInteraction("hovered", null);
+  }
+});
+
+window.addEventListener("pointercancel", () => {
+  updateCinematicCueInteraction("pressed", null);
+  updateCinematicCueInteraction("hovered", null);
 });
 
 installKeyboardViewportTracking();

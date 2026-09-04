@@ -242,7 +242,7 @@ test.describe("ambient animals", () => {
   });
 
   test("editor drag, scale and softness update both frames identically in the live preview", async ({ page }) => {
-    await startNautilus(page, editorUrl);
+    await startNautilus(page, editorRuntimeUrl);
     await page.keyboard.press("Control+Shift+D");
     await expect(page.locator("[data-animal-editor-id='harborSeagull']")).toBeVisible();
 
@@ -268,6 +268,28 @@ test.describe("ambient animals", () => {
     expect(after.sharedFilter).toContain("blur(0.7px)");
     expect(after.open).toEqual(after.closed);
     expect(after.open).toEqual(after.container);
+    expect(await page.locator("[data-select-ambient-id='harborSeagull']").getAttribute("class")).toContain("editorObjectSelected");
+  });
+
+  test("editor animal handle stays visible, selectable and draggable in Cinematic mode", async ({ page }) => {
+    await startNautilus(page, editorRuntimeUrl);
+    await page.keyboard.press("Control+Shift+D");
+    await page.evaluate(() => { window.eval("voxelRenderer").updateSettings({ renderer: "cinematic" }); window.eval("render")(); });
+    await expect(page.locator(".gameShell")).toHaveClass(/cinematicReady/, { timeout: 25000 });
+    const shell = page.locator("[data-ambient-animal='harborSeagull']");
+    await expect(shell).toHaveCSS("z-index", "46");
+    await expect(shell).not.toHaveCSS("outline-style", "none");
+    const before = await animalGeometry(page);
+    const point = await hittableAnimalPoint(page, "harborSeagull");
+    await page.mouse.move(point.x, point.y);
+    await page.mouse.down();
+    await page.mouse.move(point.x + 52, point.y + 20, { steps: 4 });
+    await page.mouse.up();
+    const restore = page.locator("[data-debug-action='restore-editor-panel']");
+    if (await restore.count()) await restore.click();
+    const after = await animalGeometry(page);
+    expect(after.x).not.toBe(before.x);
+    expect(after.y).not.toBe(before.y);
     expect(await page.locator("[data-select-ambient-id='harborSeagull']").getAttribute("class")).toContain("editorObjectSelected");
   });
 

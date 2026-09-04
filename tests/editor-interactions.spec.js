@@ -9,6 +9,7 @@ const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString
 const editorUrl = `${gameUrl}?dev=editor`;
 const editorRuntimeUrl = process.env.ATLAS_EDITOR_URL || editorUrl;
 const root = path.join(__dirname, "..");
+require("./editor-draft-fixture").preserveEditorDrafts(test, root);
 
 async function openVikingEditor(page) {
   const pageErrors = [];
@@ -84,6 +85,12 @@ function restoreFiles(snapshot) {
 
 function clearDraft(snapshot) {
   if (fs.existsSync(snapshot.draftPath)) fs.unlinkSync(snapshot.draftPath);
+}
+
+// Absence is also authored state. A scene-only Apply must not invent a draft
+// when the current working tree has no draft file.
+function readOptionalDraft(draftPath) {
+  return fs.existsSync(draftPath) ? fs.readFileSync(draftPath, "utf8") : null;
 }
 
 function loadLevelFromFile(levelPath, levelId) {
@@ -254,6 +261,16 @@ test.describe("developer editor interaction routing", () => {
     const snapshot = preserveFiles("LVL-0002");
     const challengeSource = snapshot.levelSource.slice(0, snapshot.levelSource.indexOf('window.SVEN_LEVEL_DEFINITIONS["LVL-0002"]'));
     try {
+      // Ignore unrelated authored drafts in the browser, while retaining the
+      // actual file to verify scene-only Apply leaves it byte-for-byte intact.
+      await page.route("**/__dev/levels/LVL-0002/editor-draft", async route => {
+        if (route.request().method() === "GET") {
+          const response = await route.fetch();
+          const draft = await response.json();
+          delete draft.walkPath;
+          await route.fulfill({ response, json: draft });
+        } else await route.continue();
+      });
       await openLevelEditor(page, "LVL-0002");
       const expected = await page.evaluate(async () => {
         window.eval("level.sceneEffects = []");
@@ -287,7 +304,7 @@ test.describe("developer editor interaction routing", () => {
       expect(firstAppliedLevel).toContain("sceneEffects:");
       expect(firstAppliedLevel).not.toContain("audioConfig");
       expect(fs.readFileSync(snapshot.audioPath, "utf8")).toBe(snapshot.audioSource);
-      expect(fs.readFileSync(snapshot.draftPath, "utf8")).toBe(snapshot.draftSource);
+      expect(readOptionalDraft(snapshot.draftPath)).toBe(snapshot.draftSource);
 
       const parsedLevel = loadLevelFromFile(snapshot.levelPath, "LVL-0002");
       const reloaded = {
@@ -314,7 +331,7 @@ test.describe("developer editor interaction routing", () => {
       });
       expect(fs.readFileSync(snapshot.levelPath, "utf8")).toBe(firstAppliedLevel);
       expect(fs.readFileSync(snapshot.audioPath, "utf8")).toBe(snapshot.audioSource);
-      expect(fs.readFileSync(snapshot.draftPath, "utf8")).toBe(snapshot.draftSource);
+      expect(readOptionalDraft(snapshot.draftPath)).toBe(snapshot.draftSource);
 
       await openLevelEditor(page, "LVL-0002");
       await page.evaluate(async () => {
@@ -342,8 +359,9 @@ test.describe("developer editor interaction routing", () => {
       expect(removedLevel).not.toContain("sceneEffects:");
       expect(removedLevel).not.toContain("sceneEffectGroups:");
       expect(fs.readFileSync(snapshot.audioPath, "utf8")).toBe(snapshot.audioSource);
-      expect(fs.readFileSync(snapshot.draftPath, "utf8")).toBe(snapshot.draftSource);
+      expect(readOptionalDraft(snapshot.draftPath)).toBe(snapshot.draftSource);
     } finally {
+      await page.close();
       restoreFiles(snapshot);
     }
   });
@@ -371,6 +389,7 @@ test.describe("developer editor interaction routing", () => {
       expect(fs.readFileSync(snapshot.levelPath, "utf8")).toBe(snapshot.levelSource);
       expect(fs.readFileSync(snapshot.audioPath, "utf8")).toContain(`"musicVolume": ${nextVolume}`);
     } finally {
+      await page.close();
       restoreFiles(snapshot);
     }
   });
@@ -478,6 +497,7 @@ test.describe("developer editor interaction routing", () => {
       expect(reloaded.centralLegacyApproach).toEqual(reloaded.central);
       expect(reloaded.exitLegacyApproach).toEqual(reloaded.exit);
     } finally {
+      await page.close();
       restoreFiles(snapshot);
     }
   });
@@ -515,6 +535,7 @@ test.describe("developer editor interaction routing", () => {
         expect(reloaded.legacy.radius).toBe(expected.radius);
       }
     } finally {
+      await page.close();
       restoreFiles(snapshot);
     }
   });
@@ -580,6 +601,7 @@ test.describe("developer editor interaction routing", () => {
       });
       expect(reloaded).toEqual(restored.point);
     } finally {
+      await page.close();
       restoreFiles(snapshot);
     }
   });

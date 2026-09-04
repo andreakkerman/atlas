@@ -195,7 +195,7 @@
     const input = value && typeof value === "object" ? value : {};
     const renderer = ["voxel", "voxel-v1", "voxel-v2", "voxel-v3"].includes(input.renderer)
       ? "voxel"
-      : "illustrated";
+      : input.renderer === "cinematic" ? "cinematic" : "illustrated";
     const presetTable = presetsFor(renderer);
     const quality = input.quality === "custom" || presetTable[input.quality] ? input.quality : "high";
     const base = { ...DEFAULT_SETTINGS, ...(presetTable[quality] || presetTable.high), ...input, renderer };

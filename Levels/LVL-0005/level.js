@@ -107,8 +107,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
     },
     {
       "id": "chart-approach",
-      "x": 663,
-      "y": 590,
+      "x": 787,
+      "y": 574,
       "role": "approach"
     },
     {

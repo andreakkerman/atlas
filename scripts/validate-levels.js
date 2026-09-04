@@ -268,6 +268,9 @@ function validateManifest() {
     validateRequiredString(entry.id, `${label}.id`);
     validateRequiredString(entry.title, `${label}.title`);
     validateRequiredString(entry.script, `${label}.script`);
+    if (entry.developerOnly !== undefined && typeof entry.developerOnly !== "boolean") {
+      fail(`${label}.developerOnly must be boolean when provided.`);
+    }
     if (ids.has(entry.id)) fail(`${label}.id is duplicated: ${entry.id}`);
     ids.add(entry.id);
 
@@ -424,6 +427,23 @@ function validateWorld(level, levelFolder, label) {
       }
     } catch (error) {
       fail(`${label}.world.background could not be measured: ${error.message}`);
+    }
+  }
+
+  if (level.world.depthmap !== undefined) {
+    validateRequiredString(level.world.depthmap, `${label}.world.depthmap`);
+    const depthPath = assertAssetExists(level.world.depthmap, `${label}.world.depthmap`, levelFolder);
+    if (depthPath && fs.existsSync(depthPath)) {
+      try {
+        const dimensions = readImageDimensions(depthPath);
+        if (level.world.width !== dimensions.width || level.world.height !== dimensions.height) {
+          fail(
+            `${label}.world.depthmap dimensions do not match artwork. Declared ${level.world.width}x${level.world.height}, actual ${dimensions.width}x${dimensions.height}.`
+          );
+        }
+      } catch (error) {
+        fail(`${label}.world.depthmap could not be measured: ${error.message}`);
+      }
     }
   }
 
@@ -912,8 +932,13 @@ function validateLevel(entry) {
   validateAmbientAnimals(level, world, label);
   validateSceneEffects(level, label);
   validatePlayer(level, world, nodeIds, label);
-  validateReferences(level, objects, nodeIds, label);
-  validateCompanionAuthoring(level, objects, label);
+  if (entry.developerOnly) {
+    if (!Array.isArray(level.hotspots)) fail(`${label}.hotspots must be an array.`);
+    if (!Array.isArray(level.runes)) fail(`${label}.runes must be an array.`);
+  } else {
+    validateReferences(level, objects, nodeIds, label);
+    validateCompanionAuthoring(level, objects, label);
+  }
   validateAssets(level, entry, levelFolder, label);
 }
 
@@ -930,7 +955,9 @@ function main() {
     process.exit(1);
   }
 
-  console.log(`Level validation passed for ${manifest.levels.length} level(s).`);
+  const productionCount = manifest.levels.filter((entry) => !entry.developerOnly).length;
+  const developerCount = manifest.levels.length - productionCount;
+  console.log(`Level validation passed for ${productionCount} production level(s) and ${developerCount} developer level(s).`);
 }
 
 main();

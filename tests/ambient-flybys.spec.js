@@ -31,7 +31,14 @@ test.describe("ambient flyby runtime", () => {
       };
       const before = { a: rect(frameA), b: rect(frameB), questions: window.AtlasSessionReport.getCurrent()?.questions.length || 0 };
       runtime.preview(flyby.id);
-      await new Promise((resolve) => setTimeout(resolve, 180));
+      await new Promise((resolve) => {
+        const started = performance.now();
+        const nextFrame = () => {
+          if (Number(shell.dataset.progress) > 0 || performance.now() - started > 3000) resolve();
+          else requestAnimationFrame(nextFrame);
+        };
+        requestAnimationFrame(nextFrame);
+      });
       const during = {
         active: shell.dataset.active,
         frame: shell.dataset.frame,

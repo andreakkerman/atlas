@@ -706,8 +706,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "y": 418,
       "radius": 58,
       "approach": {
-        "x": 1028,
-        "y": 570
+        "x": 1067,
+        "y": 592
       }
     },
     {
@@ -871,8 +871,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
     },
     {
       "id": "centralCodex-approach",
-      "x": 1028,
-      "y": 570,
+      "x": 1067,
+      "y": 592,
       "role": "approach"
     },
     {

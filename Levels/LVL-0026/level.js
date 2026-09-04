@@ -365,7 +365,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "centralCodex",
@@ -739,7 +740,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "designBoard",
@@ -994,8 +996,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
       "y": 403,
       "radius": 68,
       "approach": {
-        "x": 974,
-        "y": 575
+        "x": 1138,
+        "y": 563
       }
     },
     {
@@ -1071,8 +1073,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
     },
     {
       "id": "centralCodex-approach",
-      "x": 974,
-      "y": 575,
+      "x": 1138,
+      "y": 563,
       "role": "approach"
     },
     {

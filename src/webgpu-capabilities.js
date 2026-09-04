@@ -96,7 +96,13 @@
   }
 
   function forgetDevice(device) {
-    if (!device || state.device === device) state.device = null;
+    if (!device || state.device === device) {
+      state.device = null;
+      // Dawn adapters can be consumed after creating a device. Device-loss recovery
+      // must acquire a fresh adapter as well, for either experimental renderer.
+      state.adapter = null;
+      state.initializedBy = null;
+    }
   }
 
   function snapshot() {

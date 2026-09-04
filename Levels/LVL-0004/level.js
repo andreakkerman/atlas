@@ -49,8 +49,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   "player": {
     "startNode": "harbor-start",
     "start": {
-      "x": 259,
-      "y": 564
+      "x": 263,
+      "y": 566
     }
   },
   "ambientAnimals": [
@@ -60,15 +60,16 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "openFrame": "assets/ambient/animals/seagull/seagull-open.png",
       "closedFrame": "assets/ambient/animals/seagull/seagull-closed.png",
       "sound": "assets/ambient/animals/seagull/seagull-call.mp3",
-      "x": 787,
-      "y": 374,
-      "scale": 0.15,
+      "x": 743,
+      "y": 379,
+      "scale": 0.13,
       "blinkMinMs": 4000,
       "blinkMaxMs": 9000,
       "blinkDurationMs": 90,
       "doubleBlinkChance": 0.15,
       "soundCooldownMs": 750,
-      "label": "Meeuw"
+      "label": "Meeuw",
+      "softness": 0.7
     },
     {
       "id": "nautilusSeagull",
@@ -77,7 +78,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "closedFrame": "assets/ambient/animals/seagull/seagull-closed.png",
       "sound": "assets/ambient/animals/seagull/seagull-call.mp3",
       "x": 1440,
-      "y": 247,
+      "y": 246,
       "scale": 0.06,
       "blinkMinMs": 4000,
       "blinkMaxMs": 9000,
@@ -107,8 +108,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "id": "brassTelescope",
       "type": "rune",
       "center": {
-        "x": 815,
-        "y": 360
+        "x": 798,
+        "y": 366
       },
       "radius": 72,
       "approachNode": "telescope-approach",
@@ -118,10 +119,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "id": "nautilusLight",
       "type": "rune",
       "center": {
-        "x": 1420,
-        "y": 397
+        "x": 1424,
+        "y": 398
       },
-      "radius": 84,
+      "radius": 44,
       "approachNode": "nautilus-light-approach",
       "label": "Nautiluslamp"
     },
@@ -129,8 +130,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "id": "boardingGate",
       "type": "gate",
       "center": {
-        "x": 1611,
-        "y": 459
+        "x": 1603,
+        "y": 463
       },
       "radius": 100,
       "approachNode": "boarding-gate-approach",
@@ -140,25 +141,25 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
   "walkPath": [
     {
       "id": "harbor-start",
-      "x": 259,
-      "y": 564
+      "x": 263,
+      "y": 566
     },
     {
       "id": "map-approach",
-      "x": 640,
-      "y": 600,
+      "x": 607,
+      "y": 579,
       "role": "approach"
     },
     {
       "id": "telescope-approach",
-      "x": 807,
-      "y": 593,
+      "x": 816,
+      "y": 577,
       "role": "approach"
     },
     {
       "id": "dock-center",
-      "x": 1071,
-      "y": 600
+      "x": 1097,
+      "y": 586
     },
     {
       "id": "nautilus-light-approach",
@@ -860,7 +861,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "presetId": "water-shimmer",
       "variantId": "default-water-shimmer",
       "presetVersion": 1,
-      "enabled": true,
+      "enabled": false,
       "seed": 1541868200,
       "qualityTier": "auto",
       "layerSlot": "worldAtmosphere",
@@ -895,7 +896,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
       "presetId": "water-shimmer",
       "variantId": "default-water-shimmer",
       "presetVersion": 1,
-      "enabled": true,
+      "enabled": false,
       "seed": 1541868200,
       "qualityTier": "auto",
       "layerSlot": "worldAtmosphere",

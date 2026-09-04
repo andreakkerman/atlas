@@ -33,8 +33,14 @@
       return current?.id || levelId;
     }
 
-    function rootEntries() {
-      return entries.filter((entry) => !entry.connectedFrom);
+    function entryIsAvailable(entry, options = {}) {
+      if (!entry?.developerOnly) return true;
+      const includeDeveloper = options.includeDeveloper ?? isDevelopmentHost(options.location);
+      return includeDeveloper === true;
+    }
+
+    function rootEntries(options = {}) {
+      return entries.filter((entry) => !entry.connectedFrom && entryIsAvailable(entry, options));
     }
 
     function authoredEntries(rootId) {
@@ -75,8 +81,12 @@
       return sequence[index + direction] || null;
     }
 
-    function allEnabledIds() {
-      return rootEntries().flatMap((root) => enabledEntries(root.id).map((entry) => entry.id));
+    function allEnabledIds(options = {}) {
+      // Adventure/progression semantics exclude developer renderer scenes by default,
+      // even while those scenes are visible on a local development host.
+      const includeDeveloper = options.includeDeveloper === true;
+      return rootEntries({ ...options, includeDeveloper })
+        .flatMap((root) => enabledEntries(root.id).map((entry) => entry.id));
     }
 
     function setWorldOrder(rootId, order) {
@@ -132,6 +142,7 @@
 
     return {
       rootIdFor,
+      entryIsAvailable,
       rootEntries,
       authoredEntries,
       orderedEntries,

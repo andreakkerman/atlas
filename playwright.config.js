@@ -1,4 +1,5 @@
 // @ts-check
+require("./scripts/playwright-webkit-cleanup.cjs");
 const { defineConfig, devices } = require("@playwright/test");
 
 /**

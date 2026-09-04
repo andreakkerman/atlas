@@ -972,6 +972,32 @@ button {
   transition: none;
 }
 
+.cinematicViewportCanvas { position: absolute; inset: 0; z-index: 39; width: 100%; height: 100%; pointer-events: none; opacity: 0; visibility: hidden; }
+.cinematicReady .cinematicViewportCanvas { opacity: 1; visibility: visible; }
+.cinematicMode .forestMist { display: none; }
+.cinematicReady .worldArt, .cinematicReady .sceneEffectsCanvas,
+.cinematicReady .ambientAnimalFrames, .cinematicReady .ambientFlybyFrames,
+.cinematicReady [data-actor='sven'], .cinematicReady [data-npc-sprite] { opacity: 0 !important; }
+.cinematicReady .ambientAnimalEditable { z-index: 46; opacity: 1; }
+.cinematicError { position: absolute; z-index: 60; left: 12px; top: 70px; max-width: min(600px, 90%); padding: 16px; background: #381b20; color: #ffe5cf; white-space: pre-wrap; }
+.cinematicError[hidden] { display: none; }
+.cinematicEditor { border-top: 1px solid #bd9564; margin-top: 16px; padding-top: 12px; }
+.cinematicEditor p { font-size: 12px; line-height: 1.5; }
+.cinematicEditor input[type='number'] { width: 100%; box-sizing: border-box; }
+.cinematicSubsection { margin: 10px 0; padding: 0 10px 8px; border: 1px solid rgba(189,149,100,.45); border-radius: 6px; }
+.cinematicSubsection > summary { padding: 8px 0; font-weight: 800; cursor: pointer; }
+.cinematicShadowGroup { margin: 8px 0 12px; padding-top: 7px; border-top: 1px solid rgba(189,149,100,.28); }
+.cinematicShadowGroup > strong { display:block; margin-bottom:4px; color:#ffe4ac; font-size:12px; }
+.cinematicActions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 10px; }
+.cinematicGuides { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 45; pointer-events: none; overflow: visible; }
+.cinematicGuide { fill: none; stroke: #c5a673; stroke-width: 1.5; }
+.cinematicGuide.selected { stroke: #ffe4ac; }
+.cinematicInfluence { opacity: .32; stroke-dasharray: 5 7; }
+.cinematicGuide .cinematicInfluence * { vector-effect: non-scaling-stroke; }
+.cinematicMarker [data-cinematic-handle] { stroke: #91dfd3; }
+.cinematicGuide text { fill: #fff0d1; stroke: #20251f; paint-order: stroke; stroke-width: 3; font: 16px sans-serif; }
+.cinematicGuide [data-cinematic-handle] { fill: #202b29; stroke-width: 2; pointer-events: all; cursor: grab; touch-action: none; }
+
 
 .voxelReady .voxelViewportCanvas {
   opacity: 1;
@@ -1946,6 +1972,24 @@ button {
 .worldHotspot[hidden],
 .runeHotspot[hidden] {
   display: none;
+}
+
+.gameShell[data-active-renderer="cinematic"] .worldHotspot,
+.gameShell[data-active-renderer="cinematic"] .runeHotspot {
+  background: transparent;
+  box-shadow: none;
+}
+
+.gameShell[data-active-renderer="cinematic"] .runeHotspot::after,
+.gameShell[data-active-renderer="cinematic"] .worldHotspot::after {
+  content: none;
+}
+
+.gameShell[data-active-renderer="cinematic"] .worldHotspot:hover,
+.gameShell[data-active-renderer="cinematic"] .worldHotspot:focus-visible,
+.gameShell[data-active-renderer="cinematic"] .runeHotspot:hover,
+.gameShell[data-active-renderer="cinematic"] .runeHotspot:focus-visible {
+  box-shadow: none;
 }
 
 .worldHotspot:hover,
@@ -4678,3 +4722,13 @@ body.keyboard-open .openAnswerControls input {
 
 body.keyboard-open .npcChallengeLayer .npcEncounterCard { min-height: 0; }
 body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px; }
+.cinematicLayerTabs { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin:12px 0; }
+.cinematicLayerTabs [aria-selected="true"] { background:#365f64; border-color:#b7e1d5; color:#fff; }
+.cinematicEditor [hidden] { display:none !important; }
+.cinematicControl { position:relative; display:flex; align-items:center; gap:6px; }
+.cinematicControl > label { flex:1; min-width:0; }
+.cinematicInfo { position:relative; flex:0 0 auto; }
+.cinematicInfo button { padding:3px 6px; min-height:26px; background:transparent; }
+.cinematicHelp { position:absolute; z-index:10; right:0; top:100%; width:240px; padding:12px; background:#172d36; border:1px solid #80aaa6; box-shadow:0 6px 20px #0008; color:#f4f4e8; font-size:12px; line-height:1.5; }
+.cinematicInfo:hover .cinematicHelp[hidden] { display:block !important; }
+.cinematicHint { font-size:12px; opacity:.8; }

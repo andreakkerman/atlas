@@ -3,12 +3,32 @@ const { test, expect } = require("@playwright/test");
 const path = require("path");
 const { pathToFileURL } = require("url");
 const fs = require("fs");
+const vm = require("vm");
 
 const fileUrl = `${pathToFileURL(path.join(__dirname, "..", "index.html"))}?dev=editor`;
 const runtimeUrl = process.env.ATLAS_EDITOR_URL || fileUrl;
+require("./editor-draft-fixture").preserveEditorDrafts(test, path.join(__dirname, ".."));
+
+async function restoreWorldConfig(page, source) {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(source, context);
+  const response = await page.request.post(new URL("/__dev/world-config", runtimeUrl).toString(), {
+    data: context.window.SVEN_WORLD_CONFIG
+  });
+  if (!response.ok()) throw new Error(`World-config restoration failed: ${response.status()} ${await response.text()}`);
+}
 
 test.describe("Illustrated Emissive Glow", () => {
   test.describe.configure({ mode: "serial" });
+  test.beforeEach(async ({ page }) => {
+    // Emissive tests exercise world settings only. Do not let an unrelated,
+    // real walk-path draft become part of their Apply payload.
+    await page.route("**/__dev/levels/*/editor-draft", route => {
+      if (route.request().method() === "GET") return route.fulfill({ json: {} });
+      return route.continue();
+    });
+  });
   test("normalizes the authored contract without any depth input", async ({ page }) => {
     await page.goto(runtimeUrl);
     const result = await page.evaluate(() => ({
@@ -62,6 +82,8 @@ test.describe("Illustrated Emissive Glow", () => {
       await page.evaluate(async () => window.eval("selectLevel")("LVL-0004", { startImmediately: true, recordStart: false }));
       await page.keyboard.press("Control+Shift+D");
       const panel = page.locator("[data-developer-tools]");
+      await panel.locator('[data-editor-mode="graphics"]').click();
+      const configBeforeEdit = await page.evaluate(() => fetch("/__dev/world-config").then((response) => response.json()));
       const controls = panel.locator('[data-editor-panel-key="emissive-glow"]');
       await expect(controls).toBeVisible();
       await controls.locator('[data-emissive-setting="enabled"]').check();
@@ -74,7 +96,7 @@ test.describe("Illustrated Emissive Glow", () => {
         enabled: true, intensity: 0.83, radius: 11.5, sensitivity: 0.37
       });
       const persistedBeforeApply = await page.evaluate(() => fetch("/__dev/world-config").then((response) => response.json()));
-      expect(persistedBeforeApply.levels["LVL-0004"]?.emissiveGlow).toBeUndefined();
+      expect(persistedBeforeApply.levels["LVL-0004"]?.emissiveGlow).toEqual(configBeforeEdit.levels["LVL-0004"]?.emissiveGlow);
       await panel.getByRole("button", { name: "Apply" }).click();
       await expect(panel.locator(".walkPathStatusApplied")).toHaveText("Draft Status: Applied", { timeout: 15_000 });
       await expect(panel.getByText("Editorwijzigingen opgeslagen.", { exact: true })).toBeVisible();
@@ -85,6 +107,7 @@ test.describe("Illustrated Emissive Glow", () => {
       await page.locator('[data-level="LVL-0004"]').first().click();
       await page.getByRole("button", { name: "Start avontuur" }).click();
       await expect(page.locator(".gameShell")).toBeVisible();
+      await page.locator('[data-editor-mode="graphics"]').click();
       expect(await page.evaluate(() => window.eval("worldResolver.levelSettings")("LVL-0004").emissiveGlow)).toEqual({
         enabled: true, intensity: 0.83, radius: 11.5, sensitivity: 0.37
       });
@@ -94,7 +117,8 @@ test.describe("Illustrated Emissive Glow", () => {
       await expect(page.locator('[data-emissive-setting="sensitivity"]')).toHaveValue("0.37");
       await expect(page.locator("[data-emissive-glow-canvas]")).toBeVisible();
     } finally {
-      fs.writeFileSync(configPath, originalConfig);
+      await restoreWorldConfig(page, originalConfig);
+      await page.close();
     }
   });
 
@@ -107,6 +131,7 @@ test.describe("Illustrated Emissive Glow", () => {
       await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true, recordStart: false }));
       await page.keyboard.press("Control+Shift+D");
       let panel = page.locator("[data-developer-tools]");
+      await panel.locator('[data-editor-mode="graphics"]').click();
       let controls = panel.locator('[data-editor-panel-key="emissive-glow"]');
       await controls.locator('[data-emissive-setting="enabled"]').uncheck();
       await expect(page.locator("[data-emissive-glow-canvas]")).toBeHidden();
@@ -127,6 +152,7 @@ test.describe("Illustrated Emissive Glow", () => {
       await page.locator('[data-level="LVL-0001"]').first().click();
       await page.getByRole("button", { name: "Start avontuur" }).click();
       panel = page.locator("[data-developer-tools]");
+      await panel.locator('[data-editor-mode="graphics"]').click();
       controls = panel.locator('[data-editor-panel-key="emissive-glow"]');
       await expect(controls.locator('[data-emissive-setting="enabled"]')).not.toBeChecked();
       await expect(controls.locator('[data-emissive-setting="intensity"]')).toHaveValue("0.61");
@@ -134,7 +160,8 @@ test.describe("Illustrated Emissive Glow", () => {
       await expect(controls.locator('[data-emissive-setting="sensitivity"]')).toHaveValue("0.44");
       await expect(page.locator("[data-emissive-glow-canvas]")).toBeHidden();
     } finally {
-      fs.writeFileSync(configPath, originalConfig);
+      await restoreWorldConfig(page, originalConfig);
+      await page.close();
     }
   });
 });

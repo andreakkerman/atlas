@@ -2,9 +2,22 @@
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
+const vm = require("vm");
 const { pathToFileURL } = require("url");
 
 const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const root = path.join(__dirname, "..");
+require("./editor-draft-fixture").preserveEditorDrafts(test, root);
+
+async function restoreWorldConfig(page, source) {
+  const context = { window: {} };
+  vm.createContext(context);
+  vm.runInContext(source, context);
+  const response = await page.request.post(new URL("/__dev/world-config", process.env.ATLAS_EDITOR_URL).toString(), {
+    data: context.window.SVEN_WORLD_CONFIG
+  });
+  if (!response.ok()) throw new Error(`World-config restoration failed: ${response.status()} ${await response.text()}`);
+}
 
 async function enterLevel(page) {
   await page.goto(gameUrl);
@@ -169,6 +182,10 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
   const configPath = path.join(__dirname, "..", "Levels", "world-config.js");
   const originalConfig = fs.readFileSync(configPath, "utf8");
   try {
+    await page.route("**/__dev/levels/LVL-0001/editor-draft", route => {
+      if (route.request().method() === "GET") return route.fulfill({ json: {} });
+      return route.continue();
+    });
     await page.goto(process.env.ATLAS_EDITOR_URL);
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
     await page.keyboard.press("Control+Shift+D");
@@ -247,6 +264,7 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     });
     expect(migration).toEqual({ status: 200, hasOldSetting: false });
   } finally {
-    fs.writeFileSync(configPath, originalConfig);
+    await restoreWorldConfig(page, originalConfig);
+    await page.close();
   }
 });

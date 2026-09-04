@@ -178,7 +178,8 @@ test.describe("Atlas WebGPU voxel presentation", () => {
     await expect(page.getByRole("button", { name: "Illustrated", exact: true })).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Voxel", exact: true })).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Showcase", exact: true })).toHaveCount(0);
-    await expect(page.locator('[data-renderer-choice]')).toHaveCount(2);
+    await expect(page.locator('[data-renderer-choice]')).toHaveCount(3);
+    await expect(page.getByRole("button", { name: "Cinematic Lighting", exact: true })).toHaveCount(1);
     await expect(page.getByText(/Classic|Voxel V1|Voxel V2|Voxel V3/)).toHaveCount(0);
     await page.getByRole("button", { name: "Voxel", exact: true }).click();
     await expect(page.locator(".gameShell")).toHaveAttribute("data-active-renderer", "voxel");

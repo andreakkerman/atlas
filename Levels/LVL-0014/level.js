@@ -668,14 +668,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
     },
     {
       "id": "telescope-approach",
-      "x": 753,
+      "x": 731,
       "y": 629,
       "role": "approach"
     },
     {
       "id": "bridge-path",
-      "x": 1128,
-      "y": 629
+      "x": 968,
+      "y": 635
     },
     {
       "id": "crystal-approach",

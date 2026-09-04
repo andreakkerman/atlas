@@ -20,12 +20,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   },
   "companion": {
     "name": "Havenmeester Eivar",
-    "portrait": "Levels/LVL-0003/assets/havenmeester-eivar.png"
+    "portrait": "assets/characters/eivar/portrait.png"
   },
   "challengeCharacter": {
-    "id": "havenmeester-eivar",
+    "id": "eivar",
     "name": "Havenmeester Eivar",
-    "portrait": "Levels/LVL-0003/assets/havenmeester-eivar.png",
+    "portrait": "assets/characters/eivar/portrait.png",
     "role": "havenmeester"
   },
   "guides": {
@@ -45,12 +45,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     "viewportWidth": 1000,
     "background": "Levels/LVL-0003/assets/viking-harbor.png"
   },
-  "challengeArt": "Levels/LVL-0003/assets/havenmeester-eivar.png",
+  "challengeArt": "assets/characters/eivar/portrait.png",
   "player": {
     "startNode": "harbor-start",
     "start": {
-      "x": 165,
-      "y": 586
+      "x": 224,
+      "y": 574
     }
   },
   "ambientAnimals": [
@@ -135,36 +135,36 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   "walkPath": [
     {
       "id": "harbor-start",
-      "x": 165,
-      "y": 586
+      "x": 224,
+      "y": 574
     },
     {
       "id": "map-stand-approach",
       "x": 477,
-      "y": 588,
+      "y": 605,
       "role": "approach"
     },
     {
       "id": "compass-approach",
-      "x": 817,
-      "y": 560,
+      "x": 1051,
+      "y": 542,
       "role": "approach"
     },
     {
       "id": "dock-center",
-      "x": 1090,
-      "y": 552
+      "x": 1114,
+      "y": 544
     },
     {
       "id": "crate-approach",
-      "x": 1228,
-      "y": 576,
+      "x": 1361,
+      "y": 561,
       "role": "approach"
     },
     {
       "id": "gate-shield-approach",
-      "x": 1599,
-      "y": 590,
+      "x": 1598,
+      "y": 600,
       "role": "approach"
     },
     {
@@ -309,7 +309,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     {
       "id": "harborMap",
       "anchorId": "harborMap",
-      "challengeCharacterId": "havenmeester-eivar",
+      "challengeCharacterId": "eivar",
       "questions": [
         {
           "id": "harborMap-slot-1",
@@ -446,7 +446,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     {
       "id": "shipCompass",
       "anchorId": "shipCompass",
-      "challengeCharacterId": "havenmeester-eivar",
+      "challengeCharacterId": "eivar",
       "questions": [
         {
           "id": "shipCompass-slot-1",
@@ -665,7 +665,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     {
       "id": "mooringRope",
       "anchorId": "mooringRope",
-      "challengeCharacterId": "havenmeester-eivar",
+      "challengeCharacterId": "eivar",
       "questions": [
         {
           "id": "mooringRope-slot-1",
@@ -820,7 +820,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     {
       "id": "gateShield",
       "anchorId": "gateShield",
-      "challengeCharacterId": "havenmeester-eivar",
+      "challengeCharacterId": "eivar",
       "presentationType": "npc",
       "requiresAllOtherChallenges": true,
       "unlocksLevelProgression": true,

@@ -391,6 +391,18 @@ window.SVEN_LEVEL_MANIFEST = {
         badge: "Finale",
         detail: "Rustige museumzaal, scarabee en uitgang"
       }
+    },
+    {
+      id: "LVL-0000",
+      title: "Cinematic FX Lab",
+      subtitle: "Developer benchmark voor Atlas Cinematic/WebGPU-effecten.",
+      script: "Levels/LVL-0000/level.js",
+      developerOnly: true,
+      menu: {
+        illustration: "Levels/LVL-0000/assets/AtlasTestLevel.png",
+        badge: "Developer Lab",
+        detail: "Daglicht, water, waterval, grot en nacht in één benchmark"
+      }
     }
   ]
 };

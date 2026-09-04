@@ -5,6 +5,7 @@ const path = require("path");
 const { pathToFileURL } = require("url");
 
 const root = path.join(__dirname, "..");
+require("./editor-draft-fixture").preserveEditorDrafts(test, root);
 const gameUrl = pathToFileURL(path.join(root, "index.html")).toString();
 const editorUrl = process.env.ATLAS_EDITOR_URL || `${gameUrl}?dev=editor`;
 
@@ -1428,6 +1429,9 @@ test.describe("scene effects registry and runtime", () => {
   test("keeps levels without effects unchanged", async ({ page }) => {
     await page.goto(gameUrl);
     const result = await page.evaluate(async () => {
+      // LVL-0005 now has authored effects. Build the empty fixture in memory.
+      const empty = await window.eval("loadLevelDefinition")(window.eval("levelCatalog").find(entry => entry.id === "LVL-0005"));
+      delete empty.sceneEffects; delete empty.sceneEffectGroups;
       await window.eval("selectLevel")("LVL-0005", { startImmediately: true });
       return {
         sceneEffects: window.eval("level.sceneEffects"),
@@ -1570,6 +1574,8 @@ test.describe("scene effects registry and runtime", () => {
     const cleaned = await page.evaluate(async () => {
       window.eval("sceneEffectRuntime.pause")();
       const paused = window.eval("sceneEffectRuntime.rafId");
+      const empty = await window.eval("loadLevelDefinition")(window.eval("levelCatalog").find(entry => entry.id === "LVL-0005"));
+      delete empty.sceneEffects; delete empty.sceneEffectGroups;
       await window.eval("selectLevel")("LVL-0005", { startImmediately: true });
       return {
         paused,

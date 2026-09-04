@@ -36,6 +36,10 @@ test("Ctrl+Shift+L completion stays isolated from later level logic and indicato
   expect(completed.logicalIds.sort()).toEqual([...completed.activeIds].sort());
   expect(completed.renderedDoneIds.sort()).toEqual([...completed.activeIds].sort());
 
+  await page.evaluate(() => window.eval("showReward")());
+  expect(await page.evaluate(() => localStorage.getItem("svenadventure-runenpoort-v1"))).toBeNull();
+  await page.evaluate(() => window.eval("returnToMenu")());
+
   for (const levelId of ["LVL-0002", "LVL-0003"]) {
     await loadLevel(page, levelId);
     const later = await completionSnapshot(page);
@@ -44,6 +48,11 @@ test("Ctrl+Shift+L completion stays isolated from later level logic and indicato
     expect(later.renderedDoneIds).toEqual([]);
     expect(later.renderedCompletedNpcs).toEqual([]);
   }
+
+  await loadLevel(page, "LVL-0001");
+  const restarted = await completionSnapshot(page);
+  expect(restarted.logicalIds).toEqual([]);
+  expect(restarted.renderedDoneIds).toEqual([]);
 });
 
 test("level and completion state switch atomically while the next level prepares", async ({ page }) => {

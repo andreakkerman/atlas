@@ -1206,6 +1206,20 @@ test.describe("SvenAdventure", () => {
     });
   });
 
+  test("normal Eivar challenges use the canonical manifest portrait", async ({ page }) => {
+    await page.goto(gameUrl);
+    await page.evaluate(async () => {
+      localStorage.clear();
+      await window.eval("selectLevel")("LVL-0003", { startImmediately: true, recordStart: false });
+      window.eval("openRuneChallenge")("harborMap");
+    });
+
+    const character = page.locator("[data-challenge-character='eivar']");
+    await expect(character).toBeVisible();
+    await expect(character).toContainText("Havenmeester Eivar");
+    await expect(character.locator("img")).toHaveAttribute("src", /assets\/characters\/eivar\/portrait\.png/);
+  });
+
   test("editor shortcut transition from LVL-0001 renders LVL-0002", async ({ page }) => {
     const pageErrors = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
@@ -1345,7 +1359,7 @@ test.describe("SvenAdventure", () => {
     await expect(rope).toHaveClass(/runeSelected/);
     await expect(page.getByText("Een nette rol touw. In een haven is dat bijna verdacht netjes.")).toBeVisible();
     await expect(page.getByRole("heading", { name: "Touwrol" })).toBeVisible({ timeout: 22000 });
-    await expect(page.locator("[data-challenge-character='havenmeester-eivar']")).toBeVisible();
+    await expect(page.locator("[data-challenge-character='eivar']")).toBeVisible();
   });
 
   test("cancels a pending challenge when the player walks elsewhere", async ({ page }) => {

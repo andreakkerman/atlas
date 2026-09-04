@@ -61,6 +61,12 @@ window.SVEN_AUDIO_CONFIG = {
     "musicVolume": 0.62
   },
   "levels": {
+    "LVL-0000": {
+      "music": "menu",
+      "ambience": null,
+      "musicVolume": 0,
+      "ambienceVolume": 0
+    },
     "LVL-0001": {
       "music": "runeCompass",
       "ambience": "vikingForestBirds",

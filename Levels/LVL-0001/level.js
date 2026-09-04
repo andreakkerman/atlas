@@ -43,29 +43,29 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   "player": {
     "startNode": "forest-start",
     "start": {
-      "x": 170,
-      "y": 626
+      "x": 175,
+      "y": 635
     }
   },
   "ambientAnimals": [
     {
       "id": "forestOwl",
       "type": "owl",
-      "label": "Uil",
       "openFrame": "assets/ambient/animals/owl/owl-open.png",
       "closedFrame": "assets/ambient/animals/owl/owl-closed.png",
       "sound": "assets/ambient/animals/owl/owl-call.mp3",
-      "x": 273,
-      "y": 365,
+      "x": 274,
+      "y": 123,
       "scale": 0.18,
-      "softness": 0.3,
-      "saturation": 0.92,
-      "soundVolume": 0.65,
       "blinkMinMs": 4000,
       "blinkMaxMs": 9000,
       "blinkDurationMs": 90,
       "doubleBlinkChance": 0.15,
-      "soundCooldownMs": 750
+      "soundCooldownMs": 750,
+      "label": "Uil",
+      "softness": 0.3,
+      "saturation": 0.92,
+      "soundVolume": 0.65
     }
   ],
   "interactiveObjects": [
@@ -130,61 +130,61 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
   "walkPath": [
     {
       "id": "forest-start",
-      "x": 170,
-      "y": 626
+      "x": 175,
+      "y": 635
     },
     {
       "id": "forest-rune-approach",
-      "x": 285,
-      "y": 628,
+      "x": 322,
+      "y": 625,
       "role": "approach"
     },
     {
       "id": "center-trail",
-      "x": 644,
-      "y": 632
+      "x": 885,
+      "y": 609
     },
     {
       "id": "lower-trail",
-      "x": 940,
-      "y": 628
+      "x": 1017,
+      "y": 615
     },
     {
       "id": "trail-rise-2",
-      "x": 1151,
-      "y": 569
+      "x": 1155,
+      "y": 575
     },
     {
       "id": "trail-top",
-      "x": 1235,
-      "y": 518
+      "x": 1231,
+      "y": 532
     },
     {
       "id": "sun-rune-approach",
-      "x": 1300,
-      "y": 541,
+      "x": 1322,
+      "y": 565,
       "role": "approach"
     },
     {
       "id": "stone-rune-approach",
-      "x": 1417,
-      "y": 567,
+      "x": 1454,
+      "y": 601,
       "role": "approach"
     },
     {
       "id": "temple-approach",
-      "x": 1522,
-      "y": 584
+      "x": 1617,
+      "y": 594
     },
     {
       "id": "gate-step-low",
-      "x": 1624,
-      "y": 573
+      "x": 1679,
+      "y": 579
     },
     {
       "id": "wind-rune-approach",
-      "x": 1685,
-      "y": 542,
+      "x": 1697,
+      "y": 536,
       "role": "approach"
     },
     {
@@ -674,7 +674,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "npc": {
         "characterId": "freya",
         "displayName": "Freya",
-        "scale": 0.92,
+        "scale": 1.23,
         "facing": "native",
         "brightness": 1,
         "idleIntervalMinMs": 2500,
