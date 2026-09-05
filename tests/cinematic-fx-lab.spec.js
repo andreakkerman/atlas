@@ -247,6 +247,19 @@ test("Water Sparkles has a bounded native world-space specular contract", () => 
   expect(shader).toContain("if(e.v[0].x==8.0){base=waterSparkles(e,p,z,base);}");
 });
 
+test("Cinematic external textures use one decoded ImageBitmap upload path with canvas fallback diagnostics", () => {
+  const source = fs.readFileSync(path.join(root, "src/cinematic-renderer.js"), "utf8");
+  expect(source).toContain("await source.decode()");
+  expect(source).toContain("await createImageBitmap(source");
+  expect(source).toContain("function rasterizedSource(");
+  expect(source).toContain("function copyPreparedExternalSource(");
+  expect(source).toContain("function uploadDynamicCanvas(");
+  expect(source).toContain("purpose=\${details.purpose}; source=\${details.type}; dimensions=\${details.width}x\${details.height}; asset=\${details.path}");
+  expect(source).toContain('purpose:"level artwork"');
+  expect(source).toContain('purpose:"scene depthmap"');
+  expect(source).not.toMatch(/copyExternalImageToTexture\(\{\s*source:\s*(?:img|image)\b/);
+});
+
 test("developer visibility is hostname-driven and excluded from adventure progression", () => {
   const make = hostname => {
     const context = { window: { location: { hostname }, localStorage: { getItem: () => null, setItem: () => {} } } };
@@ -363,6 +376,53 @@ test("GPU FX Lab uses scene depth and captures five benchmark positions", async 
   expect(snapshot.particles).toBe(260);
   expect(errors).toEqual([]);
   console.log("FX_LAB_GPU_QA", { fps: snapshot.fps, drawCalls: snapshot.drawCalls, shadowDraws: snapshot.shadowDraws, particles: snapshot.particles, waterSurfaces: snapshot.waterSurfaces, waterSparkles: snapshot.waterSparkles, depthStatus: snapshot.depthStatus });
+});
+
+test("GPU Cinematic uploads valid prepared sources on LVL-0000 and a production level", async ({ page }, info) => {
+  test.skip(!process.env.ATLAS_WEBGPU_QA || info.project.name !== "desktop-chromium", "HTTP Chromium WebGPU run required");
+  test.setTimeout(90000);
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto(runtimeUrl);
+  await page.evaluate(() => {
+    localStorage.clear();
+    const nativeCopy = GPUQueue.prototype.copyExternalImageToTexture;
+    window.__cinematicUploadSources = [];
+    GPUQueue.prototype.copyExternalImageToTexture = function(source, destination, size) {
+      const value = source.source;
+      window.__cinematicUploadSources.push({ type: value?.constructor?.name, width: value?.naturalWidth || value?.width || 0, height: value?.naturalHeight || value?.height || 0 });
+      if (value instanceof HTMLImageElement) throw new Error("Simulated Safari invalid HTMLImageElement state");
+      if (window.__rejectNextCinematicBitmap && value instanceof ImageBitmap) {
+        window.__rejectNextCinematicBitmap = false;
+        throw new Error("Simulated WebKit ImageBitmap copy rejection");
+      }
+      return nativeCopy.call(this, source, destination, size);
+    };
+  });
+  const load = async id => {
+    await page.evaluate(async levelId => {
+      await window.eval("selectLevel")(levelId, { startImmediately: true, recordStart: false });
+      window.eval("voxelRenderer").updateSettings({ renderer: "cinematic" }); window.eval("render")();
+    }, id);
+    await expect.poll(() => page.evaluate(() => window.eval("cinematicRenderer").snapshot().levelId), { timeout: 25000 }).toBe(id);
+    await expect.poll(() => page.evaluate(() => window.eval("cinematicRenderer").snapshot().status), { timeout: 25000 }).toBe("ready");
+    await expect.poll(() => page.evaluate(() => window.eval("cinematicRenderer").snapshot().depthStatus), { timeout: 25000 }).toBe("ready");
+    await expect.poll(() => page.evaluate(() => window.eval("cinematicRenderer").snapshot().textureUploads.some(item => item.purpose.startsWith("sprite "))), { timeout: 25000 }).toBe(true);
+    return page.evaluate(() => window.eval("cinematicRenderer").snapshot());
+  };
+  const lab = await load("LVL-0000");
+  await page.evaluate(() => { window.__rejectNextCinematicBitmap = true; });
+  const production = await load("LVL-0001");
+  const nativeSources = await page.evaluate(() => window.__cinematicUploadSources);
+  expect(lab.textureUploads.find(item => item.purpose === "level artwork")).toMatchObject({ type: "ImageBitmap", fallback: false });
+  expect(lab.textureUploads.find(item => item.purpose === "scene depthmap")).toMatchObject({ type: "ImageBitmap", fallback: false });
+  expect(production.textureUploads.find(item => item.purpose === "level artwork")).toMatchObject({ sourceType: "ImageBitmap", type: "HTMLCanvasElement", fallback: true });
+  expect(production.textureUploads.find(item => item.purpose === "scene depthmap")).toMatchObject({ type: "ImageBitmap", fallback: false });
+  expect(nativeSources.some(item => item.type === "HTMLImageElement")).toBe(false);
+  expect(nativeSources.every(item => item.width > 0 && item.height > 0)).toBe(true);
+  expect(errors).toEqual([]);
 });
 
 test("GPU Water Surface evolves one wave-guided specular field and respects scene depth", async ({ page }, info) => {

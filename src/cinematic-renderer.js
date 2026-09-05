@@ -125,12 +125,12 @@
     let device, context, canvas, pipeline, uniform, effectBuffer, exposureBuffer, sampler, group0, layout0, layout1;
     let background, levelId, loading, generation = 0, raf = 0, lastTime = 0, frame = 0, lastReport = 0;
     let status = "idle", error = null, averageMs = 0, fps = 0, targets = [], drawBuffers = [], drawCursor = 0;
-    let settings = contract.normalize(), packed = [], settingsKey = "", uploaded = new Map(), effectTextures = new Map(), spriteFallbacks = new Map();
+    let settings = contract.normalize(), packed = [], settingsKey = "", uploaded = new Map(), pendingUploads = new Map(), effectTextures = new Map(), spriteFallbacks = new Map();
     let pendingPresentation = false, presented = false, lastSprites = 0, lastDraws = 0, lastShadowDraws = 0, lastGroundedSprites = 0, lastGrounding = [], initPromise, frameDt=1/60;
     let effective=contract.effective(settings), depthTexture, emptyDepth, depthStatus="none", depthPath=null, depthLoads=0, bindGroups=0, computeGroup;
-    const depthCache=new Map(), bindings=new WeakMap(), shadowStates=new Map();
+    const depthCache=new Map(), bindings=new WeakMap(), shadowStates=new Map(), uploadDiagnostics=new Map();
     const active = () => options.getRenderer() === "cinematic";
-    const snapshot = () => ({ status, error, ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.item.count, 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
+    const snapshot = () => ({ status, error, ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.item.count, 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
     function report() {
       document.querySelector(".gameShell")?.classList.toggle("cinematicReady", active() && presented);
       options.onStatus?.(snapshot());
@@ -198,11 +198,71 @@
       const tex = device.createTexture({ size: [width, height], format, usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT });
       return { texture: tex, view: tex.createView(), width, height };
     }
-    function upload(image, old) {
-      const width = image.naturalWidth || image.width, height = image.naturalHeight || image.height;
-      const resource = old || texture(width, height);
-      device.queue.copyExternalImageToTexture({ source: image }, { texture: resource.texture, premultipliedAlpha: false }, [width, height]);
+    function externalSourceDetails(source, metadata = {}) {
+      const type = source?.constructor?.name || typeof source;
+      const width = Number(source?.naturalWidth || source?.videoWidth || source?.width || 0);
+      const height = Number(source?.naturalHeight || source?.videoHeight || source?.height || 0);
+      const path = metadata.path || source?.dataset?.assetPath || source?.currentSrc || source?.src || "inline/dynamic";
+      return { type, width, height, purpose: metadata.purpose || "cinematic texture", path };
+    }
+    function uploadFailure(details, stage, caught) {
+      const message = caught?.message || String(caught);
+      return new Error(`Cinematic texture upload failed (${stage}): purpose=${details.purpose}; source=${details.type}; dimensions=${details.width}x${details.height}; asset=${details.path}; ${message}`, { cause: caught });
+    }
+    function rasterizedSource(source, details) {
+      const canvas = document.createElement("canvas"); canvas.width = details.width; canvas.height = details.height;
+      const context = canvas.getContext("2d", { alpha: true });
+      if (!context) throw uploadFailure(details, "canvas preparation", new Error("2D canvas context unavailable"));
+      context.clearRect(0, 0, details.width, details.height); context.drawImage(source, 0, 0, details.width, details.height);
+      return canvas;
+    }
+    async function preparedExternalSource(source, metadata = {}) {
+      let details = externalSourceDetails(source, metadata);
+      if (typeof HTMLImageElement !== "undefined" && source instanceof HTMLImageElement) {
+        try { await source.decode(); } catch (caught) { throw uploadFailure(details, "image decode", caught); }
+        details = externalSourceDetails(source, metadata);
+        if (!source.complete || details.width <= 0 || details.height <= 0) throw uploadFailure(details, "image validation", new Error("HTMLImageElement is not fully decoded"));
+        if (typeof createImageBitmap === "function") {
+          try {
+            const bitmap = await createImageBitmap(source, { premultiplyAlpha: "none", colorSpaceConversion: "default" });
+            return { source: bitmap, details: externalSourceDetails(bitmap, metadata), release: () => bitmap.close?.() };
+          } catch (bitmapError) {
+            console.warn(uploadFailure(details, "ImageBitmap preparation", bitmapError).message);
+          }
+        }
+        return { source: rasterizedSource(source, details), details: { ...details, type: "HTMLCanvasElement fallback" }, fallback: true };
+      }
+      if (details.width <= 0 || details.height <= 0) throw uploadFailure(details, "source validation", new Error("ExternalImageSource has invalid dimensions"));
+      return { source, details };
+    }
+    function copyPreparedExternalSource(prepared, old) {
+      const { details } = prepared;
+      const resource = old && old.width === details.width && old.height === details.height ? old : texture(details.width, details.height);
+      if (old && resource !== old) old.texture.destroy();
+      try {
+        device.queue.copyExternalImageToTexture({ source: prepared.source }, { texture: resource.texture, premultipliedAlpha: false }, [details.width, details.height]);
+        uploadDiagnostics.set(details.purpose,{...details,fallback:Boolean(prepared.fallback)});
+      } catch (caught) {
+        try {
+          const fallback = rasterizedSource(prepared.source, details);
+          device.queue.copyExternalImageToTexture({ source: fallback }, { texture: resource.texture, premultipliedAlpha: false }, [details.width, details.height]);
+          uploadDiagnostics.set(details.purpose,{...details,sourceType:details.type,type:fallback.constructor.name,fallback:true});
+        } catch (fallbackError) {
+          if (!old || resource !== old) resource.texture.destroy();
+          throw uploadFailure(details, "ImageBitmap and canvas fallback", new Error(`primary=${caught?.message||caught}; fallback=${fallbackError?.message||fallbackError}`));
+        }
+      }
       return resource;
+    }
+    async function upload(source, old, metadata) {
+      const prepared = await preparedExternalSource(source, metadata);
+      try { return copyPreparedExternalSource(prepared, old); }
+      finally { prepared.release?.(); }
+    }
+    function uploadDynamicCanvas(source, old, metadata) {
+      const details = externalSourceDetails(source, metadata);
+      if (details.width <= 0 || details.height <= 0) throw uploadFailure(details, "canvas validation", new Error("Canvas has invalid dimensions"));
+      return copyPreparedExternalSource({ source, details }, old);
     }
     function bindDepth() {
       group0=device.createBindGroup({layout:layout0,entries:[... [uniform,effectBuffer,exposureBuffer].map((buffer,binding)=>({binding,resource:{buffer}})),{binding:3,resource:depthTexture.view},{binding:4,resource:sampler}]});bindGroups++;
@@ -215,8 +275,8 @@
       depthPath=path;depthStatus=path?"loading":"none";depthTexture=emptyDepth;
       if(path && !depthCache.has(path)) {
         let resource=null;
-        try { const img=new Image();img.src=path;await img.decode();if(token!==generation)return;resource=upload(img);depthLoads++; }
-        catch { if(token!==generation)return; }
+        try { const img=new Image();img.src=path;resource=await upload(img,null,{purpose:"scene depthmap",path});if(token!==generation){resource.texture.destroy();return;}depthLoads++; }
+        catch(caught) { if(token!==generation)return;console.warn(caught?.message||caught); }
         depthCache.set(path,resource);
       }
       if(token!==generation)return;
@@ -226,8 +286,10 @@
     function releaseLevel(resetExposure = true) {
       background?.texture.destroy(); background = null;
       for (const item of uploaded.values()) item.texture.destroy(); uploaded.clear();
+      pendingUploads.clear();
       spriteFallbacks.clear();
       for (const item of effectTextures.values()) item.texture.destroy(); effectTextures.clear();
+      uploadDiagnostics.clear();
       targets.forEach(t => t.texture.destroy()); targets = [];
       drawBuffers.forEach(b => b.destroy()); drawBuffers = [];
       settingsKey = ""; frame = 0; lastTime = 0; presented = false; pendingPresentation = false;
@@ -318,7 +380,17 @@
         }
         const cacheKey = source.currentSrc || source.src;
         let resource = uploaded.get(cacheKey);
-        if (!resource && source.complete && source.naturalWidth) { resource = upload(source); uploaded.set(cacheKey, resource); }
+        if (!resource && source.complete && source.naturalWidth && !pendingUploads.has(cacheKey)) {
+          const uploadGeneration = generation;
+          const pending = upload(source,null,{purpose:`sprite ${key}`,path})
+            .then(created => {
+              if(uploadGeneration!==generation){created.texture.destroy();return null;}
+              uploaded.set(cacheKey,created);spriteFallbacks.set(key,created);return created;
+            })
+            .catch(caught => { console.warn(caught?.message||caught);return null; })
+            .finally(() => { pendingUploads.delete(cacheKey); });
+          pendingUploads.set(cacheKey,pending);
+        }
         if (resource) spriteFallbacks.set(key, resource);
         else resource = spriteFallbacks.get(key);
         if (!resource) return;
@@ -353,7 +425,7 @@
           if (!el.getContext("2d")) return;
           let resource = effectTextures.get(slot);
           if (resource && (resource.width !== el.width || resource.height !== el.height)) { resource.texture.destroy(); resource = null; }
-          resource = upload(el, resource); effectTextures.set(slot, resource);
+          resource = uploadDynamicCanvas(el, resource, {purpose:`legacy scene effects ${slot}`,path:`canvas:${slot}`}); effectTextures.set(slot, resource);
           bind(pass, resource, background, { uv: worldUV }); pass.draw(6);
         };
         drawLegacy("backgroundAtmosphere"); drawLegacy("worldAtmosphere"); drawLegacy("worldLight");
@@ -435,9 +507,10 @@
           await initialize(); if (token !== generation || !active()) return;
           if (levelId !== level.id || !background) {
             releaseLevel(); levelId=level.id; status="loading-artwork";report();
-            const img = new Image(); img.src=level.world.background; await img.decode();
-            if (token !== generation || !active()) return;
-            background=upload(img);
+            const img = new Image(); img.src=level.world.background;
+            const uploadedBackground=await upload(img,null,{purpose:"level artwork",path:level.world.background});
+            if (token !== generation || !active()) {uploadedBackground.texture.destroy();return;}
+            background=uploadedBackground;
             await loadDepth(level,token);if(token!==generation || !active())return;
           }
           canvas=nextCanvas; context=canvas.getContext("webgpu"); if (!context) throw new Error("WebGPU canvas context unavailable");
