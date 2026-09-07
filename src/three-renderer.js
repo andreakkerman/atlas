@@ -10,18 +10,30 @@
     let generation=0,loading=false,raf=0,last=0,frames=0,fps=0,averageMs=0;
     let status='idle',error=null,yaw=-.08,pitch=.015,dragging=false,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
     const keys=new Set(),textures=new Set(),flames=[];
-    let preparation='',warmupViews=0,warmupTotal=0,lookPointer=null,movePointer=null,touchWalk=0,touchTurn=0;
+    let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,lookPointer=null,movePointer=null,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
     let preparationMs=null,lastReport=0;
     let preparationCompleted=0;
     let inputType=global.matchMedia('(any-pointer: coarse)').matches?'touch':'desktop';
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
     function snapshot() {
-      return {status,error,ready:status==='ready',preparation,preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,ready:status==='ready',preparation,diagnostic,preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
     // Each boundary is reached only after the preceding work has completed.
     function preparationStage(completed,nextStatus) {preparationCompleted=completed;preparation=PREPARATION_STAGES[completed]||'';report(nextStatus);}
+    function clearWaiting() {clearInterval(waitTimer);waitTimer=0;waitingSince=0;}
+    async function observe(label,task,token) {
+      clearWaiting();diagnostic=label;waitingSince=performance.now();report();
+      waitTimer=setInterval(()=>{if(token!==generation)return clearWaiting();const seconds=Math.floor((performance.now()-waitingSince)/1000);diagnostic=`${label} — wacht nog steeds (${seconds} s)`;report();},5000);
+      try {
+        const result=await task();clearWaiting();
+        if(token===generation){diagnostic=`${label} — gelukt`;report();}
+        return result;
+      } catch(caught) {
+        clearWaiting();const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;report();throw caught;
+      }
+    }
     function resetInput() {
       keys.clear();dragging=false;lookPointer=movePointer=null;touchWalk=touchTurn=0;
       document.querySelector('[data-three-stick]')?.style.removeProperty('transform');
@@ -29,14 +41,14 @@
     function canPlay() {return status==='ready'&&options.getRenderer()==='3d'&&options.canMove?.();}
     function stop() {cancelAnimationFrame(raf);raf=0;last=0;resetInput();}
     function dispose() {
-      generation++;loading=false;stop();abort?.abort();abort=null;
+      generation++;loading=false;clearWaiting();stop();abort?.abort();abort=null;
       if(document.pointerLockElement===canvas)document.exitPointerLock();
       const geometries=new Set(),materials=new Set();
       scene?.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);for(const m of Array.isArray(obj.material)?obj.material:obj.material?[obj.material]:[])materials.add(m);});
       materials.forEach(mat=>{for(const value of Object.values(mat))if(value?.isTexture)textures.add(value);mat.dispose();});
       geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());textures.clear();
       postResources.splice(0).forEach(resource=>resource.dispose?.());post?.dispose();post=null;
-      renderer?.dispose();renderer=scene=camera=canvas=route=sun=npc=worldPass=null;flames.length=0;npcPath=null;npcFrame=null;frames=fps=averageMs=warmupViews=warmupTotal=preparationCompleted=0;preparation='';report('idle');
+      renderer?.dispose();renderer=scene=camera=canvas=route=sun=npc=worldPass=null;flames.length=0;npcPath=null;npcFrame=null;frames=fps=averageMs=warmupViews=warmupTotal=preparationCompleted=0;preparation=diagnostic='';report('idle');
     }
     function routePosition(atlasX) {
       const points=route.route;let i=0;while(i<points.length-2&&atlasX>points[i+1].atlas[0])i++;
@@ -57,7 +69,9 @@
     }
     function interact() {if(!currentTarget||!canPlay())return;resetInput();if(document.pointerLockElement===canvas)document.exitPointerLock();options.interact?.(currentTarget);}
     function attachControls() {
+      abort?.abort();resetInput();
       abort=new AbortController();const opts={signal:abort.signal};
+      const pad=document.querySelector('[data-three-move]'),action=document.querySelector('[data-three-interact]');
       canvas.addEventListener('pointerdown',e=>{
         if(e.button!==0||status!=='ready')return;e.stopPropagation();options.activate?.();
         if(!canPlay()||lookPointer)return;
@@ -66,24 +80,18 @@
       },opts);
       canvas.addEventListener('click',e=>e.stopPropagation(),opts);
       canvas.addEventListener('dblclick',e=>{e.stopPropagation();if(canPlay()&&e.pointerType!=='touch')canvas.requestPointerLock?.()?.catch?.(()=>{});},opts);
-      // Delegate controls because Atlas replaces the HUD when dialogs close.
-      document.addEventListener('pointerdown',e=>{
-        const pad=e.target.closest?.('[data-three-move]');if(!pad||!canPlay()||movePointer)return;
+      pad?.addEventListener('pointerdown',e=>{
+        if(!canPlay()||movePointer)return;
         setInputType('touch');
         e.preventDefault();e.stopPropagation();const rect=pad.getBoundingClientRect();
         movePointer={id:e.pointerId,x:rect.x+rect.width/2,y:rect.y+rect.height/2};pad.setPointerCapture?.(e.pointerId);
-      },{...opts,capture:true});
+      },opts);
       // Restrict Safari gesture suppression to the gameplay surface. Menus,
       // challenge forms and the rest of Atlas retain normal browser behavior.
-      const gameplayGesture=e=>{
-        if(!canPlay())return;
-        if(e.target===canvas||e.target.closest?.('[data-three-move]'))e.preventDefault();
-      };
-      for(const name of ['touchmove','gesturestart','gesturechange'])document.addEventListener(name,gameplayGesture,{...opts,passive:false});
-      document.addEventListener('click',e=>{
-        if(!e.target.closest?.('[data-three-interact],[data-three-move]'))return;
-        e.preventDefault();e.stopPropagation();if(e.target.closest('[data-three-interact]'))interact();
-      },{...opts,capture:true});
+      const gameplayGesture=e=>{if(canPlay())e.preventDefault();};
+      for(const target of [canvas,pad])if(target)for(const name of ['touchmove','gesturestart','gesturechange'])target.addEventListener(name,gameplayGesture,{...opts,passive:false});
+      pad?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();},opts);
+      action?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();interact();},opts);
       global.addEventListener('pointermove',e=>{
         if(!canPlay()){resetInput();return;}
         if(movePointer?.id===e.pointerId){
@@ -326,16 +334,29 @@
     async function sync() {
       const next=document.querySelector('[data-three-canvas]');
       if(options.getRenderer()!=='3d'||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading)dispose();return;}
-      if(renderer&&canvas===next){report();if(!loading&&!raf&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
+      if(renderer&&canvas===next){if(status==='ready')attachControls();report();if(!loading&&!raf&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
       if(loading)return;dispose();loading=true;const token=generation,preparationStarted=performance.now();canvas=next;preparationStage(0,'loading');
       try {
-        const [[lib,{GLTFLoader},{HDRLoader},{DRACOLoader}],data]=await Promise.all([loadModules(),fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();})]);
-        if(token!==generation)return;THREE=lib;route=data;renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance'});await renderer.init();
+        diagnostic=`navigator.gpu: ${navigator.gpu?'beschikbaar':'niet beschikbaar'}`;report();
+        if(!navigator.gpu)throw new DOMException('navigator.gpu is niet beschikbaar in deze browser.','NotSupportedError');
+        const adapter=await observe('WebGPU-adapter aanvragen',()=>navigator.gpu.requestAdapter({powerPreference:'high-performance'}),token);
+        if(token!==generation)return;if(!adapter)throw new DOMException('WebGPU heeft geen geschikte adapter teruggegeven.','NotSupportedError');
+        diagnostic='WebGPU-adapter ontvangen';report();
+        const device=await observe('WebGPU-device aanvragen',()=>adapter.requestDevice(),token);
+        if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
+        const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
+        if(token!==generation)return;THREE=lib;
+        diagnostic='Three.js WebGPURenderer maken';report();
+        try{renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});}catch(caught){diagnostic=`Three.js WebGPURenderer maken — mislukt: ${caught?.name||'Error'}: ${caught?.message||caught}`;report();throw new Error(`WebGPURenderer maken: ${caught?.name||'Error'}: ${caught?.message||caught}`,{cause:caught});}
+        diagnostic='Three.js WebGPURenderer gemaakt';report();
+        await observe('renderer.init uitvoeren',()=>renderer.init(),token);
         if(token!==generation)return;if(!renderer.backend.isWebGPUBackend)throw Error('WebGPU is required for first-person 3D.');
+        preparationStage(1,'loading');
+        route=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
+        if(token!==generation)return;
         renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#dbc294',.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
         const draco=new DRACOLoader().setDecoderPath('assets/vendor/three/draco/').setDecoderConfig({type:'wasm'}).setWorkerLimit(2);
-        preparationStage(1,'loading');
-        let gltf;try{gltf=await new GLTFLoader().setDRACOLoader(draco).loadAsync(ROOT+'lvl0001.glb');}finally{draco.dispose();}
+        let gltf;try{gltf=await observe('3D-wereld laden en decoderen',()=>new GLTFLoader().setDRACOLoader(draco).loadAsync(ROOT+'lvl0001.glb'),token);}finally{draco.dispose();}
         if(token!==generation){gltf.scene.traverse(o=>o.geometry?.dispose());return;}partitionWorld(gltf.scene);scene.add(gltf.scene);
         const prepared=new Set();gltf.scene.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=8;}});
         const sky=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation){sky.dispose();return;}textures.add(sky);
@@ -345,7 +366,7 @@
         if(!next.isConnected){dispose();sync();return;}
         if(!await warmup(token)||token!==generation)return;
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;preparationStage(PREPARATION_STAGES.length,'ready');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
-      }catch(caught){if(token===generation){loading=false;report('error',caught);}}
+      }catch(caught){if(token===generation){clearWaiting();loading=false;const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=diagnostic.includes('mislukt:')?diagnostic:`Initialisatie mislukt: ${detail}`;report('error',caught);}}
     }
     return {sync,stop,dispose,snapshot,lookAt:(nextYaw,nextPitch=0)=>{yaw=nextYaw;pitch=clamp(nextPitch,-1.3,1.3);}};
   }

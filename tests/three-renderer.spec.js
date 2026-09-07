@@ -60,8 +60,61 @@ test.describe('Atlas first-person LVL-0001',()=>{
   await expect(progress).toHaveAttribute('aria-valuenow','5');
   await expect(page.locator('[data-three-loading]')).toBeHidden();
   const evidence=await page.evaluate(()=>({milestones:window.__loadingMilestones,premature:window.__prematureReveal}));
-  expect(evidence).toEqual({milestones:[2,3,4,5],premature:false});
+  expect(evidence).toEqual({milestones:[1,2,3,4,5],premature:false});
   await page.keyboard.down('w');await expect.poll(()=>page.evaluate(()=>window.eval('state.worldX'))).toBeGreaterThan(175);await page.keyboard.up('w');
+ });
+ test('keeps iPad Atlas navigation outside 3D handlers',async({browser})=>{
+  const context=await browser.newContext({hasTouch:true,viewport:{width:1024,height:768},deviceScaleFactor:1});
+  const page=await context.newPage();
+  const tap=async locator=>{await expect(locator).toBeVisible();const box=await locator.boundingBox();await page.touchscreen.tap(box.x+box.width/2,box.y+box.height/2);};
+  try{
+   await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
+   await page.goto(process.env.ATLAS_EDITOR_URL);await page.evaluate(()=>localStorage.clear());await page.reload();
+   await tap(page.getByRole('button',{name:'Start avontuur'}));
+   await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
+   await tap(page.locator('.heroLevelTile'));
+   await expect(page.getByRole('heading',{name:'De Runenpoort'})).toBeVisible();
+   await tap(page.getByRole('button',{name:'Terug'}));
+   await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
+   await tap(page.locator('[data-menu-tile="LVL-0004"]'));
+   await expect(page.locator('.introScreen')).toBeVisible();
+   await tap(page.getByRole('button',{name:'Terug'}));
+   await tap(page.locator('.heroLevelTile'));
+   await tap(page.getByRole('button',{name:'Start avontuur'}));
+   await expect(page.locator('[data-world-stage]')).toBeVisible();
+   await tap(page.locator('[data-graphics-action="toggle"]'));
+   await expect(page.locator('[data-graphics-settings]')).toBeVisible();
+   await tap(page.getByRole('button',{name:'Sluiten'}));
+   await tap(page.getByRole('button',{name:'Terug naar menu'}));
+   await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
+  }finally{await context.close();}
+ });
+ test('reports a waiting adapter and lets iPad leave the loader',async({browser})=>{
+  const context=await browser.newContext({hasTouch:true,viewport:{width:1024,height:768},deviceScaleFactor:1});
+  const page=await context.newPage();
+  try{
+   await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
+   await page.goto(`${process.env.ATLAS_EDITOR_URL}/?dev=editor&level=LVL-0001`);
+   await page.waitForFunction(()=>window.eval('state.screen')==='scene');
+   await page.evaluate(()=>Object.defineProperty(navigator.gpu,'requestAdapter',{configurable:true,value:()=>new Promise(()=>{})}));
+   await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+   await expect(page.locator('[data-three-preparation]')).toHaveText('3D-engine starten…');
+   await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen — wacht nog steeds',{timeout:7000});
+   await expect(page.locator('[data-three-progress]')).toHaveAttribute('aria-valuenow','0');
+   await page.getByRole('button',{name:'Terug naar menu'}).click();
+   await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
+  }finally{await context.close();}
+ });
+ test('surfaces engine startup failure with Illustrated recovery',async({page})=>{
+  await page.evaluate(()=>Object.defineProperty(navigator.gpu,'requestAdapter',{configurable:true,value:async()=>null}));
+  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+  await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('error');
+  await expect(page.locator('[data-three-loading]')).toBeVisible();
+  await expect(page.locator('[data-three-loading-title]')).toHaveText('3D kon niet worden gestart');
+  await expect(page.locator('[data-three-diagnostic]')).toContainText('NotSupportedError');
+  await page.locator('[data-three-recover]').click();
+  await expect(page.locator('[data-three-canvas]')).toHaveCount(0);await expect(page.locator('.worldArt')).toBeVisible();
+  expect(await page.evaluate(()=>window.eval('voxelRenderer.getSettings')().renderer)).toBe('illustrated');
  });
  test('walks the route, looks around, completes three challenges and unlocks the gate',async({page})=>{
   test.setTimeout(240000);const errors=[];page.on('pageerror',e=>errors.push(e.message));

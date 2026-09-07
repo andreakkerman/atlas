@@ -984,6 +984,10 @@ button {
 .threeLoading { position:absolute; inset:0; z-index:49; display:grid; place-items:center; padding:32px; color:#f4e6c5; background:radial-gradient(ellipse at 40% 30%,#364535,#111d19 75%); text-align:center; }
 .threeLoading h2 { font-size:clamp(21px,3vw,32px); margin:12px 0; }
 .threeLoading p { min-height:1.5em; color:#c8dccd; }
+.threeLoading .threeDiagnostic { min-height:2.8em; margin:0 auto; max-width:600px; color:#83cdbc; font:12px/1.4 ui-monospace,monospace; overflow-wrap:anywhere; }
+.threeLoading[data-status="error"] { background:radial-gradient(ellipse at 40% 30%,#49352f,#171b18 75%); }
+.threeLoading[data-status="error"] .threeLoadingMark,.threeLoading[data-status="error"] .threeDiagnostic { color:#ffc3ad; }
+.threeRecovery { display:inline-block; margin-top:18px; touch-action:manipulation; }
 .threeLoading small { color:#b5b9a7; }
 .threeLoadingMark { font-size:56px; color:#7adbc9; }
 .threePreparationProgress { display:flex; gap:7px; width:min(360px,70vw); margin:22px auto 10px; }

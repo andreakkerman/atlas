@@ -211,8 +211,11 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
       element.textContent=`${live?snapshot.fps.toFixed(0):'—'} FPS · CPU ${live?snapshot.averageMs.toFixed(1):'—'} ms · Voorbereiding ${snapshot.preparationMs===null?'—':(snapshot.preparationMs/1000).toFixed(1)+' s'}`;
     });
     document.querySelectorAll("[data-three-loading]").forEach(element => {
-      element.hidden = snapshot.ready || snapshot.status === "error";
+      element.hidden = snapshot.ready || snapshot.status === "idle";
+      element.dataset.status = snapshot.status;
+      element.querySelector('[data-three-loading-title]').textContent = snapshot.status === 'error' ? '3D kon niet worden gestart' : 'De 3D-wereld wordt voorbereid';
       element.querySelector("[data-three-preparation]").textContent = snapshot.preparation || "3D-engine starten…";
+      element.querySelector('[data-three-diagnostic]').textContent = snapshot.diagnostic || '';
       const completed=snapshot.preparationCompleted,total=snapshot.preparationTotal;
       const progress=element.querySelector('[data-three-progress]');
       progress.setAttribute('aria-valuenow',completed);
@@ -6074,10 +6077,10 @@ function renderWorldStage() {
     <section class="stageViewport" aria-label="Verbonden wereld" data-world-stage data-renderer="${renderer}">
       ${renderer === "voxel" ? `<canvas class="voxelViewportCanvas" data-voxel-canvas aria-label="WebGPU voxelwereld"></canvas>` : ""}
       ${renderer === "3d" && level.id === "LVL-0001" ? `<canvas class="threeViewportCanvas" data-three-canvas data-three-level="${level.id}" aria-label="Eerste persoon: De Runenpoort" aria-busy="true"></canvas>
-        <div class="threeLoading" data-three-loading role="status" aria-live="polite"><div><span class="threeLoadingMark" aria-hidden="true">◇</span><h2>De 3D-wereld wordt voorbereid</h2><p data-three-preparation>3D-engine starten…</p>
+        <div class="threeLoading" data-three-loading role="status" aria-live="polite"><div><span class="threeLoadingMark" aria-hidden="true">◇</span><h2 data-three-loading-title>De 3D-wereld wordt voorbereid</h2><p data-three-preparation>3D-engine starten…</p><p class="threeDiagnostic" data-three-diagnostic>WebGPU controleren…</p>
           <div class="threePreparationProgress" data-three-progress role="progressbar" aria-label="Voltooide voorbereidingsstappen" aria-valuemin="0" aria-valuemax="${window.AtlasThreeRenderer.PREPARATION_STAGES.length}" aria-valuenow="0">${window.AtlasThreeRenderer.PREPARATION_STAGES.map(()=>'<span aria-hidden="true"></span>').join('')}</div>
           <small data-three-progress-label>0 van ${window.AtlasThreeRenderer.PREPARATION_STAGES.length} stappen voltooid</small><p class="threePreparationDetail" data-three-progress-detail></p>
-          <small>Je avontuur gaat verder zodra de wereld klaar is.</small></div></div>
+          <small>Je avontuur gaat verder zodra de wereld klaar is.</small><button class="secondaryButton threeRecovery" type="button" data-three-recover>Terug naar Illustrated</button></div></div>
         <div class="threeControls"><span class="threeDesktopHint">W/S · Lopen &nbsp; Slepen · Rondkijken &nbsp; A/D · Draaien &nbsp; E · Actie</span><span class="threeTouchHint">Linker stick · Lopen &nbsp; Slepen · Rondkijken &nbsp; Actieknop · Tikken</span></div>
         <div class="threePerformance" data-three-performance aria-label="3D-prestaties" aria-live="off"></div>
         <div class="threeTouchMovement"><div data-three-move aria-label="Sleep om te lopen en draaien"><span data-three-stick></span></div><span>Lopen</span></div>
@@ -7403,6 +7406,11 @@ app.addEventListener("focusout", (event) => {
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const threeRecovery=event.target.closest('[data-three-recover]');
+  if(threeRecovery){
+    event.preventDefault();event.stopPropagation();graphicsSettingsOpen=false;
+    voxelRenderer.updateSettings({renderer:'illustrated'});render();return;
+  }
   const graphicsAction = event.target.closest("[data-graphics-action]");
   if (graphicsAction) {
     event.preventDefault();
