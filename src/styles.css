@@ -987,7 +987,9 @@ button {
 .threeLoading .threeDiagnostic { min-height:2.8em; margin:0 auto; max-width:600px; color:#83cdbc; font:12px/1.4 ui-monospace,monospace; overflow-wrap:anywhere; }
 .threeLoading[data-status="error"] { background:radial-gradient(ellipse at 40% 30%,#49352f,#171b18 75%); }
 .threeLoading[data-status="error"] .threeLoadingMark,.threeLoading[data-status="error"] .threeDiagnostic { color:#ffc3ad; }
-.threeRecovery { display:inline-block; margin-top:18px; touch-action:manipulation; }
+.threeRecovery { display:block; margin:16px auto 0; padding:8px 12px; background:transparent; border:0; color:inherit; font:inherit; font-size:13px; text-decoration:underline; cursor:pointer; touch-action:manipulation; }
+.threeRecovery[hidden] { display:none; }
+.atlasTapDiagnostics { position:fixed; z-index:120; top:62px; right:8px; width:min(410px,65vw); max-height:32vh; overflow:hidden; margin:0; padding:7px; border-radius:5px; background:rgb(8 16 14 / 85%); color:#e1e8d4; font:10px/1.35 monospace; white-space:pre-wrap; overflow-wrap:anywhere; pointer-events:none; user-select:none; }
 .threeLoading small { color:#b5b9a7; }
 .threeLoadingMark { font-size:56px; color:#7adbc9; }
 .threePreparationProgress { display:flex; gap:7px; width:min(360px,70vw); margin:22px auto 10px; }

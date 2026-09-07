@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v141";
+const CACHE_NAME = "svenadventure-static-v142";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/GTAONode.js",
   "./",
@@ -18,6 +18,7 @@ const CORE_ASSETS = [
   "src/cinematic-renderer.js",
   "src/cinematic-editor.js",
   "src/three-renderer.js",
+  "src/tap-diagnostics.js",
   "assets/vendor/three/three.webgpu.min.js",
   "assets/vendor/three/three.core.min.js",
   "assets/vendor/three/three.tsl.min.js",

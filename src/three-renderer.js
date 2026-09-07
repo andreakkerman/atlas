@@ -22,16 +22,23 @@
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
     // Each boundary is reached only after the preceding work has completed.
     function preparationStage(completed,nextStatus) {preparationCompleted=completed;preparation=PREPARATION_STAGES[completed]||'';report(nextStatus);}
+    function releasePointerLock() {
+      // iPad Safari may expose neither API: undefined === an unset canvas is true.
+      if(canvas && document.pointerLockElement===canvas && typeof document.exitPointerLock==='function')document.exitPointerLock();
+    }
     function clearWaiting() {clearInterval(waitTimer);waitTimer=0;waitingSince=0;}
     async function observe(label,task,token) {
       clearWaiting();diagnostic=label;waitingSince=performance.now();report();
-      waitTimer=setInterval(()=>{if(token!==generation)return clearWaiting();const seconds=Math.floor((performance.now()-waitingSince)/1000);diagnostic=`${label} — wacht nog steeds (${seconds} s)`;report();},5000);
+      const started=waitingSince;
+      const timer=waitTimer=setInterval(()=>{if(token!==generation){clearInterval(timer);return;}const seconds=Math.floor((performance.now()-started)/1000);diagnostic=`${label} — wacht nog steeds (${seconds} s)`;report();},1000);
       try {
-        const result=await task();clearWaiting();
+        const result=await task();clearInterval(timer);
+        if(token===generation)clearWaiting();
         if(token===generation){diagnostic=`${label} — gelukt`;report();}
         return result;
       } catch(caught) {
-        clearWaiting();const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;report();throw caught;
+        clearInterval(timer);
+        if(token===generation){clearWaiting();const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;report();}throw caught;
       }
     }
     function resetInput() {
@@ -42,7 +49,7 @@
     function stop() {cancelAnimationFrame(raf);raf=0;last=0;resetInput();}
     function dispose() {
       generation++;loading=false;clearWaiting();stop();abort?.abort();abort=null;
-      if(document.pointerLockElement===canvas)document.exitPointerLock();
+      releasePointerLock();
       const geometries=new Set(),materials=new Set();
       scene?.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);for(const m of Array.isArray(obj.material)?obj.material:obj.material?[obj.material]:[])materials.add(m);});
       materials.forEach(mat=>{for(const value of Object.values(mat))if(value?.isTexture)textures.add(value);mat.dispose();});
@@ -56,7 +63,7 @@
       return {i,t,position:new THREE.Vector3().fromArray(a.position).lerp(new THREE.Vector3().fromArray(b.position),t),atlasY:a.atlas[1]+(b.atlas[1]-a.atlas[1])*t};
     }
     function move(dt) {
-      if(!canPlay()){resetInput();if(document.pointerLockElement===canvas)document.exitPointerLock();return;}
+      if(!canPlay()){resetInput();releasePointerLock();return;}
       const forward=clamp(Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'))+touchWalk,-1,1);
       yaw-=touchTurn*dt*1.3;
       if(keys.has('KeyA')||keys.has('ArrowLeft'))yaw+=dt*1.3;
@@ -67,7 +74,7 @@
       const next=clamp(x+forward*dt*2.7*(b.atlas[0]-a.atlas[0])/length,route.route[0].atlas[0],route.route.at(-1).atlas[0]);
       options.setPlayer?.({x:next,y:routePosition(next).atlasY});
     }
-    function interact() {if(!currentTarget||!canPlay())return;resetInput();if(document.pointerLockElement===canvas)document.exitPointerLock();options.interact?.(currentTarget);}
+    function interact() {if(!currentTarget||!canPlay())return;resetInput();releasePointerLock();options.interact?.(currentTarget);}
     function attachControls() {
       abort?.abort();resetInput();
       abort=new AbortController();const opts={signal:abort.signal};
@@ -332,25 +339,34 @@
       }catch(caught){stop();report('error',caught);}
     }
     async function sync() {
+      let token=generation,operation='3D-startpad controleren';
+      const checkpoint=label=>{operation=diagnostic=label;report();};
+      try {
       const next=document.querySelector('[data-three-canvas]');
       if(options.getRenderer()!=='3d'||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading)dispose();return;}
       if(renderer&&canvas===next){if(status==='ready')attachControls();report();if(!loading&&!raf&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
-      if(loading)return;dispose();loading=true;const token=generation,preparationStarted=performance.now();canvas=next;preparationStage(0,'loading');
-      try {
-        diagnostic=`navigator.gpu: ${navigator.gpu?'beschikbaar':'niet beschikbaar'}`;report();
-        if(!navigator.gpu)throw new DOMException('navigator.gpu is niet beschikbaar in deze browser.','NotSupportedError');
-        const adapter=await observe('WebGPU-adapter aanvragen',()=>navigator.gpu.requestAdapter({powerPreference:'high-performance'}),token);
+      if(loading)return;
+      checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
+      try{dispose();}finally{token=generation;}
+      loading=true;const preparationStarted=performance.now();canvas=next;
+      checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
+        checkpoint('navigator.gpu controleren');
+        const gpu=navigator.gpu;
+        checkpoint(`navigator.gpu beschikbaar: ${gpu?'ja':'nee'}`);
+        if(!gpu)throw new DOMException('navigator.gpu is niet beschikbaar in deze browser.','NotSupportedError');
+        const adapter=await observe('WebGPU-adapter aanvragen (navigator.gpu: ja)',()=>gpu.requestAdapter({powerPreference:'high-performance'}),token);
         if(token!==generation)return;if(!adapter)throw new DOMException('WebGPU heeft geen geschikte adapter teruggegeven.','NotSupportedError');
         diagnostic='WebGPU-adapter ontvangen';report();
         const device=await observe('WebGPU-device aanvragen',()=>adapter.requestDevice(),token);
         if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
-        if(token!==generation)return;THREE=lib;
-        diagnostic='Three.js WebGPURenderer maken';report();
-        try{renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});}catch(caught){diagnostic=`Three.js WebGPURenderer maken — mislukt: ${caught?.name||'Error'}: ${caught?.message||caught}`;report();throw new Error(`WebGPURenderer maken: ${caught?.name||'Error'}: ${caught?.message||caught}`,{cause:caught});}
-        diagnostic='Three.js WebGPURenderer gemaakt';report();
+        if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
+        checkpoint('Three.js WebGPURenderer maken');
+        renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});
+        checkpoint('Three.js WebGPURenderer gemaakt');
         await observe('renderer.init uitvoeren',()=>renderer.init(),token);
-        if(token!==generation)return;if(!renderer.backend.isWebGPUBackend)throw Error('WebGPU is required for first-person 3D.');
+        if(token!==generation)return;checkpoint('renderer.init gelukt; WebGPU-backend controleren');if(!renderer.backend.isWebGPUBackend)throw Error('WebGPU is required for first-person 3D.');
+        checkpoint('WebGPU-backend bevestigd; engine gereed');
         preparationStage(1,'loading');
         route=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
         if(token!==generation)return;
@@ -366,7 +382,19 @@
         if(!next.isConnected){dispose();sync();return;}
         if(!await warmup(token)||token!==generation)return;
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;preparationStage(PREPARATION_STAGES.length,'ready');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
-      }catch(caught){if(token===generation){clearWaiting();loading=false;const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=diagnostic.includes('mislukt:')?diagnostic:`Initialisatie mislukt: ${detail}`;report('error',caught);}}
+      }catch(caught){if(token===generation){
+        clearWaiting();loading=false;const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;
+        diagnostic=diagnostic.includes('mislukt:')?diagnostic:`${diagnostic||operation} — mislukt: ${detail}`;
+        try{report('error',caught);}catch(reportError){
+          // Even a broken status callback must not strand the initial static loader.
+          console.error('3D statusweergave:',reportError);
+          const loader=document.querySelector('[data-three-loading]');
+          if(loader){loader.hidden=false;loader.dataset.status='error';
+            const title=loader.querySelector('[data-three-loading-title]'),message=loader.querySelector('[data-three-diagnostic]'),recovery=loader.querySelector('[data-three-recover]');
+            if(title)title.textContent='3D kon niet worden gestart';if(message)message.textContent=diagnostic;if(recovery)recovery.hidden=false;
+          }
+        }
+      }}
     }
     return {sync,stop,dispose,snapshot,lookAt:(nextYaw,nextPitch=0)=>{yaw=nextYaw;pitch=clamp(nextPitch,-1.3,1.3);}};
   }

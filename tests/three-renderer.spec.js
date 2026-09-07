@@ -99,7 +99,7 @@ test.describe('Atlas first-person LVL-0001',()=>{
    await page.evaluate(()=>Object.defineProperty(navigator.gpu,'requestAdapter',{configurable:true,value:()=>new Promise(()=>{})}));
    await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
    await expect(page.locator('[data-three-preparation]')).toHaveText('3D-engine starten…');
-   await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen — wacht nog steeds',{timeout:7000});
+   await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen (navigator.gpu: ja) — wacht nog steeds',{timeout:7000});
    await expect(page.locator('[data-three-progress]')).toHaveAttribute('aria-valuenow','0');
    await page.getByRole('button',{name:'Terug naar menu'}).click();
    await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
