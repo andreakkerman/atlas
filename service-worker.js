@@ -1,5 +1,6 @@
-const CACHE_NAME = "svenadventure-static-v129";
+const CACHE_NAME = "svenadventure-static-v140";
 const CORE_ASSETS = [
+  "assets/vendor/three/tsl/display/GTAONode.js",
   "./",
   "index.html",
   "manifest.webmanifest",
@@ -16,6 +17,19 @@ const CORE_ASSETS = [
   "src/cinematic-shaders.js",
   "src/cinematic-renderer.js",
   "src/cinematic-editor.js",
+  "src/three-renderer.js",
+  "assets/vendor/three/three.webgpu.min.js",
+  "assets/vendor/three/three.core.min.js",
+  "assets/vendor/three/three.tsl.min.js",
+  "assets/vendor/three/loaders/GLTFLoader.js",
+  "assets/vendor/three/loaders/HDRLoader.js",
+  "assets/vendor/three/loaders/DRACOLoader.js",
+  "assets/vendor/three/draco/draco_wasm_wrapper.js",
+  "assets/vendor/three/draco/draco_decoder.wasm",
+  "assets/vendor/three/utils/BufferGeometryUtils.js",
+  "assets/vendor/three/tsl/math/Bayer.js",
+  "assets/vendor/three/tsl/display/GaussianBlurNode.js",
+  "assets/vendor/three/tsl/display/BloomNode.js",
   "src/atlas-world.js",
   "src/locomotion.js",
   "src/app.js",

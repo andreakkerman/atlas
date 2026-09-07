@@ -1,0 +1,177 @@
+{
+  "levelId": "LVL-0001",
+  "eyeHeight": 1.58,
+  "route": [
+    {
+      "id": "forest-start",
+      "atlas": [
+        175,
+        635
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "forest-rune-approach",
+      "atlas": [
+        322,
+        625
+      ],
+      "position": [
+        0,
+        0.35,
+        -5
+      ]
+    },
+    {
+      "id": "center-trail",
+      "atlas": [
+        885,
+        609
+      ],
+      "position": [
+        3,
+        0.91,
+        -21
+      ]
+    },
+    {
+      "id": "lower-trail",
+      "atlas": [
+        1017,
+        615
+      ],
+      "position": [
+        5,
+        0.7,
+        -26
+      ]
+    },
+    {
+      "id": "trail-rise-2",
+      "atlas": [
+        1155,
+        575
+      ],
+      "position": [
+        7,
+        2.1,
+        -32
+      ]
+    },
+    {
+      "id": "trail-top",
+      "atlas": [
+        1231,
+        532
+      ],
+      "position": [
+        8,
+        3.605,
+        -36
+      ]
+    },
+    {
+      "id": "sun-rune-approach",
+      "atlas": [
+        1322,
+        565
+      ],
+      "position": [
+        9,
+        2.45,
+        -40
+      ]
+    },
+    {
+      "id": "stone-rune-approach",
+      "atlas": [
+        1454,
+        601
+      ],
+      "position": [
+        10,
+        1.19,
+        -45
+      ]
+    },
+    {
+      "id": "temple-approach",
+      "atlas": [
+        1617,
+        594
+      ],
+      "position": [
+        12,
+        1.435,
+        -50
+      ]
+    },
+    {
+      "id": "gate-step-low",
+      "atlas": [
+        1679,
+        579
+      ],
+      "position": [
+        14,
+        1.96,
+        -51
+      ]
+    },
+    {
+      "id": "wind-rune-approach",
+      "atlas": [
+        1697,
+        536
+      ],
+      "position": [
+        15,
+        3.465,
+        -53
+      ]
+    },
+    {
+      "id": "gate-step-upper",
+      "atlas": [
+        1847,
+        481
+      ],
+      "position": [
+        18,
+        5.39,
+        -56
+      ]
+    }
+  ],
+  "landmarks": {
+    "forestRune": [
+      -2.8,
+      1.6397113037109374,
+      -5
+    ],
+    "zon": [
+      12.8,
+      5.587056369781495,
+      -35
+    ],
+    "steen": [
+      13.3,
+      2.9381167125701904,
+      -46
+    ],
+    "wind": [
+      17.8,
+      6.9,
+      -57
+    ],
+    "templeGate": [
+      19,
+      8.3,
+      -58.5
+    ]
+  }
+}

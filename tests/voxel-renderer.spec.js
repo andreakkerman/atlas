@@ -178,7 +178,8 @@ test.describe("Atlas WebGPU voxel presentation", () => {
     await expect(page.getByRole("button", { name: "Illustrated", exact: true })).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Voxel", exact: true })).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Showcase", exact: true })).toHaveCount(0);
-    await expect(page.locator('[data-renderer-choice]')).toHaveCount(3);
+    await expect(page.locator('[data-renderer-choice]')).toHaveCount(4);
+    await expect(page.getByRole("button", { name: "3D", exact: true })).toHaveCount(1);
     await expect(page.getByRole("button", { name: "Cinematic Lighting", exact: true })).toHaveCount(1);
     await expect(page.getByText(/Classic|Voxel V1|Voxel V2|Voxel V3/)).toHaveCount(0);
     await page.getByRole("button", { name: "Voxel", exact: true }).click();
@@ -255,6 +256,9 @@ test.describe("Atlas WebGPU voxel presentation", () => {
     test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server for WebGPU.");
     test.skip(testInfo.project.name !== "desktop-chromium", "Desktop WebGPU visual integration run.");
     const gpuMessages = [];
+    // LVL-0004 now ships a depth map. Explicitly model the missing-depth case
+    // instead of relying on changing production assets to remain absent.
+    await page.route("**/Levels/LVL-0004/assets/depthmap.png", route => route.fulfill({ status: 404, body: "" }));
     page.on("console", (message) => {
       if (/Atlas Voxel|WebGPU/i.test(message.text()) && message.type() === "error") gpuMessages.push(message.text());
     });

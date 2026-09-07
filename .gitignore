@@ -8,3 +8,10 @@ node_modules/
 /playwright/.auth/
 /output/
 /qa-screenshots/
+
+# Local Blender download cache and automatic backups
+/Levels/LVL-0001/3d/sources/
+/Levels/LVL-0001/3d/*.blend1
+
+# Local Blender source files
+Levels/LVL-0001/3d/*.blend

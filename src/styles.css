@@ -973,6 +973,42 @@ button {
 }
 
 .cinematicViewportCanvas { position: absolute; inset: 0; z-index: 39; width: 100%; height: 100%; pointer-events: none; opacity: 0; visibility: hidden; }
+.threeViewportCanvas { position: absolute; inset: 0; z-index: 39; width: 100%; height: 100%; pointer-events: auto; visibility: hidden; touch-action: none; outline: none; }
+.threeControls { position: absolute; z-index: 40; top: 12px; left: 50%; transform: translateX(-50%); color:#eee3c7; background:#132017b8; padding:8px 14px; border-radius:8px; font-size:12px; pointer-events:none; }
+.threeControls { display:none; }
+.threeControls { max-width:calc(100% - 24px); width:max-content; text-align:center; }
+.threePerformance { position:absolute; z-index:50; top:104px; right:max(12px,env(safe-area-inset-right)); max-width:calc(100% - 24px); padding:5px 8px; border-radius:6px; background:#102019b8; color:#d2decf; font:11px/1.4 ui-monospace,monospace; font-variant-numeric:tabular-nums; pointer-events:none; user-select:none; }
+.threeViewportCanvas,[data-three-move] { overscroll-behavior:none; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; }
+.threeReady .threeControls { display:block; }
+.threeTouchHint { display:none; }
+.threeLoading { position:absolute; inset:0; z-index:49; display:grid; place-items:center; padding:32px; color:#f4e6c5; background:radial-gradient(ellipse at 40% 30%,#364535,#111d19 75%); text-align:center; }
+.threeLoading h2 { font-size:clamp(21px,3vw,32px); margin:12px 0; }
+.threeLoading p { min-height:1.5em; color:#c8dccd; }
+.threeLoading small { color:#b5b9a7; }
+.threeLoadingMark { font-size:56px; color:#7adbc9; }
+.threePreparationProgress { display:flex; gap:7px; width:min(360px,70vw); margin:22px auto 10px; }
+.threePreparationProgress span { flex:1; height:9px; border:1px solid #718478; border-radius:3px; background:#14251d; }
+.threePreparationProgress [data-state="complete"] { background:#77d7be; border-color:#77d7be; }
+.threePreparationProgress [data-state="current"] { border-color:#d5f5e8; }
+.threeLoading .threePreparationDetail { font-size:12px; margin:8px 0 16px; min-height:1.5em; }
+.threeLoading[hidden],.threeInteract[hidden] { display:none !important; }
+.threeInteract { display:none; position:absolute; z-index:41; top:54px; left:50%; transform:translateX(-50%); min-height:44px; padding:10px 18px; border:1px solid #75b9a7; border-radius:12px; background:#13251fe8; color:#a5f5df; font:inherit; touch-action:manipulation; }
+.threeInteract::before { content:'E · '; }
+.threeReady .threeInteract:not([hidden]) { display:block; }
+.threeTouchMovement { display:none; position:absolute; z-index:41; left:max(22px,env(safe-area-inset-left)); bottom:clamp(135px,20vh,195px); text-align:center; color:#e8e6ce; font-size:12px; user-select:none; }
+[data-three-move] { display:grid; place-items:center; width:112px; height:112px; border:1px solid #d7d8b766; border-radius:50%; background:#182a226b; touch-action:none; margin-bottom:7px; }
+[data-three-stick] { width:48px; height:48px; border-radius:50%; border:1px solid #f3e6bb99; background:#d8d8ba38; pointer-events:none; }
+.threeReady[data-three-input="touch"] .threeTouchMovement { display:block; }
+.threeReady[data-three-input="touch"] .threeDesktopHint { display:none; }
+.threeReady[data-three-input="touch"] .threeTouchHint { display:inline; }
+.threeReady[data-three-input="touch"] .threeInteract { top:auto; bottom:clamp(165px,23vh,225px); left:auto; right:max(22px,env(safe-area-inset-right)); transform:none; max-width:190px; min-height:54px; }
+.threeReady[data-three-input="touch"] .threeInteract::before { content:''; }
+.threeReady[data-three-input="touch"] .threeControls { top:65px; font-size:11px; }
+.threeReady .worldTrack { pointer-events:none; }
+.threeReady .threeViewportCanvas { visibility: visible; }
+.threeReady .worldArt, .threeReady .ambientAnimalFrames, .threeReady .ambientFlybyFrames,
+.threeReady [data-actor='sven'], .threeReady [data-npc-sprite], .threeReady .sceneEffectsCanvas { opacity: 0 !important; }
+.threeReady .forestMist { display: none; }
 .cinematicReady .cinematicViewportCanvas { opacity: 1; visibility: visible; }
 .cinematicMode .forestMist { display: none; }
 .cinematicReady .worldArt, .cinematicReady .sceneEffectsCanvas,
