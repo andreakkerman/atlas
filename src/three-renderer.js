@@ -18,7 +18,7 @@
     }
     let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice;
     const postResources=[];
-    let generation=0,loading=false,raf=0,last=0,frames=0,fps=0,averageMs=0;
+    let generation=0,loading=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null;
     let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
     const keys=new Set(),textures=new Set(),flames=[];
     let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
@@ -43,21 +43,33 @@
       if(canvas && document.pointerLockElement===canvas && typeof document.exitPointerLock==='function')document.exitPointerLock();
     }
     function clearWaiting() {clearInterval(waitTimer);waitTimer=0;waitingSince=0;}
-    async function observe(label,task,token) {
+    async function observe(label,task,token,timeoutMs=0) {
+      if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');
       clearWaiting();diagnostic=label;waitingSince=performance.now();debugMark(label);report();
+      if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');
       const started=waitingSince;
       const timer=waitTimer=setInterval(()=>{if(token!==generation){clearInterval(timer);return;}const seconds=Math.floor((performance.now()-started)/1000);diagnostic=`${label} — wacht nog steeds (${seconds} s)`;report();},1000);
+      const signal=lifetime?.signal;let deadline,cancel;
       try {
-        const result=await task();clearInterval(timer);
+        const interrupted=new Promise((_,reject)=>{
+          cancel=()=>reject(signal.reason||new DOMException('Voorbereiding gestopt','AbortError'));
+          signal?.addEventListener('abort',cancel,{once:true});
+          if(signal?.aborted)cancel();
+          if(timeoutMs)deadline=setTimeout(()=>reject(new DOMException(`${label} reageert niet na ${timeoutMs/1000} seconden. Kies Illustrated om verder te spelen.`,'TimeoutError')),timeoutMs);
+        });
+        const result=await Promise.race([task(),interrupted]);clearInterval(timer);
         if(token===generation)clearWaiting();
         if(token===generation){diagnostic=`${label} — gelukt`;debugMark(label,'complete');report();}
         return result;
       } catch(caught) {
         clearInterval(timer);
         if(token===generation){clearWaiting();const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;debugMark(diagnostic,'error');report();}throw caught;
-      }
+      } finally {clearTimeout(deadline);clearInterval(timer);signal?.removeEventListener('abort',cancel);}
     }
-    const yieldFrame=()=>new Promise(resolve=>requestAnimationFrame(resolve));
+    const gpuWork=(label,task,token)=>observe(label,task,token,90000);
+    // Safari may suspend rAF during visibility/layout transitions. A UI yield
+    // must not leave preparation waiting forever after the GPU has completed.
+    const yieldFrame=()=>new Promise(resolve=>{let frame,timer;const done=()=>{cancelAnimationFrame(frame);clearTimeout(timer);resolve();};frame=requestAnimationFrame(done);timer=setTimeout(done,100);});
     async function prepareWork(label,task,token) {
       return observe(label,async()=>{await yieldFrame();if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');return task();},token);
     }
@@ -90,7 +102,7 @@
         const gltf=await loader.loadAsync(ROOT+'lvl0001.glb');
         // Only the scene escapes this scope, not gltf.parser and its binary,
         // decoded bufferView and original-node caches throughout GPU warm-up.
-        const root=gltf.scene;gltf.parser.cache.removeAll();complete=true;return root;
+        const root=gltf.scene;gltf.parser.cache.removeAll();complete=true;if(token!==generation)releaseRoot(root);return root;
       } finally {draco.dispose();if(!complete)releaseRoot({traverse:visit=>decodedMeshes.forEach(mesh=>mesh.traverse(visit))},decodedTextures);}
     }
     function resetInput() {
@@ -110,7 +122,7 @@
     function dispose(notify=true) {
       safely(()=>visibleProfile?.stop());visibleProfile=null;frameWindow.length=0;frameSampled=false;
       if(loading)debugMark('Voorbereiding gestopt','cancelled');
-      generation++;loading=false;releasedImageBytes=0;clearWaiting();safely(stop);safely(()=>input.dispose());
+      generation++;lifetime?.abort();lifetime=null;loading=false;releasedImageBytes=0;clearWaiting();safely(stop);safely(()=>input.dispose());
       safely(releasePointerLock);
       safely(()=>releaseRoot(scene,textures));textures.clear();
       postResources.splice(0).forEach(resource=>safely(()=>resource.dispose?.()));safely(()=>post?.dispose());post=null;
@@ -324,7 +336,7 @@
         const sources=new Map();for(const map of maps){if(!sources.has(map.image))sources.set(map.image,[]);sources.get(map.image).push(map);}
         let uploaded=0;
         for(const [image,variants]of sources){
-          for(const map of variants){if(!valid())return false;await prepareWork(`GPU-textuur uploaden ${++uploaded}/${maps.size}: ${map.name||'beeld'} (${image?.width}×${image?.height})`,async()=>{activeRenderer.initTexture(map);await activeRenderer.waitForGPU();},token);}
+          for(const map of variants){if(!valid())return false;await prepareWork(`GPU-textuur uploaden ${++uploaded}/${maps.size}: ${map.name||'beeld'} (${image?.width}×${image?.height})`,async()=>{activeRenderer.initTexture(map);await gpuWork(`Textuur ${uploaded}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);}
           if(!valid())return false;
           if(typeof ImageBitmap!=='undefined'&&image instanceof ImageBitmap){
             const {width,height}=image;
@@ -351,10 +363,10 @@
           worldPass.renderTarget.samples=activeRenderer.samples;worldPass.renderTarget.texture.type=activeRenderer.getColorBufferType();
           for(let i=0;i<meshes.length;i+=batchSize){
             if(!valid())return false;const objects=meshes.slice(i,i+batchSize);objects.forEach(o=>o.visible=true);
-            await prepareWork(`Wereld- en schaduwpipelines compileren ${i/batchSize+1}/${count}`,async()=>{await worldPass.compileAsync(activeRenderer);await activeRenderer.waitForGPU();},token);
+            await prepareWork(`Wereld- en schaduwpipelines compileren ${i/batchSize+1}/${count}`,async()=>{await gpuWork(`Pipelinebatch ${i/batchSize+1}: compileren`,()=>worldPass.compileAsync(activeRenderer),token);await gpuWork(`Pipelinebatch ${i/batchSize+1}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);
             objects.forEach(o=>o.visible=false);
           }
-        }else await prepareWork('Volledige wereld- en schaduwpipelines compileren',()=>worldPass.compileAsync(activeRenderer),token);
+        }else await gpuWork('Volledige wereld- en schaduwpipelines compileren',()=>worldPass.compileAsync(activeRenderer),token);
       }finally{culling.forEach((value,o)=>{o.frustumCulled=value.culled;o.visible=value.visible;});}
       if(!valid())return false;
       // Rendering the complete post chain initializes AO, volume, bloom, shadow
@@ -374,22 +386,22 @@
       preparationStage(3,'warming');
       for(const [x,heading,tilt]of samples){
         if(!valid())return false;
-        await prepareWork(`Warm-up ${warmupViews+1}/${samples.length}: schaduwen, GTAO, volume en bloom`,async()=>{resize(true);positionCamera(x,heading,tilt);updateNpc();await activePost.renderAsync();debugMark(`Warm-up ${warmupViews+1}: wachten op GPU`);await activeRenderer.waitForGPU();},token);
+        await prepareWork(`Warm-up ${warmupViews+1}/${samples.length}: schaduwen, GTAO, volume en bloom`,async()=>{resize(true);positionCamera(x,heading,tilt);updateNpc();await gpuWork(`Beeld ${warmupViews+1}/${samples.length}: renderer en post-processing`,()=>activePost.renderAsync(),token);await gpuWork(`Beeld ${warmupViews+1}/${samples.length}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);
         if(!valid())return false;warmupViews++;report('warming');
         // Yield to the loading UI and mode-switch controls, not a timed delay.
-        await new Promise(resolve=>requestAnimationFrame(resolve));
+        await yieldFrame();
       }
       preparationStage(4,'warming');
       let size;
       do {
         if(!valid())return false;
-        await prepareWork('Eerste speelbare frame op volledige resolutie + GPU afronden',async()=>{size=resize();positionCamera(options.getPlayer().x);updateNpc();updateTarget();await activePost.renderAsync();debugMark('Eerste speelbare frame: wachten op GPU');await activeRenderer.waitForGPU();},token);
+        await prepareWork('Eerste speelbare frame op volledige resolutie + GPU afronden',async()=>{size=resize();positionCamera(options.getPlayer().x);updateNpc();updateTarget();await gpuWork('Eerste speelbare frame: renderer en post-processing',()=>activePost.renderAsync(),token);await gpuWork('Eerste speelbare frame: wachten op GPU',()=>activeRenderer.waitForGPU(),token);},token);
         if(!valid())return false;
       }while(size!==resize());
       warmupViews=warmupTotal;frames=1;last=0;preparation='';return true;
     }
     function draw(time) {
-      raf=0;if(!canvas?.isConnected||document.hidden||options.getRenderer()!=='3d')return;
+      raf=0;if(loading||status!=='ready'||!canvas?.isConnected||document.hidden||options.getRenderer()!=='3d')return;
       const start=performance.now(),interval=last?time-last:null,elapsed=interval===null?1/60:interval/1000,dt=Math.min(.05,elapsed);last=time;
       try {
         const movementStart=DEBUG?performance.now():0;
@@ -415,29 +427,32 @@
       try {
       const next=document.querySelector('[data-three-canvas]');
       if(options.getRenderer()!=='3d'||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading||status!=='idle')dispose();return;}
+      // UI redraws must neither retry a failed device nor reveal 2D underneath.
+      if(status==='error'){report();return;}
+      if(loading&&canvas!==next)throw new DOMException('3D-canvas vervangen tijdens voorbereiding. Kies Illustrated en probeer opnieuw.','AbortError');
       if(renderer&&canvas===next){if(status==='ready')attachControls();report();if(!loading&&!raf&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
       try{dispose();}finally{token=generation;}
-      loading=true;const preparationStarted=performance.now();canvas=next;
+      loading=true;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
       checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
         checkpoint('navigator.gpu controleren');
         const gpu=navigator.gpu;
         checkpoint(`navigator.gpu beschikbaar: ${gpu?'ja':'nee'}`);
         if(!gpu)throw new DOMException('navigator.gpu is niet beschikbaar in deze browser.','NotSupportedError');
-        const adapter=await observe('WebGPU-adapter aanvragen (navigator.gpu: ja)',()=>gpu.requestAdapter({powerPreference:'high-performance'}),token);
+        const adapter=await gpuWork('WebGPU-adapter aanvragen (navigator.gpu: ja)',()=>gpu.requestAdapter({powerPreference:'high-performance'}),token);
         if(token!==generation)return;if(!adapter)throw new DOMException('WebGPU heeft geen geschikte adapter teruggegeven.','NotSupportedError');
         diagnostic='WebGPU-adapter ontvangen';report();
-        const device=await observe('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
+        const device=await gpuWork('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
         if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
+        device.lost?.then(info=>{if(token===generation&&info.reason!=='destroyed')lifetime?.abort(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}`,'OperationError'));});
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
         checkpoint('Three.js WebGPURenderer maken');
         renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});
         checkpoint('Three.js WebGPURenderer gemaakt');
         const initializingRenderer=renderer;
-        try{await observe('renderer.init uitvoeren',()=>initializingRenderer.init(),token);}
-        finally{if(token!==generation){safely(()=>initializingRenderer.dispose());safely(()=>initializingRenderer.backend?.context?.unconfigure());}}
+        await gpuWork('renderer.init uitvoeren',async()=>{try{await initializingRenderer.init();}finally{if(token!==generation){safely(()=>initializingRenderer.dispose());safely(()=>initializingRenderer.backend?.context?.unconfigure());}}},token);
         if(token!==generation)return;checkpoint('renderer.init gelukt; WebGPU-backend controleren');if(!renderer.backend.isWebGPUBackend)throw Error('WebGPU is required for first-person 3D.');
         checkpoint('WebGPU-backend bevestigd; engine gereed');
         preparationStage(1,'loading');
@@ -450,7 +465,7 @@
         await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);},token);
         if(token!==generation)return;
         const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=8;}});
-        const sky=await prepareWork('HDR laden en decoderen',()=>new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr'),token);if(token!==generation){sky.dispose();return;}textures.add(sky);
+        const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;textures.add(sky);
         await prepareWork('HDR-omgeving en hemeldome voorbereiden',()=>{
           const environment=sky.clone();environment.mapping=THREE.EquirectangularReflectionMapping;environment.needsUpdate=true;textures.add(environment);scene.environment=environment;scene.environmentIntensity=.16;scene.environmentRotation.set(.2,1.55,0);
           const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:sky,color:new THREE.Color(.14,.16,.19),side:THREE.BackSide,depthWrite:false,fog:false}));dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);

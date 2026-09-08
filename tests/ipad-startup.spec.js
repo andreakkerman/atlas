@@ -36,8 +36,11 @@ test('startup reaches adapter diagnostics without Pointer Lock APIs',async({page
  await page.locator('[data-graphics-action="toggle"]').tap();
  await page.locator('[data-renderer-choice="3d"]').tap();
  await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen');
- await expect(page.locator('[data-three-recover]')).toBeHidden();
+ await expect(page.locator('[data-three-recover]')).toBeVisible();
  await expect(page.locator('[data-three-canvas]')).toBeHidden();
+ await page.locator('[data-three-recover]').tap();
+ await expect(page.locator('[data-three-loading]')).toHaveCount(0);
+ await expect(page.locator('.worldArt')).toBeVisible();
  await page.getByRole('button',{name:'Terug naar menu'}).tap();
  await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
  await expect(page.locator('[data-three-loading]')).toHaveCount(0);
@@ -76,7 +79,7 @@ test('cancelled rejection cannot overwrite a new startup or leave an input shiel
  await page.evaluate(()=>window.rejectOldAdapter(new Error('obsolete adapter')));
  await expect(page.locator('[data-three-diagnostic]')).toContainText('wacht nog steeds',{timeout:7000});
  await expect(page.locator('[data-three-loading]')).toHaveAttribute('data-status','loading');
- await expect(page.locator('[data-three-recover]')).toBeHidden();
+ await expect(page.locator('[data-three-recover]')).toBeVisible();
  await page.getByRole('button',{name:'Terug naar menu'}).tap();
  await expect(page.locator('[data-three-loading], [data-three-canvas], [data-three-move]')).toHaveCount(0);
  await page.locator('.heroLevelTile').tap();

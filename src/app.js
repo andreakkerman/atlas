@@ -212,13 +212,13 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
       element.textContent=`${live?snapshot.fps.toFixed(0):'—'} FPS · CPU ${live?snapshot.averageMs.toFixed(1):'—'} ms · Voorbereiding ${snapshot.preparationMs===null?'—':(snapshot.preparationMs/1000).toFixed(1)+' s'}`;
     });
     document.querySelectorAll("[data-three-loading]").forEach(element => {
-      element.hidden = snapshot.ready || snapshot.status === "idle";
+      element.hidden = snapshot.ready;
       element.dataset.status = snapshot.status;
       element.querySelector('[data-three-loading-title]').textContent = snapshot.status === 'error' ? '3D kon niet worden gestart' : 'De 3D-wereld wordt voorbereid';
       element.querySelector("[data-three-preparation]").textContent = snapshot.preparation || "3D-engine starten…";
       element.querySelector('[data-three-diagnostic]').textContent = snapshot.diagnostic || '';
       element.querySelector('[data-three-diagnostic]').hidden = !snapshot.debug && snapshot.status !== 'error';
-      element.querySelector('[data-three-recover]').hidden = snapshot.status !== 'error';
+      element.querySelector('[data-three-recover]').hidden = snapshot.ready;
       const completed=snapshot.preparationCompleted,total=snapshot.preparationTotal;
       const progress=element.querySelector('[data-three-progress]');
       progress.setAttribute('aria-valuenow',completed);
@@ -2798,9 +2798,9 @@ function refreshChallengePresentationDom(challenge) {
   if (marker && replacement) marker.outerHTML = replacement;
   updateWorldDom();
   syncNpcAnimations();
+  threeRenderer.sync();
   voxelRenderer.sync();
   cinematicRenderer.sync();
-  threeRenderer.sync();
   cinematicEditor.updateGuideCamera();
   if (editorPanel) editorPanel.scrollTop = editorScrollTop;
 }
@@ -7364,9 +7364,9 @@ function render() {
   syncNpcAnimations();
   ambientFlybyRuntime.sync();
   sceneEffectRuntime.sync();
+  threeRenderer.sync();
   voxelRenderer.sync();
   cinematicRenderer.sync();
-  threeRenderer.sync();
   cinematicEditor.updateGuides();
   emissiveGlowRenderer.sync();
   syncPerformanceHud();
@@ -8288,9 +8288,9 @@ document.addEventListener("visibilitychange", () => {
     syncGuideBlinkTimers();
     ambientFlybyRuntime.sync();
     sceneEffectRuntime.sync();
+    threeRenderer.sync();
     voxelRenderer.sync();
     cinematicRenderer.sync();
-    threeRenderer.sync();
     emissiveGlowRenderer.sync();
   }
 });
