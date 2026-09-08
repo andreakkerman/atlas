@@ -194,6 +194,7 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
   getRenderer: () => voxelRenderer.getSettings().renderer,
   getPlayer: () => ({x:state.worldX,y:state.worldY}),
   canMove: () => state.screen === "scene" && !graphicsSettingsOpen && !worldEditor.open && !state.exitTransitionPending && !state.moving,
+  inputGuards: () => ({screen:state.screen,graphics:graphicsSettingsOpen,editor:worldEditor.open,transition:state.exitTransitionPending,moving:state.moving}),
   activate: () => { if(graphicsSettingsOpen){graphicsSettingsOpen=false;render();} },
   setPlayer: (point) => { setSvenWorldPosition(point); updateWorldDom(); },
   isTargetActive: (id) => !runeById(id) || isRuneActive(runeById(id)),
@@ -207,7 +208,7 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
     threeStatus = snapshot;
     document.querySelector('.gameShell')?.setAttribute('data-three-input',snapshot.inputType);
     document.querySelectorAll('[data-three-performance]').forEach(element => {
-      const live=snapshot.ready;
+      const live=snapshot.ready && snapshot.frameSampled;
       element.textContent=`${live?snapshot.fps.toFixed(0):'—'} FPS · CPU ${live?snapshot.averageMs.toFixed(1):'—'} ms · Voorbereiding ${snapshot.preparationMs===null?'—':(snapshot.preparationMs/1000).toFixed(1)+' s'}`;
     });
     document.querySelectorAll("[data-three-loading]").forEach(element => {

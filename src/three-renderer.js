@@ -16,20 +16,25 @@
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
       global.dispatchEvent(new CustomEvent('atlas-three-preparation',{detail:record}));
     }
-    let THREE,renderer,scene,camera,canvas,route,sun,abort,post,worldPass;
+    let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass;
     const postResources=[];
     let generation=0,loading=false,raf=0,last=0,frames=0,fps=0,averageMs=0;
-    let status='idle',error=null,yaw=-.08,pitch=.015,dragging=false,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
+    let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
     const keys=new Set(),textures=new Set(),flames=[];
-    let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,lookPointer=null,movePointer=null,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
+    let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
     let preparationMs=null,lastReport=0;
     let preparationCompleted=0;
     let inputType=global.matchMedia('(any-pointer: coarse)').matches?'touch':'desktop';
+    let visibleProfile=null,frameSampled=false;
+    const frameWindow=[];
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    let movementEvidence={applied:0};
+    const input=global.AtlasThreeInput.create({nativeTouch:compactPreparation,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
+      onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
-    function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());}
+    function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
     // Each boundary is reached only after the preceding work has completed.
     function preparationStage(completed,nextStatus) {preparationCompleted=completed;preparation=PREPARATION_STAGES[completed]||'';report(nextStatus);}
@@ -58,6 +63,7 @@
     }
     function instrumentPreparationPass(name,node) {
       if(!DEBUG)return;
+      node.atlasProfileName=name;
       const update=node.updateBefore;let previousSize='';
       node.updateBefore=function(frame){
         const size=`${canvas?.width}×${canvas?.height}`;
@@ -87,14 +93,14 @@
       } finally {draco.dispose();}
     }
     function resetInput() {
-      keys.clear();dragging=false;lookPointer=movePointer=null;touchWalk=touchTurn=0;
-      document.querySelector('[data-three-stick]')?.style.removeProperty('transform');
+      input.reset('runtime stopped');
     }
     function canPlay() {return status==='ready'&&options.getRenderer()==='3d'&&options.canMove?.();}
     function stop() {cancelAnimationFrame(raf);raf=0;last=0;resetInput();}
     function dispose() {
+      visibleProfile?.stop();visibleProfile=null;frameWindow.length=0;frameSampled=false;
       if(loading)debugMark('Voorbereiding gestopt','cancelled');
-      generation++;loading=false;releasedImageBytes=0;clearWaiting();stop();abort?.abort();abort=null;
+      generation++;loading=false;releasedImageBytes=0;clearWaiting();stop();input.dispose();
       releasePointerLock();
       const geometries=new Set(),materials=new Set();
       scene?.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);for(const m of Array.isArray(obj.material)?obj.material:obj.material?[obj.material]:[])materials.add(m);});
@@ -109,7 +115,7 @@
       return {i,t,position:new THREE.Vector3().fromArray(a.position).lerp(new THREE.Vector3().fromArray(b.position),t),atlasY:a.atlas[1]+(b.atlas[1]-a.atlas[1])*t};
     }
     function move(dt) {
-      if(!canPlay()){resetInput();releasePointerLock();return;}
+      if(!canPlay()){input.reset('movement guard');releasePointerLock();return;}
       const forward=clamp(Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'))+touchWalk,-1,1);
       yaw-=touchTurn*dt*1.3;
       if(keys.has('KeyA')||keys.has('ArrowLeft'))yaw+=dt*1.3;
@@ -119,63 +125,11 @@
       const length=new THREE.Vector3().fromArray(a.position).distanceTo(new THREE.Vector3().fromArray(b.position));
       const next=clamp(x+forward*dt*2.7*(b.atlas[0]-a.atlas[0])/length,route.route[0].atlas[0],route.route.at(-1).atlas[0]);
       options.setPlayer?.({x:next,y:routePosition(next).atlasY});
+      if(DEBUG)movementEvidence={applied:movementEvidence.applied+1,from:x,to:options.getPlayer().x,forward,dt};
     }
     function interact() {if(!currentTarget||!canPlay())return;resetInput();releasePointerLock();options.interact?.(currentTarget);}
     function attachControls() {
-      abort?.abort();resetInput();
-      abort=new AbortController();const opts={signal:abort.signal};
-      const pad=document.querySelector('[data-three-move]'),action=document.querySelector('[data-three-interact]');
-      canvas.addEventListener('pointerdown',e=>{
-        if(e.button!==0||status!=='ready')return;e.stopPropagation();options.activate?.();
-        if(!canPlay()||lookPointer)return;
-        setInputType(e.pointerType==='touch'||e.pointerType==='pen'?'touch':'desktop');
-        dragging=true;lookPointer={id:e.pointerId,x:e.clientX,y:e.clientY};canvas.focus({preventScroll:true});canvas.setPointerCapture?.(e.pointerId);
-      },opts);
-      canvas.addEventListener('click',e=>e.stopPropagation(),opts);
-      canvas.addEventListener('dblclick',e=>{e.stopPropagation();if(canPlay()&&e.pointerType!=='touch')canvas.requestPointerLock?.()?.catch?.(()=>{});},opts);
-      pad?.addEventListener('pointerdown',e=>{
-        if(!canPlay()||movePointer)return;
-        setInputType('touch');
-        e.preventDefault();e.stopPropagation();const rect=pad.getBoundingClientRect();
-        movePointer={id:e.pointerId,x:rect.x+rect.width/2,y:rect.y+rect.height/2};pad.setPointerCapture?.(e.pointerId);
-      },opts);
-      // Restrict Safari gesture suppression to the gameplay surface. Menus,
-      // challenge forms and the rest of Atlas retain normal browser behavior.
-      const gameplayGesture=e=>{if(canPlay())e.preventDefault();};
-      for(const target of [canvas,pad])if(target)for(const name of ['touchmove','gesturestart','gesturechange'])target.addEventListener(name,gameplayGesture,{...opts,passive:false});
-      pad?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();},opts);
-      action?.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();interact();},opts);
-      global.addEventListener('pointermove',e=>{
-        if(!canPlay()){resetInput();return;}
-        if(movePointer?.id===e.pointerId){
-          const x=clamp((e.clientX-movePointer.x)/40,-1,1),y=clamp((e.clientY-movePointer.y)/40,-1,1);
-          const axis=v=>Math.abs(v)<.15?0:Math.sign(v)*(Math.abs(v)-.15)/.85;
-          touchWalk=-axis(y);touchTurn=axis(x);
-          const stick=document.querySelector('[data-three-stick]');if(stick)stick.style.transform=`translate(${x*32}px,${y*32}px)`;
-          return;
-        }
-        const locked=document.pointerLockElement===canvas;if(!locked&&lookPointer?.id!==e.pointerId)return;
-        const dx=locked?e.movementX:e.clientX-lookPointer.x,dy=locked?e.movementY:e.clientY-lookPointer.y;
-        yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.30,1.30);
-        if(lookPointer){lookPointer.x=e.clientX;lookPointer.y=e.clientY;}
-      },opts);
-      const release=e=>{
-        if(lookPointer?.id===e.pointerId){lookPointer=null;dragging=false;}
-        if(movePointer?.id===e.pointerId){movePointer=null;touchWalk=touchTurn=0;document.querySelector('[data-three-stick]')?.style.removeProperty('transform');}
-      };
-      for(const name of ['pointerup','pointercancel','lostpointercapture'])global.addEventListener(name,release,opts);
-      global.addEventListener('blur',resetInput,opts);
-      document.addEventListener('visibilitychange',resetInput,opts);
-      document.addEventListener('pointerlockchange',resetInput,opts);
-      const keyCode=e=>e.code||({w:'KeyW',s:'KeyS',a:'KeyA',d:'KeyD',e:'KeyE'}[e.key?.toLowerCase()]||e.key);
-      global.addEventListener('keydown',e=>{
-        if(!canPlay()||e.ctrlKey||e.metaKey||e.altKey||e.target.closest?.('input,textarea,select,[contenteditable="true"],[role="dialog"]'))return;
-        const code=keyCode(e);
-        if(['KeyW','KeyS','KeyA','KeyD','KeyE','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(code))setInputType('desktop');
-        if(['KeyW','KeyS','KeyA','KeyD','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(code)){e.preventDefault();keys.add(code);}
-        if(code==='KeyE'&&!e.repeat){e.preventDefault();interact();}
-      },opts);
-      global.addEventListener('keyup',e=>keys.delete(keyCode(e)),opts);canvas.tabIndex=0;
+      input.attach(canvas,document.querySelector('[data-three-move]'),document.querySelector('[data-three-interact]'));
     }
     function partitionWorld(root) {
       root.updateMatrixWorld(true);const cells=new Map(),remove=[];const matrix=new THREE.Matrix4();
@@ -324,7 +278,7 @@
         npc=new THREE.Mesh(new THREE.PlaneGeometry(2*source.naturalWidth/source.naturalHeight,2),new THREE.MeshStandardMaterial({map:texture,alphaTest:.15,alphaToCoverage:true,side:THREE.DoubleSide,roughness:1}));npc.position.set(17.8,6.38,-57);npc.castShadow=true;scene.add(npc);sun.shadow.needsUpdate=true;
       }
       npc.visible=true;const path=source.currentSrc||source.src;
-      if(path!==npcPath){const context=npcFrame.getContext('2d');context.clearRect(0,0,npcFrame.width,npcFrame.height);context.drawImage(source,0,0,npcFrame.width,npcFrame.height);npc.material.map.needsUpdate=true;npcPath=path;}
+      if(path!==npcPath){const context=npcFrame.getContext('2d');context.clearRect(0,0,npcFrame.width,npcFrame.height);context.drawImage(source,0,0,npcFrame.width,npcFrame.height);npc.material.map.needsUpdate=true;npcPath=path;visibleProfile?.npc(npcFrame.width,npcFrame.height);}
       npc.rotation.y=Math.atan2(camera.position.x-npc.position.x,camera.position.z-npc.position.z);
     }
     function resize(preparing=false) {
@@ -422,12 +376,23 @@
     }
     function draw(time) {
       raf=0;if(!canvas?.isConnected||document.hidden||options.getRenderer()!=='3d')return;
-      const start=performance.now(),elapsed=last?(time-last)/1000:1/60,dt=Math.min(.05,elapsed);last=time;
+      const start=performance.now(),interval=last?time-last:null,elapsed=interval===null?1/60:interval/1000,dt=Math.min(.05,elapsed);last=time;
       try {
+        const movementStart=DEBUG?performance.now():0;
         resize();move(dt);positionCamera(options.getPlayer().x);
+        if(DEBUG)visibleProfile?.phase('movement/DOM/camera',performance.now()-movementStart);
         updateTarget();updateNpc();
         flames.forEach((f,i)=>{f.scale.y=.94+Math.sin(time*.006+i*1.8)*.09;});
-        renderer.info.reset();if(post)post.render();else renderer.render(scene,camera);frames++;fps=fps*.95+.05/Math.max(.001,elapsed);averageMs=averageMs*.95+(performance.now()-start)*.05;if(status!=='ready'||time-lastReport>=250){lastReport=time;report('ready');}raf=requestAnimationFrame(draw);
+        const shadowRefresh=sun.shadow.needsUpdate;
+        renderer.info.reset();if(post)post.render();else renderer.render(scene,camera);frames++;
+        const cpu=performance.now()-start;
+        if(interval!==null){
+          frameWindow.push({interval,cpu});let duration=frameWindow.reduce((sum,f)=>sum+f.interval,0);
+          while(frameWindow.length>1&&duration-frameWindow[0].interval>=500)duration-=frameWindow.shift().interval;
+          fps=1000*frameWindow.length/Math.max(1,duration);averageMs=frameWindow.reduce((sum,f)=>sum+f.cpu,0)/frameWindow.length;frameSampled=true;
+        }
+        visibleProfile?.frame(interval,cpu,shadowRefresh);
+        if(status!=='ready'||time-lastReport>=250){lastReport=time;report('ready');}raf=requestAnimationFrame(draw);
       }catch(caught){stop();report('error',caught);}
     }
     async function sync() {
@@ -475,7 +440,9 @@
         preparationStage(2,'warming');await prepareWork('Licht, moss-materialen en post-processing opbouwen',async()=>{buildLights();await buildAtmosphere();},token);if(token!==generation)return;
         if(!next.isConnected){dispose();sync();return;}
         if(!await warmup(token)||token!==generation)return;
-        attachControls();loading=false;preparationMs=performance.now()-preparationStarted;preparationStage(PREPARATION_STAGES.length,'ready');debugMark('3D gereed','complete');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
+        attachControls();loading=false;preparationMs=performance.now()-preparationStarted;
+        if(DEBUG)visibleProfile=global.AtlasThreeRuntimeDiagnostics?.start(renderer,postResources);
+        preparationStage(PREPARATION_STAGES.length,'ready');debugMark('3D gereed','complete');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
       }catch(caught){if(token===generation){
         clearWaiting();loading=false;const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;
         diagnostic=diagnostic.includes('mislukt:')?diagnostic:`${diagnostic||operation} — mislukt: ${detail}`;
