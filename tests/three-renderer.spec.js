@@ -16,6 +16,8 @@ test.describe('Atlas first-person LVL-0001',()=>{
   await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:120000}).toBe('ready');
   await expect(page.locator('[data-three-loading]')).toBeHidden();
   await expect(page.locator('[data-three-canvas]')).toBeVisible();
+  await expect(page.locator('[data-tap-diagnostics]')).toHaveCount(0);
+  await page.screenshot({path:'qa-screenshots/usability/desktop-ready.png'});
   const readiness=await page.evaluate(()=>window.eval('threeRenderer.snapshot')());
   expect(readiness.warmupViews).toBe(readiness.warmupTotal);
   expect(readiness.warmupTotal).toBeGreaterThan(1);

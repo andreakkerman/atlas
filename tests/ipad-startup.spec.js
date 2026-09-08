@@ -16,12 +16,7 @@ test('Atlas navigation works without Pointer Lock APIs',async({page})=>{
  await expect(page.locator('.introScreen')).toBeVisible();
  await page.getByRole('button',{name:'Terug',exact:true}).tap();
  await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
- const diagnostic=page.locator('[data-tap-diagnostics]');
- await expect(diagnostic).toContainText('pointerdown: ontvangen');
- await expect(diagnostic).toContainText('touchstart: ontvangen');
- await expect(diagnostic).toContainText('click: ontvangen');
- await expect(diagnostic).toContainText('overlay=nee');
- expect(await diagnostic.evaluate(el=>getComputedStyle(el).pointerEvents)).toBe('none');
+ await expect(page.locator('[data-tap-diagnostics]')).toHaveCount(0);
  await page.locator('[data-menu-tile="LVL-0004"]').tap();
  await page.getByRole('button',{name:'Terug',exact:true}).tap();
  await page.locator('.heroLevelTile').tap();
@@ -89,7 +84,7 @@ test('cancelled rejection cannot overwrite a new startup or leave an input shiel
  await expect(page.locator('.worldArt')).toBeVisible();
 });
 test('tap evidence distinguishes an overlay and a cancelling handler',async({page})=>{
- await page.goto(`${base}/?dev=editor&level=LVL-0001`);
+ await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1`);
  const menu=page.getByRole('button',{name:'Terug naar menu'}),box=await menu.boundingBox();
  await page.evaluate(()=>{
   const menu=document.querySelector('[data-action="menu"]'),rect=menu.getBoundingClientRect();

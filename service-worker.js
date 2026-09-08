@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v142";
+const CACHE_NAME = "svenadventure-static-v143";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/GTAONode.js",
   "./",

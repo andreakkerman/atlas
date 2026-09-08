@@ -1,16 +1,19 @@
 (function () {
   'use strict';
   // Temporary physical-device evidence. Observers never cancel events or take focus.
-  const enabled=navigator.maxTouchPoints>0||matchMedia('(any-pointer: coarse)').matches||'ontouchstart' in window||new URLSearchParams(location.search).has('tapDiagnostics');
+  const enabled=new URLSearchParams(location.search).get('debug3d')==='1';
   if(!enabled)return;
   const controls='button,a,input,select,textarea,[role="button"],[data-level]';
   const panel=document.createElement('pre');
   panel.className='atlasTapDiagnostics';panel.dataset.tapDiagnostics='';panel.setAttribute('aria-hidden','true');
   document.body.append(panel);
-  const events=new WeakMap();let trace=null,lastError='';
+  const events=new WeakMap();let trace=null,lastError='',currentPreparation='';
+  let previousPreparation='';
+  try{const previous=JSON.parse(localStorage.getItem('atlas3d-debug-preparation-v1'));if(previous)previousPreparation=`Vorige voorbereiding (${previous.state}): ${previous.operation}\nLaatst voltooid: ${previous.lastCompleted||'—'}`;}catch{}
   const name=node=>node instanceof Element?`${node.tagName.toLowerCase()}${node.id?'#'+node.id:''}${node.classList.length?'.'+Array.from(node.classList).slice(0,2).join('.'):''}`:'(geen)';
   const label=node=>(node?.getAttribute('aria-label')||node?.textContent||name(node)).trim().replace(/\s+/g,' ').slice(0,48);
-  const render=()=>{panel.textContent=(trace?`Tapdiagnose · ${trace.button}\n${['pointerdown','touchstart','click'].map(type=>`${type}: ${trace.seen[type]||'—'}`).join(' · ')}\n${trace.hit}\n${trace.style}\n${trace.lines.join('\n')}`:'Tapdiagnose actief · tik op Menu / Terug')+(lastError?'\nFOUT: '+lastError:'');};
+  const render=()=>{panel.textContent=[previousPreparation,currentPreparation,(trace?`Tapdiagnose · ${trace.button}\n${['pointerdown','touchstart','click'].map(type=>`${type}: ${trace.seen[type]||'—'}`).join(' · ')}\n${trace.hit}\n${trace.style}\n${trace.lines.join('\n')}`:'Tapdiagnose actief · tik op Menu / Terug'),lastError?'FOUT: '+lastError:''].filter(Boolean).join('\n');};
+  window.addEventListener('atlas-three-preparation',event=>{const record=event.detail;currentPreparation=`3D (${record.strategy}, ${record.state}): ${record.operation}\nLaatst voltooid: ${record.lastCompleted||'—'}`;render();});
   const add=(entry,line)=>{entry.lines.push(line);entry.lines=entry.lines.slice(-5);if(entry===trace)render();};
   const locationOfCall=()=>new Error().stack?.split('\n').find(line=>/\.js:\d+/.test(line)&&!line.includes('tap-diagnostics.js'))?.trim().replace(location.origin,'').slice(-130)||'handler';
   function begin(event) {

@@ -216,6 +216,7 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
       element.querySelector('[data-three-loading-title]').textContent = snapshot.status === 'error' ? '3D kon niet worden gestart' : 'De 3D-wereld wordt voorbereid';
       element.querySelector("[data-three-preparation]").textContent = snapshot.preparation || "3D-engine starten…";
       element.querySelector('[data-three-diagnostic]').textContent = snapshot.diagnostic || '';
+      element.querySelector('[data-three-diagnostic]').hidden = !snapshot.debug && snapshot.status !== 'error';
       element.querySelector('[data-three-recover]').hidden = snapshot.status !== 'error';
       const completed=snapshot.preparationCompleted,total=snapshot.preparationTotal;
       const progress=element.querySelector('[data-three-progress]');
