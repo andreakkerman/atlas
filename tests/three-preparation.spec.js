@@ -59,7 +59,7 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
  // No second shader warm-up after the gate. Actual mouse/keyboard interaction.
  await page.keyboard.down('w');
- await expect.poll(()=>page.evaluate(()=>window.eval('state.worldX'))).toBeGreaterThan(185);await page.keyboard.up('w');
+ await expect.poll(()=>page.evaluate(()=>window.eval('state.worldX'))).toBeGreaterThan(235);await page.keyboard.up('w');
  await page.mouse.move(700,300);await page.mouse.down();await page.mouse.move(930,360,{steps:12});await page.mouse.up();
  await page.waitForTimeout(500);
  const after=await page.evaluate(()=>({pipelines:window.pipelineCount,snapshot:window.eval('threeRenderer.snapshot')()}));

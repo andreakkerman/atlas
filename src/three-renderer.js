@@ -352,6 +352,10 @@
       // angles. Three route samples exercise the same AO/volume/bloom chain on
       // iPad, reusing small targets; desktop keeps its existing 18-view strategy.
       const samples=compactPreparation?anchors.map((x,i)=>{
+        // The initial shadow frustum misses a buttress-root draw layout first
+        // encountered when walking. Sample 2.5 metres ahead; the final full-size
+        // frame still prepares the exact spawn. Reuse the existing view budget.
+        if(i===0){const {i:segment}=routePosition(x),a=points[segment],b=points[segment+1];const metres=new THREE.Vector3().fromArray(a.position).distanceTo(new THREE.Vector3().fromArray(b.position));return [Math.min(points.at(-1).atlas[0],x+2.5*(b.atlas[0]-a.atlas[0])/metres),0,0];}
         if(i!==2)return [x,0,0];
         const p=routePosition(x).position,t=route.landmarks.templeGate,dx=t[0]-p.x,dz=t[2]-p.z;
         return [x,Math.atan2(-dx,-dz),Math.atan2(t[1]-p.y-route.eyeHeight,Math.hypot(dx,dz))];

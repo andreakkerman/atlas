@@ -4,7 +4,10 @@
   function start(renderer,passes){
     const device=renderer.backend.device,started=performance.now(),restore=[],unavailable=[],samples=[],pipelines=[];
     let active=true,last=started,frameCount=0,frameMs=0,maxFrameMs=0,cpuMs=0,fencePending=false,fenceMs=null;
-    let counts={},phases={};
+    let counts={},phases={},currentObject=null;
+    const renderObject=renderer.renderObject;
+    renderer.renderObject=function(...args){const previous=currentObject;currentObject=args[0];try{return Reflect.apply(renderObject,this,args);}finally{currentObject=previous;}};
+    restore.push(()=>{renderer.renderObject=renderObject;});
     const count=(name,n=1)=>{counts[name]=(counts[name]||0)+n;};
     function wrap(target,name,observe){
       if(typeof target?.[name]!=='function'){unavailable.push(name);return;}
@@ -12,7 +15,7 @@
       const wrapped=function(...args){if(active)observe(args);return Reflect.apply(original,this,args);};
       try{target[name]=wrapped;if(target[name]!==wrapped)throw Error('readonly');restore.push(()=>{if(descriptor)Object.defineProperty(target,name,descriptor);else delete target[name];});}catch{unavailable.push(name);}
     }
-    for(const name of ['createRenderPipeline','createRenderPipelineAsync','createComputePipeline','createComputePipelineAsync'])wrap(device,name,args=>{count(name);if(pipelines.length<16){const d=args[0];pipelines.push({seconds:(performance.now()-started)/1000,method:name,label:d.label,vertex:d.vertex?.module?.label,fragment:d.fragment?.module?.label,depth:d.depthStencil,primitive:d.primitive});}});
+    for(const name of ['createRenderPipeline','createRenderPipelineAsync','createComputePipeline','createComputePipelineAsync'])wrap(device,name,args=>{count(name);if(pipelines.length<16){const d=args[0],o=currentObject;pipelines.push({seconds:(performance.now()-started)/1000,method:name,label:d.label,object:o?{name:o.name,type:o.type,material:o.material?.name,position:o.position.toArray()}:null,vertex:d.vertex?.module?.label,fragment:d.fragment?.module?.label,depth:d.depthStencil,primitive:d.primitive});}});
     wrap(device,'createTexture',()=>count('textures'));
     wrap(device,'createBuffer',args=>{count('buffers');count('bufferBytes',args[0].size);});
     for(const name of ['copyExternalImageToTexture','writeTexture','writeBuffer'])wrap(device.queue,name,()=>count(name));
