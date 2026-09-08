@@ -16,7 +16,7 @@
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
       global.dispatchEvent(new CustomEvent('atlas-three-preparation',{detail:record}));
     }
-    let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass;
+    let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice;
     const postResources=[];
     let generation=0,loading=false,raf=0,last=0,frames=0,fps=0,averageMs=0;
     let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
@@ -76,38 +76,50 @@
     async function loadWorld(GLTFLoader,DRACOLoader,token) {
       const draco=new DRACOLoader().setDecoderPath('assets/vendor/three/draco/').setDecoderConfig({type:'wasm'}).setWorkerLimit(compactPreparation?1:2);
       const loader=new GLTFLoader().setDRACOLoader(draco);
+      const decodedMeshes=[],decodedTextures=[];let complete=false;
       // Preload through the parser's normal dependency cache, before scene loading
       // fans out. Preserve all source pixels and geometry, but avoid simultaneous
       // image decoding, Draco worker heaps and hundreds of outstanding mesh jobs.
       if(compactPreparation)loader.register(parser=>({name:'ATLAS_sequential_preparation',beforeRoot:async()=>{
         for(const type of ['texture','mesh']){
           const count=parser.json[type==='texture'?'textures':'meshes']?.length||0;
-          for(let i=0;i<count;i++)await prepareWork(`${type==='texture'?'Textuur decoderen':'Draco-mesh voorbereiden'} ${i+1}/${count}`,()=>parser.getDependency(type,i),token);
+          for(let i=0;i<count;i++){const resource=await prepareWork(`${type==='texture'?'Textuur decoderen':'Draco-mesh voorbereiden'} ${i+1}/${count}`,()=>parser.getDependency(type,i),token);if(resource)(type==='texture'?decodedTextures:decodedMeshes).push(resource);}
         }
       }}));
       try {
         const gltf=await loader.loadAsync(ROOT+'lvl0001.glb');
         // Only the scene escapes this scope, not gltf.parser and its binary,
         // decoded bufferView and original-node caches throughout GPU warm-up.
-        const root=gltf.scene;gltf.parser.cache.removeAll();return root;
-      } finally {draco.dispose();}
+        const root=gltf.scene;gltf.parser.cache.removeAll();complete=true;return root;
+      } finally {draco.dispose();if(!complete)releaseRoot({traverse:visit=>decodedMeshes.forEach(mesh=>mesh.traverse(visit))},decodedTextures);}
     }
     function resetInput() {
       input.reset('runtime stopped');
     }
     function canPlay() {return status==='ready'&&options.getRenderer()==='3d'&&options.canMove?.();}
     function stop() {cancelAnimationFrame(raf);raf=0;last=0;resetInput();}
-    function dispose() {
-      visibleProfile?.stop();visibleProfile=null;frameWindow.length=0;frameSampled=false;
+    function safely(task) {try{task();}catch(caught){if(DEBUG)console.warn('3D cleanup:',caught);}}
+    function releaseRoot(root,extraTextures=[]) {
+      const geometries=new Set(),materials=new Set(),maps=new Set(extraTextures),images=new Set();
+      root?.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);for(const m of Array.isArray(obj.material)?obj.material:obj.material?[obj.material]:[])materials.add(m);});
+      materials.forEach(mat=>{for(const value of Object.values(mat))if(value?.isTexture)maps.add(value);safely(()=>mat.dispose());});
+      geometries.forEach(g=>safely(()=>g.dispose()));
+      maps.forEach(t=>{if(typeof ImageBitmap!=='undefined'&&t.image instanceof ImageBitmap)images.add(t.image);safely(()=>t.dispose());});
+      images.forEach(image=>safely(()=>image.close()));
+    }
+    function dispose(notify=true) {
+      safely(()=>visibleProfile?.stop());visibleProfile=null;frameWindow.length=0;frameSampled=false;
       if(loading)debugMark('Voorbereiding gestopt','cancelled');
-      generation++;loading=false;releasedImageBytes=0;clearWaiting();stop();input.dispose();
-      releasePointerLock();
-      const geometries=new Set(),materials=new Set();
-      scene?.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);for(const m of Array.isArray(obj.material)?obj.material:obj.material?[obj.material]:[])materials.add(m);});
-      materials.forEach(mat=>{for(const value of Object.values(mat))if(value?.isTexture)textures.add(value);mat.dispose();});
-      geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());textures.clear();
-      postResources.splice(0).forEach(resource=>resource.dispose?.());post?.dispose();post=null;
-      renderer?.dispose();renderer=scene=camera=canvas=route=sun=npc=worldPass=null;flames.length=0;npcPath=null;npcFrame=null;frames=fps=averageMs=warmupViews=warmupTotal=preparationCompleted=0;preparation=diagnostic='';report('idle');
+      generation++;loading=false;releasedImageBytes=0;clearWaiting();safely(stop);safely(()=>input.dispose());
+      safely(releasePointerLock);
+      safely(()=>releaseRoot(scene,textures));textures.clear();
+      postResources.splice(0).forEach(resource=>safely(()=>resource.dispose?.()));safely(()=>post?.dispose());post=null;
+      safely(()=>renderer?.dispose());
+      safely(()=>renderer?.backend?.context?.unconfigure());
+      // The device is explicitly requested by Atlas, not owned by Three.js.
+      // Always destroy it, even if an earlier disposer throws.
+      safely(()=>ownedDevice?.destroy());ownedDevice=null;
+      renderer=scene=camera=canvas=route=sun=npc=worldPass=null;flames.length=0;npcPath=null;npcFrame=null;frames=fps=averageMs=warmupViews=warmupTotal=preparationCompleted=0;preparation=diagnostic='';if(notify)report('idle');
     }
     function routePosition(atlasX) {
       const points=route.route;let i=0;while(i<points.length-2&&atlasX>points[i+1].atlas[0])i++;
@@ -166,8 +178,9 @@
         const light=new THREE.PointLight('#ffab37',12,8,2);light.position.set(x,6.7,-57.7);scene.add(light);
       }
     }
-    async function buildAtmosphere() {
+    async function buildAtmosphere(token) {
       const [tsl,{bayer16},{gaussianBlur},{bloom},{ao}]=await Promise.all([import('../assets/vendor/three/three.tsl.min.js'),import('../assets/vendor/three/tsl/math/Bayer.js'),import('../assets/vendor/three/tsl/display/GaussianBlurNode.js'),import('../assets/vendor/three/tsl/display/BloomNode.js'),import('../assets/vendor/three/tsl/display/GTAONode.js')]);
+      if(token!==generation)return;
       const {pass,Fn,float,screenCoordinate,screenUV,uniform,uv,sin,time,vec3,mix,smoothstep,cameraPosition,distance}=tsl;
       // Blend the authored moss material continuously across rock surfaces.
       // World-space masks avoid hard polygon borders on the raised authoring patches.
@@ -352,10 +365,7 @@
       // angles. Three route samples exercise the same AO/volume/bloom chain on
       // iPad, reusing small targets; desktop keeps its existing 18-view strategy.
       const samples=compactPreparation?anchors.map((x,i)=>{
-        // The initial shadow frustum misses a buttress-root draw layout first
-        // encountered when walking. Sample 2.5 metres ahead; the final full-size
-        // frame still prepares the exact spawn. Reuse the existing view budget.
-        if(i===0){const {i:segment}=routePosition(x),a=points[segment],b=points[segment+1];const metres=new THREE.Vector3().fromArray(a.position).distanceTo(new THREE.Vector3().fromArray(b.position));return [Math.min(points.at(-1).atlas[0],x+2.5*(b.atlas[0]-a.atlas[0])/metres),0,0];}
+        // Preserve the first view from the physically verified iPad build.
         if(i!==2)return [x,0,0];
         const p=routePosition(x).position,t=route.landmarks.templeGate,dx=t[0]-p.x,dz=t[2]-p.z;
         return [x,Math.atan2(-dx,-dz),Math.atan2(t[1]-p.y-route.eyeHeight,Math.hypot(dx,dz))];
@@ -404,7 +414,7 @@
       const checkpoint=label=>{operation=diagnostic=label;debugMark(label);report();};
       try {
       const next=document.querySelector('[data-three-canvas]');
-      if(options.getRenderer()!=='3d'||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading)dispose();return;}
+      if(options.getRenderer()!=='3d'||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading||status!=='idle')dispose();return;}
       if(renderer&&canvas===next){if(status==='ready')attachControls();report();if(!loading&&!raf&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
@@ -418,30 +428,34 @@
         const adapter=await observe('WebGPU-adapter aanvragen (navigator.gpu: ja)',()=>gpu.requestAdapter({powerPreference:'high-performance'}),token);
         if(token!==generation)return;if(!adapter)throw new DOMException('WebGPU heeft geen geschikte adapter teruggegeven.','NotSupportedError');
         diagnostic='WebGPU-adapter ontvangen';report();
-        const device=await observe('WebGPU-device aanvragen',()=>adapter.requestDevice(),token);
+        const device=await observe('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
         if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
         checkpoint('Three.js WebGPURenderer maken');
         renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});
         checkpoint('Three.js WebGPURenderer gemaakt');
-        await observe('renderer.init uitvoeren',()=>renderer.init(),token);
+        const initializingRenderer=renderer;
+        try{await observe('renderer.init uitvoeren',()=>initializingRenderer.init(),token);}
+        finally{if(token!==generation){safely(()=>initializingRenderer.dispose());safely(()=>initializingRenderer.backend?.context?.unconfigure());}}
         if(token!==generation)return;checkpoint('renderer.init gelukt; WebGPU-backend controleren');if(!renderer.backend.isWebGPUBackend)throw Error('WebGPU is required for first-person 3D.');
         checkpoint('WebGPU-backend bevestigd; engine gereed');
         preparationStage(1,'loading');
-        route=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
-        if(token!==generation)return;
+        const loadedRoute=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
+        if(token!==generation)return;route=loadedRoute;
         renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#dbc294',.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
         const root=await observe('GLB downloaden en decoderen',()=>loadWorld(GLTFLoader,DRACOLoader,token),token);
-        if(token!==generation){root.traverse(o=>o.geometry?.dispose());return;}
-        await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
+        if(token!==generation){releaseRoot(root);return;}
+        scene.add(root);
+        await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);},token);
+        if(token!==generation)return;
         const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=8;}});
         const sky=await prepareWork('HDR laden en decoderen',()=>new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr'),token);if(token!==generation){sky.dispose();return;}textures.add(sky);
         await prepareWork('HDR-omgeving en hemeldome voorbereiden',()=>{
           const environment=sky.clone();environment.mapping=THREE.EquirectangularReflectionMapping;environment.needsUpdate=true;textures.add(environment);scene.environment=environment;scene.environmentIntensity=.16;scene.environmentRotation.set(.2,1.55,0);
           const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:sky,color:new THREE.Color(.14,.16,.19),side:THREE.BackSide,depthWrite:false,fog:false}));dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);
         },token);
-        preparationStage(2,'warming');await prepareWork('Licht, moss-materialen en post-processing opbouwen',async()=>{buildLights();await buildAtmosphere();},token);if(token!==generation)return;
+        preparationStage(2,'warming');await prepareWork('Licht, moss-materialen en post-processing opbouwen',async()=>{buildLights();await buildAtmosphere(token);},token);if(token!==generation)return;
         if(!next.isConnected){dispose();sync();return;}
         if(!await warmup(token)||token!==generation)return;
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;
@@ -450,6 +464,9 @@
       }catch(caught){if(token===generation){
         clearWaiting();loading=false;const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;
         diagnostic=diagnostic.includes('mislukt:')?diagnostic:`${diagnostic||operation} — mislukt: ${detail}`;
+        const failure={diagnostic,preparation,preparationCompleted,warmupViews,warmupTotal};
+        dispose(false);
+        ({diagnostic,preparation,preparationCompleted,warmupViews,warmupTotal}=failure);
         try{report('error',caught);}catch(reportError){
           // Even a broken status callback must not strand the initial static loader.
           console.error('3D statusweergave:',reportError);
