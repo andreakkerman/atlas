@@ -29,24 +29,34 @@ test('device arriving after cancellation is destroyed and cannot revive startup'
  expect(result).toEqual({destroyed:1,status:'idle'});
 });
 
-for(const action of ['failure','cancel','stall','stall-cancel'])test(`warm-up ${action} releases the GPU device and allows Cinematic Lighting`,async({page},info)=>{
+for(const action of ['failure','cancel','stall','stall-cancel','shader-failure'])test(`warm-up ${action} releases the GPU device and allows Cinematic Lighting`,async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires a real WebGPU device.');
  test.setTimeout(300000);
  await page.addInitScript(action=>{
   Object.defineProperty(navigator,'platform',{get:()=> 'MacIntel'});Object.defineProperty(navigator,'maxTouchPoints',{get:()=>5});
   window.destroyedDevices=0;window.triggered=false;window.stall=false;
   const timeout=window.setTimeout;
-  window.setTimeout=(fn,ms,...args)=>timeout(fn,action==='stall'&&window.stall&&ms===90000?3000:ms,...args);
+  // Accelerate only the injected queue wait, not real view-2 shader compilation.
+  window.setTimeout=(fn,ms,...args)=>timeout(fn,action==='stall'&&window.atStalledWait&&ms===90000?3000:ms,...args);
   const fence=GPUQueue.prototype.onSubmittedWorkDone;let stalledQueue;
-  GPUQueue.prototype.onSubmittedWorkDone=function(...args){if(window.stall&&(!stalledQueue||stalledQueue===this)){stalledQueue=this;return new Promise(resolve=>window.finishStaleFence=resolve);}return Reflect.apply(fence,this,args);};
+  const requestDevice=GPUAdapter.prototype.requestDevice;
+  GPUAdapter.prototype.requestDevice=async function(...args){const device=await Reflect.apply(requestDevice,this,args);stalledQueue||=device.queue;return device;};
+  GPUQueue.prototype.onSubmittedWorkDone=function(...args){if(window.stall&&stalledQueue===this)return new Promise(resolve=>window.finishStaleFence=resolve);return Reflect.apply(fence,this,args);};
   const adapter=navigator.gpu.requestAdapter.bind(navigator.gpu);
   navigator.gpu.requestAdapter=(...args)=>{if(window.triggered&&window.destroyedDevices===0)return Promise.resolve(null);return adapter(...args);};
   const destroy=GPUDevice.prototype.destroy;
   GPUDevice.prototype.destroy=function(...args){window.destroyedDevices++;return Reflect.apply(destroy,this,args);};
   const write=GPUQueue.prototype.writeBuffer;let fail=false;
   GPUQueue.prototype.writeBuffer=function(...args){if(fail){fail=false;throw new RangeError('Range consisting of offset and length are out of bounds');}return Reflect.apply(write,this,args);};
+  const shader=GPUDevice.prototype.createShaderModule;let failShader=false;
+  GPUDevice.prototype.createShaderModule=function(...args){if(failShader){failShader=false;throw new DOMException('GPUDevice.createShaderModule: Unable to make shader module.','InvalidStateError');}return Reflect.apply(shader,this,args);};
   window.addEventListener('atlas-three-preparation',event=>{
+   if(action==='shader-failure'){
+    if(!window.triggered&&event.detail.operation.startsWith('Warm-up 1/3:')&&event.detail.state==='complete'){window.triggered=failShader=true;}
+    return;
+   }
    if(action.startsWith('stall')){
+    if(event.detail.operation==='Beeld 2/3: wachten op GPU'&&event.detail.state==='pending')window.atStalledWait=true;
     if(!window.triggered&&event.detail.operation.startsWith('Warm-up 1/3:')&&event.detail.state==='complete'){window.triggered=window.stall=true;}
     return;
    }
@@ -68,11 +78,18 @@ for(const action of ['failure','cancel','stall','stall-cancel'])test(`warm-up ${
   expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().ready)).toBe(false);
   if(action==='stall-cancel')await page.locator('[data-three-recover]').click();
  }
- const failed=action==='failure'||action==='stall';
- await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:10000}).toBe(failed?'error':'idle');
+ const failed=action==='failure'||action==='stall'||action==='shader-failure';
+ await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:30000}).toBe(failed?'error':'idle');
  expect(await page.evaluate(()=>window.destroyedDevices)).toBe(1);
  if(failed){
-  await expect(page.locator('[data-three-diagnostic]')).toContainText(action==='stall'?'TimeoutError: Beeld 2/3':'RangeError: Range consisting');
+  await expect(page.locator('[data-three-diagnostic]')).toContainText(action==='shader-failure'?'InvalidStateError: GPUDevice.createShaderModule':action==='stall'?'TimeoutError: Beeld 2/3':'RangeError: Range consisting');
+  if(action==='shader-failure'){
+   const trace=await page.evaluate(()=>window.eval('threeRenderer.snapshot')().gpuPreparation);
+   expect(trace.firstFailure.shader.operation).toContain('Beeld 2/3');
+   expect(trace.firstFailure.shader.label).toBeTruthy();expect(trace.firstFailure.shader.pass).toBeTruthy();
+   expect(trace.firstFailure.shader.state).toBe('threw');
+   expect(trace.loss?.cleanupAlreadyRequested).not.toBe(false);
+  }
   await expect(page.locator('[data-three-recover]')).toBeVisible();
   await page.evaluate(()=>window.eval('render')());
   expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('error');

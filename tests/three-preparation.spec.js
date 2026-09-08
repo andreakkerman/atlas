@@ -29,7 +29,8 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
  await expect(page.locator('[data-three-loading]')).toBeVisible();
  await expect(page.locator('[data-three-canvas]')).toBeHidden();
- await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().ready),{timeout:240000}).toBe(true);
+ await page.waitForFunction(()=>['ready','error'].includes(window.eval('threeRenderer.snapshot')().status),{},{timeout:240000});
+ expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().error)).toBeNull();
  const ready=await page.evaluate(()=>({snapshot:window.eval('threeRenderer.snapshot')(),views:window.preparationViews,pipelines:window.pipelineCount,compilePeak:window.compilePeak,journal:JSON.parse(localStorage.getItem('atlas3d-debug-preparation-v1'))}));
  expect(ready.snapshot.preparationStrategy).toBe('compact');
  expect(ready.snapshot.warmupTotal).toBe(4);expect(ready.snapshot.warmupViews).toBe(4);
@@ -40,6 +41,8 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(ready.snapshot.releasedImageBytes).toBeGreaterThan(800*1024*1024);
  expect(ready.compilePeak).toBeLessThan(100);
  expect(ready.journal.operation).toBe('3D gereed');
+ expect(ready.snapshot.gpuPreparation.firstFailure).toBeNull();
+ expect(ready.snapshot.gpuPreparation.loss).toBeNull();
  await expect(page.locator('[data-three-loading]')).toBeHidden();
  await page.screenshot({path:'qa-screenshots/usability/compact-ready.png'});
  // Drive the production native TouchEvent path through Chromium's input device.

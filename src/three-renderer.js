@@ -11,6 +11,7 @@
     let lastCompletedOperation='',releasedImageBytes=0;
     function debugMark(operation,state='pending') {
       if(!DEBUG)return;
+      gpuTrace?.checkpoint(operation,state);
       if(state==='complete')lastCompletedOperation=operation;
       const record={operation,state,lastCompleted:lastCompletedOperation,strategy:preparationStrategy,at:new Date().toISOString()};
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
@@ -25,14 +26,14 @@
     let preparationMs=null,lastReport=0;
     let preparationCompleted=0;
     let inputType=global.matchMedia('(any-pointer: coarse)').matches?'touch':'desktop';
-    let visibleProfile=null,frameSampled=false;
+    let visibleProfile=null,frameSampled=false,gpuTrace=null;
     const frameWindow=[];
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
     let movementEvidence={applied:0};
     const input=global.AtlasThreeInput.create({nativeTouch:compactPreparation,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
@@ -45,11 +46,13 @@
     function clearWaiting() {clearInterval(waitTimer);waitTimer=0;waitingSince=0;}
     async function observe(label,task,token,timeoutMs=0) {
       if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');
+      if(lifetime?.signal.aborted)throw lifetime.signal.reason;
       clearWaiting();diagnostic=label;waitingSince=performance.now();debugMark(label);report();
       if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');
       const started=waitingSince;
       const timer=waitTimer=setInterval(()=>{if(token!==generation){clearInterval(timer);return;}const seconds=Math.floor((performance.now()-started)/1000);diagnostic=`${label} — wacht nog steeds (${seconds} s)`;report();},1000);
       const signal=lifetime?.signal;let deadline,cancel;
+      if(signal?.aborted){clearWaiting();clearInterval(timer);throw signal.reason;}
       try {
         const interrupted=new Promise((_,reject)=>{
           cancel=()=>reject(signal.reason||new DOMException('Voorbereiding gestopt','AbortError'));
@@ -66,7 +69,7 @@
         if(token===generation){clearWaiting();const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;debugMark(diagnostic,'error');report();}throw caught;
       } finally {clearTimeout(deadline);clearInterval(timer);signal?.removeEventListener('abort',cancel);}
     }
-    const gpuWork=(label,task,token)=>observe(label,task,token,90000);
+    const gpuWork=(label,task,token)=>observe(label,()=>gpuTrace&&(/renderer.init|compileren|renderer en post-processing/.test(label))?gpuTrace.scope(label,task):task(),token,90000);
     // Safari may suspend rAF during visibility/layout transitions. A UI yield
     // must not leave preparation waiting forever after the GPU has completed.
     const yieldFrame=()=>new Promise(resolve=>{let frame,timer;const done=()=>{cancelAnimationFrame(frame);clearTimeout(timer);resolve();};frame=requestAnimationFrame(done);timer=setTimeout(done,100);});
@@ -79,9 +82,10 @@
       const update=node.updateBefore;let previousSize='';
       node.updateBefore=function(frame){
         const size=`${canvas?.width}×${canvas?.height}`;
-        if(status!=='warming'||size===previousSize)return update.call(this,frame);
+        const run=()=>gpuTrace?gpuTrace.withPass(name,()=>update.call(this,frame)):update.call(this,frame);
+        if(status!=='warming'||size===previousSize)return run();
         debugMark(`${name}: renderresources voorbereiden (${size})`);
-        const result=update.call(this,frame);previousSize=size;
+        const result=run();previousSize=size;
         debugMark(`${name}: GPU-opdrachten ingediend (${size})`,'complete');return result;
       };
     }
@@ -120,6 +124,7 @@
       images.forEach(image=>safely(()=>image.close()));
     }
     function dispose(notify=true) {
+      gpuTrace?.cleanup();
       safely(()=>visibleProfile?.stop());visibleProfile=null;frameWindow.length=0;frameSampled=false;
       if(loading)debugMark('Voorbereiding gestopt','cancelled');
       generation++;lifetime?.abort();lifetime=null;loading=false;releasedImageBytes=0;clearWaiting();safely(stop);safely(()=>input.dispose());
@@ -363,10 +368,10 @@
           worldPass.renderTarget.samples=activeRenderer.samples;worldPass.renderTarget.texture.type=activeRenderer.getColorBufferType();
           for(let i=0;i<meshes.length;i+=batchSize){
             if(!valid())return false;const objects=meshes.slice(i,i+batchSize);objects.forEach(o=>o.visible=true);
-            await prepareWork(`Wereld- en schaduwpipelines compileren ${i/batchSize+1}/${count}`,async()=>{await gpuWork(`Pipelinebatch ${i/batchSize+1}: compileren`,()=>worldPass.compileAsync(activeRenderer),token);await gpuWork(`Pipelinebatch ${i/batchSize+1}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);
+            await prepareWork(`Wereldpipelines compileren ${i/batchSize+1}/${count} (schaduwvarianten volgen in warm-up)`,async()=>{await gpuWork(`Pipelinebatch ${i/batchSize+1}: compileren`,()=>worldPass.compileAsync(activeRenderer),token);await gpuWork(`Pipelinebatch ${i/batchSize+1}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);
             objects.forEach(o=>o.visible=false);
           }
-        }else await gpuWork('Volledige wereld- en schaduwpipelines compileren',()=>worldPass.compileAsync(activeRenderer),token);
+        }else await gpuWork('Volledige wereldpipelines compileren (schaduwvarianten volgen in warm-up)',()=>worldPass.compileAsync(activeRenderer),token);
       }finally{culling.forEach((value,o)=>{o.frustumCulled=value.culled;o.visible=value.visible;});}
       if(!valid())return false;
       // Rendering the complete post chain initializes AO, volume, bloom, shadow
@@ -434,7 +439,7 @@
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
       try{dispose();}finally{token=generation;}
-      loading=true;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
+      loading=true;gpuTrace=null;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
       checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
         checkpoint('navigator.gpu controleren');
         const gpu=navigator.gpu;
@@ -445,11 +450,13 @@
         diagnostic='WebGPU-adapter ontvangen';report();
         const device=await gpuWork('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
         if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
+        gpuTrace=global.AtlasThreeGpuDiagnostics?.create(device)||null;
         device.lost?.then(info=>{if(token===generation&&info.reason!=='destroyed')lifetime?.abort(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}`,'OperationError'));});
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
         checkpoint('Three.js WebGPURenderer maken');
         renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});
+        gpuTrace?.attach(renderer);
         checkpoint('Three.js WebGPURenderer gemaakt');
         const initializingRenderer=renderer;
         await gpuWork('renderer.init uitvoeren',async()=>{try{await initializingRenderer.init();}finally{if(token!==generation){safely(()=>initializingRenderer.dispose());safely(()=>initializingRenderer.backend?.context?.unconfigure());}}},token);
@@ -474,6 +481,7 @@
         if(!next.isConnected){dispose();sync();return;}
         if(!await warmup(token)||token!==generation)return;
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;
+        gpuTrace?.stop();
         if(DEBUG)visibleProfile=global.AtlasThreeRuntimeDiagnostics?.start(renderer,postResources);
         preparationStage(PREPARATION_STAGES.length,'ready');debugMark('3D gereed','complete');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
       }catch(caught){if(token===generation){
