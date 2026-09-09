@@ -29,7 +29,7 @@ test('device arriving after cancellation is destroyed and cannot revive startup'
  expect(result).toEqual({destroyed:1,status:'idle'});
 });
 
-for(const action of ['failure','cancel','stall','stall-cancel','shader-failure'])test(`warm-up ${action} releases the GPU device and allows Cinematic Lighting`,async({page},info)=>{
+for(const action of ['failure','cancel','stall','stall-cancel','shader-failure','batch-stall'])test(`warm-up ${action} releases the GPU device and allows Cinematic Lighting`,async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires a real WebGPU device.');
  test.setTimeout(300000);
  await page.addInitScript(action=>{
@@ -37,7 +37,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
   window.destroyedDevices=0;window.triggered=false;window.stall=false;
   const timeout=window.setTimeout;
   // Accelerate only the injected queue wait, not real view-2 shader compilation.
-  window.setTimeout=(fn,ms,...args)=>timeout(fn,action==='stall'&&window.atStalledWait&&ms===90000?20000:ms,...args);
+  window.setTimeout=(fn,ms,...args)=>timeout(fn,['stall','batch-stall'].includes(action)&&window.atStalledWait&&ms===90000?20000:ms,...args);
   const fence=GPUQueue.prototype.onSubmittedWorkDone;let stalledQueue;
   const requestDevice=GPUAdapter.prototype.requestDevice;
   GPUAdapter.prototype.requestDevice=async function(...args){const device=await Reflect.apply(requestDevice,this,args);stalledQueue||=device.queue;return device;};
@@ -55,9 +55,10 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
     if(!window.triggered&&event.detail.operation.startsWith('Warm-up 1/3:')&&event.detail.state==='complete'){window.triggered=failShader=true;}
     return;
    }
-   if(action.startsWith('stall')){
-    if(event.detail.operation.startsWith('Warm-up 2/3:')&&event.detail.state==='pending')window.atStalledWait=true;
-    if(!window.triggered&&event.detail.operation.startsWith('Warm-up 1/3:')&&event.detail.state==='complete'){window.triggered=window.stall=true;}
+   if(action.includes('stall')){
+    const prefix=action==='batch-stall'?'Wereld- en schaduwpipelines compileren ':'Warm-up ';
+    if(event.detail.operation.startsWith(prefix+'2/')&&event.detail.state==='pending')window.atStalledWait=true;
+    if(!window.triggered&&event.detail.operation.startsWith(prefix+'1/')&&event.detail.state==='complete'){window.triggered=window.stall=true;}
     return;
    }
    if(window.triggered||!event.detail.operation.startsWith('Warm-up 1/3:')||event.detail.state!=='pending')return;
@@ -71,8 +72,8 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
  const initialPosition=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
  await expect.poll(()=>page.evaluate(()=>window.triggered),{timeout:240000}).toBe(true);
- if(action.startsWith('stall')){
-  await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().warmupViews)).toBe(1);
+ if(action.includes('stall')){
+  await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().warmupViews)).toBe(action==='batch-stall'?0:1);
   await page.locator('[data-three-loading-title]').click();
   const detached=await page.evaluate(async()=>{
    const ancestors=new Set();for(let node=document.querySelector('[data-three-canvas]');node;node=node.parentNode)ancestors.add(node);
@@ -87,11 +88,11 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
   expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().ready)).toBe(false);
   if(action==='stall-cancel')await page.locator('[data-three-recover]').click();
  }
- const failed=action==='failure'||action==='stall'||action==='shader-failure';
+ const failed=['failure','stall','shader-failure','batch-stall'].includes(action);
  await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:30000}).toBe(failed?'error':'idle');
  expect(await page.evaluate(()=>window.destroyedDevices)).toBe(1);
  if(failed){
-  await expect(page.locator('[data-three-diagnostic]')).toContainText(action==='shader-failure'?'InvalidStateError: GPUDevice.createShaderModule':action==='stall'?'TimeoutError: Warm-up 2/3':'RangeError: Range consisting');
+  await expect(page.locator('[data-three-diagnostic]')).toContainText(action==='shader-failure'?'InvalidStateError: GPUDevice.createShaderModule':action==='batch-stall'?'TimeoutError: Wereld- en schaduwpipelines compileren 2/':action==='stall'?'TimeoutError: Warm-up 2/3':'RangeError: Range consisting');
   await expect(page.locator('[data-three-recover]')).toBeVisible();
   await page.evaluate(()=>window.eval('render')());
   expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('error');
@@ -101,7 +102,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
  await expect.poll(()=>page.evaluate(()=>window.eval('cinematicRenderer.snapshot')().status),{timeout:60000}).toBe('ready');
  expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('idle');
  expect(await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}))).toEqual(initialPosition);
- if(action.startsWith('stall')){await page.evaluate(()=>window.finishStaleFence?.());expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('idle');}
+ if(action.includes('stall')){await page.evaluate(()=>window.finishStaleFence?.());expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('idle');}
  await page.getByRole('button',{name:'Terug naar menu'}).click();
  await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
 });

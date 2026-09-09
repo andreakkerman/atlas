@@ -74,7 +74,7 @@
     // must not leave preparation waiting forever after the GPU has completed.
     const yieldFrame=()=>new Promise(resolve=>{let frame,timer;const done=()=>{cancelAnimationFrame(frame);clearTimeout(timer);resolve();};frame=requestAnimationFrame(done);timer=setTimeout(done,100);});
     async function prepareWork(label,task,token) {
-      return observe(label,async()=>{await yieldFrame();if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');return task();},token,/^Warm-up |^Eerste speelbare/.test(label)?90000:0);
+      return observe(label,async()=>{await yieldFrame();if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');return task();},token,/^Wereld- en schaduwpipelines |^Warm-up |^Eerste speelbare/.test(label)?90000:0);
     }
     function instrumentPreparationPass(name,node) {
       if(!DEBUG)return;
@@ -366,7 +366,10 @@
           worldPass.renderTarget.samples=activeRenderer.samples;worldPass.renderTarget.texture.type=activeRenderer.getColorBufferType();
           for(let i=0;i<meshes.length;i+=batchSize){
             if(!valid())return false;const objects=meshes.slice(i,i+batchSize);objects.forEach(o=>o.visible=true);
-            await prepareWork(`Wereld- en schaduwpipelines compileren ${i/batchSize+1}/${count}`,async()=>{await worldPass.compileAsync(activeRenderer);await activeRenderer.waitForGPU();},token);
+            // compileAsync does not exercise the actual shadow render path.
+            // Render the same bounded batch through PassNode instead, so its
+            // shadow pipelines finish before the next batch reaches the GPU.
+            await prepareWork(`Wereld- en schaduwpipelines compileren ${i/batchSize+1}/${count}`,async()=>{sun.shadow.needsUpdate=true;worldPass.updateBefore({renderer:activeRenderer});await activeRenderer.waitForGPU();},token);
             objects.forEach(o=>o.visible=false);
           }
         }else await prepareWork('Volledige wereld- en schaduwpipelines compileren',()=>worldPass.compileAsync(activeRenderer),token);
