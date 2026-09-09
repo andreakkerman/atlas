@@ -758,6 +758,7 @@
 
     function dispose() {
       stop();
+      context?.unconfigure?.();
       loadToken += 1;
       background?.texture?.destroy?.();
       if (depth && depth !== fallbackDepth) depth.texture?.destroy?.();

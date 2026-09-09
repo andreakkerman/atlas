@@ -6,6 +6,33 @@ const { pathToFileURL } = require("url");
 const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 
 test.describe("shared WebGPU capability state", () => {
+  test('a cancelled handoff cannot destroy a device reclaimed by a shared renderer',async({page})=>{
+    await page.goto(gameUrl);
+    const result=await page.evaluate(async()=>{
+      let finish,lose,destroyed=0,requested=false,releaseAllowed=true;
+      const device={lost:new Promise(r=>lose=r),destroy(){destroyed++;lose({reason:'destroyed'});}};
+      Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:()=>{requested=true;return new Promise(r=>finish=r);}})}});
+      const broker=AtlasWebGPUCapabilities,pending=broker.requestDevice('cinematic');
+      while(!requested)await new Promise(r=>setTimeout(r,0));
+      const release=broker.releaseDevice(()=>releaseAllowed);releaseAllowed=false;finish(device);await pending;await release;
+      const retained=destroyed===0&&broker.snapshot().deviceReady;
+      await broker.releaseDevice();return {retained,destroyed};
+    });
+    expect(result).toEqual({retained:true,destroyed:1});
+  });
+  test('release waits for a pending device and clears the consumed adapter',async({page})=>{
+    await page.goto(gameUrl);
+    const result=await page.evaluate(async()=>{
+      let finish,lose,destroyed=0,requested=false;
+      const device={lost:new Promise(r=>lose=r),destroy(){destroyed++;lose({reason:'destroyed'});}};
+      Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:()=>{requested=true;return new Promise(r=>finish=r);}})}});
+      const broker=AtlasWebGPUCapabilities,pending=broker.requestDevice('test');
+      while(!requested)await new Promise(r=>setTimeout(r,0));
+      const release=broker.releaseDevice();finish(device);await pending;await release;
+      return {destroyed,snapshot:broker.snapshot()};
+    });
+    expect(result.destroyed).toBe(1);expect(result.snapshot.deviceReady).toBe(false);expect(result.snapshot.adapterReady).toBe(false);
+  });
   test("falls back from high-performance to a default adapter and reuses an Illustrated device", async ({ page }) => {
     await page.goto(gameUrl);
     const result = await page.evaluate(async () => {

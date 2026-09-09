@@ -190,6 +190,7 @@ const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
 });
 let threeStatus = { status: "idle", ready: false };
 const threeRenderer = window.AtlasThreeRenderer.createRuntime({
+  releaseOtherRenderers: () => { cinematicRenderer.dispose();voxelRenderer.dispose(); },
   getLevel: () => level,
   getRenderer: () => voxelRenderer.getSettings().renderer,
   getPlayer: () => ({x:state.worldX,y:state.worldY}),

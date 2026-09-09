@@ -19,7 +19,7 @@
     }
     let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice;
     const postResources=[];
-    let generation=0,loading=false,suspended=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null;
+    let generation=0,loading=false,suspended=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null,framePending=false,frameTimer=0;
     let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
     const keys=new Set(),textures=new Set(),flames=[];
     let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
@@ -122,9 +122,10 @@
       images.forEach(image=>safely(()=>image.close()));
     }
     function dispose(notify=true) {
+      clearTimeout(frameTimer);frameTimer=0;framePending=false;
       gpuTrace?.cleanup();
       safely(()=>visibleProfile?.stop());visibleProfile=null;frameWindow.length=0;frameSampled=false;
-      if(loading)debugMark('Voorbereiding gestopt','cancelled');
+      if(loading)debugMark(`Voorbereiding gestopt tijdens: ${diagnostic||preparation}`,'cancelled');
       generation++;lifetime?.abort();lifetime=null;loading=false;releasedImageBytes=0;clearWaiting();safely(stop);safely(()=>input.dispose());
       safely(releasePointerLock);
       safely(()=>releaseRoot(scene,textures));textures.clear();
@@ -423,8 +424,17 @@
           fps=1000*frameWindow.length/Math.max(1,duration);averageMs=frameWindow.reduce((sum,f)=>sum+f.cpu,0)/frameWindow.length;frameSampled=true;
         }
         visibleProfile?.frame(interval,cpu,shadowRefresh);
-        if(status!=='ready'||time-lastReport>=250){lastReport=time;report('ready');}raf=requestAnimationFrame(draw);
-      }catch(caught){stop();report('error',caught);}
+        if(status!=='ready'||time-lastReport>=250){lastReport=time;report('ready');}
+        if(compactPreparation){
+          // CPU submission is not GPU completion. Bound in-flight work so a
+          // stalled device cannot accumulate frames while the UI appears live.
+          const token=generation;framePending=true;raf=0;
+          const fail=caught=>{if(token!==generation)return;dispose(false);diagnostic=`GPU-frame afronden — mislukt: ${caught.name}: ${caught.message}`;report('error',caught);};
+          const check=()=>{if(token!==generation)return;if(document.hidden){frameTimer=setTimeout(check,15000);return;}fail(new DOMException('De GPU voltooit geen 3D-frame meer. Kies Illustrated om verder te spelen.','TimeoutError'));};
+          frameTimer=setTimeout(check,15000);
+          renderer.waitForGPU().then(()=>{if(token!==generation)return;if(lifetime?.signal.aborted){fail(lifetime.signal.reason);return;}clearTimeout(frameTimer);frameTimer=0;framePending=false;if(status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);},fail);
+        }else raf=requestAnimationFrame(draw);
+      }catch(caught){dispose(false);diagnostic=`3D-frame — mislukt: ${caught.name}: ${caught.message}`;report('error',caught);}
     }
     async function sync() {
       if(suspended)return;
@@ -436,7 +446,7 @@
       // UI redraws must neither retry a failed device nor reveal 2D underneath.
       if(status==='error'){report();return;}
       if(loading&&canvas!==next)throw new DOMException('3D-canvas vervangen tijdens voorbereiding. Kies Illustrated en probeer opnieuw.','AbortError');
-      if(renderer&&canvas===next){if(status==='ready')attachControls();report();if(!loading&&!raf&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
+      if(renderer&&canvas===next){if(status==='ready')attachControls();report();if(!loading&&!raf&&!framePending&&status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);return;}
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
       try{dispose();}finally{token=generation;}
@@ -446,6 +456,8 @@
         const gpu=navigator.gpu;
         checkpoint(`navigator.gpu beschikbaar: ${gpu?'ja':'nee'}`);
         if(!gpu)throw new DOMException('navigator.gpu is niet beschikbaar in deze browser.','NotSupportedError');
+        await gpuWork('Vorige Cinematic/Voxel WebGPU-resources vrijgeven',()=>{options.releaseOtherRenderers?.();return global.AtlasWebGPUCapabilities?.releaseDevice?.(()=>token===generation||!['cinematic','voxel'].includes(options.getRenderer()));},token);
+        if(token!==generation)return;
         const adapter=await gpuWork('WebGPU-adapter aanvragen (navigator.gpu: ja)',()=>gpu.requestAdapter({powerPreference:'high-performance'}),token);
         if(token!==generation)return;if(!adapter)throw new DOMException('WebGPU heeft geen geschikte adapter teruggegeven.','NotSupportedError');
         diagnostic='WebGPU-adapter ontvangen';report();

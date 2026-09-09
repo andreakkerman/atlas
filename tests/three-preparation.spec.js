@@ -102,7 +102,7 @@ test('debug journal survives reload and is absent from normal production UI',asy
  await expect(page.locator('[data-three-diagnostic]')).toBeVisible();
  await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen');
  await page.goto(`${base}/?debug3d=1`);
- await expect(page.locator('[data-tap-diagnostics]')).toContainText('Vorige voorbereiding (pending): WebGPU-adapter aanvragen');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Vorige voorbereiding (cancelled): Voorbereiding gestopt tijdens: WebGPU-adapter aanvragen');
  await page.goto(base);
  await expect(page.locator('[data-tap-diagnostics]')).toHaveCount(0);
  await expect(page.locator('body')).not.toContainText('Vorige voorbereiding');

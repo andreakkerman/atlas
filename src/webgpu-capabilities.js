@@ -116,5 +116,15 @@
     };
   }
 
-  global.AtlasWebGPUCapabilities = { capabilityError, requestAdapter, requestDevice, registerDevice, forgetDevice, snapshot, validateRendererRequirements };
+  async function releaseDevice(shouldRelease=()=>true) {
+    // Experimental 2D renderers share this device. Finish acquisition before
+    // relinquishing it so an in-flight request cannot repopulate the cache.
+    if(state.devicePromise){try{await state.devicePromise;}catch{}}
+    if(!shouldRelease())return;
+    const device=state.device;
+    forgetDevice();
+    if(device){device.destroy();await device.lost;}
+  }
+
+  global.AtlasWebGPUCapabilities = { capabilityError, requestAdapter, requestDevice, registerDevice, forgetDevice, releaseDevice, snapshot, validateRendererRequirements };
 })(window);
