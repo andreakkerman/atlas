@@ -19,7 +19,7 @@
     }
     let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice;
     const postResources=[];
-    let generation=0,loading=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null;
+    let generation=0,loading=false,suspended=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null;
     let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
     const keys=new Set(),textures=new Set(),flames=[];
     let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
@@ -427,6 +427,7 @@
       }catch(caught){stop();report('error',caught);}
     }
     async function sync() {
+      if(suspended)return;
       let token=generation,operation='3D-startpad controleren';
       const checkpoint=label=>{operation=diagnostic=label;debugMark(label);report();};
       try {
@@ -500,7 +501,11 @@
         }
       }}
     }
-    return {sync,stop,dispose,snapshot,lookAt:(nextYaw,nextPitch=0)=>{yaw=nextYaw;pitch=clamp(nextPitch,-1.3,1.3);}};
+    // A cached/closing document must not retain its device or restart from a
+    // late UI refresh. pageshow explicitly reopens preparation on restoration.
+    function suspend(){suspended=true;dispose();}
+    function resume(){suspended=false;return sync();}
+    return {sync,stop,dispose,suspend,resume,snapshot,lookAt:(nextYaw,nextPitch=0)=>{yaw=nextYaw;pitch=clamp(nextPitch,-1.3,1.3);}};
   }
   global.AtlasThreeRenderer=Object.freeze({createRuntime,SUPPORTED_LEVEL,PREPARATION_STAGES});
 })(window);

@@ -8288,6 +8288,9 @@ window.addEventListener("pointerup", () => {
   if (finishedAnimalDrag) render();
 });
 
+window.addEventListener("pagehide", () => threeRenderer.suspend());
+window.addEventListener("pageshow", event => { if(event.persisted)threeRenderer.resume(); });
+
 document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     stopMenuAutoRotation();
