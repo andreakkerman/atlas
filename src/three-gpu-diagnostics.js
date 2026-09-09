@@ -7,7 +7,7 @@
   let operation='device acquired',pass='',object=null,material=null,lastShader=null,lastPipeline=null,cleanupAt=null,loss=null,firstFailure=null,active=true;
   const counts={shaders:0,pipelines:0,newShaders:0},unavailable=[];
   const now=()=>+(performance.now()-started).toFixed(1);
-  const errorInfo=e=>({name:e?.name||e?.constructor?.name||'Error',message:String(e?.message||e)});
+  const errorInfo=e=>({name:e?.name||e?.constructor?.name||'Error',message:String(e?.message||e),stack:String(e?.stack||'').slice(0,5000)});
   function snapshot(){return {session,operation,pass,counts:{...counts},lastShader,lastPipeline,firstFailure,loss,cleanupAt,views:JSON.parse(JSON.stringify(views)),events:events.slice(),boundaries:boundaries.slice(),unavailable:unavailable.slice()};}
   function publish(){if(session!==currentSession)return;const data=snapshot();try{localStorage.setItem('atlas3d-gpu-preparation-v1',JSON.stringify(data));}catch{}global.dispatchEvent(new CustomEvent('atlas-three-gpu',{detail:data}));}
   function record(type,detail={}){events.push({at:now(),operation,pass,type,...detail});if(events.length>48)events.shift();publish();}
@@ -19,6 +19,20 @@
    try{target[name]=replacement;if(target[name]!==replacement)throw Error('readonly');restore.push(()=>{if(descriptor)Object.defineProperty(target,name,descriptor);else delete target[name];});}catch{unavailable.push(name);}
   }
   function objectInfo(){return object?{name:object.name,type:object.type,material:material?.name||object.material?.name,materialType:material?.type||object.material?.type}:null;}
+  // WebKit uses this RangeError wording for TypedArray.set, not just GPU APIs.
+  // Capture only exceptions; do not copy data, clamp ranges, or change arguments.
+  const arrayInfo=a=>({type:a?.constructor?.name,length:a?.length,byteLength:a?.byteLength,byteOffset:a?.byteOffset,bufferBytes:a?.buffer?.byteLength});
+  wrap(Object.getPrototypeOf(Uint8Array.prototype),'set',(fn,self,args)=>{
+   try{return Reflect.apply(fn,self,args);}catch(error){
+    failure('typed-array-set',error,{copy:{api:'TypedArray.set',destination:arrayInfo(self),source:arrayInfo(args[0]),offset:args[1]??0},object:objectInfo()});throw error;
+   }
+  });
+  for(const name of ['writeBuffer','writeTexture'])wrap(device.queue,name,(fn,self,args)=>{
+   try{return Reflect.apply(fn,self,args);}catch(error){
+    const copy=name==='writeBuffer'?{api:name,bufferLabel:args[0]?.label,bufferBytes:args[0]?.size,bufferOffset:args[1],source:arrayInfo(args[2]),dataOffset:args[3]??0,size:args[4]??null}:{api:name,textureLabel:args[0]?.texture?.label,source:arrayInfo(args[1]),layout:args[2],extent:args[3]};
+    failure('gpu-upload',error,{copy,object:objectInfo()});throw error;
+   }
+  });
   function fingerprint(code){let h=2166136261;for(let i=0;i<code.length;i++)h=Math.imul(h^code.charCodeAt(i),16777619);return `${code.length}:${(h>>>0).toString(16)}`;}
   const inView=()=>/^Beeld |^Warm-up |^Eerste speelbare/.test(operation);
   wrap(device,'createShaderModule',(fn,self,args)=>{

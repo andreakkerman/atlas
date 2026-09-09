@@ -1,6 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
-test.use({hasTouch:true});
+// Non-round aspect ratio also exercises the physical retest's 512×318 warm-up.
+test.use({hasTouch:true,viewport:{width:1280,height:795}});
 test('compact preparation retains full pipeline coverage and final resolution',async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires real Chromium WebGPU; this exercises iPad strategy, not physical Safari.');
  test.setTimeout(300000);
@@ -41,8 +42,8 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(ready.snapshot.releasedImageBytes).toBeGreaterThan(800*1024*1024);
  expect(ready.compilePeak).toBeLessThan(100);
  expect(ready.journal.operation).toBe('3D gereed');
- expect(ready.snapshot.gpuPreparation.firstFailure).toBeNull();
- expect(ready.snapshot.gpuPreparation.loss).toBeNull();
+ expect(ready.snapshot.gpuPreparation).toBeUndefined();
+ expect(ready.snapshot.visibleProfile).toBeUndefined();
  await expect(page.locator('[data-three-loading]')).toBeHidden();
  await page.screenshot({path:'qa-screenshots/usability/compact-ready.png'});
  // Drive the production native TouchEvent path through Chromium's input device.
@@ -68,15 +69,10 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  await page.waitForTimeout(500);
  const after=await page.evaluate(()=>({pipelines:window.pipelineCount,snapshot:window.eval('threeRenderer.snapshot')()}));
  require('fs').writeFileSync('qa-screenshots/usability/compact-preparation.json',JSON.stringify({ready,after},null,2));
- await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().visibleProfile.active),{timeout:20000}).toBe(false);
- const profile=await page.evaluate(()=>window.eval('threeRenderer.snapshot')().visibleProfile);
- require('fs').writeFileSync('qa-screenshots/usability/first-visible-profile.json',JSON.stringify(profile,null,2));
- expect(profile.samples.length).toBeGreaterThan(5);
- expect(profile.samples.some(sample=>sample.fps>0)).toBe(true);
  // Preserve the physically verified preparation view. Its known single root
  // shadow pipeline may initialize on walking; do not trade iPad startup for it.
  expect(after.pipelines-ready.pipelines).toBeLessThanOrEqual(1);
- expect(profile.pipelines.every(p=>p.label.includes('ShadowMaterial')&&p.object?.name.startsWith('Buttress_roots'))).toBe(true);
+ expect(after.snapshot.fps).toBeGreaterThan(0);
  expect(after.snapshot.ready).toBe(true);expect(errors).toEqual([]);
  await page.evaluate(()=>{window.eval('state').worldX=1847;window.eval('updateWorldDom')();window.eval('threeRenderer.lookAt')(-.38,.46);});
  await page.setViewportSize({width:800,height:1000});

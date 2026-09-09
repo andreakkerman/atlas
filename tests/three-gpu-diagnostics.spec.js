@@ -1,5 +1,22 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
+
+test('native typed-array range failure records sizes, pass and stack then restores the method',async({page})=>{
+ await page.goto(`${base}/?debug3d=1`);
+ const data=await page.evaluate(()=>{
+  const prototype=Object.getPrototypeOf(Uint8Array.prototype),original=prototype.set;
+  const trace=AtlasThreeGpuDiagnostics.create({});let caught;
+  trace.checkpoint('Beeld 1/3: renderer en post-processing','pending');
+  try{trace.withPass('GTAO',()=>new Float32Array(4).set(new Float32Array(5),1));}catch(error){caught=error.name;}
+  const failure=trace.snapshot().firstFailure;trace.cleanup();
+  return {caught,failure,restored:prototype.set===original};
+ });
+ expect(data.caught).toBe('RangeError');expect(data.restored).toBe(true);
+ expect(data.failure.type).toBe('typed-array-set');expect(data.failure.pass).toBe('GTAO');
+ expect(data.failure.copy.destination.length).toBe(4);expect(data.failure.copy.source.length).toBe(5);expect(data.failure.copy.offset).toBe(1);
+ expect(data.failure.error.stack).toBeTruthy();
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Foutbron: typed-array-set');
+});
 test('shader failure, scope errors and device loss remain distinct from cleanup',async({page})=>{
  await page.goto(`${base}/?debug3d=1`);
  const result=await page.evaluate(async()=>{

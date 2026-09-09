@@ -74,18 +74,16 @@
     // must not leave preparation waiting forever after the GPU has completed.
     const yieldFrame=()=>new Promise(resolve=>{let frame,timer;const done=()=>{cancelAnimationFrame(frame);clearTimeout(timer);resolve();};frame=requestAnimationFrame(done);timer=setTimeout(done,100);});
     async function prepareWork(label,task,token) {
-      return observe(label,async()=>{await yieldFrame();if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');return task();},token);
+      return observe(label,async()=>{await yieldFrame();if(token!==generation)throw new DOMException('Voorbereiding gestopt','AbortError');return task();},token,/^Warm-up |^Eerste speelbare/.test(label)?90000:0);
     }
     function instrumentPreparationPass(name,node) {
       if(!DEBUG)return;
-      node.atlasProfileName=name;
       const update=node.updateBefore;let previousSize='';
       node.updateBefore=function(frame){
         const size=`${canvas?.width}×${canvas?.height}`;
-        const run=()=>gpuTrace?gpuTrace.withPass(name,()=>update.call(this,frame)):update.call(this,frame);
-        if(status!=='warming'||size===previousSize)return run();
+        if(status!=='warming'||size===previousSize)return update.call(this,frame);
         debugMark(`${name}: renderresources voorbereiden (${size})`);
-        const result=run();previousSize=size;
+        const result=update.call(this,frame);previousSize=size;
         debugMark(`${name}: GPU-opdrachten ingediend (${size})`,'complete');return result;
       };
     }
@@ -341,7 +339,7 @@
         const sources=new Map();for(const map of maps){if(!sources.has(map.image))sources.set(map.image,[]);sources.get(map.image).push(map);}
         let uploaded=0;
         for(const [image,variants]of sources){
-          for(const map of variants){if(!valid())return false;await prepareWork(`GPU-textuur uploaden ${++uploaded}/${maps.size}: ${map.name||'beeld'} (${image?.width}×${image?.height})`,async()=>{activeRenderer.initTexture(map);await gpuWork(`Textuur ${uploaded}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);}
+          for(const map of variants){if(!valid())return false;await prepareWork(`GPU-textuur uploaden ${++uploaded}/${maps.size}: ${map.name||'beeld'} (${image?.width}×${image?.height})`,async()=>{activeRenderer.initTexture(map);await activeRenderer.waitForGPU();},token);}
           if(!valid())return false;
           if(typeof ImageBitmap!=='undefined'&&image instanceof ImageBitmap){
             const {width,height}=image;
@@ -368,10 +366,10 @@
           worldPass.renderTarget.samples=activeRenderer.samples;worldPass.renderTarget.texture.type=activeRenderer.getColorBufferType();
           for(let i=0;i<meshes.length;i+=batchSize){
             if(!valid())return false;const objects=meshes.slice(i,i+batchSize);objects.forEach(o=>o.visible=true);
-            await prepareWork(`Wereldpipelines compileren ${i/batchSize+1}/${count} (schaduwvarianten volgen in warm-up)`,async()=>{await gpuWork(`Pipelinebatch ${i/batchSize+1}: compileren`,()=>worldPass.compileAsync(activeRenderer),token);await gpuWork(`Pipelinebatch ${i/batchSize+1}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);
+            await prepareWork(`Wereld- en schaduwpipelines compileren ${i/batchSize+1}/${count}`,async()=>{await worldPass.compileAsync(activeRenderer);await activeRenderer.waitForGPU();},token);
             objects.forEach(o=>o.visible=false);
           }
-        }else await gpuWork('Volledige wereldpipelines compileren (schaduwvarianten volgen in warm-up)',()=>worldPass.compileAsync(activeRenderer),token);
+        }else await prepareWork('Volledige wereld- en schaduwpipelines compileren',()=>worldPass.compileAsync(activeRenderer),token);
       }finally{culling.forEach((value,o)=>{o.frustumCulled=value.culled;o.visible=value.visible;});}
       if(!valid())return false;
       // Rendering the complete post chain initializes AO, volume, bloom, shadow
@@ -382,7 +380,6 @@
       // angles. Three route samples exercise the same AO/volume/bloom chain on
       // iPad, reusing small targets; desktop keeps its existing 18-view strategy.
       const samples=compactPreparation?anchors.map((x,i)=>{
-        // Preserve the first view from the physically verified iPad build.
         if(i!==2)return [x,0,0];
         const p=routePosition(x).position,t=route.landmarks.templeGate,dx=t[0]-p.x,dz=t[2]-p.z;
         return [x,Math.atan2(-dx,-dz),Math.atan2(t[1]-p.y-route.eyeHeight,Math.hypot(dx,dz))];
@@ -391,16 +388,16 @@
       preparationStage(3,'warming');
       for(const [x,heading,tilt]of samples){
         if(!valid())return false;
-        await prepareWork(`Warm-up ${warmupViews+1}/${samples.length}: schaduwen, GTAO, volume en bloom`,async()=>{resize(true);positionCamera(x,heading,tilt);updateNpc();await gpuWork(`Beeld ${warmupViews+1}/${samples.length}: renderer en post-processing`,()=>activePost.renderAsync(),token);await gpuWork(`Beeld ${warmupViews+1}/${samples.length}: wachten op GPU`,()=>activeRenderer.waitForGPU(),token);},token);
+        await prepareWork(`Warm-up ${warmupViews+1}/${samples.length}: schaduwen, GTAO, volume en bloom`,async()=>{resize(true);positionCamera(x,heading,tilt);updateNpc();await activePost.renderAsync();debugMark(`Warm-up ${warmupViews+1}: wachten op GPU`);await activeRenderer.waitForGPU();},token);
         if(!valid())return false;warmupViews++;report('warming');
         // Yield to the loading UI and mode-switch controls, not a timed delay.
-        await yieldFrame();
+        await new Promise(resolve=>requestAnimationFrame(resolve));
       }
       preparationStage(4,'warming');
       let size;
       do {
         if(!valid())return false;
-        await prepareWork('Eerste speelbare frame op volledige resolutie + GPU afronden',async()=>{size=resize();positionCamera(options.getPlayer().x);updateNpc();updateTarget();await gpuWork('Eerste speelbare frame: renderer en post-processing',()=>activePost.renderAsync(),token);await gpuWork('Eerste speelbare frame: wachten op GPU',()=>activeRenderer.waitForGPU(),token);},token);
+        await prepareWork('Eerste speelbare frame op volledige resolutie + GPU afronden',async()=>{size=resize();positionCamera(options.getPlayer().x);updateNpc();updateTarget();await activePost.renderAsync();debugMark('Eerste speelbare frame: wachten op GPU');await activeRenderer.waitForGPU();},token);
         if(!valid())return false;
       }while(size!==resize());
       warmupViews=warmupTotal;frames=1;last=0;preparation='';return true;
@@ -450,7 +447,7 @@
         diagnostic='WebGPU-adapter ontvangen';report();
         const device=await gpuWork('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
         if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
-        gpuTrace=global.AtlasThreeGpuDiagnostics?.create(device)||null;
+        gpuTrace=new URLSearchParams(location.search).get('debug3dgpu')==='1'?global.AtlasThreeGpuDiagnostics?.create(device)||null:null;
         device.lost?.then(info=>{if(token===generation&&info.reason!=='destroyed')lifetime?.abort(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}`,'OperationError'));});
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
@@ -468,8 +465,7 @@
         renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#dbc294',.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
         const root=await observe('GLB downloaden en decoderen',()=>loadWorld(GLTFLoader,DRACOLoader,token),token);
         if(token!==generation){releaseRoot(root);return;}
-        scene.add(root);
-        await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);},token);
+        await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
         if(token!==generation)return;
         const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=8;}});
         const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;textures.add(sky);
@@ -482,7 +478,7 @@
         if(!await warmup(token)||token!==generation)return;
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;
         gpuTrace?.stop();
-        if(DEBUG)visibleProfile=global.AtlasThreeRuntimeDiagnostics?.start(renderer,postResources);
+        if(DEBUG&&new URLSearchParams(location.search).get('debug3dgpu')==='1')visibleProfile=global.AtlasThreeRuntimeDiagnostics?.start(renderer,postResources);
         preparationStage(PREPARATION_STAGES.length,'ready');debugMark('3D gereed','complete');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
       }catch(caught){if(token===generation){
         clearWaiting();loading=false;const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;
