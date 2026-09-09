@@ -84,6 +84,10 @@ test('cancelled rejection cannot overwrite a new startup or leave an input shiel
  await expect(page.locator('[data-three-loading], [data-three-canvas], [data-three-move]')).toHaveCount(0);
  await page.locator('.heroLevelTile').tap();
  await page.getByRole('button',{name:'Start avontuur'}).tap();
+ // The selected 3D mode persists across Menu. Its new preparation must shield
+ // Illustrated until the user explicitly recovers to that mode.
+ await expect(page.locator('[data-three-loading]')).toBeVisible();
+ await page.locator('[data-three-recover]').tap();
  await expect(page.locator('.worldArt')).toBeVisible();
 });
 test('tap evidence distinguishes an overlay and a cancelling handler',async({page})=>{

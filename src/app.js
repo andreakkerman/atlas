@@ -3419,6 +3419,10 @@ function recordPhysicalMovement(movement, previousX) {
 }
 
 function stepMovement(timestamp) {
+  if (voxelRenderer.getSettings().renderer === "3d" && level.id === "LVL-0001" && !threeStatus.ready) {
+    stopMovement({ invalidateIntent: true });
+    return;
+  }
   const movement = state.movement;
   if (!movement) return;
 
@@ -4011,6 +4015,7 @@ function finishInteraction(target, kind, action) {
 
 function beginFreeWalk(point) {
   if (state.screen !== "scene") return;
+  if (voxelRenderer.getSettings().renderer === "3d" && level.id === "LVL-0001") return;
 
   const interactionToken = replaceMovementIntent({ type: "ground", point: { ...point } });
   state.justCompletedRuneId = null;
@@ -7289,6 +7294,14 @@ function restoreEditorUiState(saved) {
 }
 
 function render() {
+  // A redundant scene refresh must not detach Safari's active GPU canvas while
+  // preparation is submitting work. Navigation and Graphics changes still render.
+  const preparingCanvas=app.querySelector('[data-three-canvas]');
+  if(state.screen==='scene' && ['loading','warming'].includes(threeStatus.status) &&
+    voxelRenderer.getSettings().renderer==='3d' && preparingCanvas?.dataset.threeLevel===level?.id &&
+    !graphicsSettingsOpen && !app.querySelector('[data-graphics-settings]') && !worldEditor.open){
+    updateWorldDom();threeRenderer.sync();return;
+  }
   const editorUiState = captureEditorUiState();
   const retainedCinematicCanvas = app.querySelector("[data-cinematic-canvas]");
   const retainedThreeCanvas = app.querySelector("[data-three-canvas]");
@@ -7414,6 +7427,8 @@ app.addEventListener("click", (event) => {
     event.preventDefault();event.stopPropagation();graphicsSettingsOpen=false;
     voxelRenderer.updateSettings({renderer:'illustrated'});render();return;
   }
+  // Loading content lives inside the 2D stage, but must never become a walk target.
+  if(event.target.closest('[data-three-loading]'))return;
   const graphicsAction = event.target.closest("[data-graphics-action]");
   if (graphicsAction) {
     event.preventDefault();
@@ -7426,6 +7441,7 @@ app.addEventListener("click", (event) => {
   if (rendererChoice) {
     event.preventDefault();
     event.stopPropagation();
+    if(rendererChoice.dataset.rendererChoice === "3d" && level.id === "LVL-0001")stopMovement({invalidateIntent:true});
     voxelRenderer.updateSettings({ renderer: rendererChoice.dataset.rendererChoice });
     // Selecting first person hands control back to the game. Previously this
     // popover remained open and blocked keys even while mouse-look still worked.

@@ -271,6 +271,11 @@ test.describe('Atlas first-person LVL-0001',()=>{
    window.eval('voxelRenderer.updateSettings')({renderer:'3d'});window.eval('render')();
   });
   await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:30000}).toBe('error');
-  await expect(page.locator('[data-three-error]')).toBeVisible();await expect(page.locator('.worldArt')).toBeVisible();
+  await expect(page.locator('[data-three-error]')).toBeVisible();
+  await expect(page.locator('[data-three-loading]')).toBeVisible();
+  await expect(page.locator('.worldArt')).toBeHidden();
+  await page.locator('[data-three-recover]').click();
+  await expect(page.locator('.worldArt')).toBeVisible();
+  expect(await page.evaluate(()=>window.eval('voxelRenderer.getSettings')().renderer)).toBe('illustrated');
  });
 });

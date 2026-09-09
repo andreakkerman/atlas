@@ -69,10 +69,19 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1`);
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+ const initialPosition=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
  await expect.poll(()=>page.evaluate(()=>window.triggered),{timeout:240000}).toBe(true);
  if(action.startsWith('stall')){
   await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().warmupViews)).toBe(1);
-  await page.evaluate(()=>{for(let i=0;i<3;i++)window.eval('render')();});
+  await page.locator('[data-three-loading-title]').click();
+  const detached=await page.evaluate(async()=>{
+   const ancestors=new Set();for(let node=document.querySelector('[data-three-canvas]');node;node=node.parentNode)ancestors.add(node);
+   let detached=false;const observer=new MutationObserver(records=>{for(const r of records)for(const node of r.removedNodes)if(ancestors.has(node))detached=true;});
+   observer.observe(document.querySelector('#app'),{childList:true,subtree:true});
+   for(let i=0;i<3;i++)window.eval('render')();await Promise.resolve();observer.disconnect();return detached;
+  });
+  expect(detached).toBe(false);
+  expect(await page.evaluate(()=>!!window.eval('state.movement'))).toBe(false);
   await expect(page.locator('[data-three-loading]')).toBeVisible();
   await expect(page.locator('[data-three-canvas]')).toBeHidden();
   expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().ready)).toBe(false);
@@ -91,6 +100,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure']
  await page.evaluate(()=>{window.eval('voxelRenderer.updateSettings')({renderer:'cinematic'});window.eval('render')();});
  await expect.poll(()=>page.evaluate(()=>window.eval('cinematicRenderer.snapshot')().status),{timeout:60000}).toBe('ready');
  expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('idle');
+ expect(await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}))).toEqual(initialPosition);
  if(action.startsWith('stall')){await page.evaluate(()=>window.finishStaleFence?.());expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().status)).toBe('idle');}
  await page.getByRole('button',{name:'Terug naar menu'}).click();
  await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();

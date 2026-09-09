@@ -1,0 +1,30 @@
+const {test,expect}=require('@playwright/test');
+const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
+test.use({hasTouch:true});
+for(const walking of [false,true])test('3D preparation isolates player state: existing walk '+walking,async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:()=>new Promise(()=>{})}}));
+ await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
+ await page.goto(base+'/?dev=editor&level=LVL-0001');
+ if(walking)await page.evaluate(()=>window.eval('beginFreeWalk')({x:1800,y:600}));
+ await page.locator('[data-graphics-action="toggle"]').tap();
+ await page.locator('[data-renderer-choice="3d"]').tap();
+ const start=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
+ await page.locator('[data-three-loading-title]').tap();
+ await expect(page.locator('.worldArt')).toBeHidden();
+ const removed=await page.evaluate(async()=>{
+  const canvas=document.querySelector('[data-three-canvas]'),ancestors=new Set();
+  for(let node=canvas;node;node=node.parentNode)ancestors.add(node);
+  let removed=false;const observer=new MutationObserver(records=>{for(const r of records)for(const node of r.removedNodes)if(ancestors.has(node))removed=true;});
+  observer.observe(document.querySelector('#app'),{childList:true,subtree:true});
+  window.eval('render')();window.eval('render')();await Promise.resolve();observer.disconnect();return removed;
+ });
+ expect(removed).toBe(false);
+ await page.waitForTimeout(700);
+ expect(await page.evaluate(()=>!!window.eval('state.movement'))).toBe(false);
+ expect(await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}))).toEqual(start);
+ await page.locator('[data-three-recover]').tap();
+ await expect(page.locator('.worldArt')).toBeVisible();
+ expect(await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}))).toEqual(start);
+ await page.getByRole('button',{name:'Terug naar menu'}).tap();
+ await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
+});
