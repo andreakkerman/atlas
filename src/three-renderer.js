@@ -24,7 +24,7 @@
     const keys=new Set(),textures=new Set(),flames=[];
     let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
     let preparationMs=null,lastReport=0;
-    let preparationCompleted=0;
+    let preparationCompleted=0,failurePhase=null;
     let inputType=global.matchMedia('(any-pointer: coarse)').matches?'touch':'desktop';
     let visibleProfile=null,frameSampled=false,gpuTrace=null;
     const frameWindow=[];
@@ -33,7 +33,7 @@
     const input=global.AtlasThreeInput.create({nativeTouch:compactPreparation,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,failurePhase,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
@@ -121,7 +121,16 @@
       maps.forEach(t=>{if(typeof ImageBitmap!=='undefined'&&t.image instanceof ImageBitmap)images.add(t.image);safely(()=>t.dispose());});
       images.forEach(image=>safely(()=>image.close()));
     }
+    function failRuntime(caught,operation='GPU-frame afronden') {
+      const evidence={preparationCompleted,warmupViews,warmupTotal,frames};
+      const detail=`${operation} — mislukt: ${caught.name||'Error'}: ${caught.message||caught}`;
+      dispose(false);
+      ({preparationCompleted,warmupViews,warmupTotal,frames}=evidence);
+      failurePhase='gameplay';preparation='3D-weergave gestopt tijdens het spelen.';diagnostic=detail;
+      debugMark(detail,'error');report('error',caught);
+    }
     function dispose(notify=true) {
+      failurePhase=null;
       clearTimeout(frameTimer);frameTimer=0;framePending=false;
       gpuTrace?.cleanup();
       safely(()=>visibleProfile?.stop());visibleProfile=null;frameWindow.length=0;frameSampled=false;
@@ -429,12 +438,12 @@
           // CPU submission is not GPU completion. Bound in-flight work so a
           // stalled device cannot accumulate frames while the UI appears live.
           const token=generation;framePending=true;raf=0;
-          const fail=caught=>{if(token!==generation)return;dispose(false);diagnostic=`GPU-frame afronden — mislukt: ${caught.name}: ${caught.message}`;report('error',caught);};
+          const fail=caught=>{if(token===generation)failRuntime(caught);};
           const check=()=>{if(token!==generation)return;if(document.hidden){frameTimer=setTimeout(check,15000);return;}fail(new DOMException('De GPU voltooit geen 3D-frame meer. Kies Illustrated om verder te spelen.','TimeoutError'));};
           frameTimer=setTimeout(check,15000);
           renderer.waitForGPU().then(()=>{if(token!==generation)return;if(lifetime?.signal.aborted){fail(lifetime.signal.reason);return;}clearTimeout(frameTimer);frameTimer=0;framePending=false;if(status==='ready'&&!document.hidden)raf=requestAnimationFrame(draw);},fail);
         }else raf=requestAnimationFrame(draw);
-      }catch(caught){dispose(false);diagnostic=`3D-frame — mislukt: ${caught.name}: ${caught.message}`;report('error',caught);}
+      }catch(caught){failRuntime(caught,'3D-frame');}
     }
     async function sync() {
       if(suspended)return;
@@ -464,7 +473,15 @@
         const device=await gpuWork('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
         if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
         gpuTrace=new URLSearchParams(location.search).get('debug3dgpu')==='1'?global.AtlasThreeGpuDiagnostics?.create(device)||null:null;
-        device.lost?.then(info=>{if(token===generation&&info.reason!=='destroyed')lifetime?.abort(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}`,'OperationError'));});
+        // Validation errors do not necessarily reject a queue fence. Never keep
+        // submitting invalid commands until the browser GPU process stops responding.
+        const deviceFailure=caught=>{
+          if(token!==generation)return;
+          if(status==='ready')failRuntime(caught,'WebGPU');
+          else lifetime?.abort(caught);
+        };
+        device.addEventListener?.('uncapturederror',event=>deviceFailure(new DOMException(event.error?.message||'Onbekende WebGPU-fout',event.error?.constructor?.name||'OperationError')));
+        device.lost?.then(info=>{deviceFailure(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}`,'OperationError'));});
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
         checkpoint('Three.js WebGPURenderer maken');

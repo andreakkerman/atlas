@@ -215,7 +215,8 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
     document.querySelectorAll("[data-three-loading]").forEach(element => {
       element.hidden = snapshot.ready;
       element.dataset.status = snapshot.status;
-      element.querySelector('[data-three-loading-title]').textContent = snapshot.status === 'error' ? '3D kon niet worden gestart' : 'De 3D-wereld wordt voorbereid';
+      element.querySelector('[data-three-loading-help]').textContent = snapshot.status === 'error' ? 'Kies Illustrated om je avontuur voort te zetten.' : 'Je avontuur gaat verder zodra de wereld klaar is.';
+      element.querySelector('[data-three-loading-title]').textContent = snapshot.status === 'error' ? (snapshot.failurePhase === 'gameplay' ? 'De 3D-weergave is gestopt' : '3D kon niet worden gestart') : 'De 3D-wereld wordt voorbereid';
       element.querySelector("[data-three-preparation]").textContent = snapshot.preparation || "3D-engine starten…";
       element.querySelector('[data-three-diagnostic]').textContent = snapshot.diagnostic || '';
       element.querySelector('[data-three-diagnostic]').hidden = !snapshot.debug && snapshot.status !== 'error';
@@ -6089,7 +6090,7 @@ function renderWorldStage() {
         <div class="threeLoading" data-three-loading role="status" aria-live="polite"><div><span class="threeLoadingMark" aria-hidden="true">◇</span><h2 data-three-loading-title>De 3D-wereld wordt voorbereid</h2><p data-three-preparation>3D-engine starten…</p><p class="threeDiagnostic" data-three-diagnostic>WebGPU controleren…</p>
           <div class="threePreparationProgress" data-three-progress role="progressbar" aria-label="Voltooide voorbereidingsstappen" aria-valuemin="0" aria-valuemax="${window.AtlasThreeRenderer.PREPARATION_STAGES.length}" aria-valuenow="0">${window.AtlasThreeRenderer.PREPARATION_STAGES.map(()=>'<span aria-hidden="true"></span>').join('')}</div>
           <small data-three-progress-label>0 van ${window.AtlasThreeRenderer.PREPARATION_STAGES.length} stappen voltooid</small><p class="threePreparationDetail" data-three-progress-detail></p>
-          <small>Je avontuur gaat verder zodra de wereld klaar is.</small><button class="threeRecovery" type="button" data-three-recover hidden>Terug naar Illustrated</button></div></div>
+          <small data-three-loading-help>Je avontuur gaat verder zodra de wereld klaar is.</small><button class="threeRecovery" type="button" data-three-recover hidden>Terug naar Illustrated</button></div></div>
         <div class="threeControls"><span class="threeDesktopHint">W/S · Lopen &nbsp; Slepen · Rondkijken &nbsp; A/D · Draaien &nbsp; E · Actie</span><span class="threeTouchHint">Linker stick · Lopen &nbsp; Slepen · Rondkijken &nbsp; Actieknop · Tikken</span></div>
         <div class="threePerformance" data-three-performance aria-label="3D-prestaties" aria-live="off"></div>
         <div class="threeTouchMovement"><div data-three-move aria-label="Sleep om te lopen en draaien"><span data-three-stick></span></div><span>Lopen</span></div>
