@@ -1,5 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
+// Physical M3 iPad evidence: 1180x734 CSS pixels at the runtime's 1.5 DPR cap.
+test.use({viewport:{width:1180,height:734},deviceScaleFactor:2});
 for(const failure of ['none','stall','validation','lost'])test(`Cinematic to compact 3D to Cinematic, failure ${failure}`,async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires real WebGPU.');
  test.setTimeout(300000);
@@ -7,6 +9,10 @@ for(const failure of ['none','stall','validation','lost'])test(`Cinematic to com
   Object.defineProperty(navigator,'platform',{get:()=> 'MacIntel'});Object.defineProperty(navigator,'maxTouchPoints',{get:()=>5});
   const request=GPUAdapter.prototype.requestDevice,destroy=GPUDevice.prototype.destroy,fence=GPUQueue.prototype.onSubmittedWorkDone,submit=GPUQueue.prototype.submit;
   const live=new Set();let threeQueue;
+  window.presentationSamples=[];window.depthSamples=[];
+  const pipeline=GPUDevice.prototype.createRenderPipeline,texture=GPUDevice.prototype.createTexture;
+  GPUDevice.prototype.createRenderPipeline=function(d){if(d.vertex?.module?.label==='vertex_PostProcessing')window.presentationSamples.push(d.multisample?.count||1);return Reflect.apply(pipeline,this,[d]);};
+  GPUDevice.prototype.createTexture=function(d){if(d.label==='depth')window.depthSamples.push(d.sampleCount||1);return Reflect.apply(texture,this,[d]);};
   window.gpuEvidence={created:0,destroyed:0,peak:0,submitsWhileStalled:0,errors:[],shaderErrors:[]};
   const shader=GPUDevice.prototype.createShaderModule;
   GPUDevice.prototype.createShaderModule=function(descriptor){const module=Reflect.apply(shader,this,[descriptor]);module.getCompilationInfo().then(info=>{for(const message of info.messages)if(message.type==='error')window.gpuEvidence.shaderErrors.push({label:descriptor.label,message:message.message});});return module;};
@@ -26,6 +32,10 @@ for(const failure of ['none','stall','validation','lost'])test(`Cinematic to com
  expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().error)).toBeNull();
  expect(await page.evaluate(()=>window.gpuEvidence.shaderErrors)).toEqual([]);
  expect(await page.evaluate(()=>window.gpuEvidence.errors)).toEqual([]);
+ expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual([1770,1101]);
+ expect(await page.evaluate(()=>window.presentationSamples)).toContain(1);
+ expect(await page.evaluate(()=>window.presentationSamples)).not.toContain(4);
+ expect(await page.evaluate(()=>window.depthSamples)).toContain(4);
  expect(await page.evaluate(()=>window.gpuEvidence.peak)).toBe(1);
  expect(await page.evaluate(()=>window.gpuEvidence.destroyed)).toBe(1);
  if(failure==='stall'){

@@ -1,6 +1,25 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 
+for(const jsDestroy of [false,true])test(`device-loss evidence distinguishes JavaScript destruction: ${jsDestroy}`,async({page})=>{
+ await page.route('**/assets/vendor/three/loaders/*.js',r=>r.fulfill({contentType:'application/javascript',body:'export class GLTFLoader {} export class HDRLoader {} export class DRACOLoader {}'}));
+ await page.route('**/assets/vendor/three/three.webgpu.min.js',r=>r.fulfill({contentType:'application/javascript',body:'export class WebGPURenderer {constructor(){this.backend={}} init(){window.engineInit=true;return new Promise(()=>{})} dispose(){}}'}));
+ await page.goto(base+'/?debug3d=1');
+ const result=await page.evaluate(async jsDestroy=>{
+  document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
+  let lose;const device=new EventTarget();device.lost=new Promise(resolve=>lose=resolve);device.destroy=()=>lose({reason:'destroyed',message:''});
+  Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:async()=>device})}});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'})});
+  const pending=runtime.sync();while(!window.engineInit)await new Promise(resolve=>setTimeout(resolve,0));
+  if(jsDestroy)device.destroy();else lose({reason:'destroyed',message:''});
+  await pending;return runtime.snapshot();
+ },jsDestroy);
+ expect(result.status).toBe('error');
+ expect(result.diagnostic).toContain(`JavaScript destroy: ${jsDestroy?'ja':'nee'}`);
+ // Cleanup itself always destroys the device; this must not falsify the evidence.
+ expect(result.deviceDestruction.activeGeneration).toBe(false);
+});
+
 test('a throwing renderer disposer cannot retain the owned device or hide the startup error',async({page})=>{
  await page.route('**/assets/vendor/three/loaders/*.js',route=>route.fulfill({contentType:'application/javascript',body:'export class GLTFLoader {} export class HDRLoader {} export class DRACOLoader {}'}));
  await page.route('**/assets/vendor/three/three.webgpu.min.js',route=>route.fulfill({contentType:'application/javascript',body:`export class WebGPURenderer {constructor(){this.backend={context:{unconfigure(){window.unconfigured++}}}} async init(){throw new RangeError('injected initialization failure')} dispose(){throw new Error('injected disposer failure')}}`}));

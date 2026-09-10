@@ -24,7 +24,15 @@
     const keys=new Set(),textures=new Set(),flames=[];
     let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
     let preparationMs=null,lastReport=0;
-    let preparationCompleted=0,failurePhase=null;
+    let preparationCompleted=0,failurePhase=null,deviceDestruction=null;
+    function trackDeviceDestruction(device){
+      if(!DEBUG)return;
+      const destroy=device.destroy,token=generation;
+      device.destroy=function(...args){
+        deviceDestruction={operation:diagnostic||preparation,status,activeGeneration:token===generation,stack:new Error('GPUDevice.destroy').stack};
+        return Reflect.apply(destroy,this,args);
+      };
+    }
     let inputType=global.matchMedia('(any-pointer: coarse)').matches?'touch':'desktop';
     let visibleProfile=null,frameSampled=false,gpuTrace=null;
     const frameWindow=[];
@@ -33,7 +41,7 @@
     const input=global.AtlasThreeInput.create({nativeTouch:compactPreparation,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,failurePhase,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
@@ -288,8 +296,10 @@
         return float(.28).mul(phase).mul(positionRay.y.mul(-.04).exp()).mul(smoothstep(2,8,distance(positionRay,cameraPosition)));
       });
       const volume=new THREE.Mesh(new THREE.BoxGeometry(90,38,140),material);volume.position.set(5,10,-32);volume.receiveShadow=true;volume.layers.set(10);scene.add(volume);sun.layers.enable(10);
-      const scenePass=worldPass=pass(scene,camera),depth=scenePass.getTextureNode('depth');material.depthNode=depth.sample(screenUV);
-      const layers=new THREE.Layers();layers.set(10);const fogPass=pass(scene,camera,{depthBuffer:false});fogPass.setLayers(layers);fogPass.setResolution(.25);
+      const scenePass=worldPass=pass(scene,camera,compactPreparation?{samples:4}:{}),depth=scenePass.getTextureNode('depth');material.depthNode=depth.sample(screenUV);
+      // Bind depth sampling to its producer, never the currently rendered post pass.
+      if(compactPreparation)scenePass.renderTarget.depthTexture.renderTarget=scenePass.renderTarget;
+      const layers=new THREE.Layers();layers.set(10);const fogPass=pass(scene,camera,{depthBuffer:false,...(compactPreparation?{samples:4}:{})});fogPass.setLayers(layers);fogPass.setResolution(.25);
       const contact=ao(depth,null,camera);contact.resolutionScale=.5;contact.radius.value=.42;
       const blur=gaussianBlur(fogPass,uniform(.3),1),combined=scenePass.mul(mix(float(1),contact.getTextureNode().r,.3)).add(blur.mul(.3));
       const glow=bloom(combined,.16,.5,1.15);post=new THREE.PostProcessing(renderer);post.outputNode=new URLSearchParams(location.search).get('threeDebug')==='volume'?scenePass.mul(.000001).add(blur):combined.add(glow);
@@ -373,7 +383,7 @@
           // Bound draw objects rather than geometry types: one fir geometry can
           // have hundreds of spatial cells, each needing renderer preparation.
           const batchSize=16,count=Math.ceil(meshes.length/batchSize);
-          worldPass.renderTarget.samples=activeRenderer.samples;worldPass.renderTarget.texture.type=activeRenderer.getColorBufferType();
+          worldPass.renderTarget.samples=worldPass.options.samples??activeRenderer.samples;worldPass.renderTarget.texture.type=activeRenderer.getColorBufferType();
           for(let i=0;i<meshes.length;i+=batchSize){
             if(!valid())return false;const objects=meshes.slice(i,i+batchSize);objects.forEach(o=>o.visible=true);
             // compileAsync does not exercise the actual shadow render path.
@@ -459,7 +469,7 @@
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
       try{dispose();}finally{token=generation;}
-      loading=true;gpuTrace=null;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
+      loading=true;gpuTrace=null;deviceDestruction=null;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
       checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
         checkpoint('navigator.gpu controleren');
         const gpu=navigator.gpu;
@@ -471,7 +481,7 @@
         if(token!==generation)return;if(!adapter)throw new DOMException('WebGPU heeft geen geschikte adapter teruggegeven.','NotSupportedError');
         diagnostic='WebGPU-adapter ontvangen';report();
         const device=await gpuWork('WebGPU-device aanvragen',async()=>{const acquired=await adapter.requestDevice();if(token===generation)ownedDevice=acquired;else safely(()=>acquired.destroy());return acquired;},token);
-        if(token!==generation)return;diagnostic='WebGPU-device ontvangen';report();
+        if(token!==generation)return;trackDeviceDestruction(device);diagnostic='WebGPU-device ontvangen';report();
         gpuTrace=new URLSearchParams(location.search).get('debug3dgpu')==='1'?global.AtlasThreeGpuDiagnostics?.create(device)||null:null;
         // Validation errors do not necessarily reject a queue fence. Never keep
         // submitting invalid commands until the browser GPU process stops responding.
@@ -481,11 +491,11 @@
           else lifetime?.abort(caught);
         };
         device.addEventListener?.('uncapturederror',event=>deviceFailure(new DOMException(event.error?.message||'Onbekende WebGPU-fout',event.error?.constructor?.name||'OperationError')));
-        device.lost?.then(info=>{deviceFailure(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}`,'OperationError'));});
+        device.lost?.then(info=>{deviceFailure(new DOMException(`WebGPU-device verloren: ${info.message||info.reason}${DEBUG?`; JavaScript destroy: ${deviceDestruction?'ja ('+deviceDestruction.operation+')':'nee'}`:''}`,'OperationError'));});
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
         checkpoint('Three.js WebGPURenderer maken');
-        renderer=new THREE.WebGPURenderer({canvas,antialias:true,powerPreference:'high-performance',device});
+        renderer=new THREE.WebGPURenderer({canvas,antialias:!compactPreparation,depth:!compactPreparation,powerPreference:'high-performance',device});
         gpuTrace?.attach(renderer);
         checkpoint('Three.js WebGPURenderer gemaakt');
         const initializingRenderer=renderer;
