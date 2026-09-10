@@ -87,7 +87,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
   });
  },action);
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
- await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1`);
+ await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1&rendererPreset=desktop-high`);
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
  const initialPosition=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
  await expect.poll(()=>page.evaluate(()=>window.triggered),{timeout:240000}).toBe(true);

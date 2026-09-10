@@ -2,27 +2,28 @@ const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 // Physical M3 iPad evidence: 1180x734 CSS pixels at the runtime's 1.5 DPR cap.
 test.use({viewport:{width:1180,height:734},deviceScaleFactor:2});
-for(const failure of ['none','stall','validation','lost'])test(`Cinematic to compact 3D to Cinematic, failure ${failure}`,async({page},info)=>{
+for(const preset of ['desktop-high','tablet-optimized'])for(const failure of ['none','stall','validation','lost'])test(`${preset}: Cinematic to compact 3D to Cinematic, failure ${failure}`,async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires real WebGPU.');
  test.setTimeout(300000);
  await page.addInitScript(()=>{
   Object.defineProperty(navigator,'platform',{get:()=> 'MacIntel'});Object.defineProperty(navigator,'maxTouchPoints',{get:()=>5});
   const request=GPUAdapter.prototype.requestDevice,destroy=GPUDevice.prototype.destroy,fence=GPUQueue.prototype.onSubmittedWorkDone,submit=GPUQueue.prototype.submit;
   const live=new Set();let threeQueue;
-  window.presentationSamples=[];window.depthSamples=[];
+  window.presentationSamples=[];window.depthSamples=[];window.gtaoModules=0;window.shadowSizes=[];window.anisotropies=[];
+  const sampler=GPUDevice.prototype.createSampler;GPUDevice.prototype.createSampler=function(d={}){window.anisotropies.push(d.maxAnisotropy||1);return Reflect.apply(sampler,this,[d]);};
   const pipeline=GPUDevice.prototype.createRenderPipeline,texture=GPUDevice.prototype.createTexture;
   GPUDevice.prototype.createRenderPipeline=function(d){if(d.vertex?.module?.label==='vertex_PostProcessing')window.presentationSamples.push(d.multisample?.count||1);return Reflect.apply(pipeline,this,[d]);};
-  GPUDevice.prototype.createTexture=function(d){if(d.label==='depth')window.depthSamples.push(d.sampleCount||1);return Reflect.apply(texture,this,[d]);};
+  GPUDevice.prototype.createTexture=function(d){if((d.usage&GPUTextureUsage.RENDER_ATTACHMENT)&&d.format.startsWith('depth')&&d.size.width===d.size.height)window.shadowSizes.push(d.size.width);if(d.label==='depth')window.depthSamples.push(d.sampleCount||1);return Reflect.apply(texture,this,[d]);};
   window.gpuEvidence={created:0,destroyed:0,peak:0,submitsWhileStalled:0,errors:[],shaderErrors:[]};
   const shader=GPUDevice.prototype.createShaderModule;
-  GPUDevice.prototype.createShaderModule=function(descriptor){const module=Reflect.apply(shader,this,[descriptor]);module.getCompilationInfo().then(info=>{for(const message of info.messages)if(message.type==='error')window.gpuEvidence.shaderErrors.push({label:descriptor.label,message:message.message});});return module;};
+  GPUDevice.prototype.createShaderModule=function(descriptor){if(descriptor.label==='fragment_GTAO')window.gtaoModules++;const module=Reflect.apply(shader,this,[descriptor]);module.getCompilationInfo().then(info=>{for(const message of info.messages)if(message.type==='error')window.gpuEvidence.shaderErrors.push({label:descriptor.label,message:message.message});});return module;};
   GPUAdapter.prototype.requestDevice=async function(...args){const d=await Reflect.apply(request,this,args);d.addEventListener('uncapturederror',event=>window.gpuEvidence.errors.push(event.error.message));live.add(d);const e=window.gpuEvidence;e.created++;e.peak=Math.max(e.peak,live.size);if(e.created===2){threeQueue=d.queue;window.threeTestDevice=d;}return d;};
   GPUDevice.prototype.destroy=function(...args){if(live.delete(this))window.gpuEvidence.destroyed++;return Reflect.apply(destroy,this,args);};
   GPUQueue.prototype.onSubmittedWorkDone=function(...args){if(window.stallFrame&&this===threeQueue)return new Promise(()=>{});return Reflect.apply(fence,this,args);};
   GPUQueue.prototype.submit=function(...args){if(window.stallFrame&&this===threeQueue)window.gpuEvidence.submitsWhileStalled++;return Reflect.apply(submit,this,args);};
  });
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
- await page.goto(base+'/?dev=editor&level=LVL-0001');
+ await page.goto(base+'/?dev=editor&level=LVL-0001'+(preset==='desktop-high'?'&rendererPreset=desktop-high':''));
  const choose=async mode=>{await page.evaluate(mode=>{window.eval('voxelRenderer.updateSettings')({renderer:mode});window.eval('render')();},mode);};
  await choose('cinematic');
  await expect.poll(()=>page.evaluate(()=>window.eval('cinematicRenderer.snapshot')().status),{timeout:60000}).toBe('ready');
@@ -32,12 +33,17 @@ for(const failure of ['none','stall','validation','lost'])test(`Cinematic to com
  expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().error)).toBeNull();
  expect(await page.evaluate(()=>window.gpuEvidence.shaderErrors)).toEqual([]);
  expect(await page.evaluate(()=>window.gpuEvidence.errors)).toEqual([]);
- expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual([1770,1101]);
+ expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual(preset==='desktop-high'?[1770,1101]:[1180,734]);
  expect(await page.evaluate(()=>window.presentationSamples)).toContain(1);
  expect(await page.evaluate(()=>window.presentationSamples)).not.toContain(4);
- expect(await page.evaluate(()=>window.depthSamples)).toContain(4);
+ expect(await page.evaluate(()=>window.depthSamples)).toContain(preset==='desktop-high'?4:1);
  expect(await page.evaluate(()=>window.gpuEvidence.peak)).toBe(1);
  expect(await page.evaluate(()=>window.gpuEvidence.destroyed)).toBe(1);
+ const config=await page.evaluate(()=>window.eval('threeRenderer.snapshot')().configuration);
+ expect(config.device.deviceClass).toBe('tablet');expect(config.preset.id).toBe(preset);
+ expect(await page.evaluate(()=>window.shadowSizes)).toContain(preset==='desktop-high'?4096:2048);
+ expect(await page.evaluate(()=>Math.max(...window.anisotropies))).toBe(preset==='desktop-high'?8:4);
+ expect(await page.evaluate(()=>window.gtaoModules)).toBe(preset==='desktop-high'?2:0);
  if(failure==='stall'){
   await page.evaluate(()=>window.stallFrame=true);
   await page.waitForTimeout(2000);

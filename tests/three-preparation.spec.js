@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 // Non-round aspect ratio also exercises the physical retest's 512×318 warm-up.
-test.use({hasTouch:true,viewport:{width:1280,height:795}});
+test.use({hasTouch:true,viewport:{width:1770,height:1101}});
 test('compact preparation retains full pipeline coverage and final resolution',async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires real Chromium WebGPU; this exercises iPad strategy, not physical Safari.');
  test.setTimeout(300000);
@@ -37,6 +37,13 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().error)).toBeNull();
  const ready=await page.evaluate(()=>({snapshot:window.eval('threeRenderer.snapshot')(),views:window.preparationViews,pipelines:window.pipelineCount,groups:window.pipelineGroups,compilePeak:window.compilePeak,journal:JSON.parse(localStorage.getItem('atlas3d-debug-preparation-v1'))}));
  expect(ready.snapshot.preparationStrategy).toBe('compact');
+ expect(ready.snapshot.configuration.preset.name).toBe('Tablet Optimized');
+ expect(ready.snapshot.resolution).toEqual([1770,1101]);
+ expect(ready.snapshot.actualEffects).toEqual({gtao:false,bloom:true,volumeSteps:40,volumeResolution:.25});
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('tablet · Tablet Optimized');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('MSAA wereld 1× / effecten 1× / presentatie 1× · DPR-cap 1');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Schaduw 2048² · GTAO uit · Volume 25% / 40 stappen');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Bloom aan · Anisotropie 4');
  expect(ready.snapshot.warmupTotal).toBe(4);expect(ready.snapshot.warmupViews).toBe(4);
  expect(ready.views).toHaveLength(3);
  // Actual shadow passes must finish in bounded batches, not first appear in
