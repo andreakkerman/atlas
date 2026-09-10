@@ -10,13 +10,17 @@
     const compactPreparation=configuration.compact;
     const effectNames=`schaduwen, ${preset.gtao?'GTAO, ':''}volume${preset.bloom?' en bloom':''}`;
     const preparationStrategy=compactPreparation?'compact':'desktop';
-    let actualEffects=null;
+    let actualEffects=null,failureEvidence=null;
+    function recordFailure(caught,context={}) {
+      if(!DEBUG||failureEvidence)return;
+      failureEvidence={name:caught?.name||'Error',message:String(caught?.message||caught),stack:String(caught?.stack||'').slice(0,6000),...context};
+    }
     let lastCompletedOperation='',releasedImageBytes=0;
     function debugMark(operation,state='pending') {
       if(!DEBUG)return;
       gpuTrace?.checkpoint(operation,state);
       if(state==='complete')lastCompletedOperation=operation;
-      const record={operation,state,lastCompleted:lastCompletedOperation,strategy:preparationStrategy,rendererSettings:global.AtlasThreePresets.describe(configuration),at:new Date().toISOString()};
+      const record={operation,state,lastCompleted:lastCompletedOperation,strategy:preparationStrategy,rendererSettings:global.AtlasThreePresets.describe(configuration),failure:failureEvidence,at:new Date().toISOString()};
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
       global.dispatchEvent(new CustomEvent('atlas-three-preparation',{detail:record}));
     }
@@ -77,7 +81,7 @@
         return result;
       } catch(caught) {
         clearInterval(timer);
-        if(token===generation){clearWaiting();const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;debugMark(diagnostic,'error');report();}throw caught;
+        if(token===generation){clearWaiting();recordFailure(caught,{operation:label});const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;debugMark(diagnostic,'error');report();}throw caught;
       } finally {clearTimeout(deadline);clearInterval(timer);signal?.removeEventListener('abort',cancel);}
     }
     const gpuWork=(label,task,token)=>observe(label,()=>gpuTrace&&(/renderer.init|compileren|renderer en post-processing/.test(label))?gpuTrace.scope(label,task):task(),token,90000);
@@ -94,7 +98,13 @@
         const size=`${canvas?.width}×${canvas?.height}`;
         if(status!=='warming'||size===previousSize)return update.call(this,frame);
         debugMark(`${name}: renderresources voorbereiden (${size})`);
-        const result=update.call(this,frame);previousSize=size;
+        const run=()=>update.call(this,frame);
+        const result=name!=='Wereld en schaduwen'&&global.AtlasThreeGpuDiagnostics?.captureRangeFailure
+          ?global.AtlasThreeGpuDiagnostics.captureRangeFailure(ownedDevice,run,(caught,copy)=>{
+            const target=renderer?.getRenderTarget(),input=node.textureNode?.value?.image;
+            recordFailure(caught,{pass:name,canvas:[canvas?.width,canvas?.height],target:target?{width:target.width,height:target.height,samples:target.samples}:null,input:input?{width:input.width,height:input.height}:null,copy});
+          }):run();
+        previousSize=size;
         debugMark(`${name}: GPU-opdrachten ingediend (${size})`,'complete');return result;
       };
     }
@@ -473,7 +483,7 @@
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
       try{dispose();}finally{token=generation;}
-      loading=true;gpuTrace=null;deviceDestruction=null;actualEffects=null;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
+      loading=true;gpuTrace=null;deviceDestruction=null;actualEffects=null;failureEvidence=null;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
       checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
         checkpoint('navigator.gpu controleren');
         const gpu=navigator.gpu;

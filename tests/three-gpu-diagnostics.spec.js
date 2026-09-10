@@ -1,6 +1,67 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 
+test('ordinary debug journal preserves the original caught preparation stack',async({page})=>{
+ await page.route('**/assets/vendor/three/loaders/*.js',r=>r.fulfill({contentType:'application/javascript',body:'export class GLTFLoader {} export class HDRLoader {} export class DRACOLoader {}'}));
+ await page.route('**/assets/vendor/three/three.webgpu.min.js',r=>r.fulfill({contentType:'application/javascript',body:'export class WebGPURenderer { constructor(){this.backend={context:{unconfigure(){}}};this.info={render:{}};} init(){new Float32Array(4).set(new Float32Array(5));} dispose(){} }'}));
+ await page.goto(`${base}/?debug3d=1`);
+ const record=await page.evaluate(async()=>{
+  document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
+  const device={lost:new Promise(()=>{}),destroy(){}};
+  Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:async()=>device})}});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'}),onStatus(){}});
+  await runtime.sync();
+  return {snapshot:runtime.snapshot(),journal:JSON.parse(localStorage.getItem('atlas3d-debug-preparation-v1'))};
+ });
+ expect(record.snapshot.status).toBe('error');expect(record.snapshot.gpuPreparation).toBeUndefined();
+ expect(record.journal.failure.name).toBe('RangeError');expect(record.journal.failure.operation).toBe('renderer.init uitvoeren');
+ expect(record.journal.failure.stack).toContain('three.webgpu.min.js');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Foutbron: renderer.init uitvoeren');
+});
+
+test('failure-only capture preserves native range evidence and restores hooks (not a physical reproduction)',async({page})=>{
+ await page.goto(`${base}/?debug3d=1`);
+ const data=await page.evaluate(()=>{
+  const prototype=Object.getPrototypeOf(Uint8Array.prototype),original=prototype.set;
+  const queue={writeBuffer(){},writeTexture(){}},write=queue.writeBuffer;let failure,caught,same=false;
+  try{AtlasThreeGpuDiagnostics.captureRangeFailure({queue},()=>new Float32Array(4).set(new Float32Array(5),1),(error,details)=>{failure={name:error.name,stack:error.stack,details};caught=error;});}catch(error){same=error===caught;}
+  return {failure,same,restored:prototype.set===original&&queue.writeBuffer===write};
+ });
+ expect(data.same).toBe(true);expect(data.restored).toBe(true);
+ expect(data.failure.name).toBe('RangeError');expect(data.failure.stack).toBeTruthy();
+ expect(data.failure.details.api).toBe('TypedArray.set');expect(data.failure.details.destination.length).toBe(4);
+ expect(data.failure.details.source.length).toBe(5);expect(data.failure.details.offset).toBe(1);
+});
+
+test('failure-only capture correlates an empty mapping with the failing native copy',async({page})=>{
+ await page.goto(`${base}/?debug3d=1`);
+ const data=await page.evaluate(()=>{
+  // Diagnostic fixture: this does not assert that an empty GPU mapping caused
+  // the physical v157 failure. Preserve evidence needed to distinguish it.
+  const original=window.GPUBuffer;let failure;
+  class Mapping{constructor(){this.size=64;this.label='fixture';this.mapState='mapped';}getMappedRange(){return new ArrayBuffer(0);}}
+  window.GPUBuffer=Mapping;const method=Mapping.prototype.getMappedRange;
+  try{AtlasThreeGpuDiagnostics.captureRangeFailure({},()=>new Float32Array(new Mapping().getMappedRange()).set(new Float32Array(16)),(error,details)=>failure={name:error.name,details});}catch{}
+  finally{window.GPUBuffer=original;}
+  return {failure,restored:Mapping.prototype.getMappedRange===method};
+ });
+ expect(data.restored).toBe(true);expect(data.failure.name).toBe('RangeError');
+ expect(data.failure.details.destination.mapping).toMatchObject({bufferSize:64,mappedBytes:0,label:'fixture'});
+});
+
+test('failure-only capture forwards queue arguments, original exceptions and successful values',async({page})=>{
+ await page.goto(`${base}/?debug3d=1`);
+ const result=await page.evaluate(()=>{
+  const error=new RangeError('fixture'),calls=[];let evidence,same=false;
+  const queue={writeBuffer(...args){calls.push(args);throw error;}};
+  try{AtlasThreeGpuDiagnostics.captureRangeFailure({queue},()=>queue.writeBuffer({size:16,label:'uniform'},4,new Float32Array(8),2,7),(caught,details)=>{evidence=details;throw Error('diagnostic callback failure');});}catch(caught){same=caught===error;}
+  const value=AtlasThreeGpuDiagnostics.captureRangeFailure({},()=>42,()=>{});
+  return {same,evidence,value,calls:calls.length};
+ });
+ expect(result.same).toBe(true);expect(result.value).toBe(42);expect(result.calls).toBe(1);
+ expect(result.evidence).toMatchObject({api:'GPUQueue.writeBuffer',bufferSize:16,bufferOffset:4,dataOffset:2,size:7});
+});
+
 test('native typed-array range failure records sizes, pass and stack then restores the method',async({page})=>{
  await page.goto(`${base}/?debug3d=1`);
  const data=await page.evaluate(()=>{

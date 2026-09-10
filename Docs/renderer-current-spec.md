@@ -2,6 +2,13 @@
 
 Verified against source on 2026-09-10. This describes the implementation, not a proposed redesign. v157 adds renderer presets on top of the completed v156 presentation-memory work. Physical iPad stability is not yet accepted: the latest physical v156 report lost the device during warm-up 3/3 without a preceding JavaScript destroy call. GPU resource pressure is a leading hypothesis, not a proven cause.
 
+Physical v157 follow-up: Tablet Optimized is correctly selected but reports a
+RangeError in warm-up 1/3. The exact call/range is not yet identified. The local
+follow-up adds failure evidence and a mandatory tablet acceptance path without
+changing rendering settings. See [the investigation](3d-tablet-range-investigation.md)
+and the renderer QA gate in `AGENTS.md`; this is not a claim that the physical bug
+has been fixed.
+
 ## World mode versus renderer preset
 
 Real 3D is the existing LVL-0001 world. Its geometry, assets, foliage, route, materials and content are unchanged by v157. Atlas 3D is a future alternative world/style and is not implemented here. Renderer presets configure rendering of Real 3D; they do not select or replace a world.

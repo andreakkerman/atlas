@@ -99,5 +99,30 @@
   function stop(){if(!active)return;active=false;restore.reverse().forEach(fn=>{try{fn();}catch{}});publish();}
   return {attach,scope,snapshot,checkpoint,cleanup,stop,withPass(name,task){const old=pass;pass=name;try{return task();}finally{pass=old;}}};
  }
- global.AtlasThreeGpuDiagnostics=Object.freeze({create});
+ // Synchronous, failure-only capture around preparation effects. No shader
+ // profiling, error scopes, extra GPU work or hooks surviving the operation.
+ function captureRangeFailure(device,task,report){
+  const restore=[],mapped=new WeakMap();let recorded=false;
+  const array=a=>({type:a?.constructor?.name,length:a?.length,byteLength:a?.byteLength,byteOffset:a?.byteOffset,bufferBytes:a?.buffer?.byteLength,mapping:a?.buffer?mapped.get(a.buffer):undefined});
+  const failure=(error,details)=>{if(recorded)return;recorded=true;try{report(error,details);}catch{/* Evidence cannot replace the original exception. */}};
+  const wrap=(target,name,invoke)=>{
+   if(typeof target?.[name]!=='function')return;
+   const original=target[name],descriptor=Object.getOwnPropertyDescriptor(target,name);
+   const replacement=function(...args){return invoke(original,this,args);};
+   try{target[name]=replacement;if(target[name]===replacement)restore.push(()=>{if(descriptor)Object.defineProperty(target,name,descriptor);else delete target[name];});}catch{}
+  };
+  wrap(Object.getPrototypeOf(Uint8Array.prototype),'set',(fn,self,args)=>{
+   try{return Reflect.apply(fn,self,args);}catch(error){failure(error,{api:'TypedArray.set',destination:array(self),source:array(args[0]),offset:args[1]??0});throw error;}
+  });
+  wrap(global.GPUBuffer?.prototype,'getMappedRange',(fn,self,args)=>{
+   const details={api:'GPUBuffer.getMappedRange',label:self.label,bufferSize:self.size,mapState:self.mapState,offset:args[0]??0,size:args[1]??null};
+   try{const result=Reflect.apply(fn,self,args);mapped.set(result,{...details,mappedBytes:result.byteLength});return result;}catch(error){failure(error,details);throw error;}
+  });
+  for(const name of ['writeBuffer','writeTexture'])wrap(device?.queue,name,(fn,self,args)=>{
+   try{return Reflect.apply(fn,self,args);}catch(error){failure(error,name==='writeBuffer'?{api:'GPUQueue.writeBuffer',label:args[0]?.label,bufferSize:args[0]?.size,bufferOffset:args[1],source:array(args[2]),dataOffset:args[3]??0,size:args[4]??null}:{api:'GPUQueue.writeTexture',label:args[0]?.texture?.label,source:array(args[1]),layout:args[2],extent:args[3]});throw error;}
+  });
+  try{return task();}catch(error){failure(error,{api:'preparation effect (see original stack)'});throw error;}
+  finally{restore.reverse().forEach(fn=>{try{fn();}catch{}});}
+ }
+ global.AtlasThreeGpuDiagnostics=Object.freeze({create,captureRangeFailure});
 })(window);
