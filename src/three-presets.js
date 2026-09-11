@@ -4,7 +4,7 @@
   'desktop-high':Object.freeze({id:'desktop-high',name:'Desktop High',worldSamples:4,effectSamples:4,dprCap:1.5,shadowSize:4096,volumeResolution:.25,volumeSteps:80,gtao:true,bloom:true,anisotropy:8}),
   // WebGPU only supports sample counts 1 and 4. Two samples are not a valid
   // intermediate setting; use one for this deliberately conservative baseline.
-  'tablet-optimized':Object.freeze({id:'tablet-optimized',name:'Tablet Optimized',worldSamples:1,effectSamples:1,dprCap:1,shadowSize:2048,volumeResolution:.25,volumeSteps:40,gtao:false,bloom:true,anisotropy:4})
+  'tablet-optimized':Object.freeze({id:'tablet-optimized',name:'Tablet Optimized',worldSamples:1,effectSamples:1,dprCap:.75,shadowSize:1024,volumeResolution:0,volumeSteps:0,gtao:false,bloom:false,anisotropy:2,textureCap:1024,environmentCap:512})
  });
  function detectDevice(s){
   const ua=s.userAgent||'',platform=s.platform||'',touch=(s.maxTouchPoints||0)>1;
@@ -26,6 +26,6 @@
  }
  const nav=global.navigator||{},screen=global.screen||{};
  const session=select({userAgent:nav.userAgent,platform:nav.platform||nav.userAgentData?.platform,maxTouchPoints:nav.maxTouchPoints,mobile:nav.userAgentData?.mobile,formFactors:nav.userAgentData?.formFactors,screenWidth:screen.width,screenHeight:screen.height,width:global.innerWidth,height:global.innerHeight,coarse:global.matchMedia?.('(pointer: coarse)').matches,hover:global.matchMedia?.('(hover: hover)').matches},new URLSearchParams(global.location?.search).get('rendererPreset'));
- function describe(config=session){const {device,preset:p,presentationSamples}=config;return `${device.deviceClass} · ${p.name}\nMSAA wereld ${p.worldSamples}× / effecten ${p.effectSamples}× / presentatie ${presentationSamples}× · DPR-cap ${p.dprCap}\nSchaduw ${p.shadowSize}² · GTAO ${p.gtao?'aan':'uit'} · Volume ${p.volumeResolution*100}% / ${p.volumeSteps} stappen\nBloom ${p.bloom?'aan':'uit'} · Anisotropie ${p.anisotropy}`;}
+ function describe(config=session){const {device,preset:p,presentationSamples}=config;return `${device.deviceClass} · ${p.name}\nMSAA wereld ${p.worldSamples}× / effecten ${p.effectSamples}× / presentatie ${presentationSamples}× · DPR-cap ${p.dprCap}\nSchaduw ${p.shadowSize}² · GTAO ${p.gtao?'aan':'uit'} · Volume ${p.volumeSteps?`${p.volumeResolution*100}% / ${p.volumeSteps} stappen`:"uit"}\nBloom ${p.bloom?'aan':'uit'} · Anisotropie ${p.anisotropy} · Textuur-cap ${p.textureCap||"origineel"}\nOmgeving ${p.environmentCap?`HDR ${p.environmentCap}×${p.environmentCap/2} / PMREM ${p.environmentCap*.75}×${p.environmentCap}`:"HDR 2048×1024 / PMREM 1536×2048"}`;}
  global.AtlasThreePresets=Object.freeze({presets,detectDevice,select,session,describe});
 })(window);

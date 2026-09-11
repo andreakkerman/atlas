@@ -1,0 +1,12 @@
+{
+  "before": {
+    "objects": 18008,
+    "faces": 49020935
+  },
+  "after": {
+    "objects": 17114,
+    "faces": 2345171,
+    "treePlacements": 248,
+    "glbBytes": 26869972
+  }
+}

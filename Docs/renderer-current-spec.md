@@ -1,17 +1,15 @@
-# Current Atlas renderer implementation — local v157
+# Current Atlas renderer implementation — local v158
 
-Verified against source on 2026-09-10. This describes the implementation, not a proposed redesign. v157 adds renderer presets on top of the completed v156 presentation-memory work. Physical iPad stability is not yet accepted: the latest physical v156 report lost the device during warm-up 3/3 without a preceding JavaScript destroy call. GPU resource pressure is a leading hypothesis, not a proven cause.
-
-Physical v157 follow-up: Tablet Optimized is correctly selected but reports a
-RangeError in warm-up 1/3. The exact call/range is not yet identified. The local
-follow-up adds failure evidence and a mandatory tablet acceptance path without
-changing rendering settings. See [the investigation](3d-tablet-range-investigation.md)
-and the renderer QA gate in `AGENTS.md`; this is not a claim that the physical bug
-has been fixed.
+Verified against source on 2026-09-11. v158 is a deliberately conservative
+physical-tablet stability baseline, not the final visual-quality target. It retains
+the v156 compact presentation, GPU fencing, cleanup and recovery work, and the
+v157 RangeError evidence capture. Physical Safari stability is not yet accepted.
+Neither device pressure nor the original physical RangeError's cause is proven.
+See [the prior investigation](3d-tablet-range-investigation.md) and `AGENTS.md`.
 
 ## World mode versus renderer preset
 
-Real 3D is the existing LVL-0001 world. Its geometry, assets, foliage, route, materials and content are unchanged by v157. Atlas 3D is a future alternative world/style and is not implemented here. Renderer presets configure rendering of Real 3D; they do not select or replace a world.
+Real 3D is the existing LVL-0001 world. The v158 renderer baseline did not change its content. The subsequent user-authorized [faceted forest pass](faceted-forest.md) replaces generic nature geometry in this same world, retaining the route, landmarks and progression. Atlas 3D remains unimplemented. Renderer presets configure rendering of Real 3D; they do not select or replace a world.
 
 `src/three-presets.js` owns the immutable **Desktop High** and **Tablet Optimized** configurations. Desktop/laptop defaults to Desktop High; tablets default to Tablet Optimized. Phones also use the conservative Tablet Optimized configuration. Detection is evaluated once per page session, and does not respond to FPS, rotation, resizing or a subsequently connected input device.
 
@@ -37,7 +35,7 @@ Detection is heuristic: convertible devices that expose identical browser signal
 - Level model: Levels/LVL-0001/3d/lvl0001.glb; route and landmarks: route.json. GLTFLoader plus Draco WASM decoding.
 - Compact devices use one Draco worker and sequential texture/mesh dependency loading. Desktop permits two workers.
 - Loaded meshes are repartitioned into InstancedMesh groups by geometry, material and 12-unit X/Z cells. Frustum culling operates on the resulting spatial instances. The runtime does not stream level chunks or provide a separate iPad asset set.
-- Original material textures remain at source resolution; anisotropy is requested at the preset target (8 desktop, 4 tablet). Runtime node materials retain world-space moss blending and existing material adjustments. Static decoded ImageBitmap pixels are released on compact devices after all their GPU variants upload.
+- Desktop retains original material textures and anisotropy 8. Tablet bounds each decoded GLB image to a 1024-pixel long edge before loading the next dependency, preserving aspect ratio and never upscaling. Raw-channel ImageBitmap resizing preserves texture color-space metadata, alpha, packed PBR channels, samplers and UV transforms. Source assets are untouched. Shared texture Sources are resized once; original ImageBitmaps close immediately after replacement. Compact static resized pixels close after all sampler/color-space variants upload and complete their GPU fence. NPC canvas dimensions also respect the cap; live pixels remain available for animation.
 - HDR environment: qwantani_sunset_puresky_2k.hdr. NPC uses a camera-facing textured plane with a persistent CanvasTexture. Flames use crossed animated translucent planes.
 
 ## Camera, route and input
@@ -54,23 +52,28 @@ Detection is heuristic: convertible devices that expose identical browser signal
 | --- | --- | --- |
 | World MSAA | 4 samples | **1 sample** |
 | Volume/effect MSAA | 4 samples | 1 sample |
-| Render DPR cap | 1.5 | 1.0 |
-| Directional shadow map | 4096×4096 | 2048×2048 |
-| Volumetric resolution | Quarter width and height | Quarter width and height |
-| Volumetric raymarch steps | 80 | 40 |
+| Render DPR cap | 1.5 | 0.75 |
+| Directional shadow map | 4096×4096 | 1024×1024 |
+| Volumetric resolution | Quarter width and height | Off; no volume or blur targets |
+| Volumetric raymarch steps | 80 | 0 |
 | GTAO | Enabled, half width/height, radius 0.42, blend 0.3 | Disabled; no GTAO node, targets or shaders created |
-| Bloom | Enabled | Enabled, same existing mip chain |
-| Texture anisotropy target | 8 | 4 |
+| Bloom | Enabled | Off; no bloom nodes/targets |
+| Texture anisotropy target | 8 | 2 |
+| Texture long edge | Source resolution | Maximum 1024, no upscaling |
+| HDR input | 2048×1024 | 512×256 linear half-float |
+| Derived environment PMREM atlas | 1536×2048 | 384×512 |
 
 **MSAA exception:** the requested approximate 2× world baseline cannot be represented by WebGPU. Valid texture sample counts are 1 or 4 ([WebGPU texture validation](https://www.w3.org/TR/2022/WD-webgpu-20220613/#dom-gpudevice-createtexture)); vendored Three r180 also maps counts below 4 to 1. Tablet Optimized explicitly uses and reports 1×, avoiding an invalid descriptor or hidden promotion to 4×. This can make foliage/geometry edges less smooth. Source assets remain unchanged.
 
-Volume's quarter resolution means 25% on each axis, approximately 1/16 of full-resolution pixels. Bloom retains the existing reduced-resolution mip chain and settings; no additional bloom targets were introduced. GTAO and bloom are independently controlled by the preset, allowing later measured changes without device checks scattered through effect construction.
+Desktop retains the existing quarter-resolution volume, Gaussian blur, GTAO and bloom chain. Tablet constructs none of these effects. Its world, lighting, shadows and tone mapping remain active. The choice is fixed by the session preset, not FPS or iPad model.
+
+The faceted forest pass excludes small groundcover from casting separate tablet shadows; it still receives shadows. Trees, rocks and architecture retain shadow casting. Shadow normal bias scales with texel footprint (`0.025 * 4096 / shadowSize`): Desktop remains 0.025, Tablet uses 0.1 to avoid self-shadow striping on broad facets. Renderer quality settings otherwise remain unchanged.
 
 | Component | Current implementation |
 | --- | --- |
 | Resolution | Canvas CSS size multiplied by min(devicePixelRatio, preset DPR cap, 1920/CSS width); no adaptive FPS-based scale |
 | Final fullscreen presentation | Compact: one sample and no default depth attachment; non-compact Desktop High: four samples with the existing depth attachment |
-| World depth | Retained; compact depth sampling explicitly references the producing world render target |
+| World depth | Retained; compact volumetric depth sampling, when enabled, references its producer |
 | Sun shadows | Preset map resolution; static reuse with recentering after camera position changes by over 0.4 units |
 | Other lighting | Hemisphere, warm directional bounce, rune and brazier point lights |
 | Tone mapping | ACES filmic, exposure 1.2 |
@@ -79,9 +82,9 @@ Volume's quarter resolution means 25% on each axis, approximately 1/16 of full-r
 | Composition | World multiplied by AO contribution when enabled, plus Gaussian-blurred volume at 0.3 strength, then bloom when enabled |
 | Bloom | Strength 0.16, radius 0.5, threshold 1.15 |
 
-The retained Three.js TextureSizeNode patch uses a mip-free textureDimensions call for multisampled textures. v156 only removed redundant final-copy MSAA/depth attachments on compact devices; that optimization remains intact. v157 additionally reduces tablet rendering settings as listed above, while Desktop High retains the existing quality.
+The retained Three.js TextureSizeNode patch uses a mip-free textureDimensions call for multisampled textures. v156 only removed redundant final-copy MSAA/depth attachments on compact devices; that optimization remains intact. v158 reduces tablet rendering settings as listed above, while Desktop High retains the existing quality.
 
-At a 1180×734 CSS viewport and devicePixelRatio 2, Desktop High produces a 1770×1101 buffer, while Tablet Optimized produces 1180×734. A 1770×1101 CSS viewport is also tested directly: Tablet Optimized produces a 1770×1101 buffer. The cap is not a fixed pixel size.
+At a 1180×734 CSS viewport and devicePixelRatio 2, Desktop High produces a 1770×1101 buffer, while Tablet Optimized produces 885×551 after rounding. Separate 1770×1101 buffer coverage uses a 2360×1468 CSS viewport at the 0.75 cap. The cap is not a fixed pixel size.
 
 ## Readiness and rendering loop
 
@@ -99,7 +102,16 @@ Compact gameplay permits one in-flight GPU frame and schedules the next after co
 - debug3d=1 plus debug3dgpu=1 opts into heavier shader/pipeline scopes and profiling. These are not the normal production path.
 - Canvas unconfiguration, Three.js resource disposal, owned-device destruction and stale-callback guards support mode recovery. The app cannot restart Safari's shared GPU process if Safari stops returning adapters.
 
-## Acceptance status
+## v158 acceptance
+
+The conservative baseline and its validation evidence are documented in
+[v158-tablet-baseline.md](v158-tablet-baseline.md). The dedicated real-WebGPU tablet
+acceptance completes both viewport cases, all three warm-up views, final GPU
+completion, native movement/look, sustained rendering, Illustrated/Cinematic
+recovery and a second 3D entry. Actual raster/PMREM allocations are checked, not
+only preset metadata. Physical Safari acceptance remains outstanding.
+
+## Historical v157 acceptance
 
 See `3d-presentation-memory.md` for historical v156 validation. Local v157 validation completed on 2026-09-10: **74 checks passed**.
 
@@ -114,4 +126,33 @@ GPU tests ran sequentially with `ATLAS_WEBGPU_QA=1`, `ATLAS_EDITOR_URL=http://12
 
 These checks cannot establish physical Safari GPU stability. Source textures and geometry remain substantial, and browser/GPU-process pressure may still occur. A more conservative render-target baseline reduces demand but is not proof of the cause or a guarantee of recovery from a failed Safari GPU process.
 
-For physical acceptance, load v157 with `?debug3d=1` and no preset override. Verify **tablet · Tablet Optimized**, world/effects/presentation **1×/1×/1×**, DPR **1**, shadows **2048**, GTAO **uit**, volume **25% / 40**, bloom **aan**, anisotropy **4**. Test Illustrated → Cinematic → Real 3D, all five preparation stages, simultaneous movement/look and interaction for at least two minutes, then Illustrated → Cinematic and another 3D entry in the same Safari session. If it fails, retain the settings and operation/device-loss diagnostics in the screenshot.
+For v158 physical acceptance after deployment, use `https://svenakkerman.nl/?debug3d=1&rendererPreset=tablet-optimized`. Verify **tablet · Tablet Optimized**, world/effects/presentation **1×/1×/1×**, DPR **0.75**, shadows **1024**, GTAO/volume/bloom **uit**, texture cap **1024**, anisotropy **2**, HDR **512×256**, PMREM **384×512**. Test Illustrated → Cinematic → Real 3D, all five preparation stages, simultaneous movement/look and interaction for at least two minutes, then Illustrated → Cinematic and another 3D entry in the same Safari session. If it fails, retain the settings and operation/device-loss diagnostics in the screenshot. The production URL does not serve these local changes until an authorized deployment occurs.
+
+## v158 HDR and resource budget
+
+Tablet still decodes the existing 2K HDR file: this small transient CPU allocation
+has not been eliminated by pretending that the source file is lower resolution.
+Immediately after decoding, linear box filtering creates a 512×256 half-float
+image and replaces the full-resolution data. The existing sky and reflection
+textures share that smaller CPU Source. The active material path derives a PMREM cube-UV atlas of 384×512 instead of
+1536×2048; the actual GPU allocations are asserted in acceptance QA. Environmental lighting stays
+on, with the existing intensity/rotation. After final GPU completion, the shared
+HDR CPU data is released; dimensions and uploaded GPU representations remain.
+Desktop keeps its original HDR path and source lifetime.
+
+At the same CSS viewport, 0.75² gives 56.25% of v157 full-size target pixels
+(43.75% fewer before rounding). Shadows have 75% fewer pixels. Removing volume,
+blur and bloom eliminates their targets and work entirely. HDR input and derived
+PMREM pixels each fall by 93.75%. These are allocation estimates, not a measurement
+of Safari's total GPU memory or a guarantee against device loss.
+
+For each raster image, base-level bytes fall in proportion to
+`min(1,1024/longEdge)²`, with integer aspect-ratio rounding. A 2048² map falls by
+75%, a 4096² map by 93.75%; maps already at/below 1024 do not change. Uncompressed
+RGBA8 mip-chain estimates use 4 bytes/pixel × 4/3. Runtime `textureBudget` records
+unique decoded image bytes before/after resize and promptly released originals;
+it does not pretend to measure driver overhead or exact GPU storage.
+
+Diagnostic output reports preset DPR/MSAA/shadows, volume and bloom off, texture
+cap/anisotropy and HDR/PMREM sizes. The existing debug-only original exception,
+copy-range, device-loss and intentional-destruction evidence remains intact.

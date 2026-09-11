@@ -2,6 +2,8 @@
 
 Blender geometry, route composition, conifer trunk/branch meshes, terrain, paving, temple architecture, runestones, guardians, braziers and authoring scripts were created for this implementation. Atlas character sprites and UI assets are reused from the existing repository.
 
+The September 2026 faceted-forest pass replaces generic fir/groundcover meshes with original opaque vertex-colored geometry and simplifies selected scanned rocks in the live GLB. The following inventory also documents historical sources retained in the original Blender checkpoint; it does not imply every source remains in the current export. See `Docs/faceted-forest.md` and `scripts/stylized-forest-lvl0001-blender.py` for the current replacements.
+
 ## Poly Haven — CC0
 
 Public-domain PBR scans and HDR environment from [Poly Haven](https://polyhaven.com/license):

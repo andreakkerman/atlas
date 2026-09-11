@@ -1,7 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 // Non-round aspect ratio also exercises the physical retest's 512×318 warm-up.
-test.use({hasTouch:true,viewport:{width:1770,height:1101}});
+test.use({hasTouch:true,viewport:{width:2360,height:1468}});
 test('compact preparation retains full pipeline coverage and final resolution',async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium'||process.env.ATLAS_WEBGPU_QA!=='1','Requires real Chromium WebGPU; this exercises iPad strategy, not physical Safari.');
  test.setTimeout(300000);
@@ -39,11 +39,11 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(ready.snapshot.preparationStrategy).toBe('compact');
  expect(ready.snapshot.configuration.preset.name).toBe('Tablet Optimized');
  expect(ready.snapshot.resolution).toEqual([1770,1101]);
- expect(ready.snapshot.actualEffects).toEqual({gtao:false,bloom:true,volumeSteps:40,volumeResolution:.25});
+ expect(ready.snapshot.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0});
  await expect(page.locator('[data-tap-diagnostics]')).toContainText('tablet · Tablet Optimized');
- await expect(page.locator('[data-tap-diagnostics]')).toContainText('MSAA wereld 1× / effecten 1× / presentatie 1× · DPR-cap 1');
- await expect(page.locator('[data-tap-diagnostics]')).toContainText('Schaduw 2048² · GTAO uit · Volume 25% / 40 stappen');
- await expect(page.locator('[data-tap-diagnostics]')).toContainText('Bloom aan · Anisotropie 4');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('MSAA wereld 1× / effecten 1× / presentatie 1× · DPR-cap 0.75');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Schaduw 1024² · GTAO uit · Volume uit');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Bloom uit · Anisotropie 2');
  expect(ready.snapshot.warmupTotal).toBe(4);expect(ready.snapshot.warmupViews).toBe(4);
  expect(ready.views).toHaveLength(3);
  // Actual shadow passes must finish in bounded batches, not first appear in
@@ -55,7 +55,11 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(ready.views[0].camera).toEqual(ready.snapshot.camera);
  expect(ready.views.every(size=>Math.max(size.width,size.height)<=512)).toBe(true);
  expect(ready.snapshot.resolution[0]).toBeGreaterThan(512);
- expect(ready.snapshot.releasedImageBytes).toBeGreaterThan(800*1024*1024);
+ // The faceted world must reduce decode demand, not depend on the former
+ // photorealistic world's >800 MiB release count to pass this test.
+ expect(ready.snapshot.textureBudget.sourceBytes).toBeLessThan(500*1024*1024);
+ expect(ready.snapshot.textureBudget.maxLongEdge).toBeLessThanOrEqual(1024);
+ expect(ready.snapshot.releasedImageBytes+ready.snapshot.textureBudget.releasedSourceBytes).toBeGreaterThan(0);
  expect(ready.compilePeak).toBeLessThan(100);
  expect(ready.journal.operation).toBe('3D gereed');
  expect(ready.snapshot.gpuPreparation).toBeUndefined();
@@ -92,7 +96,7 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(after.snapshot.ready).toBe(true);expect(errors).toEqual([]);
  await page.evaluate(()=>{window.eval('state').worldX=1847;window.eval('updateWorldDom')();window.eval('threeRenderer.lookAt')(-.38,.46);});
  await page.setViewportSize({width:800,height:1000});
- await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual([800,1000]);
+ await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual([600,750]);
  await page.screenshot({path:'qa-screenshots/usability/compact-temple-resized.png'});
  expect(await page.evaluate(()=>window.pipelineCount)-ready.pipelines).toBeLessThanOrEqual(1);
  expect(errors).toEqual([]);

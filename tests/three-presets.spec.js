@@ -27,7 +27,7 @@ for(const [name,signals,kind]of [
 });
 test('preset settings use valid WebGPU sample counts, not unsupported 2x',()=>{
  const {presets,select}=api(),p=presets['tablet-optimized'];
- expect(JSON.parse(JSON.stringify(p))).toEqual({id:'tablet-optimized',name:'Tablet Optimized',worldSamples:1,effectSamples:1,dprCap:1,shadowSize:2048,volumeResolution:.25,volumeSteps:40,gtao:false,bloom:true,anisotropy:4});
+ expect(JSON.parse(JSON.stringify(p))).toEqual({id:'tablet-optimized',name:'Tablet Optimized',worldSamples:1,effectSamples:1,dprCap:.75,shadowSize:1024,volumeResolution:0,volumeSteps:0,gtao:false,bloom:false,anisotropy:2,textureCap:1024,environmentCap:512});
  const high=presets['desktop-high'];expect(high.worldSamples).toBe(4);expect(high.effectSamples).toBe(4);expect(high.dprCap).toBe(1.5);expect(high.shadowSize).toBe(4096);expect(high.volumeSteps).toBe(80);expect(high.gtao).toBe(true);expect(high.anisotropy).toBe(8);
  const forced=select(desktop,'tablet-optimized');expect(forced.compact).toBe(true);expect(forced.presentationSamples).toBe(1);expect(forced.presentationDepth).toBe(false);
  const ipadHigh=select({...touch,platform:'MacIntel'},'desktop-high');expect(ipadHigh.preset).toBe(high);expect(ipadHigh.presentationSamples).toBe(1);

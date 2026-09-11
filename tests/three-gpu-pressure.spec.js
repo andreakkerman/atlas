@@ -33,7 +33,7 @@ for(const preset of ['desktop-high','tablet-optimized'])for(const failure of ['n
  expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().error)).toBeNull();
  expect(await page.evaluate(()=>window.gpuEvidence.shaderErrors)).toEqual([]);
  expect(await page.evaluate(()=>window.gpuEvidence.errors)).toEqual([]);
- expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual(preset==='desktop-high'?[1770,1101]:[1180,734]);
+ expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().resolution)).toEqual(preset==='desktop-high'?[1770,1101]:[885,551]);
  expect(await page.evaluate(()=>window.presentationSamples)).toContain(1);
  expect(await page.evaluate(()=>window.presentationSamples)).not.toContain(4);
  expect(await page.evaluate(()=>window.depthSamples)).toContain(preset==='desktop-high'?4:1);
@@ -41,8 +41,8 @@ for(const preset of ['desktop-high','tablet-optimized'])for(const failure of ['n
  expect(await page.evaluate(()=>window.gpuEvidence.destroyed)).toBe(1);
  const config=await page.evaluate(()=>window.eval('threeRenderer.snapshot')().configuration);
  expect(config.device.deviceClass).toBe('tablet');expect(config.preset.id).toBe(preset);
- expect(await page.evaluate(()=>window.shadowSizes)).toContain(preset==='desktop-high'?4096:2048);
- expect(await page.evaluate(()=>Math.max(...window.anisotropies))).toBe(preset==='desktop-high'?8:4);
+ expect(await page.evaluate(()=>window.shadowSizes)).toContain(preset==='desktop-high'?4096:1024);
+ expect(await page.evaluate(()=>Math.max(...window.anisotropies))).toBe(preset==='desktop-high'?8:2);
  expect(await page.evaluate(()=>window.gtaoModules)).toBe(preset==='desktop-high'?2:0);
  if(failure==='stall'){
   await page.evaluate(()=>window.stallFrame=true);

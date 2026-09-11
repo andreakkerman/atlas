@@ -8,9 +8,10 @@
   function createRuntime(options) {
     const configuration=global.AtlasThreePresets.session,preset=configuration.preset;
     const compactPreparation=configuration.compact;
-    const effectNames=`schaduwen, ${preset.gtao?'GTAO, ':''}volume${preset.bloom?' en bloom':''}`;
+    const effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
     const preparationStrategy=compactPreparation?'compact':'desktop';
     let actualEffects=null,failureEvidence=null;
+    let textureBudget=global.AtlasThreeTextureBudget.create(preset.textureCap||0);
     function recordFailure(caught,context={}) {
       if(!DEBUG||failureEvidence)return;
       failureEvidence={name:caught?.name||'Error',message:String(caught?.message||caught),stack:String(caught?.stack||'').slice(0,6000),...context};
@@ -48,7 +49,7 @@
     const input=global.AtlasThreeInput.create({nativeTouch:configuration.device.nativeTouch,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,worldMode:'real-3d',configuration,actualEffects,rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,worldMode:'real-3d',configuration,actualEffects,textureBudget:textureBudget.snapshot(),rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
@@ -113,14 +114,17 @@
       const loader=new GLTFLoader().setDRACOLoader(draco);
       const decodedMeshes=[],decodedTextures=[];let complete=false;
       // Preload through the parser's normal dependency cache, before scene loading
-      // fans out. Preserve all source pixels and geometry, but avoid simultaneous
-      // image decoding, Draco worker heaps and hundreds of outstanding mesh jobs.
-      if(compactPreparation)loader.register(parser=>({name:'ATLAS_sequential_preparation',beforeRoot:async()=>{
+      // fans out. Apply the tablet image cap before the next decode; geometry is
+      // unchanged. Avoid overlapping decoder heaps and outstanding mesh jobs.
+      if(compactPreparation)loader.register(parser=>{
+        const loadImage=parser.loadImageSource.bind(parser);
+        if(preset.textureCap)parser.loadImageSource=async(...args)=>{const texture=await loadImage(...args);try{await textureBudget.resize(texture);}catch(error){texture.image?.close?.();texture.dispose();throw error;}return texture;};
+        return {name:'ATLAS_sequential_preparation',beforeRoot:async()=>{
         for(const type of ['texture','mesh']){
           const count=parser.json[type==='texture'?'textures':'meshes']?.length||0;
           for(let i=0;i<count;i++){const resource=await prepareWork(`${type==='texture'?'Textuur decoderen':'Draco-mesh voorbereiden'} ${i+1}/${count}`,()=>parser.getDependency(type,i),token);if(resource)(type==='texture'?decodedTextures:decodedMeshes).push(resource);}
         }
-      }}));
+      }};});
       try {
         const gltf=await loader.loadAsync(ROOT+'lvl0001.glb');
         // Only the scene escapes this scope, not gltf.parser and its binary,
@@ -211,7 +215,9 @@
       const bounce=new THREE.DirectionalLight('#ffdaa0',1.8);bounce.position.set(-30,18,25);scene.add(bounce);
       sun=new THREE.DirectionalLight('#ffca85',10);sun.position.set(-36,42,-24);sun.castShadow=true;
       sun.shadow.mapSize.set(preset.shadowSize,preset.shadowSize);Object.assign(sun.shadow.camera,{left:-27,right:27,top:27,bottom:-27,near:.5,far:130});
-      sun.shadow.bias=-.00025;sun.shadow.normalBias=.025;scene.add(sun,sun.target);
+      // Keep the normal offset proportional to shadow texel footprint. The
+      // faceted surfaces otherwise self-shadow in stripes at tablet resolution.
+      sun.shadow.bias=-.00025;sun.shadow.normalBias=.025*4096/preset.shadowSize;scene.add(sun,sun.target);
       // Keep the world shadow layer independent of the atmosphere pass camera.
       // Three otherwise inherits layer 10 and replaces the map with an empty pass.
       sun.shadow.camera.layers.enable(1);
@@ -292,7 +298,10 @@
       for(const x of [16.2,21.8])for(let i=0;i<3;i++){
         const flame=new THREE.Mesh(flameGeometry,flameMaterial);flame.position.set(x,6.73,-57.7);flame.rotation.y=i*Math.PI/3;scene.add(flame);flames.push(flame);
       }
-      const material=new THREE.VolumeNodeMaterial();material.steps=preset.volumeSteps;material.fog=false;material.offsetNode=bayer16(screenCoordinate);
+      let material=null,fogPass=null,blur=null;
+      const scenePass=worldPass=pass(scene,camera,{samples:preset.worldSamples}),depth=scenePass.getTextureNode('depth');
+      if(preset.volumeSteps){
+      material=new THREE.VolumeNodeMaterial();material.steps=preset.volumeSteps;material.fog=false;material.offsetNode=bayer16(screenCoordinate);
       // Extend r180's volume model to scatter the existing directional sunlight.
       // Its default direct() deliberately excludes lights without a distance field.
       const baseLightingModel=material.setupLightingModel.bind(material);
@@ -309,16 +318,19 @@
         return float(.28).mul(phase).mul(positionRay.y.mul(-.04).exp()).mul(smoothstep(2,8,distance(positionRay,cameraPosition)));
       });
       const volume=new THREE.Mesh(new THREE.BoxGeometry(90,38,140),material);volume.position.set(5,10,-32);volume.receiveShadow=true;volume.layers.set(10);scene.add(volume);sun.layers.enable(10);
-      const scenePass=worldPass=pass(scene,camera,{samples:preset.worldSamples}),depth=scenePass.getTextureNode('depth');material.depthNode=depth.sample(screenUV);
+      material.depthNode=depth.sample(screenUV);
       // Bind depth sampling to its producer, never the currently rendered post pass.
       if(compactPreparation)scenePass.renderTarget.depthTexture.renderTarget=scenePass.renderTarget;
-      const layers=new THREE.Layers();layers.set(10);const fogPass=pass(scene,camera,{depthBuffer:false,samples:preset.effectSamples});fogPass.setLayers(layers);fogPass.setResolution(preset.volumeResolution);
+      const layers=new THREE.Layers();layers.set(10);fogPass=pass(scene,camera,{depthBuffer:false,samples:preset.effectSamples});fogPass.setLayers(layers);fogPass.setResolution(preset.volumeResolution);
+      blur=gaussianBlur(fogPass,uniform(.3),1);
+      }
       const contact=preset.gtao?ao(depth,null,camera):null;if(contact){contact.resolutionScale=.5;contact.radius.value=.42;}
-      const blur=gaussianBlur(fogPass,uniform(.3),1),combined=(contact?scenePass.mul(mix(float(1),contact.getTextureNode().r,.3)):scenePass).add(blur.mul(.3));
-      const glow=preset.bloom?bloom(combined,.16,.5,1.15):null;post=new THREE.PostProcessing(renderer);post.outputNode=new URLSearchParams(location.search).get('threeDebug')==='volume'?scenePass.mul(.000001).add(blur):glow?combined.add(glow):combined;
+      let combined=contact?scenePass.mul(mix(float(1),contact.getTextureNode().r,.3)):scenePass;
+      if(blur)combined=combined.add(blur.mul(.3));
+      const glow=preset.bloom?bloom(combined,.16,.5,1.15):null;post=new THREE.PostProcessing(renderer);post.outputNode=blur&&new URLSearchParams(location.search).get('threeDebug')==='volume'?scenePass.mul(.000001).add(blur):glow?combined.add(glow):combined;
       for(const [name,node]of [['Wereld en schaduwen',scenePass],['Volumetrisch licht',fogPass],['GTAO',contact],['Volume-blur',blur],['Bloom',glow]]){if(node)instrumentPreparationPass(name,node);}
       postResources.push(...[scenePass,fogPass,contact,blur,glow].filter(Boolean));
-      actualEffects={gtao:Boolean(contact),bloom:Boolean(glow),volumeSteps:material.steps,volumeResolution:fogPass.getResolution()};
+      actualEffects={gtao:Boolean(contact),bloom:Boolean(glow),volumeSteps:material?.steps||0,volumeResolution:fogPass?.getResolution()||0};
     }
     function updateTarget() {
       currentTarget=null;let best=0;const direction=new THREE.Vector3();camera.getWorldDirection(direction);
@@ -335,7 +347,7 @@
       // the mutable DOM image caused partially updated character textures.
       if(!source?.complete||!source.naturalWidth)return;
       if(!npc){
-        npcFrame=document.createElement('canvas');npcFrame.width=source.naturalWidth;npcFrame.height=source.naturalHeight;
+        npcFrame=document.createElement('canvas');const size=global.AtlasThreeTextureBudget.dimensions(source.naturalWidth,source.naturalHeight,preset.textureCap||0);npcFrame.width=size.width;npcFrame.height=size.height;
         const texture=new THREE.CanvasTexture(npcFrame);texture.colorSpace=THREE.SRGBColorSpace;textures.add(texture);
         npc=new THREE.Mesh(new THREE.PlaneGeometry(2*source.naturalWidth/source.naturalHeight,2),new THREE.MeshStandardMaterial({map:texture,alphaTest:.15,alphaToCoverage:true,side:THREE.DoubleSide,roughness:1}));npc.position.set(17.8,6.38,-57);npc.castShadow=true;scene.add(npc);sun.shadow.needsUpdate=true;
       }
@@ -483,7 +495,7 @@
       if(loading)return;
       checkpoint('3D-startpad gecontroleerd; vorige runtime opruimen');
       try{dispose();}finally{token=generation;}
-      loading=true;gpuTrace=null;deviceDestruction=null;actualEffects=null;failureEvidence=null;lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
+      loading=true;gpuTrace=null;deviceDestruction=null;actualEffects=null;failureEvidence=null;textureBudget=global.AtlasThreeTextureBudget.create(preset.textureCap||0);lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
       checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
         checkpoint('navigator.gpu controleren');
         const gpu=navigator.gpu;
@@ -524,8 +536,13 @@
         if(token!==generation){releaseRoot(root);return;}
         await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
         if(token!==generation)return;
-        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
-        const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;textures.add(sky);
+        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;const smallGroundcover=/^(Grass|Path.bank.community|Atlas.woodland.fern|Rich.route.understory|Fern.drift|Detailed.woodland.flower|Paving.edge.tuft|Sorrel.in.paving.joint)/.test(obj.name);obj.castShadow=!(preset.id==='tablet-optimized'&&smallGroundcover);obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
+        const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;
+        textures.add(sky);
+        if(preset.environmentCap){
+          await prepareWork(`HDR verkleinen tot ${preset.environmentCap} pixels`,()=>global.AtlasThreeTextureBudget.resizeHDR(sky,preset.environmentCap,THREE.DataUtils),token);
+          if(token!==generation)return;
+        }
         await prepareWork('HDR-omgeving en hemeldome voorbereiden',()=>{
           const environment=sky.clone();environment.mapping=THREE.EquirectangularReflectionMapping;environment.needsUpdate=true;textures.add(environment);scene.environment=environment;scene.environmentIntensity=.16;scene.environmentRotation.set(.2,1.55,0);
           const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:sky,color:new THREE.Color(.14,.16,.19),side:THREE.BackSide,depthWrite:false,fog:false}));dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);
@@ -533,6 +550,11 @@
         preparationStage(2,'warming');await prepareWork('Licht, moss-materialen en post-processing opbouwen',async()=>{buildLights();await buildAtmosphere(token);},token);if(token!==generation)return;
         if(!next.isConnected){dispose();sync();return;}
         if(!await warmup(token)||token!==generation)return;
+        if(preset.environmentCap){
+          // All environment conversion and sky uploads have completed their GPU fences.
+          const image=sky.image;sky.source.data={width:image.width,height:image.height,data:null};sky.source.dataReady=false;
+          debugMark('HDR CPU-bron vrijgegeven na GPU-voltooiing','complete');
+        }
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;
         gpuTrace?.stop();
         if(DEBUG&&new URLSearchParams(location.search).get('debug3dgpu')==='1')visibleProfile=global.AtlasThreeRuntimeDiagnostics?.start(renderer,postResources);
