@@ -9,7 +9,7 @@ for(const jsDestroy of [false,true])test(`device-loss evidence distinguishes Jav
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   let lose;const device=new EventTarget();device.lost=new Promise(resolve=>lose=resolve);device.destroy=()=>lose({reason:'destroyed',message:''});
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:async()=>device})}});
-  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'})});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> 'atlas-3d',getLevel:()=>({id:'LVL-0001'})});
   const pending=runtime.sync();while(!window.engineInit)await new Promise(resolve=>setTimeout(resolve,0));
   if(jsDestroy)device.destroy();else lose({reason:'destroyed',message:''});
   await pending;return runtime.snapshot();
@@ -28,7 +28,7 @@ test('a throwing renderer disposer cannot retain the owned device or hide the st
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   window.unconfigured=0;let destroyed=0;
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:async()=>({destroy:()=>destroyed++})})}});
-  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'})});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> 'atlas-3d',getLevel:()=>({id:'LVL-0001'})});
   await runtime.sync();return {destroyed,unconfigured:window.unconfigured,status:runtime.snapshot().status,diagnostic:runtime.snapshot().diagnostic};
  });
  expect(result.destroyed).toBe(1);expect(result.unconfigured).toBe(1);expect(result.status).toBe('error');expect(result.diagnostic).toContain('RangeError: injected initialization failure');
@@ -40,7 +40,7 @@ test('device arriving after cancellation is destroyed and cannot revive startup'
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   let resolveDevice,destroyed=0,requested=false;
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:()=>{requested=true;return new Promise(resolve=>resolveDevice=resolve);}})}});
-  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'})});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> 'atlas-3d',getLevel:()=>({id:'LVL-0001'})});
   const pending=runtime.sync();while(!requested)await new Promise(resolve=>setTimeout(resolve,0));
   runtime.dispose();resolveDevice({destroy:()=>destroyed++});await pending;
   return {destroyed,status:runtime.snapshot().status};
@@ -71,7 +71,9 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
   GPUDevice.prototype.createShaderModule=function(...args){if(failShader){failShader=false;throw new DOMException('GPUDevice.createShaderModule: Unable to make shader module.','InvalidStateError');}return Reflect.apply(shader,this,args);};
   window.addEventListener('atlas-three-preparation',event=>{
    if(action==='shader-failure'){
-    if(!window.triggered&&event.detail.operation.startsWith('Warm-up 1/3:')&&event.detail.state==='complete'){window.triggered=failShader=true;}
+    // Canonical Atlas has no late view-2 effect shaders. Inject at its first
+    // actual warm-up shader creation; this tests recovery, not Safari's cause.
+    if(!window.triggered&&event.detail.operation.startsWith('Warm-up 1/3:')&&event.detail.state==='pending'){window.triggered=failShader=true;}
     return;
    }
    if(action.includes('stall')){
@@ -88,7 +90,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
  },action);
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1&rendererPreset=desktop-high`);
- await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+ await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
  const initialPosition=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
  await expect.poll(()=>page.evaluate(()=>window.triggered),{timeout:240000}).toBe(true);
  if(action.includes('stall')){

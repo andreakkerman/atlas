@@ -10,7 +10,7 @@ test('pagehide cancels a late device and prevents restart until pageshow',async(
  });
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base+'/?dev=editor&level=LVL-0001');
- await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+ await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
  await expect.poll(()=>page.evaluate(()=>window.deviceRequested)).toBe(true);
  await page.evaluate(()=>{
   dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
@@ -38,7 +38,7 @@ test('real navigation destroys the ready device and permits a new 3D session',as
  });
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base+'/?dev=editor&level=LVL-0001');
- await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+ await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
  await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:240000}).toBe('ready');
  await page.goto('about:blank');
  await page.goto(base+'/?dev=editor&level=LVL-0001');

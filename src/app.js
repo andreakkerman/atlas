@@ -129,7 +129,7 @@ const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
 const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
-  shouldRenderEffect: (effect) => !(voxelRenderer.getSettings().renderer === "cinematic" || (voxelRenderer.getSettings().renderer === "3d" && level?.id === "LVL-0001")) || !window.AtlasCinematicSettings.replacedPresets.has(effect.presetId),
+  shouldRenderEffect: (effect) => !(voxelRenderer.getSettings().renderer === "cinematic" || (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id === "LVL-0001")) || !window.AtlasCinematicSettings.replacedPresets.has(effect.presetId),
   warn: (message) => console.warn(message)
 });
 let graphicsSettingsOpen = false;
@@ -161,7 +161,7 @@ const voxelRenderer = window.AtlasVoxelRenderer.createRuntime({
 });
 const emissiveGlowRenderer = window.AtlasEmissiveGlow.createRuntime({
   getLevel: () => level,
-  getRenderer: () => voxelRenderer.getSettings().renderer === "3d" && level?.id !== "LVL-0001" ? "illustrated" : voxelRenderer.getSettings().renderer,
+  getRenderer: () => window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id !== "LVL-0001" ? "illustrated" : voxelRenderer.getSettings().renderer,
   getSettings: (levelId) => worldResolver.levelSettings(levelId).emissiveGlow
 });
 const cinematicOriginals = new Map();
@@ -183,7 +183,7 @@ const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
     : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))).groundingShadow : false,
   onStatus: (snapshot) => {
     cinematicStatus = snapshot;
-    const message = snapshot.error ? `Cinematic Lighting unavailable: ${snapshot.error}` : `Cinematic Lighting · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
+    const message = snapshot.error ? `Cinematic unavailable: ${snapshot.error}` : `Cinematic · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
     document.querySelectorAll("[data-cinematic-status]").forEach(node => { node.textContent = message; node.dataset.status = snapshot.status; });
     document.querySelectorAll("[data-cinematic-error]").forEach(node => { node.textContent = snapshot.error ? message : ""; node.hidden = !snapshot.error; });
   }
@@ -3421,7 +3421,7 @@ function recordPhysicalMovement(movement, previousX) {
 }
 
 function stepMovement(timestamp) {
-  if (voxelRenderer.getSettings().renderer === "3d" && level.id === "LVL-0001" && !threeStatus.ready) {
+  if (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level.id === "LVL-0001" && !threeStatus.ready) {
     stopMovement({ invalidateIntent: true });
     return;
   }
@@ -4017,7 +4017,7 @@ function finishInteraction(target, kind, action) {
 
 function beginFreeWalk(point) {
   if (state.screen !== "scene") return;
-  if (voxelRenderer.getSettings().renderer === "3d" && level.id === "LVL-0001") return;
+  if (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level.id === "LVL-0001") return;
 
   const interactionToken = replaceMovementIntent({ type: "ground", point: { ...point } });
   state.justCompletedRuneId = null;
@@ -6074,7 +6074,7 @@ function renderFlightPathWorkspace() {
 
 function renderWorldStage() {
   const selectedRenderer = voxelRenderer.getSettings().renderer;
-  const renderer = selectedRenderer === "3d" && level.id !== "LVL-0001" ? "illustrated" : selectedRenderer;
+  const renderer = window.AtlasGraphicsModes.isThree(selectedRenderer) && level.id !== "LVL-0001" ? "illustrated" : selectedRenderer;
   const emissiveGlow = window.AtlasEmissiveGlow.normalizeSettings(worldResolver.levelSettings(level.id).emissiveGlow);
   const actorPosition = worldToScreen({ x: state.worldX, y: state.worldY }, "track");
   const svenClasses = [
@@ -6086,7 +6086,7 @@ function renderWorldStage() {
   return `
     <section class="stageViewport" aria-label="Verbonden wereld" data-world-stage data-renderer="${renderer}">
       ${renderer === "voxel" ? `<canvas class="voxelViewportCanvas" data-voxel-canvas aria-label="WebGPU voxelwereld"></canvas>` : ""}
-      ${renderer === "3d" && level.id === "LVL-0001" ? `<canvas class="threeViewportCanvas" data-three-canvas data-three-level="${level.id}" aria-label="Eerste persoon: De Runenpoort" aria-busy="true"></canvas>
+      ${window.AtlasGraphicsModes.isThree(renderer) && level.id === "LVL-0001" ? `<canvas class="threeViewportCanvas" data-three-canvas data-three-level="${level.id}" data-three-mode="${renderer}" aria-label="Eerste persoon: De Runenpoort" aria-busy="true"></canvas>
         <div class="threeLoading" data-three-loading role="status" aria-live="polite"><div><span class="threeLoadingMark" aria-hidden="true">◇</span><h2 data-three-loading-title>De 3D-wereld wordt voorbereid</h2><p data-three-preparation>3D-engine starten…</p><p class="threeDiagnostic" data-three-diagnostic>WebGPU controleren…</p>
           <div class="threePreparationProgress" data-three-progress role="progressbar" aria-label="Voltooide voorbereidingsstappen" aria-valuemin="0" aria-valuemax="${window.AtlasThreeRenderer.PREPARATION_STAGES.length}" aria-valuenow="0">${window.AtlasThreeRenderer.PREPARATION_STAGES.map(()=>'<span aria-hidden="true"></span>').join('')}</div>
           <small data-three-progress-label>0 van ${window.AtlasThreeRenderer.PREPARATION_STAGES.length} stappen voltooid</small><p class="threePreparationDetail" data-three-progress-detail></p>
@@ -6096,7 +6096,7 @@ function renderWorldStage() {
         <div class="threeTouchMovement"><div data-three-move aria-label="Sleep om te lopen en draaien"><span data-three-stick></span></div><span>Lopen</span></div>
         <button class="threeInteract" type="button" data-three-interact hidden></button>
         <p class="cinematicError" data-three-error role="alert" hidden></p>` : ""}
-      ${renderer === "cinematic" ? `<canvas class="cinematicViewportCanvas" data-cinematic-canvas data-cinematic-level="${level.id}" aria-label="WebGPU Cinematic Lighting"></canvas><p class="cinematicError" data-cinematic-error role="alert" hidden></p>` : ""}
+      ${renderer === "cinematic" ? `<canvas class="cinematicViewportCanvas" data-cinematic-canvas data-cinematic-level="${level.id}" aria-label="WebGPU Cinematic"></canvas><p class="cinematicError" data-cinematic-error role="alert" hidden></p>` : ""}
       <div
         class="worldTrack"
         style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
@@ -6386,28 +6386,18 @@ function renderGraphicsSettings() {
   const descriptions = {
     illustrated: "De oorspronkelijke geïllustreerde 2D Atlas-presentatie.",
     voxel: "WebGPU voxel rendering with depth-aware world geometry, high-fidelity voxel sprites and emissive effects.",
-    cinematic: "Experimental WebGPU lighting over the original artwork. Author per-level effects in Developer Tools → Graphics → Cinematic Lighting.",
+    cinematic: "WebGPU-verlichting over de oorspronkelijke illustraties.",
+    "atlas-3d": level?.id === "LVL-0001" ? "De gefacetteerde wereld, met dezelfde weergave op desktop en tablet." : "Atlas 3D is beschikbaar voor De Runenpoort. Dit level gebruikt Illustrated.",
     "3d": level?.id === "LVL-0001" ? "Loop door De Runenpoort vanuit Svens ogen." : "3D is beschikbaar voor De Runenpoort. Dit level gebruikt Illustrated."
   };
   return `
     <section class="graphicsSettingsPopover" data-graphics-settings role="dialog" aria-label="Grafische instellingen">
       <header><div><span class="settingsEyebrow">Presentation</span><h2>Graphics</h2></div><button type="button" data-graphics-action="close" aria-label="Sluiten">×</button></header>
-      <fieldset>
-        <legend>Renderer</legend>
-        <div class="segmentedControl">
-          <button type="button" data-renderer-choice="illustrated" aria-pressed="${settings.renderer === "illustrated"}">Illustrated</button>
-          <button type="button" data-renderer-choice="3d" aria-pressed="${settings.renderer === "3d"}">3D</button>
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend>Experimental</legend>
-        <div class="segmentedControl">
-          <button type="button" data-renderer-choice="voxel" aria-pressed="${settings.renderer === "voxel"}">Voxel</button>
-          <button type="button" data-renderer-choice="cinematic" aria-pressed="${settings.renderer === "cinematic"}">Cinematic Lighting</button>
-        </div>
-      </fieldset>
+      ${['Renderer','Experimental'].map(group=>`<fieldset><legend>${group}</legend><div class="segmentedControl">
+        ${window.AtlasGraphicsModes.list(settings.renderer).filter(mode=>mode.group===group).map(mode=>`<button type="button" data-renderer-choice="${mode.id}" aria-pressed="${mode.selected}" ${mode.enabled?'':'disabled title="Desktop only"'}>${mode.label}${mode.enabled?'':'<small>Desktop only</small>'}</button>`).join('')}
+      </div></fieldset>`).join('')}
       <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
-      ${settings.renderer === "3d" && level?.id === "LVL-0001" ? `<p data-three-status>${threeStatus.error || threeStatus.status}</p>` : ""}
+      ${window.AtlasGraphicsModes.isThree(settings.renderer) && level?.id === "LVL-0001" ? `<p data-three-status>${threeStatus.error || threeStatus.status}</p>` : ""}
       ${settings.renderer === "cinematic" ? `<p data-cinematic-status>${cinematicStatus.error || cinematicStatus.status}</p>` : ""}
       ${settings.renderer === "voxel" ? `<label class="graphicsSelect">Graphics quality
         <select data-graphics-quality>
@@ -6418,7 +6408,7 @@ function renderGraphicsSettings() {
       <label class="graphicsRange">Voxel blockiness <output>${Math.round(settings.voxelSize)} px</output>
         <input type="range" min="1" max="10" step="1" value="${settings.voxelSize}" data-voxel-setting="voxelSize" />
       </label>` : ""}
-      ${!["cinematic", "3d"].includes(settings.renderer) ? `<p class="voxelRuntimeStatus" data-voxel-runtime-status data-status="${voxelRendererStatus.status}">${voxelRuntimeStatusLabel()}</p>` : ""}
+      ${!["cinematic", "3d", "atlas-3d"].includes(settings.renderer) ? `<p class="voxelRuntimeStatus" data-voxel-runtime-status data-status="${voxelRendererStatus.status}">${voxelRuntimeStatusLabel()}</p>` : ""}
       ${settings.renderer === "voxel" ? `<button class="openVoxelTuningButton" type="button" data-voxel-action="open">Advanced voxel tuning</button>` : ""}
       ${settings.renderer === "voxel" ? `<p class="graphicsHint">Ctrl + Shift + V opent de uitgebreide voxel tuning.</p>` : ""}
     </section>
@@ -7300,7 +7290,7 @@ function render() {
   // preparation is submitting work. Navigation and Graphics changes still render.
   const preparingCanvas=app.querySelector('[data-three-canvas]');
   if(state.screen==='scene' && ['loading','warming'].includes(threeStatus.status) &&
-    voxelRenderer.getSettings().renderer==='3d' && preparingCanvas?.dataset.threeLevel===level?.id &&
+    window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && preparingCanvas?.dataset.threeLevel===level?.id && preparingCanvas?.dataset.threeMode===voxelRenderer.getSettings().renderer &&
     !graphicsSettingsOpen && !app.querySelector('[data-graphics-settings]') && !worldEditor.open){
     updateWorldDom();threeRenderer.sync();return;
   }
@@ -7337,7 +7327,7 @@ function render() {
 
   const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas]");
   const replacementThreeCanvas = app.querySelector("[data-three-canvas]");
-  if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id) replacementThreeCanvas.replaceWith(retainedThreeCanvas);
+  if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) replacementThreeCanvas.replaceWith(retainedThreeCanvas);
   if (retainedCinematicCanvas && replacementCinematicCanvas && retainedCinematicCanvas.dataset.cinematicLevel === level?.id) replacementCinematicCanvas.replaceWith(retainedCinematicCanvas);
   const replacementVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   if (retainedVoxelCanvas && replacementVoxelCanvas && (!retainedVoxelLevel || retainedVoxelLevel === level?.id)) {
@@ -7443,11 +7433,11 @@ app.addEventListener("click", (event) => {
   if (rendererChoice) {
     event.preventDefault();
     event.stopPropagation();
-    if(rendererChoice.dataset.rendererChoice === "3d" && level.id === "LVL-0001")stopMovement({invalidateIntent:true});
+    if(window.AtlasGraphicsModes.isThree(rendererChoice.dataset.rendererChoice) && level.id === "LVL-0001")stopMovement({invalidateIntent:true});
     voxelRenderer.updateSettings({ renderer: rendererChoice.dataset.rendererChoice });
     // Selecting first person hands control back to the game. Previously this
     // popover remained open and blocked keys even while mouse-look still worked.
-    if(rendererChoice.dataset.rendererChoice === "3d")graphicsSettingsOpen=false;
+    if(window.AtlasGraphicsModes.isThree(rendererChoice.dataset.rendererChoice))graphicsSettingsOpen=false;
     if (rendererChoice.dataset.rendererChoice !== "voxel") voxelTuningOpen = false;
     render();
     return;

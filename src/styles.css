@@ -974,7 +974,7 @@ button {
 
 .cinematicViewportCanvas { position: absolute; inset: 0; z-index: 39; width: 100%; height: 100%; pointer-events: none; opacity: 0; visibility: hidden; }
 .threeViewportCanvas { position: absolute; inset: 0; z-index: 39; width: 100%; height: 100%; pointer-events: auto; visibility: hidden; touch-action: none; outline: none; }
-.stageViewport[data-renderer="3d"] .worldTrack { visibility:hidden; pointer-events:none; }
+.stageViewport:is([data-renderer="3d"], [data-renderer="atlas-3d"]) .worldTrack { visibility:hidden; pointer-events:none; }
 .threeControls { position: absolute; z-index: 40; top: 12px; left: 50%; transform: translateX(-50%); color:#eee3c7; background:#132017b8; padding:8px 14px; border-radius:8px; font-size:12px; pointer-events:none; }
 .threeControls { display:none; }
 .threeControls { max-width:calc(100% - 24px); width:max-content; text-align:center; }
@@ -4775,3 +4775,6 @@ body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px;
 .cinematicHelp { position:absolute; z-index:10; right:0; top:100%; width:240px; padding:12px; background:#172d36; border:1px solid #80aaa6; box-shadow:0 6px 20px #0008; color:#f4f4e8; font-size:12px; line-height:1.5; }
 .cinematicInfo:hover .cinematicHelp[hidden] { display:block !important; }
 .cinematicHint { font-size:12px; opacity:.8; }
+
+.segmentedControl button:disabled { opacity: .45; cursor: not-allowed; }
+.segmentedControl button small { display:block; font-size: .7em; }

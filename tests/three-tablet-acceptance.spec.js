@@ -54,7 +54,7 @@ for(const height of [734,689])test(`Tablet Optimized real GPU acceptance: 1180x$
  try{
   for(let entry=0;entry<2;entry++){
    const before=await page.evaluate(()=>({operations:window.tabletQA.operations.length,fences:window.tabletQA.fences,textures:window.tabletQA.textures.length}));
-   await choose('3d');
+   await choose('atlas-3d');
    console.log(`Tablet ${height}, entry ${entry+1}: preparation started`);
    await expect(page.locator('[data-three-loading]')).toBeVisible();
    await expect(page.locator('[data-three-canvas]')).toBeHidden();
@@ -62,7 +62,7 @@ for(const height of [734,689])test(`Tablet Optimized real GPU acceptance: 1180x$
    const s=await snapshot();expect(s.error,JSON.stringify(await page.evaluate(()=>window.tabletQA.errors))).toBeNull();
    console.log(`Tablet ${height}, entry ${entry+1}: ${s.status}, ${s.warmupViews} frames prepared`);
    expect(s.status).toBe('ready');expect(s.backend).toBe('WebGPU');expect(s.resolution).toEqual([885,Math.round(height*.75)]);
-   expect(s.configuration.preset).toEqual({id:'tablet-optimized',name:'Tablet Optimized',worldSamples:1,effectSamples:1,dprCap:.75,shadowSize:1024,volumeResolution:0,volumeSteps:0,gtao:false,bloom:false,anisotropy:2,textureCap:1024,environmentCap:512});
+   expect(s.configuration.preset).toEqual({id:'atlas-canonical',name:'Atlas 3D',worldSamples:1,effectSamples:1,dprCap:.75,shadowSize:1024,volumeResolution:0,volumeSteps:0,gtao:false,bloom:false,anisotropy:2,textureCap:1024,environmentCap:512});
    expect(s.configuration.presentationSamples).toBe(1);expect(s.configuration.presentationDepth).toBe(false);
    expect(s.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0});
    expect(s.textureBudget.maxLongEdge).toBeLessThanOrEqual(1024);expect(s.textureBudget.resized).toBeGreaterThan(0);expect(s.textureBudget.resizedBytes).toBeLessThan(s.textureBudget.sourceBytes);

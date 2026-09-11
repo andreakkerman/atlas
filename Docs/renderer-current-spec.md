@@ -1,27 +1,26 @@
-# Current Atlas renderer implementation — local v158
+# Current Atlas renderer implementation — local world-mode separation
 
 Verified against source on 2026-09-11. v158 is a deliberately conservative
 physical-tablet stability baseline, not the final visual-quality target. It retains
 the v156 compact presentation, GPU fencing, cleanup and recovery work, and the
-v157 RangeError evidence capture. Physical Safari stability is not yet accepted.
+v157 RangeError evidence capture. The user reports the unchanged faceted baseline passed physical iPad testing; the new mode separation still requires physical acceptance.
 Neither device pressure nor the original physical RangeError's cause is proven.
 See [the prior investigation](3d-tablet-range-investigation.md) and `AGENTS.md`.
 
-## World mode versus renderer preset
+## Graphics modes and rendering
 
-Real 3D is the existing LVL-0001 world. The v158 renderer baseline did not change its content. The subsequent user-authorized [faceted forest pass](faceted-forest.md) replaces generic nature geometry in this same world, retaining the route, landmarks and progression. Atlas 3D remains unimplemented. Renderer presets configure rendering of Real 3D; they do not select or replace a world.
+`src/graphics-modes.js` is the product source of truth for labels, groups, availability, selected state, world asset and rendering configuration. Graphics contains:
 
-`src/three-presets.js` owns the immutable **Desktop High** and **Tablet Optimized** configurations. Desktop/laptop defaults to Desktop High; tablets default to Tablet Optimized. Phones also use the conservative Tablet Optimized configuration. Detection is evaluated once per page session, and does not respond to FPS, rotation, resizing or a subsequently connected input device.
+- Renderer: Illustrated, Cinematic.
+- Experimental: Voxel, Real 3D, Atlas 3D.
 
-Detection combines the following signals, in order:
+Real 3D (`3d`, preserving the saved identifier) is the original heavy world, desktop/laptop only, using Desktop High. Tablets/phones see a disabled button with “Desktop only”. The central settings normalizer rejects unsupported choices, including saved and programmatic selections, with Illustrated fallback before any heavy-world request. Renderer query overrides cannot bypass availability.
 
-- Explicit iPad user agent, or a Mac platform with more than one touch point (including iPadOS desktop-style Safari and an attached trackpad).
-- Browser-reported Tablet form factor, where available.
-- Android with multitouch and either a non-Mobile user agent or a screen short side of at least 600 CSS pixels.
-- Other multitouch devices with a coarse primary pointer, no primary hover, and a screen short side of at least 600 CSS pixels. Viewport dimensions are the fallback if screen dimensions are unavailable.
-- Handheld identifiers/mobile information distinguish phones; the remaining devices are desktops. A Windows touchscreen laptop with fine pointer/hover retains Desktop High.
+Atlas 3D (`atlas-3d`) is the unchanged, physically tested faceted world. It uses **one canonical Atlas 3D configuration** on every device, with the exact conservative values in the table below. Desktop is the authoritative visual development/QA preview for iPad Atlas 3D: no automatic desktop uplift, no device-selected quality variant, and no rendererPreset override. Both desktop and tablet use sequential compact preparation and one in-flight GPU frame. Input and lifecycle behavior may still follow platform capabilities.
 
-Detection is heuristic: convertible devices that expose identical browser signals cannot be distinguished perfectly. The pure detector and selector are unit tested. For development, `?rendererPreset=desktop-high` or `?rendererPreset=tablet-optimized` explicitly selects a preset until the next page load; unknown values are ignored. Add `&debug3d=1` to show settings. An iPad forced to Desktop High still retains compact preparation and v156's one-sample, depth-free final presentation. Forcing Tablet Optimized on desktop enables the compact strategy for representative QA. Other graphics modes ignore this selection.
+The existing centralized `AtlasThreePresets.detectDevice` / session device classification remains the source of truth: explicit iPad identity, touch-capable Mac platform (desktop-style iPad Safari), browser tablet form factor, Android touch/screen signals, and large coarse/no-hover touch screens. Phone signals classify handhelds; other devices are desktop. Detection remains heuristic and session-stable. Its older preset selector remains available for isolated legacy diagnostics/tests but does not select product world quality.
+
+World mappings and export instructions: [3D world modes](3d-world-modes.md). The user reports the conservative faceted baseline worked for multiple minutes and through physical iPad lock/unlock before this separation; local WebGPU QA is not a new physical-Safari acceptance claim.
 
 ## Platform and ownership
 
@@ -32,10 +31,10 @@ Detection is heuristic: convertible devices that expose identical browser signal
 
 ## Assets and scene
 
-- Level model: Levels/LVL-0001/3d/lvl0001.glb; route and landmarks: route.json. GLTFLoader plus Draco WASM decoding.
+- Level models: Levels/LVL-0001/3d/real-3d.glb and atlas-3d.glb (only the selected world loads); route and landmarks: route.json. GLTFLoader plus Draco WASM decoding.
 - Compact devices use one Draco worker and sequential texture/mesh dependency loading. Desktop permits two workers.
 - Loaded meshes are repartitioned into InstancedMesh groups by geometry, material and 12-unit X/Z cells. Frustum culling operates on the resulting spatial instances. The runtime does not stream level chunks or provide a separate iPad asset set.
-- Desktop retains original material textures and anisotropy 8. Tablet bounds each decoded GLB image to a 1024-pixel long edge before loading the next dependency, preserving aspect ratio and never upscaling. Raw-channel ImageBitmap resizing preserves texture color-space metadata, alpha, packed PBR channels, samplers and UV transforms. Source assets are untouched. Shared texture Sources are resized once; original ImageBitmaps close immediately after replacement. Compact static resized pixels close after all sampler/color-space variants upload and complete their GPU fence. NPC canvas dimensions also respect the cap; live pixels remain available for animation.
+- Real 3D retains original material textures and anisotropy 8. Atlas 3D bounds each decoded GLB image to a 1024-pixel long edge before loading the next dependency, preserving aspect ratio and never upscaling. Raw-channel ImageBitmap resizing preserves texture color-space metadata, alpha, packed PBR channels, samplers and UV transforms. Source assets are untouched. Shared texture Sources are resized once; original ImageBitmaps close immediately after replacement. Compact static resized pixels close after all sampler/color-space variants upload and complete their GPU fence. NPC canvas dimensions also respect the cap; live pixels remain available for animation.
 - HDR environment: qwantani_sunset_puresky_2k.hdr. NPC uses a camera-facing textured plane with a persistent CanvasTexture. Flames use crossed animated translucent planes.
 
 ## Camera, route and input
@@ -48,7 +47,7 @@ Detection is heuristic: convertible devices that expose identical browser signal
 
 ## Render targets and effects
 
-| Setting | Desktop High | Tablet Optimized |
+| Setting | Real 3D / Desktop High | Atlas 3D / canonical on all devices |
 | --- | --- | --- |
 | World MSAA | 4 samples | **1 sample** |
 | Volume/effect MSAA | 4 samples | 1 sample |
@@ -63,11 +62,11 @@ Detection is heuristic: convertible devices that expose identical browser signal
 | HDR input | 2048×1024 | 512×256 linear half-float |
 | Derived environment PMREM atlas | 1536×2048 | 384×512 |
 
-**MSAA exception:** the requested approximate 2× world baseline cannot be represented by WebGPU. Valid texture sample counts are 1 or 4 ([WebGPU texture validation](https://www.w3.org/TR/2022/WD-webgpu-20220613/#dom-gpudevice-createtexture)); vendored Three r180 also maps counts below 4 to 1. Tablet Optimized explicitly uses and reports 1×, avoiding an invalid descriptor or hidden promotion to 4×. This can make foliage/geometry edges less smooth. Source assets remain unchanged.
+**MSAA exception:** the requested approximate 2× world baseline cannot be represented by WebGPU. Valid texture sample counts are 1 or 4 ([WebGPU texture validation](https://www.w3.org/TR/2022/WD-webgpu-20220613/#dom-gpudevice-createtexture)); vendored Three r180 also maps counts below 4 to 1. Atlas 3D explicitly uses and reports 1×, avoiding an invalid descriptor or hidden promotion to 4×. This can make foliage/geometry edges less smooth. Source assets remain unchanged.
 
-Desktop retains the existing quarter-resolution volume, Gaussian blur, GTAO and bloom chain. Tablet constructs none of these effects. Its world, lighting, shadows and tone mapping remain active. The choice is fixed by the session preset, not FPS or iPad model.
+Desktop retains the existing quarter-resolution volume, Gaussian blur, GTAO and bloom chain. Atlas 3D constructs none of these effects. Its world, lighting, shadows and tone mapping remain active. The choice is fixed by the session preset, not FPS or iPad model.
 
-The faceted forest pass excludes small groundcover from casting separate tablet shadows; it still receives shadows. Trees, rocks and architecture retain shadow casting. Shadow normal bias scales with texel footprint (`0.025 * 4096 / shadowSize`): Desktop remains 0.025, Tablet uses 0.1 to avoid self-shadow striping on broad facets. Renderer quality settings otherwise remain unchanged.
+The faceted forest pass excludes small groundcover from casting separate Atlas 3D shadows; it still receives shadows. Trees, rocks and architecture retain shadow casting. Shadow normal bias scales with texel footprint (`0.025 * 4096 / shadowSize`): Real 3D remains 0.025, Atlas 3D uses 0.1 to avoid self-shadow striping on broad facets. Renderer quality settings otherwise remain unchanged.
 
 | Component | Current implementation |
 | --- | --- |
@@ -84,7 +83,7 @@ The faceted forest pass excludes small groundcover from casting separate tablet 
 
 The retained Three.js TextureSizeNode patch uses a mip-free textureDimensions call for multisampled textures. v156 only removed redundant final-copy MSAA/depth attachments on compact devices; that optimization remains intact. v158 reduces tablet rendering settings as listed above, while Desktop High retains the existing quality.
 
-At a 1180×734 CSS viewport and devicePixelRatio 2, Desktop High produces a 1770×1101 buffer, while Tablet Optimized produces 885×551 after rounding. Separate 1770×1101 buffer coverage uses a 2360×1468 CSS viewport at the 0.75 cap. The cap is not a fixed pixel size.
+At a 1180×734 CSS viewport and devicePixelRatio 2, Desktop High produces a 1770×1101 buffer, while Atlas 3D produces 885×551 after rounding. Separate 1770×1101 buffer coverage uses a 2360×1468 CSS viewport at the 0.75 cap. The cap is not a fixed pixel size.
 
 ## Readiness and rendering loop
 
@@ -126,11 +125,11 @@ GPU tests ran sequentially with `ATLAS_WEBGPU_QA=1`, `ATLAS_EDITOR_URL=http://12
 
 These checks cannot establish physical Safari GPU stability. Source textures and geometry remain substantial, and browser/GPU-process pressure may still occur. A more conservative render-target baseline reduces demand but is not proof of the cause or a guarantee of recovery from a failed Safari GPU process.
 
-For v158 physical acceptance after deployment, use `https://svenakkerman.nl/?debug3d=1&rendererPreset=tablet-optimized`. Verify **tablet · Tablet Optimized**, world/effects/presentation **1×/1×/1×**, DPR **0.75**, shadows **1024**, GTAO/volume/bloom **uit**, texture cap **1024**, anisotropy **2**, HDR **512×256**, PMREM **384×512**. Test Illustrated → Cinematic → Real 3D, all five preparation stages, simultaneous movement/look and interaction for at least two minutes, then Illustrated → Cinematic and another 3D entry in the same Safari session. If it fails, retain the settings and operation/device-loss diagnostics in the screenshot. The production URL does not serve these local changes until an authorized deployment occurs.
+For physical acceptance after deployment, use `https://svenakkerman.nl/?debug3d=1` and select **Atlas 3D**. Verify **tablet · Atlas 3D**, world/effects/presentation **1×/1×/1×**, DPR **0.75**, shadows **1024**, GTAO/volume/bloom **uit**, texture cap **1024**, anisotropy **2**, HDR **512×256**, PMREM **384×512**. Real 3D must be visibly disabled. Test Illustrated → Cinematic → Atlas 3D, all five stages, movement/look/interaction, lock/unlock, then Illustrated → Cinematic → Atlas 3D again. The production URL does not serve these local changes until authorized deployment.
 
-## v158 HDR and resource budget
+## Canonical Atlas HDR and resource budget (retained from v158)
 
-Tablet still decodes the existing 2K HDR file: this small transient CPU allocation
+Atlas 3D still decodes the existing 2K HDR file: this small transient CPU allocation
 has not been eliminated by pretending that the source file is lower resolution.
 Immediately after decoding, linear box filtering creates a 512×256 half-float
 image and replaces the full-resolution data. The existing sky and reflection
@@ -138,7 +137,7 @@ textures share that smaller CPU Source. The active material path derives a PMREM
 1536×2048; the actual GPU allocations are asserted in acceptance QA. Environmental lighting stays
 on, with the existing intensity/rotation. After final GPU completion, the shared
 HDR CPU data is released; dimensions and uploaded GPU representations remain.
-Desktop keeps its original HDR path and source lifetime.
+Real 3D keeps its original HDR path and source lifetime.
 
 At the same CSS viewport, 0.75² gives 56.25% of v157 full-size target pixels
 (43.75% fewer before rounding). Shadows have 75% fewer pixels. Removing volume,

@@ -178,11 +178,11 @@ test("new depth, cue, ray-motion and simple shadow settings normalize and pack",
   expect(result.explicit.depth.enabled).toBe(false);expect(result.explicit.gameplayCues).toMatchObject({enabled:false,intensity:0});expect(result.explicit.characters).toMatchObject({groundingShadow:false,shadowShape:'capsule',shadowStrength:1.4,shadowSoftness:0.4,shadowWidth:1.2,shadowLength:1.3,shadowOffsetX:12,shadowOffsetY:-7,shadowDirection:35,shadowDarkBackgroundSuppression:0.8});
   expect(result.light[27]).toBeCloseTo(-0.2);expect(result.rays[30]).toBeCloseTo(0.4);expect(result.rays[31]).toBeCloseTo(0.3);expect(result.rays[33]).toBeCloseTo(0.5);
 });
-test("Experimental selection persists independently of Voxel", async ({ page }) => {
+test("Cinematic selection persists independently of Voxel", async ({ page }) => {
   await scene(page);
   await page.getByRole("button", { name: "Grafische instellingen" }).click();
-  await expect(page.locator("fieldset").filter({ hasText: "Experimental" })).toContainText("Cinematic Lighting");
-  await page.getByRole("button", { name: "Cinematic Lighting", exact: true }).click();
+  await expect(page.locator("fieldset").filter({ hasText: "Renderer" })).toContainText("Cinematic");
+  await page.getByRole("button", { name: "Cinematic", exact: true }).click();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("atlas.graphics.v1")).renderer)).toBe("cinematic");
   await page.reload();
   expect(await page.evaluate(() => window.eval("voxelRenderer").getSettings().renderer)).toBe("cinematic");

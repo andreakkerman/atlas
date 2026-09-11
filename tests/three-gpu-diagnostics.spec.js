@@ -9,7 +9,7 @@ test('ordinary debug journal preserves the original caught preparation stack',as
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   const device={lost:new Promise(()=>{}),destroy(){}};
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:async()=>device})}});
-  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'}),onStatus(){}});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> 'atlas-3d',getLevel:()=>({id:'LVL-0001'}),onStatus(){}});
   await runtime.sync();
   return {snapshot:runtime.snapshot(),journal:JSON.parse(localStorage.getItem('atlas3d-debug-preparation-v1'))};
  });
@@ -131,7 +131,7 @@ test('known device loss prevents the next initialization operation from running'
   let notifyLoss,destroyed=0;window.initCalls=0;
   const device={lost:{then(callback){notifyLoss=callback;}},destroy(){destroyed++;}};
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:async()=>({requestDevice:async()=>device})}});
-  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'}),onStatus(s){if(s.diagnostic==='renderer.init uitvoeren')notifyLoss({reason:'unknown',message:'injected device loss at boundary'});}});
+  const runtime=AtlasThreeRenderer.createRuntime({getRenderer:()=> 'atlas-3d',getLevel:()=>({id:'LVL-0001'}),onStatus(s){if(s.diagnostic==='renderer.init uitvoeren')notifyLoss({reason:'unknown',message:'injected device loss at boundary'});}});
   await runtime.sync();return {initCalls:window.initCalls,destroyed,status:runtime.snapshot().status,error:runtime.snapshot().error};
  });
  expect(result.initCalls).toBe(0);expect(result.destroyed).toBe(1);expect(result.status).toBe('error');expect(result.error).toContain('injected device loss');

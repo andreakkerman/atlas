@@ -32,7 +32,7 @@ test.describe('Atlas first-person LVL-0001',()=>{
   test.setTimeout(180000);
   let releaseModel;
   const modelGate=new Promise(resolve=>{releaseModel=resolve;});
-  await page.route('**/3d/lvl0001.glb',async route=>{await modelGate;await route.continue();});
+  await page.route('**/3d/real-3d.glb',async route=>{await modelGate;await route.continue();});
   await page.locator('[data-graphics-action="toggle"]').click();
   await page.locator('[data-renderer-choice="3d"]').click();
   const progress=page.locator('[data-three-progress]');

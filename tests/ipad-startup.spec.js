@@ -34,7 +34,7 @@ test('startup reaches adapter diagnostics without Pointer Lock APIs',async({page
  await page.addInitScript(()=>Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:()=>new Promise(()=>{})}}));
  await page.goto(`${base}/?dev=editor&level=LVL-0001`);
  await page.locator('[data-graphics-action="toggle"]').tap();
- await page.locator('[data-renderer-choice="3d"]').tap();
+ await page.locator('[data-renderer-choice="atlas-3d"]').tap();
  await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen');
  await expect(page.locator('[data-three-recover]')).toBeVisible();
  await expect(page.locator('[data-three-canvas]')).toBeHidden();
@@ -52,7 +52,7 @@ for(const boundary of ['requestAdapter','requestDevice'])test(`names and recover
   const fail=()=>{throw new DOMException(`Injected ${boundary} failure`,'OperationError');};
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:boundary==='requestAdapter'?fail:async()=>({requestDevice:async()=>fail()})}});
  },boundary);
- await page.locator('[data-renderer-choice="3d"]').tap();
+ await page.locator('[data-renderer-choice="atlas-3d"]').tap();
  await expect(page.locator('[data-three-loading]')).toHaveAttribute('data-status','error');
  await expect(page.locator('[data-three-diagnostic]')).toContainText(`OperationError: Injected ${boundary} failure`);
  await expect(page.locator('[data-three-progress]')).toHaveAttribute('aria-valuenow','0');
@@ -70,12 +70,12 @@ test('cancelled rejection cannot overwrite a new startup or leave an input shiel
   Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:()=>new Promise((resolve,reject)=>{if(++count===1)window.rejectOldAdapter=reject;})}});
  });
  const choose=async mode=>{await page.locator('[data-graphics-action="toggle"]').tap();await page.locator(`[data-renderer-choice="${mode}"]`).tap();};
- await choose('3d');
+ await choose('atlas-3d');
  await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen');
  await choose('illustrated');
  await expect(page.locator('[data-three-loading]')).toHaveCount(0);
  // Illustrated keeps the Graphics panel open.
- await page.locator('[data-renderer-choice="3d"]').tap();
+ await page.locator('[data-renderer-choice="atlas-3d"]').tap();
  await page.evaluate(()=>window.rejectOldAdapter(new Error('obsolete adapter')));
  await expect(page.locator('[data-three-diagnostic]')).toContainText('wacht nog steeds',{timeout:7000});
  await expect(page.locator('[data-three-loading]')).toHaveAttribute('data-status','loading');
@@ -133,7 +133,7 @@ test('synchronous cleanup and status errors cannot strand the initial loader',as
   document.querySelector('#app').innerHTML='<div class="gameShell"><canvas data-three-canvas></canvas><div data-three-loading><h2 data-three-loading-title></h2><p data-three-diagnostic>WebGPU controleren…</p><button data-three-recover hidden>Terug</button></div></div>';
   let cleaned=false;
   const runtime=window.AtlasThreeRenderer.createRuntime({
-   getRenderer:()=> '3d',getLevel:()=>({id:'LVL-0001'}),
+   getRenderer:()=> 'atlas-3d',getLevel:()=>({id:'LVL-0001'}),
    onStatus:snapshot=>{if(snapshot.status==='idle'&&!snapshot.diagnostic){cleaned=true;throw new TypeError('Injected cleanup status failure');}if(snapshot.status==='error')throw new Error('Injected error display failure');}
   });
   await runtime.sync();

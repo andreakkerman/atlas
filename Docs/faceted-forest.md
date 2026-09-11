@@ -1,6 +1,6 @@
 # Real 3D faceted forest — local follow-up to v158
 
-The user's new reference authorizes simpler, angular nature in the existing Real 3D world. This is a shared asset update, not the future Atlas 3D world mode. No commit or deployment is included.
+The user's new reference authorizes simpler, angular nature in the existing Real 3D world. This was initially a shared asset update. It is now exposed as Atlas 3D; see [world-mode separation](3d-world-modes.md). No commit or deployment is included.
 
 ## Assets
 

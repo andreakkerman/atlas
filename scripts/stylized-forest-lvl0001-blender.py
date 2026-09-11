@@ -7,6 +7,7 @@ from mathutils import Vector
 SC=bpy.data.scenes['Atlas LVL-0001 First Person']
 bpy.context.window.scene=SC
 OUT='D:/DevProjects/SvenAdventure/Levels/LVL-0001/3d'
+if any(o.name.startswith('Faceted mature fir') for o in SC.objects):raise RuntimeError('Run the stylization pipeline against the original heavy checkpoint only')
 before={'objects':len(SC.objects),'faces':sum(len(o.data.polygons) for o in SC.objects if o.type=='MESH')}
 mat=bpy.data.materials.new('Atlas painted nature');mat.use_nodes=True
 bs=mat.node_tree.nodes.get('Principled BSDF');bs.inputs['Roughness'].default_value=.92
@@ -154,7 +155,7 @@ for o in list(SC.objects):
 after={'objects':len(SC.objects),'faces':sum(len(o.data.polygons) for o in SC.objects if o.type=='MESH'),'treePlacements':len(anchors)}
 bpy.ops.wm.save_as_mainfile(filepath=OUT+'/lvl0001-stylized.blend')
 with contextlib.redirect_stdout(io.StringIO()):
- bpy.ops.export_scene.gltf(filepath=OUT+'/lvl0001.glb',export_format='GLB',use_active_scene=True,export_yup=True,export_apply=True,export_gpu_instances=True,export_lights=False,export_cameras=False,export_image_format='WEBP',export_image_quality=88,export_extras=True,export_draco_mesh_compression_enable=True,export_draco_mesh_compression_level=6,export_draco_position_quantization=18,export_draco_normal_quantization=12,export_draco_texcoord_quantization=16,export_draco_color_quantization=10)
-after['glbBytes']=os.path.getsize(OUT+'/lvl0001.glb')
+ bpy.ops.export_scene.gltf(filepath=OUT+'/atlas-3d.glb',export_format='GLB',use_active_scene=True,export_yup=True,export_apply=True,export_gpu_instances=True,export_lights=False,export_cameras=False,export_image_format='WEBP',export_image_quality=88,export_extras=True,export_draco_mesh_compression_enable=True,export_draco_mesh_compression_level=6,export_draco_position_quantization=18,export_draco_normal_quantization=12,export_draco_texcoord_quantization=16,export_draco_color_quantization=10)
+after['glbBytes']=os.path.getsize(OUT+'/atlas-3d.glb')
 with open(OUT+'/stylized-budget.json','w') as f:json.dump({'before':before,'after':after},f,indent=2)
 print(json.dumps({'before':before,'after':after}))

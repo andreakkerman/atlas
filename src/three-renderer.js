@@ -6,10 +6,11 @@
   let modules;
   const loadModules=()=>modules ||= Promise.all([import('../assets/vendor/three/three.webgpu.min.js'),import('../assets/vendor/three/loaders/GLTFLoader.js'),import('../assets/vendor/three/loaders/HDRLoader.js'),import('../assets/vendor/three/loaders/DRACOLoader.js')]);
   function createRuntime(options) {
-    const configuration=global.AtlasThreePresets.session,preset=configuration.preset;
-    const compactPreparation=configuration.compact;
-    const effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
-    const preparationStrategy=compactPreparation?'compact':'desktop';
+    let activeMode=global.AtlasGraphicsModes.normalize(options.getRenderer());
+    let configuration=global.AtlasGraphicsModes.configuration(activeMode)||global.AtlasGraphicsModes.configuration('atlas-3d'),preset=configuration.preset;
+    let compactPreparation=configuration.compact;
+    let effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
+    let preparationStrategy=compactPreparation?'compact':'desktop';
     let actualEffects=null,failureEvidence=null;
     let textureBudget=global.AtlasThreeTextureBudget.create(preset.textureCap||0);
     function recordFailure(caught,context={}) {
@@ -25,7 +26,7 @@
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
       global.dispatchEvent(new CustomEvent('atlas-three-preparation',{detail:record}));
     }
-    let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice;
+    let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice,worldLoading=null;
     const postResources=[];
     let generation=0,loading=false,suspended=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null,framePending=false,frameTimer=0;
     let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
@@ -49,7 +50,7 @@
     const input=global.AtlasThreeInput.create({nativeTouch:configuration.device.nativeTouch,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,worldMode:'real-3d',configuration,actualEffects,textureBudget:textureBudget.snapshot(),rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:ROOT+'lvl0001.glb',camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {status,error,worldMode:global.AtlasGraphicsModes.get(activeMode)?.world,configuration,actualEffects,textureBudget:textureBudget.snapshot(),rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:global.AtlasGraphicsModes.get(activeMode)?.asset,camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
@@ -126,7 +127,7 @@
         }
       }};});
       try {
-        const gltf=await loader.loadAsync(ROOT+'lvl0001.glb');
+        const gltf=await loader.loadAsync(global.AtlasGraphicsModes.get(activeMode).asset);
         // Only the scene escapes this scope, not gltf.parser and its binary,
         // decoded bufferView and original-node caches throughout GPU warm-up.
         const root=gltf.scene;gltf.parser.cache.removeAll();complete=true;if(token!==generation)releaseRoot(root);return root;
@@ -135,7 +136,7 @@
     function resetInput() {
       input.reset('runtime stopped');
     }
-    function canPlay() {return status==='ready'&&options.getRenderer()==='3d'&&options.canMove?.();}
+    function canPlay() {return status==='ready'&&options.getRenderer()===activeMode&&options.canMove?.();}
     function stop() {cancelAnimationFrame(raf);raf=0;last=0;resetInput();}
     function safely(task) {try{task();}catch(caught){if(DEBUG)console.warn('3D cleanup:',caught);}}
     function releaseRoot(root,extraTextures=[]) {
@@ -372,7 +373,7 @@
     }
     async function warmup(token) {
       const activeRenderer=renderer,activePost=post;
-      const valid=()=>token===generation&&canvas?.isConnected&&options.getRenderer()==='3d';
+      const valid=()=>token===generation&&canvas?.isConnected&&options.getRenderer()===activeMode;
       resize(true);positionCamera(options.getPlayer().x);
       // Decode a stable NPC frame rather than waiting on its changing animation image.
       const source=document.querySelector('[data-npc-challenge="wind"] [data-npc-sprite]');
@@ -452,7 +453,7 @@
       warmupViews=warmupTotal;frames=1;last=0;preparation='';return true;
     }
     function draw(time) {
-      raf=0;if(loading||status!=='ready'||!canvas?.isConnected||document.hidden||options.getRenderer()!=='3d')return;
+      raf=0;if(loading||status!=='ready'||!canvas?.isConnected||document.hidden||options.getRenderer()!==activeMode)return;
       const start=performance.now(),interval=last?time-last:null,elapsed=interval===null?1/60:interval/1000,dt=Math.min(.05,elapsed);last=time;
       try {
         const movementStart=DEBUG?performance.now():0;
@@ -487,7 +488,14 @@
       const checkpoint=label=>{operation=diagnostic=label;debugMark(label);report();};
       try {
       const next=document.querySelector('[data-three-canvas]');
-      if(options.getRenderer()!=='3d'||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading||status!=='idle')dispose();return;}
+      const requested=global.AtlasGraphicsModes.normalize(options.getRenderer());
+      if(!global.AtlasGraphicsModes.isThree(requested)||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading||status!=='idle')dispose();return;}
+      if(requested!==activeMode){
+        dispose();token=generation;activeMode=requested;
+        configuration=global.AtlasGraphicsModes.configuration(activeMode);preset=configuration.preset;compactPreparation=configuration.compact;
+        effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
+        preparationStrategy=compactPreparation?'compact':'desktop';
+      }
       // UI redraws must neither retry a failed device nor reveal 2D underneath.
       if(status==='error'){report();return;}
       if(loading&&canvas!==next)throw new DOMException('3D-canvas vervangen tijdens voorbereiding. Kies Illustrated en probeer opnieuw.','AbortError');
@@ -497,6 +505,10 @@
       try{dispose();}finally{token=generation;}
       loading=true;gpuTrace=null;deviceDestruction=null;actualEffects=null;failureEvidence=null;textureBudget=global.AtlasThreeTextureBudget.create(preset.textureCap||0);lifetime=new AbortController();const preparationStarted=performance.now();canvas=next;
       checkpoint('Vorige runtime opgeruimd; laadstatus voorbereiden');preparationStage(0,'loading');
+        // A cancelled GLTF decode may still be finishing in its worker. Do not
+        // begin a second world's decode/device allocation until it has released
+        // its root. The old generation reports its own error; this is only a join.
+        if(worldLoading){const previous=worldLoading;await observe('Vorige werelddecode afronden',()=>previous.catch(()=>{}),token);if(token!==generation)return;}
         checkpoint('navigator.gpu controleren');
         const gpu=navigator.gpu;
         checkpoint(`navigator.gpu beschikbaar: ${gpu?'ja':'nee'}`);
@@ -532,11 +544,14 @@
         const loadedRoute=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
         if(token!==generation)return;route=loadedRoute;
         renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#dbc294',.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
-        const root=await observe('GLB downloaden en decoderen',()=>loadWorld(GLTFLoader,DRACOLoader,token),token);
+        const root=await observe('GLB downloaden en decoderen',()=>{
+          const pending=loadWorld(GLTFLoader,DRACOLoader,token);worldLoading=pending;
+          const clear=()=>{if(worldLoading===pending)worldLoading=null;};pending.then(clear,clear);return pending;
+        },token);
         if(token!==generation){releaseRoot(root);return;}
         await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
         if(token!==generation)return;
-        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;const smallGroundcover=/^(Grass|Path.bank.community|Atlas.woodland.fern|Rich.route.understory|Fern.drift|Detailed.woodland.flower|Paving.edge.tuft|Sorrel.in.paving.joint)/.test(obj.name);obj.castShadow=!(preset.id==='tablet-optimized'&&smallGroundcover);obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
+        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;const smallGroundcover=/^(Grass|Path.bank.community|Atlas.woodland.fern|Rich.route.understory|Fern.drift|Detailed.woodland.flower|Paving.edge.tuft|Sorrel.in.paving.joint)/.test(obj.name);obj.castShadow=!(activeMode==='atlas-3d'&&smallGroundcover);obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
         const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;
         textures.add(sky);
         if(preset.environmentCap){

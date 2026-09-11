@@ -7,7 +7,7 @@ for(const walking of [false,true])test('3D preparation isolates player state: ex
  await page.goto(base+'/?dev=editor&level=LVL-0001');
  if(walking)await page.evaluate(()=>window.eval('beginFreeWalk')({x:1800,y:600}));
  await page.locator('[data-graphics-action="toggle"]').tap();
- await page.locator('[data-renderer-choice="3d"]').tap();
+ await page.locator('[data-renderer-choice="atlas-3d"]').tap();
  const start=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
  await page.locator('[data-three-loading-title]').tap();
  await expect(page.locator('.worldArt')).toBeHidden();
