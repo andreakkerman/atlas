@@ -8,9 +8,9 @@
   function createRuntime(options) {
     let activeMode=global.AtlasGraphicsModes.normalize(options.getRenderer());
     let configuration=global.AtlasGraphicsModes.configuration(activeMode)||global.AtlasGraphicsModes.configuration('atlas-3d'),preset=configuration.preset;
-    let compactPreparation=configuration.compact;
+    let compactExecution=configuration.compact,batchedWarmup=configuration.batchedWarmup;
     let effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
-    let preparationStrategy=compactPreparation?'compact':'desktop';
+    let preparationStrategy=compactExecution?'compact':batchedWarmup?'desktop-batched':'desktop';
     let actualEffects=null,failureEvidence=null;
     let textureBudget=global.AtlasThreeTextureBudget.create(preset.textureCap||0);
     function recordFailure(caught,context={}) {
@@ -43,14 +43,14 @@
       };
     }
     let inputType=global.matchMedia('(any-pointer: coarse)').matches?'touch':'desktop';
-    let visibleProfile=null,frameSampled=false,gpuTrace=null;
+    let performanceProfile=null,operationTimings=[],visibleProfile=null,frameSampled=false,gpuTrace=null;
     const frameWindow=[];
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
     let movementEvidence={applied:0};
     const input=global.AtlasThreeInput.create({nativeTouch:configuration.device.nativeTouch,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
-      return {status,error,worldMode:global.AtlasGraphicsModes.get(activeMode)?.world,configuration,actualEffects,textureBudget:textureBudget.snapshot(),rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:global.AtlasGraphicsModes.get(activeMode)?.asset,camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
+      return {performanceProfile:performanceProfile?.snapshot(),operationTimings:DEBUG?operationTimings:undefined,status,error,worldMode:global.AtlasGraphicsModes.get(activeMode)?.world,configuration,actualEffects,textureBudget:textureBudget.snapshot(),rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:global.AtlasGraphicsModes.get(activeMode)?.asset,camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
     }
     function report(next=status,caught) {status=next;if(caught!==undefined)error=caught?String(caught.message||caught):null;else if(next!=='error')error=null;document.querySelector('.gameShell')?.classList.toggle('threeReady',status==='ready');options.onStatus?.(snapshot());if(DEBUG&&status==='ready')global.dispatchEvent(new CustomEvent('atlas-three-input',{detail:{...input.snapshot(),movement:movementEvidence,player:options.getPlayer(),guards:options.inputGuards?.()}}));}
     function setInputType(next) {if(inputType!==next){inputType=next;report();}}
@@ -84,7 +84,7 @@
       } catch(caught) {
         clearInterval(timer);
         if(token===generation){clearWaiting();recordFailure(caught,{operation:label});const detail=`${caught?.name||'Error'}: ${caught?.message||caught}`;diagnostic=`${label} — mislukt: ${detail}`;debugMark(diagnostic,'error');report();}throw caught;
-      } finally {clearTimeout(deadline);clearInterval(timer);signal?.removeEventListener('abort',cancel);}
+      } finally {if(DEBUG&&token===generation)operationTimings.push({label,ms:performance.now()-started});clearTimeout(deadline);clearInterval(timer);signal?.removeEventListener('abort',cancel);}
     }
     const gpuWork=(label,task,token)=>observe(label,()=>gpuTrace&&(/renderer.init|compileren|renderer en post-processing/.test(label))?gpuTrace.scope(label,task):task(),token,90000);
     // Safari may suspend rAF during visibility/layout transitions. A UI yield
@@ -111,16 +111,17 @@
       };
     }
     async function loadWorld(GLTFLoader,DRACOLoader,token) {
-      const draco=new DRACOLoader().setDecoderPath('assets/vendor/three/draco/').setDecoderConfig({type:'wasm'}).setWorkerLimit(compactPreparation?1:2);
+      const draco=new DRACOLoader().setDecoderPath('assets/vendor/three/draco/').setDecoderConfig({type:'wasm'}).setWorkerLimit(compactExecution?1:2);
       const loader=new GLTFLoader().setDRACOLoader(draco);
       const decodedMeshes=[],decodedTextures=[];let complete=false;
       // Preload through the parser's normal dependency cache, before scene loading
       // fans out. Apply the tablet image cap before the next decode; geometry is
       // unchanged. Avoid overlapping decoder heaps and outstanding mesh jobs.
-      if(compactPreparation)loader.register(parser=>{
+      if(compactExecution||preset.textureCap)loader.register(parser=>{
         const loadImage=parser.loadImageSource.bind(parser);
         if(preset.textureCap)parser.loadImageSource=async(...args)=>{const texture=await loadImage(...args);try{await textureBudget.resize(texture);}catch(error){texture.image?.close?.();texture.dispose();throw error;}return texture;};
-        return {name:'ATLAS_sequential_preparation',beforeRoot:async()=>{
+        return {name:'ATLAS_resource_preparation',beforeRoot:async()=>{
+        if(!compactExecution)return;
         for(const type of ['texture','mesh']){
           const count=parser.json[type==='texture'?'textures':'meshes']?.length||0;
           for(let i=0;i<count;i++){const resource=await prepareWork(`${type==='texture'?'Textuur decoderen':'Draco-mesh voorbereiden'} ${i+1}/${count}`,()=>parser.getDependency(type,i),token);if(resource)(type==='texture'?decodedTextures:decodedMeshes).push(resource);}
@@ -159,7 +160,7 @@
       failurePhase=null;
       clearTimeout(frameTimer);frameTimer=0;framePending=false;
       gpuTrace?.cleanup();
-      safely(()=>visibleProfile?.stop());visibleProfile=null;frameWindow.length=0;frameSampled=false;
+      safely(()=>visibleProfile?.stop());visibleProfile=null;safely(()=>performanceProfile?.stop());performanceProfile=null;operationTimings=[];frameWindow.length=0;frameSampled=false;
       if(loading)debugMark(`Voorbereiding gestopt tijdens: ${diagnostic||preparation}`,'cancelled');
       generation++;lifetime?.abort();lifetime=null;loading=false;releasedImageBytes=0;clearWaiting();safely(stop);safely(()=>input.dispose());
       safely(releasePointerLock);
@@ -321,7 +322,7 @@
       const volume=new THREE.Mesh(new THREE.BoxGeometry(90,38,140),material);volume.position.set(5,10,-32);volume.receiveShadow=true;volume.layers.set(10);scene.add(volume);sun.layers.enable(10);
       material.depthNode=depth.sample(screenUV);
       // Bind depth sampling to its producer, never the currently rendered post pass.
-      if(compactPreparation)scenePass.renderTarget.depthTexture.renderTarget=scenePass.renderTarget;
+      if(!configuration.presentationDepth)scenePass.renderTarget.depthTexture.renderTarget=scenePass.renderTarget;
       const layers=new THREE.Layers();layers.set(10);fogPass=pass(scene,camera,{depthBuffer:false,samples:preset.effectSamples});fogPass.setLayers(layers);fogPass.setResolution(preset.volumeResolution);
       blur=gaussianBlur(fogPass,uniform(.3),1);
       }
@@ -358,7 +359,7 @@
     }
     function resize(preparing=false) {
       const bounds=canvas.getBoundingClientRect(),ratio=Math.min(global.devicePixelRatio||1,preset.dprCap,1920/Math.max(1,bounds.width));
-      const scale=preparing&&compactPreparation?Math.min(1,512/Math.max(bounds.width*ratio,bounds.height*ratio)):1;
+      const scale=preparing&&batchedWarmup?Math.min(1,512/Math.max(bounds.width*ratio,bounds.height*ratio)):1;
       const width=Math.max(2,Math.round(bounds.width*ratio*scale)),height=Math.max(2,Math.round(bounds.height*ratio*scale));
       if(canvas.width!==width||canvas.height!==height)renderer.setSize(width,height,false);
       camera.aspect=Math.max(1,bounds.width)/Math.max(1,bounds.height);camera.updateProjectionMatrix();
@@ -378,9 +379,11 @@
       // Decode a stable NPC frame rather than waiting on its changing animation image.
       const source=document.querySelector('[data-npc-challenge="wind"] [data-npc-sprite]');
       if(source){const frame=new Image();frame.src=source.currentSrc||source.src;await prepareWork('NPC-frame decoderen',()=>frame.decode(),token);if(!valid())return false;updateNpc(frame);}
+      // Atlas keeps the proven batched GPU warm-up on both device classes.
+      // Only desktop dependency loading and visible frame scheduling differ.
       // Compile the actual HDR scene-pass target, including objects behind the
       // initial camera. This also uploads their geometry and material textures.
-      if(compactPreparation){
+      if(batchedWarmup){
         const maps=new Set();scene.traverse(o=>{for(const mat of Array.isArray(o.material)?o.material:o.material?[o.material]:[])for(const value of Object.values(mat))if(value?.isTexture)maps.add(value);});
         maps.add(scene.environment);
         const sources=new Map();for(const map of maps){if(!sources.has(map.image))sources.set(map.image,[]);sources.get(map.image).push(map);}
@@ -403,7 +406,7 @@
       }
       const culling=new Map();scene.traverse(o=>{if(o.isMesh){culling.set(o,{culled:o.frustumCulled,visible:o.visible});o.frustumCulled=false;}});
       try{
-        if(compactPreparation){
+        if(batchedWarmup){
           // Compile every original visible mesh, including off-camera geometry,
           // in bounded batches. All lights remain present in every batch.
           const meshes=[];for(const [o,original]of culling){o.visible=false;if(original.visible)meshes.push(o);}
@@ -429,7 +432,7 @@
       // Pipeline coverage comes from the complete compile above, not 18 camera
       // angles. Three route samples exercise the same AO/volume/bloom chain on
       // iPad, reusing small targets; desktop keeps its existing 18-view strategy.
-      const samples=compactPreparation?anchors.map((x,i)=>{
+      const samples=batchedWarmup?anchors.map((x,i)=>{
         if(i!==2)return [x,0,0];
         const p=routePosition(x).position,t=route.landmarks.templeGate,dx=t[0]-p.x,dz=t[2]-p.z;
         return [x,Math.atan2(-dx,-dz),Math.atan2(t[1]-p.y-route.eyeHeight,Math.hypot(dx,dz))];
@@ -469,9 +472,9 @@
           while(frameWindow.length>1&&duration-frameWindow[0].interval>=500)duration-=frameWindow.shift().interval;
           fps=1000*frameWindow.length/Math.max(1,duration);averageMs=frameWindow.reduce((sum,f)=>sum+f.cpu,0)/frameWindow.length;frameSampled=true;
         }
-        visibleProfile?.frame(interval,cpu,shadowRefresh);
+        visibleProfile?.frame(interval,cpu,shadowRefresh);performanceProfile?.frame(interval,cpu,shadowRefresh);
         if(status!=='ready'||time-lastReport>=250){lastReport=time;report('ready');}
-        if(compactPreparation){
+        if(compactExecution){
           // CPU submission is not GPU completion. Bound in-flight work so a
           // stalled device cannot accumulate frames while the UI appears live.
           const token=generation;framePending=true;raf=0;
@@ -492,9 +495,9 @@
       if(!global.AtlasGraphicsModes.isThree(requested)||options.getLevel()?.id!==SUPPORTED_LEVEL||!next){if(renderer||loading||status!=='idle')dispose();return;}
       if(requested!==activeMode){
         dispose();token=generation;activeMode=requested;
-        configuration=global.AtlasGraphicsModes.configuration(activeMode);preset=configuration.preset;compactPreparation=configuration.compact;
+        configuration=global.AtlasGraphicsModes.configuration(activeMode);preset=configuration.preset;compactExecution=configuration.compact;batchedWarmup=configuration.batchedWarmup;
         effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
-        preparationStrategy=compactPreparation?'compact':'desktop';
+        preparationStrategy=compactExecution?'compact':batchedWarmup?'desktop-batched':'desktop';
       }
       // UI redraws must neither retry a failed device nor reveal 2D underneath.
       if(status==='error'){report();return;}
@@ -533,7 +536,7 @@
         const [lib,{GLTFLoader},{HDRLoader},{DRACOLoader}]=await observe('Three.js WebGPU-modules laden',loadModules,token);
         if(token!==generation)return;checkpoint('Three.js WebGPU-modules geladen; module koppelen');THREE=lib;
         checkpoint('Three.js WebGPURenderer maken');
-        renderer=new THREE.WebGPURenderer({canvas,antialias:!compactPreparation,depth:!compactPreparation,powerPreference:'high-performance',device});
+        renderer=new THREE.WebGPURenderer({canvas,antialias:configuration.presentationSamples>1,depth:configuration.presentationDepth,powerPreference:'high-performance',device});
         gpuTrace?.attach(renderer);
         checkpoint('Three.js WebGPURenderer gemaakt');
         const initializingRenderer=renderer;
@@ -544,6 +547,7 @@
         const loadedRoute=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
         if(token!==generation)return;route=loadedRoute;
         renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#dbc294',.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
+        performanceProfile=global.AtlasThreePerformance?.start(renderer,scene);
         const root=await observe('GLB downloaden en decoderen',()=>{
           const pending=loadWorld(GLTFLoader,DRACOLoader,token);worldLoading=pending;
           const clear=()=>{if(worldLoading===pending)worldLoading=null;};pending.then(clear,clear);return pending;
@@ -572,6 +576,7 @@
         }
         attachControls();loading=false;preparationMs=performance.now()-preparationStarted;
         gpuTrace?.stop();
+        performanceProfile?.prepared();
         if(DEBUG&&new URLSearchParams(location.search).get('debug3dgpu')==='1')visibleProfile=global.AtlasThreeRuntimeDiagnostics?.start(renderer,postResources);
         preparationStage(PREPARATION_STAGES.length,'ready');debugMark('3D gereed','complete');if(options.canMove?.())canvas.focus({preventScroll:true});raf=requestAnimationFrame(draw);
       }catch(caught){if(token===generation){

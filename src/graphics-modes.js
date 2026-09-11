@@ -15,8 +15,9 @@
  const isThree=id=>Boolean(get(id)?.world);
  function configuration(id,current=device){
   const mode=get(id);if(!mode?.world||!supported(id,current))return null;
-  const compact=id==='atlas-3d';
-  return Object.freeze({device:current,preset:mode.preset,compact,presentationSamples:compact?1:4,presentationDepth:!compact,override:false});
+  // Execution is device-specific; presentation and world quality are not.
+  const atlas=id==='atlas-3d',compact=atlas&&current.deviceClass!=='desktop';
+  return Object.freeze({device:current,preset:mode.preset,compact,batchedWarmup:atlas,presentationSamples:atlas?1:4,presentationDepth:!atlas,override:false});
  }
  const list=(selected,current=device)=>modes.map(mode=>({...mode,supported:supported(mode.id,current),enabled:supported(mode.id,current),selected:normalize(selected,current)===mode.id}));
  global.AtlasGraphicsModes=Object.freeze({modes,device,atlasPreset,get,supported,normalize,isThree,configuration,list});

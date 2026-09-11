@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v159-world-modes";
+const CACHE_NAME = "svenadventure-static-v160-desktop-execution";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/GTAONode.js",
   "./",

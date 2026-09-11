@@ -7,9 +7,9 @@ test.describe('Atlas first-person LVL-0001',()=>{
   await page.goto(`${process.env.ATLAS_EDITOR_URL}/?dev=editor&level=LVL-0001`);
   await page.waitForFunction(()=>window.eval('state.screen')==='scene');
  });
- async function enable(page){
+ async function enable(page,mode='3d'){
   await page.locator('[data-graphics-action="toggle"]').click();
-  await page.locator('[data-renderer-choice="3d"]').click();
+  await page.locator(`[data-renderer-choice="${mode}"]`).click();
   await expect(page.locator('[data-three-loading]')).toBeVisible();
   await expect(page.locator('[data-three-canvas]')).toBeHidden();
   await expect(page.locator('[data-graphics-settings]')).toHaveCount(0);
@@ -99,7 +99,7 @@ test.describe('Atlas first-person LVL-0001',()=>{
    await page.goto(`${process.env.ATLAS_EDITOR_URL}/?dev=editor&level=LVL-0001`);
    await page.waitForFunction(()=>window.eval('state.screen')==='scene');
    await page.evaluate(()=>Object.defineProperty(navigator.gpu,'requestAdapter',{configurable:true,value:()=>new Promise(()=>{})}));
-   await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="3d"]').click();
+   await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
    await expect(page.locator('[data-three-preparation]')).toHaveText('3D-engine starten…');
    await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen (navigator.gpu: ja) — wacht nog steeds',{timeout:7000});
    await expect(page.locator('[data-three-progress]')).toHaveAttribute('aria-valuenow','0');
@@ -208,7 +208,7 @@ test.describe('Atlas first-person LVL-0001',()=>{
    await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
    await page.goto(`${process.env.ATLAS_EDITOR_URL}/?dev=editor&level=LVL-0001`);
    await page.waitForFunction(()=>window.eval('state.screen')==='scene');
-   await enable(page);
+   await enable(page,'atlas-3d');
    await expect(page.locator('[data-three-move]')).toBeVisible();
    await expect(page.locator('.threeDesktopHint')).toBeHidden();
    await expect(page.locator('.threeTouchHint')).toContainText('Actieknop');

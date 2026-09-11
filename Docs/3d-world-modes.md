@@ -49,7 +49,7 @@ Desktop Atlas 3D is the authoritative development/QA preview for iPad Atlas 3D: 
 | Anisotropy | 2 | 8 |
 | HDR / PMREM | 512×256 / 384×512 | 2048×1024 / 1536×2048 |
 | GTAO / volume / bloom | Off / off / off | On / quarter-resolution 80 steps / on |
-| Preparation | Sequential compact, 3 small views + final | Existing Desktop High, 18 views + final |
+| Preparation | Both: batched uploads/compile, 3 small views + final; desktop: concurrent decode and async gameplay | Existing Desktop High, 18 views + final |
 
 Both retain the existing width safety limit of 1920 pixels; actual drawing-buffer dimensions depend on viewport and devicePixelRatio. Atlas uses the same material path and small-groundcover shadow-caster exclusions everywhere. Platform-specific touch/lifecycle behavior remains, without quality divergence. Canonical-configuration equality tests cover desktop, desktop-style iPad Safari and Android tablet, even with a Desktop High query override.
 

@@ -10,7 +10,7 @@ function registry(signals={}){
 test('Atlas quality is canonical across desktop, iPad and Android despite override',()=>{
  const devices=[{}, {platform:'MacIntel',maxTouchPoints:5},{userAgent:'Android',maxTouchPoints:5},{userAgent:'iPhone',maxTouchPoints:5}];
  const configs=devices.map(device=>registry(device).configuration('atlas-3d'));
- for(const config of configs){expect(config.preset).toEqual(configs[0].preset);expect(config.compact).toBe(true);expect(config.presentationSamples).toBe(1);expect(config.presentationDepth).toBe(false);}
+ for(const config of configs){expect(config.preset).toEqual(configs[0].preset);expect(config.compact).toBe(config.device.deviceClass!=='desktop');expect(config.batchedWarmup).toBe(true);expect(config.presentationSamples).toBe(1);expect(config.presentationDepth).toBe(false);}
  expect(configs[0].preset).toEqual({id:'atlas-canonical',name:'Atlas 3D',worldSamples:1,effectSamples:1,dprCap:.75,shadowSize:1024,volumeResolution:0,volumeSteps:0,gtao:false,bloom:false,anisotropy:2,textureCap:1024,environmentCap:512});
  expect(registry(devices[1]).configuration('3d')).toBeNull();expect(registry(devices[3]).configuration('3d')).toBeNull();
  expect(registry().configuration('3d').preset.id).toBe('desktop-high');
@@ -25,7 +25,7 @@ test('world outputs are independent and retain the verified content',()=>{
  expect(exportScript).not.toContain('save_as_mainfile');
  const html=fs.readFileSync('index.html','utf8'),worker=fs.readFileSync('service-worker.js','utf8');
  expect(html.indexOf('src/graphics-modes.js')).toBeLessThan(html.indexOf('src/voxel-renderer.js'));
- expect(worker).toContain('v159-world-modes');expect(worker).toContain('"src/graphics-modes.js"');
+ expect(worker).toContain('v160-desktop-execution');expect(worker).toContain('"src/graphics-modes.js"');
  // Large worlds are requested only on selection, never install-time precached.
  const core=worker.slice(0,worker.indexOf('self.addEventListener'));
  expect(core).not.toContain('real-3d.glb');expect(core).not.toContain('atlas-3d.glb');
