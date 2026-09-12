@@ -64,7 +64,7 @@ for(const height of [734,689])test(`Tablet Optimized real GPU acceptance: 1180x$
    expect(s.status).toBe('ready');expect(s.backend).toBe('WebGPU');expect(s.resolution).toEqual([885,Math.round(height*.75)]);
    expect(s.configuration.preset).toEqual({id:'atlas-canonical',name:'Atlas 3D',worldSamples:1,effectSamples:1,dprCap:.75,shadowSize:1024,volumeResolution:0,volumeSteps:0,gtao:false,bloom:false,anisotropy:2,textureCap:1024,environmentCap:512});
    expect(s.configuration.presentationSamples).toBe(1);expect(s.configuration.presentationDepth).toBe(false);
-   expect(s.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0});
+   expect(s.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0,fxaa:true,lightingMode:"golden-evening",sunDirection:[-38,24,-52],forestFloor:true});
    expect(s.textureBudget.maxLongEdge).toBeLessThanOrEqual(1024);expect(s.textureBudget.resized).toBeGreaterThan(0);expect(s.textureBudget.resizedBytes).toBeLessThan(s.textureBudget.sourceBytes);
    expect(s.preparationCompleted).toBe(5);expect(s.warmupViews).toBe(4);
    const operations=await page.evaluate(n=>window.tabletQA.operations.slice(n),before.operations);

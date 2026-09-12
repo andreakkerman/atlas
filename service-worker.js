@@ -1,5 +1,6 @@
-const CACHE_NAME = "svenadventure-static-v161-atlas-composition";
+const CACHE_NAME = "svenadventure-static-v169-atlas-cohesion";
 const CORE_ASSETS = [
+  "assets/vendor/three/tsl/display/FXAANode.js",
   "assets/vendor/three/tsl/display/GTAONode.js",
   "./",
   "index.html",

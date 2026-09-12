@@ -1,0 +1,277 @@
+{
+  "before": {
+    "preparationMs": 17327.30000001192,
+    "actualEffects": {
+      "gtao": false,
+      "bloom": false,
+      "volumeSteps": 0,
+      "volumeResolution": 0
+    },
+    "inventory": {
+      "meshes": 561,
+      "instances": 6598,
+      "instancedMeshes": 553,
+      "shadowCasters": 487,
+      "lights": 9,
+      "geometries": 244,
+      "materials": 28,
+      "geometryMaterialPairs": 244,
+      "textures": 23,
+      "nodeMaterials": 1,
+      "doubleSided": 27,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "phases": {
+      "stationary": {
+        "fps": 57.11215168496201,
+        "cpu": 3.378763439834759,
+        "draws": 479,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1715047,
+        "pipelineTransitions": 479,
+        "traversalMs": 0.11263440893862837,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.378763439834759,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 57.14636844045718,
+        "cpu": 3.5473118271398287,
+        "draws": 437.0403225806452,
+        "shadowDraws": 14.405913978494624,
+        "shadowRefreshHz": 3.2260046700258087,
+        "triangles": 1583428.3682795698,
+        "pipelineTransitions": 451.4462365591398,
+        "traversalMs": 0.1153225821032319,
+        "shadowFrameCpuMs": 7.9476190493220376,
+        "regularFrameCpuMs": 3.284045583077645,
+        "shadowFrameDraws": 255.1904761904762
+      },
+      "turning": {
+        "fps": 57.16656677884835,
+        "cpu": 1.6569892478886472,
+        "draws": 203.2983870967742,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1065443.9086021506,
+        "pipelineTransitions": 203.2983870967742,
+        "traversalMs": 0.09193548263721568,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.6569892478886472,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 57.0771001150748,
+        "cpu": 2.0731182790571645,
+        "draws": 213.19892473118279,
+        "shadowDraws": 14.411290322580646,
+        "shadowRefreshHz": 3.222094361334868,
+        "triangles": 1072053.6532258065,
+        "pipelineTransitions": 227.61021505376345,
+        "traversalMs": 0.10080645177313076,
+        "shadowFrameCpuMs": 6.447619046483721,
+        "regularFrameCpuMs": 1.8113960109205327,
+        "shadowFrameDraws": 255.28571428571428
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "on": {
+    "preparationMs": 17589.59999999404,
+    "actualEffects": {
+      "gtao": false,
+      "bloom": false,
+      "volumeSteps": 0,
+      "volumeResolution": 0,
+      "fxaa": true,
+      "lightingMode": "early-morning",
+      "sunDirection": [
+        -10,
+        23,
+        -60
+      ],
+      "forestFloor": true
+    },
+    "inventory": {
+      "meshes": 561,
+      "instances": 6598,
+      "instancedMeshes": 553,
+      "shadowCasters": 487,
+      "lights": 9,
+      "geometries": 244,
+      "materials": 28,
+      "geometryMaterialPairs": 244,
+      "textures": 22,
+      "nodeMaterials": 2,
+      "doubleSided": 27,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "phases": {
+      "stationary": {
+        "fps": 57.08235510748974,
+        "cpu": 3.4118279575179984,
+        "draws": 480,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1715047,
+        "pipelineTransitions": 480,
+        "traversalMs": 0.11827956973224558,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.4118279575179984,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 57.18490809020803,
+        "cpu": 3.754155496489906,
+        "draws": 437.9517426273458,
+        "shadowDraws": 23.67024128686327,
+        "shadowRefreshHz": 3.2195256565532673,
+        "triangles": 1583273.5549597854,
+        "pipelineTransitions": 461.6219839142091,
+        "traversalMs": 0.11662198367451215,
+        "shadowFrameCpuMs": 10.538095237243743,
+        "regularFrameCpuMs": 3.349431818774478,
+        "shadowFrameDraws": 420.42857142857144
+      },
+      "turning": {
+        "fps": 57.1998159791443,
+        "cpu": 1.7852546919446848,
+        "draws": 204.7426273458445,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1066409.037533512,
+        "pipelineTransitions": 204.7426273458445,
+        "traversalMs": 0.10268096493971572,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.7852546919446848,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 57.19279953387099,
+        "cpu": 2.363806971116616,
+        "draws": 214.11796246648794,
+        "shadowDraws": 23.675603217158177,
+        "shadowRefreshHz": 3.2199699469471605,
+        "triangles": 1071077.4530831098,
+        "pipelineTransitions": 237.7935656836461,
+        "traversalMs": 0.1077747992152503,
+        "shadowFrameCpuMs": 9.504761904478073,
+        "regularFrameCpuMs": 1.9377840915694833,
+        "shadowFrameDraws": 420.5238095238095
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "off": {
+    "preparationMs": 17442.19999998808,
+    "actualEffects": {
+      "gtao": false,
+      "bloom": false,
+      "volumeSteps": 0,
+      "volumeResolution": 0,
+      "fxaa": false,
+      "lightingMode": "early-morning",
+      "sunDirection": [
+        -10,
+        23,
+        -60
+      ],
+      "forestFloor": true
+    },
+    "inventory": {
+      "meshes": 561,
+      "instances": 6598,
+      "instancedMeshes": 553,
+      "shadowCasters": 487,
+      "lights": 9,
+      "geometries": 244,
+      "materials": 28,
+      "geometryMaterialPairs": 244,
+      "textures": 22,
+      "nodeMaterials": 2,
+      "doubleSided": 27,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "phases": {
+      "stationary": {
+        "fps": 57.22877702256931,
+        "cpu": 3.201072387417264,
+        "draws": 479,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1715047,
+        "pipelineTransitions": 479,
+        "traversalMs": 0.08686327063366171,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.201072387417264,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 57.15866138102701,
+        "cpu": 3.535215053426963,
+        "draws": 437.0752688172043,
+        "shadowDraws": 23.717741935483872,
+        "shadowRefreshHz": 3.226698626348299,
+        "triangles": 1583458.1532258065,
+        "pipelineTransitions": 460.7930107526882,
+        "traversalMs": 0.09462365548136414,
+        "shadowFrameCpuMs": 10.309523810942968,
+        "regularFrameCpuMs": 3.129914529473014,
+        "shadowFrameDraws": 420.14285714285717
+      },
+      "turning": {
+        "fps": 57.03072300239158,
+        "cpu": 1.641935483983127,
+        "draws": 203.47043010752688,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1065801.497311828,
+        "pipelineTransitions": 203.47043010752688,
+        "traversalMs": 0.07500000057681915,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.641935483983127,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 57.04559046786586,
+        "cpu": 2.1454301079915417,
+        "draws": 213.252688172043,
+        "shadowDraws": 23.701612903225808,
+        "shadowRefreshHz": 3.2203155909279113,
+        "triangles": 1071961.2768817204,
+        "pipelineTransitions": 236.95430107526883,
+        "traversalMs": 0.07795698876662921,
+        "shadowFrameCpuMs": 9.533333329927354,
+        "regularFrameCpuMs": 1.70341880411504,
+        "shadowFrameDraws": 419.85714285714283
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "validation": {
+    "acceptance": {
+      "passed": 25,
+      "minutes": 7.1
+    },
+    "policy": {
+      "passed": 22,
+      "seconds": 1.6
+    },
+    "webkit": {
+      "passed": 13,
+      "minutes": 1.2
+    },
+    "physicalSafari": "Not tested; no deployment",
+    "recoveryGameplay": {
+      "passed": 6,
+      "minutes": 4.9
+    }
+  }
+}

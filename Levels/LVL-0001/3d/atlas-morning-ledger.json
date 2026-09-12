@@ -1,0 +1,16 @@
+{
+  "image": "Atlas morning woodland floor 512",
+  "size": 512,
+  "maps": 1,
+  "roughness": 0.94,
+  "geometryChanged": false,
+  "uvChanged": false,
+  "foliageChanged": false,
+  "source": "assets\\textures\\atlas-woodland-floor-512.png",
+  "exportAudit": {
+    "nodesIdentical": true,
+    "meshDescriptorsIdentical": true,
+    "geometryStreamsIdentical": true,
+    "sourceGeometryStreams": 241
+  }
+}

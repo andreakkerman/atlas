@@ -1,0 +1,16 @@
+[
+  {
+    "mesh": "Atlas paired fern 0",
+    "instances": 739,
+    "triangles": 260,
+    "fronds": 5,
+    "pairsPerFrond": 6
+  },
+  {
+    "mesh": "Atlas paired fern 1",
+    "instances": 731,
+    "triangles": 260,
+    "fronds": 5,
+    "pairsPerFrond": 6
+  }
+]

@@ -22,7 +22,7 @@
       if(!DEBUG)return;
       gpuTrace?.checkpoint(operation,state);
       if(state==='complete')lastCompletedOperation=operation;
-      const record={operation,state,lastCompleted:lastCompletedOperation,strategy:preparationStrategy,rendererSettings:global.AtlasThreePresets.describe(configuration),failure:failureEvidence,at:new Date().toISOString()};
+      const record={operation,state,lastCompleted:lastCompletedOperation,strategy:preparationStrategy,rendererSettings:global.AtlasThreePresets.describe(configuration)+(activeMode==='atlas-3d'?`\nAtlas: FXAA ${global.AtlasWorldPolicy.fxaa(location.search)?'aan':'uit'} · avondzon ${global.AtlasWorldPolicy.lighting.sunOffset.join('/')} · bosbodem ${actualEffects?.forestFloor?'512px actief':'voorbereiden'}`:''),failure:failureEvidence,at:new Date().toISOString()};
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
       global.dispatchEvent(new CustomEvent('atlas-three-preparation',{detail:record}));
     }
@@ -215,9 +215,10 @@
       }
     }
     function buildLights() {
-      scene.add(new THREE.HemisphereLight('#b6cfde','#344d2b',1.4));
-      const bounce=new THREE.DirectionalLight('#ffdaa0',1.8);bounce.position.set(-30,18,25);scene.add(bounce);
-      sun=new THREE.DirectionalLight('#ffca85',10);sun.position.set(-36,42,-24);sun.castShadow=true;
+      const art=activeMode==='atlas-3d'?global.AtlasWorldPolicy.lighting:null;
+      scene.add(new THREE.HemisphereLight(art?.sky??'#b6cfde',art?.ground??'#344d2b',art?.hemisphere??1.4));
+      const bounce=new THREE.DirectionalLight(art?.bounce??'#ffdaa0',art?.bounceIntensity??1.8);bounce.position.set(-30,18,25);scene.add(bounce);
+      sun=new THREE.DirectionalLight(art?.sun??'#ffca85',art?.sunIntensity??10);sun.position.fromArray(art?.sunOffset??[-36,42,-24]);sun.castShadow=true;
       sun.shadow.mapSize.set(preset.shadowSize,preset.shadowSize);Object.assign(sun.shadow.camera,{left:-27,right:27,top:27,bottom:-27,near:.5,far:130});
       // Keep the normal offset proportional to shadow texel footprint. The
       // faceted surfaces otherwise self-shadow in stripes at tablet resolution.
@@ -225,7 +226,7 @@
       // Keep the world shadow layer independent of the atmosphere pass camera.
       // Three otherwise inherits layer 10 and replaces the map with an empty pass.
       sun.shadow.camera.layers.enable(1);
-      sun.shadow.intensity=1;
+      sun.shadow.intensity=art?.shadowIntensity??1;
       // All shadow-casting landscape geometry is static. Reuse its map while
       // looking around, and recenter it only after the player changes position.
       sun.shadow.autoUpdate=false;sun.shadow.needsUpdate=true;
@@ -236,8 +237,33 @@
     }
     async function buildAtmosphere(token) {
       const [tsl,{bayer16},{gaussianBlur},{bloom},{ao}]=await Promise.all([import('../assets/vendor/three/three.tsl.min.js'),import('../assets/vendor/three/tsl/math/Bayer.js'),import('../assets/vendor/three/tsl/display/GaussianBlurNode.js'),import('../assets/vendor/three/tsl/display/BloomNode.js'),import('../assets/vendor/three/tsl/display/GTAONode.js')]);
+      const fxaaModule=activeMode==='atlas-3d'?await import('../assets/vendor/three/tsl/display/FXAANode.js'):null;
       if(token!==generation)return;
       const {pass,Fn,float,screenCoordinate,screenUV,uniform,uv,sin,time,vec3,mix,smoothstep,cameraPosition,distance}=tsl;
+      if(activeMode==='atlas-3d'){
+        // A ray-based disc shares the exact directional-light offset. The HDR
+        // stays available for ambient reflections, but cannot paint a second sun.
+        const art=global.AtlasWorldPolicy.lighting,dome=scene.getObjectByName('Atlas evening sky');
+        const ray=tsl.positionWorld.sub(cameraPosition).normalize();
+        const towardSun=ray.dot(vec3(...art.sunOffset).normalize());
+        const radius=Math.cos(THREE.MathUtils.degToRad(art.sunRadiusDegrees));
+        const disc=smoothstep(radius-.000035,radius+.000015,towardSun);
+        const halo=smoothstep(Math.cos(THREE.MathUtils.degToRad(art.sunHaloDegrees)),1,towardSun).pow(4);
+        // Atlas painted-sky treatment on the existing dome: cool upper sky,
+        // warm horizon and broad cloud ribbons. No texture, extra draw or target.
+        const elevation=smoothstep(0,.8,ray.y);
+        const skyBase=mix(vec3(.58,.61,.58),vec3(.19,.34,.52),elevation);
+        const cloudWave=sin(ray.x.mul(9).add(ray.z.mul(5))).mul(.035)
+          .add(sin(ray.z.mul(13).sub(ray.x.mul(4))).mul(.018));
+        const cloudBand=sin(ray.y.add(cloudWave).mul(31)).mul(.5).add(.5);
+        const cloudMask=smoothstep(.68,.96,cloudBand)
+          .mul(smoothstep(.04,.17,ray.y)).mul(float(1).sub(smoothstep(.4,.7,ray.y)))
+          .mul(smoothstep(-.7,.8,towardSun).mul(.2).add(.12));
+        const sky=mix(skyBase,vec3(.87,.78,.62),cloudMask);
+        const material=new THREE.MeshBasicNodeMaterial({side:THREE.BackSide,depthWrite:false,fog:false});
+        material.colorNode=sky.add(halo.mul(vec3(.28,.22,.11))).add(disc.mul(vec3(5,4.4,2.7)));
+        dome.material.dispose();dome.material=material;
+      }
       // Blend the authored moss material continuously across rock surfaces.
       // World-space masks avoid hard polygon borders on the raised authoring patches.
       const {texture,positionWorld,positionLocal,normalWorldGeometry,mx_noise_float}=tsl;
@@ -332,9 +358,25 @@
       let combined=contact?scenePass.mul(mix(float(1),contact.getTextureNode().r,.3)):scenePass;
       if(blur)combined=combined.add(blur.mul(.3));
       const glow=preset.bloom?bloom(combined,.16,.5,1.15):null;post=new THREE.PostProcessing(renderer);post.outputNode=blur&&new URLSearchParams(location.search).get('threeDebug')==='volume'?scenePass.mul(.000001).add(blur):glow?combined.add(glow):combined;
+      const useFxaa=activeMode==='atlas-3d'&&global.AtlasWorldPolicy.fxaa(location.search);
+      if(useFxaa){
+        const {fxaa}=fxaaModule;
+        // FXAA needs display/sRGB input. Apply the output transform once, before
+        // filtering, and explicitly own its single-sample, depth-free RTT.
+        const antialias=fxaa(tsl.renderOutput(combined,renderer.toneMapping,renderer.outputColorSpace));
+        const display=antialias.textureNode;display.renderTarget.texture.type=THREE.UnsignedByteType;
+        display.renderTarget.texture.name='Atlas FXAA sRGB';
+        display.renderTarget.depthBuffer=false;display.renderTarget.samples=0;
+        instrumentPreparationPass('FXAA kleurvoorbereiding',display);
+        // r180 RTTNode has no resource-owning dispose(). Its target and quad
+        // material must be released explicitly, including cancelled preparation.
+        postResources.push({dispose(){display.renderTarget.dispose();display._quadMesh.material.dispose();}});
+        post.outputColorTransform=false;post.outputNode=antialias;
+      }
       for(const [name,node]of [['Wereld en schaduwen',scenePass],['Volumetrisch licht',fogPass],['GTAO',contact],['Volume-blur',blur],['Bloom',glow]]){if(node)instrumentPreparationPass(name,node);}
       postResources.push(...[scenePass,fogPass,contact,blur,glow].filter(Boolean));
-      actualEffects={gtao:Boolean(contact),bloom:Boolean(glow),volumeSteps:material?.steps||0,volumeResolution:fogPass?.getResolution()||0};
+      let forestFloor=false;if(activeMode==='atlas-3d')scene.traverse(o=>{for(const m of Array.isArray(o.material)?o.material:[o.material])if(m?.name===global.AtlasWorldPolicy.forestFloor.name&&m.map&&m.userData?.atlasFloorVersion==='evening-v168')forestFloor=true;});
+      actualEffects={gtao:Boolean(contact),bloom:Boolean(glow),volumeSteps:material?.steps||0,volumeResolution:fogPass?.getResolution()||0,fxaa:useFxaa,...(activeMode==='atlas-3d'?{lightingMode:global.AtlasWorldPolicy.lighting.mode,sunDirection:[...global.AtlasWorldPolicy.lighting.sunOffset],forestFloor}: {})};
     }
     function updateTarget() {
       currentTarget=null;let best=0;const direction=new THREE.Vector3();camera.getWorldDirection(direction);
@@ -372,7 +414,8 @@
       camera.updateMatrixWorld();
       const shadowDistance=activeMode==='atlas-3d'?global.AtlasWorldPolicy.shadowRecenterDistance:.4;
       if(frames===0||sun.target.position.distanceToSquared(camera.position)>shadowDistance*shadowDistance){
-        sun.position.copy(camera.position).add(new THREE.Vector3(-36,42,-24));sun.target.position.copy(camera.position);sun.shadow.needsUpdate=true;
+        const offset=activeMode==='atlas-3d'?global.AtlasWorldPolicy.lighting.sunOffset:[-36,42,-24];
+        sun.position.copy(camera.position).add(new THREE.Vector3().fromArray(offset));sun.target.position.copy(camera.position);sun.shadow.needsUpdate=true;
       }
     }
     async function warmup(token) {
@@ -555,7 +598,8 @@
         preparationStage(1,'loading');
         const loadedRoute=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
         if(token!==generation)return;route=loadedRoute;
-        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2('#dbc294',.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
+        const art=activeMode==='atlas-3d'?global.AtlasWorldPolicy.lighting:null;
+        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=art?.exposure??1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2(art?.fog??'#dbc294',art?.fogDensity??.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
         performanceProfile=global.AtlasThreePerformance?.start(renderer,scene);
         const root=await observe('GLB downloaden en decoderen',()=>{
           const pending=loadWorld(GLTFLoader,DRACOLoader,token);worldLoading=pending;
@@ -573,7 +617,7 @@
         }
         await prepareWork('HDR-omgeving en hemeldome voorbereiden',()=>{
           const environment=sky.clone();environment.mapping=THREE.EquirectangularReflectionMapping;environment.needsUpdate=true;textures.add(environment);scene.environment=environment;scene.environmentIntensity=.16;scene.environmentRotation.set(.2,1.55,0);
-          const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:sky,color:new THREE.Color(.14,.16,.19),side:THREE.BackSide,depthWrite:false,fog:false}));dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);
+          const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:art?null:sky,color:new THREE.Color().fromArray(art?.skyTint??[.14,.16,.19]),side:THREE.BackSide,depthWrite:false,fog:false}));if(art)dome.name='Atlas evening sky';dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);
         },token);
         preparationStage(2,'warming');await prepareWork('Licht, moss-materialen en post-processing opbouwen',async()=>{buildLights();await buildAtmosphere(token);},token);if(token!==generation)return;
         if(!next.isConnected){dispose();sync();return;}

@@ -1,0 +1,299 @@
+{
+  "date": "2026-09-12",
+  "world": "Atlas 3D",
+  "counts": {
+    "Pine1": 80,
+    "Fern": 165,
+    "Flower1": 28,
+    "Flower2": 31,
+    "Flower3": 31,
+    "grass2": 4000
+  },
+  "sourceGeometry": {
+    "grass1": 8540,
+    "grass2": 2352,
+    "selectedGrass2": 256
+  },
+  "comparison": "Same 80-pine world, with and without grass; 1180x734 CSS, canonical DPR cap .75; sequential runs, vsync limited.",
+  "baseline": {
+    "preparationMs": 18046.40000000596,
+    "inventory": {
+      "meshes": 547,
+      "instances": 2598,
+      "instancedMeshes": 539,
+      "shadowCasters": 487,
+      "lights": 9,
+      "geometries": 243,
+      "materials": 27,
+      "geometryMaterialPairs": 243,
+      "textures": 23,
+      "nodeMaterials": 1,
+      "doubleSided": 26,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "phases": {
+      "stationary": {
+        "fps": 59.995089915914804,
+        "cpu": 3.8657289009417415,
+        "draws": 469,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 862823,
+        "pipelineTransitions": 469,
+        "traversalMs": 0.12941176377598892,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.8657289009417415,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99601049546575,
+        "cpu": 4.106393862258443,
+        "draws": 428.67263427109975,
+        "shadowDraws": 13.703324808184144,
+        "shadowRefreshHz": 3.2222921237973936,
+        "triangles": 826781.47314578,
+        "pipelineTransitions": 442.37595907928386,
+        "traversalMs": 0.12250639441068215,
+        "shadowFrameCpuMs": 9.457142858278184,
+        "regularFrameCpuMs": 3.80270270302489,
+        "shadowFrameDraws": 255.14285714285714
+      },
+      "turning": {
+        "fps": 59.995089915914775,
+        "cpu": 1.9222506385325167,
+        "draws": 195.59846547314578,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 463197.74168797955,
+        "pipelineTransitions": 195.59846547314578,
+        "traversalMs": 0.09897698282890613,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.9222506385325167,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99508991591484,
+        "cpu": 2.3276214832844944,
+        "draws": 206.0537084398977,
+        "shadowDraws": 13.703324808184144,
+        "shadowRefreshHz": 3.222242680905912,
+        "triangles": 517221.2531969309,
+        "pipelineTransitions": 219.75703324808185,
+        "traversalMs": 0.10997442470487122,
+        "shadowFrameCpuMs": 7.166666669504983,
+        "regularFrameCpuMs": 2.052972972715223,
+        "shadowFrameDraws": 255.14285714285714
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "after": {
+    "preparationMs": 17980.5,
+    "inventory": {
+      "meshes": 561,
+      "instances": 6598,
+      "instancedMeshes": 553,
+      "shadowCasters": 487,
+      "lights": 9,
+      "geometries": 244,
+      "materials": 28,
+      "geometryMaterialPairs": 244,
+      "textures": 23,
+      "nodeMaterials": 1,
+      "doubleSided": 27,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "phases": {
+      "stationary": {
+        "fps": 59.99601049546579,
+        "cpu": 3.719181584961274,
+        "draws": 479,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1715047,
+        "pipelineTransitions": 479,
+        "traversalMs": 0.1265984654731458,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.719181584961274,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99416936461415,
+        "cpu": 4.411508951421894,
+        "draws": 436.9846547314578,
+        "shadowDraws": 13.703324808184144,
+        "shadowRefreshHz": 3.2221932395317063,
+        "triangles": 1583369.8158567776,
+        "pipelineTransitions": 450.68797953964196,
+        "traversalMs": 0.11790281221689776,
+        "shadowFrameCpuMs": 9.119047619047619,
+        "regularFrameCpuMs": 4.144324324340434,
+        "shadowFrameDraws": 255.14285714285714
+      },
+      "turning": {
+        "fps": 59.99416936461422,
+        "cpu": 2.1168797955183725,
+        "draws": 203.24040920716112,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1064807.475703325,
+        "pipelineTransitions": 203.24040920716112,
+        "traversalMs": 0.12966751922731815,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 2.1168797955183725,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99508991591484,
+        "cpu": 2.8360613808607504,
+        "draws": 212.77237851662403,
+        "shadowDraws": 13.703324808184144,
+        "shadowRefreshHz": 3.222242680905912,
+        "triangles": 1070628.9335038364,
+        "pipelineTransitions": 226.4757033248082,
+        "traversalMs": 0.1360613807387974,
+        "shadowFrameCpuMs": 8.509523811794462,
+        "regularFrameCpuMs": 2.514054053699648,
+        "shadowFrameDraws": 255.14285714285714
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "candidateBenchmarks": [
+    {
+      "file": "test-results/grass-comparison/.last-run.json",
+      "data": {
+        "status": "passed",
+        "failedTests": []
+      }
+    },
+    {
+      "file": "test-results/grass-comparison/atlas-grass-benchmark-gras-7125a-GPU-comparison-grass2-light-desktop-chromium/metrics.json",
+      "data": {
+        "candidate": "grass2-light",
+        "results": [
+          {
+            "count": 500,
+            "fps": 59.997473790351386,
+            "cpuMs": 0.27263157712785824,
+            "queueFenceMs": 2.826315791355936,
+            "draws": 3,
+            "triangles": 128003
+          },
+          {
+            "count": 3000,
+            "fps": 59.997473791480644,
+            "cpuMs": 0.25894736867201956,
+            "queueFenceMs": 3.0515789477448716,
+            "draws": 3,
+            "triangles": 768003
+          }
+        ],
+        "errors": [],
+        "notes": "One metre normalized source patches; shared vertex-color material, no textures, no grass shadows. Queue fence wall time is not hardware GPU timing."
+      }
+    },
+    {
+      "file": "test-results/grass-comparison/atlas-grass-benchmark-grass-source-GPU-comparison-grass1-desktop-chromium/metrics.json",
+      "data": {
+        "candidate": "grass1",
+        "results": [
+          {
+            "count": 500,
+            "fps": 59.997473790351386,
+            "cpuMs": 0.31789473514807853,
+            "queueFenceMs": 3.3042105263785313,
+            "draws": 3,
+            "triangles": 4270003
+          },
+          {
+            "count": 3000,
+            "fps": 59.99368487527629,
+            "cpuMs": 0.2610526304495962,
+            "queueFenceMs": 4.226315791669645,
+            "draws": 3,
+            "triangles": 25620003
+          }
+        ],
+        "errors": [],
+        "notes": "One metre normalized source patches; shared vertex-color material, no textures, no grass shadows. Queue fence wall time is not hardware GPU timing."
+      }
+    },
+    {
+      "file": "test-results/grass-comparison/atlas-grass-benchmark-grass-source-GPU-comparison-grass2-desktop-chromium/metrics.json",
+      "data": {
+        "candidate": "grass2",
+        "results": [
+          {
+            "count": 500,
+            "fps": 59.99368487527629,
+            "cpuMs": 0.2673684223702079,
+            "queueFenceMs": 2.8105263148483477,
+            "draws": 3,
+            "triangles": 1176003
+          },
+          {
+            "count": 3000,
+            "fps": 59.99368487527629,
+            "cpuMs": 0.2926315781317259,
+            "queueFenceMs": 3.108421053070771,
+            "draws": 3,
+            "triangles": 7056003
+          }
+        ],
+        "errors": [],
+        "notes": "One metre normalized source patches; shared vertex-color material, no textures, no grass shadows. Queue fence wall time is not hardware GPU timing."
+      }
+    }
+  ],
+  "tabletConfigurationEvidence": [
+    {
+      "file": "test-results/grass-acceptance/three-tablet-acceptance-Ta-4057b-eal-GPU-acceptance-1180x734-desktop-chromium/tablet-runtime-evidence.json",
+      "preparationMs": 21784.90000000596,
+      "ready": false,
+      "errors": [],
+      "devices": 4,
+      "destroyed": 3,
+      "snapshotPhase": "After final switch away from Atlas 3D; ready=false is expected after cleanup"
+    },
+    {
+      "file": "test-results/grass-acceptance/three-tablet-acceptance-Ta-6f8aa-eal-GPU-acceptance-1180x689-desktop-chromium/tablet-runtime-evidence.json",
+      "preparationMs": 21381.59999999404,
+      "ready": false,
+      "errors": [],
+      "devices": 4,
+      "destroyed": 3,
+      "snapshotPhase": "After final switch away from Atlas 3D; ready=false is expected after cleanup"
+    }
+  ],
+  "qa": {
+    "candidateBenchmarks": {
+      "passed": 3,
+      "seconds": 13.2
+    },
+    "worldComparison": {
+      "passed": 2
+    },
+    "acceptance": {
+      "passed": 21,
+      "minutes": 6.4
+    },
+    "policy": {
+      "passed": 28,
+      "seconds": 21.5
+    },
+    "webkit": {
+      "passed": 13,
+      "minutes": 1.2
+    },
+    "recoveryGameplay": {
+      "passed": 9,
+      "minutes": 6.6
+    },
+    "physicalSafari": "Not tested; not deployed"
+  }
+}

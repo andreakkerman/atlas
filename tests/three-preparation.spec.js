@@ -39,7 +39,7 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  expect(ready.snapshot.preparationStrategy).toBe('compact');
  expect(ready.snapshot.configuration.preset.name).toBe('Atlas 3D');
  expect(ready.snapshot.resolution).toEqual([1770,1101]);
- expect(ready.snapshot.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0});
+ expect(ready.snapshot.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0,fxaa:true,lightingMode:"golden-evening",sunDirection:[-38,24,-52],forestFloor:true});
  await expect(page.locator('[data-tap-diagnostics]')).toContainText('tablet · Atlas 3D');
  await expect(page.locator('[data-tap-diagnostics]')).toContainText('MSAA wereld 1× / effecten 1× / presentatie 1× · DPR-cap 0.75');
  await expect(page.locator('[data-tap-diagnostics]')).toContainText('Schaduw 1024² · GTAO uit · Volume uit');

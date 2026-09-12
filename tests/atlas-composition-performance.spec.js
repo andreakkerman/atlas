@@ -3,11 +3,25 @@ const fs=require('fs');
 const sizes=(process.env.ATLAS_GROUP_SIZES||'32').split(',').map(Number);
 for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELINE_ASSET==='1'?12:size}`,async({page},info)=>{
  test.skip(process.env.ATLAS_PERFORMANCE_QA!=='1'||info.project.name!=='desktop-chromium','Opt-in sequential real WebGPU benchmark');test.setTimeout(300000);
- await page.setViewportSize({width:1180,height:734});
+ await page.setViewportSize(process.env.ATLAS_ART_POSES==='1'&&process.env.ATLAS_CAPTURE_ONLY==='1'?{width:1840,height:1034}:{width:1180,height:734});
  if(process.env.ATLAS_PROFILE_TABLET==='1')await page.addInitScript(()=>{
   Object.defineProperty(navigator,'platform',{get:()=> 'MacIntel'});Object.defineProperty(navigator,'maxTouchPoints',{get:()=>5});Object.defineProperty(window,'devicePixelRatio',{get:()=>2});
  });
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
+ if(process.env.ATLAS_COHESION_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/cohesion-v169-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
+  await page.route('**/src/three-renderer.js*',r=>r.fulfill({path:'output/cohesion-v169-backup/three-renderer.js',contentType:'text/javascript'}));
+ }
+ if(process.env.ATLAS_CURATED_BEFORE==='1')await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/curated-foliage-backup/before.glb',contentType:'model/gltf-binary'}));
+ if(process.env.ATLAS_GRASS_BASELINE==='1')await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/grass-v166/no-grass.glb',contentType:'model/gltf-binary'}));
+ if(process.env.ATLAS_EVENING_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/evening-v168-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
+  for(const name of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+name+'*',r=>r.fulfill({path:'output/evening-v168-backup/'+name,contentType:'text/javascript'}));
+ }
+ if(process.env.ATLAS_MORNING_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/morning-v167-backup/before.glb',contentType:'model/gltf-binary'}));
+  for(const name of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+name+'*',r=>r.fulfill({path:'output/morning-v167-backup/'+name,contentType:'text/javascript'}));
+ }
  if(process.env.ATLAS_BASELINE_ASSET==='1'){
   await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/atlas-before-composition.glb',contentType:'model/gltf-binary'}));
   const before=require('child_process').execFileSync('git',['show','f8f16a3:src/three-renderer.js'],{encoding:'utf8'});
@@ -26,7 +40,7 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
   addEventListener('unhandledrejection',e=>benchmarkErrors.push(String(e.reason)));
  });
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:4173/?dev=editor&level=LVL-0001&debug3d=1&profile3d=1');
+ await page.goto('http://127.0.0.1:4173/?dev=editor&level=LVL-0001&debug3d=1&profile3d=1'+(process.env.ATLAS_FXAA!==undefined?'&atlasFxaa='+process.env.ATLAS_FXAA:''));
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
  await page.waitForFunction(()=>['ready','error'].includes(window.eval('threeRenderer.snapshot')().status),{},{timeout:240000});
  const initial=await page.evaluate(()=>window.eval('threeRenderer.snapshot')());expect(initial.error).toBeNull();expect(initial.ready).toBe(true);
@@ -43,12 +57,28 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
   const shadow=samples.filter(x=>x.shadowRefresh),regular=samples.filter(x=>!x.shadowRefresh),average=(values,key)=>values.length?values.reduce((s,x)=>s+(x[key]||0),0)/values.length:null;
   phases[phase].shadowFrameCpuMs=average(shadow,'cpu');phases[phase].regularFrameCpuMs=average(regular,'cpu');phases[phase].shadowFrameDraws=average(shadow,'shadowDraws');
  }
- const views=process.env.ATLAS_REVIEW_POSES==='1'?[[1,322,-.4],[2,1017,-1.2],[3,1322,1.4],[4,1617,1.5]]:[[1,322,-1.1],[2,1017,1.5],[3,1322,1.4],[4,1617,2.9]];
+ const views=process.env.ATLAS_ART_POSES==='1'?[[1,322,-.6],[2,1017,1.4],[3,1322,1.4],[4,1617,1.55]]:process.env.ATLAS_REVIEW_POSES==='1'?[[1,322,-.4],[2,1017,-1.2],[3,1322,1.4],[4,1617,1.5]]:[[1,322,-1.1],[2,1017,1.5],[3,1322,1.4],[4,1617,2.9]];
  if(process.env.ATLAS_REVIEW_POSES==='1')await page.addStyleTag({content:'[data-tap-diagnostics]{visibility:hidden}'});
  for(const [i,x,yaw] of views){
   await page.evaluate(({x,yaw})=>{window.eval('state.worldX='+x);window.eval('threeRenderer').lookAt(yaw,0);},{x,yaw});await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(`view-${i}.png`)});
  }
+ if(process.env.ATLAS_CURATED_CLOSE==='1'){
+  await page.evaluate(()=>{window.eval('state.worldX=1017');window.eval('threeRenderer').lookAt(1.4,-.42);});
+  await page.waitForTimeout(1000);await page.screenshot({path:info.outputPath('fern-close.png')});
+ }
+ if(process.env.ATLAS_MORNING_VIEWS==='1'){
+  for(const x of [175,650,1017]){
+   await page.evaluate(x=>{window.eval('state.worldX='+x);const [sx,sy,sz]=AtlasWorldPolicy.lighting.sunOffset;window.eval('threeRenderer').lookAt(Math.atan2(-sx,-sz),Math.atan2(sy,Math.hypot(sx,sz)));},x);
+   await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(`sun-${x}.png`)});
+  }
+ }
+ if(process.env.ATLAS_EVENING_DETAILS==='1'){
+  for(const [name,x,target] of [['first-rune',175,[-2.8,1.8,-5]],['rock-1',322,[9,1.8,-5]],['rock-2',885,[-.5,1.6,-18]],['rock-3',1017,[1.6,1.5,-31.3]],['temple',1697,[19,8,-58.5]],['rock-4',1617,[8.3,1.7,-50]]]){
+   await page.evaluate(x=>window.eval('state.worldX='+x),x);await page.waitForTimeout(100);
+   await page.evaluate(target=>{const r=window.eval('threeRenderer'),p=r.snapshot().camera;const d=target.map((v,i)=>v-p[i]);r.lookAt(Math.atan2(-d[0],-d[2]),Math.atan2(d[1],Math.hypot(d[0],d[2])));},target);
+   await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(name+'.png')});
+  }
+ }
  const gpuErrors=await page.evaluate(()=>benchmarkErrors);fs.writeFileSync(info.outputPath('metrics.json'),JSON.stringify({size:process.env.ATLAS_BASELINE_ASSET==='1'?12:size,baseline:process.env.ATLAS_BASELINE_ASSET==='1',initial,phases,errors,gpuErrors},null,2));console.log(size,JSON.stringify(phases));expect(errors).toEqual([]);expect(gpuErrors).toEqual([]);
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="illustrated"]').click();
 });
-

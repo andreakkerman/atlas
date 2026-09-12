@@ -21,7 +21,7 @@ test('desktop world switching uses one device and the correct worlds and quality
    const s=await page.evaluate(()=>window.eval('threeRenderer.snapshot')());expect(s.error).toBeNull();expect(s.ready).toBe(true);
    expect(s.worldMode).toBe(mode==='3d'?'real-3d':'atlas-3d');expect(s.source).toContain(mode==='3d'?'real-3d.glb':'atlas-3d.glb');
    expect(s.configuration.preset.id).toBe(mode==='3d'?'desktop-high':'atlas-canonical');expect(s.preparationCompleted).toBe(5);
-   if(mode==='atlas-3d'){expect(s.preparationStrategy).toBe('desktop-batched');expect(s.configuration.presentationSamples).toBe(1);expect(s.configuration.presentationDepth).toBe(false);expect(s.warmupViews).toBe(4);expect(s.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0});expect(s.textureBudget.maxLongEdge).toBeLessThanOrEqual(1024);}
+   if(mode==='atlas-3d'){expect(s.preparationStrategy).toBe('desktop-batched');expect(s.configuration.presentationSamples).toBe(1);expect(s.configuration.presentationDepth).toBe(false);expect(s.warmupViews).toBe(4);expect(s.actualEffects).toEqual({gtao:false,bloom:false,volumeSteps:0,volumeResolution:0,fxaa:true,lightingMode:"golden-evening",sunDirection:[-38,24,-52],forestFloor:true});expect(s.textureBudget.maxLongEdge).toBeLessThanOrEqual(1024);}
    // Regression: both desktop worlds render continuously without a per-frame queue fence.
    const fences=await page.evaluate(()=>window.worldQA.fences);await page.waitForTimeout(1200);expect(await page.evaluate(()=>window.worldQA.fences)).toBe(fences);
    const x=await page.evaluate(()=>window.eval('state.worldX'));await page.keyboard.down('w');await expect.poll(()=>page.evaluate(()=>window.eval('state.worldX'))).toBeGreaterThan(x+1);await page.keyboard.up('w');

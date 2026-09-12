@@ -1,6 +1,6 @@
-# Current Atlas renderer implementation — local v161 composition and batching
+# Current Atlas renderer implementation — local v168 Atlas evening delta (FXAA retained)
 
-Verified against source on 2026-09-11. v158 is a deliberately conservative
+Verified against source on 2026-09-12. v158 is a deliberately conservative
 physical-tablet stability baseline, not the final visual-quality target. It retains
 the v156 compact presentation, GPU fencing, cleanup and recovery work, and the
 v157 RangeError evidence capture. The user reports the unchanged faceted baseline passed physical iPad testing; the new mode separation still requires physical acceptance.
@@ -16,7 +16,7 @@ See [the prior investigation](3d-tablet-range-investigation.md) and `AGENTS.md`.
 
 Real 3D (`3d`, preserving the saved identifier) is the original heavy world, desktop/laptop only, using Desktop High. Tablets/phones see a disabled button with “Desktop only”. The central settings normalizer rejects unsupported choices, including saved and programmatic selections, with Illustrated fallback before any heavy-world request. Renderer query overrides cannot bypass availability.
 
-Atlas 3D (`atlas-3d`) is the faceted world, with the local v161 authoring cleanup described in [the composition report](atlas-composition-performance.md). This new asset still needs physical iPad acceptance. It uses **one canonical Atlas 3D configuration** on every device, with the exact conservative values in the table below. Desktop is the authoritative visual development/QA preview for iPad Atlas 3D: no automatic desktop uplift, no device-selected quality variant, and no rendererPreset override. Desktop Atlas uses the existing asynchronous desktop scheduler, two Draco workers and concurrent dependencies. Its batched GPU warm-up, sequential uploads and three small views remain shared with tablet to preserve the verified visual output. Tablets retain sequential compact preparation, three small warm-up views and one in-flight GPU frame. Presentation remains one sample without default depth on both; world depth, texture cap and all quality values are independent of execution. Input and lifecycle behavior may still follow platform capabilities.
+Atlas 3D (`atlas-3d`) is the faceted world, with the v162 art pass and [v163 calm foliage revision](atlas-foliage-pass.md). This new asset still needs physical iPad acceptance. It uses **one canonical Atlas 3D configuration** on every device, with the exact conservative values in the table below. Desktop is the authoritative visual development/QA preview for iPad Atlas 3D: no automatic desktop uplift, no device-selected quality variant, and no rendererPreset override. Desktop Atlas uses the existing asynchronous desktop scheduler, two Draco workers and concurrent dependencies. Its batched GPU warm-up, sequential uploads and three small views remain shared with tablet to preserve the verified visual output. Tablets retain sequential compact preparation, three small warm-up views and one in-flight GPU frame. Presentation remains one sample without default depth on both; world depth, texture cap and all quality values are independent of execution. Input and lifecycle behavior may still follow platform capabilities.
 
 The existing centralized `AtlasThreePresets.detectDevice` / session device classification remains the source of truth: explicit iPad identity, touch-capable Mac platform (desktop-style iPad Safari), browser tablet form factor, Android touch/screen signals, and large coarse/no-hover touch screens. Phone signals classify handhelds; other devices are desktop. Detection remains heuristic and session-stable. Its older preset selector remains available for isolated legacy diagnostics/tests but does not select product world quality.
 
@@ -39,7 +39,7 @@ case with the v161 group count and passes after the ordering correction.
 
 - Level models: Levels/LVL-0001/3d/real-3d.glb and atlas-3d.glb (only the selected world loads); route and landmarks: route.json. GLTFLoader plus Draco WASM decoding.
 - Compact devices use one Draco worker and sequential texture/mesh dependency loading. Desktop permits two workers.
-- Real meshes retain 12-unit X/Z cells. Atlas uses `AtlasWorldPolicy`: 32-unit cells for repeated opaque nature, 12 for other content and alpha materials. Geometry, material and shadow eligibility form the grouping key. Bounds are recomputed for frustum culling. Twenty authoring-side root clusters preserve the surface data of 160 unique root meshes. The runtime does not stream level chunks or provide a separate iPad asset set.
+- Real meshes retain 12-unit X/Z cells. Atlas uses `AtlasWorldPolicy`: 32-unit cells for repeated opaque nature, 12 for other content and alpha materials. Geometry, material and shadow eligibility form the grouping key. Bounds are recomputed for frustum culling. v166 retains the five supplied Poly Pizza foliage sources as shared meshes: 80 Pine1, 165 Fern and 90 Flower1/2/3 instances, with original materials. Grass adds 4,000 instances of one 256-triangle grass2-derived mesh with one opaque vertex-color material and no textures. Grass uses the existing 32-unit spatial groups, receives shadows, and does not cast individual shadows. See [the grass/pine report](atlas-grass-pines.md). Curated ferns and flowers follow the existing groundcover shadow exclusion; pines cast shadows. Old custom root collars are removed. The runtime does not stream level chunks or provide a separate iPad asset set.
 - Real 3D retains original material textures and anisotropy 8. Atlas 3D bounds each decoded GLB image to a 1024-pixel long edge before use (sequential dependencies on tablets), preserving aspect ratio and never upscaling. Raw-channel ImageBitmap resizing preserves texture color-space metadata, alpha, packed PBR channels, samplers and UV transforms. Source assets are untouched. Shared texture Sources are resized once; original ImageBitmaps close immediately after replacement. Compact static resized pixels close after all sampler/color-space variants upload and complete their GPU fence. NPC canvas dimensions also respect the cap; live pixels remain available for animation.
 - HDR environment: qwantani_sunset_puresky_2k.hdr. NPC uses a camera-facing textured plane with a persistent CanvasTexture. Flames use crossed animated translucent planes.
 
@@ -167,3 +167,35 @@ copy-range, device-loss and intentional-destruction evidence remains intact.
 See [matched performance investigation](3d-execution-performance.md). `debug3d=1&profile3d=1` opts into bounded per-frame submission/CPU/draw instrumentation exposed in `threeRenderer.snapshot().performanceProfile`; `operationTimings` contains inclusive preparation operation wall times. There are no extra profiling GPU fences or readbacks. Pure GPU execution time and separate frustum-culling time are not exposed by this capture. Production profiling is disabled.
 
 An experiment using full-world async compilation was rejected: it initially exposed a depth-attachment mismatch, and correcting that still changed the shadow image. Atlas therefore retains its existing batched GPU preparation on both device classes. Only desktop dependency concurrency and frame scheduling change. The real-WebGPU world-switching test checks that desktop gameplay adds no queue fences; compact tablet tests retain their original three-view pipeline and GPU-frame fencing.
+
+## Atlas-only v162 art lighting
+
+The world policy owns art lighting independently of device presets. Atlas uses sun `#ffcf8f`, intensity 6, offset `[-32,48,35]`; hemisphere sky `#b7cce6`, ground `#283c22`, intensity 2.2; warm bounce `#edbc7c`, intensity 1.2; exposure 1.12; shadow intensity 0.75; fog `#d7c49b`, exponential density 0.014; sky tint `[0.24,0.27,0.32]`. Real retains its previous values. No new post-processing passes, sample counts, targets or texture limits are introduced. A static haze-sheet experiment was rejected and removed.
+
+Atlas floor now uses one packed 256x256 painted soil/moss map with constant roughness 0.94, replacing the photographic floor diffuse/normal/roughness combination in this world only. Source images and the Real checkpoint are unchanged. See the art report for composition, grounding and validation evidence.
+
+The v164 update replaces only the two Atlas fern meshes; renderer settings are unchanged. See [fern review](atlas-reference-ferns.md).
+
+v165 supersedes that foliage with the supplied Fern, Pine1 and Flower1/2/3 assets. See [curated foliage](atlas-curated-foliage.md). Renderer presets, lights, texture budget, preparation and GPU ownership are unchanged. This is one shared world on desktop/tablet; physical iPad acceptance remains outstanding for the new content.
+
+## v167 Atlas-only morning/FXAA integration
+
+Atlas adds the official r180 FXAANode after explicit ACES/sRGB conversion; automatic final color conversion is disabled only on this branch. It retains 1x world and presentation rendering. Its one additional RGBA8 RTT has no depth or multisampling, follows current render dimensions, and explicitly releases its target and quad material on cleanup. FXAA defaults on everywhere; `?debug3d=1&atlasFxaa=0` disables it, `atlasFxaa=1` enables it. Real 3D is unchanged.
+
+The main Atlas sun offset is [-10,23,-60] (20.7 degree elevation), pale gold #fff0cf. Hemisphere and bounce are cool; no additional shadow-casting light or effect is added. The existing dome uses a cheap gradient/disc shader derived from that identical sun offset; the HDR still supplies low-intensity environment lighting but no longer paints the visible Atlas sky. The disc radius is 0.65 degrees, with a controlled 4 degree halo.
+
+The shared floor material has one embedded 512px tiling soil/moss/needle map, roughness .94, no normal/displacement/extra packed map. Geometry, foliage, UVs, route, budgets and execution/lifecycle are unchanged. Debug preparation reports FXAA, morning direction and active floor material. See [measurements and visual report](atlas-morning-pass.md).
+
+## v168 current Atlas evening delta
+
+Supersedes the v167 morning art settings; FXAA and renderer execution remain unchanged. Atlas uses warm sun `#ffd49a`, intensity 7, offset `[-38,24,-52]` (20.4 degrees), hemisphere `#b6c7d8` / `#403a27` at 1.9, bounce `#e7bd8c` at 0.8, exposure 1.12 and fog `#dbc5a1` at 0.0115. The same light offset drives the existing sky disc; no extra lights/effects/targets were added.
+
+The previous striped floor is replaced by `assets/textures/atlas-evening-floor-512.png`, one embedded 512px color map, roughness .94. Four supplied rock variants share one 512px opaque palette. Foliage counts stay 80 pines, 165 ferns, 90 flower groups and 4000 grass patches; targeted rune/temple/rock contact corrections are recorded in `atlas-evening-ledger.json`. See [delta report and comparisons](atlas-evening-pass.md). Physical iPad verification remains required.
+
+## v169 Atlas palette and sky
+
+Retains every v168 lighting/preset/target/texture-budget value. Moss vertex colours
+on shared Atlas rocks are darker olive; foliage colours and geometry are unchanged.
+The existing sky-dome shader adds soft static cloud ribbons and a cooler upper-sky
+gradient, with no new textures, targets, passes or lights. The sun disc still uses
+the real light direction. See [cohesion review](atlas-cohesion-pass.md).

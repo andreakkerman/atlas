@@ -120,7 +120,7 @@ test.describe('Atlas first-person LVL-0001',()=>{
  });
  test('walks the route, looks around, completes three challenges and unlocks the gate',async({page})=>{
   test.setTimeout(240000);const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await enable(page);
+  await enable(page,process.env.ATLAS_GAMEPLAY_WORLD||'3d');
   expect(await page.evaluate(()=>window.eval('threeRenderer.snapshot')().backend)).toBe('WebGPU');
   // No forced canvas focus or artificial post-readiness warm-up.
   await page.keyboard.down('w');

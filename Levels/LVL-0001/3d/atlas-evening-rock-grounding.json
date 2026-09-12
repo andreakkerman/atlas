@@ -1,0 +1,1928 @@
+[
+  {
+    "name": "Atlas moss rock",
+    "minBaseGap": -0.7685635089874268,
+    "maxBaseGap": 0.3621542453765869,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.001",
+    "minBaseGap": -1.4566764831542969,
+    "maxBaseGap": 0.5273647308349609,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.002",
+    "minBaseGap": -0.8494362831115723,
+    "maxBaseGap": 0.8437361717224121,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.004",
+    "minBaseGap": -1.2382477521896362,
+    "maxBaseGap": 0.3889014720916748,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.005",
+    "minBaseGap": -0.4700794219970703,
+    "maxBaseGap": 0.1458752155303955,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.006",
+    "minBaseGap": -0.49439501762390137,
+    "maxBaseGap": 1.010263442993164,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.007",
+    "minBaseGap": -0.625684380531311,
+    "maxBaseGap": 0.27708470821380615,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.008",
+    "minBaseGap": -1.0079545974731445,
+    "maxBaseGap": 2.5818896293640137,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.010",
+    "minBaseGap": -0.8391900062561035,
+    "maxBaseGap": 0.3814525604248047,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.012",
+    "minBaseGap": -0.8129987716674805,
+    "maxBaseGap": 0.8458309173583984,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.014",
+    "minBaseGap": -0.6623793840408325,
+    "maxBaseGap": 1.5669105052947998,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.015",
+    "minBaseGap": -0.6270650625228882,
+    "maxBaseGap": 0.7525608539581299,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.017",
+    "minBaseGap": -0.4274263381958008,
+    "maxBaseGap": 0.4329366683959961,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.018",
+    "minBaseGap": -0.6200566291809082,
+    "maxBaseGap": 0.8749270439147949,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.019",
+    "minBaseGap": -1.412855625152588,
+    "maxBaseGap": 0.4944953918457031,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.020",
+    "minBaseGap": -1.5139999389648438,
+    "maxBaseGap": 0.9790468215942383,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.021",
+    "minBaseGap": -0.5808237642049789,
+    "maxBaseGap": 0.06506171822547913,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.022",
+    "minBaseGap": -0.5569925308227539,
+    "maxBaseGap": -0.008243680000305176,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.023",
+    "minBaseGap": -0.9462475776672363,
+    "maxBaseGap": 0.6286735534667969,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.024",
+    "minBaseGap": -0.6021184921264648,
+    "maxBaseGap": 0.3608427047729492,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.025",
+    "minBaseGap": -0.562201976776123,
+    "maxBaseGap": 0.3292226791381836,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.026",
+    "minBaseGap": -0.22110259532928467,
+    "maxBaseGap": 0.04726290702819824,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.027",
+    "minBaseGap": -0.6704673767089844,
+    "maxBaseGap": 0.45287513732910156,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.028",
+    "minBaseGap": -0.44115257263183594,
+    "maxBaseGap": 0.13076329231262207,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.029",
+    "minBaseGap": -0.6432521343231201,
+    "maxBaseGap": 0.6784255504608154,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.031",
+    "minBaseGap": -0.7090454809367657,
+    "maxBaseGap": -0.1440725326538086,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.032",
+    "minBaseGap": -0.7578449249267578,
+    "maxBaseGap": 0.3204669952392578,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.035",
+    "minBaseGap": -0.61768639087677,
+    "maxBaseGap": 0.3249506950378418,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.036",
+    "minBaseGap": -0.35838255286216736,
+    "maxBaseGap": 0.21043604612350464,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.037",
+    "minBaseGap": -0.4059845209121704,
+    "maxBaseGap": 0.4503260850906372,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.038",
+    "minBaseGap": -0.6010727882385254,
+    "maxBaseGap": 0.6338963508605957,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.039",
+    "minBaseGap": -3.055248975753784,
+    "maxBaseGap": 1.5654411315917969,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.040",
+    "minBaseGap": -0.9807567596435547,
+    "maxBaseGap": 0.6657044887542725,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.041",
+    "minBaseGap": -0.4923127740621567,
+    "maxBaseGap": 0.13758590817451477,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.042",
+    "minBaseGap": -0.3819434642791748,
+    "maxBaseGap": 1.1775355339050293,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.043",
+    "minBaseGap": -2.2477035522460938,
+    "maxBaseGap": 1.8342218399047852,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.044",
+    "minBaseGap": -1.4206676483154297,
+    "maxBaseGap": 0.5967845916748047,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.045",
+    "minBaseGap": -0.4099130630493164,
+    "maxBaseGap": 0.31229686737060547,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.046",
+    "minBaseGap": -0.7951469421386719,
+    "maxBaseGap": 0.21966266632080078,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.047",
+    "minBaseGap": -0.43149852752685547,
+    "maxBaseGap": 0.43566417694091797,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.048",
+    "minBaseGap": -1.427255630493164,
+    "maxBaseGap": 1.1085596084594727,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.049",
+    "minBaseGap": -1.0842028260231018,
+    "maxBaseGap": 0.3993231952190399,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.050",
+    "minBaseGap": -0.501289963722229,
+    "maxBaseGap": 0.19007515907287598,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.051",
+    "minBaseGap": -1.1342334747314453,
+    "maxBaseGap": 0.932642936706543,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.052",
+    "minBaseGap": -0.38532328605651855,
+    "maxBaseGap": 0.11001062393188477,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.053",
+    "minBaseGap": -0.16487348079681396,
+    "maxBaseGap": 0.2828207015991211,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.054",
+    "minBaseGap": -0.7680776119232178,
+    "maxBaseGap": 0.030083537101745605,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.055",
+    "minBaseGap": -1.532351016998291,
+    "maxBaseGap": 1.5505239963531494,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.056",
+    "minBaseGap": -0.4328784942626953,
+    "maxBaseGap": -0.13518524169921875,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.057",
+    "minBaseGap": -2.3738760948181152,
+    "maxBaseGap": 0.718564510345459,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.058",
+    "minBaseGap": -2.5501251220703125,
+    "maxBaseGap": 0.3518095016479492,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.059",
+    "minBaseGap": -1.1404719352722168,
+    "maxBaseGap": 1.2945165634155273,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.060",
+    "minBaseGap": -1.7258752584457397,
+    "maxBaseGap": 0.7599824070930481,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.061",
+    "minBaseGap": -0.44339847564697266,
+    "maxBaseGap": 0.051714420318603516,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.062",
+    "minBaseGap": -0.6149568557739258,
+    "maxBaseGap": 0.03979134559631348,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.063",
+    "minBaseGap": -2.391073703765869,
+    "maxBaseGap": 1.4465086460113525,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.064",
+    "minBaseGap": -0.6088418960571289,
+    "maxBaseGap": 0.5827732086181641,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.065",
+    "minBaseGap": -1.2923569679260254,
+    "maxBaseGap": 0.7507095336914062,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.066",
+    "minBaseGap": -0.43271782994270325,
+    "maxBaseGap": 0.29369574785232544,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.067",
+    "minBaseGap": -1.588292121887207,
+    "maxBaseGap": 0.932952880859375,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.068",
+    "minBaseGap": -1.5380973815917969,
+    "maxBaseGap": 1.1925058364868164,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.069",
+    "minBaseGap": -0.9400800168514252,
+    "maxBaseGap": 0.17774105072021484,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.070",
+    "minBaseGap": -0.6779611706733704,
+    "maxBaseGap": 0.15901899337768555,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.071",
+    "minBaseGap": -1.6635370254516602,
+    "maxBaseGap": 0.9051980972290039,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.072",
+    "minBaseGap": -0.4466879367828369,
+    "maxBaseGap": 0.12148433923721313,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.073",
+    "minBaseGap": -0.8148617148399353,
+    "maxBaseGap": 0.4720182418823242,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.074",
+    "minBaseGap": -0.3211956024169922,
+    "maxBaseGap": -0.019926071166992188,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.075",
+    "minBaseGap": -0.7357175350189209,
+    "maxBaseGap": 0.08625954389572144,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.076",
+    "minBaseGap": -1.8002910614013672,
+    "maxBaseGap": 0.5607223510742188,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.077",
+    "minBaseGap": -0.4722471237182617,
+    "maxBaseGap": 0.5165538787841797,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.078",
+    "minBaseGap": -1.0230897963047028,
+    "maxBaseGap": 0.24727803468704224,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.079",
+    "minBaseGap": -0.2589406967163086,
+    "maxBaseGap": 0.24328255653381348,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.080",
+    "minBaseGap": -0.9597468376159668,
+    "maxBaseGap": 0.4278445243835449,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.081",
+    "minBaseGap": -1.9665380716323853,
+    "maxBaseGap": 0.8831233978271484,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.082",
+    "minBaseGap": -0.4423828125,
+    "maxBaseGap": 0.07771778106689453,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.083",
+    "minBaseGap": -1.3124752044677734,
+    "maxBaseGap": 0.5590295791625977,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.084",
+    "minBaseGap": -1.0049898624420166,
+    "maxBaseGap": 0.5810656547546387,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.085",
+    "minBaseGap": -0.4622814655303955,
+    "maxBaseGap": 0.5811076164245605,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.086",
+    "minBaseGap": -1.2506694793701172,
+    "maxBaseGap": 0.859703540802002,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.087",
+    "minBaseGap": -1.1745439767837524,
+    "maxBaseGap": 0.44344329833984375,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.088",
+    "minBaseGap": -0.2145829200744629,
+    "maxBaseGap": 0.09238219261169434,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.089",
+    "minBaseGap": -1.5669872760772705,
+    "maxBaseGap": 0.6917605400085449,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.090",
+    "minBaseGap": -0.9470653533935547,
+    "maxBaseGap": 0.6193497180938721,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.091",
+    "minBaseGap": -1.232429027557373,
+    "maxBaseGap": 0.9899125099182129,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.092",
+    "minBaseGap": -0.6694966554641724,
+    "maxBaseGap": 0.4926905632019043,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.093",
+    "minBaseGap": -1.320023536682129,
+    "maxBaseGap": 1.2792818546295166,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.094",
+    "minBaseGap": -0.7399988174438477,
+    "maxBaseGap": 0.13266420364379883,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.095",
+    "minBaseGap": -0.3673638105392456,
+    "maxBaseGap": 0.13293910026550293,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.096",
+    "minBaseGap": -1.208878517150879,
+    "maxBaseGap": 2.3979835510253906,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.097",
+    "minBaseGap": -0.19258874654769897,
+    "maxBaseGap": -0.01901531219482422,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.098",
+    "minBaseGap": -0.4344978332519531,
+    "maxBaseGap": 0.5377063751220703,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.099",
+    "minBaseGap": -0.3157675564289093,
+    "maxBaseGap": -0.040848612785339355,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.100",
+    "minBaseGap": -0.9921083450317383,
+    "maxBaseGap": 1.022324562072754,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.101",
+    "minBaseGap": -0.5551873743534088,
+    "maxBaseGap": -0.06756016612052917,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.102",
+    "minBaseGap": -0.6580740213394165,
+    "maxBaseGap": 0.5596835613250732,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.104",
+    "minBaseGap": -0.8053255081176758,
+    "maxBaseGap": 0.8433623313903809,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.106",
+    "minBaseGap": -0.9232044219970703,
+    "maxBaseGap": 0.25136280059814453,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.108",
+    "minBaseGap": -0.3170497417449951,
+    "maxBaseGap": -0.012746572494506836,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.109",
+    "minBaseGap": -0.6372415274381638,
+    "maxBaseGap": 0.32041943073272705,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.110",
+    "minBaseGap": -2.1477065086364746,
+    "maxBaseGap": 1.7211370468139648,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.111",
+    "minBaseGap": -0.8713879734277725,
+    "maxBaseGap": 0.6145974695682526,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.112",
+    "minBaseGap": -0.486291766166687,
+    "maxBaseGap": 0.4017915725708008,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.113",
+    "minBaseGap": -0.7047744393348694,
+    "maxBaseGap": 0.3727610111236572,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.115",
+    "minBaseGap": -0.6342089176177979,
+    "maxBaseGap": 0.5157018899917603,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.116",
+    "minBaseGap": -0.6969537734985352,
+    "maxBaseGap": 0.5729331970214844,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.118",
+    "minBaseGap": -0.9599523544311523,
+    "maxBaseGap": 0.46357059478759766,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.119",
+    "minBaseGap": -1.0445003509521484,
+    "maxBaseGap": 2.7141990661621094,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.120",
+    "minBaseGap": -0.6428593993186951,
+    "maxBaseGap": 0.5663976669311523,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.121",
+    "minBaseGap": -0.9039106369018555,
+    "maxBaseGap": 0.3348579406738281,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.123",
+    "minBaseGap": -0.46326351165771484,
+    "maxBaseGap": -0.05285453796386719,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.124",
+    "minBaseGap": -0.42395806312561035,
+    "maxBaseGap": 0.32375800609588623,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.125",
+    "minBaseGap": -1.6129260063171387,
+    "maxBaseGap": 0.8953866958618164,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.126",
+    "minBaseGap": -0.1619405746459961,
+    "maxBaseGap": -0.025197982788085938,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.127",
+    "minBaseGap": -0.3015310764312744,
+    "maxBaseGap": 0.72977614402771,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.129",
+    "minBaseGap": -0.4833841323852539,
+    "maxBaseGap": -0.0021791458129882812,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.131",
+    "minBaseGap": -0.7950223386287689,
+    "maxBaseGap": 0.6185084283351898,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.132",
+    "minBaseGap": -3.127573013305664,
+    "maxBaseGap": 0.4360072612762451,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.133",
+    "minBaseGap": -1.4950017929077148,
+    "maxBaseGap": 1.184624195098877,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.134",
+    "minBaseGap": -1.3733747005462646,
+    "maxBaseGap": 0.053524136543273926,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.135",
+    "minBaseGap": -0.5297231748700142,
+    "maxBaseGap": 0.587803989648819,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.136",
+    "minBaseGap": -0.3847341537475586,
+    "maxBaseGap": -0.03448486328125,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.137",
+    "minBaseGap": -0.6747894287109375,
+    "maxBaseGap": 0.5161418914794922,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.138",
+    "minBaseGap": -2.2609710693359375,
+    "maxBaseGap": 1.822105884552002,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.139",
+    "minBaseGap": -1.0590324401855469,
+    "maxBaseGap": 0.4113950729370117,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.140",
+    "minBaseGap": -0.5221952795982361,
+    "maxBaseGap": 0.04979127645492554,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.141",
+    "minBaseGap": -1.4685993194580078,
+    "maxBaseGap": 1.3955135345458984,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.142",
+    "minBaseGap": -0.4591236114501953,
+    "maxBaseGap": 0.31392478942871094,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.145",
+    "minBaseGap": -0.3260383605957031,
+    "maxBaseGap": 0.021221160888671875,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.146",
+    "minBaseGap": -1.1282820105552673,
+    "maxBaseGap": 0.19077575206756592,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.147",
+    "minBaseGap": -0.7290582656860352,
+    "maxBaseGap": 0.6382951736450195,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.148",
+    "minBaseGap": -0.6354532241821289,
+    "maxBaseGap": 0.5943493843078613,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.149",
+    "minBaseGap": -2.031339168548584,
+    "maxBaseGap": 0.8954415321350098,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.150",
+    "minBaseGap": -3.638558864593506,
+    "maxBaseGap": 2.5935192108154297,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.151",
+    "minBaseGap": -1.473921775817871,
+    "maxBaseGap": 0.5615497827529907,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.152",
+    "minBaseGap": -0.5773782730102539,
+    "maxBaseGap": 0.38252782821655273,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.153",
+    "minBaseGap": -0.23463726043701172,
+    "maxBaseGap": 0.025638580322265625,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.154",
+    "minBaseGap": -0.42185866832733154,
+    "maxBaseGap": 0.1456139087677002,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.155",
+    "minBaseGap": -0.7859559059143066,
+    "maxBaseGap": 0.2711963653564453,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.156",
+    "minBaseGap": -0.5605344772338867,
+    "maxBaseGap": -0.03114175796508789,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.157",
+    "minBaseGap": -0.7262086868286133,
+    "maxBaseGap": 1.0695486068725586,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.158",
+    "minBaseGap": -1.01938995718956,
+    "maxBaseGap": 0.20876222848892212,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.159",
+    "minBaseGap": -1.6904182434082031,
+    "maxBaseGap": 0.9058823585510254,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.160",
+    "minBaseGap": -2.9045066833496094,
+    "maxBaseGap": 0.13889002799987793,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.161",
+    "minBaseGap": -1.232109546661377,
+    "maxBaseGap": 0.8981590270996094,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.162",
+    "minBaseGap": -1.3638129234313965,
+    "maxBaseGap": 0.271273136138916,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.163",
+    "minBaseGap": -0.5165377855300903,
+    "maxBaseGap": 0.1440550684928894,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.164",
+    "minBaseGap": -1.785177230834961,
+    "maxBaseGap": 0.8993215560913086,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.165",
+    "minBaseGap": -0.7510833740234375,
+    "maxBaseGap": 1.1495161056518555,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.166",
+    "minBaseGap": -0.5967836380004883,
+    "maxBaseGap": 0.5430612564086914,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.167",
+    "minBaseGap": -0.6624155044555664,
+    "maxBaseGap": 0.5036735534667969,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.168",
+    "minBaseGap": -0.45345544815063477,
+    "maxBaseGap": 0.43831372261047363,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.169",
+    "minBaseGap": -0.9615658521652222,
+    "maxBaseGap": 0.22658520936965942,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.170",
+    "minBaseGap": -1.015192985534668,
+    "maxBaseGap": 0.9409961700439453,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.171",
+    "minBaseGap": -0.4060937166213989,
+    "maxBaseGap": 0.20274537801742554,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.172",
+    "minBaseGap": -0.9607639312744141,
+    "maxBaseGap": 0.7084569931030273,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.173",
+    "minBaseGap": -1.4728596210479736,
+    "maxBaseGap": 0.7757440209388733,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.174",
+    "minBaseGap": -0.5019170045852661,
+    "maxBaseGap": 0.2966850996017456,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.175",
+    "minBaseGap": -1.3001694679260254,
+    "maxBaseGap": 0.918766975402832,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.176",
+    "minBaseGap": -0.34374356269836426,
+    "maxBaseGap": 0.6481242179870605,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.177",
+    "minBaseGap": -0.3599052429199219,
+    "maxBaseGap": 0.3223686218261719,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.178",
+    "minBaseGap": -0.9058361053466797,
+    "maxBaseGap": 1.2374801635742188,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.179",
+    "minBaseGap": -1.4728236198425293,
+    "maxBaseGap": 0.4647798538208008,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.180",
+    "minBaseGap": -1.1406105756759644,
+    "maxBaseGap": 0.7539429664611816,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.181",
+    "minBaseGap": -0.5437145233154297,
+    "maxBaseGap": 0.7949295043945312,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.182",
+    "minBaseGap": -0.5945935249328613,
+    "maxBaseGap": 0.5083775520324707,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.183",
+    "minBaseGap": -1.3776423931121826,
+    "maxBaseGap": 0.8991179466247559,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.184",
+    "minBaseGap": -2.3785011768341064,
+    "maxBaseGap": 0.6840193271636963,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.185",
+    "minBaseGap": -0.9722480773925781,
+    "maxBaseGap": 0.6123733520507812,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.186",
+    "minBaseGap": -1.0475292205810547,
+    "maxBaseGap": 0.7452945709228516,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.187",
+    "minBaseGap": -1.0773154497146606,
+    "maxBaseGap": 0.6232953369617462,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.188",
+    "minBaseGap": -0.8027998208999634,
+    "maxBaseGap": 0.38878607749938965,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.189",
+    "minBaseGap": -0.5411086082458496,
+    "maxBaseGap": 0.688568115234375,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.190",
+    "minBaseGap": -1.1203150749206543,
+    "maxBaseGap": 0.32239019870758057,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.191",
+    "minBaseGap": -1.7749254703521729,
+    "maxBaseGap": 1.112267017364502,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.192",
+    "minBaseGap": -0.4332636594772339,
+    "maxBaseGap": 0.26978737115859985,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.193",
+    "minBaseGap": -1.648164987564087,
+    "maxBaseGap": 1.7024445533752441,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.194",
+    "minBaseGap": -0.8060918003320694,
+    "maxBaseGap": 0.4546271562576294,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.195",
+    "minBaseGap": -0.41699671745300293,
+    "maxBaseGap": 0.9962280988693237,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.196",
+    "minBaseGap": -0.4381527900695801,
+    "maxBaseGap": 0.2694740295410156,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.197",
+    "minBaseGap": -0.6075201034545898,
+    "maxBaseGap": 0.17229652404785156,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.198",
+    "minBaseGap": -2.968632221221924,
+    "maxBaseGap": 0.4597625732421875,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.199",
+    "minBaseGap": -0.4334975481033325,
+    "maxBaseGap": 0.602415919303894,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.200",
+    "minBaseGap": -1.026686668395996,
+    "maxBaseGap": 1.4662656784057617,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.201",
+    "minBaseGap": -0.32086074352264404,
+    "maxBaseGap": 0.1396193504333496,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.203",
+    "minBaseGap": -0.3167663514614105,
+    "maxBaseGap": 0.002852201461791992,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.205",
+    "minBaseGap": -0.8272128105163574,
+    "maxBaseGap": 0.5274529457092285,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.206",
+    "minBaseGap": -0.6357030868530273,
+    "maxBaseGap": 0.584376335144043,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.207",
+    "minBaseGap": -0.9110121726989746,
+    "maxBaseGap": 0.5021615028381348,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.208",
+    "minBaseGap": -0.8600826263427734,
+    "maxBaseGap": 0.6730070114135742,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.209",
+    "minBaseGap": -1.8293910026550293,
+    "maxBaseGap": 1.5382332801818848,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.210",
+    "minBaseGap": -0.8886442184448242,
+    "maxBaseGap": 1.0017518997192383,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.211",
+    "minBaseGap": -1.5528898239135742,
+    "maxBaseGap": 1.2613229751586914,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.212",
+    "minBaseGap": -3.4142184257507324,
+    "maxBaseGap": 2.433551788330078,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.213",
+    "minBaseGap": -0.4804210662841797,
+    "maxBaseGap": 1.0956926345825195,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.215",
+    "minBaseGap": -1.7716920375823975,
+    "maxBaseGap": 2.636439800262451,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.216",
+    "minBaseGap": -0.7157812118530273,
+    "maxBaseGap": 0.3660860061645508,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.217",
+    "minBaseGap": -0.6894133388996124,
+    "maxBaseGap": 0.27689293026924133,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.218",
+    "minBaseGap": -0.5393013954162598,
+    "maxBaseGap": 0.6539435386657715,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.219",
+    "minBaseGap": -1.0728983879089355,
+    "maxBaseGap": 0.4524662494659424,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.220",
+    "minBaseGap": -1.1871919631958008,
+    "maxBaseGap": 0.9798099994659424,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.221",
+    "minBaseGap": -1.0372390747070312,
+    "maxBaseGap": 1.4371376037597656,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.222",
+    "minBaseGap": -0.648914709687233,
+    "maxBaseGap": 0.13196325302124023,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.223",
+    "minBaseGap": -0.7882261127233505,
+    "maxBaseGap": 0.4910181164741516,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.224",
+    "minBaseGap": -0.5029433965682983,
+    "maxBaseGap": -0.0074727535247802734,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.225",
+    "minBaseGap": -1.7929377555847168,
+    "maxBaseGap": 0.8401222229003906,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.228",
+    "minBaseGap": -0.3281857371330261,
+    "maxBaseGap": 0.10716086626052856,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.229",
+    "minBaseGap": -1.2317402362823486,
+    "maxBaseGap": 0.7693667411804199,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.230",
+    "minBaseGap": -0.9073734283447266,
+    "maxBaseGap": 0.8645858764648438,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.231",
+    "minBaseGap": -0.27712035179138184,
+    "maxBaseGap": 0.0294187068939209,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.232",
+    "minBaseGap": -0.5426664352416992,
+    "maxBaseGap": 0.13220930099487305,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.233",
+    "minBaseGap": -1.6327743530273438,
+    "maxBaseGap": 1.7342166900634766,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.234",
+    "minBaseGap": -0.6899232864379883,
+    "maxBaseGap": 0.36415648460388184,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.235",
+    "minBaseGap": -0.43223297595977783,
+    "maxBaseGap": 0.15005743503570557,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.236",
+    "minBaseGap": -0.263153076171875,
+    "maxBaseGap": 0.7609405517578125,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.237",
+    "minBaseGap": -0.46637511253356934,
+    "maxBaseGap": 0.40567994117736816,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.238",
+    "minBaseGap": -1.291999340057373,
+    "maxBaseGap": 1.669881820678711,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.239",
+    "minBaseGap": -1.7030174732208252,
+    "maxBaseGap": 0.734032392501831,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.240",
+    "minBaseGap": -0.39585113525390625,
+    "maxBaseGap": 0.2980356216430664,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.241",
+    "minBaseGap": -0.39120984077453613,
+    "maxBaseGap": 0.2697864770889282,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.242",
+    "minBaseGap": -0.7940616607666016,
+    "maxBaseGap": 0.3842463493347168,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.243",
+    "minBaseGap": -1.6928727626800537,
+    "maxBaseGap": 0.20737791061401367,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.244",
+    "minBaseGap": -0.29370003938674927,
+    "maxBaseGap": -0.022805333137512207,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.245",
+    "minBaseGap": -1.1177420616149902,
+    "maxBaseGap": -0.2159261703491211,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.246",
+    "minBaseGap": -2.736497402191162,
+    "maxBaseGap": -0.11066842079162598,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.247",
+    "minBaseGap": -0.7104320526123047,
+    "maxBaseGap": 0.41066837310791016,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.248",
+    "minBaseGap": -0.4299583435058594,
+    "maxBaseGap": 0.24904823303222656,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.249",
+    "minBaseGap": -1.6108550429344177,
+    "maxBaseGap": 0.5346930027008057,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.250",
+    "minBaseGap": -0.8887431621551514,
+    "maxBaseGap": 0.6959106922149658,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.251",
+    "minBaseGap": -0.4627542495727539,
+    "maxBaseGap": 0.3780689239501953,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.252",
+    "minBaseGap": -0.36238691210746765,
+    "maxBaseGap": 0.13947689533233643,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.253",
+    "minBaseGap": -0.3725770115852356,
+    "maxBaseGap": 0.19683051109313965,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.254",
+    "minBaseGap": -0.972592830657959,
+    "maxBaseGap": -0.013881206512451172,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.255",
+    "minBaseGap": -0.4481896162033081,
+    "maxBaseGap": 0.23491358757019043,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.256",
+    "minBaseGap": -0.7913103103637695,
+    "maxBaseGap": 0.579716682434082,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.257",
+    "minBaseGap": -1.0355033874511719,
+    "maxBaseGap": 0.899327278137207,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.258",
+    "minBaseGap": -0.8284902572631836,
+    "maxBaseGap": 0.4859161376953125,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.259",
+    "minBaseGap": -2.5526514053344727,
+    "maxBaseGap": 1.2891788482666016,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.260",
+    "minBaseGap": -0.8254375457763672,
+    "maxBaseGap": 3.0357284545898438,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.261",
+    "minBaseGap": -1.0079463608562946,
+    "maxBaseGap": 0.46606743335723877,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.262",
+    "minBaseGap": -0.34679722785949707,
+    "maxBaseGap": 0.021782279014587402,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.263",
+    "minBaseGap": -0.932673454284668,
+    "maxBaseGap": 0.6866651773452759,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.264",
+    "minBaseGap": -1.0535831451416016,
+    "maxBaseGap": 1.127298355102539,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.265",
+    "minBaseGap": -0.48809847235679626,
+    "maxBaseGap": 0.19153591990470886,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.266",
+    "minBaseGap": -2.5875213146209717,
+    "maxBaseGap": 0.3909895420074463,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.267",
+    "minBaseGap": -1.756104975938797,
+    "maxBaseGap": 0.6377324759960175,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.268",
+    "minBaseGap": -0.9576225280761719,
+    "maxBaseGap": -0.1377544403076172,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.269",
+    "minBaseGap": -0.30174505710601807,
+    "maxBaseGap": 0.18084824085235596,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.270",
+    "minBaseGap": -0.8955388069152832,
+    "maxBaseGap": 1.3840899467468262,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.271",
+    "minBaseGap": -1.2238235473632812,
+    "maxBaseGap": 1.1647729873657227,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.272",
+    "minBaseGap": -0.5433478355407715,
+    "maxBaseGap": 0.12326037883758545,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.273",
+    "minBaseGap": -1.1948142051696777,
+    "maxBaseGap": 0.9668385982513428,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.274",
+    "minBaseGap": -0.7994813919067383,
+    "maxBaseGap": 1.024184226989746,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.275",
+    "minBaseGap": -0.5671482086181641,
+    "maxBaseGap": 0.09953689575195312,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.276",
+    "minBaseGap": -0.8371062278747559,
+    "maxBaseGap": 0.9015834331512451,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.277",
+    "minBaseGap": -0.7360198795795441,
+    "maxBaseGap": 0.06664854288101196,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.278",
+    "minBaseGap": -0.5596723556518555,
+    "maxBaseGap": 0.08097529411315918,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.279",
+    "minBaseGap": -0.8928947448730469,
+    "maxBaseGap": 0.4826078414916992,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.281",
+    "minBaseGap": -0.718623161315918,
+    "maxBaseGap": 0.08205413818359375,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.282",
+    "minBaseGap": -0.8029026985168457,
+    "maxBaseGap": 0.5296635627746582,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.283",
+    "minBaseGap": -0.5611658096313477,
+    "maxBaseGap": 0.1339573860168457,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.284",
+    "minBaseGap": -3.165122151374817,
+    "maxBaseGap": 0.10210883617401123,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.285",
+    "minBaseGap": -1.210221290588379,
+    "maxBaseGap": 0.49547290802001953,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.286",
+    "minBaseGap": -0.2472202628850937,
+    "maxBaseGap": -0.035488128662109375,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.287",
+    "minBaseGap": -1.4400348663330078,
+    "maxBaseGap": 1.1511454582214355,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.288",
+    "minBaseGap": -1.5590848922729492,
+    "maxBaseGap": 0.9333701133728027,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.289",
+    "minBaseGap": -0.7447552680969238,
+    "maxBaseGap": 0.7768516540527344,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.290",
+    "minBaseGap": -1.2839736938476562,
+    "maxBaseGap": 0.3850250244140625,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.291",
+    "minBaseGap": -0.6075072288513184,
+    "maxBaseGap": 0.31209278106689453,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.292",
+    "minBaseGap": -0.7596333026885986,
+    "maxBaseGap": 0.6960864067077637,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.293",
+    "minBaseGap": -0.2249889373779297,
+    "maxBaseGap": 2.681086540222168,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.294",
+    "minBaseGap": -0.41582679748535156,
+    "maxBaseGap": 0.6433748006820679,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.295",
+    "minBaseGap": -1.3069677352905273,
+    "maxBaseGap": 1.7872896194458008,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.296",
+    "minBaseGap": -0.3869755268096924,
+    "maxBaseGap": 0.5150132179260254,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.297",
+    "minBaseGap": -0.3531613349914551,
+    "maxBaseGap": 0.1846466064453125,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.298",
+    "minBaseGap": -0.3921095132827759,
+    "maxBaseGap": 0.0028352737426757812,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.299",
+    "minBaseGap": -0.267169713973999,
+    "maxBaseGap": 0.27332890033721924,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.300",
+    "minBaseGap": -1.0065022706985474,
+    "maxBaseGap": 0.5513168573379517,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.301",
+    "minBaseGap": -0.3673849105834961,
+    "maxBaseGap": 0.01997852325439453,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.303",
+    "minBaseGap": -0.9071006774902344,
+    "maxBaseGap": 0.8062343597412109,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.305",
+    "minBaseGap": -0.799231767654419,
+    "maxBaseGap": 0.32388293743133545,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.306",
+    "minBaseGap": -0.4800418019294739,
+    "maxBaseGap": 0.4739927053451538,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.307",
+    "minBaseGap": -0.6018288135528564,
+    "maxBaseGap": 0.5308712720870972,
+    "baseSamples": 283
+  },
+  {
+    "name": "Atlas moss rock.308",
+    "minBaseGap": -0.378398060798645,
+    "maxBaseGap": 0.15147817134857178,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.309",
+    "minBaseGap": -0.2518237233161926,
+    "maxBaseGap": 0.1508941650390625,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.310",
+    "minBaseGap": -0.28320181369781494,
+    "maxBaseGap": 0.1431778073310852,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.311",
+    "minBaseGap": -1.504323959350586,
+    "maxBaseGap": 0.891944408416748,
+    "baseSamples": 7
+  },
+  {
+    "name": "Atlas moss rock.313",
+    "minBaseGap": -1.2637054920196533,
+    "maxBaseGap": 0.6284772157669067,
+    "baseSamples": 180
+  },
+  {
+    "name": "Atlas moss rock.314",
+    "minBaseGap": -1.8287620544433594,
+    "maxBaseGap": 1.8739099502563477,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.315",
+    "minBaseGap": -0.3419481962919235,
+    "maxBaseGap": 0.17188194394111633,
+    "baseSamples": 400
+  },
+  {
+    "name": "Atlas moss rock.316",
+    "minBaseGap": -0.4768686294555664,
+    "maxBaseGap": 0.15386486053466797,
+    "baseSamples": 271
+  },
+  {
+    "name": "Atlas moss rock.317",
+    "minBaseGap": -2.2805566787719727,
+    "maxBaseGap": 0.5738372802734375,
+    "baseSamples": 47
+  },
+  {
+    "name": "Atlas moss rock.318",
+    "minBaseGap": -0.5798503160476685,
+    "maxBaseGap": 0.16331148147583008,
+    "baseSamples": 283
+  },
+  {
+    "name": "Enclosure outcrop",
+    "minBaseGap": -2.6625298857688904,
+    "maxBaseGap": -0.1322493553161621,
+    "baseSamples": 283
+  },
+  {
+    "name": "Enclosure outcrop.001",
+    "minBaseGap": -1.013978660106659,
+    "maxBaseGap": -0.0497739315032959,
+    "baseSamples": 271
+  },
+  {
+    "name": "Enclosure outcrop.002",
+    "minBaseGap": -0.7716439366340637,
+    "maxBaseGap": -0.009584426879882812,
+    "baseSamples": 180
+  },
+  {
+    "name": "Enclosure outcrop.003",
+    "minBaseGap": -5.1647844314575195,
+    "maxBaseGap": -0.7915991544723511,
+    "baseSamples": 271
+  },
+  {
+    "name": "Enclosure outcrop.004",
+    "minBaseGap": -1.6754255294799805,
+    "maxBaseGap": -0.47877275943756104,
+    "baseSamples": 180
+  },
+  {
+    "name": "Enclosure outcrop.005",
+    "minBaseGap": -1.8131412267684937,
+    "maxBaseGap": -0.471152663230896,
+    "baseSamples": 400
+  },
+  {
+    "name": "Enclosure outcrop.006",
+    "minBaseGap": -3.4423251152038574,
+    "maxBaseGap": -1.2656440734863281,
+    "baseSamples": 180
+  },
+  {
+    "name": "Enclosure outcrop.007",
+    "minBaseGap": -1.944775104522705,
+    "maxBaseGap": -1.3128180503845215,
+    "baseSamples": 400
+  },
+  {
+    "name": "Enclosure outcrop.008",
+    "minBaseGap": -1.9624683856964111,
+    "maxBaseGap": -1.2481188774108887,
+    "baseSamples": 7
+  },
+  {
+    "name": "Enclosure outcrop.009",
+    "minBaseGap": -1.9561185836791992,
+    "maxBaseGap": 1.0383758544921875,
+    "baseSamples": 400
+  },
+  {
+    "name": "Enclosure outcrop.010",
+    "minBaseGap": -0.6255078315734863,
+    "maxBaseGap": 0.27262258529663086,
+    "baseSamples": 7
+  },
+  {
+    "name": "Enclosure outcrop.011",
+    "minBaseGap": -1.0859322547912598,
+    "maxBaseGap": 0.34219980239868164,
+    "baseSamples": 47
+  },
+  {
+    "name": "Enclosure outcrop.012",
+    "minBaseGap": -1.10860675573349,
+    "maxBaseGap": -0.09885668754577637,
+    "baseSamples": 7
+  },
+  {
+    "name": "Enclosure outcrop.013",
+    "minBaseGap": -0.6350807845592499,
+    "maxBaseGap": 0.6936389207839966,
+    "baseSamples": 47
+  },
+  {
+    "name": "Enclosure outcrop.014",
+    "minBaseGap": -0.5776703506708145,
+    "maxBaseGap": 0.21154272556304932,
+    "baseSamples": 283
+  },
+  {
+    "name": "Enclosure outcrop.015",
+    "minBaseGap": -2.6364420652389526,
+    "maxBaseGap": 1.0270822048187256,
+    "baseSamples": 47
+  },
+  {
+    "name": "Enclosure outcrop.016",
+    "minBaseGap": -1.0430340766906738,
+    "maxBaseGap": 0.7884454727172852,
+    "baseSamples": 283
+  },
+  {
+    "name": "Enclosure outcrop.017",
+    "minBaseGap": -0.8811993598937988,
+    "maxBaseGap": 0.5163326263427734,
+    "baseSamples": 271
+  },
+  {
+    "name": "Enclosure outcrop.018",
+    "minBaseGap": -3.155191421508789,
+    "maxBaseGap": 3.418564796447754,
+    "baseSamples": 283
+  },
+  {
+    "name": "Enclosure outcrop.019",
+    "minBaseGap": -1.7282695770263672,
+    "maxBaseGap": 4.193238735198975,
+    "baseSamples": 271
+  },
+  {
+    "name": "Enclosure outcrop.020",
+    "minBaseGap": -1.2437238693237305,
+    "maxBaseGap": 0.4200420379638672,
+    "baseSamples": 180
+  },
+  {
+    "name": "Enclosure outcrop.021",
+    "minBaseGap": -2.1882914006710052,
+    "maxBaseGap": 0.3685823082923889,
+    "baseSamples": 271
+  },
+  {
+    "name": "Enclosure outcrop.022",
+    "minBaseGap": -0.858060747385025,
+    "maxBaseGap": -0.0271073579788208,
+    "baseSamples": 180
+  },
+  {
+    "name": "Enclosure outcrop.023",
+    "minBaseGap": -1.0872127413749695,
+    "maxBaseGap": -0.07519727945327759,
+    "baseSamples": 400
+  },
+  {
+    "name": "Opening fractured moss boulder",
+    "minBaseGap": -1.685006320476532,
+    "maxBaseGap": -0.6130761504173279,
+    "baseSamples": 106
+  },
+  {
+    "name": "Atlas moss rock supplied 1",
+    "minBaseGap": -0.8589537143707275,
+    "maxBaseGap": -0.034999966621398926,
+    "baseSamples": 110
+  },
+  {
+    "name": "Atlas moss rock supplied 2",
+    "minBaseGap": -0.9792194962501526,
+    "maxBaseGap": -0.034999966621398926,
+    "baseSamples": 88
+  },
+  {
+    "name": "Atlas moss rock supplied 3",
+    "minBaseGap": -0.7322699427604675,
+    "maxBaseGap": -0.034999966621398926,
+    "baseSamples": 88
+  },
+  {
+    "name": "Atlas moss rock supplied 4",
+    "minBaseGap": -0.5252290964126587,
+    "maxBaseGap": -0.034999966621398926,
+    "baseSamples": 110
+  }
+]
