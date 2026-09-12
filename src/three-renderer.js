@@ -201,7 +201,9 @@
         if(!obj.isMesh)return;
         const add=(transform)=>{
           const p=new THREE.Vector3().setFromMatrixPosition(transform);
-          const key=`${obj.geometry.uuid}/${obj.material.uuid}/${Math.floor(p.x/12)}/${Math.floor(p.z/12)}`;
+          const span=activeMode==='atlas-3d'?global.AtlasWorldPolicy.cellSize(obj):12;
+          const shadowKey=activeMode==='atlas-3d'?global.AtlasWorldPolicy.castsShadow(obj):true;
+          const key=`${obj.geometry.uuid}/${obj.material.uuid}/${shadowKey}/${Math.floor(p.x/span)}/${Math.floor(p.z/span)}`;
           let cell=cells.get(key);if(!cell){cell={geometry:obj.geometry,material:obj.material,matrices:[],name:obj.name};cells.set(key,cell);}cell.matrices.push(transform.clone());
         };
         if(obj.isInstancedMesh){for(let i=0;i<obj.count;i++){obj.getMatrixAt(i,matrix);add(new THREE.Matrix4().multiplyMatrices(obj.matrixWorld,matrix));}}else add(obj.matrixWorld);
@@ -368,7 +370,8 @@
     function positionCamera(x,viewYaw=yaw,viewPitch=pitch) {
       const p=routePosition(x);positionIndex=p.i+p.t;camera.position.copy(p.position);camera.position.y+=route.eyeHeight;camera.rotation.set(viewPitch,viewYaw,0,'YXZ');
       camera.updateMatrixWorld();
-      if(frames===0||sun.target.position.distanceToSquared(camera.position)>.16){
+      const shadowDistance=activeMode==='atlas-3d'?global.AtlasWorldPolicy.shadowRecenterDistance:.4;
+      if(frames===0||sun.target.position.distanceToSquared(camera.position)>shadowDistance*shadowDistance){
         sun.position.copy(camera.position).add(new THREE.Vector3(-36,42,-24));sun.target.position.copy(camera.position);sun.shadow.needsUpdate=true;
       }
     }
@@ -410,6 +413,12 @@
           // Compile every original visible mesh, including off-camera geometry,
           // in bounded batches. All lights remain present in every batch.
           const meshes=[];for(const [o,original]of culling){o.visible=false;if(original.visible)meshes.push(o);}
+          // Shadow nodes run through a visible shadow RECEIVER's material.
+          // The NPC casts but does not receive; leaving it in a trailing batch
+          // containing only sky/effects skips its shadow shader until a later
+          // camera view. Put that small non-receiver set beside world receivers.
+          // Same objects, same batch limit, no additional renders or resources.
+          meshes.sort((a,b)=>Number(a.receiveShadow)-Number(b.receiveShadow));
           // Bound draw objects rather than geometry types: one fir geometry can
           // have hundreds of spatial cells, each needing renderer preparation.
           const batchSize=16,count=Math.ceil(meshes.length/batchSize);
@@ -555,7 +564,7 @@
         if(token!==generation){releaseRoot(root);return;}
         await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
         if(token!==generation)return;
-        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;const smallGroundcover=/^(Grass|Path.bank.community|Atlas.woodland.fern|Rich.route.understory|Fern.drift|Detailed.woodland.flower|Paving.edge.tuft|Sorrel.in.paving.joint)/.test(obj.name);obj.castShadow=!(activeMode==='atlas-3d'&&smallGroundcover);obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
+        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=activeMode==='atlas-3d'?global.AtlasWorldPolicy.castsShadow(obj):true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
         const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;
         textures.add(sky);
         if(preset.environmentCap){

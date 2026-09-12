@@ -1,4 +1,4 @@
-# Current Atlas renderer implementation — local world-mode separation
+# Current Atlas renderer implementation — local v161 composition and batching
 
 Verified against source on 2026-09-11. v158 is a deliberately conservative
 physical-tablet stability baseline, not the final visual-quality target. It retains
@@ -16,13 +16,19 @@ See [the prior investigation](3d-tablet-range-investigation.md) and `AGENTS.md`.
 
 Real 3D (`3d`, preserving the saved identifier) is the original heavy world, desktop/laptop only, using Desktop High. Tablets/phones see a disabled button with “Desktop only”. The central settings normalizer rejects unsupported choices, including saved and programmatic selections, with Illustrated fallback before any heavy-world request. Renderer query overrides cannot bypass availability.
 
-Atlas 3D (`atlas-3d`) is the unchanged, physically tested faceted world. It uses **one canonical Atlas 3D configuration** on every device, with the exact conservative values in the table below. Desktop is the authoritative visual development/QA preview for iPad Atlas 3D: no automatic desktop uplift, no device-selected quality variant, and no rendererPreset override. Desktop Atlas uses the existing asynchronous desktop scheduler, two Draco workers and concurrent dependencies. Its batched GPU warm-up, sequential uploads and three small views remain shared with tablet to preserve the verified visual output. Tablets retain sequential compact preparation, three small warm-up views and one in-flight GPU frame. Presentation remains one sample without default depth on both; world depth, texture cap and all quality values are independent of execution. Input and lifecycle behavior may still follow platform capabilities.
+Atlas 3D (`atlas-3d`) is the faceted world, with the local v161 authoring cleanup described in [the composition report](atlas-composition-performance.md). This new asset still needs physical iPad acceptance. It uses **one canonical Atlas 3D configuration** on every device, with the exact conservative values in the table below. Desktop is the authoritative visual development/QA preview for iPad Atlas 3D: no automatic desktop uplift, no device-selected quality variant, and no rendererPreset override. Desktop Atlas uses the existing asynchronous desktop scheduler, two Draco workers and concurrent dependencies. Its batched GPU warm-up, sequential uploads and three small views remain shared with tablet to preserve the verified visual output. Tablets retain sequential compact preparation, three small warm-up views and one in-flight GPU frame. Presentation remains one sample without default depth on both; world depth, texture cap and all quality values are independent of execution. Input and lifecycle behavior may still follow platform capabilities.
 
 The existing centralized `AtlasThreePresets.detectDevice` / session device classification remains the source of truth: explicit iPad identity, touch-capable Mac platform (desktop-style iPad Safari), browser tablet form factor, Android touch/screen signals, and large coarse/no-hover touch screens. Phone signals classify handhelds; other devices are desktop. Detection remains heuristic and session-stable. Its older preset selector remains available for isolated legacy diagnostics/tests but does not select product world quality.
 
 World mappings and export instructions: [3D world modes](3d-world-modes.md). The user reports the conservative faceted baseline worked for multiple minutes and through physical iPad lock/unlock before this separation; local WebGPU QA is not a new physical-Safari acceptance claim.
 
 ## Platform and ownership
+
+Atlas's 16-object preparation batches order caster-only meshes before world
+receivers. This keeps the NPC's lazy shadow shader in a receiver-containing
+batch, rather than deferring it to a camera warm-up view. It does not add GPU
+work or change the batch limit. The strict 1770×1101 pipeline test caught this
+case with the v161 group count and passes after the ordering correction.
 
 - Existing Blender → GLB → Three.js/WebGPU pipeline. First-person 3D supports LVL-0001 only. Other levels retain their existing renderer behavior.
 - Vendored Three.js r180, WebGPURenderer, TSL node materials and PostProcessing. The application requires the WebGPU backend; a WebGL fallback is not accepted as the 3D mode.
@@ -33,7 +39,7 @@ World mappings and export instructions: [3D world modes](3d-world-modes.md). The
 
 - Level models: Levels/LVL-0001/3d/real-3d.glb and atlas-3d.glb (only the selected world loads); route and landmarks: route.json. GLTFLoader plus Draco WASM decoding.
 - Compact devices use one Draco worker and sequential texture/mesh dependency loading. Desktop permits two workers.
-- Loaded meshes are repartitioned into InstancedMesh groups by geometry, material and 12-unit X/Z cells. Frustum culling operates on the resulting spatial instances. The runtime does not stream level chunks or provide a separate iPad asset set.
+- Real meshes retain 12-unit X/Z cells. Atlas uses `AtlasWorldPolicy`: 32-unit cells for repeated opaque nature, 12 for other content and alpha materials. Geometry, material and shadow eligibility form the grouping key. Bounds are recomputed for frustum culling. Twenty authoring-side root clusters preserve the surface data of 160 unique root meshes. The runtime does not stream level chunks or provide a separate iPad asset set.
 - Real 3D retains original material textures and anisotropy 8. Atlas 3D bounds each decoded GLB image to a 1024-pixel long edge before use (sequential dependencies on tablets), preserving aspect ratio and never upscaling. Raw-channel ImageBitmap resizing preserves texture color-space metadata, alpha, packed PBR channels, samplers and UV transforms. Source assets are untouched. Shared texture Sources are resized once; original ImageBitmaps close immediately after replacement. Compact static resized pixels close after all sampler/color-space variants upload and complete their GPU fence. NPC canvas dimensions also respect the cap; live pixels remain available for animation.
 - HDR environment: qwantani_sunset_puresky_2k.hdr. NPC uses a camera-facing textured plane with a persistent CanvasTexture. Flames use crossed animated translucent planes.
 
@@ -62,7 +68,7 @@ World mappings and export instructions: [3D world modes](3d-world-modes.md). The
 | HDR input | 2048×1024 | 512×256 linear half-float |
 | Derived environment PMREM atlas | 1536×2048 | 384×512 |
 
-**MSAA exception:** the requested approximate 2× world baseline cannot be represented by WebGPU. Valid texture sample counts are 1 or 4 ([WebGPU texture validation](https://www.w3.org/TR/2022/WD-webgpu-20220613/#dom-gpudevice-createtexture)); vendored Three r180 also maps counts below 4 to 1. Atlas 3D explicitly uses and reports 1×, avoiding an invalid descriptor or hidden promotion to 4×. This can make foliage/geometry edges less smooth. Source assets remain unchanged.
+**MSAA exception:** the requested approximate 2× world baseline cannot be represented by WebGPU. Valid texture sample counts are 1 or 4 ([WebGPU texture validation](https://www.w3.org/TR/2022/WD-webgpu-20220613/#dom-gpudevice-createtexture)); vendored Three r180 also maps counts below 4 to 1. Atlas 3D explicitly uses and reports 1×, avoiding an invalid descriptor or hidden promotion to 4×. This can make foliage/geometry edges less smooth. The MSAA constraint does not alter source assets.
 
 Desktop retains the existing quarter-resolution volume, Gaussian blur, GTAO and bloom chain. Atlas 3D constructs none of these effects. Its world, lighting, shadows and tone mapping remain active. The choice is fixed by the session preset, not FPS or iPad model.
 
@@ -73,7 +79,7 @@ The faceted forest pass excludes small groundcover from casting separate Atlas 3
 | Resolution | Canvas CSS size multiplied by min(devicePixelRatio, preset DPR cap, 1920/CSS width); no adaptive FPS-based scale |
 | Final fullscreen presentation | Atlas on all devices: one sample and no default depth attachment; Real/Desktop High: four samples with the existing depth attachment |
 | World depth | Retained; compact volumetric depth sampling, when enabled, references its producer |
-| Sun shadows | Preset map resolution; static reuse with recentering after camera position changes by over 0.4 units |
+| Sun shadows | Preset map resolution; static reuse with recentering after over 0.4 units in Real, 0.8 in Atlas. Atlas broad-leaf groundcover joins the non-casting small-plant set; trees, rocks, shrubs and architecture still cast. |
 | Other lighting | Hemisphere, warm directional bounce, rune and brazier point lights |
 | Tone mapping | ACES filmic, exposure 1.2 |
 | Scene fog | Exponential squared, colour #dbc294, density 0.009 |

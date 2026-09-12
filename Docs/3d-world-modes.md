@@ -1,4 +1,4 @@
-# Graphics world separation — local v159
+# Graphics world separation — local v161
 
 ## Product contract
 
@@ -10,21 +10,34 @@ The existing session device classifier owns device identity. Real 3D is enabled 
 
 ## Verified authoring and runtime mapping
 
+The table and hashes below describe v161. The following inventory paragraph
+records the original separation baseline; current Atlas counts and source fixes
+are in [the composition report](atlas-composition-performance.md).
+
 | Mode | Preserved source under Levels/LVL-0001/3d | Runtime asset | Bytes |
 | --- | --- | --- | ---: |
 | Real 3D | lvl0001.blend | real-3d.glb | 91,231,328 |
-| Atlas 3D | lvl0001-stylized.blend | atlas-3d.glb | 26,869,972 |
+| Atlas 3D | lvl0001-stylized.blend | atlas-3d.glb | 24,403,720 |
 
 Blender MCP inspected both libraries without modifying the open scene. The heavy library contains 320 detailed conifer objects and no faceted mature firs. The faceted library contains 175 faceted mature firs plus separate juvenile meshes. Retained source-library objects are not all exported; active-world budgets from the authoring pass are 18,008 objects / 49,020,935 instance-weighted polygons versus 17,114 / 2,345,171, with 248 tree placements retained.
 
-Real 3D is restored byte-for-byte from the verified pre-faceting Git export at `362fd8a`. Atlas 3D is moved without regeneration from the validated current export. SHA-256:
+Real 3D is restored byte-for-byte from the verified pre-faceting Git export at `362fd8a`. Atlas 3D is re-exported from its separate edited checkpoint for v161. SHA-256:
 
 - Real: `57a2e0589df616d2d91a2d40e93169bd5ffea4d5281d06414c6e3096c2d8a086`
-- Atlas: `06210bcfd18c6cab583a7d0f4052fd91ff8021230faf0f60d8d6ab569d6f8129`
+- Atlas: `33c8bb6a7133312c10fc97171cc0268f64418cbb57303299f26f859eabb30fbb`
 
-The obsolete ambiguous `lvl0001.glb` delivery path is removed. The two new paths cannot overwrite each other during the supported export workflow. Source checkpoints are unchanged.
+The obsolete ambiguous `lvl0001.glb` delivery path is removed. The two new paths cannot overwrite each other during the supported export workflow. The Real checkpoint is unchanged. Atlas has its own before-composition backup and updated checkpoint.
 
 ## Export workflow
+
+For the v161 authoring pass, Blender MCP ran `compose-atlas-forest.py`,
+`batch-atlas-roots.py`, then `refine-atlas-sightlines.py` on the Atlas checkpoint.
+The first script saves `lvl0001-stylized-before-composition.blend` before changes;
+do not re-run against an already-edited scene. Category counts, removed names,
+protected route hash and the Real asset hash are recorded in
+`Levels/LVL-0001/3d/atlas-composition-ledger.json`. All 248 tree placements remain.
+The source `.blend` files are locally ignored by Git, as before. The GLB is the
+versioned runtime deliverable. See [v161 measurements and visual review](atlas-composition-performance.md).
 
 Use installed Blender background automation:
 
@@ -57,9 +70,13 @@ Both retain the existing width safety limit of 1920 pixels; actual drawing-buffe
 
 One Three runtime owns one active world and GPU device. World changes dispose the old scene, textures, post-processing and device, invalidate generation callbacks, and change configuration before loading. The canvas-retention and loader-isolation rules now include world identity. A cancelled in-progress GLTF decode is joined before another world's device/decode starts, so old decode resources cannot overlap the next world. Existing failure, device-loss, navigation and page lifecycle cleanup remain.
 
-Service worker v159 includes the new metadata script. World GLBs remain fetched/cached on demand through the existing request cache; neither is preloaded in CORE_ASSETS. Selecting Atlas never requests the heavy world.
+Service worker v161 includes the metadata and Atlas world-policy scripts. World GLBs remain fetched/cached on demand through the existing request cache; neither is preloaded in CORE_ASSETS. Selecting Atlas never requests the heavy world.
 
-## Validation and limits
+## Historical v159 separation validation and limits
+
+The results below record the original world-separation release. For the edited
+v161 Atlas export and its completed regression runs, see
+[the composition report](atlas-composition-performance.md).
 
 Completed locally on 2026-09-11:
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v160-desktop-execution";
+const CACHE_NAME = "svenadventure-static-v161-atlas-composition";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/GTAONode.js",
   "./",
@@ -17,6 +17,7 @@ const CORE_ASSETS = [
   "src/cinematic-shaders.js",
   "src/cinematic-renderer.js",
   "src/cinematic-editor.js",
+  "src/atlas-world-policy.js",
   "src/three-renderer.js",
   "src/three-gpu-diagnostics.js",
   "src/three-input.js",

@@ -49,6 +49,9 @@ test('compact preparation retains full pipeline coverage and final resolution',a
  // Actual shadow passes must finish in bounded batches, not first appear in
  // camera warm-up (the previous path created 796 / 702 / 73 late pipelines).
  const shadowGroups=Object.entries(ready.groups).filter(([key])=>key.includes('vertex_ShadowMaterial'));
+ await info.attach('preparation-coverage-at-ready',{body:JSON.stringify(ready,null,2),contentType:'application/json'});
+ require('fs').writeFileSync(info.outputPath('preparation-ready.json'),JSON.stringify(ready,null,2));
+ if(shadowGroups.some(([key,count])=>!key.startsWith('Wereld- en schaduwpipelines compileren')||count>16))console.log('Unexpected shadow preparation',JSON.stringify(shadowGroups.filter(([key,count])=>!key.startsWith('Wereld- en schaduwpipelines compileren')||count>16)));
  expect(shadowGroups.length).toBeGreaterThan(0);
  expect(shadowGroups.every(([key,count])=>key.startsWith('Wereld- en schaduwpipelines compileren')&&count<=16)).toBe(true);
  expect(ready.views[2].pipelines).toBe(ready.views[1].pipelines);
