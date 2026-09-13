@@ -1,0 +1,468 @@
+{
+  "method": "Fresh sequential Chromium WebGPU runs: tablet preset, 1180x734 CSS viewport, native browser DPR 2, 885x551 drawing buffer. Queue fences are wall time, not hardware GPU timestamps. Alternating material test holds each of two camera poses and changes existing uniforms only.",
+  "standalone": {
+    "before": {
+      "inventory": {
+        "meshes": 467,
+        "instances": 6436,
+        "instancedMeshes": 459,
+        "shadowCasters": 401,
+        "lights": 9,
+        "geometries": 222,
+        "materials": 30,
+        "geometryMaterialPairs": 222,
+        "textures": 24,
+        "nodeMaterials": 3,
+        "doubleSided": 29,
+        "alphaTest": 4,
+        "transparent": 1
+      },
+      "totals": {
+        "createShaderModule": 891,
+        "createRenderPipeline": 872,
+        "preparationFenceMs": 7891.499999985099,
+        "preparationFences": 59
+      },
+      "configuration": {
+        "device": {
+          "deviceClass": "tablet",
+          "reason": "iPad / touch-capable Mac platform",
+          "nativeTouch": true
+        },
+        "preset": {
+          "id": "atlas-canonical",
+          "name": "Atlas 3D",
+          "worldSamples": 1,
+          "effectSamples": 1,
+          "dprCap": 0.75,
+          "shadowSize": 1024,
+          "volumeResolution": 0,
+          "volumeSteps": 0,
+          "gtao": false,
+          "bloom": false,
+          "anisotropy": 2,
+          "textureCap": 1024,
+          "environmentCap": 512
+        },
+        "compact": true,
+        "batchedWarmup": true,
+        "presentationSamples": 1,
+        "presentationDepth": false,
+        "override": false
+      },
+      "resolution": [
+        885,
+        551
+      ],
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "preparationMs": 22933.29999999702,
+      "phases": {
+        "stationary": {
+          "fps": 59.99508991591484,
+          "cpu": 4.980818414779575,
+          "draws": 405,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 1596482,
+          "pipelineTransitions": 405,
+          "traversalMs": 0.16393861902491821,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 4.980818414779575,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.032225064075816316,
+          "fenceMs": 4.634782608779495
+        },
+        "walking": {
+          "fps": 51.55509183250731,
+          "cpu": 7.983928570878648,
+          "draws": 376.1041666666667,
+          "shadowDraws": 14.491071428571429,
+          "shadowRefreshHz": 3.2221932395317068,
+          "triangles": 1443428.8035714286,
+          "pipelineTransitions": 390.5952380952381,
+          "traversalMs": 0.20476190448694287,
+          "shadowFrameCpuMs": 12.838095238520985,
+          "regularFrameCpuMs": 7.660317459702492,
+          "shadowFrameDraws": 231.85714285714286,
+          "matrixUpdateMs": 0.040773810020514896,
+          "fenceMs": 6.539285714826768
+        },
+        "turning": {
+          "fps": 59.68679814171001,
+          "cpu": 3.736340206001223,
+          "draws": 170.60824742268042,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 991432.8582474227,
+          "pipelineTransitions": 170.60824742268042,
+          "traversalMs": 0.17010309289872033,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 3.736340206001223,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.030670102954525307,
+          "fenceMs": 5.353865978912902
+        },
+        "walking-looking": {
+          "fps": 57.54690991459791,
+          "cpu": 3.5792553191013794,
+          "draws": 154.09574468085106,
+          "shadowDraws": 4.928191489361702,
+          "shadowRefreshHz": 1.6835532155866408,
+          "triangles": 958082.6702127659,
+          "pipelineTransitions": 159.02393617021278,
+          "traversalMs": 0.16010638274886507,
+          "shadowFrameCpuMs": 8.854545453732664,
+          "regularFrameCpuMs": 3.4202739725782445,
+          "shadowFrameDraws": 168.45454545454547,
+          "matrixUpdateMs": 0.027127659582394235,
+          "fenceMs": 5.035638298680808
+        }
+      },
+      "errors": [],
+      "gpuErrors": []
+    },
+    "after": {
+      "inventory": {
+        "meshes": 467,
+        "instances": 6436,
+        "instancedMeshes": 459,
+        "shadowCasters": 401,
+        "lights": 9,
+        "geometries": 222,
+        "materials": 30,
+        "geometryMaterialPairs": 222,
+        "textures": 24,
+        "nodeMaterials": 3,
+        "doubleSided": 29,
+        "alphaTest": 4,
+        "transparent": 1
+      },
+      "totals": {
+        "createShaderModule": 891,
+        "createRenderPipeline": 872,
+        "preparationFenceMs": 9746.999999970198,
+        "preparationFences": 59
+      },
+      "configuration": {
+        "device": {
+          "deviceClass": "tablet",
+          "reason": "iPad / touch-capable Mac platform",
+          "nativeTouch": true
+        },
+        "preset": {
+          "id": "atlas-canonical",
+          "name": "Atlas 3D",
+          "worldSamples": 1,
+          "effectSamples": 1,
+          "dprCap": 0.75,
+          "shadowSize": 1024,
+          "volumeResolution": 0,
+          "volumeSteps": 0,
+          "gtao": false,
+          "bloom": false,
+          "anisotropy": 2,
+          "textureCap": 1024,
+          "environmentCap": 512
+        },
+        "compact": true,
+        "batchedWarmup": true,
+        "presentationSamples": 1,
+        "presentationDepth": false,
+        "override": false
+      },
+      "resolution": [
+        885,
+        551
+      ],
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "preparationMs": 27117.40000000596,
+      "phases": {
+        "stationary": {
+          "fps": 40.04787331983062,
+          "cpu": 9.459770114999621,
+          "draws": 405,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 1596482,
+          "pipelineTransitions": 405,
+          "traversalMs": 0.3440613030702218,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 9.459770114999621,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.038697317870640666,
+          "fenceMs": 7.1095785436388175
+        },
+        "walking": {
+          "fps": 30.688496417118046,
+          "cpu": 10.945999999940396,
+          "draws": 377.225,
+          "shadowDraws": 24.44,
+          "shadowRefreshHz": 3.222292123797395,
+          "triangles": 1450895.425,
+          "pipelineTransitions": 401.665,
+          "traversalMs": 0.36449999928474425,
+          "shadowFrameCpuMs": 17.180952380100887,
+          "regularFrameCpuMs": 10.214525139698104,
+          "shadowFrameDraws": 232.76190476190476,
+          "matrixUpdateMs": 0.05350000023841858,
+          "fenceMs": 9.079499999806284
+        },
+        "turning": {
+          "fps": 53.70486872995659,
+          "cpu": 4.148857143052987,
+          "draws": 146.53714285714287,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 926613.3228571429,
+          "pipelineTransitions": 146.53714285714287,
+          "traversalMs": 0.24485714205673761,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 4.148857143052987,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.04828571481364114,
+          "fenceMs": 5.988857142712389
+        },
+        "walking-looking": {
+          "fps": 53.414552021794336,
+          "cpu": 4.414899713415813,
+          "draws": 138.567335243553,
+          "shadowDraws": 5.30945558739255,
+          "shadowRefreshHz": 1.683553215586641,
+          "triangles": 916265.0401146131,
+          "pipelineTransitions": 143.87679083094557,
+          "traversalMs": 0.28194842447011725,
+          "shadowFrameCpuMs": 10.518181817098098,
+          "regularFrameCpuMs": 4.216272189331478,
+          "shadowFrameDraws": 168.45454545454547,
+          "matrixUpdateMs": 0.039828080160911584,
+          "fenceMs": 6.343266475209193
+        }
+      },
+      "errors": [],
+      "gpuErrors": []
+    }
+  },
+  "paired": {
+    "materials": [
+      {
+        "name": "rock_boulder_dry",
+        "roughness": 1,
+        "metalness": 0
+      },
+      {
+        "name": "Leaves",
+        "roughness": 1,
+        "metalness": 0
+      },
+      {
+        "name": "Bark_NormalTree",
+        "roughness": 1,
+        "metalness": 0
+      },
+      {
+        "name": "Leaves_Pine",
+        "roughness": 1,
+        "metalness": 0
+      },
+      {
+        "name": "Atlas interlaced carved stone",
+        "roughness": 0.9200000166893005,
+        "metalness": 0
+      },
+      {
+        "name": "Deep carved channels.001",
+        "roughness": 0.8500000238418579,
+        "metalness": 0
+      },
+      {
+        "name": "Stone incisions.001",
+        "roughness": 0.8500000238418579,
+        "metalness": 0
+      },
+      {
+        "name": "mossy_stone_wall",
+        "roughness": 1,
+        "metalness": 0
+      },
+      {
+        "name": "Hazel broad leaves",
+        "roughness": 0.7300000190734863,
+        "metalness": 0
+      },
+      {
+        "name": "Atlas gate dragon relief",
+        "roughness": 0.9200000166893005,
+        "metalness": 0
+      }
+    ],
+    "blocks": [
+      {
+        "pose": "forest",
+        "variant": "before",
+        "samples": 126,
+        "cpuMs": 9.30317460260694,
+        "fenceMs": 7.246825396305039,
+        "fps": 41.9944007465671,
+        "draws": 405,
+        "triangles": 1596482
+      },
+      {
+        "pose": "forest",
+        "variant": "after",
+        "samples": 131,
+        "cpuMs": 8.604580153035753,
+        "fenceMs": 7.387786258950488,
+        "fps": 43.18444041536179,
+        "draws": 405,
+        "triangles": 1596482
+      },
+      {
+        "pose": "forest",
+        "variant": "after",
+        "samples": 117,
+        "cpuMs": 9.605128205357454,
+        "fenceMs": 7.170085468990171,
+        "fps": 38.565495418287355,
+        "draws": 405,
+        "triangles": 1596482
+      },
+      {
+        "pose": "forest",
+        "variant": "before",
+        "samples": 128,
+        "cpuMs": 8.900781249278225,
+        "fenceMs": 7.328124999417923,
+        "fps": 41.96583718566606,
+        "draws": 405,
+        "triangles": 1596482
+      },
+      {
+        "pose": "forest",
+        "variant": "after",
+        "samples": 149,
+        "cpuMs": 8.226845638263946,
+        "fenceMs": 7.251677851648939,
+        "fps": 48.84925578650585,
+        "draws": 405,
+        "triangles": 1596482
+      },
+      {
+        "pose": "forest",
+        "variant": "before",
+        "samples": 158,
+        "cpuMs": 7.979113923503628,
+        "fenceMs": 7.101265822973432,
+        "fps": 50.964453906199644,
+        "draws": 405,
+        "triangles": 1596482
+      },
+      {
+        "pose": "temple",
+        "variant": "before",
+        "samples": 184,
+        "cpuMs": 4.689130434847397,
+        "fenceMs": 5.745108695133872,
+        "fps": 59.67245013783039,
+        "draws": 171,
+        "triangles": 760493
+      },
+      {
+        "pose": "temple",
+        "variant": "after",
+        "samples": 181,
+        "cpuMs": 4.86574585628773,
+        "fenceMs": 5.960220994211692,
+        "fps": 58.38144695674607,
+        "draws": 171,
+        "triangles": 760493
+      },
+      {
+        "pose": "temple",
+        "variant": "after",
+        "samples": 185,
+        "cpuMs": 4.429189188577033,
+        "fenceMs": 5.743783783348831,
+        "fps": 59.363367988704894,
+        "draws": 171,
+        "triangles": 760493
+      },
+      {
+        "pose": "temple",
+        "variant": "before",
+        "samples": 187,
+        "cpuMs": 4.440106951297923,
+        "fenceMs": 5.832620320234069,
+        "fps": 59.36131039299098,
+        "draws": 171,
+        "triangles": 760493
+      },
+      {
+        "pose": "temple",
+        "variant": "after",
+        "samples": 184,
+        "cpuMs": 4.744565218039181,
+        "fenceMs": 5.790760868674387,
+        "fps": 59.034907597535884,
+        "draws": 171,
+        "triangles": 760493
+      },
+      {
+        "pose": "temple",
+        "variant": "before",
+        "samples": 184,
+        "cpuMs": 4.948369565298376,
+        "fenceMs": 5.805434782300955,
+        "fps": 58.40898990540289,
+        "draws": 171,
+        "triangles": 760493
+      }
+    ],
+    "initialTotals": {
+      "createShaderModule": 891,
+      "createRenderPipeline": 872,
+      "preparationFenceMs": 9895.199999988079,
+      "preparationFences": 59,
+      "visibleFenceMs": 69.59999999403954,
+      "visibleFences": 9
+    },
+    "finalTotals": {
+      "createShaderModule": 891,
+      "createRenderPipeline": 872,
+      "preparationFenceMs": 9895.199999988079,
+      "preparationFences": 59,
+      "visibleFenceMs": 15081.599998995662,
+      "visibleFences": 2268
+    },
+    "inventory": {
+      "meshes": 467,
+      "instances": 6436,
+      "instancedMeshes": 459,
+      "shadowCasters": 401,
+      "lights": 9,
+      "geometries": 222,
+      "materials": 30,
+      "geometryMaterialPairs": 222,
+      "textures": 24,
+      "nodeMaterials": 3,
+      "doubleSided": 29,
+      "alphaTest": 4,
+      "transparent": 1
+    }
+  }
+}

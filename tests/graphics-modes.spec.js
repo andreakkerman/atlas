@@ -26,7 +26,7 @@ test('world outputs are independent and retain the verified content',()=>{
  expect(exportScript).not.toContain('save_as_mainfile');
  const html=fs.readFileSync('index.html','utf8'),worker=fs.readFileSync('service-worker.js','utf8');
  expect(html.indexOf('src/graphics-modes.js')).toBeLessThan(html.indexOf('src/voxel-renderer.js'));
- expect(worker).toContain('v179-atlas-running');expect(worker).toContain('"src/graphics-modes.js"');
+ expect(worker).toContain('v180-atlas-material-polish');expect(worker).toContain('"src/graphics-modes.js"');
  // Large worlds are requested only on selection, never install-time precached.
  const core=worker.slice(0,worker.indexOf('self.addEventListener'));
  expect(core).not.toContain('real-3d.glb');expect(core).not.toContain('atlas-3d.glb');

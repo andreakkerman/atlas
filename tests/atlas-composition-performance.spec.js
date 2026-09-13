@@ -1,6 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('fs');
 const sizes=(process.env.ATLAS_GROUP_SIZES||'32').split(',').map(Number);
+if(process.env.ATLAS_PROFILE_TABLET==='1')test.use({deviceScaleFactor:2,hasTouch:true});
 for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELINE_ASSET==='1'?12:size}`,async({page},info)=>{
  test.skip(process.env.ATLAS_PERFORMANCE_QA!=='1'||info.project.name!=='desktop-chromium','Opt-in sequential real WebGPU benchmark');test.setTimeout(300000);
  await page.setViewportSize(process.env.ATLAS_ART_POSES==='1'&&process.env.ATLAS_CAPTURE_ONLY==='1'?{width:1840,height:1034}:{width:1180,height:734});
@@ -10,6 +11,7 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  if(process.env.ATLAS_GRASS_COVERAGE_ASSET)await page.route('**/atlas-3d.glb',r=>r.fulfill({path:process.env.ATLAS_GRASS_COVERAGE_ASSET,contentType:'model/gltf-binary'}));
  if(process.env.ATLAS_SKY_VARIANT)for(const file of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+file+'*',r=>r.fulfill({path:`output/golden-hour/${process.env.ATLAS_SKY_VARIANT}/${file}`,contentType:'text/javascript'}));
+ if(process.env.ATLAS_POLISH_VARIANT)for(const file of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+file+'*',r=>r.fulfill({path:`output/final-polish/${process.env.ATLAS_POLISH_VARIANT}/${file}`,contentType:'text/javascript'}));
  if(process.env.ATLAS_COHESION_V176_BEFORE==='1'){
   await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/v176-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
   for(const name of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+name+'*',r=>r.fulfill({path:'output/v176-backup/'+name,contentType:'text/javascript'}));
@@ -83,7 +85,7 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
  for(const [i,x,yaw] of views){
   await page.evaluate(({x,yaw})=>{window.eval('state.worldX='+x);window.eval('threeRenderer').lookAt(yaw,0);},{x,yaw});await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(`view-${i}.png`)});
  }
- if(process.env.ATLAS_SKY_VARIANT){
+ if(process.env.ATLAS_SKY_VARIANT||process.env.ATLAS_POLISH_VARIANT){
   await page.addStyleTag({content:'[data-tap-diagnostics]{visibility:hidden}'});
   const sun=await page.evaluate(()=>{const [x,y,z]=AtlasWorldPolicy.lighting.sunOffset;return {yaw:Math.atan2(-x,-z),pitch:Math.atan2(y,Math.hypot(x,z))};});
   for(const [id,x,yaw,pitch] of [['trail',650,0,0],['bank',322,-1.1,0],['rune',1322,1.4,0],['hill',1617,1.5,.12],['temple',1697,0,.2],['sun',1697,sun.yaw,sun.pitch],['opposite-sky',1697,sun.yaw-Math.PI,.55],['upper-sky',1697,sun.yaw,1.1],['seam-left',1697,Math.PI-.001,.48],['seam-right',1697,-Math.PI+.001,.48]]){

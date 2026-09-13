@@ -337,6 +337,9 @@
         const balanced=new Set();
         scene.traverse(o=>{
           const m=o.material;if(!o.isMesh||!m||balanced.has(m))return;balanced.add(m);
+          // Imported vegetation is dielectric: metallic leaf/bark response
+          // suppresses diffuse light and conflicts with the matte forest floor.
+          if(m.name==='Leaves_Pine'||m.name==='Leaves'||m.name==='Bark_NormalTree')m.metalness=0;
           if(m.name==='Leaves_Pine'||m.name==='Leaves'){m.emissive.setRGB(.012,.028,.021);m.emissiveIntensity=.5;}
           if(m.name==='Atlas boulder palette')m.color.multiply(new THREE.Color().setRGB(.88,.93,1));
           if(m.name==='Atlas path palette.001')m.color.multiplyScalar(.84);
@@ -714,7 +717,9 @@
         if(activeMode==='atlas-3d')root.traverse(obj=>{const id=obj.userData?.atlasLandmark,p=obj.userData?.atlasLandmarkPosition;if(id&&Object.hasOwn(route.landmarks,id)&&Array.isArray(p)&&p.length===3&&p.every(Number.isFinite))route.landmarks[id]=[...p];});
         await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
         if(token!==generation)return;
-        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=activeMode==='atlas-3d'?global.AtlasWorldPolicy.castsShadow(obj):true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
+        // Atlas keeps authored dry-stone roughness; the glossy adjustment is
+        // specific to the other 3D world's material treatment.
+        const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=activeMode==='atlas-3d'?global.AtlasWorldPolicy.castsShadow(obj):true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(activeMode!=='atlas-3d'&&/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
         const sky=await prepareWork('HDR laden en decoderen',async()=>{const loaded=await new HDRLoader().loadAsync(ROOT+'qwantani_sunset_puresky_2k.hdr');if(token!==generation)loaded.dispose();return loaded;},token);if(token!==generation)return;
         textures.add(sky);
         if(preset.environmentCap){
