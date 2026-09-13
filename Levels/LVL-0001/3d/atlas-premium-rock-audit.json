@@ -1,0 +1,22 @@
+[
+  {
+    "source": "rock1.glb",
+    "closedAfterWeldingUVSeams": true,
+    "triangles": 342
+  },
+  {
+    "source": "rock2.glb",
+    "closedAfterWeldingUVSeams": true,
+    "triangles": 244
+  },
+  {
+    "source": "rock3.glb",
+    "closedAfterWeldingUVSeams": true,
+    "triangles": 244
+  },
+  {
+    "source": "rock4.glb",
+    "closedAfterWeldingUVSeams": true,
+    "triangles": 342
+  }
+]

@@ -1,0 +1,1024 @@
+{
+  "before": {
+    "size": 32,
+    "baseline": false,
+    "initial": {
+      "performanceProfile": {
+        "inventory": {
+          "meshes": 484,
+          "instances": 6436,
+          "instancedMeshes": 476,
+          "shadowCasters": 413,
+          "lights": 9,
+          "geometries": 234,
+          "materials": 30,
+          "geometryMaterialPairs": 234,
+          "textures": 25,
+          "nodeMaterials": 2,
+          "doubleSided": 29,
+          "alphaTest": 4,
+          "transparent": 1
+        },
+        "totals": {
+          "createShaderModule": 920,
+          "createRenderPipeline": 901,
+          "preparationFenceMs": 7630.599999979138,
+          "preparationFences": 61
+        },
+        "samples": [
+          {
+            "traversalAndCullingMs": 0.19999999552965164,
+            "matrixUpdateMs": 0,
+            "draws": 430,
+            "visibleTriangles": 1675847,
+            "pipelineSwitches": 430,
+            "submissions": 3,
+            "interval": null,
+            "cpu": 6.0999999940395355,
+            "shadowRefresh": false,
+            "visibleObjects": 422,
+            "visibleMaterials": 30
+          }
+        ],
+        "gpuTiming": "queue fence wall time, not hardware execution time; culling included in traversal"
+      },
+      "operationTimings": [
+        {
+          "label": "Vorige Cinematic/Voxel WebGPU-resources vrijgeven",
+          "ms": 0.3999999985098839
+        },
+        {
+          "label": "WebGPU-adapter aanvragen (navigator.gpu: ja)",
+          "ms": 84.70000000298023
+        },
+        {
+          "label": "WebGPU-device aanvragen",
+          "ms": 39.79999999701977
+        },
+        {
+          "label": "Three.js WebGPU-modules laden",
+          "ms": 52.100000001490116
+        },
+        {
+          "label": "renderer.init uitvoeren",
+          "ms": 0.8000000044703484
+        },
+        {
+          "label": "Routegegevens laden",
+          "ms": 2.100000001490116
+        },
+        {
+          "label": "GLB downloaden en decoderen",
+          "ms": 309.3999999985099
+        },
+        {
+          "label": "Wereld opdelen in ruimtelijke instanties",
+          "ms": 9.099999994039536
+        },
+        {
+          "label": "HDR laden en decoderen",
+          "ms": 102.30000000447035
+        },
+        {
+          "label": "HDR verkleinen tot 512 pixels",
+          "ms": 29.69999999552965
+        },
+        {
+          "label": "Ge\u00c3\u00afllustreerd panorama laden (1024\u00c3\u2014342)",
+          "ms": 5.200000002980232
+        },
+        {
+          "label": "HDR-omgeving en hemeldome voorbereiden",
+          "ms": 4.299999997019768
+        },
+        {
+          "label": "Licht, moss-materialen en post-processing opbouwen",
+          "ms": 51.100000001490116
+        },
+        {
+          "label": "NPC-frame decoderen",
+          "ms": 15.699999995529652
+        },
+        {
+          "label": "GPU-textuur uploaden 1/26: mossy_rock_Diffuse (1024\u00c3\u20141024)",
+          "ms": 127.5
+        },
+        {
+          "label": "GPU-textuur uploaden 2/26: mossy_rock_nor_gl (1024\u00c3\u20141024)",
+          "ms": 5.899999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 3/26: mossy_rock_Rough (1024\u00c3\u20141024)",
+          "ms": 17.599999994039536
+        },
+        {
+          "label": "GPU-textuur uploaden 4/26: Atlas shared boulder palette 512 (512\u00c3\u2014512)",
+          "ms": 14.700000002980232
+        },
+        {
+          "label": "GPU-textuur uploaden 5/26: PathRocks_Diffuse.png (512\u00c3\u2014512)",
+          "ms": 19.200000002980232
+        },
+        {
+          "label": "GPU-textuur uploaden 6/26: atlas-evening-floor-512 (512\u00c3\u2014512)",
+          "ms": 13.399999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 7/26: Leaves (1024\u00c3\u20141024)",
+          "ms": 17.399999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 8/26: DesertMarigold_BaseColor (1024\u00c3\u20141024)",
+          "ms": 15.599999994039536
+        },
+        {
+          "label": "GPU-textuur uploaden 9/26: Bark_NormalTree (1024\u00c3\u20141024)",
+          "ms": 19.19999999552965
+        },
+        {
+          "label": "GPU-textuur uploaden 10/26: Bark_NormalTree_Normal (1024\u00c3\u20141024)",
+          "ms": 13.799999997019768
+        },
+        {
+          "label": "GPU-textuur uploaden 11/26: Leaf_Pine_C (1024\u00c3\u20141024)",
+          "ms": 15.700000002980232
+        },
+        {
+          "label": "GPU-textuur uploaden 12/26: runestone-carved-albedo (512\u00c3\u20141024)",
+          "ms": 17.900000005960464
+        },
+        {
+          "label": "GPU-textuur uploaden 13/26: runestone-carved-normal (512\u00c3\u20141024)",
+          "ms": 14.899999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 14/26: mossy_stone_wall_4 (1024\u00c3\u20141024)",
+          "ms": 16.399999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 15/26: mossy_stone_wall_6 (1024\u00c3\u20141024)",
+          "ms": 16.299999997019768
+        },
+        {
+          "label": "GPU-textuur uploaden 16/26: mossy_stone_wall_10 (1024\u00c3\u20141024)",
+          "ms": 16.69999999552965
+        },
+        {
+          "label": "GPU-textuur uploaden 17/26: shrub_01_diff-shrub_01_alpha_1k (1024\u00c3\u20141024)",
+          "ms": 16.19999999552965
+        },
+        {
+          "label": "GPU-textuur uploaden 18/26: Moss_velvet.001 (256\u00c3\u2014256)",
+          "ms": 16.099999994039536
+        },
+        {
+          "label": "GPU-textuur uploaden 19/26: pine_bark_Diffuse (1024\u00c3\u20141024)",
+          "ms": 17.100000001490116
+        },
+        {
+          "label": "GPU-textuur uploaden 20/26: pine_bark_nor_gl (1024\u00c3\u20141024)",
+          "ms": 17.69999999552965
+        },
+        {
+          "label": "GPU-textuur uploaden 21/26: pine_bark_Rough (1024\u00c3\u20141024)",
+          "ms": 17.299999997019768
+        },
+        {
+          "label": "GPU-textuur uploaden 22/26: gate-carved-albedo (819\u00c3\u20141024)",
+          "ms": 14.700000002980232
+        },
+        {
+          "label": "GPU-textuur uploaden 23/26: gate-carved-normal (819\u00c3\u20141024)",
+          "ms": 15.799999997019768
+        },
+        {
+          "label": "GPU-textuur uploaden 24/26: beeld (1024\u00c3\u2014342)",
+          "ms": 19.799999997019768
+        },
+        {
+          "label": "GPU-textuur uploaden 25/26: beeld (392\u00c3\u2014584)",
+          "ms": 13.700000002980232
+        },
+        {
+          "label": "GPU-textuur uploaden 26/26: beeld (512\u00c3\u2014256)",
+          "ms": 20.69999999552965
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 1/31",
+          "ms": 559.6999999955297
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 2/31",
+          "ms": 603.2000000029802
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 3/31",
+          "ms": 549
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 4/31",
+          "ms": 542
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 5/31",
+          "ms": 515.6999999955297
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 6/31",
+          "ms": 516.4000000059605
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 7/31",
+          "ms": 642.5999999940395
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 8/31",
+          "ms": 561.1000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 9/31",
+          "ms": 534.7999999970198
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 10/31",
+          "ms": 484.6000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 11/31",
+          "ms": 607.8999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 12/31",
+          "ms": 559.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 13/31",
+          "ms": 535.8999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 14/31",
+          "ms": 558.7000000029802
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 15/31",
+          "ms": 526.1000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 16/31",
+          "ms": 524.6999999955297
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 17/31",
+          "ms": 649.3999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 18/31",
+          "ms": 518.3000000044703
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 19/31",
+          "ms": 526.7999999970198
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 20/31",
+          "ms": 529.3999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 21/31",
+          "ms": 532.7000000029802
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 22/31",
+          "ms": 537.8999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 23/31",
+          "ms": 652.2999999970198
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 24/31",
+          "ms": 504.6000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 25/31",
+          "ms": 518.6000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 26/31",
+          "ms": 498.3999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 27/31",
+          "ms": 469.29999999701977
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 28/31",
+          "ms": 474.6000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 29/31",
+          "ms": 509.8999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 30/31",
+          "ms": 536.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 31/31",
+          "ms": 144.10000000149012
+        },
+        {
+          "label": "Warm-up 1/3: schaduwen",
+          "ms": 125.5
+        },
+        {
+          "label": "Warm-up 2/3: schaduwen",
+          "ms": 46.29999999701977
+        },
+        {
+          "label": "Warm-up 3/3: schaduwen",
+          "ms": 36
+        },
+        {
+          "label": "Eerste speelbare frame op volledige resolutie + GPU afronden",
+          "ms": 37.100000001490116
+        }
+      ],
+      "status": "ready",
+      "error": null,
+      "worldMode": "atlas-3d",
+      "configuration": {
+        "device": {
+          "deviceClass": "desktop",
+          "reason": "desktop input",
+          "nativeTouch": false
+        },
+        "preset": {
+          "id": "atlas-canonical",
+          "name": "Atlas 3D",
+          "worldSamples": 1,
+          "effectSamples": 1,
+          "dprCap": 0.75,
+          "shadowSize": 1024,
+          "volumeResolution": 0,
+          "volumeSteps": 0,
+          "gtao": false,
+          "bloom": false,
+          "anisotropy": 2,
+          "textureCap": 1024,
+          "environmentCap": 512
+        },
+        "compact": false,
+        "batchedWarmup": true,
+        "presentationSamples": 1,
+        "presentationDepth": false,
+        "override": false
+      },
+      "actualEffects": {
+        "gtao": false,
+        "bloom": false,
+        "volumeSteps": 0,
+        "volumeResolution": 0,
+        "fxaa": true,
+        "lightingMode": "golden-evening",
+        "sunDirection": [
+          -38,
+          24,
+          -52
+        ],
+        "forestFloor": true
+      },
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "rendererSettings": "desktop \u00c2\u00b7 Atlas 3D\nUitvoering desktop: asynchroon\nMSAA wereld 1\u00c3\u2014 / effecten 1\u00c3\u2014 / presentatie 1\u00c3\u2014 \u00c2\u00b7 DPR-cap 0.75\nSchaduw 1024\u00c2\u00b2 \u00c2\u00b7 GTAO uit \u00c2\u00b7 Volume uit\nBloom uit \u00c2\u00b7 Anisotropie 2 \u00c2\u00b7 Textuur-cap 1024\nOmgeving HDR 512\u00c3\u2014256 / PMREM 384\u00c3\u2014512",
+      "failurePhase": null,
+      "deviceDestruction": null,
+      "ready": true,
+      "preparation": "",
+      "diagnostic": "Eerste speelbare frame op volledige resolutie + GPU afronden \u00e2\u20ac\u201d gelukt",
+      "debug": true,
+      "preparationStrategy": "desktop-batched",
+      "releasedImageBytes": 77225984,
+      "frameSampled": false,
+      "input": {
+        "transport": "pointer IDs",
+        "moveId": null,
+        "lookId": null,
+        "walk": 0,
+        "turn": 0,
+        "lastEvent": "idle",
+        "lastReset": "initial",
+        "capture": "none",
+        "counts": {
+          "down": 0,
+          "motion": 0,
+          "end": 0,
+          "cancel": 0,
+          "rebind": 1
+        },
+        "allowed": true
+      },
+      "movement": {
+        "applied": 0
+      },
+      "preparationCompleted": 5,
+      "preparationTotal": 5,
+      "preparationMs": 17947.79999999702,
+      "inputType": "desktop",
+      "warmupViews": 4,
+      "warmupTotal": 4,
+      "fps": 0,
+      "averageMs": 0,
+      "backend": "WebGPU",
+      "firstPerson": true,
+      "levelId": "LVL-0001",
+      "source": "Levels/LVL-0001/3d/atlas-3d.glb",
+      "camera": [
+        0,
+        1.58,
+        0
+      ],
+      "yaw": -0.08,
+      "pitch": 0.015,
+      "positionIndex": 0,
+      "target": null,
+      "drawCalls": 430,
+      "triangles": 1675849,
+      "resolution": [
+        885,
+        551
+      ],
+      "frames": 2
+    },
+    "phases": {
+      "stationary": {
+        "fps": 59.99693110326837,
+        "cpu": 3.6539641947049617,
+        "draws": 412,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1655425,
+        "pipelineTransitions": 412,
+        "traversalMs": 0.14552429699531907,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.6539641947049617,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99479636970264,
+        "cpu": 3.885969387766506,
+        "draws": 385.55867346938777,
+        "shadowDraws": 10.306122448979592,
+        "shadowRefreshHz": 3.214006948376927,
+        "triangles": 1535523.375,
+        "pipelineTransitions": 395.86479591836735,
+        "traversalMs": 0.13724489797058761,
+        "shadowFrameCpuMs": 8.038095239017691,
+        "regularFrameCpuMs": 3.6509433961862503,
+        "shadowFrameDraws": 192.38095238095238
+      },
+      "turning": {
+        "fps": 59.996307919512624,
+        "cpu": 2.07538461526617,
+        "draws": 177.06666666666666,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1050926.8205128205,
+        "pipelineTransitions": 177.06666666666666,
+        "traversalMs": 0.12128205129351372,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 2.07538461526617,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99601049546579,
+        "cpu": 2.3562659845708884,
+        "draws": 180.1074168797954,
+        "shadowDraws": 10.332480818414322,
+        "shadowRefreshHz": 3.2222921237973954,
+        "triangles": 1041553.7647058824,
+        "pipelineTransitions": 190.4398976982097,
+        "traversalMs": 0.12915601032545498,
+        "shadowFrameCpuMs": 6.557142857639563,
+        "regularFrameCpuMs": 2.117837837721045,
+        "shadowFrameDraws": 192.38095238095238
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "after": {
+    "size": 32,
+    "baseline": false,
+    "initial": {
+      "performanceProfile": {
+        "inventory": {
+          "meshes": 496,
+          "instances": 6436,
+          "instancedMeshes": 488,
+          "shadowCasters": 426,
+          "lights": 9,
+          "geometries": 234,
+          "materials": 30,
+          "geometryMaterialPairs": 234,
+          "textures": 24,
+          "nodeMaterials": 3,
+          "doubleSided": 29,
+          "alphaTest": 4,
+          "transparent": 1
+        },
+        "totals": {
+          "createShaderModule": 945,
+          "createRenderPipeline": 926,
+          "preparationFenceMs": 8095.79999999702,
+          "preparationFences": 60
+        },
+        "samples": [
+          {
+            "traversalAndCullingMs": 0.19999999552965164,
+            "matrixUpdateMs": 0.10000000149011612,
+            "draws": 438,
+            "visibleTriangles": 1655404,
+            "pipelineSwitches": 438,
+            "submissions": 4,
+            "interval": null,
+            "cpu": 8.300000004470348,
+            "shadowRefresh": false,
+            "visibleObjects": 430,
+            "visibleMaterials": 30
+          }
+        ],
+        "gpuTiming": "queue fence wall time, not hardware execution time; culling included in traversal"
+      },
+      "operationTimings": [
+        {
+          "label": "Vorige Cinematic/Voxel WebGPU-resources vrijgeven",
+          "ms": 0.29999999701976776
+        },
+        {
+          "label": "WebGPU-adapter aanvragen (navigator.gpu: ja)",
+          "ms": 98.79999999701977
+        },
+        {
+          "label": "WebGPU-device aanvragen",
+          "ms": 46.20000000298023
+        },
+        {
+          "label": "Three.js WebGPU-modules laden",
+          "ms": 28
+        },
+        {
+          "label": "renderer.init uitvoeren",
+          "ms": 0.5999999940395355
+        },
+        {
+          "label": "Routegegevens laden",
+          "ms": 1.7000000029802322
+        },
+        {
+          "label": "GLB downloaden en decoderen",
+          "ms": 327.3999999985099
+        },
+        {
+          "label": "Wereld opdelen in ruimtelijke instanties",
+          "ms": 9.200000002980232
+        },
+        {
+          "label": "HDR laden en decoderen",
+          "ms": 90.29999999701977
+        },
+        {
+          "label": "HDR verkleinen tot 512 pixels",
+          "ms": 28.299999997019768
+        },
+        {
+          "label": "HDR-omgeving en hemeldome voorbereiden",
+          "ms": 1.7000000029802322
+        },
+        {
+          "label": "Licht, moss-materialen en post-processing opbouwen",
+          "ms": 11.100000001490116
+        },
+        {
+          "label": "NPC-frame decoderen",
+          "ms": 7.699999995529652
+        },
+        {
+          "label": "GPU-textuur uploaden 1/25: mossy_rock_Diffuse (1024\u00c3\u20141024)",
+          "ms": 54.80000000447035
+        },
+        {
+          "label": "GPU-textuur uploaden 2/25: mossy_rock_nor_gl (1024\u00c3\u20141024)",
+          "ms": 11.800000004470348
+        },
+        {
+          "label": "GPU-textuur uploaden 3/25: mossy_rock_Rough (1024\u00c3\u20141024)",
+          "ms": 18.399999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 4/25: Atlas shared boulder palette 512 (512\u00c3\u2014512)",
+          "ms": 13.199999995529652
+        },
+        {
+          "label": "GPU-textuur uploaden 5/25: PathRocks_Diffuse.png (512\u00c3\u2014512)",
+          "ms": 19.600000001490116
+        },
+        {
+          "label": "GPU-textuur uploaden 6/25: atlas-evening-floor-512 (512\u00c3\u2014512)",
+          "ms": 15.5
+        },
+        {
+          "label": "GPU-textuur uploaden 7/25: Leaves (1024\u00c3\u20141024)",
+          "ms": 14.800000004470348
+        },
+        {
+          "label": "GPU-textuur uploaden 8/25: DesertMarigold_BaseColor (1024\u00c3\u20141024)",
+          "ms": 15.800000004470348
+        },
+        {
+          "label": "GPU-textuur uploaden 9/25: Bark_NormalTree (1024\u00c3\u20141024)",
+          "ms": 18.5
+        },
+        {
+          "label": "GPU-textuur uploaden 10/25: Bark_NormalTree_Normal (1024\u00c3\u20141024)",
+          "ms": 13.900000005960464
+        },
+        {
+          "label": "GPU-textuur uploaden 11/25: Leaf_Pine_C (1024\u00c3\u20141024)",
+          "ms": 16.600000001490116
+        },
+        {
+          "label": "GPU-textuur uploaden 12/25: runestone-carved-albedo (512\u00c3\u20141024)",
+          "ms": 19.600000001490116
+        },
+        {
+          "label": "GPU-textuur uploaden 13/25: runestone-carved-normal (512\u00c3\u20141024)",
+          "ms": 13.100000001490116
+        },
+        {
+          "label": "GPU-textuur uploaden 14/25: mossy_stone_wall_4 (1024\u00c3\u20141024)",
+          "ms": 16.899999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 15/25: mossy_stone_wall_6 (1024\u00c3\u20141024)",
+          "ms": 16.19999999552965
+        },
+        {
+          "label": "GPU-textuur uploaden 16/25: mossy_stone_wall_10 (1024\u00c3\u20141024)",
+          "ms": 16.19999999552965
+        },
+        {
+          "label": "GPU-textuur uploaden 17/25: shrub_01_diff-shrub_01_alpha_1k (1024\u00c3\u20141024)",
+          "ms": 16.299999997019768
+        },
+        {
+          "label": "GPU-textuur uploaden 18/25: Moss_velvet.001 (256\u00c3\u2014256)",
+          "ms": 18.399999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 19/25: pine_bark_Diffuse (1024\u00c3\u20141024)",
+          "ms": 14.599999994039536
+        },
+        {
+          "label": "GPU-textuur uploaden 20/25: pine_bark_nor_gl (1024\u00c3\u20141024)",
+          "ms": 16.099999994039536
+        },
+        {
+          "label": "GPU-textuur uploaden 21/25: pine_bark_Rough (1024\u00c3\u20141024)",
+          "ms": 16.600000001490116
+        },
+        {
+          "label": "GPU-textuur uploaden 22/25: gate-carved-albedo (819\u00c3\u20141024)",
+          "ms": 17.200000002980232
+        },
+        {
+          "label": "GPU-textuur uploaden 23/25: gate-carved-normal (819\u00c3\u20141024)",
+          "ms": 15.399999998509884
+        },
+        {
+          "label": "GPU-textuur uploaden 24/25: beeld (392\u00c3\u2014584)",
+          "ms": 16.5
+        },
+        {
+          "label": "GPU-textuur uploaden 25/25: beeld (512\u00c3\u2014256)",
+          "ms": 20.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 1/31",
+          "ms": 713.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 2/31",
+          "ms": 570.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 3/31",
+          "ms": 555
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 4/31",
+          "ms": 562
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 5/31",
+          "ms": 540.1999999955297
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 6/31",
+          "ms": 527
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 7/31",
+          "ms": 684.6000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 8/31",
+          "ms": 484.3999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 9/31",
+          "ms": 578.8000000044703
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 10/31",
+          "ms": 501.69999999552965
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 11/31",
+          "ms": 629.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 12/31",
+          "ms": 540.8999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 13/31",
+          "ms": 520.1000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 14/31",
+          "ms": 511.5
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 15/31",
+          "ms": 546.1000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 16/31",
+          "ms": 499.19999999552965
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 17/31",
+          "ms": 746
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 18/31",
+          "ms": 550.1000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 19/31",
+          "ms": 469.3999999985099
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 20/31",
+          "ms": 534.2000000029802
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 21/31",
+          "ms": 598.6000000014901
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 22/31",
+          "ms": 658.5999999940395
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 23/31",
+          "ms": 727.9000000059605
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 24/31",
+          "ms": 682.8000000044703
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 25/31",
+          "ms": 660.5999999940395
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 26/31",
+          "ms": 568
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 27/31",
+          "ms": 547.3000000044703
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 28/31",
+          "ms": 487.69999999552965
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 29/31",
+          "ms": 548.3000000044703
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 30/31",
+          "ms": 558.7999999970198
+        },
+        {
+          "label": "Wereld- en schaduwpipelines compileren 31/31",
+          "ms": 508.5
+        },
+        {
+          "label": "Warm-up 1/3: schaduwen",
+          "ms": 113.80000000447035
+        },
+        {
+          "label": "Warm-up 2/3: schaduwen",
+          "ms": 43.599999994039536
+        },
+        {
+          "label": "Warm-up 3/3: schaduwen",
+          "ms": 36.20000000298023
+        },
+        {
+          "label": "Eerste speelbare frame op volledige resolutie + GPU afronden",
+          "ms": 34.80000000447035
+        }
+      ],
+      "status": "ready",
+      "error": null,
+      "worldMode": "atlas-3d",
+      "configuration": {
+        "device": {
+          "deviceClass": "desktop",
+          "reason": "desktop input",
+          "nativeTouch": false
+        },
+        "preset": {
+          "id": "atlas-canonical",
+          "name": "Atlas 3D",
+          "worldSamples": 1,
+          "effectSamples": 1,
+          "dprCap": 0.75,
+          "shadowSize": 1024,
+          "volumeResolution": 0,
+          "volumeSteps": 0,
+          "gtao": false,
+          "bloom": false,
+          "anisotropy": 2,
+          "textureCap": 1024,
+          "environmentCap": 512
+        },
+        "compact": false,
+        "batchedWarmup": true,
+        "presentationSamples": 1,
+        "presentationDepth": false,
+        "override": false
+      },
+      "actualEffects": {
+        "gtao": false,
+        "bloom": false,
+        "volumeSteps": 0,
+        "volumeResolution": 0,
+        "fxaa": true,
+        "lightingMode": "golden-evening",
+        "sunDirection": [
+          -38,
+          24,
+          -52
+        ],
+        "forestFloor": true
+      },
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "rendererSettings": "desktop \u00c2\u00b7 Atlas 3D\nUitvoering desktop: asynchroon\nMSAA wereld 1\u00c3\u2014 / effecten 1\u00c3\u2014 / presentatie 1\u00c3\u2014 \u00c2\u00b7 DPR-cap 0.75\nSchaduw 1024\u00c2\u00b2 \u00c2\u00b7 GTAO uit \u00c2\u00b7 Volume uit\nBloom uit \u00c2\u00b7 Anisotropie 2 \u00c2\u00b7 Textuur-cap 1024\nOmgeving HDR 512\u00c3\u2014256 / PMREM 384\u00c3\u2014512",
+      "failurePhase": null,
+      "deviceDestruction": null,
+      "ready": true,
+      "preparation": "",
+      "diagnostic": "Eerste speelbare frame op volledige resolutie + GPU afronden \u00e2\u20ac\u201d gelukt",
+      "debug": true,
+      "preparationStrategy": "desktop-batched",
+      "releasedImageBytes": 77225984,
+      "frameSampled": false,
+      "input": {
+        "transport": "pointer IDs",
+        "moveId": null,
+        "lookId": null,
+        "walk": 0,
+        "turn": 0,
+        "lastEvent": "idle",
+        "lastReset": "initial",
+        "capture": "none",
+        "counts": {
+          "down": 0,
+          "motion": 0,
+          "end": 0,
+          "cancel": 0,
+          "rebind": 1
+        },
+        "allowed": true
+      },
+      "movement": {
+        "applied": 0
+      },
+      "preparationCompleted": 5,
+      "preparationTotal": 5,
+      "preparationMs": 19172.89999999851,
+      "inputType": "desktop",
+      "warmupViews": 4,
+      "warmupTotal": 4,
+      "fps": 0,
+      "averageMs": 0,
+      "backend": "WebGPU",
+      "firstPerson": true,
+      "levelId": "LVL-0001",
+      "source": "Levels/LVL-0001/3d/atlas-3d.glb",
+      "camera": [
+        0,
+        1.58,
+        0
+      ],
+      "yaw": -0.08,
+      "pitch": 0.015,
+      "positionIndex": 0,
+      "target": null,
+      "drawCalls": 438,
+      "triangles": 1655406,
+      "resolution": [
+        885,
+        551
+      ],
+      "frames": 2
+    },
+    "phases": {
+      "stationary": {
+        "fps": 59.995089915914804,
+        "cpu": 3.542199488548214,
+        "draws": 420,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1560958,
+        "pipelineTransitions": 420,
+        "traversalMs": 0.14936061369259948,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.542199488548214,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99538497038693,
+        "cpu": 3.8202564099469245,
+        "draws": 391.52564102564105,
+        "shadowDraws": 11.005128205128205,
+        "shadowRefreshHz": 3.230520729174681,
+        "triangles": 1504595.935897436,
+        "pipelineTransitions": 402.53076923076924,
+        "traversalMs": 0.14487179496731514,
+        "shadowFrameCpuMs": 7.861904761266141,
+        "regularFrameCpuMs": 3.59024390214827,
+        "shadowFrameDraws": 204.38095238095238
+      },
+      "turning": {
+        "fps": 59.99416936461422,
+        "cpu": 2.078516624277205,
+        "draws": 182.16368286445012,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 988261.1534526855,
+        "pipelineTransitions": 182.16368286445012,
+        "traversalMs": 0.14066496163682865,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 2.078516624277205,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99416936461415,
+        "cpu": 2.420460358052455,
+        "draws": 187.08695652173913,
+        "shadowDraws": 10.976982097186701,
+        "shadowRefreshHz": 3.2221932395317063,
+        "triangles": 1024312.7672634271,
+        "pipelineTransitions": 198.06393861892582,
+        "traversalMs": 0.1322250639652962,
+        "shadowFrameCpuMs": 6.766666666382835,
+        "regularFrameCpuMs": 2.173783783795866,
+        "shadowFrameDraws": 204.38095238095238
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  }
+}

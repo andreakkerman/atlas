@@ -1,0 +1,128 @@
+{
+  "before": {
+    "preparationMs": 21166,
+    "resolution": [
+      885,
+      551
+    ],
+    "phases": {
+      "stationary": {
+        "fps": 59.99601049546575,
+        "cpu": 9.166496163801007,
+        "draws": 398,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1736643,
+        "pipelineTransitions": 398,
+        "traversalMs": 0.2759590793562972,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 9.166496163801007,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99601049546575,
+        "cpu": 9.203836317171755,
+        "draws": 374.5089514066496,
+        "shadowDraws": 9.588235294117647,
+        "shadowRefreshHz": 3.2222921237973936,
+        "triangles": 1615664.6956521738,
+        "pipelineTransitions": 384.0971867007673,
+        "traversalMs": 0.2618925831830867,
+        "shadowFrameCpuMs": 14.233333333262376,
+        "regularFrameCpuMs": 8.918378378420666,
+        "shadowFrameDraws": 178.52380952380952
+      },
+      "turning": {
+        "fps": 59.99601049546579,
+        "cpu": 4.362404092136399,
+        "draws": 166.47314578005114,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1090149.1739130435,
+        "pipelineTransitions": 166.47314578005114,
+        "traversalMs": 0.2048593351088674,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 4.362404092136399,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99601049546579,
+        "cpu": 5.086956521777241,
+        "draws": 171.2455242966752,
+        "shadowDraws": 9.588235294117647,
+        "shadowRefreshHz": 3.2222921237973954,
+        "triangles": 1082066.294117647,
+        "pipelineTransitions": 180.83375959079285,
+        "traversalMs": 0.2099744245752959,
+        "shadowFrameCpuMs": 9.857142857497646,
+        "regularFrameCpuMs": 4.816216216236353,
+        "shadowFrameDraws": 178.52380952380952
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "after": {
+    "preparationMs": 24032.5,
+    "resolution": [
+      885,
+      551
+    ],
+    "phases": {
+      "stationary": {
+        "fps": 59.99508991591484,
+        "cpu": 8.665728900190967,
+        "draws": 412,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1655425,
+        "pipelineTransitions": 412,
+        "traversalMs": 0.24347826077238374,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 8.665728900190967,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99508991591484,
+        "cpu": 9.490537084362773,
+        "draws": 385.4910485933504,
+        "shadowDraws": 10.332480818414322,
+        "shadowRefreshHz": 3.222242680905912,
+        "triangles": 1535216.7212276214,
+        "pipelineTransitions": 395.8235294117647,
+        "traversalMs": 0.2739130434439615,
+        "shadowFrameCpuMs": 14.871428571464051,
+        "regularFrameCpuMs": 9.185135135094862,
+        "shadowFrameDraws": 192.38095238095238
+      },
+      "turning": {
+        "fps": 59.99601049546579,
+        "cpu": 4.548593350440798,
+        "draws": 177.07416879795397,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1050624.3017902814,
+        "pipelineTransitions": 177.07416879795397,
+        "traversalMs": 0.21023017907386546,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 4.548593350440798,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99601049546579,
+        "cpu": 5.1465473143798315,
+        "draws": 180.1381074168798,
+        "shadowDraws": 10.332480818414322,
+        "shadowRefreshHz": 3.2222921237973954,
+        "triangles": 1041704.979539642,
+        "pipelineTransitions": 190.47058823529412,
+        "traversalMs": 0.2099744245562407,
+        "shadowFrameCpuMs": 10.157142856823546,
+        "regularFrameCpuMs": 4.862162161970863,
+        "shadowFrameDraws": 192.38095238095238
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  }
+}

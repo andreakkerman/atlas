@@ -825,9 +825,16 @@ button {
   left: max(12px, calc(env(safe-area-inset-left) + 12px));
   top: max(12px, calc(env(safe-area-inset-top) + 12px));
   z-index: var(--layer-world-ui);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto auto;
   gap: 8px;
 }
+
+.displayToggles { display:flex; flex-wrap:wrap; gap:8px; }
+.displayToggles button { min-height:32px; padding:5px 8px; border:1px solid #ffe7a657; border-radius:6px; background:#0a1216df; color:#fff7de; font-family:inherit; font-size:12px; font-weight:700; line-height:1.4; cursor:pointer; touch-action:manipulation; }
+.displayToggles button[aria-pressed="true"] { border-color:var(--teal); color:var(--teal); }
+.fpsDisplay { position:fixed; top:max(12px,env(safe-area-inset-top)); right:max(12px,env(safe-area-inset-right)); z-index:50; padding:3px 6px; border-radius:4px; background:#102019b8; color:#d2decf; font:11px/1.4 ui-monospace,monospace; pointer-events:none; font-variant-numeric:tabular-nums; }
+.fpsDisplay[hidden], .atlasTapDiagnostics[hidden] { display:none; }
 
 .gameplayTopControls .menuReturnButton,
 .graphicsSettingsButton {

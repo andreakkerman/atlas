@@ -1,0 +1,116 @@
+{
+  "before": {
+    "preparationMs": 21656.200000001118,
+    "phases": {
+      "stationary": {
+        "fps": 57.223509197183326,
+        "cpu": 3.5168900803260845,
+        "draws": 482,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1708518,
+        "pipelineTransitions": 482,
+        "traversalMs": 0.12573726540656097,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.5168900803260845,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 57.262162452601345,
+        "cpu": 3.8809651475319833,
+        "draws": 437.16353887399464,
+        "shadowDraws": 14.85254691689008,
+        "shadowRefreshHz": 3.2238750978676363,
+        "triangles": 1575893.3672922251,
+        "pipelineTransitions": 452.01608579088474,
+        "traversalMs": 0.12654155495778804,
+        "shadowFrameCpuMs": 9.228571428961697,
+        "regularFrameCpuMs": 3.5619318182421424,
+        "shadowFrameDraws": 263.8095238095238
+      },
+      "turning": {
+        "fps": 57.17711071148616,
+        "cpu": 1.891935483898006,
+        "draws": 204.71774193548387,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1058700.0779569892,
+        "pipelineTransitions": 204.71774193548387,
+        "traversalMs": 0.10913978486512137,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.891935483898006,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 57.1954304991183,
+        "cpu": 2.322520107260578,
+        "draws": 213.50938337801608,
+        "shadowDraws": 14.849865951742627,
+        "shadowRefreshHz": 3.220118070995937,
+        "triangles": 1062404.3056300269,
+        "pipelineTransitions": 228.3592493297587,
+        "traversalMs": 0.11233243970425136,
+        "shadowFrameCpuMs": 7.5523809524519105,
+        "regularFrameCpuMs": 2.0105113636554135,
+        "shadowFrameDraws": 263.76190476190476
+      }
+    }
+  },
+  "final": {
+    "preparationMs": 19775.599999999627,
+    "phases": {
+      "stationary": {
+        "fps": 57.100755203536565,
+        "cpu": 3.5895161290192394,
+        "draws": 447,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1707088,
+        "pipelineTransitions": 447,
+        "traversalMs": 0.10672043010552404,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.5895161290192394,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 57.34315187479825,
+        "cpu": 3.7747989275689977,
+        "draws": 412.46648793565686,
+        "shadowDraws": 12.88739946380697,
+        "shadowRefreshHz": 3.2284348240503036,
+        "triangles": 1584617.9383378017,
+        "pipelineTransitions": 425.3538873994638,
+        "traversalMs": 0.10643431636687098,
+        "shadowFrameCpuMs": 8.195238095131659,
+        "regularFrameCpuMs": 3.511079545413271,
+        "shadowFrameDraws": 228.9047619047619
+      },
+      "turning": {
+        "fps": 57.11478228827614,
+        "cpu": 1.9336021504995804,
+        "draws": 204.94354838709677,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1076972.3521505375,
+        "pipelineTransitions": 204.94354838709677,
+        "traversalMs": 0.11021505380850485,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.9336021504995804,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 57.188537695240406,
+        "cpu": 2.2846774193207904,
+        "draws": 203.81720430107526,
+        "shadowDraws": 12.908602150537634,
+        "shadowRefreshHz": 3.2283851924732487,
+        "triangles": 1070140.5,
+        "pipelineTransitions": 216.7258064516129,
+        "traversalMs": 0.10618279563883941,
+        "shadowFrameCpuMs": 6.766666666737625,
+        "regularFrameCpuMs": 2.016524216483886,
+        "shadowFrameDraws": 228.66666666666666
+      }
+    }
+  }
+}

@@ -19,7 +19,7 @@ test.afterEach(async ({ page }) => {
   await page.goto("about:blank");
 });
 
-test("shows the reset only on the exact 127.0.0.1 hostname", async ({ page }) => {
+test("shows the reset on every hostname and device", async ({ page }) => {
   const url = new URL(runtimeUrl);
   test.skip(url.hostname !== "127.0.0.1", "Requires the local HTTP server for the positive visibility assertion.");
 
@@ -36,7 +36,7 @@ test("shows the reset only on the exact 127.0.0.1 hostname", async ({ page }) =>
       localhost: available({ hostname: "localhost" })
     };
   });
-  expect(hostnameMatrix).toEqual({ loopback: true, production: false, lan: false, localhost: false });
+  expect(hostnameMatrix).toEqual({ loopback: true, production: true, lan: true, localhost: true });
 
   const serviceWorkerBoundary = await page.evaluate(async () => {
     const container = navigator.serviceWorker;
@@ -75,11 +75,11 @@ test("shows the reset only on the exact 127.0.0.1 hostname", async ({ page }) =>
   localhostUrl.searchParams.set("dev", "editor");
   await page.goto(localhostUrl.toString());
   await showMenu(page);
-  await expect(page.getByRole("button", { name: "Reset local Atlas data", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Reset local Atlas data", exact: true })).toBeVisible();
 
   await page.goto(fileDevUrl);
   await showMenu(page);
-  await expect(page.getByRole("button", { name: "Reset local Atlas data", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Reset local Atlas data", exact: true })).toBeVisible();
 });
 
 test("confirms, clears only Atlas-owned state and caches, then reloads cleanly", async ({ page }) => {

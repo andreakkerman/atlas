@@ -1,0 +1,763 @@
+{
+  "sampleCount": 2849,
+  "surfaceCoverage": 0.9852579852579852,
+  "maxJointRadius": 0.15000000000000002,
+  "mainStoneGrounding": [
+    {
+      "name": "Atlas route stone",
+      "maxGap": -0.15238073468208313
+    },
+    {
+      "name": "Atlas route stone.001",
+      "maxGap": -0.16409850120544434
+    },
+    {
+      "name": "Atlas route stone.002",
+      "maxGap": -0.17016205191612244
+    },
+    {
+      "name": "Atlas route stone.003",
+      "maxGap": -0.14612556993961334
+    },
+    {
+      "name": "Atlas route stone.004",
+      "maxGap": -0.14823032915592194
+    },
+    {
+      "name": "Atlas route stone.005",
+      "maxGap": -0.15961237251758575
+    },
+    {
+      "name": "Atlas route stone.006",
+      "maxGap": -0.1487782895565033
+    },
+    {
+      "name": "Atlas route stone.007",
+      "maxGap": -0.1355133205652237
+    },
+    {
+      "name": "Atlas route stone.008",
+      "maxGap": -0.14008828997612
+    },
+    {
+      "name": "Atlas route stone.009",
+      "maxGap": -0.14448592066764832
+    },
+    {
+      "name": "Atlas route stone.010",
+      "maxGap": -0.14540892839431763
+    },
+    {
+      "name": "Atlas route stone.011",
+      "maxGap": -0.1377294957637787
+    },
+    {
+      "name": "Atlas route stone.012",
+      "maxGap": -0.1361643671989441
+    },
+    {
+      "name": "Atlas route stone.013",
+      "maxGap": -0.13209615647792816
+    },
+    {
+      "name": "Atlas route stone.014",
+      "maxGap": -0.15920909494161606
+    },
+    {
+      "name": "Atlas route stone.015",
+      "maxGap": -0.14205460250377655
+    },
+    {
+      "name": "Atlas route stone.016",
+      "maxGap": -0.15985246002674103
+    },
+    {
+      "name": "Atlas route stone.017",
+      "maxGap": -0.13073430210351944
+    },
+    {
+      "name": "Atlas route stone.018",
+      "maxGap": -0.16214578598737717
+    },
+    {
+      "name": "Atlas route stone.019",
+      "maxGap": -0.1465300526469946
+    },
+    {
+      "name": "Atlas route stone.020",
+      "maxGap": -0.14433086849749088
+    },
+    {
+      "name": "Atlas route stone.021",
+      "maxGap": -0.1495301304385066
+    },
+    {
+      "name": "Atlas route stone.022",
+      "maxGap": -0.12705998867750168
+    },
+    {
+      "name": "Atlas route stone.023",
+      "maxGap": -0.15080362558364868
+    },
+    {
+      "name": "Atlas route stone.024",
+      "maxGap": -0.12860774248838425
+    },
+    {
+      "name": "Atlas route stone.025",
+      "maxGap": -0.1464925855398178
+    },
+    {
+      "name": "Atlas route stone.026",
+      "maxGap": -0.14814019203186035
+    },
+    {
+      "name": "Atlas route stone.027",
+      "maxGap": -0.14113013818860054
+    },
+    {
+      "name": "Atlas route stone.028",
+      "maxGap": -0.14631503820419312
+    },
+    {
+      "name": "Atlas route stone.029",
+      "maxGap": -0.1416115090250969
+    },
+    {
+      "name": "Atlas route stone.030",
+      "maxGap": -0.1381513550877571
+    },
+    {
+      "name": "Atlas route stone.031",
+      "maxGap": -0.14910023659467697
+    },
+    {
+      "name": "Atlas route stone.032",
+      "maxGap": -0.13010632991790771
+    },
+    {
+      "name": "Atlas route stone.033",
+      "maxGap": -0.1343744397163391
+    },
+    {
+      "name": "Atlas route stone.034",
+      "maxGap": -0.15484455227851868
+    },
+    {
+      "name": "Atlas route stone.035",
+      "maxGap": -0.14449943602085114
+    },
+    {
+      "name": "Atlas route stone.036",
+      "maxGap": -0.16552025079727173
+    },
+    {
+      "name": "Atlas route stone.037",
+      "maxGap": -0.16342537105083466
+    },
+    {
+      "name": "Atlas route stone.038",
+      "maxGap": -0.1573985069990158
+    },
+    {
+      "name": "Atlas route stone.039",
+      "maxGap": -0.16766804456710815
+    },
+    {
+      "name": "Atlas route stone.040",
+      "maxGap": -0.14645500481128693
+    },
+    {
+      "name": "Atlas route stone.041",
+      "maxGap": -0.13954615592956543
+    },
+    {
+      "name": "Atlas route stone.042",
+      "maxGap": -0.16030661761760712
+    },
+    {
+      "name": "Atlas route stone.043",
+      "maxGap": -0.15401895344257355
+    },
+    {
+      "name": "Atlas route stone.044",
+      "maxGap": -0.16888892650604248
+    },
+    {
+      "name": "Atlas route stone.045",
+      "maxGap": -0.14910514652729034
+    },
+    {
+      "name": "Atlas route stone.046",
+      "maxGap": -0.16473503410816193
+    },
+    {
+      "name": "Atlas route stone.047",
+      "maxGap": -0.15449374914169312
+    },
+    {
+      "name": "Atlas route stone.048",
+      "maxGap": -0.1575675904750824
+    },
+    {
+      "name": "Atlas route stone.049",
+      "maxGap": -0.1537715643644333
+    },
+    {
+      "name": "Atlas route stone.050",
+      "maxGap": -0.13189753890037537
+    },
+    {
+      "name": "Atlas route stone.051",
+      "maxGap": -0.16684943437576294
+    },
+    {
+      "name": "Atlas route stone.052",
+      "maxGap": -0.15938659012317657
+    },
+    {
+      "name": "Atlas route stone.053",
+      "maxGap": -0.1639738231897354
+    },
+    {
+      "name": "Atlas route stone.054",
+      "maxGap": -0.14488062262535095
+    },
+    {
+      "name": "Atlas route stone.055",
+      "maxGap": -0.15688154101371765
+    },
+    {
+      "name": "Atlas route stone.056",
+      "maxGap": -0.14787980914115906
+    },
+    {
+      "name": "Atlas route stone.057",
+      "maxGap": -0.1728547364473343
+    },
+    {
+      "name": "Atlas route stone.058",
+      "maxGap": -0.13184010982513428
+    },
+    {
+      "name": "Atlas route stone.059",
+      "maxGap": -0.16543489694595337
+    },
+    {
+      "name": "Atlas route stone.060",
+      "maxGap": -0.13427534699440002
+    },
+    {
+      "name": "Atlas route stone.061",
+      "maxGap": -0.1626412272453308
+    },
+    {
+      "name": "Atlas route stone.062",
+      "maxGap": -0.1413259208202362
+    },
+    {
+      "name": "Atlas route stone.063",
+      "maxGap": -0.15358930826187134
+    },
+    {
+      "name": "Atlas route stone.064",
+      "maxGap": -0.15087702870368958
+    },
+    {
+      "name": "Atlas route stone.065",
+      "maxGap": -0.14940503239631653
+    },
+    {
+      "name": "Atlas route stone.066",
+      "maxGap": -0.15266919136047363
+    },
+    {
+      "name": "Atlas route stone.067",
+      "maxGap": -0.156656414270401
+    },
+    {
+      "name": "Atlas route stone.068",
+      "maxGap": -0.1494777500629425
+    },
+    {
+      "name": "Atlas route stone.069",
+      "maxGap": -0.15432795882225037
+    },
+    {
+      "name": "Atlas route stone.070",
+      "maxGap": -0.15486711263656616
+    },
+    {
+      "name": "Atlas route stone.071",
+      "maxGap": -0.1611747145652771
+    },
+    {
+      "name": "Atlas route stone.072",
+      "maxGap": -0.17412522435188293
+    },
+    {
+      "name": "Atlas route stone.073",
+      "maxGap": -0.15702661871910095
+    },
+    {
+      "name": "Atlas route stone.074",
+      "maxGap": -0.13539555668830872
+    },
+    {
+      "name": "Atlas route stone.075",
+      "maxGap": -0.14868447184562683
+    },
+    {
+      "name": "Atlas route stone.076",
+      "maxGap": -0.16460955142974854
+    },
+    {
+      "name": "Atlas route stone.077",
+      "maxGap": -0.14433923363685608
+    },
+    {
+      "name": "Atlas route stone.078",
+      "maxGap": -0.15713784098625183
+    },
+    {
+      "name": "Atlas route stone.079",
+      "maxGap": -0.1612909734249115
+    },
+    {
+      "name": "Atlas route stone.080",
+      "maxGap": -0.14797073602676392
+    },
+    {
+      "name": "Atlas route stone.081",
+      "maxGap": -0.17364594340324402
+    },
+    {
+      "name": "Atlas route stone.082",
+      "maxGap": -0.14555516839027405
+    },
+    {
+      "name": "Atlas route stone.083",
+      "maxGap": -0.14375334978103638
+    },
+    {
+      "name": "Atlas route stone.084",
+      "maxGap": -0.15721619129180908
+    },
+    {
+      "name": "Atlas route stone.085",
+      "maxGap": -0.15349513292312622
+    },
+    {
+      "name": "Atlas route stone.086",
+      "maxGap": -0.14552748203277588
+    },
+    {
+      "name": "Atlas route stone.087",
+      "maxGap": -0.12788879871368408
+    },
+    {
+      "name": "Atlas route stone.088",
+      "maxGap": -0.16751974821090698
+    },
+    {
+      "name": "Atlas route stone.089",
+      "maxGap": -0.15838640928268433
+    },
+    {
+      "name": "Atlas route stone.090",
+      "maxGap": -0.1294107437133789
+    },
+    {
+      "name": "Atlas route stone.091",
+      "maxGap": -0.14635437726974487
+    },
+    {
+      "name": "Atlas route stone.092",
+      "maxGap": -0.16033399105072021
+    },
+    {
+      "name": "Atlas route stone.093",
+      "maxGap": -0.16844308376312256
+    },
+    {
+      "name": "Atlas route stone.094",
+      "maxGap": -0.1338678002357483
+    },
+    {
+      "name": "Atlas route stone.095",
+      "maxGap": -0.15956562757492065
+    },
+    {
+      "name": "Atlas route stone.096",
+      "maxGap": -0.14722400903701782
+    },
+    {
+      "name": "Atlas route stone.097",
+      "maxGap": -0.1487841010093689
+    },
+    {
+      "name": "Atlas route stone.098",
+      "maxGap": -0.13969862461090088
+    },
+    {
+      "name": "Atlas route stone.099",
+      "maxGap": -0.135952889919281
+    },
+    {
+      "name": "Atlas route stone.100",
+      "maxGap": -0.13238686323165894
+    },
+    {
+      "name": "Atlas route stone.101",
+      "maxGap": -0.1456490159034729
+    },
+    {
+      "name": "Atlas route stone.102",
+      "maxGap": -0.14091306924819946
+    },
+    {
+      "name": "Atlas route stone.103",
+      "maxGap": -0.13498419523239136
+    },
+    {
+      "name": "Atlas route stone.104",
+      "maxGap": -0.14401012659072876
+    },
+    {
+      "name": "Atlas route stone.105",
+      "maxGap": -0.13325351476669312
+    },
+    {
+      "name": "Atlas route stone.106",
+      "maxGap": -0.13769227266311646
+    },
+    {
+      "name": "Atlas route stone.107",
+      "maxGap": -0.15098625421524048
+    },
+    {
+      "name": "Atlas route stone.108",
+      "maxGap": -0.13951987028121948
+    },
+    {
+      "name": "Atlas route stone.109",
+      "maxGap": -0.12844935059547424
+    },
+    {
+      "name": "Atlas route stone.110",
+      "maxGap": -0.15167590975761414
+    },
+    {
+      "name": "Atlas route stone.111",
+      "maxGap": -0.14974132180213928
+    },
+    {
+      "name": "Atlas route stone.112",
+      "maxGap": -0.14686688780784607
+    },
+    {
+      "name": "Atlas route stone.113",
+      "maxGap": -0.14545857906341553
+    },
+    {
+      "name": "Atlas route stone.114",
+      "maxGap": -0.1663147509098053
+    },
+    {
+      "name": "Atlas route stone.115",
+      "maxGap": -0.14767280220985413
+    },
+    {
+      "name": "Atlas route stone.116",
+      "maxGap": -0.1587684452533722
+    },
+    {
+      "name": "Atlas route stone.117",
+      "maxGap": -0.15062683820724487
+    },
+    {
+      "name": "Atlas route stone.118",
+      "maxGap": -0.14719924330711365
+    },
+    {
+      "name": "Atlas route stone.119",
+      "maxGap": -0.13625174760818481
+    },
+    {
+      "name": "Atlas route stone.120",
+      "maxGap": -0.156549870967865
+    },
+    {
+      "name": "Atlas route stone.121",
+      "maxGap": -0.06696581840515137
+    },
+    {
+      "name": "Atlas route stone.122",
+      "maxGap": -0.09875297546386719
+    },
+    {
+      "name": "Atlas route stone.123",
+      "maxGap": -0.08815455436706543
+    },
+    {
+      "name": "Atlas route stone.124",
+      "maxGap": -0.026905059814453125
+    },
+    {
+      "name": "Atlas route stone.125",
+      "maxGap": -0.1126406192779541
+    },
+    {
+      "name": "Atlas route stone.126",
+      "maxGap": -0.14552068710327148
+    },
+    {
+      "name": "Atlas route stone.127",
+      "maxGap": -0.15311908721923828
+    },
+    {
+      "name": "Atlas route stone.128",
+      "maxGap": -0.14191341400146484
+    },
+    {
+      "name": "Atlas route stone.129",
+      "maxGap": -0.13206267356872559
+    },
+    {
+      "name": "Atlas route stone.130",
+      "maxGap": -0.15698575973510742
+    },
+    {
+      "name": "Atlas route stone.131",
+      "maxGap": -0.17384910583496094
+    },
+    {
+      "name": "Atlas route stone.132",
+      "maxGap": -0.14826202392578125
+    },
+    {
+      "name": "Atlas route stone.133",
+      "maxGap": -0.13439297676086426
+    },
+    {
+      "name": "Atlas route stone.134",
+      "maxGap": -0.16895675659179688
+    },
+    {
+      "name": "Atlas route stone.135",
+      "maxGap": -0.1680302619934082
+    },
+    {
+      "name": "Atlas route stone.136",
+      "maxGap": -0.13362383842468262
+    },
+    {
+      "name": "Atlas route stone.137",
+      "maxGap": -0.16307687759399414
+    },
+    {
+      "name": "Atlas route stone.138",
+      "maxGap": -0.16960811614990234
+    },
+    {
+      "name": "Atlas route stone.139",
+      "maxGap": -0.1555016040802002
+    },
+    {
+      "name": "Atlas route stone.140",
+      "maxGap": -0.17520475387573242
+    },
+    {
+      "name": "Atlas route stone.141",
+      "maxGap": -0.1550889015197754
+    },
+    {
+      "name": "Atlas route stone.142",
+      "maxGap": -0.16758441925048828
+    },
+    {
+      "name": "Atlas route stone.143",
+      "maxGap": -0.15403664112091064
+    },
+    {
+      "name": "Atlas route stone.144",
+      "maxGap": -0.15957260131835938
+    },
+    {
+      "name": "Atlas route stone.145",
+      "maxGap": -0.17054533958435059
+    },
+    {
+      "name": "Atlas route stone.146",
+      "maxGap": -0.13523638248443604
+    },
+    {
+      "name": "Atlas route stone.147",
+      "maxGap": -0.15613830089569092
+    },
+    {
+      "name": "Atlas route stone.148",
+      "maxGap": -0.13634717464447021
+    },
+    {
+      "name": "Atlas route stone.149",
+      "maxGap": -0.17367422580718994
+    },
+    {
+      "name": "Atlas route stone.150",
+      "maxGap": -0.15472197532653809
+    },
+    {
+      "name": "Atlas route stone.151",
+      "maxGap": -0.15266740322113037
+    },
+    {
+      "name": "Atlas route stone.152",
+      "maxGap": -0.15743017196655273
+    },
+    {
+      "name": "Atlas route stone.153",
+      "maxGap": -0.16522717475891113
+    },
+    {
+      "name": "Atlas route stone.154",
+      "maxGap": -0.1574634313583374
+    },
+    {
+      "name": "Atlas route stone.155",
+      "maxGap": -0.1710141897201538
+    },
+    {
+      "name": "Atlas route stone.156",
+      "maxGap": -0.16523611545562744
+    },
+    {
+      "name": "Atlas route stone.157",
+      "maxGap": -0.1392204761505127
+    },
+    {
+      "name": "Atlas route stone.158",
+      "maxGap": -0.1689060926437378
+    },
+    {
+      "name": "Atlas route stone.159",
+      "maxGap": -0.13102364540100098
+    },
+    {
+      "name": "Atlas route stone.160",
+      "maxGap": -0.1515434980392456
+    },
+    {
+      "name": "Atlas route stone.161",
+      "maxGap": -0.13712608814239502
+    },
+    {
+      "name": "Atlas route stone.162",
+      "maxGap": -0.15060925483703613
+    },
+    {
+      "name": "Atlas route stone.163",
+      "maxGap": -0.16973495483398438
+    },
+    {
+      "name": "Atlas route stone.164",
+      "maxGap": -0.14810264110565186
+    },
+    {
+      "name": "Atlas route stone.165",
+      "maxGap": -0.1141313910484314
+    },
+    {
+      "name": "Atlas route stone.166",
+      "maxGap": -0.1462010145187378
+    },
+    {
+      "name": "Atlas route stone.167",
+      "maxGap": -0.1311115026473999
+    },
+    {
+      "name": "Atlas route stone.168",
+      "maxGap": -0.14745956659317017
+    },
+    {
+      "name": "Atlas route stone.169",
+      "maxGap": -0.13808798789978027
+    },
+    {
+      "name": "Atlas route stone.170",
+      "maxGap": -0.13330209255218506
+    },
+    {
+      "name": "Atlas route stone.171",
+      "maxGap": -0.14618605375289917
+    },
+    {
+      "name": "Atlas route stone.172",
+      "maxGap": -0.15879392623901367
+    },
+    {
+      "name": "Atlas route stone.173",
+      "maxGap": -0.13749438524246216
+    },
+    {
+      "name": "Atlas route stone.174",
+      "maxGap": -0.1690899133682251
+    },
+    {
+      "name": "Atlas route stone.175",
+      "maxGap": -0.16813141107559204
+    },
+    {
+      "name": "Atlas route stone.176",
+      "maxGap": -0.14619219303131104
+    },
+    {
+      "name": "Atlas route stone.177",
+      "maxGap": -0.13867676258087158
+    },
+    {
+      "name": "Atlas route stone.178",
+      "maxGap": -0.16401219367980957
+    },
+    {
+      "name": "Atlas route stone.179",
+      "maxGap": -0.16289830207824707
+    },
+    {
+      "name": "Atlas route stone.180",
+      "maxGap": -0.13949739933013916
+    },
+    {
+      "name": "Atlas route stone.181",
+      "maxGap": -0.1547236442565918
+    },
+    {
+      "name": "Atlas route stone.182",
+      "maxGap": -0.1706300973892212
+    },
+    {
+      "name": "Atlas route stone.183",
+      "maxGap": -0.1357802152633667
+    },
+    {
+      "name": "Atlas route stone.184",
+      "maxGap": -0.14578115940093994
+    },
+    {
+      "name": "Atlas route stone.185",
+      "maxGap": -0.12888765335083008
+    },
+    {
+      "name": "Atlas route stone.186",
+      "maxGap": -0.09441983699798584
+    },
+    {
+      "name": "Atlas route stone.187",
+      "maxGap": -0.1503385305404663
+    },
+    {
+      "name": "Atlas route stone.188",
+      "maxGap": -0.17564678192138672
+    }
+  ]
+}

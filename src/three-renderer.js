@@ -249,20 +249,52 @@
         const radius=Math.cos(THREE.MathUtils.degToRad(art.sunRadiusDegrees));
         const disc=smoothstep(radius-.000035,radius+.000015,towardSun);
         const halo=smoothstep(Math.cos(THREE.MathUtils.degToRad(art.sunHaloDegrees)),1,towardSun).pow(4);
-        // Atlas painted-sky treatment on the existing dome: cool upper sky,
-        // warm horizon and broad cloud ribbons. No texture, extra draw or target.
-        const elevation=smoothstep(0,.8,ray.y);
-        const skyBase=mix(vec3(.58,.61,.58),vec3(.19,.34,.52),elevation);
-        const cloudWave=sin(ray.x.mul(9).add(ray.z.mul(5))).mul(.035)
-          .add(sin(ray.z.mul(13).sub(ray.x.mul(4))).mul(.018));
-        const cloudBand=sin(ray.y.add(cloudWave).mul(31)).mul(.5).add(.5);
-        const cloudMask=smoothstep(.68,.96,cloudBand)
-          .mul(smoothstep(.04,.17,ray.y)).mul(float(1).sub(smoothstep(.4,.7,ray.y)))
-          .mul(smoothstep(-.7,.8,towardSun).mul(.2).add(.12));
-        const sky=mix(skyBase,vec3(.87,.78,.62),cloudMask);
+        // Altitude only: continuous at every azimuth, without a panorama upload.
+        const peach=vec3(.58,.22,.17),orange=vec3(.76,.38,.16),gold=vec3(.82,.62,.30),blue=vec3(.18,.31,.48);
+        const low=mix(peach,orange,smoothstep(-.02,.25,ray.y));
+        const middle=mix(low,gold,smoothstep(.20,.55,ray.y));
+        let sky=mix(middle,blue,smoothstep(.50,.98,ray.y));
+        // Two distant, gently rolling silhouettes in the existing sky material.
+        // Integer harmonics wrap exactly; no geometry, texture or fog pass.
+        const azimuth=tsl.atan2(ray.z,ray.x);
+        const farRidge=sin(azimuth.mul(2).add(.7)).mul(.055).add(sin(azimuth.mul(5).sub(.4)).mul(.027)).add(.14);
+        const nearRidge=sin(azimuth.mul(3).sub(.8)).mul(.035).add(sin(azimuth.mul(7).add(.3)).mul(.018)).add(.06);
+        const farHill=float(1).sub(smoothstep(farRidge.sub(.008),farRidge.add(.008),ray.y));
+        const nearHill=float(1).sub(smoothstep(nearRidge.sub(.006),nearRidge.add(.006),ray.y));
+        sky=mix(sky,mix(sky,vec3(.25,.36,.37),.38),farHill);
+        sky=mix(sky,mix(sky,vec3(.19,.29,.29),.46),nearHill);
         const material=new THREE.MeshBasicNodeMaterial({side:THREE.BackSide,depthWrite:false,fog:false});
-        material.colorNode=sky.add(halo.mul(vec3(.28,.22,.11))).add(disc.mul(vec3(5,4.4,2.7)));
+        material.colorNode=mix(sky.add(halo.mul(vec3(.12,.055,.008))),vec3(1.8,.83,.19),disc);
         dome.material.dispose();dome.material=material;
+        const contactMap=await new THREE.TextureLoader().loadAsync('assets/textures/atlas-contact-v174.png');
+        if(token!==generation){contactMap.dispose();return;}
+        textures.add(contactMap);contactMap.colorSpace=THREE.NoColorSpace;contactMap.anisotropy=1;
+        // A small constant cool fill keeps leaf undersides readable without extra lights/passes.
+        const balanced=new Set();
+        scene.traverse(o=>{
+          const m=o.material;if(!o.isMesh||!m||balanced.has(m))return;balanced.add(m);
+          if(m.name==='Leaves_Pine'||m.name==='Leaves'){m.emissive.setRGB(.012,.028,.021);m.emissiveIntensity=.5;}
+          if(m.name==='Atlas boulder palette')m.color.multiply(new THREE.Color().setRGB(.88,.93,1));
+          if(m.name==='Atlas path palette.001')m.color.multiplyScalar(.84);
+          if(m.name==='Purple_BellFlowers')m.color.multiply(new THREE.Color().setRGB(.78,.84,.92));
+        });
+        const floors=new Map();
+        scene.traverse(o=>{
+          if(!o.isMesh||o.material?.name!=='forrest_ground_01')return;
+          const original=o.material;let m=floors.get(original);
+          if(!m){
+            m=new THREE.MeshStandardNodeMaterial();THREE.MeshStandardMaterial.prototype.copy.call(m,original);
+            const contactUV=tsl.vec2(tsl.positionWorld.x.add(50).div(100),tsl.positionWorld.z.negate().add(30).div(120));
+            // glTF COLOR_0 is a white export placeholder; authored terrain colors are COLOR_1.
+            // Quiet the soil map and retain broad moss/earth masses from that actual channel.
+            m.colorNode=mix(vec3(.42,.46,.30),tsl.materialColor.rgb,.48).mul(tsl.attribute('color_1','vec4').rgb).mul(tsl.texture(contactMap,contactUV).r);
+            // Keep the texture discoverable by normal material/resource cleanup.
+            m.userData={...original.userData};m.userData.contactVersion=174;
+            floors.set(original,m);
+          }
+          o.material=m;
+        });
+        postResources.push(...floors.keys());
       }
       // Blend the authored moss material continuously across rock surfaces.
       // World-space masks avoid hard polygon borders on the raised authoring patches.
@@ -275,6 +307,7 @@
           if(!o.isMesh)return;
           if(/Raised.moss.mantle/.test(o.name)){o.visible=false;return;}
           const original=o.material;
+          if(original?.userData?.contactVersion===174)return;
           if(!/^(rock_moss_set_01|rock_face_01|rock_boulder_dry|Weathered enclosure cliff|Scanned rocky forest bank|Scanned woodland cliff shelf|Scanned woodland boulder|knotted_pine_bark|forrest_ground_01)$/.test(original?.name))return;
           let material=replacements.get(original);
           if(!material){
@@ -411,6 +444,9 @@
     }
     function positionCamera(x,viewYaw=yaw,viewPitch=pitch) {
       const p=routePosition(x);positionIndex=p.i+p.t;camera.position.copy(p.position);camera.position.y+=route.eyeHeight;camera.rotation.set(viewPitch,viewYaw,0,'YXZ');
+      // A fixed 180 m dome exceeded the 220 m far plane from the temple,
+      // exposing a round clear-color hole. Keep every sky ray inside that plane.
+      if(activeMode==='atlas-3d')scene.getObjectByName('Atlas evening sky')?.position.copy(camera.position);
       camera.updateMatrixWorld();
       const shadowDistance=activeMode==='atlas-3d'?global.AtlasWorldPolicy.shadowRecenterDistance:.4;
       if(frames===0||sun.target.position.distanceToSquared(camera.position)>shadowDistance*shadowDistance){
@@ -599,13 +635,16 @@
         const loadedRoute=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
         if(token!==generation)return;route=loadedRoute;
         const art=activeMode==='atlas-3d'?global.AtlasWorldPolicy.lighting:null;
-        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=art?.exposure??1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=new THREE.FogExp2(art?.fog??'#dbc294',art?.fogDensity??.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
+        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=art?.exposure??1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=art?.fogNear!==undefined?new THREE.Fog(art.fog,art.fogNear,art.fogFar):new THREE.FogExp2(art?.fog??'#dbc294',art?.fogDensity??.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
         performanceProfile=global.AtlasThreePerformance?.start(renderer,scene);
         const root=await observe('GLB downloaden en decoderen',()=>{
           const pending=loadWorld(GLTFLoader,DRACOLoader,token);worldLoading=pending;
           const clear=()=>{if(worldLoading===pending)worldLoading=null;};pending.then(clear,clear);return pending;
         },token);
         if(token!==generation){releaseRoot(root);return;}
+        // Atlas-only authoring placements may move an interaction landmark.
+        // Read them before partitioning discards individual object metadata.
+        if(activeMode==='atlas-3d')root.traverse(obj=>{const id=obj.userData?.atlasLandmark,p=obj.userData?.atlasLandmarkPosition;if(id&&Object.hasOwn(route.landmarks,id)&&Array.isArray(p)&&p.length===3&&p.every(Number.isFinite))route.landmarks[id]=[...p];});
         await prepareWork('Wereld opdelen in ruimtelijke instanties',()=>{partitionWorld(root);scene.add(root);},token);
         if(token!==generation)return;
         const prepared=new Set();root.traverse(obj=>{if(!obj.isMesh)return;obj.castShadow=activeMode==='atlas-3d'?global.AtlasWorldPolicy.castsShadow(obj):true;obj.receiveShadow=true;for(const mat of Array.isArray(obj.material)?obj.material:[obj.material]){if(prepared.has(mat))continue;prepared.add(mat);mat.side=THREE.DoubleSide;if(mat.transparent){mat.transparent=false;mat.alphaTest=.35;mat.depthWrite=true;}if(/rock|stone|carved|relief/i.test(mat.name))mat.roughness*=.46;if(mat.name==='flower_heliophila')mat.color.setRGB(.84,.43,.9);if(mat.name.startsWith('Living fir twig')){mat.alphaTest=.12;mat.alphaToCoverage=true;}for(const value of Object.values(mat))if(value?.isTexture)value.anisotropy=preset.anisotropy;}});
@@ -617,7 +656,7 @@
         }
         await prepareWork('HDR-omgeving en hemeldome voorbereiden',()=>{
           const environment=sky.clone();environment.mapping=THREE.EquirectangularReflectionMapping;environment.needsUpdate=true;textures.add(environment);scene.environment=environment;scene.environmentIntensity=.16;scene.environmentRotation.set(.2,1.55,0);
-          const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:art?null:sky,color:new THREE.Color().fromArray(art?.skyTint??[.14,.16,.19]),side:THREE.BackSide,depthWrite:false,fog:false}));if(art)dome.name='Atlas evening sky';dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);
+          const dome=new THREE.Mesh(new THREE.SphereGeometry(180,48,24),new THREE.MeshBasicMaterial({map:art?null:sky,color:new THREE.Color().fromArray(art?[1,1,1]:[.14,.16,.19]),side:THREE.BackSide,depthWrite:false,fog:false}));if(art)dome.name='Atlas evening sky';dome.rotation.set(.20,1.55,0);dome.renderOrder=-100;scene.add(dome);
         },token);
         preparationStage(2,'warming');await prepareWork('Licht, moss-materialen en post-processing opbouwen',async()=>{buildLights();await buildAtmosphere(token);},token);if(token!==generation)return;
         if(!next.isConnected){dispose();sync();return;}

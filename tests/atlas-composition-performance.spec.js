@@ -8,6 +8,24 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
   Object.defineProperty(navigator,'platform',{get:()=> 'MacIntel'});Object.defineProperty(navigator,'maxTouchPoints',{get:()=>5});Object.defineProperty(window,'devicePixelRatio',{get:()=>2});
  });
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
+ if(process.env.ATLAS_COHESION_V176_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/v176-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
+  for(const name of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+name+'*',r=>r.fulfill({path:'output/v176-backup/'+name,contentType:'text/javascript'}));
+  await page.route('**/atlas-contact-v174.png',r=>r.fulfill({path:'output/v176-backup/atlas-contact-v174.png',contentType:'image/png'}));
+ }
+ if(process.env.ATLAS_TEMPLE_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/v175-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
+  await page.route('**/src/three-renderer.js*',r=>r.fulfill({path:'output/v175-backup/three-renderer.js',contentType:'text/javascript'}));
+  await page.route('**/atlas-contact-v174.png',r=>r.fulfill({path:'output/v175-backup/atlas-contact-v174.png',contentType:'image/png'}));
+ }
+ if(process.env.ATLAS_PANORAMA_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/art-v172-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
+  for(const name of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+name+'*',r=>r.fulfill({path:'output/art-v172-backup/'+name,contentType:'text/javascript'}));
+ }
+ if(process.env.ATLAS_PATH_BEFORE==='1'){
+  await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/art-v171-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
+  for(const name of ['three-renderer.js','atlas-world-policy.js'])await page.route('**/src/'+name+'*',r=>r.fulfill({path:'output/art-v171-backup/'+name,contentType:'text/javascript'}));
+ }
  if(process.env.ATLAS_COHESION_BEFORE==='1'){
   await page.route('**/atlas-3d.glb',r=>r.fulfill({path:'output/cohesion-v169-backup/atlas-3d.glb',contentType:'model/gltf-binary'}));
   await page.route('**/src/three-renderer.js*',r=>r.fulfill({path:'output/cohesion-v169-backup/three-renderer.js',contentType:'text/javascript'}));
@@ -66,6 +84,20 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
   await page.evaluate(()=>{window.eval('state.worldX=1017');window.eval('threeRenderer').lookAt(1.4,-.42);});
   await page.waitForTimeout(1000);await page.screenshot({path:info.outputPath('fern-close.png')});
  }
+ if(process.env.ATLAS_PATH_VIEWS==='1'){
+  for(const x of [175,650,1017,1322,1617,1697]){
+   for(const [prefix,yaw,pitch] of [['path',0,-.22],['return-path',Math.PI,-.12]]){
+    await page.evaluate(({x,yaw,pitch})=>{window.eval('state.worldX='+x);window.eval('threeRenderer').lookAt(yaw,pitch);},{x,yaw,pitch});
+    await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(`${prefix}-${x}.png`)});
+   }
+  }
+ }
+ if(process.env.ATLAS_PANORAMA_VIEWS==='1'){
+  for(const [i,yaw] of [-2.5,-1.4,1.4,2.5,Math.PI].entries()){
+   await page.evaluate(yaw=>{window.eval('state.worldX=885');window.eval('threeRenderer').lookAt(yaw,.16);},yaw);
+   await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(`panorama-${i+1}.png`)});
+  }
+ }
  if(process.env.ATLAS_MORNING_VIEWS==='1'){
   for(const x of [175,650,1017]){
    await page.evaluate(x=>{window.eval('state.worldX='+x);const [sx,sy,sz]=AtlasWorldPolicy.lighting.sunOffset;window.eval('threeRenderer').lookAt(Math.atan2(-sx,-sz),Math.atan2(sy,Math.hypot(sx,sz)));},x);
@@ -73,7 +105,7 @@ for(const size of sizes)test(`Atlas matched grouping ${process.env.ATLAS_BASELIN
   }
  }
  if(process.env.ATLAS_EVENING_DETAILS==='1'){
-  for(const [name,x,target] of [['first-rune',175,[-2.8,1.8,-5]],['rock-1',322,[9,1.8,-5]],['rock-2',885,[-.5,1.6,-18]],['rock-3',1017,[1.6,1.5,-31.3]],['temple',1697,[19,8,-58.5]],['rock-4',1617,[8.3,1.7,-50]]]){
+  for(const [name,x,target] of [['second-rune-context',1231,[11.4,3.66,-42.5]],['second-rune',1322,[11.4,3.66,-42.5]],['first-rune',175,[-2.8,1.8,-5]],['rock-1',322,[9,1.8,-5]],['rock-2',885,[-.5,1.6,-18]],['rock-3',1017,[1.6,1.5,-31.3]],['temple',1697,[19,8,-58.5]],['rock-4',1617,[8.3,1.7,-50]]]){
    await page.evaluate(x=>window.eval('state.worldX='+x),x);await page.waitForTimeout(100);
    await page.evaluate(target=>{const r=window.eval('threeRenderer'),p=r.snapshot().camera;const d=target.map((v,i)=>v-p[i]);r.lookAt(Math.atan2(-d[0],-d[2]),Math.atan2(d[1],Math.hypot(d[0],d[2])));},target);
    await page.waitForTimeout(700);await page.screenshot({path:info.outputPath(name+'.png')});

@@ -4,7 +4,7 @@ const b=fs.readFileSync('Levels/LVL-0001/3d/atlas-3d.glb');
 const g=JSON.parse(b.subarray(20,20+b.readUInt32LE(12)));
 test('evening delta retains foliage counts and clears rune trunks and temple footprint',()=>{
  const foliage=g.nodes.filter(n=>n.extras?.curatedSource);
- expect(foliage).toHaveLength(4335);
+ expect(foliage).toHaveLength(4356);
  const trees=foliage.filter(n=>n.extras.curatedSource==='Pine1');expect(trees).toHaveLength(80);
  for(const name of ['forestRune','zon','steen']){
   const rune=g.nodes.find(n=>n.name===name);

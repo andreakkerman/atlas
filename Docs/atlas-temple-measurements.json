@@ -1,0 +1,219 @@
+{
+  "before": {
+    "inventory": {
+      "meshes": 496,
+      "instances": 6436,
+      "instancedMeshes": 488,
+      "shadowCasters": 426,
+      "lights": 9,
+      "geometries": 234,
+      "materials": 30,
+      "geometryMaterialPairs": 234,
+      "textures": 24,
+      "nodeMaterials": 3,
+      "doubleSided": 29,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "preparationMs": 22760.30000000447,
+    "resolution": [
+      885,
+      551
+    ],
+    "configuration": {
+      "device": {
+        "deviceClass": "tablet",
+        "reason": "iPad / touch-capable Mac platform",
+        "nativeTouch": true
+      },
+      "preset": {
+        "id": "atlas-canonical",
+        "name": "Atlas 3D",
+        "worldSamples": 1,
+        "effectSamples": 1,
+        "dprCap": 0.75,
+        "shadowSize": 1024,
+        "volumeResolution": 0,
+        "volumeSteps": 0,
+        "gtao": false,
+        "bloom": false,
+        "anisotropy": 2,
+        "textureCap": 1024,
+        "environmentCap": 512
+      },
+      "compact": true,
+      "batchedWarmup": true,
+      "presentationSamples": 1,
+      "presentationDepth": false,
+      "override": false
+    },
+    "phases": {
+      "stationary": {
+        "fps": 59.99508991591484,
+        "cpu": 3.291560102435177,
+        "draws": 420,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1560958,
+        "pipelineTransitions": 420,
+        "traversalMs": 0.12890025569349908,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.291560102435177,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.84164978825261,
+        "cpu": 3.691025641082953,
+        "draws": 391.3871794871795,
+        "shadowDraws": 11.005128205128205,
+        "shadowRefreshHz": 3.22224268090591,
+        "triangles": 1504330.7974358974,
+        "pipelineTransitions": 402.39230769230767,
+        "traversalMs": 0.11179487181779665,
+        "shadowFrameCpuMs": 7.876190476119518,
+        "regularFrameCpuMs": 3.4528455285198967,
+        "shadowFrameDraws": 204.38095238095238
+      },
+      "turning": {
+        "fps": 59.99508991591484,
+        "cpu": 2.433759590606098,
+        "draws": 182.72890025575447,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 989824.6905370844,
+        "pipelineTransitions": 182.72890025575447,
+        "traversalMs": 0.09488491058502051,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 2.433759590606098,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.995384970386894,
+        "cpu": 2.185897435706395,
+        "draws": 187.2128205128205,
+        "shadowDraws": 11.005128205128205,
+        "shadowRefreshHz": 3.2305207291746787,
+        "triangles": 1024353.5743589744,
+        "pipelineTransitions": 198.21794871794873,
+        "traversalMs": 0.09717948719477042,
+        "shadowFrameCpuMs": 6.2476190474061735,
+        "regularFrameCpuMs": 1.9547425472356763,
+        "shadowFrameDraws": 204.38095238095238
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "after": {
+    "inventory": {
+      "meshes": 470,
+      "instances": 6436,
+      "instancedMeshes": 462,
+      "shadowCasters": 401,
+      "lights": 9,
+      "geometries": 222,
+      "materials": 30,
+      "geometryMaterialPairs": 222,
+      "textures": 24,
+      "nodeMaterials": 3,
+      "doubleSided": 29,
+      "alphaTest": 4,
+      "transparent": 1
+    },
+    "preparationMs": 19468.19999999553,
+    "resolution": [
+      885,
+      551
+    ],
+    "configuration": {
+      "device": {
+        "deviceClass": "tablet",
+        "reason": "iPad / touch-capable Mac platform",
+        "nativeTouch": true
+      },
+      "preset": {
+        "id": "atlas-canonical",
+        "name": "Atlas 3D",
+        "worldSamples": 1,
+        "effectSamples": 1,
+        "dprCap": 0.75,
+        "shadowSize": 1024,
+        "volumeResolution": 0,
+        "volumeSteps": 0,
+        "gtao": false,
+        "bloom": false,
+        "anisotropy": 2,
+        "textureCap": 1024,
+        "environmentCap": 512
+      },
+      "compact": true,
+      "batchedWarmup": true,
+      "presentationSamples": 1,
+      "presentationDepth": false,
+      "override": false
+    },
+    "phases": {
+      "stationary": {
+        "fps": 59.99601049546575,
+        "cpu": 3.2672634269575327,
+        "draws": 407,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1575714,
+        "pipelineTransitions": 407,
+        "traversalMs": 0.12301790293144144,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 3.2672634269575327,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.842568013380195,
+        "cpu": 3.6494871796514743,
+        "draws": 379.24615384615385,
+        "shadowDraws": 9.543589743589743,
+        "shadowRefreshHz": 3.222292123797395,
+        "triangles": 1424799.2205128204,
+        "pipelineTransitions": 388.7897435897436,
+        "traversalMs": 0.12051282020715567,
+        "shadowFrameCpuMs": 7.057142856929984,
+        "regularFrameCpuMs": 3.455555555741315,
+        "shadowFrameDraws": 177.23809523809524
+      },
+      "turning": {
+        "fps": 59.99508991591484,
+        "cpu": 1.6705882354541812,
+        "draws": 172.85677749360613,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 956950.2864450128,
+        "pipelineTransitions": 172.85677749360613,
+        "traversalMs": 0.09130434789087462,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 1.6705882354541812,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99601049546579,
+        "cpu": 1.8795396420161437,
+        "draws": 175.66751918158567,
+        "shadowDraws": 9.51918158567775,
+        "shadowRefreshHz": 3.2222921237973954,
+        "triangles": 1003068.7033248082,
+        "pipelineTransitions": 185.18670076726343,
+        "traversalMs": 0.08618925826247696,
+        "shadowFrameCpuMs": 5.057142857284773,
+        "regularFrameCpuMs": 1.699189189257654,
+        "shadowFrameDraws": 177.23809523809524
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "release": {
+    "chromiumPassed": 55,
+    "webkitPassed": 18,
+    "webkitExistingInapplicableSkip": 1,
+    "physicalIPadVerified": false
+  },
+  "atlasSHA256": "422dc665a810fcff80d984bdfa3842cc98037a3e1861937191c5b6239ee88d1d"
+}

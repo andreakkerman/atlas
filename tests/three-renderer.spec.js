@@ -23,9 +23,11 @@ test.describe('Atlas first-person LVL-0001',()=>{
   expect(readiness.warmupTotal).toBeGreaterThan(1);
   expect(readiness.preparationCompleted).toBe(readiness.preparationTotal);
   expect(readiness.preparationMs).toBeGreaterThan(0);
+  await page.locator('[data-graphics-action="toggle"]').click();
+  if(await page.locator('[data-display-toggle="fps"]').getAttribute('aria-pressed')==='false')await page.locator('[data-display-toggle="fps"]').click();
+  await page.locator('[data-graphics-action="close"]').click();
   await expect(page.locator('[data-three-performance]')).toBeVisible();
-  await expect(page.locator('[data-three-performance]')).toContainText('CPU');
-  await expect(page.locator('[data-three-performance]')).toContainText(`Voorbereiding ${(readiness.preparationMs/1000).toFixed(1)} s`);
+  await expect(page.locator('[data-three-performance]')).toHaveText(/^\d+ FPS$/);
   expect(await page.locator('[data-three-performance]').evaluate(el=>({pointer:getComputedStyle(el).pointerEvents,tab:el.tabIndex}))).toEqual({pointer:'none',tab:-1});
  }
  test('advances loading segments only at real preparation milestones',async({page})=>{
@@ -128,11 +130,20 @@ test.describe('Atlas first-person LVL-0001',()=>{
   await page.keyboard.up('w');
   await expect(page.locator('.threeDesktopHint')).toBeVisible();
   await expect(page.locator('.threeTouchHint')).toBeHidden();
-  const hudText=await page.locator('[data-three-performance]').textContent();
-  await expect.poll(()=>page.locator('[data-three-performance]').textContent()).not.toBe(hudText);
+  await expect(page.locator('[data-three-performance]')).toHaveText(/^\d+ FPS$/);
   await page.keyboard.down('s');await page.waitForTimeout(700);await page.keyboard.up('s');
   expect(await page.evaluate(()=>window.eval('state.worldX'))).toBe(175);
   await page.evaluate(()=>{window.__threeCanvas=document.querySelector('[data-three-canvas]');});
+  await page.locator('[data-graphics-action="toggle"]').click();
+  await page.locator('[data-display-toggle="debug"]').click();
+  await expect(page.locator('[data-tap-diagnostics]')).toBeVisible();
+  await page.locator('[data-display-toggle="debug"]').click();
+  await expect(page.locator('[data-tap-diagnostics]')).toBeHidden();
+  await page.locator('[data-display-toggle="fps"]').click();
+  await expect(page.locator('[data-three-performance]')).toBeHidden();
+  await page.locator('[data-display-toggle="fps"]').click();
+  expect(await page.evaluate(()=>document.querySelector('[data-three-canvas]')===window.__threeCanvas)).toBe(true);
+  await page.locator('[data-graphics-action="close"]').click();
   const yaw=await page.evaluate(()=>window.eval('threeRenderer.snapshot')().yaw);
   await page.mouse.move(700,300);await page.mouse.down();await page.mouse.move(860,355,{steps:8});await page.mouse.up();
   await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().yaw)).toBeLessThan(yaw-.2);
@@ -146,6 +157,7 @@ test.describe('Atlas first-person LVL-0001',()=>{
   async function aim(id){
    await page.evaluate(async id=>{
     const data=await fetch('Levels/LVL-0001/3d/route.json').then(r=>r.json());
+    if(id==='zon'&&window.eval('voxelRenderer.getSettings')().renderer==='atlas-3d')data.landmarks.zon=(await fetch('Levels/LVL-0001/3d/atlas-panorama-ledger.json').then(r=>r.json())).rune.target;
     const p=window.eval('threeRenderer.snapshot')().camera,t=data.landmarks[id],dx=t[0]-p[0],dy=t[1]-p[1],dz=t[2]-p[2];
     window.eval('threeRenderer.lookAt')(Math.atan2(-dx,-dz),Math.atan2(dy,Math.hypot(dx,dz)));
    },id);

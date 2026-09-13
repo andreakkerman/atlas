@@ -1,6 +1,6 @@
-# Current Atlas renderer implementation — local v168 Atlas evening delta (FXAA retained)
+# Current Atlas renderer implementation — local v174 premium forest-floor pass
 
-Verified against source on 2026-09-12. v158 is a deliberately conservative
+Verified against source on 2026-09-13. v158 is a deliberately conservative
 physical-tablet stability baseline, not the final visual-quality target. It retains
 the v156 compact presentation, GPU fencing, cleanup and recovery work, and the
 v157 RangeError evidence capture. The user reports the unchanged faceted baseline passed physical iPad testing; the new mode separation still requires physical acceptance.
@@ -199,3 +199,107 @@ on shared Atlas rocks are darker olive; foliage colours and geometry are unchang
 The existing sky-dome shader adds soft static cloud ribbons and a cooler upper-sky
 gradient, with no new textures, targets, passes or lights. The sun disc still uses
 the real light direction. See [cohesion review](atlas-cohesion-pass.md).
+
+## v171 current Atlas path / evening art
+
+Retains the v170 UI controls and the canonical Atlas device configuration.
+Supplied rockpath3 replaces every old path stone with 18 shared variants,
+one 512² opaque colour map and 37,838 placed triangles. The existing 32 m
+repeated-object grouping applies to these stones. No new render targets/effects.
+Grass colours are quieter; limited foliage redistribution preserves all counts.
+
+Atlas sun is #ffd095 at intensity 6.6, exposure 1.09, same direction and shadow
+settings. Existing sky gradient/cloud colours are warmer. Simple distance fog
+uses #d6bea0 from 22 to 155 metres, leaving the foreground clear. Real 3D fog
+and lighting are unchanged. See [art and performance report](atlas-path-evening-pass.md).
+
+## v172 current Atlas art delta
+
+Supersedes the v171 path and sky. The path now uses 288 instances of the actual
+188-triangle temple stair mesh and its existing material: three stones across,
+1.02 m column spacing, 0.60 m row spacing, 1.0 × 0.67 m tiles. Bases extend into
+terrain where needed without raising the top. Temple stairs and route data remain
+unchanged. The same 32 m grouping applies; no new path material or texture.
+
+The gray geometric ridgeline is removed. The existing dome samples one static
+1024 × 342 illustrated panorama by camera direction, with mirrored horizontal
+wrapping and no parallax. The same directional sun still drives the disc/halo.
+The map is loaded sequentially, registered for cleanup and uses the existing
+render pass; no additional target, MSAA, bloom or volumetrics. HDR lighting and
+all canonical device settings remain unchanged. Atlas retains v171 sun/exposure
+and the simple 22–155 m warm distance fog. Real 3D is untouched.
+
+Foliage totals: 80 pines, 177 ferns, 99 flower groups and 4,000 grass patches.
+Three occasional larger ferns and 21 selectively placed new instances reuse
+the existing source meshes/materials. Three weak rocks reuse supplied rock1/2/3;
+the four previous supplied rocks and other good rocks remain.
+
+The second rune and its blue components move together to an exposed position.
+Atlas-only `atlasLandmark` / `atlasLandmarkPosition` export metadata updates its
+in-memory interaction/light target before world partitioning. Shared route data,
+Real 3D targets, challenge IDs and progression are unchanged.
+
+FPS and Debug controls are inside the Graphics panel. The optional compact FPS
+badge remains top-right. Toggles still neither reload nor recreate the renderer.
+See [v172 art review](atlas-panorama-pass.md) for captures and measured validation.
+
+## v173 supplied-stone path update
+
+The v172 temple-mesh pavement is superseded by the supplied `rockpath3.glb`
+flagstones: 189 organically packed path stones, 183 replacement uphill-course
+stones and 12 temple-landing stones. Six shared source shapes and one baked
+static stair surface use one 512² opaque palette. The duplicate 80 old temple
+terrace surfaces are removed, retaining their named anchors. The existing route
+and course heights are retained. No renderer settings, passes, grouping policy or gameplay logic
+change. See [v173 path review](atlas-organic-path-pass.md) for the current path,
+grounding/coverage audit and runtime validation.
+
+## v174 premium forest-floor update
+
+Continues v173 with 104 small outer-stone offsets, full plant-footprint clearance,
+49 selective replacements of the old painted rock family, and clustered reuse of
+180 existing grass instances. Counts remain 4,000 grass, 177 ferns, 99 flowers and
+80 curated pines. Local slope fitting keeps roots seated. Broad olive vertex-color
+islands connect fern/grass groups to the existing floor texture.
+
+The generated panorama is no longer loaded. The visible Atlas sky is an altitude-only
+peach/orange/gold/blue gradient; the 1.8-degree warm sun uses the existing light
+direction. The dome follows the camera: the fixed-origin 180 m dome previously
+crossed the 220 m far plane from the temple, producing a round dark hole.
+
+A static 1024-square contact mask modulates the ground's existing material color.
+This costs one ground-material texture sample, with no extra draw or fullscreen
+pass. Fade strengths are capped at 13% for ferns and 23% for larger contacts;
+overlaps use maximum darkening rather than accumulating black halos. The mask is
+owned by the existing texture lifecycle. No presets, DPR, MSAA, shadows, bloom,
+volumetrics or post-processing configuration changed.
+
+See [the v174 review](atlas-premium-pass.md) for the replacement ledger, geometry
+audits, background regression, captures and acceptance results. Physical iPad
+Safari acceptance remains separate from Chromium WebGPU configuration testing.
+
+## v175 temple review
+
+The warm sky now extends its blue transition from 30° to 78° elevation. Two soft
+periodic hill silhouettes run inside the same sky material, without extra draws
+or textures. The camera-following dome and warm sun remain.
+
+The authored scene replaces 239 weak painted rock instances using the existing
+four shared supplied meshes, corrects temple undersides, rotates both complete
+rune assemblies toward the path, and redistributes 69 existing plants onto the
+hill. Counts and quality presets are unchanged. Seven pines receive support
+corrections with the existing seven-metre separation retained. The same 1024²
+contact mask is rebaked. See [the v175 review](atlas-temple-review.md).
+
+## v176 whole-frame cohesion
+
+Atlas terrain explicitly samples authored `color_1`; the exported default color
+channel is white. Broad moss/earth vertex regions and a quieter blend of the
+existing soil texture unite the banks with vegetation. The same contact mask is
+rebaked. 240 grass and 18 fern instances move into 12 groups, with counts unchanged.
+
+The warm key now comes from `[-38,28,24]`; cooler fill, a tiny leaf material fill,
+quieter path/flower values and cooler existing hill/fog colors improve separation.
+No presets, shadow resolution, render dimensions, resources or post passes were
+added. See [the v176 review](atlas-cohesion-v176-review.md) for iterations,
+measurements, performance costs and remaining physical-iPad/visual limitations.

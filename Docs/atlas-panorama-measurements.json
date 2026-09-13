@@ -1,0 +1,128 @@
+{
+  "before": {
+    "preparationMs": 24034.39999999851,
+    "resolution": [
+      885,
+      551
+    ],
+    "phases": {
+      "stationary": {
+        "fps": 59.992960009794785,
+        "cpu": 9.055612244804827,
+        "draws": 447,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1707088,
+        "pipelineTransitions": 447,
+        "traversalMs": 0.26887755099760025,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 9.055612244804827,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.995089915914775,
+        "cpu": 9.885677749381575,
+        "draws": 412.4117647058824,
+        "shadowDraws": 12.271099744245523,
+        "shadowRefreshHz": 3.222242680905909,
+        "triangles": 1584592.3350383632,
+        "pipelineTransitions": 424.68286445012785,
+        "traversalMs": 0.26649616365237616,
+        "shadowFrameCpuMs": 15.7428571429281,
+        "regularFrameCpuMs": 9.553243243261367,
+        "shadowFrameDraws": 228.47619047619048
+      },
+      "turning": {
+        "fps": 59.99601049546579,
+        "cpu": 5.006138107374959,
+        "draws": 204.27621483375958,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1074764.0358056265,
+        "pipelineTransitions": 204.27621483375958,
+        "traversalMs": 0.21790281314488566,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 5.006138107374959,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99785173932397,
+        "cpu": 4.646547314541801,
+        "draws": 203.89769820971867,
+        "shadowDraws": 12.271099744245523,
+        "shadowRefreshHz": 3.2223910141324894,
+        "triangles": 1070302.368286445,
+        "pipelineTransitions": 216.1687979539642,
+        "traversalMs": 0.17647058834009768,
+        "shadowFrameCpuMs": 9.933333333049502,
+        "regularFrameCpuMs": 4.346486486464336,
+        "shadowFrameDraws": 228.47619047619048
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  },
+  "final": {
+    "preparationMs": 19996,
+    "resolution": [
+      885,
+      551
+    ],
+    "phases": {
+      "stationary": {
+        "fps": 59.99601049546575,
+        "cpu": 7.703324808336585,
+        "draws": 398,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1736643,
+        "pipelineTransitions": 398,
+        "traversalMs": 0.20255754471701734,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 7.703324808336585,
+        "shadowFrameDraws": null
+      },
+      "walking": {
+        "fps": 59.99601049546575,
+        "cpu": 7.840664961730199,
+        "draws": 374.51150895140665,
+        "shadowDraws": 9.588235294117647,
+        "shadowRefreshHz": 3.2222921237973936,
+        "triangles": 1615667.6572890026,
+        "pipelineTransitions": 384.0997442455243,
+        "traversalMs": 0.18337595916312674,
+        "shadowFrameCpuMs": 11.628571428535949,
+        "regularFrameCpuMs": 7.6256756757763595,
+        "shadowFrameDraws": 178.52380952380952
+      },
+      "turning": {
+        "fps": 59.995089915914775,
+        "cpu": 2.8179028133392485,
+        "draws": 166.57289002557545,
+        "shadowDraws": 0,
+        "shadowRefreshHz": 0,
+        "triangles": 1090669.0818414323,
+        "pipelineTransitions": 166.57289002557545,
+        "traversalMs": 0.14347826056849317,
+        "shadowFrameCpuMs": null,
+        "regularFrameCpuMs": 2.8179028133392485,
+        "shadowFrameDraws": null
+      },
+      "walking-looking": {
+        "fps": 59.99693110326837,
+        "cpu": 3.3386189257702252,
+        "draws": 171.1611253196931,
+        "shadowDraws": 9.588235294117647,
+        "shadowRefreshHz": 3.2223415682062297,
+        "triangles": 1081710.5319693096,
+        "pipelineTransitions": 180.74936061381075,
+        "traversalMs": 0.1468030690498974,
+        "shadowFrameCpuMs": 7.514285714498588,
+        "regularFrameCpuMs": 3.1016216215451022,
+        "shadowFrameDraws": 178.52380952380952
+      }
+    },
+    "errors": [],
+    "gpuErrors": []
+  }
+}

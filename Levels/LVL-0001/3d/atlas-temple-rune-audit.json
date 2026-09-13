@@ -1,0 +1,38 @@
+[
+  {
+    "forestRune": {
+      "minimumTerrainGap": -0.06885424256324768,
+      "verticesBelowTerrain": 10
+    },
+    "forestRune diamond": {
+      "minimumTerrainGap": 0.7464170455932617,
+      "verticesBelowTerrain": 0
+    },
+    "forestRune diamond.001": {
+      "minimumTerrainGap": 0.8280969858169556,
+      "verticesBelowTerrain": 0
+    },
+    "forestRune inner rune": {
+      "minimumTerrainGap": 1.1518027782440186,
+      "verticesBelowTerrain": 0
+    }
+  },
+  {
+    "zon": {
+      "minimumTerrainGap": -0.2728947401046753,
+      "verticesBelowTerrain": 12
+    },
+    "zon diamond": {
+      "minimumTerrainGap": 0.9940667152404785,
+      "verticesBelowTerrain": 0
+    },
+    "zon diamond.001": {
+      "minimumTerrainGap": 1.1145062446594238,
+      "verticesBelowTerrain": 0
+    },
+    "zon inner rune": {
+      "minimumTerrainGap": 1.607398509979248,
+      "verticesBelowTerrain": 0
+    }
+  }
+]

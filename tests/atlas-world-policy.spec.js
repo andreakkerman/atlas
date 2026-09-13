@@ -2,7 +2,7 @@ const {test,expect}=require('@playwright/test');
 const fs=require('fs'),vm=require('vm');
 const sandbox={window:{}};vm.runInNewContext(fs.readFileSync('src/atlas-world-policy.js','utf8'),sandbox);const policy=sandbox.window.AtlasWorldPolicy;
 test('Atlas coarsens only opaque repeated nature and keeps useful shadows',()=>{
- for(const name of ['Curated_grass2.012','Curated_Fern.012','Curated_Pine1.012','Curated_Flower1.004','Faceted_mature_fir.012','Atlas_woodland_fern.004','Grass.010','Atlas_moss_rock.015'])expect(policy.cellSize({name,material:{}})).toBe(32);
+ for(const name of ['Atlas_route_stone.012','Curated_grass2.012','Curated_Fern.012','Curated_Pine1.012','Curated_Flower1.004','Faceted_mature_fir.012','Atlas_woodland_fern.004','Grass.010','Atlas_moss_rock.015'])expect(policy.cellSize({name,material:{}})).toBe(32);
  for(const name of ['Temple_stair','forestRune','Guardian_face','NPC'])expect(policy.cellSize({name,material:{}})).toBe(12);
  expect(policy.cellSize({name:'Grass',material:{transparent:true}})).toBe(12);
  expect(policy.cellSize({name:'Grass',material:{alphaTest:.35}})).toBe(12);
@@ -16,7 +16,7 @@ test('Atlas art export keeps shared foliage, scenic closure and no rejected haze
  const b=fs.readFileSync('Levels/LVL-0001/3d/atlas-3d.glb');const g=JSON.parse(b.subarray(20,20+b.readUInt32LE(12)).toString());
  const nodes=prefix=>g.nodes.filter(n=>(n.name||'').startsWith(prefix));
  expect(nodes('Atlas sunlight haze')).toHaveLength(0);
- expect(nodes('Atlas distant ridgeline')).toHaveLength(1);
+ expect(nodes('Atlas distant ridgeline')).toHaveLength(0);
  expect(nodes('Faceted distant fir')).toHaveLength(0);
  const floor=g.materials.find(m=>m.name==='forrest_ground_01');
  expect(floor.normalTexture).toBeUndefined();
@@ -24,7 +24,7 @@ test('Atlas art export keeps shared foliage, scenic closure and no rejected haze
  expect(floor.pbrMetallicRoughness.baseColorTexture).toBeDefined();
  expect(floor.pbrMetallicRoughness.roughnessFactor).toBeCloseTo(.94);
  expect(nodes('Broadleaf hazel sapling')).toHaveLength(0);
- expect(policy.lighting.fogDensity).toBeGreaterThan(.009);
+ expect(policy.lighting.fogNear).toBe(22);expect(policy.lighting.fogFar).toBe(155);
  expect(policy.castsShadow({name:'Atlas_distant_ridgeline'})).toBe(false);
 });
 test('historical composition ledger and current protected gameplay files remain intact',()=>{
@@ -40,7 +40,7 @@ test('export uses intact curated source geometry and shared meshes, with all old
  const b=fs.readFileSync('Levels/LVL-0001/3d/atlas-3d.glb');const gltf=JSON.parse(b.subarray(20,20+b.readUInt32LE(12)).toString());
  const nodes=prefix=>gltf.nodes.filter(n=>(n.name||'').startsWith(prefix));
  for(const prefix of ['Faceted mature fir','Faceted young fir','Faceted planted root collar','Atlas woodland fern','Fern drift','Grass','Rich route understory','Broad leaf community','Detailed woodland flower'])expect(nodes(prefix)).toHaveLength(0);
- const counts={Fern:165,Pine1:80,Flower1:28,Flower2:31,Flower3:31};
+ const counts={Fern:177,Pine1:80,Flower1:31,Flower2:34,Flower3:34};
  for(const [key,count] of Object.entries(counts)){
   const source=fs.readFileSync(`3dmodels/${key}.glb`),s=JSON.parse(source.subarray(20,20+source.readUInt32LE(12)).toString());
   const placements=nodes('Curated '+key);expect(placements).toHaveLength(count);
@@ -58,7 +58,7 @@ test('export uses intact curated source geometry and shared meshes, with all old
    (material.pbrMetallicRoughness.baseColorFactor||[1,1,1,1]).forEach((value,i)=>expect(value).toBeCloseTo((original.pbrMetallicRoughness?.baseColorFactor||[1,1,1,1])[i],5));
   }
  }
- const rock=nodes('Opening fractured moss boulder');expect(rock.length).toBe(1);expect(gltf.accessors[gltf.meshes[rock[0].mesh].primitives[0].indices].count).toBe(640*3);
+ const rock=nodes('Opening fractured moss boulder');expect(rock.length).toBe(1);expect(rock[0].extras.replacementRock).toBe('rock1.glb');expect(gltf.accessors[gltf.meshes[rock[0].mesh].primitives[0].indices].count).toBe(342*3);
 });
 test('curated export keeps audited root transforms, uniform scaling and untouched source files',()=>{
  const b=fs.readFileSync('Levels/LVL-0001/3d/atlas-3d.glb');const g=JSON.parse(b.subarray(20,20+b.readUInt32LE(12)).toString());

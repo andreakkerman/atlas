@@ -14,7 +14,55 @@ const DERIVED_WALK_SEGMENT_LENGTH = 90;
 const EDITOR_DEV_MODE = new URLSearchParams(window.location.search).get("dev") === "editor";
 const PERFORMANCE_HUD_MODE = new URLSearchParams(window.location.search).get("perf") === "1";
 const DIRECT_DEV_LEVEL_ID = EDITOR_DEV_MODE ? new URLSearchParams(window.location.search).get("level") : null;
-const LOCAL_ATLAS_RESET_HOSTNAME = "127.0.0.1";
+let fpsDisplayEnabled = false;
+let debugInfoEnabled = new URLSearchParams(location.search).get('debug3d') === '1';
+let fpsDisplayFrame = null;
+
+function updateDisplayControls() {
+  for (const kind of ['fps', 'debug']) {
+    const enabled = kind === 'fps' ? fpsDisplayEnabled : debugInfoEnabled;
+    document.querySelectorAll(`[data-display-toggle="${kind}"]`).forEach(button => {
+      button.setAttribute('aria-pressed', String(enabled));
+      button.textContent = `${kind === 'fps' ? 'FPS' : 'Debug'}: ${enabled ? 'aan' : 'uit'}`;
+    });
+  }
+  document.querySelectorAll('[data-fps-display]').forEach(node => { node.hidden = !fpsDisplayEnabled; });
+}
+
+function toggleDisplayControl(kind) {
+  if (kind === 'debug') {
+    debugInfoEnabled = !debugInfoEnabled;
+    window.AtlasTapDiagnostics.setEnabled(debugInfoEnabled);
+    window.dispatchEvent(new CustomEvent('atlas-display-status', {detail: {
+      mode: voxelRenderer.getSettings().renderer, status: threeStatus.status,
+      fps: threeStatus.fps, preparation: threeStatus.preparation
+    }}));
+  } else {
+    fpsDisplayEnabled = !fpsDisplayEnabled;
+    if (fpsDisplayFrame !== null) cancelAnimationFrame(fpsDisplayFrame);
+    fpsDisplayFrame = null;
+    if (fpsDisplayEnabled) {
+      let start = performance.now(), frames = 0;
+      const tick = now => {
+        if (!fpsDisplayEnabled) return;
+        frames++;
+        if (now - start >= 500) {
+          const mode = voxelRenderer.getSettings().renderer;
+          const value = window.AtlasGraphicsModes.isThree(mode)
+            ? (threeStatus.ready && threeStatus.frameSampled ? threeStatus.fps : null)
+            : mode === 'cinematic' ? (cinematicStatus.ready || cinematicStatus.status === 'ready' ? cinematicStatus.fps : null)
+            : mode === 'voxel' ? (voxelRendererStatus.status === 'ready' ? voxelRendererStatus.fps : null)
+            : frames * 1000 / (now - start);
+          document.querySelectorAll('[data-fps-display]').forEach(node => { node.textContent = `${Number.isFinite(value) ? Math.round(value) : '—'} FPS`; });
+          frames = 0; start = now;
+        }
+        fpsDisplayFrame = requestAnimationFrame(tick);
+      };
+      fpsDisplayFrame = requestAnimationFrame(tick);
+    }
+  }
+  updateDisplayControls();
+}
 const LOCAL_ATLAS_CACHE_PREFIX = "svenadventure-";
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
 const GUIDE_PURR_KEYS = {
@@ -210,8 +258,12 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
     document.querySelector('.gameShell')?.setAttribute('data-three-input',snapshot.inputType);
     document.querySelectorAll('[data-three-performance]').forEach(element => {
       const live=snapshot.ready && snapshot.frameSampled;
-      element.textContent=`${live?snapshot.fps.toFixed(0):'—'} FPS · CPU ${live?snapshot.averageMs.toFixed(1):'—'} ms · Voorbereiding ${snapshot.preparationMs===null?'—':(snapshot.preparationMs/1000).toFixed(1)+' s'}`;
+      element.textContent=`${live?snapshot.fps.toFixed(0):'—'} FPS`;
     });
+    if (debugInfoEnabled) window.dispatchEvent(new CustomEvent('atlas-display-status', {detail: {
+      mode: voxelRenderer.getSettings().renderer, status: snapshot.status,
+      fps: snapshot.fps, preparation: snapshot.preparation, cpu: snapshot.averageMs
+    }}));
     document.querySelectorAll("[data-three-loading]").forEach(element => {
       element.hidden = snapshot.ready;
       element.dataset.status = snapshot.status;
@@ -2021,7 +2073,7 @@ function adventureEntryFor(entry) {
 }
 
 function localAtlasResetAvailable(locationLike = window.location) {
-  return String(locationLike?.hostname || "").toLowerCase() === LOCAL_ATLAS_RESET_HOSTNAME;
+  return true;
 }
 
 function isAtlasOwnedStorageKey(key) {
@@ -6092,7 +6144,6 @@ function renderWorldStage() {
           <small data-three-progress-label>0 van ${window.AtlasThreeRenderer.PREPARATION_STAGES.length} stappen voltooid</small><p class="threePreparationDetail" data-three-progress-detail></p>
           <small data-three-loading-help>Je avontuur gaat verder zodra de wereld klaar is.</small><button class="threeRecovery" type="button" data-three-recover hidden>Terug naar Illustrated</button></div></div>
         <div class="threeControls"><span class="threeDesktopHint">W/S · Lopen &nbsp; Slepen · Rondkijken &nbsp; A/D · Draaien &nbsp; E · Actie</span><span class="threeTouchHint">Linker stick · Lopen &nbsp; Slepen · Rondkijken &nbsp; Actieknop · Tikken</span></div>
-        <div class="threePerformance" data-three-performance aria-label="3D-prestaties" aria-live="off"></div>
         <div class="threeTouchMovement"><div data-three-move aria-label="Sleep om te lopen en draaien"><span data-three-stick></span></div><span>Lopen</span></div>
         <button class="threeInteract" type="button" data-three-interact hidden></button>
         <p class="cinematicError" data-three-error role="alert" hidden></p>` : ""}
@@ -6366,6 +6417,7 @@ function renderReturnToMenuButton() {
       <button class="menuReturnButton" type="button" data-action="menu" aria-label="Terug naar menu">Menu</button>
       <button class="graphicsSettingsButton" type="button" data-graphics-action="toggle" aria-expanded="${graphicsSettingsOpen}" aria-label="Grafische instellingen">Graphics</button>
     </nav>
+    <div class="fpsDisplay" data-fps-display ${window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) ? 'data-three-performance' : ''} ${fpsDisplayEnabled ? '' : 'hidden'} aria-live="off">— FPS</div>
   `;
 }
 
@@ -6397,6 +6449,10 @@ function renderGraphicsSettings() {
         ${window.AtlasGraphicsModes.list(settings.renderer).filter(mode=>mode.group===group).map(mode=>`<button type="button" data-renderer-choice="${mode.id}" aria-pressed="${mode.selected}" ${mode.enabled?'':'disabled title="Desktop only"'}>${mode.label}${mode.enabled?'':'<small>Desktop only</small>'}</button>`).join('')}
       </div></fieldset>`).join('')}
       <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
+      <fieldset><legend>Weergave-informatie</legend><div class="displayToggles">
+        <button type="button" data-display-toggle="fps" aria-pressed="${fpsDisplayEnabled}">FPS: ${fpsDisplayEnabled ? 'aan' : 'uit'}</button>
+        <button type="button" data-display-toggle="debug" aria-pressed="${debugInfoEnabled}">Debug: ${debugInfoEnabled ? 'aan' : 'uit'}</button>
+      </div></fieldset>
       ${window.AtlasGraphicsModes.isThree(settings.renderer) && level?.id === "LVL-0001" ? `<p data-three-status>${threeStatus.error || threeStatus.status}</p>` : ""}
       ${settings.renderer === "cinematic" ? `<p data-cinematic-status>${cinematicStatus.error || cinematicStatus.status}</p>` : ""}
       ${settings.renderer === "voxel" ? `<label class="graphicsSelect">Graphics quality
@@ -6770,8 +6826,7 @@ function renderMenu() {
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
         }
         ${localAtlasResetAvailable() ? `
-          <aside class="localAtlasReset" data-local-atlas-reset aria-label="Local development">
-            <span>Local development</span>
+          <aside class="localAtlasReset" data-local-atlas-reset aria-label="Lokale Atlas-data">
             <button class="secondaryButton" type="button" data-action="reset-local-atlas">Reset local Atlas data</button>
           </aside>
         ` : ""}
@@ -7414,6 +7469,12 @@ app.addEventListener("focusout", (event) => {
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const displayToggle = event.target.closest('[data-display-toggle]');
+  if (displayToggle) {
+    event.preventDefault(); event.stopPropagation();
+    toggleDisplayControl(displayToggle.dataset.displayToggle);
+    return;
+  }
   const threeRecovery=event.target.closest('[data-three-recover]');
   if(threeRecovery){
     event.preventDefault();event.stopPropagation();graphicsSettingsOpen=false;
