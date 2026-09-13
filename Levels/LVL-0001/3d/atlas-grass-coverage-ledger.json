@@ -1,0 +1,70 @@
+{
+  "version": 177,
+  "upperBladeWidthFactor": 2,
+  "baseline": {
+    "sha256": "22748e586810407d90ae85af224c8843eb0ccfdfe4c23c91bf644a940540c428",
+    "bytes": 17753224,
+    "grassInstances": 4000,
+    "geometry": {
+      "POSITION": {
+        "count": 768,
+        "type": "VEC3",
+        "componentType": 5126
+      },
+      "NORMAL": {
+        "count": 768,
+        "type": "VEC3",
+        "componentType": 5126
+      },
+      "COLOR_0": {
+        "count": 768,
+        "type": "VEC3",
+        "componentType": 5126
+      },
+      "indices": {
+        "count": 768,
+        "type": "SCALAR",
+        "componentType": 5123
+      }
+    },
+    "protectedJsonSHA256": "9263c652639863249d19fedd1be6d95fea1ff8a6b5aa4aa635e44ad71e6b011f",
+    "nonGrassPayloadSHA256": "c789aab71e2614ce4eb5259930303df53a812d8a817987e2eae9875a9bf0100d",
+    "bufferViews": 242,
+    "grassBufferView": 36,
+    "triangles": 256
+  },
+  "candidate": {
+    "sha256": "c6d9a6ca1d40e7a0d7e75ada75cc29ef781e8f067a5f189fff6d99ef87e55536",
+    "bytes": 17753228,
+    "grassInstances": 4000,
+    "geometry": {
+      "POSITION": {
+        "count": 768,
+        "type": "VEC3",
+        "componentType": 5126
+      },
+      "NORMAL": {
+        "count": 768,
+        "type": "VEC3",
+        "componentType": 5126
+      },
+      "COLOR_0": {
+        "count": 768,
+        "type": "VEC3",
+        "componentType": 5126
+      },
+      "indices": {
+        "count": 768,
+        "type": "SCALAR",
+        "componentType": 5123
+      }
+    },
+    "protectedJsonSHA256": "9263c652639863249d19fedd1be6d95fea1ff8a6b5aa4aa635e44ad71e6b011f",
+    "nonGrassPayloadSHA256": "c789aab71e2614ce4eb5259930303df53a812d8a817987e2eae9875a9bf0100d",
+    "bufferViews": 242,
+    "grassBufferView": 36,
+    "triangles": 256
+  },
+  "rootVerticesUnchanged": true,
+  "placementsUnchanged": true
+}

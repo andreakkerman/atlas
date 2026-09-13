@@ -11,9 +11,9 @@
   fxaa(search=''){const q=new URLSearchParams(search);return !(q.get('debug3d')==='1'&&q.get('atlasFxaa')==='0');},
   forestFloor:Object.freeze({name:'forrest_ground_01',texture:'Atlas evening floor v168',size:512}),
   // Art direction shared by Atlas on every device; no extra render passes.
-  lighting:Object.freeze({mode:'golden-evening',sun:'#ffe0b0',sunIntensity:5.1,sunOffset:Object.freeze([-38,28,24]),
-   sky:'#bdcdd6',ground:'#687477',hemisphere:2.7,bounce:'#a8bac8',bounceIntensity:1.0,
-   exposure:1.02,shadowIntensity:.68,fog:'#b1bfb6',fogNear:22,fogFar:155,
-   sunRadiusDegrees:1.8,sunHaloDegrees:5,skyTint:Object.freeze([.24,.27,.32])})
+  lighting:Object.freeze({mode:'golden-evening',sun:'#ffd29c',sunIntensity:5.6,sunOffset:Object.freeze([-38,28,24]),
+   sky:'#c1cbd2',ground:'#756e64',hemisphere:2.7,bounce:'#a8bac8',bounceIntensity:1.0,
+   exposure:1.02,shadowIntensity:.68,fog:'#c8b59d',fogNear:22,fogFar:155,
+   sunRadiusDegrees:1.8,sunHaloDegrees:7.5,skyTint:Object.freeze([.24,.27,.32])})
  });
 })(window);

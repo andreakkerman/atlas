@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v176-forest-cohesion";
+const CACHE_NAME = "svenadventure-static-v179-atlas-running";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/FXAANode.js",
   "assets/vendor/three/tsl/display/GTAONode.js",

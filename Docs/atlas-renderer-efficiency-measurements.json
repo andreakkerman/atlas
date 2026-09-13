@@ -1,0 +1,433 @@
+{
+  "date": "2026-09-13",
+  "environment": "Local Chromium real WebGPU; emulated tablet identity, 1180x734 CSS, DPR 2 exposed by JavaScript override in existing benchmark (context DPR 1), 885x551 render target. Separate transform and tablet acceptance tests use context DPR 2. Not physical iPad Safari.",
+  "runs": {
+    "baseline": {
+      "phases": {
+        "stationary": {
+          "fps": 59.995089915914804,
+          "cpu": 3.208951407000232,
+          "draws": 405,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 1596482,
+          "pipelineTransitions": 405,
+          "traversalMs": 0.11253196930946291,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 3.208951407000232,
+          "shadowFrameDraws": null
+        },
+        "walking": {
+          "fps": 59.99508991591484,
+          "cpu": 3.253452685825965,
+          "draws": 377.27109974424553,
+          "shadowDraws": 12.32992327365729,
+          "shadowRefreshHz": 3.222242680905912,
+          "triangles": 1450073.915601023,
+          "pipelineTransitions": 389.60102301790283,
+          "traversalMs": 0.11329923261461965,
+          "shadowFrameCpuMs": 7.119047619047619,
+          "regularFrameCpuMs": 3.034054054480952,
+          "shadowFrameDraws": 229.57142857142858
+        },
+        "turning": {
+          "fps": 59.996307919512624,
+          "cpu": 1.6387179478238791,
+          "draws": 171.45384615384614,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 994178.0307692308,
+          "pipelineTransitions": 171.45384615384614,
+          "traversalMs": 0.08794871797928443,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 1.6387179478238791,
+          "shadowFrameDraws": null
+        },
+        "walking-looking": {
+          "fps": 59.99601049546579,
+          "cpu": 1.9327365732406412,
+          "draws": 174.27365728900256,
+          "shadowDraws": 12.32992327365729,
+          "shadowRefreshHz": 3.2222921237973954,
+          "triangles": 1029016.7877237851,
+          "pipelineTransitions": 186.60358056265986,
+          "traversalMs": 0.09411764678442874,
+          "shadowFrameCpuMs": 6.257142857426689,
+          "regularFrameCpuMs": 1.6872972976517033,
+          "shadowFrameDraws": 229.57142857142858
+        }
+      },
+      "preparationMs": 19410.79999999702,
+      "preparationTotals": {
+        "createShaderModule": 891,
+        "createRenderPipeline": 872,
+        "preparationFenceMs": 7035.900000035763,
+        "preparationFences": 59
+      },
+      "inventory": {
+        "meshes": 467,
+        "instances": 6436,
+        "instancedMeshes": 459,
+        "shadowCasters": 401,
+        "lights": 9,
+        "geometries": 222,
+        "materials": 30,
+        "geometryMaterialPairs": 222,
+        "textures": 24,
+        "nodeMaterials": 3,
+        "doubleSided": 29,
+        "alphaTest": 4,
+        "transparent": 1
+      },
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "errors": [],
+      "gpuErrors": []
+    },
+    "baseline-detail": {
+      "phases": {
+        "stationary": {
+          "fps": 59.995384970386894,
+          "cpu": 3.1364102564943144,
+          "draws": 405,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 1596482,
+          "pipelineTransitions": 405,
+          "traversalMs": 0.11282051289692903,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 3.1364102564943144,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.07846153821700659,
+          "fenceMs": 4.411025640903375
+        },
+        "walking": {
+          "fps": 59.68912553129458,
+          "cpu": 3.7370179947130477,
+          "draws": 377.18251928020567,
+          "shadowDraws": 12.393316195372751,
+          "shadowRefreshHz": 3.2222921237973936,
+          "triangles": 1450031.7377892032,
+          "pipelineTransitions": 389.5758354755784,
+          "traversalMs": 0.1251928016045406,
+          "shadowFrameCpuMs": 7.72380952395144,
+          "regularFrameCpuMs": 3.509510869403248,
+          "shadowFrameDraws": 229.57142857142858,
+          "matrixUpdateMs": 0.09125964106048594,
+          "fenceMs": 5.294087404227196
+        },
+        "turning": {
+          "fps": 59.842568013380195,
+          "cpu": 1.7110256408269588,
+          "draws": 170.72820512820513,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 991891.1794871795,
+          "pipelineTransitions": 170.72820512820513,
+          "traversalMs": 0.10666666615467806,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 1.7110256408269588,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.08923076929954382,
+          "fenceMs": 3.885897436279517
+        },
+        "walking-looking": {
+          "fps": 59.84247123253952,
+          "cpu": 1.9951156814101423,
+          "draws": 174.55526992287918,
+          "shadowDraws": 12.393316195372751,
+          "shadowRefreshHz": 3.2305704264352952,
+          "triangles": 1029239.5244215939,
+          "pipelineTransitions": 186.94858611825194,
+          "traversalMs": 0.0938303345349883,
+          "shadowFrameCpuMs": 6.333333334042912,
+          "regularFrameCpuMs": 1.7475543479718592,
+          "shadowFrameDraws": 229.57142857142858,
+          "matrixUpdateMs": 0.08303341928361926,
+          "fenceMs": 4.029820051896541
+        }
+      },
+      "preparationMs": 19408.5,
+      "preparationTotals": {
+        "createShaderModule": 891,
+        "createRenderPipeline": 872,
+        "preparationFenceMs": 7063.199999988079,
+        "preparationFences": 59
+      },
+      "inventory": {
+        "meshes": 467,
+        "instances": 6436,
+        "instancedMeshes": 459,
+        "shadowCasters": 401,
+        "lights": 9,
+        "geometries": 222,
+        "materials": 30,
+        "geometryMaterialPairs": 222,
+        "textures": 24,
+        "nodeMaterials": 3,
+        "doubleSided": 29,
+        "alphaTest": 4,
+        "transparent": 1
+      },
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "errors": [],
+      "gpuErrors": []
+    },
+    "candidate": {
+      "phases": {
+        "stationary": {
+          "fps": 59.99508991591484,
+          "cpu": 2.9854219945724054,
+          "draws": 405,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 1596482,
+          "pipelineTransitions": 405,
+          "traversalMs": 0.12301790279805508,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 2.9854219945724054,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.024040920617025528,
+          "fenceMs": 4.373145780028285
+        },
+        "walking": {
+          "fps": 59.842568013380195,
+          "cpu": 3.6112820508770453,
+          "draws": 377.24615384615385,
+          "shadowDraws": 12.361538461538462,
+          "shadowRefreshHz": 3.222292123797395,
+          "triangles": 1450396.9487179487,
+          "pipelineTransitions": 389.60769230769233,
+          "traversalMs": 0.12487179487943649,
+          "shadowFrameCpuMs": 7.490476191043854,
+          "regularFrameCpuMs": 3.39051490468869,
+          "shadowFrameDraws": 229.57142857142858,
+          "matrixUpdateMs": 0.025384615056025676,
+          "fenceMs": 5.380769231456977
+        },
+        "turning": {
+          "fps": 59.99416936461422,
+          "cpu": 1.584654731290115,
+          "draws": 171.55498721227622,
+          "shadowDraws": 0,
+          "shadowRefreshHz": 0,
+          "triangles": 994381.8542199489,
+          "pipelineTransitions": 171.55498721227622,
+          "traversalMs": 0.10332480808505622,
+          "shadowFrameCpuMs": null,
+          "regularFrameCpuMs": 1.584654731290115,
+          "shadowFrameDraws": null,
+          "matrixUpdateMs": 0.024808184493838065,
+          "fenceMs": 3.927109975072429
+        },
+        "walking-looking": {
+          "fps": 59.995384970386894,
+          "cpu": 1.9069230763958052,
+          "draws": 174.28205128205127,
+          "shadowDraws": 12.361538461538462,
+          "shadowRefreshHz": 3.2305207291746787,
+          "triangles": 1028206.5564102564,
+          "pipelineTransitions": 186.64358974358976,
+          "traversalMs": 0.09846153870607034,
+          "shadowFrameCpuMs": 6.028571428287597,
+          "regularFrameCpuMs": 1.6723577230361095,
+          "shadowFrameDraws": 229.57142857142858,
+          "matrixUpdateMs": 0.023589743559177104,
+          "fenceMs": 4.33102564177452
+        }
+      },
+      "preparationMs": 19351.40000000596,
+      "preparationTotals": {
+        "createShaderModule": 891,
+        "createRenderPipeline": 872,
+        "preparationFenceMs": 7000.399999931455,
+        "preparationFences": 59
+      },
+      "inventory": {
+        "meshes": 467,
+        "instances": 6436,
+        "instancedMeshes": 459,
+        "shadowCasters": 401,
+        "lights": 9,
+        "geometries": 222,
+        "materials": 30,
+        "geometryMaterialPairs": 222,
+        "textures": 24,
+        "nodeMaterials": 3,
+        "doubleSided": 29,
+        "alphaTest": 4,
+        "transparent": 1
+      },
+      "textureBudget": {
+        "sourceBytes": 218369368,
+        "resizedBytes": 77225984,
+        "releasedSourceBytes": 193989976,
+        "images": 23,
+        "resized": 14,
+        "maxLongEdge": 1024,
+        "cap": 1024
+      },
+      "errors": [],
+      "gpuErrors": []
+    }
+  },
+  "imageComparison": [
+    {
+      "view": 1,
+      "crop": [
+        0,
+        55,
+        750,
+        625
+      ],
+      "pixels": 427500,
+      "changedPixels": 0
+    },
+    {
+      "view": 2,
+      "crop": [
+        0,
+        55,
+        750,
+        625
+      ],
+      "pixels": 427500,
+      "changedPixels": 0
+    },
+    {
+      "view": 3,
+      "crop": [
+        0,
+        55,
+        750,
+        625
+      ],
+      "pixels": 427500,
+      "changedPixels": 0
+    },
+    {
+      "view": 4,
+      "crop": [
+        0,
+        55,
+        750,
+        625
+      ],
+      "pixels": 427500,
+      "changedPixels": 0
+    }
+  ],
+  "transforms": {
+    "frozen": 700,
+    "meshes": 459,
+    "mismatches": 0,
+    "phases": [
+      {
+        "automatic": true,
+        "msPerUpdate": 0.0468999999910593,
+        "landscapeMatrixCalls": 700000
+      },
+      {
+        "automatic": false,
+        "msPerUpdate": 0.012100000008940697,
+        "landscapeMatrixCalls": 0
+      },
+      {
+        "automatic": true,
+        "msPerUpdate": 0.0461000000089407,
+        "landscapeMatrixCalls": 700000
+      },
+      {
+        "automatic": false,
+        "msPerUpdate": 0.012099999994039535,
+        "landscapeMatrixCalls": 0
+      },
+      {
+        "automatic": true,
+        "msPerUpdate": 0.047400000005960466,
+        "landscapeMatrixCalls": 700000
+      },
+      {
+        "automatic": false,
+        "msPerUpdate": 0.012900000005960465,
+        "landscapeMatrixCalls": 0
+      }
+    ],
+    "instanceVersionsUnchanged": true,
+    "dynamicMeshes": [
+      {
+        "name": "Atlas evening sky",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      },
+      {
+        "name": "",
+        "automatic": true
+      }
+    ],
+    "dynamicLights": true
+  },
+  "validation": {
+    "chromiumReleaseChecks": 43,
+    "chromiumResult": "passed",
+    "webkitNavigationChecks": 2,
+    "webkitResult": "passed",
+    "profileRuns": 3,
+    "profileResult": "passed",
+    "physicalIPad": "not measured",
+    "gpuSuites": "sequential",
+    "tabletAcceptanceSizes": [
+      [
+        1180,
+        734
+      ],
+      [
+        1180,
+        689
+      ]
+    ],
+    "tabletContextDPR": 2,
+    "separatePreparationResolution": [
+      1770,
+      1101
+    ]
+  }
+}

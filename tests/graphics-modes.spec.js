@@ -18,14 +18,15 @@ test('Atlas quality is canonical across desktop, iPad and Android despite overri
 test('world outputs are independent and retain the verified content',()=>{
  const modes=registry(),real=modes.get('3d'),atlas=modes.get('atlas-3d');expect(real.asset).not.toBe(atlas.asset);
  const hash=path=>require('crypto').createHash('sha256').update(fs.readFileSync(path)).digest('hex');
- expect(hash(atlas.asset)).toBe('22748e586810407d90ae85af224c8843eb0ccfdfe4c23c91bf644a940540c428');
+ // Verified grass-coverage export; this controls pass leaves the world intact.
+ expect(hash(atlas.asset)).toBe('c6d9a6ca1d40e7a0d7e75ada75cc29ef781e8f067a5f189fff6d99ef87e55536');
  expect(hash(real.asset)).toBe('57a2e0589df616d2d91a2d40e93169bd5ffea4d5281d06414c6e3096c2d8a086');
  const exportScript=fs.readFileSync('scripts/export-lvl0001-blender.py','utf8');
  expect(exportScript).toContain("'real-3d':('lvl0001.blend','real-3d.glb')");expect(exportScript).toContain("'atlas-3d':('lvl0001-stylized.blend','atlas-3d.glb')");
  expect(exportScript).not.toContain('save_as_mainfile');
  const html=fs.readFileSync('index.html','utf8'),worker=fs.readFileSync('service-worker.js','utf8');
  expect(html.indexOf('src/graphics-modes.js')).toBeLessThan(html.indexOf('src/voxel-renderer.js'));
- expect(worker).toContain('v176-forest-cohesion');expect(worker).toContain('"src/graphics-modes.js"');
+ expect(worker).toContain('v179-atlas-running');expect(worker).toContain('"src/graphics-modes.js"');
  // Large worlds are requested only on selection, never install-time precached.
  const core=worker.slice(0,worker.indexOf('self.addEventListener'));
  expect(core).not.toContain('real-3d.glb');expect(core).not.toContain('atlas-3d.glb');

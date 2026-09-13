@@ -5,9 +5,51 @@
   const PREPARATION_STAGES=Object.freeze(['3D-engine starten…','Wereld en modellen laden…','Texturen en materialen voorbereiden…','WebGPU, licht en schaduwen opwarmen…','Eerste speelbare beeld afronden…']);
   let modules;
   const loadModules=()=>modules ||= Promise.all([import('../assets/vendor/three/three.webgpu.min.js'),import('../assets/vendor/three/loaders/GLTFLoader.js'),import('../assets/vendor/three/loaders/HDRLoader.js'),import('../assets/vendor/three/loaders/DRACOLoader.js')]);
+  // A CPU-only corridor inside the existing ~3 m stone path. No colliders,
+  // raycasts, scene objects or GPU resources are needed for lateral movement.
+  function createLane(route,halfWidth=1.2){
+    const points=route.route,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+    let state=null;
+    function nearest(x,z){
+      let best=null,distance=Infinity;
+      for(let i=0;i<points.length-1;i++){
+        const a=points[i],b=points[i+1],dx=b.position[0]-a.position[0],dz=b.position[2]-a.position[2];
+        const t=clamp(((x-a.position[0])*dx+(z-a.position[2])*dz)/(dx*dx+dz*dz),0,1);
+        const cx=a.position[0]+dx*t,cz=a.position[2]+dz*t,d=(x-cx)**2+(z-cz)**2;
+        if(d<distance){distance=d;best={a,b,t,cx,cz,distance:Math.sqrt(d)};}
+      }
+      return best;
+    }
+    function sync(atlasX){
+      if(state&&Math.abs(state.atlasX-atlasX)<1e-7)return state;
+      let i=0;while(i<points.length-2&&atlasX>points[i+1].atlas[0])i++;
+      const a=points[i],b=points[i+1],t=clamp((atlasX-a.atlas[0])/(b.atlas[0]-a.atlas[0]),0,1);
+      state={x:a.position[0]+(b.position[0]-a.position[0])*t,y:a.position[1]+(b.position[1]-a.position[1])*t,z:a.position[2]+(b.position[2]-a.position[2])*t,atlasX,atlasY:a.atlas[1]+(b.atlas[1]-a.atlas[1])*t,distance:0};
+      return state;
+    }
+    function step(atlasX,forward,side,yaw,dt,speed=2.7){
+      sync(atlasX);
+      const scale=speed*Math.min(dt,.05)/Math.max(1,Math.hypot(forward,side));
+      let x=state.x+(-Math.sin(yaw)*forward+Math.cos(yaw)*side)*scale;
+      let z=state.z+(-Math.cos(yaw)*forward-Math.sin(yaw)*side)*scale;
+      // Flat end caps keep the player inside the authored start and gate.
+      for(const [a,b,start] of [[points[0],points[1],true],[points.at(-2),points.at(-1),false]]){
+        const p=start?a.position:b.position,dx=b.position[0]-a.position[0],dz=b.position[2]-a.position[2];
+        const along=((x-p[0])*dx+(z-p[2])*dz)/(dx*dx+dz*dz);
+        if(start?along<0:along>0){x-=along*dx;z-=along*dz;}
+      }
+      let p=nearest(x,z);
+      if(p.distance>halfWidth){const s=halfWidth/p.distance;x=p.cx+(x-p.cx)*s;z=p.cz+(z-p.cz)*s;p=nearest(x,z);}
+      const {a,b,t}=p;
+      state={x,y:a.position[1]+(b.position[1]-a.position[1])*t,z,atlasX:a.atlas[0]+(b.atlas[0]-a.atlas[0])*t,atlasY:a.atlas[1]+(b.atlas[1]-a.atlas[1])*t,distance:p.distance};
+      return state;
+    }
+    return {sync,step,snapshot:()=>state?{...state,halfWidth}:null};
+  }
   function createRuntime(options) {
     let activeMode=global.AtlasGraphicsModes.normalize(options.getRenderer());
     let configuration=global.AtlasGraphicsModes.configuration(activeMode)||global.AtlasGraphicsModes.configuration('atlas-3d'),preset=configuration.preset;
+    const isIPad=configuration.device.deviceClass==='tablet'&&configuration.device.nativeTouch;
     let compactExecution=configuration.compact,batchedWarmup=configuration.batchedWarmup;
     let effectNames=['schaduwen',preset.gtao&&'GTAO',preset.volumeSteps&&'volume',preset.bloom&&'bloom'].filter(Boolean).join(', ');
     let preparationStrategy=compactExecution?'compact':batchedWarmup?'desktop-batched':'desktop';
@@ -26,12 +68,12 @@
       try{localStorage.setItem('atlas3d-debug-preparation-v1',JSON.stringify(record));}catch{}
       global.dispatchEvent(new CustomEvent('atlas-three-preparation',{detail:record}));
     }
-    let THREE,renderer,scene,camera,canvas,route,sun,post,worldPass,ownedDevice,worldLoading=null;
+    let THREE,renderer,scene,camera,canvas,route,lane,sun,post,worldPass,ownedDevice,worldLoading=null;
     const postResources=[];
     let generation=0,loading=false,suspended=false,raf=0,last=0,frames=0,fps=0,averageMs=0,lifetime=null,framePending=false,frameTimer=0;
     let status='idle',error=null,yaw=-.08,pitch=.015,positionIndex=0,currentTarget=null,npc=null,npcPath=null,npcFrame=null;
     const keys=new Set(),textures=new Set(),flames=[];
-    let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,waitTimer=0,waitingSince=0;
+    let preparation='',diagnostic='',warmupViews=0,warmupTotal=0,touchWalk=0,touchTurn=0,touchLookX=0,touchLookY=0,waitTimer=0,waitingSince=0;
     let preparationMs=null,lastReport=0;
     let preparationCompleted=0,failurePhase=null,deviceDestruction=null;
     function trackDeviceDestruction(device){
@@ -48,6 +90,8 @@
     const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
     let movementEvidence={applied:0};
     const input=global.AtlasThreeInput.create({nativeTouch:configuration.device.nativeTouch,keys,canPlay,activate:options.activate,onInputType:setInputType,interact,
+      canRun:()=>activeMode==='atlas-3d'&&!isIPad,
+      onLookVector:(x,y)=>{touchLookX=x;touchLookY=y;},
       onVector:(walk,turn)=>{touchWalk=walk;touchTurn=turn;},onLook:(dx,dy)=>{yaw-=dx*.0022;pitch=clamp(pitch-dy*.0022,-1.3,1.3);}});
     function snapshot() {
       return {performanceProfile:performanceProfile?.snapshot(),operationTimings:DEBUG?operationTimings:undefined,status,error,worldMode:global.AtlasGraphicsModes.get(activeMode)?.world,configuration,actualEffects,textureBudget:textureBudget.snapshot(),rendererSettings:global.AtlasThreePresets.describe(configuration),failurePhase,deviceDestruction:DEBUG?deviceDestruction:undefined,ready:status==='ready',preparation,diagnostic,debug:DEBUG,preparationStrategy,releasedImageBytes,frameSampled,input:DEBUG?input.snapshot():undefined,movement:DEBUG?movementEvidence:undefined,visibleProfile:DEBUG?visibleProfile?.snapshot():undefined,gpuPreparation:gpuTrace?.snapshot(),preparationCompleted,preparationTotal:PREPARATION_STAGES.length,preparationMs,inputType,warmupViews,warmupTotal,fps,averageMs,backend:renderer?.backend?.isWebGPUBackend?'WebGPU':'uninitialized',firstPerson:true,levelId:SUPPORTED_LEVEL,source:global.AtlasGraphicsModes.get(activeMode)?.asset,camera:camera?.position.toArray(),yaw,pitch,positionIndex,target:currentTarget,drawCalls:renderer?.info.render.drawCalls||0,triangles:renderer?.info.render.triangles||0,resolution:canvas?[canvas.width,canvas.height]:[0,0],frames};
@@ -171,7 +215,7 @@
       // The device is explicitly requested by Atlas, not owned by Three.js.
       // Always destroy it, even if an earlier disposer throws.
       safely(()=>ownedDevice?.destroy());ownedDevice=null;
-      renderer=scene=camera=canvas=route=sun=npc=worldPass=null;flames.length=0;npcPath=null;npcFrame=null;frames=fps=averageMs=warmupViews=warmupTotal=preparationCompleted=0;preparation=diagnostic='';if(notify)report('idle');
+      renderer=scene=camera=canvas=route=lane=sun=npc=worldPass=null;flames.length=0;npcPath=null;npcFrame=null;frames=fps=averageMs=warmupViews=warmupTotal=preparationCompleted=0;preparation=diagnostic='';if(notify)report('idle');
     }
     function routePosition(atlasX) {
       const points=route.route;let i=0;while(i<points.length-2&&atlasX>points[i+1].atlas[0])i++;
@@ -181,6 +225,18 @@
     function move(dt) {
       if(!canPlay()){input.reset('movement guard');releasePointerLock();return;}
       const forward=clamp(Number(keys.has('KeyW')||keys.has('ArrowUp'))-Number(keys.has('KeyS')||keys.has('ArrowDown'))+touchWalk,-1,1);
+      if(activeMode==='atlas-3d'){
+        yaw-=touchLookX*dt*1.5;pitch=clamp(pitch-touchLookY*dt*1.2,-1.3,1.3);
+        if(keys.has('KeyA')||keys.has('ArrowLeft'))yaw+=dt*1.3;
+        if(keys.has('KeyD')||keys.has('ArrowRight'))yaw-=dt*1.3;
+        const side=touchTurn;
+        if(!forward&&!side)return;
+        const speed=(isIPad?(touchWalk||touchTurn):keys.has('ShiftLeft'))?4.8:2.7;
+        const x=options.getPlayer().x,p=lane.step(x,forward,side,yaw,dt,speed);
+        options.setPlayer?.({x:p.atlasX,y:p.atlasY});
+        if(DEBUG)movementEvidence={applied:movementEvidence.applied+1,from:x,to:p.atlasX,forward,side,dt,speed,lane:lane.snapshot()};
+        return;
+      }
       yaw-=touchTurn*dt*1.3;
       if(keys.has('KeyA')||keys.has('ArrowLeft'))yaw+=dt*1.3;
       if(keys.has('KeyD')||keys.has('ArrowRight'))yaw-=dt*1.3;
@@ -193,7 +249,7 @@
     }
     function interact() {if(!currentTarget||!canPlay())return;resetInput();releasePointerLock();options.interact?.(currentTarget);}
     function attachControls() {
-      input.attach(canvas,document.querySelector('[data-three-move]'),document.querySelector('[data-three-interact]'));
+      input.attach(canvas,document.querySelector('[data-three-move]'),document.querySelector('[data-three-interact]'),activeMode==='atlas-3d'?document.querySelector('[data-three-look]'):null);
     }
     function partitionWorld(root) {
       root.updateMatrixWorld(true);const cells=new Map(),remove=[];const matrix=new THREE.Matrix4();
@@ -212,6 +268,14 @@
       remove.forEach(obj=>obj.removeFromParent());
       for(const cell of cells.values()) {
         const object=new THREE.InstancedMesh(cell.geometry,cell.material,cell.matrices.length);cell.matrices.forEach((m,i)=>object.setMatrixAt(i,m));object.instanceMatrix.needsUpdate=true;object.computeBoundingSphere();object.name=cell.name;root.add(object);
+      }
+      if(activeMode==='atlas-3d'){
+        // Only the imported landscape is static. Bake its final transforms once;
+        // the camera, lights, sky, NPC and flames remain outside this subtree.
+        // Disable both flags: the scene propagates a forced world update even
+        // when a child's local matrix has not changed.
+        root.updateMatrixWorld(true);
+        root.traverse(object=>{object.matrixAutoUpdate=false;object.matrixWorldAutoUpdate=false;});
       }
     }
     function buildLights() {
@@ -250,10 +314,10 @@
         const disc=smoothstep(radius-.000035,radius+.000015,towardSun);
         const halo=smoothstep(Math.cos(THREE.MathUtils.degToRad(art.sunHaloDegrees)),1,towardSun).pow(4);
         // Altitude only: continuous at every azimuth, without a panorama upload.
-        const peach=vec3(.58,.22,.17),orange=vec3(.76,.38,.16),gold=vec3(.82,.62,.30),blue=vec3(.18,.31,.48);
+        const peach=vec3(.68,.25,.13),orange=vec3(.98,.43,.11),gold=vec3(1.0,.66,.29),blue=vec3(.18,.30,.46);
         const low=mix(peach,orange,smoothstep(-.02,.25,ray.y));
-        const middle=mix(low,gold,smoothstep(.20,.55,ray.y));
-        let sky=mix(middle,blue,smoothstep(.50,.98,ray.y));
+        const middle=mix(low,gold,smoothstep(.30,.72,ray.y));
+        let sky=mix(middle,blue,smoothstep(.62,.99,ray.y));
         // Two distant, gently rolling silhouettes in the existing sky material.
         // Integer harmonics wrap exactly; no geometry, texture or fog pass.
         const azimuth=tsl.atan2(ray.z,ray.x);
@@ -261,10 +325,10 @@
         const nearRidge=sin(azimuth.mul(3).sub(.8)).mul(.035).add(sin(azimuth.mul(7).add(.3)).mul(.018)).add(.06);
         const farHill=float(1).sub(smoothstep(farRidge.sub(.008),farRidge.add(.008),ray.y));
         const nearHill=float(1).sub(smoothstep(nearRidge.sub(.006),nearRidge.add(.006),ray.y));
-        sky=mix(sky,mix(sky,vec3(.25,.36,.37),.38),farHill);
-        sky=mix(sky,mix(sky,vec3(.19,.29,.29),.46),nearHill);
+        sky=mix(sky,mix(sky,vec3(.34,.35,.32),.38),farHill);
+        sky=mix(sky,mix(sky,vec3(.22,.28,.27),.46),nearHill);
         const material=new THREE.MeshBasicNodeMaterial({side:THREE.BackSide,depthWrite:false,fog:false});
-        material.colorNode=mix(sky.add(halo.mul(vec3(.12,.055,.008))),vec3(1.8,.83,.19),disc);
+        material.colorNode=mix(sky.add(halo.mul(vec3(.32,.15,.035))),vec3(3.2,2.4,1.15),disc);
         dome.material.dispose();dome.material=material;
         const contactMap=await new THREE.TextureLoader().loadAsync('assets/textures/atlas-contact-v174.png');
         if(token!==generation){contactMap.dispose();return;}
@@ -444,6 +508,9 @@
     }
     function positionCamera(x,viewYaw=yaw,viewPitch=pitch) {
       const p=routePosition(x);positionIndex=p.i+p.t;camera.position.copy(p.position);camera.position.y+=route.eyeHeight;camera.rotation.set(viewPitch,viewYaw,0,'YXZ');
+      if(activeMode==='atlas-3d'&&status==='ready'){
+        const position=lane.sync(x);camera.position.set(position.x,position.y+route.eyeHeight,position.z);
+      }
       // A fixed 180 m dome exceeded the 220 m far plane from the temple,
       // exposing a round clear-color hole. Keep every sky ray inside that plane.
       if(activeMode==='atlas-3d')scene.getObjectByName('Atlas evening sky')?.position.copy(camera.position);
@@ -633,7 +700,7 @@
         checkpoint('WebGPU-backend bevestigd; engine gereed');
         preparationStage(1,'loading');
         const loadedRoute=await observe('Routegegevens laden',()=>fetch(ROOT+'route.json').then(r=>{if(!r.ok)throw Error('Route asset could not be loaded');return r.json();}),token);
-        if(token!==generation)return;route=loadedRoute;
+        if(token!==generation)return;route=loadedRoute;lane=activeMode==='atlas-3d'?createLane(route):null;
         const art=activeMode==='atlas-3d'?global.AtlasWorldPolicy.lighting:null;
         renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=art?.exposure??1.2;renderer.shadowMap.enabled=true;scene=new THREE.Scene();scene.fog=art?.fogNear!==undefined?new THREE.Fog(art.fog,art.fogNear,art.fogFar):new THREE.FogExp2(art?.fog??'#dbc294',art?.fogDensity??.009);camera=new THREE.PerspectiveCamera(64,1,.06,220);
         performanceProfile=global.AtlasThreePerformance?.start(renderer,scene);
@@ -694,7 +761,7 @@
     function resume(){suspended=false;return sync();}
     return {sync,stop,dispose,suspend,resume,snapshot,lookAt:(nextYaw,nextPitch=0)=>{yaw=nextYaw;pitch=clamp(nextPitch,-1.3,1.3);}};
   }
-  global.AtlasThreeRenderer=Object.freeze({createRuntime,SUPPORTED_LEVEL,PREPARATION_STAGES});
+  global.AtlasThreeRenderer=Object.freeze({createRuntime,createLane,SUPPORTED_LEVEL,PREPARATION_STAGES});
 })(window);
 
 
