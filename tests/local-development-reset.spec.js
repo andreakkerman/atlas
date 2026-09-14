@@ -13,6 +13,7 @@ async function showMenu(page) {
     window.eval("render")();
   });
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
+  await page.locator(".menuSettingsButton").click();
 }
 
 test.afterEach(async ({ page }) => {

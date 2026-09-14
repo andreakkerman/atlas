@@ -17,8 +17,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
   },
   "player": {
     "start": {
-      "x": 121,
-      "y": 667
+      "x": 108,
+      "y": 673
     },
     "scale": 0.47,
     "startNode": "start"
@@ -774,7 +774,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
       "radius": 41,
       "approach": {
         "x": 201,
-        "y": 648
+        "y": 653
       }
     },
     {
@@ -785,8 +785,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
       "y": 497,
       "radius": 50,
       "approach": {
-        "x": 412,
-        "y": 654
+        "x": 414,
+        "y": 660
       }
     },
     {
@@ -845,19 +845,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
   "walkPath": [
     {
       "id": "start",
-      "x": 121,
-      "y": 667
+      "x": 108,
+      "y": 673
     },
     {
       "id": "tripodInstrument-approach",
       "x": 201,
-      "y": 648,
+      "y": 653,
       "role": "approach"
     },
     {
       "id": "planningTable-approach",
-      "x": 412,
-      "y": 654,
+      "x": 414,
+      "y": 660,
       "role": "approach"
     },
     {

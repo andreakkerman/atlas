@@ -377,7 +377,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "flightControls",
@@ -763,8 +764,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "y": 481,
       "radius": 82,
       "approach": {
-        "x": 421,
-        "y": 613
+        "x": 423,
+        "y": 619
       }
     },
     {
@@ -775,8 +776,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "y": 476,
       "radius": 82,
       "approach": {
-        "x": 861,
-        "y": 633
+        "x": 717,
+        "y": 619
       }
     },
     {
@@ -832,7 +833,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
       "openFrame": "assets/ambient/animals/raven/raven-open.png",
       "closedFrame": "assets/ambient/animals/raven/raven-closed.png",
       "sound": "assets/ambient/animals/raven/raven-call.mp3",
-      "x": 769,
+      "x": 863,
       "y": 348,
       "scale": 0.2,
       "blinkMinMs": 4000,
@@ -861,14 +862,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0024"] = {
     },
     {
       "id": "wingRack-approach",
-      "x": 421,
-      "y": 613,
+      "x": 423,
+      "y": 619,
       "role": "approach"
     },
     {
       "id": "counterweights-approach",
-      "x": 861,
-      "y": 633,
+      "x": 717,
+      "y": 619,
       "role": "approach"
     },
     {

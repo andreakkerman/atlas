@@ -210,7 +210,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "opticalTable",
@@ -365,8 +366,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
             }
           ]
         }
-      ],
-      "active": false
+      ]
     },
     {
       "id": "centralCodex",

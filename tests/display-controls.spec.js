@@ -25,6 +25,7 @@ test('display toggles do not rebuild the scene or alter gameplay, and survive re
  await activate(page.locator('[data-graphics-action="close"]'));
  await expect(fps).toHaveCount(0);await expect(debug).toHaveCount(0);
  await activate(page.locator('[data-action="menu"]'));
+ await page.locator('.menuSettingsButton').click();
  await expect(page.locator('[data-local-atlas-reset]')).toBeVisible();
  await expect(page.getByText('Local development',{exact:true})).toHaveCount(0);
  await page.screenshot({path:info.outputPath('reset-control.png'),fullPage:true});

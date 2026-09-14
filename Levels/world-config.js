@@ -5454,8 +5454,8 @@ window.SVEN_WORLD_CONFIG = {
           "items": [
             {
               "enabled": true,
-              "x": 49,
-              "y": 337,
+              "x": 41,
+              "y": 340,
               "color": "#ff9340",
               "radius": 160,
               "intensity": 1.25,
@@ -5479,8 +5479,8 @@ window.SVEN_WORLD_CONFIG = {
             },
             {
               "enabled": true,
-              "x": 339,
-              "y": 385,
+              "x": 329,
+              "y": 390,
               "color": "#ff9340",
               "radius": 175,
               "intensity": 1.4,
@@ -5504,10 +5504,10 @@ window.SVEN_WORLD_CONFIG = {
             },
             {
               "enabled": true,
-              "x": 927,
-              "y": 313,
+              "x": 971,
+              "y": 302,
               "color": "#ff9b49",
-              "radius": 185,
+              "radius": 147,
               "intensity": 1.45,
               "falloff": 1.45,
               "aspect": 1,
@@ -5529,8 +5529,8 @@ window.SVEN_WORLD_CONFIG = {
             },
             {
               "enabled": true,
-              "x": 1540,
-              "y": 360,
+              "x": 1444,
+              "y": 330,
               "color": "#ffc06c",
               "radius": 360,
               "intensity": 0.55,
@@ -5682,38 +5682,6 @@ window.SVEN_WORLD_CONFIG = {
               "distribution": "volume",
               "id": "tomb-dust",
               "name": "tomb-dust"
-            },
-            {
-              "enabled": true,
-              "x": 520,
-              "y": 330,
-              "color": "#ff8331",
-              "shape": "rectangle",
-              "width": 1050,
-              "height": 300,
-              "softness": 0.6,
-              "direction": -90,
-              "count": 115,
-              "size": 1.05,
-              "sizeVariation": 0.9,
-              "speed": 34,
-              "turbulence": 1.1,
-              "lifetime": 5,
-              "opacity": 0.46,
-              "glow": 1.35,
-              "gravity": -1.4,
-              "randomness": 0.82,
-              "depth": 0.82,
-              "depthInfluence": 0.82,
-              "depthSoftness": 0.14,
-              "layer": "effects",
-              "wind": 3,
-              "streak": 1.7,
-              "pulse": 0,
-              "depthSpread": 0.16,
-              "distribution": "volume",
-              "id": "tomb-embers",
-              "name": "tomb-embers"
             }
           ]
         },
@@ -6313,7 +6281,7 @@ window.SVEN_WORLD_CONFIG = {
       }
     },
     "LVL-0031": {
-      "spriteScale": 1.1,
+      "spriteScale": 1.15,
       "cinematicLighting": {
         "version": 3,
         "layers": {
@@ -9465,6 +9433,7 @@ window.SVEN_WORLD_CONFIG = {
       }
     },
     "LVL-0028": {
+      "spriteScale": 1.25,
       "cinematicLighting": {
         "version": 3,
         "layers": {
@@ -9713,6 +9682,7 @@ window.SVEN_WORLD_CONFIG = {
       }
     },
     "LVL-0030": {
+      "spriteScale": 1.1,
       "cinematicLighting": {
         "version": 3,
         "layers": {
@@ -9741,8 +9711,8 @@ window.SVEN_WORLD_CONFIG = {
           "items": [
             {
               "enabled": true,
-              "x": 120,
-              "y": 75,
+              "x": 62,
+              "y": 60,
               "color": "#ffdfa0",
               "shape": "ellipse",
               "width": 2400,
@@ -9912,24 +9882,24 @@ window.SVEN_WORLD_CONFIG = {
               "x": 7,
               "y": 1,
               "color": "#ffe2a6",
-              "direction": 48,
-              "spread": 55,
-              "rayCount": 7,
-              "rayWidth": 0.42,
-              "widthVariation": 0.6,
+              "direction": 44,
+              "spread": 84,
+              "rayCount": 3,
+              "rayWidth": 0.4,
+              "widthVariation": 0.32,
               "spacingVariation": 0.48,
-              "rayMotion": 0,
-              "motionSpeed": 0.14,
+              "rayMotion": 0.63,
+              "motionSpeed": 0.69,
               "fadeVariation": 0.25,
               "length": 1080,
-              "intensity": 0.4,
-              "softness": 0.72,
+              "intensity": 1.83,
+              "softness": 0.75,
               "feather": 0.42,
-              "decay": 1,
+              "decay": 0.63,
               "breakup": 0.48,
               "noiseScale": 1.2,
               "noiseAmount": 0.38,
-              "noiseSpeed": 0.1,
+              "noiseSpeed": 1.63,
               "atmosphereInfluence": 1.15,
               "depth": 0.45,
               "depthInfluence": 0.7,

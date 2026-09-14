@@ -1053,6 +1053,7 @@ async function prepareWorldEditor() {
   if (!EDITOR_DEV_MODE || !window.location.protocol.startsWith("http")) {
     worldEditor.apiAvailable = false;
     worldEditor.message = "Start npm run dev:editor om wereldinstellingen op te slaan.";
+    render();
     return;
   }
   worldEditor.busy = true;
@@ -1976,7 +1977,7 @@ async function selectLevel(id, options = {}) {
   }
 
   if (!options.deferRender) {
-    state = { screen: "loading", message: "Avontuur en Sven voorbereiden..." };
+    state = { screen: "loading", message: "Avontuur voorbereiden..." };
     render();
   }
 
@@ -2280,7 +2281,7 @@ function setSvenWorldPosition(point) {
 }
 
 function updateWorldDom() {
-  const track = document.querySelector(".worldTrack");
+  const tracks = document.querySelectorAll(".worldTrack, .editorWorldTrack");
   const actor = document.querySelector("[data-actor='sven']");
   const actorShell = document.querySelector("[data-actor-shell='sven']");
   const areaName = document.querySelector("[data-area-name]");
@@ -2290,7 +2291,7 @@ function updateWorldDom() {
   refreshViewportMetrics();
   syncCamera();
 
-  if (track) {
+  for (const track of tracks) {
     track.style.setProperty("--camera-percent", String(getCameraPercent()));
     track.style.setProperty("--camera-x", state.cameraX.toFixed(2));
     track.style.setProperty("--world-scale", String(state.worldScale));
@@ -2639,7 +2640,7 @@ async function revertWalkPathDraft() {
 }
 
 function updateDraggedWalkPathPoint(event) {
-  if (walkPathEditor.draggingIndex === null || !level) return;
+  if (!debugOverlayEnabled || !walkPathEditor.enabled || walkPathEditor.draggingIndex === null || !level) return;
   const stage = document.querySelector("[data-world-stage]");
   if (!stage) return;
 
@@ -3674,7 +3675,7 @@ async function refreshMenuAdventureStats(options = {}) {
     }
     menuAdventureStats.byRoot = nextStats;
     menuAdventureStats.loaded = true;
-    if (options.render !== false && state.screen === "menu") render();
+    if (options.render !== false && state.screen === "menu") updateMenuAdventureBadges();
   } catch (error) {
     console.warn(`[Atlas] Menu-opdrachten konden niet worden geteld: ${error.message}`);
   } finally {
@@ -6159,7 +6160,6 @@ function renderWorldStage() {
         ${renderSceneEffectCanvases()}
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
         ${(level.ambientFlybys || []).map(renderAmbientFlyby).join("")}
-        ${debugOverlayEnabled ? renderDebugOverlay() : ""}
         ${renderSceneEffectGuides()}
         ${level.hotspots.filter(isTargetVisible).map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
@@ -6171,6 +6171,11 @@ function renderWorldStage() {
           <span class="svenSpriteMount" data-actor-mount="sven" aria-hidden="true"></span>
         </span>
       </div>
+      ${debugOverlayEnabled && !window.AtlasGraphicsModes.isThree(renderer) ? `
+        <div class="editorWorldTrack" style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}">
+          ${renderDebugOverlay()}
+        </div>
+      ` : ""}
       ${renderer === "cinematic" ? cinematicEditor.renderGuides() : ""}
       ${renderFlightPathWorkspace()}
       ${renderEffectGeometryWorkspace()}
@@ -6433,6 +6438,13 @@ function voxelRuntimeStatusLabel() {
   return "Illustrated actief";
 }
 
+function renderDisplayToggles() {
+  return `
+    <button type="button" data-display-toggle="fps" aria-pressed="${fpsDisplayEnabled}">FPS: ${fpsDisplayEnabled ? 'aan' : 'uit'}</button>
+    <button type="button" data-display-toggle="debug" aria-pressed="${debugInfoEnabled}">Debug: ${debugInfoEnabled ? 'aan' : 'uit'}</button>
+  `;
+}
+
 function renderGraphicsSettings() {
   if (!graphicsSettingsOpen) return "";
   const settings = voxelRenderer.getSettings();
@@ -6451,8 +6463,7 @@ function renderGraphicsSettings() {
       </div></fieldset>`).join('')}
       <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
       <fieldset><legend>Weergave-informatie</legend><div class="displayToggles">
-        <button type="button" data-display-toggle="fps" aria-pressed="${fpsDisplayEnabled}">FPS: ${fpsDisplayEnabled ? 'aan' : 'uit'}</button>
-        <button type="button" data-display-toggle="debug" aria-pressed="${debugInfoEnabled}">Debug: ${debugInfoEnabled ? 'aan' : 'uit'}</button>
+        ${renderDisplayToggles()}
       </div></fieldset>
       ${window.AtlasGraphicsModes.isThree(settings.renderer) && level?.id === "LVL-0001" ? `<p data-three-status>${threeStatus.error || threeStatus.status}</p>` : ""}
       ${settings.renderer === "cinematic" ? `<p data-cinematic-status>${cinematicStatus.error || cinematicStatus.status}</p>` : ""}
@@ -6794,7 +6805,25 @@ function renderMenu() {
   const supportingLevels = menuLevels;
   return `
     <main class="menuScreen">
-      <button class="progressMenuButton" type="button" data-action="progress">Voortgang</button>
+      <div class="menuControls">
+        <button class="progressMenuButton" type="button" data-action="progress">Voortgang</button>
+        <details class="menuSettings" ${app.querySelector(".menuSettings")?.open ? "open" : ""}>
+          <summary class="progressMenuButton menuSettingsButton" aria-label="Instellingen">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m9 3-.6 2.4-2 .9L4.2 5.6 2 9.4l1.8 1.7v1.8L2 14.6l2.2 3.8 2.2-.7 2 .9L9 21h6l.6-2.4 2-.9 2.2.7 2.2-3.8-1.8-1.7v-1.8L22 9.4l-2.2-3.8-2.2.7-2-.9L15 3Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </summary>
+          <div class="menuSettingsPanel">
+            <div class="displayToggles">${renderDisplayToggles()}</div>
+            ${localAtlasResetAvailable() ? `
+              <aside class="localAtlasReset" data-local-atlas-reset aria-label="Lokale Atlas-data">
+                <button class="secondaryButton" type="button" data-action="reset-local-atlas">Reset local Atlas data</button>
+              </aside>
+            ` : ""}
+          </div>
+        </details>
+      </div>
       <section class="menuHeader">
         <h1>Kies een avontuur</h1>
         <p>Wat ga je vandaag ontdekken?</p>
@@ -6826,11 +6855,6 @@ function renderMenu() {
             `
             : `<p class="emptyMenu">Er zijn nog geen avonturen gevonden.</p>`
         }
-        ${localAtlasResetAvailable() ? `
-          <aside class="localAtlasReset" data-local-atlas-reset aria-label="Lokale Atlas-data">
-            <button class="secondaryButton" type="button" data-action="reset-local-atlas">Reset local Atlas data</button>
-          </aside>
-        ` : ""}
       </section>
       ${renderWorldManagementPanel()}
     </main>
@@ -6880,7 +6904,23 @@ function setMenuHeroIndex(menuHeroIndex, options = {}) {
     menuHeroIndex: nextIndex,
     menuHeroTransition: !prefersReducedMotion()
   };
-  render();
+  // Keep the scroll container, navigation/focus and unrelated menu content mounted.
+  // Replacing only the slide also restarts its existing reveal/image animations.
+  const hero = app.querySelector(".heroLevelTile");
+  if (hero) {
+    const template = document.createElement("template");
+    template.innerHTML = renderHeroLevelTile(menuLevels[nextIndex]);
+    hero.replaceWith(template.content.firstElementChild);
+  }
+  app.querySelectorAll("[data-menu-index]").forEach((dot) => {
+    dot.setAttribute("aria-current", String(Number(dot.dataset.menuIndex) === nextIndex));
+  });
+  app.querySelectorAll("[data-menu-tile]").forEach((tile) => {
+    const active = tile.dataset.menuTile === menuLevels[nextIndex].id;
+    tile.classList.toggle("activeSupportingLevelTile", active);
+    tile.setAttribute("aria-pressed", String(active));
+  });
+  syncMenuAutoRotation();
 }
 
 function changeMenuHero(direction, options = {}) {
@@ -7047,6 +7087,15 @@ function adventureMenuBadge(item) {
   if (!stats) return item.menu?.badge || item.id;
   const placeLabel = stats.placeCount === 1 ? "plaats" : "plaatsen";
   return `${stats.placeCount} ${placeLabel} · ${stats.challengeCount} opdrachten`;
+}
+
+function updateMenuAdventureBadges() {
+  const items = new Map(visibleLevelCatalog().map((item) => [item.id, item]));
+  app.querySelectorAll("[data-featured-level], [data-menu-tile]").forEach((tile) => {
+    const item = items.get(tile.dataset.featuredLevel || tile.dataset.menuTile);
+    const badge = tile.querySelector(".levelBadge");
+    if (item && badge) badge.textContent = adventureMenuBadge(item);
+  });
 }
 
 function renderHeroLevelTile(item) {

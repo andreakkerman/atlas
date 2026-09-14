@@ -782,9 +782,9 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "sundial",
       "type": "challenge",
       "name": "Zonnewijzer",
-      "x": 775,
-      "y": 465,
-      "radius": 73,
+      "x": 774,
+      "y": 477,
+      "radius": 59,
       "approach": {
         "x": 740,
         "y": 611
@@ -806,8 +806,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "templePanel",
       "type": "challenge",
       "name": "Tempelpaneel",
-      "x": 1478,
-      "y": 455,
+      "x": 1441,
+      "y": 456,
       "radius": 92,
       "approach": {
         "x": 1437,
@@ -818,8 +818,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "homeScarab",
       "type": "exit",
       "name": "Gouden scarabee",
-      "x": 1920,
-      "y": 378,
+      "x": 1911,
+      "y": 355,
       "radius": 120,
       "approach": {
         "x": 1892,
@@ -896,10 +896,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "sundial",
       "type": "rune",
       "center": {
-        "x": 775,
-        "y": 465
+        "x": 774,
+        "y": 477
       },
-      "radius": 73,
+      "radius": 59,
       "approachNode": "sundial-approach",
       "label": "Zonnewijzer"
     },
@@ -918,8 +918,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "templePanel",
       "type": "rune",
       "center": {
-        "x": 1478,
-        "y": 455
+        "x": 1441,
+        "y": 456
       },
       "radius": 92,
       "approachNode": "templePanel-approach",
@@ -929,8 +929,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "homeScarab",
       "type": "exit",
       "center": {
-        "x": 1920,
-        "y": 378
+        "x": 1911,
+        "y": 355
       },
       "radius": 120,
       "approachNode": "homeScarab-approach",

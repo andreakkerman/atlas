@@ -712,8 +712,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "paintedRelief",
       "type": "challenge",
       "name": "Geschilderd relief",
-      "x": 385,
-      "y": 346,
+      "x": 457,
+      "y": 322,
       "radius": 53,
       "approach": {
         "x": 353,
@@ -724,8 +724,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "canopicJars",
       "type": "challenge",
       "name": "Rituele kruiken",
-      "x": 738,
-      "y": 356,
+      "x": 747,
+      "y": 405,
       "radius": 86,
       "approach": {
         "x": 705,
@@ -748,8 +748,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "altarTable",
       "type": "challenge",
       "name": "Altaartafel",
-      "x": 1455,
-      "y": 333,
+      "x": 1444,
+      "y": 367,
       "radius": 60,
       "approach": {
         "x": 1453,
@@ -760,12 +760,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "tombSarcophagus",
       "type": "exit",
       "name": "Sarcofaag van Tutanchamon",
-      "x": 1953,
-      "y": 422,
+      "x": 1944,
+      "y": 418,
       "radius": 112,
       "approach": {
-        "x": 1939,
-        "y": 595
+        "x": 1949,
+        "y": 585
       },
       "targetLevel": "LVL-0030",
       "lockedUntilComplete": true
@@ -817,8 +817,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
     },
     {
       "id": "tombSarcophagus-approach",
-      "x": 1939,
-      "y": 595,
+      "x": 1949,
+      "y": 585,
       "role": "approach"
     }
   ],
@@ -827,8 +827,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "paintedRelief",
       "type": "rune",
       "center": {
-        "x": 385,
-        "y": 346
+        "x": 457,
+        "y": 322
       },
       "radius": 53,
       "approachNode": "paintedRelief-approach",
@@ -838,8 +838,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "canopicJars",
       "type": "rune",
       "center": {
-        "x": 738,
-        "y": 356
+        "x": 747,
+        "y": 405
       },
       "radius": 86,
       "approachNode": "canopicJars-approach",
@@ -860,8 +860,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "altarTable",
       "type": "rune",
       "center": {
-        "x": 1455,
-        "y": 333
+        "x": 1444,
+        "y": 367
       },
       "radius": 60,
       "approachNode": "altarTable-approach",
@@ -871,8 +871,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "id": "tombSarcophagus",
       "type": "exit",
       "center": {
-        "x": 1953,
-        "y": 422
+        "x": 1944,
+        "y": 418
       },
       "radius": 112,
       "approachNode": "tombSarcophagus-approach",
@@ -977,8 +977,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "groupId": "",
       "geometry": {
         "type": "pointRadius",
-        "x": 49,
-        "y": 337,
+        "x": 42,
+        "y": 329,
         "radius": 27
       },
       "overrides": {}
@@ -996,8 +996,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "groupId": "",
       "geometry": {
         "type": "pointRadius",
-        "x": 339,
-        "y": 385,
+        "x": 333,
+        "y": 382,
         "radius": 27
       },
       "overrides": {}
@@ -1015,11 +1015,53 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0029"] = {
       "groupId": "",
       "geometry": {
         "type": "pointRadius",
-        "x": 927,
-        "y": 313,
+        "x": 975,
+        "y": 294,
         "radius": 27
       },
       "overrides": {}
+    },
+    {
+      "id": "light-source-enhancement-01-copy-copy-copy",
+      "label": "Wall torch 1 copy copy copy",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 831246026,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 1256,
+        "y": 350,
+        "radius": 19
+      },
+      "overrides": {
+        "size": 0.6
+      }
+    },
+    {
+      "id": "light-source-enhancement-01-copy-copy-copy-copy",
+      "label": "Wall torch 1 copy copy copy copy",
+      "presetId": "light-source-enhancement",
+      "variantId": "wall-torch",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 831246026,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 1635,
+        "y": 355,
+        "radius": 22
+      },
+      "overrides": {
+        "size": 0.6
+      }
     }
   ],
   "reward": {

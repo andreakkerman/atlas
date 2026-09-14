@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v180-atlas-material-polish";
+const CACHE_NAME = "svenadventure-static-v182-editor-route-overlay";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/FXAANode.js",
   "assets/vendor/three/tsl/display/GTAONode.js",
