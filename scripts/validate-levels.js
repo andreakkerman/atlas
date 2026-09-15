@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
+const { discoverCharacters } = require("./generate-character-manifest");
 
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
@@ -40,6 +41,7 @@ const forbiddenCompanionTextPatterns = [
 
 const errors = [];
 let sceneEffectsApi = null;
+let sharedCharacterPortraits = null;
 
 function fail(message) {
   errors.push(message);
@@ -125,6 +127,30 @@ function assertProjectAssetExists(relativePath, ownerLabel) {
     fail(`${ownerLabel} asset does not exist: ${relativePath}`);
   }
 
+  return resolved;
+}
+
+function assertCharacterArtExists(relativePath, ownerLabel, levelFolder) {
+  const resolved = resolveProjectPath(relativePath, ownerLabel);
+  if (!resolved) return null;
+  if (!fs.existsSync(resolved) || !fs.statSync(resolved).isFile()) {
+    fail(`${ownerLabel} asset does not exist or is not a file: ${relativePath}`);
+    return resolved;
+  }
+  if (resolved.startsWith(levelFolder + path.sep)) return resolved;
+
+  const charactersFolder = path.join(rootDir, "assets", "characters");
+  if (!resolved.startsWith(charactersFolder + path.sep)) {
+    fail(`${ownerLabel} must be inside its level folder or reference a shared character portrait: ${relativePath}`);
+    return resolved;
+  }
+  // Reuse manifest discovery, including its portrait + idle requirements.
+  // Do not trust a stale generated manifest or accept arbitrary library files.
+  sharedCharacterPortraits ||= new Set(discoverCharacters().map((character) =>
+    path.resolve(rootDir, character.portrait.split("?")[0])));
+  if (!sharedCharacterPortraits.has(resolved)) {
+    fail(`${ownerLabel} must reference the portrait of a discovered shared character: ${relativePath}`);
+  }
   return resolved;
 }
 
@@ -530,10 +556,10 @@ function validateInteractiveObjects(level, world, nodeIds, label) {
 function validateAssets(level, entry, levelFolder, label) {
   assertAssetExists(entry.menu?.illustration, `${label}.manifest.menu.illustration`, levelFolder);
   assertAssetExists(level.menu?.illustration, `${label}.menu.illustration`, levelFolder);
-  assertAssetExists(level.challengeArt, `${label}.challengeArt`, levelFolder);
-  assertAssetExists(level.companion?.portrait, `${label}.companion.portrait`, levelFolder);
+  assertCharacterArtExists(level.challengeArt, `${label}.challengeArt`, levelFolder);
+  assertCharacterArtExists(level.companion?.portrait, `${label}.companion.portrait`, levelFolder);
   if (level.challengeCharacter?.portrait) {
-    assertAssetExists(level.challengeCharacter.portrait, `${label}.challengeCharacter.portrait`, levelFolder);
+    assertCharacterArtExists(level.challengeCharacter.portrait, `${label}.challengeCharacter.portrait`, levelFolder);
   }
   (level.ambientAnimals || []).forEach((animal, index) => {
     assertCentralAmbientAsset(animal.openFrame, `${label}.ambientAnimals[${index}].openFrame`);

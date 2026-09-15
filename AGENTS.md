@@ -1,4 +1,21 @@
-# Renderer QA release gate
+# Atlas development rules
+
+- Reuse existing state, handlers, persistence and rendering systems. Additional controls must operate on the same underlying settings; avoid parallel implementations.
+- Preserve authored level content, assets, coordinates, IDs and existing drafts unless the task intentionally changes them. Keep unrelated changes out of the diff.
+- Run regression checks relevant to the affected behavior; preserve desktop and iPad layout/input support. Do not weaken assertions or hide failures to obtain a pass.
+- Use the canonical documents below for current contracts. Older task briefs, investigations and release reports are historical/reference material, not additional execution instructions. Current source and tests resolve stale implementation descriptions; update the owning contract when behavior changes.
+
+## Canonical documentation
+
+- [Development workflow and persistence](Docs/DEV_TOOLS.md)
+- [Level schema and interactions](Docs/LEVEL_CONTRACT.md)
+- [Learning-content rules](Docs/ATLAS_LEARNING_CONTENT_RULES.md)
+- [Editor and effects](Docs/EDITOR_AND_EFFECTS.md)
+- [Rendering modes, resources and lifecycle](Docs/renderer-current-spec.md)
+
+## Conditional renderer QA gate
+
+Apply this gate when a change affects the renderer/resource behavior below, including changes through shared code or 3D assets. Documentation-only work and unrelated UI/content changes do not require the 3D suite; they require their relevant checks.
 
 Changes affecting 3D renderer presets, dimensions, DPR, MSAA, render targets,
 shadows, volumetrics, GTAO, bloom, texture uploads, GPU resource lifetime or

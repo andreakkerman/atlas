@@ -1,0 +1,71 @@
+
+Running 3 tests using 1 worker
+
+(node:32988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:571:3 › SvenAdventure › loads the adventure (5.5s)
+(node:36824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:660:3 › SvenAdventure › auto-rotates only the hero while keeping adventure tiles stable (10.8s)
+  x  3 [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:718:3 › SvenAdventure › companion portrait space does not advertise dialogue clickability (1.7s)
+
+
+  1) [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:571:3 › SvenAdventure › loads the adventure 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('.supportingAdventureGrid').getByText('8 plaatsen · 24 opdrachten', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.supportingAdventureGrid').getByText('8 plaatsen · 24 opdrachten', { exact: true })[22m
+
+
+      594 |     await expect(page.locator(".supportingAdventureGrid").getByText("5 plaatsen · 15 opdrachten", { exact: true })).toBeVisible();
+      595 |     await expect(page.locator('[data-menu-tile="LVL-0021"] .levelBadge')).toContainText(/6 plaatsen · \d+ opdrachten/);
+    > 596 |     await expect(page.locator(".supportingAdventureGrid").getByText("8 plaatsen · 24 opdrachten", { exact: true })).toBeVisible();
+          |                                                                                                                     ^
+      597 |     await expect(page.getByRole("button", { name: /De Tempelzaal/ })).toHaveCount(0);
+      598 |     await expect(page.getByRole("button", { name: /De Vikinghaven/ })).toHaveCount(0);
+      599 |     await expect(page.getByRole("button", { name: /Aan boord/ })).toHaveCount(0);
+        at D:\DevProjects\SvenAdventure\output\character-baseline\tests\runenpoort.spec.js:596:117
+
+    Error Context: output\character-baseline\results\runenpoort-SvenAdventure-loads-the-adventure-desktop-chromium\error-context.md
+
+  2) [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:718:3 › SvenAdventure › companion portrait space does not advertise dialogue clickability 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 1[39m
+
+    [2m  Object {[22m
+    [2m    "barCursor": "default",[22m
+    [2m    "portraitsCursor": "default",[22m
+    [2m    "portraitsPointerEvents": "auto",[22m
+    [32m-   "speechCursor": "pointer",[39m
+    [31m+   "speechCursor": "default",[39m
+    [2m  }[22m
+
+      729 |       };
+      730 |     });
+    > 731 |     expect(cursorState).toEqual({
+          |                         ^
+      732 |       portraitsCursor: "default",
+      733 |       portraitsPointerEvents: "auto",
+      734 |       speechCursor: "pointer",
+        at D:\DevProjects\SvenAdventure\output\character-baseline\tests\runenpoort.spec.js:731:25
+
+    Error Context: output\character-baseline\results\runenpoort-SvenAdventure-c-79612-rtise-dialogue-clickability-desktop-chromium\error-context.md
+
+  2 failed
+    [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:571:3 › SvenAdventure › loads the adventure 
+    [desktop-chromium] › output\character-baseline\tests\runenpoort.spec.js:718:3 › SvenAdventure › companion portrait space does not advertise dialogue clickability 
+  1 passed (19.5s)

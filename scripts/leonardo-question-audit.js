@@ -3,7 +3,7 @@ const path = require("path");
 const vm = require("vm");
 
 const rootDir = path.resolve(__dirname, "..");
-const docsDir = path.join(rootDir, "Docs");
+const reportsDir = path.join(rootDir, "reports", "learning");
 const levelIds = ["LVL-0021", "LVL-0022", "LVL-0023", "LVL-0024", "LVL-0025", "LVL-0026"];
 const multiplicationSign = "×";
 const divisionSign = ":";
@@ -384,7 +384,7 @@ function writeQuestionAudit(rows) {
   const lines = [
     "# Atlas Leonardo Question Audit",
     "",
-    "Review-only export of authored non-clock variants from `LVL-0021` through `LVL-0026`, checked against `ATLAS_LEARNING_CONTENT_RULES.md`.",
+    "Review-only export of authored non-clock variants from `LVL-0021` through `LVL-0026`, checked against [Learning Content Rules](../../Docs/ATLAS_LEARNING_CONTENT_RULES.md).",
     "",
     "## Summary",
     "",
@@ -463,7 +463,7 @@ function writeQuestionAudit(rows) {
     })
   ];
 
-  fs.writeFileSync(path.join(docsDir, "ATLAS_LEONARDO_QUESTION_AUDIT.md"), lines.join("\n"), "utf8");
+  fs.writeFileSync(path.join(reportsDir, "ATLAS_LEONARDO_QUESTION_AUDIT.md"), lines.join("\n"), "utf8");
 }
 
 function writeClockAudit(rows) {
@@ -501,7 +501,7 @@ function writeClockAudit(rows) {
   const lines = [
     "# Atlas Leonardo Clock Question Audit",
     "",
-    "Review-only export of authored clock variants from `LVL-0021` through `LVL-0026`, following the format of `ATLAS_CLOCK_QUESTION_AUDIT.md`.",
+    "Review-only export of authored clock variants from `LVL-0021` through `LVL-0026`, following the historical [clock audit format](../../Docs/archive/learning-reviews/ATLAS_CLOCK_QUESTION_AUDIT.md).",
     "",
     "## Summary",
     "",
@@ -599,7 +599,7 @@ function writeClockAudit(rows) {
       ];
     })
   ];
-  fs.writeFileSync(path.join(docsDir, "ATLAS_LEONARDO_CLOCK_QUESTION_AUDIT.md"), lines.join("\n"), "utf8");
+  fs.writeFileSync(path.join(reportsDir, "ATLAS_LEONARDO_CLOCK_QUESTION_AUDIT.md"), lines.join("\n"), "utf8");
 }
 
 function writeCsv(rows) {
@@ -638,10 +638,11 @@ function writeCsv(rows) {
       [...row.flags, ...row.clockFlags].join("; ")
     ].map(csvCell).join(","));
   }
-  fs.writeFileSync(path.join(docsDir, "ATLAS_LEONARDO_QUESTION_VARIANTS.csv"), lines.join("\n"), "utf8");
+  fs.writeFileSync(path.join(reportsDir, "ATLAS_LEONARDO_QUESTION_VARIANTS.csv"), lines.join("\n"), "utf8");
 }
 
 function main() {
+  fs.mkdirSync(reportsDir, { recursive: true });
   const rows = collectRows();
   writeQuestionAudit(rows);
   writeClockAudit(rows);

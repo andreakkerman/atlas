@@ -17,4 +17,5 @@ for(const n of before.g.nodes.filter(n=>n.extras?.curatedSource)){
 }
 const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
 const report={unchangedNodes:after.g.nodes.length,unchangedFoliage:foliage,unchangedMaterials:after.g.materials.length,unchangedImages:after.g.images.length,accessorsUnchanged:true,realHash:hash('Levels/LVL-0001/3d/real-3d.glb'),routeHash:hash('Levels/LVL-0001/3d/route.json')};
-fs.writeFileSync('Docs/atlas-cohesion-integrity.json',JSON.stringify(report,null,2));console.log(report);
+fs.mkdirSync('reports/renderer',{recursive:true});
+fs.writeFileSync('reports/renderer/atlas-cohesion-integrity.json',JSON.stringify(report,null,2));console.log(report);

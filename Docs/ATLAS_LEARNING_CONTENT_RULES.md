@@ -8,6 +8,8 @@ Atlas is an adventure-first browser game for Sven. Learning content should suppo
 
 Runtime content is authored ahead of time. Atlas does not use runtime AI or a runtime question generator.
 
+This is the canonical learning-content document. [Level Contract](LEVEL_CONTRACT.md) owns schema/linkage and active challenges; [Dev Tools](DEV_TOOLS.md) owns validation workflow; [Editor and Effects](EDITOR_AND_EFFECTS.md) owns editing. Unless explicitly labeled below, language, difficulty and distribution rules are authoring guidance, not runtime rejection rules.
+
 ## Target learner
 
 * Dutch child, age 8–9
@@ -38,7 +40,7 @@ Sven should not see:
 
 ## Challenge structure
 
-Each Europe challenge object has:
+Each authored `learningChallenges` entry (including Europe content) has:
 
 * 4 question slots
 * 2 authored variants per question slot
@@ -47,7 +49,11 @@ The 4 question slots are not variants.
 Each slot represents a required question position inside the challenge.
 Each slot may randomly select one authored variant when the question starts.
 
-The selected variant must remain stable until that question is completed. It must not change after a wrong answer, hint, explanation, rerender, or assisted completion.
+The selected variant remains stable for the current question. Wrong answers, hints and rerenders do not reselect it; assisted completion resolves that same selected variant before advancing.
+
+The restrictions on companions acting as teachers apply to ambient/narrative `companionMoments`. Authored `hintMinnie` and `hintMoose` learning hints intentionally may explain a strategy or answer. Keep these roles distinct; see [Companion Authoring Guide](COMPANION_AUTHORING_GUIDE.md).
+
+The player-facing principles above do not prohibit the existing separate Voortgang/session report or developer previews. Keep internal metadata out of the ordinary challenge presentation.
 
 ## Content mix for non-clock questions
 
@@ -287,16 +293,24 @@ Een kaartje kost 4 euro. Sven koopt 5 kaartjes. Hoeveel euro betaalt hij?
 De route is 72 meter lang. Sven verdeelt hem in 8 gelijke stukken. Hoeveel meter is elk stuk?
 ```
 
-## Validation expectations
+## Enforcement boundaries
 
-Validation/reporting should be able to check:
+### Runtime behavior
 
-* 4 question slots per Europe challenge
-* 2 variants per question slot
-* required authored fields
-* multiple choice includes correct answer
-* no duplicate choices
-* valid clock visuals
-* no digital notation in clock choices
-* capitalized textual clock choices
-* no forbidden filler or rune wording in Europe levels
+The existing [challenge runtime](../src/app.js) selects an authored variant for the current question and reuses it through attempts/hints/redraws. It handles open versus multiple-choice answers and renders SVG clocks from authored hour/minute data. Active-state filtering, completion and exit readiness use the shared rules in [Level Contract](LEVEL_CONTRACT.md#active-challenges-and-progression). The runtime does not rebalance content percentages or rewrite language to meet guidance.
+
+### Authoring validation
+
+[`scripts/validate-levels.js`](../scripts/validate-levels.js) checks authored challenge data before release; these checks are not a claim that the browser performs the same complete schema validation on load:
+
+- Exactly four slots per authored challenge and two variants per slot, unique slot/variant IDs within the challenge, required fields and valid anchor/character references.
+- `domain: "math"`, `schoolBand: "E5-intended"`, supported presentation/answer modes, and finite numeric or nonempty string answers.
+- Multiple-choice sets with at least two options, the exact answer included, and no case-insensitive duplicate choices.
+- Clock visuals with integer hour 1-12 and minute 0-59, multiple-choice mode, and capitalized string answers/choices. The validator explicitly rejects digital notation in the clock answer; editorial review must also check every choice and the actual Dutch wording.
+- Optional boolean challenge `active` and Europe-specific forbidden rune/filler wording.
+
+The validator does not establish arithmetic/story plausibility, exact Dutch time-language correctness, scene relevance, percentage targets or the 60% preferred-table mix. Check those through content review and targeted audits. Four-choice clock examples and historical review totals are not universal runtime schema requirements.
+
+### Review and regression evidence
+
+Verify the intended content mix, one-step wording, correct arithmetic, plausible distractors, source-independent clock reading and useful hints. Test stable variants, active-state progression, answer handling and actual SVG output with relevant existing browser tests. Generated question audit documents are snapshots, not additional rules; regenerate only deliberately because their script writes reports.

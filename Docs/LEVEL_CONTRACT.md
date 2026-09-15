@@ -1,480 +1,89 @@
-# Level Contract
+# Atlas level contract
 
-This document defines the current playable level contract for SvenAdventure.
+This is the current level-data and interaction contract. Implementation authorities are [the validator](../scripts/validate-levels.js), [runtime normalization and progression](../src/app.js), [world configuration](../src/atlas-world.js), and the existing level definitions. This document describes supported data, not a future metadata compiler.
 
-It describes the runtime-facing format used by `level.js`. The future generated metadata format is defined in `LEVEL_METADATA.md`.
-
-## Core Rule
-
-The background image pixel coordinate system is the single source of truth.
-
-These all use the same coordinates:
-
-* world dimensions
-* Sven position
-* camera
-* interactive object centers
-* object radii
-* sparse walk path
-* approach nodes
-* challenge anchors
-* solved glows
-* debug overlay
-
-Do not mix world pixels with viewport percentages, CSS percentages, screenshot coordinates, cropped-image coordinates, or prompt dimensions.
-
-## Folder Structure
-
-Each level lives in its own folder:
+Learning authoring belongs to [Learning Content Rules](ATLAS_LEARNING_CONTENT_RULES.md); editing/persistence to [Dev Tools](DEV_TOOLS.md); optional visual tooling to [Editor and Effects](EDITOR_AND_EFFECTS.md); rendering policy to [Renderer Specification](renderer-current-spec.md).
 
-```text
-Levels/
-  manifest.js
-  LVL-0001/
-    level.js
-    assets/
-      level-1-wide-world.png
-      ...
-```
-
-Level-specific files belong inside the level folder.
-
-Shared runtime files and Sven character assets do not belong inside level folders.
-
-## Manifest Entry
+## Registration and ownership
 
-`Levels/manifest.js` lists available levels.
-
-Example:
-
-```js
-window.SVEN_LEVEL_MANIFEST = {
-  levels: [
-    {
-      id: "LVL-0001",
-      title: "Sven en de Runenpoort",
-      subtitle: "Een Vikingtempel vol runen en keersommen.",
-      script: "Levels/LVL-0001/level.js",
-      menu: {
-        illustration: "Levels/LVL-0001/assets/level-1-wide-world.png",
-        badge: "Eerste avontuur",
-        detail: "Bos, tempel en drie magische runen"
-      }
-    }
-  ]
-};
-```
-
-Required manifest fields:
+`Levels/manifest.js` registers entries with `id`, `title`, `script` and menu information. Entries may be connected/hidden from the main menu; developer-only fixtures are not ordinary adventure entries. Each level script registers its definition in `window.SVEN_LEVEL_DEFINITIONS[id]`. IDs must agree with the manifest. Load level scripts through the existing loader rather than copying definitions into runtime code.
 
-* `id`
-* `title`
-* `script`
-* `menu.illustration`
-
-The `script` path must point to the level definition.
-
-## Level Definition
-
-A level script registers itself on `window.SVEN_LEVEL_DEFINITIONS`.
-
-Example:
-
-```js
-window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
-
-window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
-  id: "LVL-0001",
-  title: "Sven en de Runenpoort",
-  description: "Sven opent een Vikingpoort met magische runen."
-};
-```
-
-Required top-level fields:
-
-* `id`
-* `title`
-* `description`
-* `storageKey`
-* `progressKey`
-* `menu`
-* `companion`
-* `world`
-* `challengeArt`
-* `player`
-* `interactiveObjects`
-* `walkPath`
-* `intro`
-* `spiritName`
-* `spiritLines`
-* `areas`
-* `hotspots`
-* `runes`
-* `reward`
+`Levels/LVL-xxxx/level.js` owns authored level content. `Levels/world-config.js` owns adventure ordering/visibility and level presentation/tuning overrides through the shared resolver. Shared characters, ambient libraries and audio configuration live outside individual levels. Normal gameplay does not write these source files.
 
-`walkGraph` may exist at runtime after derivation, but future authored levels should prefer `walkPath`.
+## Definition structure
 
-Optional procedural enhancement fields:
+| Fields | Current role |
+| --- | --- |
+| `id`, `title`, `description`, `storageKey`, `progressKey` | Identity, display and local gameplay/learning storage keys; validated nonempty strings. |
+| `subtitle`, `menu` | Additional presentation, alongside manifest menu metadata. |
+| `world` | Measured `width`, `height`, `background`; optional `aspectRatio` and artwork-sized `depthmap`. |
+| `player` | `startNode` and world-pixel `start`; start coordinates must match the authored start node. |
+| `walkPath` or `walkGraph` | Authored route or legacy explicit graph; do not author both. |
+| `interactiveObjects` | Nonempty object registry: unique `id`, `type`, `label`, `center`, positive `radius`, valid `approachNode`. |
+| `hotspots`, `runes` | Interaction bindings to object IDs; runes remain the compatibility/progression container for challenge objects, including non-rune stories. |
+| `learningChallenges` | Optional authored challenge registry linked from runes; preferred for authored learning content. |
+| `challengeCharacter`, `guides` | Challenge presentation identity and guide configuration where used. |
+| `companion`, `challengeArt`, `spiritName`, `spiritLines` | Existing compatibility/presentation fields; these are still validated, not permission to remove them. `spiritLines` requires welcome/moving/allRunes/reward strings. |
+| `intro`, `areas`, `reward` | Nonempty introduction and area arrays; reward requires title, line and art. |
+| `levelSemantics`, `companionMoments` | Authored narrative context and event-driven companion dialogue. |
+| `ambientAnimals`, `ambientFlybys`, `sceneEffects`, `sceneEffectGroups` | Optional reusable systems; omission must remain supported. |
 
-* `sceneEffects`
-* `sceneEffectGroups`
+A hotspot has `id`, `objectId`, `type`, `name`, and `defaultAction`. A rune has `id`, `objectId`, `name`, `defaultAction`, `intro`, and `solved`, plus its challenge binding. References must resolve within the owning level. Asset paths are repository-relative; level artwork belongs with that level, shared libraries in `assets/`.
 
-Levels that omit these fields retain their previous runtime behavior. See
-`ATLAS_SCENE_EFFECTS_IMPLEMENTATION.md` for the versioned preset, source
-geometry, optional visibility-mask, grouping and semantic-layer contract.
+Keep source data distinct from runtime normalization: the app derives a graph and applies world-setting overrides in memory. Do not persist that derived graph alongside its source path. General editor Apply also synchronizes player start and legacy interaction geometry; effect-only Apply preserves unrelated source sections.
 
-## World
+## Coordinates, path and interaction geometry
 
-The world is defined by one background image.
+The painted background's actual pixel dimensions define the 2D coordinate system. Measure the image; do not infer dimensions from a screenshot, viewport or historical level. A replacement image with different coordinates needs intentional reauthoring, not silently reused hit geometry. Depth maps must match the artwork dimensions.
 
-Required structure:
+Use world coordinates for player feet, path points, object centers, approach positions and editor overlays. Convert pointer coordinates through the shared camera/world scale once. Keep x/y scaling uniform so circular interaction regions remain circles on desktop and iPad. CSS viewport coordinates and 3D world units are not interchangeable with artwork pixels.
 
-```js
-world: {
-  width: 2172,
-  height: 724,
-  aspectRatio: 3,
-  viewportWidth: 1000,
-  background: "Levels/LVL-0001/assets/level-1-wide-world.png"
-}
-```
+`walkPath` accepts an ordered point array, or the supported `{ main: [...] }` form. Normalization accepts point objects and legacy coordinate pairs; new authored points should have stable IDs with x/y. The runtime densifies the sparse path into a connected movement graph. Author only meaningful bends and interaction/start locations, on visible walkable ground. Do not add dense hand-maintained samples merely to imitate the runtime graph.
 
-Rules:
+Explicit legacy `walkGraph` definitions contain nodes and `[fromId, toId]` edges. Nodes must be unique and references valid. A path/graph must contain a traversable route. Player start and all object approach nodes must resolve into it.
 
-* `world.background` must exist.
-* `world.width` must equal the actual image width in pixels.
-* `world.height` must equal the actual image height in pixels.
-* `aspectRatio` should match `width / height`.
-* All world coordinates use this image pixel coordinate system.
+An object's `center` marks the painted interactive feature; `radius` defines its circular interaction region. Its `approachNode` is where Sven stands to act. They are separate concepts: never move the feature center to Sven's feet to repair an approach. Hotspots/runes reference this shared object geometry instead of maintaining independent hit areas. Keep click, hover/focus, solved indicators and editor guides aligned to the same data.
 
-Do not use prompt dimensions, intended dimensions, CSS dimensions, or screenshot dimensions as world dimensions.
+Ordinary 2D interaction follows **Move To -> Arrive -> Action**. Preserve contextual actions, path constraints and pending-action cancellation. Editor actions consume input without initiating walking. Renderer-specific presentation must reuse the same challenge/progression state.
 
-## interactiveObjects
+## Authored learning challenges
 
-`interactiveObjects` is the authoritative registry for every object Sven can interact with in the world.
+An authored challenge contains `id`, `anchorId`, `challengeCharacterId`, optional boolean `active`, and `questions`. `anchorId` resolves to an interactive object; the validator requires `challengeCharacterId` to match the level's challenge character ID. Additional presentation/prerequisite settings use existing runtime fields rather than a new challenge engine.
 
-Required structure:
+Each authored challenge has exactly four question slots, each with an `id` and exactly two `variants`. Slot IDs are unique within a challenge; variant IDs are unique across that challenge. IDs can recur in different levels: audits and edits must use the level/challenge context, not a global variant-ID lookup.
 
-```js
-{
-  id: "zon",
-  type: "rune",
-  center: { x: 1384, y: 160 },
-  radius: 46,
-  approachNode: "sun-rune-approach",
-  label: "Zonrune"
-}
-```
+Each variant provides `id`, `domain: "math"`, `schoolBand: "E5-intended"`, `family`, `presentation` (`bare` or `story`), `answerMode` (`open` or `multipleChoice`), `prompt`, `answer`, `hintMinnie`, `hintMoose`, and `explanation`. Optional `visual` currently supports `{ type: "clock", hour, minute }`. Multiple choice must include the exact answer and nonduplicate choices. See the learning contract for validation details and editorial guidance.
 
-Required fields:
+A rune may reference a single `challengeId`, or the supported `challengeIds` list, whose anchors must match its `objectId`. Legacy `rune.questions` with a/b multiplication pairs remain supported when no authored binding exists. Do not convert legacy content incidentally during another task.
 
-* `id`
-* `type`
-* `center.x`
-* `center.y`
-* `radius`
-* `approachNode`
-* `label`
+Variant selection is retained for the question attempt; wrong answers, hints and UI redraws must not choose a new variant. Persist completion/learning evidence through the existing storage handlers, not through editor drafts.
 
-Rules:
+## Active challenges and progression
 
-* `id` must be unique.
-* `center.x` and `center.y` must be inside world bounds.
-* `radius` must be greater than zero.
-* `approachNode` must reference a valid walk path point or derived walk graph node.
-* The rendered click area must be a true circle.
+Omitted `active` means active; only explicit `false` disables an authored challenge. A rune with one binding follows that challenge; a multi-binding rune is active if any linked challenge is active. Legacy runes remain active.
 
-The object center drives:
+Inactive challenges remain authored and editable, but do not appear as playable challenge targets/cues or contribute to active menu counts and required progression. Do not delete their variants or pretend they were solved. Existing completion records must not bypass a changed active set.
 
-* click circle
-* hover circle
-* focus circle
-* solved glow
-* challenge anchor
-* label anchor
+Exit readiness uses the existing active-rune calculation. If any active rune's selected challenge explicitly sets `unlocksLevelProgression: true`, all such runes must be completed; otherwise all active runes are required. Prerequisite locking and renderer cues project this state rather than implementing a separate completion rule. See [active challenge regressions](../tests/challenge-active.spec.js).
 
-No other coordinate may be introduced for these visuals.
+## Characters and shared asset discovery
 
-## Object Center Versus Approach Node
+[Sven locomotion](../src/locomotion.js) owns Sven's animation configuration and `frame_001.png`-style numbered paths. Do not impose the obsolete `idle-right/frame-01.png`, fixed 360x440 canvas, or fixed frame-count intake on the current system.
 
-Object center and approach node are different concepts.
+[Character manifest generation](../scripts/generate-character-manifest.js) scans character directories. A discoverable NPC needs `portrait.png` and nonempty `idle` frames. It discovers numbered `idle_animation_N` folders in numeric order and optional `idle_to_pass`; supported images are PNG/JPEG/WebP, numerically sorted and content-versioned. The generated [manifest](../assets/characters/manifest.js) is not hand-maintained. Missing optional animations use existing runtime fallbacks.
 
-Object center answers:
+The character editor assigns discovered assets through existing NPC/challenge data. Preserve separation between challenge identity, selected character art and Minnie/Moose narrative roles. General/Visual controls reuse [shared appearance definitions](../src/character-appearance.js); do not fork settings by renderer. Keep anchor positions and animation-frame readiness stable during appearance changes.
 
-```text
-Where does this object exist in the artwork?
-```
+## Optional systems and renderer integration
 
-Approach node answers:
+Ambient instances reuse central asset libraries; configured instances may share assets. Effects use versioned preset IDs plus authored geometry/overrides. Audio is shared configuration rather than a second per-level playback engine. Narrative moments use authored event records; [Companion Guide](COMPANION_AUTHORING_GUIDE.md) owns dialogue tone and allowed events.
 
-```text
-Where can Sven believably stand to interact with it?
-```
+Ambient animals carry unique instance IDs, type/optional label, world x/y, positive scale, open/closed frame paths, sound and blink/cooldown settings. Appearance/mirroring fields use the existing normalizers. Flybys carry unique instance IDs, frameA/frameB, optional sound, path points, scale, speed, flap frequency, facing/mirroring, interval bounds and optional `syncKey`/`startDelayMs`; supported motion-profile controls extend that same instance. Their off-world path points are intentional, unlike ordinary walking-path points. The dev server validates these payloads; do not assume the level CLI duplicates every endpoint check. Effect instance/group schema and geometry are owned by [Editor and Effects](EDITOR_AND_EFFECTS.md#procedural-scene-effects).
 
-These are often not close together.
+Illustrated and Cinematic use the same level coordinates and gameplay. Cinematic may use optional authored depth and lighting settings; it does not own an alternate route. Voxel likewise projects the existing adventure. Real/Atlas 3D use explicitly mapped assets and route data for supported levels; unsupported levels retain Illustrated fallback. Never infer 3D support from the presence of ordinary 2D artwork or persist 3D lane offsets into the 2D path.
 
-Examples:
+## Validation
 
-* A rune high on a temple wall can have a center far above Sven's feet.
-* A rune partly hidden by vegetation should keep its true visual center, while the approach node stays on the visible path.
-* A gate can have a center on the door symbol, while the approach node sits on a step.
+Run `npm.cmd run validate:levels` for schema/reference/asset checks after intentional content changes, then applicable audit/report and browser tests described in [Dev Tools](DEV_TOOLS.md). Structural validation is not proof of narrative quality, accurate artistic placement or full runtime behavior. Preserve existing authored content in editor regression fixtures and inspect the final diff.
 
-Do not move object centers to fix movement. Fix the approach node or path instead.
-
-## Object Types
-
-Common object types:
-
-* `rune`: challenge-bearing magical object
-* `object`: inspectable clue or story object
-* `gate`: progression or reward object
-* `talk`: character visible inside the world
-* `inspect`: optional detail object
-
-Use `talk` objects only when the character is visibly present in the world. If a character exists only as a companion overlay, do not create an in-world object.
-
-## Radius
-
-`radius` controls the circular interaction area in world pixels.
-
-Guidelines:
-
-* small object: `30-45`
-* normal rune: `45-70`
-* large door or gate: `80-120`
-
-The circle should be large enough for touch but not so large that it covers unrelated art.
-
-All circles must remain true circles across desktop, iPad landscape, and iPad portrait.
-
-## walkPath
-
-`walkPath` is the preferred authored movement source.
-
-It should be sparse and readable. It expresses path intent, not all execution detail.
-
-Example:
-
-```js
-walkPath: [
-  { id: "forest-start", x: 170, y: 626 },
-  { id: "forest-rune-approach", x: 285, y: 628, role: "approach" },
-  { id: "center-trail", x: 590, y: 634 },
-  { id: "lower-trail", x: 940, y: 628 },
-  { id: "trail-rise-2", x: 1151, y: 569 },
-  { id: "trail-top", x: 1235, y: 518 },
-  { id: "sun-rune-approach", x: 1308, y: 547, role: "approach" }
-]
-```
-
-Required fields per point:
-
-* `id`
-* `x`
-* `y`
-
-Optional fields:
-
-* `role`
-
-Rules:
-
-* point ids must be unique
-* coordinates must be inside world bounds
-* points should sit where Sven's feet belong
-* the path should follow visible walkable ground
-* curves need enough points to express intent
-* stairs need enough points to express elevation changes
-* approach points may be part of the path
-
-Bad path data:
-
-* floats above the painted path
-* cuts through rocks, plants, walls, or doors
-* uses too many execution-detail points
-* uses too few points for stairs or sharp elevation changes
-* treats object center as Sven's standing position
-
-## Derived walkGraph
-
-The runtime derives a denser `walkGraph` from `walkPath`.
-
-The derived graph supports:
-
-* free click projection
-* route calculation
-* smooth walking
-* debug overlay review
-
-Generated levels should not manually over-author graph detail unless there is a specific runtime need.
-
-## Player
-
-Required structure:
-
-```js
-player: {
-  start: { x: 210, y: 610 }
-}
-```
-
-Rules:
-
-* start coordinates must be inside world bounds
-* start should sit on or near the walk path
-* start should place Sven's feet on believable ground
-
-## Hotspots
-
-Hotspots define non-rune contextual interactions.
-
-Example:
-
-```js
-{
-  id: "forestRune",
-  objectId: "forestRune",
-  type: "object",
-  name: "Bosrune",
-  defaultAction: "look",
-  look: "Een oude steen. Hij wijst naar de tempel."
-}
-```
-
-Required fields:
-
-* `id`
-* `objectId`
-* `type`
-* `name`
-* `defaultAction`
-
-Rules:
-
-* `objectId` must reference a valid `interactiveObjects` entry.
-* Object placement must not be duplicated on the hotspot.
-* The hotspot uses the referenced object's center and approach node.
-
-## Runes And Challenges
-
-Runes are challenge-bearing interactive objects.
-
-Example:
-
-```js
-{
-  id: "zon",
-  objectId: "zon",
-  name: "Zonrune",
-  shortName: "Zon",
-  defaultAction: "activate",
-  intro: "De Zonrune voelt warm aan.",
-  solved: "Goed zo! De Zonrune gloeit.",
-  questions: [
-    { a: 3, b: 4 }
-  ]
-}
-```
-
-Required fields:
-
-* `id`
-* `objectId`
-* `name`
-* `defaultAction`
-* `intro`
-* `solved`
-* `questions`
-
-Rules:
-
-* `objectId` must reference a valid `interactiveObjects` entry.
-* `interactiveObjects[objectId].type` should be `rune`.
-* Each question must include positive numbers `a` and `b`.
-* The challenge anchor must use the interactive object's center.
-* Solved visuals must use the same interactive object's center.
-* No separate challenge or solved coordinates are allowed.
-
-## Companion Text
-
-The companion helps Sven understand what to do.
-
-Required structure:
-
-```js
-companion: {
-  name: "Runewachter",
-  portrait: "Levels/LVL-0001/assets/viking-spirit.png"
-}
-```
-
-`spiritLines` should include:
-
-* `welcome`
-* `moving`
-* `allRunes`
-* `reward`
-
-Text rules:
-
-* Dutch only
-* short sentences
-* clear guidance
-* suitable for an 8-9 year old child
-
-## Completion State
-
-Required structure:
-
-```js
-reward: {
-  title: "De poort gaat open!",
-  badge: "Bewaker van de Runenpoort",
-  line: "Sven reisde door het bos en opende de oude Vikingpoort.",
-  art: "Levels/LVL-0001/assets/reward.png"
-}
-```
-
-Rules:
-
-* reward art must exist
-* completion must write to `storageKey`
-* multiplication progress must write to `progressKey`
-* reward should feel like an adventure outcome, not a score page
-
-## Asset Rules
-
-Level-specific assets must stay inside the level folder.
-
-Examples:
-
-* world background
-* level menu illustration
-* companion portrait
-* reward art
-* level-specific puzzle art
-
-Shared Sven assets must stay outside level folders.
-
-Examples:
-
-* `assets/characters/sven/idle-right/frame-01.png`
-* `assets/characters/sven/walk-right/frame-01.png`
-* `assets/characters/sven/interact-right/frame-01.png`
-
-## Invariants
-
-These rules must always be true:
-
-* actual image dimensions equal declared world dimensions
-* all world object coordinates are image pixel coordinates
-* no viewport-relative coordinates are stored in level data
-* every interactive object has one center and one radius
-* click circle, hover circle, solved glow, challenge anchor, and label anchor derive from the same center
-* every approach node represents where Sven can stand, not where the object is
-* every challenge references a valid interactive object
-* every approach node references a valid path point or derived graph node
-* every authored walk path point is inside world bounds
-* derived graph detail comes from authored sparse path intent
-* level assets are local and inside the level folder
-* shared Sven assets are not copied into level folders
+`challengeArt`, `companion.portrait` and `challengeCharacter.portrait` accept existing level-local files or the portrait of a shared character recognized by the same discovery function used to generate the NPC manifest. Shared characters must have their portrait and discoverable idle frames; arbitrary library files, missing files and directories are not valid portrait references. The validator checks current assets rather than trusting a stale generated manifest. World backgrounds, menu illustrations and reward artwork retain their level-local checks. See [shared character asset regressions](../tests/level-character-assets.spec.js).

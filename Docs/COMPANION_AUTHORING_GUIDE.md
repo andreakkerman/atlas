@@ -1,6 +1,8 @@
 # Companion Authoring Guide
 
-SvenAdventure companion dialogue is authored by Codex before runtime. The game engine is not a writer, tutor, or AI system.
+Atlas ambient/narrative companion dialogue is authored before runtime. The game engine does not generate it.
+
+This guide covers `companionMoments`. Minnie/Moose challenge hints (`hintMinnie`, `hintMoose`) may intentionally teach strategies and explain answers; [Learning Content Rules](ATLAS_LEARNING_CONTENT_RULES.md) owns that separate role. [Level Contract](LEVEL_CONTRACT.md) owns schema and references.
 
 Runtime only receives events, queues authored moments, plays moments, and applies interruption rules. It must never generate companion dialogue.
 
@@ -39,10 +41,15 @@ Forbidden companion lines:
 
 ## Allowed Events
 
-Use only these event names:
+The current validator allows these event names:
 
 * `LEVEL_ENTER`
 * `OBJECT_FIRST_LOOK`
+* `AMBIENT_ATTENTION`
+* `AMBIENT_ATTENTION_FIRST`
+* `HOTSPOT_ATTENTION_FIRST`
+* `LEVEL_PROGRESS_MILESTONE`
+* `EXIT_BLOCKED`
 * `CHALLENGE_OPEN`
 * `CHALLENGE_FAIL_1`
 * `CHALLENGE_FAIL_2`
@@ -122,7 +129,7 @@ The runtime:
 
 For each level:
 
-* write 4-6 companion moments
+* write 4-6 companion moments as an editorial target; the validator accepts 4-12
 * include at least one `LEVEL_ENTER`
 * include one completion-oriented moment, usually `PATH_UNLOCKED` or `ADVENTURE_COMPLETE`
 * keep every line short and Dutch

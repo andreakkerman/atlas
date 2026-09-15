@@ -1,4 +1,4 @@
-# SvenAdventure Vision
+# Atlas Vision
 
 ## Mission
 
@@ -7,7 +7,7 @@ SvenAdventure is a personalized educational adventure game for Sven.
 The product goal is simple:
 
 1. Sven wants to play because the adventure is exciting.
-2. Sven practices multiplication because the adventure needs it.
+2. Sven practices math because the adventure needs it, with multiplication automation as the main focus and division, clocks and applied problems for variety.
 
 The game must feel like an adventure first and a learning app second. Multiplication should never feel like a worksheet placed on top of a pretty background.
 
@@ -66,7 +66,7 @@ Traditional command buttons such as `Kijk`, `Praat`, and `Activeer` are intentio
 
 Movement is part of the game design, not just transportation.
 
-The runtime direction is:
+The default painted 2D level direction is:
 
 * one wide world image per level
 * camera-follow movement
@@ -75,7 +75,7 @@ The runtime direction is:
 * object approach nodes
 * Move To -> Arrive -> Action interaction flow
 
-This should remain the default direction for future levels.
+This remains the default authoring direction. Optional Cinematic, Voxel and mapped 3D presentations reuse existing gameplay; [Renderer Specification](renderer-current-spec.md) owns their current behavior.
 
 ## Language And Tone
 
@@ -108,7 +108,7 @@ Multiplication should be tied to progression. A correct answer should help Sven 
 
 ### No Timers
 
-The learning tone should be supportive. Timers, pressure, and punishment are not appropriate for the current product.
+The learning tone should be supportive. Timed learning pressure and punishment are not appropriate for the current product. This does not prohibit animation, carousel or lifecycle timers.
 
 ### Useful Mistakes
 
@@ -177,7 +177,7 @@ Runtime gameplay should be:
 
 Codex should generate, validate, audit, fix, and retest level content as much as possible. The human role is final approval before Sven plays a level or before a level becomes a publish candidate.
 
-The target generated level model is:
+The following is an unimplemented long-term authoring idea, not the current level schema or a required workflow:
 
 ```text
 world.png
@@ -185,7 +185,7 @@ world.png
 world-metadata.json
 ```
 
-The metadata should contain object placement, sparse walk path, approach nodes, challenges, and completion data. Runtime execution details should be derived from that metadata.
+Current levels are registered JavaScript definitions, not compiled from this proposed metadata file. Use [Level Contract](LEVEL_CONTRACT.md), [Learning Content Rules](ATLAS_LEARNING_CONTENT_RULES.md) and [Dev Tools](DEV_TOOLS.md) for current implementation and validation.
 
 ## Technical Direction
 
