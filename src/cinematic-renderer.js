@@ -334,6 +334,7 @@
       put(21,[["tapered","oval","capsule","wideSoft","silhouette"].indexOf(s.characters.shadowShape),radians(s.characters.shadowDirection),s.characters.shadowDarkBackgroundSuppression,s.characters.shadowOpacity/100]);
       put(22,[s.characters.shadowGroundlineOffset,s.characters.shadowScale,0,0]);
       if (!data.every(Number.isFinite)) throw new Error("Invalid cinematic uniforms");
+      // Secondary render-loop diagnostic only; the shared HUD samples gameplay RAF.
       device.queue.writeBuffer(uniform, 0, data); lastTime = timestamp; fps = fps ? fps * 0.95 + 0.05 / Math.max(dt, 0.001) : 1 / dt;
     }
     function bind(pass, source, aux = background, config = {}) {
@@ -520,7 +521,7 @@
       })();
       loading={level:level.id,canvas:nextCanvas,promise}; await promise; if(loading?.promise===promise) loading=null;
     }
-    function stop() { if(raf)cancelAnimationFrame(raf);raf=0; }
+    function stop() { if(raf)cancelAnimationFrame(raf);raf=0;lastTime=0;fps=0;averageMs=0;lastReport=0;report(); }
     function dispose() { generation++;stop();releaseLevel();context?.unconfigure();context=null;canvas=null;levelId=null;status="idle";report(); }
     return { sync, stop, dispose, snapshot, refreshSettings, getSettings: () => contract.clone(settings) };
   }

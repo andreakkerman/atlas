@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v182-editor-route-overlay";
+const CACHE_NAME = "svenadventure-static-v183-gameplay-cadence";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/FXAANode.js",
   "assets/vendor/three/tsl/display/GTAONode.js",
@@ -41,6 +41,7 @@ const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/BloomNode.js",
   "src/atlas-world.js",
   "src/locomotion.js",
+  "src/gameplay-cadence.js",
   "src/app.js",
   "src/audio-config.js",
   "Levels/manifest.js",

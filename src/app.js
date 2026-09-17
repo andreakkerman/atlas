@@ -18,6 +18,47 @@ let fpsDisplayEnabled = false;
 let debugInfoEnabled = new URLSearchParams(location.search).get('debug3d') === '1';
 let fpsDisplayFrame = null;
 
+const gameplayCadence = window.AtlasGameplayCadence.createSampler();
+let fpsNodes = [], fpsContext = null, fpsSample = null;
+function writeFpsDisplay() {
+  const primary = fpsSample ? `${Math.round(fpsSample.fps)} FPS` : '— FPS';
+  const pacing = debugInfoEnabled && fpsSample?.worstMs !== undefined
+    ? ` · missed ${fpsSample.missedPercent.toFixed(0)}% · worst ${fpsSample.worstMs.toFixed(0)} ms` : '';
+  for (const node of fpsNodes) {
+    node.hidden = !fpsDisplayEnabled;
+    node.textContent = primary + pacing;
+  }
+}
+function syncFpsDisplay(forceReset = false) {
+  fpsNodes = [...document.querySelectorAll('[data-fps-display]')];
+  const mode = voxelRenderer.getSettings().renderer;
+  const active = fpsDisplayEnabled && !document.hidden && fpsNodes.length > 0
+    && ['scene', 'challenge', 'correct'].includes(state.screen);
+  if (forceReset || !active || !fpsContext || fpsContext.level !== level || fpsContext.mode !== mode || fpsContext.screen !== state.screen) {
+    if (fpsDisplayFrame !== null) cancelAnimationFrame(fpsDisplayFrame);
+    fpsDisplayFrame = null; gameplayCadence.reset(); fpsSample = null;
+  }
+  fpsContext = active ? { level, mode, screen: state.screen } : null;
+  writeFpsDisplay();
+  if (active && fpsDisplayFrame === null) fpsDisplayFrame = requestAnimationFrame(sampleGameplayFrame);
+}
+function sampleGameplayFrame(now) {
+  fpsDisplayFrame = null;
+  if (!fpsContext || document.hidden || !fpsDisplayEnabled) { syncFpsDisplay(true); return; }
+  const sample = gameplayCadence.frame(now);
+  if (sample) {
+    // Illustrated and Cinematic deliberately share the exact primary metric.
+    // Experimental renderer diagnostics retain their existing HUD semantics.
+    const mode = fpsContext.mode;
+    fpsSample = mode === 'illustrated' || mode === 'cinematic' ? sample
+      : window.AtlasGraphicsModes.isThree(mode)
+        ? (threeStatus.ready && threeStatus.frameSampled ? { fps: threeStatus.fps } : null)
+        : (voxelRendererStatus.status === 'ready' ? { fps: voxelRendererStatus.fps } : null);
+    writeFpsDisplay();
+  }
+  fpsDisplayFrame = requestAnimationFrame(sampleGameplayFrame);
+}
+
 function updateDisplayControls() {
   for (const kind of ['fps', 'debug']) {
     const enabled = kind === 'fps' ? fpsDisplayEnabled : debugInfoEnabled;
@@ -39,29 +80,9 @@ function toggleDisplayControl(kind) {
     }}));
   } else {
     fpsDisplayEnabled = !fpsDisplayEnabled;
-    if (fpsDisplayFrame !== null) cancelAnimationFrame(fpsDisplayFrame);
-    fpsDisplayFrame = null;
-    if (fpsDisplayEnabled) {
-      let start = performance.now(), frames = 0;
-      const tick = now => {
-        if (!fpsDisplayEnabled) return;
-        frames++;
-        if (now - start >= 500) {
-          const mode = voxelRenderer.getSettings().renderer;
-          const value = window.AtlasGraphicsModes.isThree(mode)
-            ? (threeStatus.ready && threeStatus.frameSampled ? threeStatus.fps : null)
-            : mode === 'cinematic' ? (cinematicStatus.ready || cinematicStatus.status === 'ready' ? cinematicStatus.fps : null)
-            : mode === 'voxel' ? (voxelRendererStatus.status === 'ready' ? voxelRendererStatus.fps : null)
-            : frames * 1000 / (now - start);
-          document.querySelectorAll('[data-fps-display]').forEach(node => { node.textContent = `${Number.isFinite(value) ? Math.round(value) : '—'} FPS`; });
-          frames = 0; start = now;
-        }
-        fpsDisplayFrame = requestAnimationFrame(tick);
-      };
-      fpsDisplayFrame = requestAnimationFrame(tick);
-    }
   }
   updateDisplayControls();
+  syncFpsDisplay();
 }
 const LOCAL_ATLAS_CACHE_PREFIX = "svenadventure-";
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
@@ -7480,6 +7501,7 @@ function render() {
   cinematicEditor.updateGuides();
   emissiveGlowRenderer.sync();
   syncPerformanceHud();
+  syncFpsDisplay();
   syncMenuAutoRotation();
   restoreEditorUiState(editorUiState);
 }
@@ -8395,6 +8417,7 @@ window.addEventListener("pagehide", () => threeRenderer.suspend());
 window.addEventListener("pageshow", event => { if(event.persisted)threeRenderer.resume(); });
 
 document.addEventListener("visibilitychange", () => {
+  syncFpsDisplay(true);
   if (document.hidden) {
     stopMenuAutoRotation();
     pauseAmbientAnimalTimers();

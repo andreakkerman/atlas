@@ -108,3 +108,11 @@ Preserve both real-WebGPU tablet cases at 1180x734 and 1180x689, DPR 2, includin
 Require actual GPU-completed preparation, clean shader/native validation, rendered movement, sustained frames and successful cleanup/recovery. Keep resource budgets and assertions; do not skip GPU work, swallow errors or relax timeouts to obtain a pass. Use the true browser DPR when claiming DPR-specific visual evidence.
 
 Chromium's tablet configuration and desktop WebKit navigation are not physical iPad Safari/WebGPU certification. A physical root-cause claim needs the actual failing operation and a regression failing before the fix. Preserve unresolved physical-device gaps explicitly; local FPS, historical pass counts and a synthetic injected error cannot close them.
+
+## Illustrated / Cinematic performance HUD
+
+The existing shared FPS toggle enables one foreground gameplay cadence sampler for both modes: RAF callbacks divided by elapsed foreground wall-clock time over approximately one second. This is main-thread callback cadence, not GPU-completed or physically presented FPS. Intentional effect/sprite rates do not replace it. The compact HUD shows FPS; Debug adds worst interval and estimated missed opportunities.
+
+Pacing uses the faster fifth of observed intervals as the expected cadence, retaining the fastest window baseline until reset. Intervals above 1.5 times that baseline contribute rounded missing opportunities; missed percentage divides those by observed plus missing callbacks. No 60 Hz assumption is used. A consistently slow stream from startup cannot reveal a faster physical display; the estimate describes observed opportunities.
+
+Samples reset on gameplay screen/level identity or mode changes, disable, and visibility changes, showing `— FPS` until a fresh window completes. Ordinary UI remounts retain the measurement and rebind the HUD. Sampling stops outside gameplay or while hidden/disabled. Cinematic's smoothed renderer-loop FPS and CPU statistics remain separate diagnostics and reset when its loop stops. Illustrated subsystem rates are not added to the compact HUD. Experimental Voxel/3D metrics retain their existing semantics.
