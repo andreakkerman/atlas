@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v183-gameplay-cadence";
+const CACHE_NAME = "svenadventure-static-v185-challenge-rune-particles";
 const CORE_ASSETS = [
   "assets/vendor/three/tsl/display/FXAANode.js",
   "assets/vendor/three/tsl/display/GTAONode.js",

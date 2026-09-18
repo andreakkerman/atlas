@@ -1426,7 +1426,7 @@ test.describe("scene effects registry and runtime", () => {
     expect(deterministicRender.alphaPixels).toBeGreaterThan(400);
   });
 
-  test("keeps levels without effects unchanged", async ({ page }) => {
+  test("keeps authored effects empty while providing the challenge cue canvas", async ({ page }) => {
     await page.goto(gameUrl);
     const result = await page.evaluate(async () => {
       // LVL-0005 now has authored effects. Build the empty fixture in memory.
@@ -1439,7 +1439,7 @@ test.describe("scene effects registry and runtime", () => {
         runtimeCount: window.eval("sceneEffectRuntime.resolved.length")
       };
     });
-    expect(result).toEqual({ sceneEffects: undefined, canvases: 0, runtimeCount: 0 });
+    expect(result).toEqual({ sceneEffects: undefined, canvases: 1, runtimeCount: 0 });
   });
 
   test("resolves groups, deterministic seeds, geometry cutouts and quality scaling", async ({ page }) => {
@@ -1583,7 +1583,7 @@ test.describe("scene effects registry and runtime", () => {
         canvases: document.querySelectorAll("[data-scene-effects-canvas]").length
       };
     });
-    expect(cleaned).toEqual({ paused: null, count: 0, canvases: 0 });
+    expect(cleaned).toEqual({ paused: null, count: 0, canvases: 1 });
   });
 
   test("shows the lightweight performance HUD only for editor and perf query modes", async ({ page }) => {

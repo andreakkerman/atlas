@@ -1004,35 +1004,38 @@
     drawWithFeatheredMask(ctx, resolved, paint);
   }
 
-  function drawGlow(ctx, resolved, time) {
-    const geometry = resolved.geometry;
-    const bounds = geometryBounds(geometry);
-    const center = { x: geometry.x ?? bounds.x + bounds.width / 2, y: geometry.y ?? bounds.y + bounds.height / 2 };
-    const radius = Math.max(25, geometry.radius || Math.max(bounds.width, bounds.height) / 2) * resolved.size * (0.84 + resolved.softness * 0.12);
-    const pulse = 1 + Math.sin(time * resolved.pulseRate * Math.PI * 2 + hash(resolved.instance.seed) * 6.28) * resolved.pulseAmount;
-    const flicker = 1 + Math.sin(time * 11.7 + hash(resolved.instance.seed, 3) * 8) * resolved.flickerAmount * 0.35;
-    const coreColor = resolved.preset.id === "light-source-enhancement"
-      ? mixColor(resolved.primaryColor, "#FF9F43", resolved.warmth * 0.24)
-      : resolved.primaryColor;
-    const gradient = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, radius * pulse);
-    gradient.addColorStop(0, rgba(coreColor, resolved.opacity * resolved.intensity * 1.0 * flicker));
-    gradient.addColorStop(clamp(0.1 + resolved.softness * 0.07, 0.1, 0.28), rgba(resolved.secondaryColor, resolved.opacity * resolved.intensity * 0.58));
-    gradient.addColorStop(clamp(0.42 + resolved.softness * 0.1, 0.42, 0.7), rgba(resolved.glowColor, resolved.opacity * resolved.glow * 0.32));
-    gradient.addColorStop(1, rgba(resolved.glowColor, 0));
+  function drawGlow(ctx, resolved, time, particlesOnly = false) {
     ctx.globalCompositeOperation = resolved.blendMode || resolved.preset.blendMode;
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, radius * pulse, 0, Math.PI * 2);
-    ctx.fill();
-    const coreRadius = Math.max(5, radius * (resolved.preset.id === "light-source-enhancement" ? 0.12 : 0.09));
-    ctx.fillStyle = rgba(coreColor, resolved.opacity * resolved.intensity * (resolved.preset.id === "light-source-enhancement" ? 0.95 : 0.78));
-    ctx.beginPath();
-    if (resolved.preset.id === "light-source-enhancement") {
-      ctx.ellipse(center.x, center.y - coreRadius * 0.35, coreRadius * 0.62, coreRadius * 1.25, 0, 0, Math.PI * 2);
-    } else {
-      ctx.arc(center.x, center.y, coreRadius, 0, Math.PI * 2);
+    // Gameplay cues reuse the Rune motes without its central light field or solid core.
+    if (!particlesOnly) {
+      const geometry = resolved.geometry;
+      const bounds = geometryBounds(geometry);
+      const center = { x: geometry.x ?? bounds.x + bounds.width / 2, y: geometry.y ?? bounds.y + bounds.height / 2 };
+      const radius = Math.max(25, geometry.radius || Math.max(bounds.width, bounds.height) / 2) * resolved.size * (0.84 + resolved.softness * 0.12);
+      const pulse = 1 + Math.sin(time * resolved.pulseRate * Math.PI * 2 + hash(resolved.instance.seed) * 6.28) * resolved.pulseAmount;
+      const flicker = 1 + Math.sin(time * 11.7 + hash(resolved.instance.seed, 3) * 8) * resolved.flickerAmount * 0.35;
+      const coreColor = resolved.preset.id === "light-source-enhancement"
+        ? mixColor(resolved.primaryColor, "#FF9F43", resolved.warmth * 0.24)
+        : resolved.primaryColor;
+      const gradient = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, radius * pulse);
+      gradient.addColorStop(0, rgba(coreColor, resolved.opacity * resolved.intensity * 1.0 * flicker));
+      gradient.addColorStop(clamp(0.1 + resolved.softness * 0.07, 0.1, 0.28), rgba(resolved.secondaryColor, resolved.opacity * resolved.intensity * 0.58));
+      gradient.addColorStop(clamp(0.42 + resolved.softness * 0.1, 0.42, 0.7), rgba(resolved.glowColor, resolved.opacity * resolved.glow * 0.32));
+      gradient.addColorStop(1, rgba(resolved.glowColor, 0));
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, radius * pulse, 0, Math.PI * 2);
+      ctx.fill();
+      const coreRadius = Math.max(5, radius * (resolved.preset.id === "light-source-enhancement" ? 0.12 : 0.09));
+      ctx.fillStyle = rgba(coreColor, resolved.opacity * resolved.intensity * (resolved.preset.id === "light-source-enhancement" ? 0.95 : 0.78));
+      ctx.beginPath();
+      if (resolved.preset.id === "light-source-enhancement") {
+        ctx.ellipse(center.x, center.y - coreRadius * 0.35, coreRadius * 0.62, coreRadius * 1.25, 0, 0, Math.PI * 2);
+      } else {
+        ctx.arc(center.x, center.y, coreRadius, 0, Math.PI * 2);
+      }
+      ctx.fill();
     }
-    ctx.fill();
     if (resolved.sparkAmount > 0) {
       resolved._sparkResolved ||= {
         ...resolved,
@@ -1922,10 +1925,10 @@
     }
   }
 
-  function drawResolved(ctx, resolved, time) {
+  function drawResolved(ctx, resolved, time, { glowParticlesOnly = false } = {}) {
     ctx.save();
     ctx.globalAlpha = clamp(resolved.opacity, 0, 1);
-    if (resolved.preset.renderer === "glowField") drawWithOptionalMask(ctx, resolved, (target) => drawGlow(target, resolved, time));
+    if (resolved.preset.renderer === "glowField") drawWithOptionalMask(ctx, resolved, (target) => drawGlow(target, resolved, time, glowParticlesOnly));
     if (resolved.preset.renderer === "particleField") drawWithOptionalMask(ctx, resolved, (target) => drawParticles(target, resolved, time));
     if (resolved.preset.renderer === "fogField") drawFog(ctx, resolved, time);
     if (resolved.preset.renderer === "focusedFog") drawFocusedFog(ctx, resolved, time);
@@ -1956,6 +1959,7 @@
     let previewEpoch = performance.now();
     let lastFrame = 0;
     let resolved = [];
+    let transient = [];
     let visibility = { mode: "all", selectedId: null };
     const performanceRank = { Low: 1, Medium: 2, High: 3 };
 
@@ -1997,11 +2001,14 @@
         })
         .map((effect) => resolve(effect, current, { quality, reducedMotion }))
         .filter(Boolean);
+      transient = (options.getTransientEffects?.() || [])
+        .filter(effect => validateInstance(effect, current).valid)
+        .map(effect => resolve(effect, current, { quality, reducedMotion })).filter(Boolean);
       return resolved;
     }
 
     function canRun() {
-      return Boolean(getLevel()?.id === levelId && ["scene", "challenge", "correct"].includes(getScreen()) && !document.hidden && !paused && resolved.length);
+      return Boolean(getLevel()?.id === levelId && ["scene", "challenge", "correct"].includes(getScreen()) && !document.hidden && !paused && (resolved.length || transient.length));
     }
 
     function sizeCanvas(canvas) {
@@ -2028,6 +2035,12 @@
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         resolved.filter((effect) => effect.layerSlot === canvas.dataset.sceneEffectsCanvas).forEach((effect) => drawResolved(ctx, effect, time));
+        transient.filter(effect => effect.layerSlot === canvas.dataset.sceneEffectsCanvas).forEach(effect => {
+          // Reuse the preset renderer, but contain gameplay decoration within its cue.
+          ctx.save(); ctx.beginPath();
+          ctx.arc(effect.geometry.x, effect.geometry.y, effect.geometry.radius, 0, Math.PI * 2); ctx.clip();
+          drawResolved(ctx, effect, time, { glowParticlesOnly: true }); ctx.restore();
+        });
       }
       if (canRun()) rafId = requestAnimationFrame(draw);
     }
@@ -2036,8 +2049,7 @@
       syncResolved();
       canvases().forEach(sizeCanvas);
       if (!canRun()) {
-        if (rafId) cancelAnimationFrame(rafId);
-        rafId = null;
+        stop();
         return;
       }
       if (rafId) cancelAnimationFrame(rafId);
@@ -2086,6 +2098,7 @@
     function dispose() {
       stop();
       resolved = [];
+      transient = [];
       levelId = null;
     }
 
@@ -2107,6 +2120,7 @@
       prepareLevel, syncResolved, sync, stop, pause, play, restart, generateSeed, setVisibility, dispose, performanceSnapshot,
       get paused() { return paused; },
       get resolved() { return resolved; },
+      get transient() { return transient; },
       get rafId() { return rafId; }
     };
   }

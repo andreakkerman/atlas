@@ -1814,7 +1814,7 @@ test.describe("SvenAdventure", () => {
     const actor = page.locator("[data-actor='sven']");
     const actorShell = page.locator("[data-actor-shell='sven']");
     await expect(actor).toBeVisible();
-    await expect(actor).toHaveAttribute("src", /assets\/characters\/sven\/idle-right\/frame-\d+\.png/);
+    await expect(actor).toHaveAttribute("src", "assets/characters/sven/idle/frame_001.png");
     await expect(actor).toHaveAttribute("data-animation", "idle");
     await expect(page.locator(".svenBlink")).toHaveCount(0);
     await expectStableActorAnchor(page);

@@ -277,7 +277,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
             }
           ]
         }
-      ]
+      ],
+      "active": false
     },
     {
       "id": "planningTable",

@@ -68,7 +68,7 @@ Exit readiness uses the existing active-rune calculation. If any active rune's s
 
 ## Characters and shared asset discovery
 
-[Sven locomotion](../src/locomotion.js) owns Sven's animation configuration and `frame_001.png`-style numbered paths. Do not impose the obsolete `idle-right/frame-01.png`, fixed 360x440 canvas, or fixed frame-count intake on the current system.
+[Sven locomotion](../src/locomotion.js) owns Sven's animation configuration and `frame_001.png`-style numbered paths. Its ten current animation folders contain 143 required 432x528 PNG frames, including `idle/frame_001.png`. The removed legacy sprite folders are not runtime inputs; use the controller's `ANIMATIONS` map and `allFrameUrls()` for the current frame inventory.
 
 [Character manifest generation](../scripts/generate-character-manifest.js) scans character directories. A discoverable NPC needs `portrait.png` and nonempty `idle` frames. It discovers numbered `idle_animation_N` folders in numeric order and optional `idle_to_pass`; supported images are PNG/JPEG/WebP, numerically sorted and content-versioned. The generated [manifest](../assets/characters/manifest.js) is not hand-maintained. Missing optional animations use existing runtime fallbacks.
 

@@ -198,6 +198,7 @@ const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
 const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
+  getTransientEffects: () => illustratedChallengeGlows(),
   shouldRenderEffect: (effect) => !(voxelRenderer.getSettings().renderer === "cinematic" || (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id === "LVL-0001")) || !window.AtlasCinematicSettings.replacedPresets.has(effect.presetId),
   warn: (message) => console.warn(message)
 });
@@ -2874,6 +2875,7 @@ function refreshChallengePresentationDom(challenge) {
   if (marker && replacement) marker.outerHTML = replacement;
   updateWorldDom();
   syncNpcAnimations();
+  sceneEffectRuntime.sync();
   threeRenderer.sync();
   voxelRenderer.sync();
   cinematicRenderer.sync();
@@ -6205,9 +6207,28 @@ function renderWorldStage() {
   `;
 }
 
+// Gameplay-only projection: no authored instances, IDs or editor persistence change.
+function illustratedChallengeGlows() {
+  if (!level || voxelRenderer.getSettings().renderer !== "illustrated") return [];
+  const stage = document.querySelector('[data-world-stage]');
+  const scale = stage?.getBoundingClientRect().height / level.world.height;
+  if (!scale) return [];
+  return [...document.querySelectorAll('.runeHotspot[data-hotspot-cue="challenge"]:not([data-npc-challenge])')].map(node => {
+    const object = interactiveObjectById(node.dataset.object);
+    if (!object) return null;
+    // The existing outer ring is inset 20 CSS pixels. Keep glow and motes inside it.
+    const radius = Math.max(1, object.radius - 20 / scale) * 0.82;
+    const effect = window.AtlasSceneEffects.defaultInstance('magical-glow', 'rune', level.world);
+    return { ...effect, id: `challenge-glow-${node.dataset.rune}`, seed: [...`${level.id}:${node.dataset.rune}`].reduce((seed, letter) => (Math.imul(seed, 31) + letter.charCodeAt(0)) & 0x7fffffff, 17),
+      geometry: { type: 'pointRadius', x: object.center.x, y: object.center.y, radius },
+      overrides: { intensity: 0.88, amount: 0.46, speed: 0.45, size: 1, glow: 1.08, softness: 0.65 } };
+  }).filter(Boolean);
+}
+
 function renderSceneEffectCanvases() {
-  if (!(level.sceneEffects || []).some((effect) => effect?.enabled !== false)) return "";
-  return window.AtlasSceneEffects.LAYER_SLOTS.map((slot) => `
+  const authored = (level.sceneEffects || []).some((effect) => effect?.enabled !== false);
+  const slots = authored ? window.AtlasSceneEffects.LAYER_SLOTS : voxelRenderer.getSettings().renderer === "illustrated" ? ["worldLight"] : [];
+  return slots.map((slot) => `
     <canvas class="sceneEffectsCanvas" data-scene-effects-canvas="${slot}" aria-hidden="true"></canvas>
   `).join("");
 }
@@ -8459,7 +8480,10 @@ window.addEventListener("pointercancel", () => {
 
 installKeyboardViewportTracking();
 
-window.addEventListener("resize", updateWorldDom);
+window.addEventListener("resize", () => {
+  updateWorldDom();
+  if (voxelRenderer.getSettings().renderer === "illustrated") sceneEffectRuntime.sync();
+});
 
 window.addEventListener("keydown", (event) => {
   ensureAudioUnlocked();

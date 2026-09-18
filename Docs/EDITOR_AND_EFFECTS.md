@@ -101,3 +101,9 @@ Use the relevant suites listed in [Dev Tools](DEV_TOOLS.md). Verify controls cha
 | World modes and dual-controls report | Renderer Specification: supported modes, export boundaries, input and resources. |
 
 Task-specific bans, rollout plans, fixed historic inventories and prescribed final reports are not migrated as permanent rules. Detailed parameter schemas remain in their shared source registries; unimplemented future features do not become requirements merely by appearing in an old brief.
+
+## Illustrated challenge cue glow
+
+Illustrated circular challenge hotspots keep their existing CSS pulse and add a transient `magical-glow` / `rune` instance on the shared `worldLight` canvas. The inner effect uses the Rune particle defaults, omits both the central radial light field and solid core, and uses a clipped radius inside the existing 20 CSS-pixel ring inset. It follows world coordinates, viewport size and stable level/rune seeds. NPC sprite hotspots retain their existing presentation.
+
+These are built-in gameplay decorations, not authored `sceneEffects`: no level writes, editor entries or extra settings are introduced. They share the existing scheduler, quality/reduced-motion handling and pause/visibility lifecycle. Inactive/completed hotspots have no inner glow. Other rendering modes and authored Rune presets are unchanged. Editor effect isolation applies to authored effects; gameplay cues remain present until the shared preview is paused.
