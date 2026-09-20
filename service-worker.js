@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v201-replay-run";
+const CACHE_NAME = "svenadventure-static-v204-shared-particle-fields";
 const CORE_ASSETS = [
   "Levels/LVL-0035/level.js",
   "Levels/LVL-0035/stellamontis.png",

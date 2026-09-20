@@ -234,7 +234,7 @@ let cinematicStatus = { status: "idle", ready: false };
 const cinematicCueInteraction = { hoveredId: null, pressedId: null };
 const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
   getLevel: () => level,
-  getRenderer: () => voxelRenderer.getSettings().renderer,
+  getRenderer: () => window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id !== "LVL-0001" ? "illustrated" : voxelRenderer.getSettings().renderer,
   getSettings: (id) => worldResolver.levelSettings(id).cinematicLighting,
   getGameplayCues: () => cinematicGameplayCues(),
   getCameraX: () => level ? getCameraX() : 0,
@@ -248,7 +248,8 @@ const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
     : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))).groundingShadow : false,
   onStatus: (snapshot) => {
     cinematicStatus = snapshot;
-    const message = snapshot.error ? `Cinematic unavailable: ${snapshot.error}` : `Cinematic · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
+    const label = snapshot.mode === "illustrated" ? "Particle Fields" : "Cinematic";
+    const message = snapshot.error ? `${label} unavailable: ${snapshot.error}` : `${label} · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
     document.querySelectorAll("[data-cinematic-status]").forEach(node => { node.textContent = message; node.dataset.status = snapshot.status; });
     document.querySelectorAll("[data-cinematic-error]").forEach(node => { node.textContent = snapshot.error ? message : ""; node.hidden = !snapshot.error; });
   }
@@ -320,7 +321,7 @@ const cinematicEditor = window.AtlasCinematicEditor.createEditor({
     worldResolver.updateLevelSettings(level.id, { cinematicLighting: settings });
     markWorldConfigDirty(`${level.id}: Cinematic Lighting aangepast.`);
     markEditorModified("Cinematic Lighting aangepast. Apply slaat dit level op.");
-    if (voxelRenderer.getSettings().renderer === "cinematic") cinematicRenderer.sync();
+    cinematicRenderer.sync();
   }
 });
 const performanceHud = {
@@ -3141,10 +3142,10 @@ async function addAmbientFlybyFromEditor() {
   const label = String(data.get("label") || "").trim();
   const assetSet = discoveredAssetSetByKey("flyby", String(data.get("assetSet") || ""));
   const frameA = String(data.get("frameA") || assetSet?.frameA || "");
-  const frameB = String(data.get("frameB") || assetSet?.frameB || "");
-  const sound = String(data.get("sound") || assetSet?.sound || "");
-  if (!id || !label || !frameA || !frameB) {
-    walkPathEditor.message = "ID, label en beide flybyframes zijn verplicht.";
+  const frameB = String(data.get("frameB") || "") || null;
+  const sound = String(data.get("sound") || "");
+  if (!id || !label || !frameA) {
+    walkPathEditor.message = "ID, label en Frame A zijn verplicht.";
     render();
     return;
   }
@@ -3154,7 +3155,7 @@ async function addAmbientFlybyFromEditor() {
     return;
   }
   try {
-    await Promise.all([assetCache.image(frameA), assetCache.image(frameB)]);
+    await Promise.all([assetCache.image(frameA), ...(frameB ? [assetCache.image(frameB)] : [])]);
   } catch {
     walkPathEditor.message = "Een gekozen flybyframe ontbreekt of is ongeldig.";
     render();
@@ -3242,6 +3243,8 @@ function updateAmbientFlybySetting(id, field, value) {
   const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile"]);
   if (booleans.has(field)) flyby[field] = Boolean(value);
   else if (field === "motionProfile") flyby[field] = String(value) === "organic" ? "organic" : "smooth";
+  else if (field === "soundTrigger") flyby[field] = value === "tap" ? "tap" : "during";
+  else if (field === "frameB") flyby[field] = value || null;
   else if (strings.has(field)) flyby[field] = String(value);
   else flyby[field] = Number(value);
   if (field === "wobble") flyby.wobble = Math.max(0, Number(flyby.wobble) || 0);
@@ -4642,7 +4645,7 @@ function renderAmbientAddForm(type) {
       <label><span>Label</span><input name="label" required /></label>
       <label><span>Discovered set</span><select name="assetSet">${renderAssetSetOptions(type)}</select></label>
       <label><span>${flyby ? "Frame A" : "Open frame"}</span><select name="${flyby ? "frameA" : "openFrame"}">${assetOptions(images)}</select></label>
-      <label><span>${flyby ? "Frame B" : "Closed frame"}</span><select name="${flyby ? "frameB" : "closedFrame"}">${assetOptions(images)}</select></label>
+      <label><span>${flyby ? "Frame B" : "Closed frame"}</span><select name="${flyby ? "frameB" : "closedFrame"}">${flyby ? '<option value="">N/A</option>' : ''}${assetOptions(images)}</select></label>
       <label><span>Sound</span><select name="sound">${assetOptions(audio, "", true)}</select></label>
       <button type="button" data-debug-action="add-${type}">Add ${flyby ? "ambient flyby" : "ambient animal"}</button>
     </form>
@@ -4894,7 +4897,7 @@ function renderAmbientEditorControls(options = {}) {
         <div class="flybyEditorCard" data-flyby-editor-id="${flyby.id}">
           <div class="editorCommonControls"><strong>${flyby.label}</strong><span>${flyby.id}</span>
             ${renderFlybyField("Scale", flyby, "scale", { min: 0.02, max: 2, step: 0.01 })}
-            ${renderFlybyField("Speed px/s", flyby, "speed", { min: 20, max: 2000, step: 10 })}
+            ${renderFlybyField("Speed px/s", flyby, "speed", { min: 1, max: 2000, step: 1 })}
             <div class="animalEditorActions">
               <button type="button" data-debug-action="edit-flight-path" data-flyby-id="${flyby.id}">Edit flight path</button>
               <button type="button" data-debug-action="preview-flyby" data-flyby-id="${flyby.id}">Preview flyby</button>
@@ -4904,7 +4907,7 @@ function renderAmbientEditorControls(options = {}) {
           </div>
           <details class="editorNestedSection" open><summary>Assets</summary>
             <label class="editorField"><span>Frame A</span><select data-flyby-setting="frameA" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameA)}</select></label>
-            <label class="editorField"><span>Frame B</span><select data-flyby-setting="frameB" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameB)}</select></label>
+            <label class="editorField"><span>Frame B</span><select data-flyby-setting="frameB" data-flyby-id="${flyby.id}"><option value="" ${!flyby.frameB ? "selected" : ""}>N/A</option>${assetOptions(walkPathEditor.assets.images || [], flyby.frameB)}</select></label>
           </details>
           <details class="editorNestedSection" open><summary>Animation</summary>
             ${renderFlybyMotionProfile(flyby)}
@@ -4927,6 +4930,7 @@ function renderAmbientEditorControls(options = {}) {
           </details>
           <details class="editorNestedSection"><summary>Audio</summary>
             <label class="editorField"><span>Sound</span><select data-flyby-setting="sound" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.audio || [], flyby.sound, true)}</select></label>
+            <label class="editorField"><span>Sound Trigger</span><select data-flyby-setting="soundTrigger" data-flyby-id="${flyby.id}"><option value="during" ${flyby.soundTrigger !== "tap" ? "selected" : ""}>During Flyby</option><option value="tap" ${flyby.soundTrigger === "tap" ? "selected" : ""}>On Tap</option></select></label>
             ${renderFlybyField("Sound volume", flyby, "soundVolume", { min: 0, max: 1, step: 0.05 })}
           </details>
           <details class="editorNestedSection"><summary>Advanced</summary>
@@ -6199,6 +6203,7 @@ function renderFlightPathWorkspace() {
 function renderWorldStage() {
   const selectedRenderer = voxelRenderer.getSettings().renderer;
   const renderer = window.AtlasGraphicsModes.isThree(selectedRenderer) && level.id !== "LVL-0001" ? "illustrated" : selectedRenderer;
+  const fieldCanvas = `<canvas class="${renderer === "illustrated" ? "particleFieldsCanvas" : "cinematicViewportCanvas"}" ${renderer === "illustrated" ? "data-particle-fields-canvas" : "data-cinematic-canvas"} data-cinematic-mode="${renderer}" data-cinematic-level="${level.id}" aria-label="${renderer === "illustrated" ? "Particle Fields" : "WebGPU Cinematic"}"></canvas>`;
   const emissiveGlow = window.AtlasEmissiveGlow.normalizeSettings(worldResolver.levelSettings(level.id).emissiveGlow);
   const actorPosition = worldToScreen({ x: state.worldX, y: state.worldY }, "track");
   const svenClasses = [
@@ -6220,7 +6225,8 @@ function renderWorldStage() {
         ${renderer === 'atlas-3d' ? '<div class="threeTouchMovement threeTouchLook"><div data-three-look aria-label="Sleep om rond te kijken"><span data-three-stick></span></div><span>Rondkijken</span></div>' : ''}
         <button class="threeInteract" type="button" data-three-interact hidden></button>
         <p class="cinematicError" data-three-error role="alert" hidden></p>` : ""}
-      ${renderer === "cinematic" ? `<canvas class="cinematicViewportCanvas" data-cinematic-canvas data-cinematic-level="${level.id}" aria-label="WebGPU Cinematic"></canvas><p class="cinematicError" data-cinematic-error role="alert" hidden></p>` : ""}
+      ${renderer === "cinematic" ? fieldCanvas : ""}
+      ${["illustrated", "cinematic"].includes(renderer) ? `<p class="cinematicError" data-cinematic-error role="alert" hidden></p>` : ""}
       <div
         class="worldTrack"
         style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
@@ -6229,6 +6235,7 @@ function renderWorldStage() {
         <canvas class="emissiveGlowCanvas" data-emissive-glow-canvas aria-hidden="true" ${renderer === "illustrated" && emissiveGlow.enabled ? "" : "hidden"}></canvas>
         <div class="forestMist"></div>
         ${renderSceneEffectCanvases()}
+        ${renderer === "illustrated" ? fieldCanvas : ""}
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
         ${(level.ambientFlybys || []).map(renderAmbientFlyby).join("")}
         ${renderSceneEffectGuides()}
@@ -6247,7 +6254,7 @@ function renderWorldStage() {
           ${renderDebugOverlay()}
         </div>
       ` : ""}
-      ${renderer === "cinematic" ? cinematicEditor.renderGuides() : ""}
+      ${["illustrated", "cinematic"].includes(renderer) ? cinematicEditor.renderGuides() : ""}
       ${renderFlightPathWorkspace()}
       ${renderEffectGeometryWorkspace()}
       ${renderDeveloperToolsPanel()}
@@ -6313,14 +6320,15 @@ function renderSceneEffectGuides() {
 function renderAmbientFlyby(flyby) {
   const ready = ambientFlybyRuntime.readiness.get(`${level.id}:${flyby.id}`);
   if (!ready?.frameA) return "";
-  const frameB = ready.frameB ? flyby.frameB : flyby.frameA;
+  const frameB = ready.frameB ? flyby.frameB : null;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
+      data-sound-trigger="${flyby.soundTrigger === "tap" && flyby.sound && state.screen === "scene" && !walkPathEditor.enabled ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
       <span class="ambientFlybyFrames">
         <img class="ambientFlybyFrame ambientFlybyFrameA" src="${readyAssetSrc(flyby.frameA)}" alt="" draggable="false" decoding="sync"/>
-        <img class="ambientFlybyFrame ambientFlybyFrameB" src="${readyAssetSrc(frameB)}" alt="" draggable="false" decoding="sync"/>
+        ${frameB ? `<img class="ambientFlybyFrame ambientFlybyFrameB" src="${readyAssetSrc(frameB)}" alt="" draggable="false" decoding="sync"/>` : ""}
       </span>
     </span>
   `;
@@ -7504,7 +7512,7 @@ function render() {
     updateWorldDom();threeRenderer.sync();return;
   }
   const editorUiState = captureEditorUiState();
-  const retainedCinematicCanvas = app.querySelector("[data-cinematic-canvas]");
+  const retainedCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const retainedThreeCanvas = app.querySelector("[data-three-canvas]");
   const retainedVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   const retainedVoxelLevel = retainedVoxelCanvas?.dataset.voxelLevel;
@@ -7534,10 +7542,10 @@ function render() {
     app.innerHTML = renderScene();
   }
 
-  const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas]");
+  const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const replacementThreeCanvas = app.querySelector("[data-three-canvas]");
   if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) replacementThreeCanvas.replaceWith(retainedThreeCanvas);
-  if (retainedCinematicCanvas && replacementCinematicCanvas && retainedCinematicCanvas.dataset.cinematicLevel === level?.id) replacementCinematicCanvas.replaceWith(retainedCinematicCanvas);
+  if (retainedCinematicCanvas && replacementCinematicCanvas && retainedCinematicCanvas.dataset.cinematicLevel === level?.id && retainedCinematicCanvas.dataset.cinematicMode === replacementCinematicCanvas.dataset.cinematicMode) replacementCinematicCanvas.replaceWith(retainedCinematicCanvas);
   const replacementVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   if (retainedVoxelCanvas && replacementVoxelCanvas && (!retainedVoxelLevel || retainedVoxelLevel === level?.id)) {
     replacementVoxelCanvas.replaceWith(retainedVoxelCanvas);
@@ -7624,6 +7632,13 @@ app.addEventListener("focusout", (event) => {
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
+  const tappedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]');
+  if (tappedFlyby) {
+    event.preventDefault();
+    event.stopPropagation();
+    ambientFlybyRuntime.tap(tappedFlyby.dataset.ambientFlyby);
+    return;
+  }
   const displayToggle = event.target.closest('[data-display-toggle]');
   if (displayToggle) {
     event.preventDefault(); event.stopPropagation();
@@ -8183,6 +8198,14 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  const flybySet = event.target.closest('[data-add-flyby-form] [name="assetSet"]');
+  if (flybySet) {
+    const form = flybySet.closest('form');
+    const set = discoveredAssetSetByKey("flyby", flybySet.value);
+    form.elements.frameB.disabled = Boolean(set && !set.frameB);
+    if (set) for (const field of ["frameA", "frameB", "sound"]) form.elements[field].value = set[field] || "";
+    return;
+  }
   const challengePresentation = event.target.closest("[data-challenge-presentation]");
   if (challengePresentation) {
     updateChallengePresentation(challengePresentation.dataset.challengePresentation, challengePresentation.value);
@@ -8321,6 +8344,7 @@ app.addEventListener("change", (event) => {
 });
 
 app.addEventListener("pointerdown", (event) => {
+  if (event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]')) return;
   ensureAudioUnlocked();
   updateCinematicCueInteraction("pressed", cinematicCueIdForTarget(event.target));
   // Form controls must not pick a world/animal drag handle behind the panel.

@@ -569,9 +569,12 @@ function validateAssets(level, entry, levelFolder, label) {
   });
   (level.ambientFlybys || []).forEach((flyby, index) => {
     assertCentralAmbientAsset(flyby.frameA, `${label}.ambientFlybys[${index}].frameA`);
-    assertCentralAmbientAsset(flyby.frameB, `${label}.ambientFlybys[${index}].frameB`);
+    assertCentralAmbientAsset(flyby.frameB, `${label}.ambientFlybys[${index}].frameB`, true);
     assertCentralAmbientAsset(flyby.sound, `${label}.ambientFlybys[${index}].sound`, true);
     const flybyLabel = `${label}.ambientFlybys[${index}]`;
+    if (flyby.soundTrigger !== undefined && !["during", "tap"].includes(flyby.soundTrigger)) {
+      fail(`${flybyLabel}.soundTrigger must be "during" or "tap".`);
+    }
     if (flyby.motionProfile !== undefined && !["smooth", "organic"].includes(flyby.motionProfile)) {
       fail(`${flybyLabel}.motionProfile must be "smooth" or "organic".`);
     }

@@ -140,6 +140,8 @@ test('Particle Field editor drag, resize, Apply and reload preserve the rendered
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   try{
     await page.setViewportSize({width:2600,height:900});await scene(page);
+    const existingParticleCount=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().particles);
+    await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});window.eval('render')();});await ready(page);
     await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
     await page.locator('[data-cinematic-layer="environment"]').click();
     const group=page.locator('[data-cinematic-group="particles"]');if(!await group.evaluate(e=>e.open))await group.locator('summary').click();
@@ -164,8 +166,8 @@ test('Particle Field editor drag, resize, Apply and reload preserve the rendered
     await page.locator('[data-debug-action="apply-walkpath"]').click();await expect.poll(()=>page.evaluate(()=>window.eval('walkPathEditor').status)).toBe('Applied');
     await page.reload();await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));await ready(page);
     expect(await item()).toEqual(authored);
-    expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().particles)).toBe(contract.particleCount(authored));
-    for(const renderer of ['illustrated','cinematic']){await page.evaluate(renderer=>{window.eval('voxelRenderer').updateSettings({renderer});window.eval('render')();},renderer);if(renderer==='cinematic')await ready(page);}
+    expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().particles)).toBe(existingParticleCount+contract.particleCount(authored));
+    for(const renderer of ['illustrated','cinematic']){await page.evaluate(renderer=>{window.eval('voxelRenderer').updateSettings({renderer});window.eval('render')();},renderer);await ready(page);}
     expect(await item()).toEqual(authored);expect(errors).toEqual([]);
   }finally{await page.close();fs.writeFileSync(config,original);}
 });

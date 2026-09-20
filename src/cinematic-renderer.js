@@ -128,38 +128,64 @@
     let settings = contract.normalize(), packed = [], settingsKey = "", uploaded = new Map(), pendingUploads = new Map(), effectTextures = new Map(), spriteFallbacks = new Map();
     let pendingPresentation = false, presented = false, lastSprites = 0, lastDraws = 0, lastShadowDraws = 0, lastGroundedSprites = 0, lastGrounding = [], initPromise, frameDt=1/60;
     let effective=contract.effective(settings), depthTexture, emptyDepth, depthStatus="none", depthPath=null, depthLoads=0, bindGroups=0, computeGroup;
-    const depthCache=new Map(), bindings=new WeakMap(), shadowStates=new Map(), uploadDiagnostics=new Map();
-    const active = () => options.getRenderer() === "cinematic";
-    const snapshot = () => ({ status, error, ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.data[16], 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
+    const depthCache=new Map(), bindings=new WeakMap(), shadowStates=new Map(), uploadDiagnostics=new Map(), observedDevices=new WeakSet();
+    // One owner/RAF for both presentations. Illustrated only prepares the particle
+    // pipeline; it never uploads artwork/sprites or runs Cinematic scene passes.
+    let mode = null;
+    const particleOnly = () => mode === "illustrated";
+    const hasParticles = value => { const s=contract.effective(contract.normalize(value));return s.particles.enabled && s.particles.items.some(item=>item.enabled); };
+    const active = () => options.getRenderer() === mode && (mode === "cinematic" || mode === "illustrated");
+    const snapshot = () => ({ status, error, mode, pipelines:Object.keys(pipeline || {}), renderTargets:targets.length, buffers:(uniform?1:0)+(effectBuffer?1:0)+(exposureBuffer?1:0)+drawBuffers.length, scheduled:Boolean(raf), ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.data[16], 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
     function report() {
-      document.querySelector(".gameShell")?.classList.toggle("cinematicReady", active() && presented);
+      document.querySelector(".gameShell")?.classList.toggle("cinematicReady", active() && !particleOnly() && presented);
+      document.querySelector(".gameShell")?.classList.toggle("particleFieldsReady", active() && particleOnly() && presented);
       options.onStatus?.(snapshot());
     }
     function fail(caught, fallback = "frame-error") {
       stop(); error = caught?.message || String(caught); status = caught?.atlasWebGPUCategory || fallback; presented = false; report();
       // An in-scene error banner is intentional; do not silently claim a successful GPU fallback.
     }
-    async function initialize() {
+    async function initialize(token) {
       if (pipeline) return;
-      if (initPromise) return initPromise;
+      if (initPromise) {
+        await initPromise;
+        if(token!==generation || pipeline)return;
+      }
       initPromise = (async () => {
         status = "requesting-device"; report();
-        device = await global.AtlasWebGPUCapabilities.requestDevice("cinematic");
+        const acquiredDevice = await global.AtlasWebGPUCapabilities.requestDevice("cinematic");
+        if(token!==generation)return;
+        device=acquiredDevice;
         const currentDevice = device;
-        device.addEventListener("uncapturederror", event => { if (active() && device === currentDevice) fail(event.error, "gpu-validation-error"); });
+        if(!observedDevices.has(device)) {
+        observedDevices.add(device);
+        device.addEventListener("uncapturederror", event => { if (active() && (pipeline || loading) && device === currentDevice) fail(event.error, "gpu-validation-error"); });
         device.lost.then(info => {
           if (device !== currentDevice) return;
+          const wasActive=active() && Boolean(pipeline || loading);
           stop(); generation++; global.AtlasWebGPUCapabilities.forgetDevice(device);
           releaseLevel(false); uniform?.destroy(); effectBuffer?.destroy(); exposureBuffer?.destroy();
           releaseDepth();
           uniform=null;effectBuffer=null;exposureBuffer=null;pipeline=null;initPromise=null;context=null;canvas=null;
-          if (active()) fail(new Error(`WebGPU device lost: ${info.message || info.reason}`), "device-lost");
+          if (wasActive) fail(new Error(`WebGPU device lost: ${info.message || info.reason}`), "device-lost");
         });
+        }
         status = "compiling-pipelines"; report();
         const module = device.createShaderModule({ label: "Atlas Cinematic shared fields", code: global.AtlasCinematicShaders.shared });
         const messages = await module.getCompilationInfo();
+        if(token!==generation)return;
         const failures = messages.messages.filter(m => m.type === "error");
         if (failures.length) throw new Error(failures.map(m => `${m.lineNum}:${m.linePos} ${m.message}`).join("\n"));
+        if(particleOnly()) {
+          const particle = await device.createRenderPipelineAsync({label:"Atlas shared Particle Fields",layout:"auto",vertex:{module,entryPoint:"particle"},fragment:{module,entryPoint:"particleColor",targets:[{format:navigator.gpu.getPreferredCanvasFormat(),blend:{color:{srcFactor:"one",dstFactor:"one"},alpha:{srcFactor:"zero",dstFactor:"one"}}}]},primitive:{topology:"triangle-list"}});
+          if(token!==generation)return;
+          layout0=particle.getBindGroupLayout(0);layout1=particle.getBindGroupLayout(1);
+          uniform=device.createBuffer({size:512,usage:GPUBufferUsage.UNIFORM|GPUBufferUsage.COPY_DST});
+          effectBuffer=device.createBuffer({size:128*256,usage:GPUBufferUsage.STORAGE|GPUBufferUsage.COPY_DST});
+          sampler=device.createSampler({minFilter:"linear",magFilter:"linear"});
+          emptyDepth=texture(1,1);device.queue.writeTexture({texture:emptyDepth.texture},new Uint8Array([0,0,0,255]),{bytesPerRow:4},[1,1]);
+          depthTexture=emptyDepth;bindDepth();pipeline={particle};return;
+        }
         layout0 = device.createBindGroupLayout({ entries: [
           { binding: 0, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "uniform" } },
           { binding: 1, visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT, buffer: { type: "read-only-storage" } },
@@ -178,12 +204,14 @@
         const alpha = { color: { srcFactor: "one", dstFactor: "one-minus-src-alpha" }, alpha: { srcFactor: "one", dstFactor: "one-minus-src-alpha" } };
         const add = { color: { srcFactor: "one", dstFactor: "one" }, alpha: { srcFactor: "zero", dstFactor: "one" } };
         const result = await Promise.all([create("sprite", "quad", "rgba16float", alpha), create("field"), create("bloomExtract"), create("blur"), create("finish", "fullscreen", navigator.gpu.getPreferredCanvasFormat()), create("particleColor", "particle", "rgba16float", add)]);
+        if(token!==generation)return;
         const nextPipeline = Object.fromEntries(["sprite", "field", "extract", "blur", "finish", "particle"].map((key, i) => [key, result[i]]));
         const adaptationModule = device.createShaderModule({ label: "Cinematic adaptation", code: global.AtlasCinematicShaders.autoExposure });
         const adaptationInfo = await adaptationModule.getCompilationInfo();
         const adaptationErrors = adaptationInfo.messages.filter(m => m.type === "error");
         if (adaptationErrors.length) throw new Error(adaptationErrors.map(m => `${m.lineNum}:${m.linePos} ${m.message}`).join("\n"));
         nextPipeline.adapt = await device.createComputePipelineAsync({ layout: "auto", compute: { module: adaptationModule, entryPoint: "adapt" } });
+        if(token!==generation)return;
         uniform = device.createBuffer({ size: 512, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
         effectBuffer = device.createBuffer({ size: 128 * 256, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
         exposureBuffer = device.createBuffer({ size: 16, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
@@ -192,7 +220,8 @@
         depthTexture=emptyDepth;bindDepth();
         pipeline = nextPipeline;
       })();
-      try { await initPromise; } finally { initPromise = null; }
+      const pending=initPromise;
+      try { await pending; } finally { if(initPromise===pending)initPromise = null; }
     }
     function texture(width, height, format = "rgba8unorm") {
       const tex = device.createTexture({ size: [width, height], format, usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT });
@@ -255,8 +284,12 @@
       return resource;
     }
     async function upload(source, old, metadata) {
+      const token=generation;
       const prepared = await preparedExternalSource(source, metadata);
-      try { return copyPreparedExternalSource(prepared, old); }
+      try {
+        if(token!==generation)throw new DOMException("Texture upload canceled", "AbortError");
+        return copyPreparedExternalSource(prepared, old);
+      }
       finally { prepared.release?.(); }
     }
     function uploadDynamicCanvas(source, old, metadata) {
@@ -265,7 +298,7 @@
       return copyPreparedExternalSource({ source, details }, old);
     }
     function bindDepth() {
-      group0=device.createBindGroup({layout:layout0,entries:[... [uniform,effectBuffer,exposureBuffer].map((buffer,binding)=>({binding,resource:{buffer}})),{binding:3,resource:depthTexture.view},{binding:4,resource:sampler}]});bindGroups++;
+      group0=device.createBindGroup({layout:layout0,entries:[... (particleOnly()?[uniform,effectBuffer]:[uniform,effectBuffer,exposureBuffer]).map((buffer,binding)=>({binding,resource:{buffer}})),{binding:3,resource:depthTexture.view},{binding:4,resource:sampler}]});bindGroups++;
     }
     function releaseDepth() { for(const resource of depthCache.values()) resource?.texture.destroy();depthCache.clear();emptyDepth?.texture.destroy();emptyDepth=null;depthTexture=null;depthStatus="none";depthPath=null; }
     async function loadDepth(level, token) {
@@ -299,11 +332,13 @@
     }
     function refreshSettings() {
       const value = options.getSettings(options.getLevel()?.id);
-      const cues=options.getGameplayCues?.() || [];
+      const cues=particleOnly()?[]:options.getGameplayCues?.() || [];
       const key = JSON.stringify([value,cues]);
       if (key === settingsKey) return;
+      // Keep the authored record indices in both modes: the particle shader
+      // derives its deterministic seeds from them. Only dispatch is mode-specific.
       settingsKey = key; settings = contract.normalize(value); effective=contract.effective(settings);packed = packEffects(settings);
-      if(effective.gameplayCues.enabled) for(const cue of cues.slice(0,48)) {
+      if(!particleOnly() && effective.gameplayCues.enabled) for(const cue of cues.slice(0,48)) {
         const interaction=cue.interaction==="pressed"?2:cue.interaction==="hover"?1:0,boost=interaction===2?1.55:interaction===1?1.28:1;
         const item=contract.instance("localLights",{id:cue.id,x:cue.x,y:cue.y,radius:Math.max(70,cue.radius*2.5)*(interaction?1.08:1),color:cue.color,intensity:cue.intensity*effective.gameplayCues.intensity*0.2*boost,falloff:1,depthInfluence:0.35,characterInfluence:effective.gameplayCues.characterInfluence,behavior:cue.state==="available"||cue.state==="open"?"slowPulse":"steady",flickerAmount:0.12});
         const single=contract.normalize({localLights:{enabled:true,items:[item]}});const record=packEffects(single)[0];record.key="gameplayCues";record.data[36]=cue.state==="available"?Math.max(44,cue.radius):cue.state==="open"?Math.max(70,cue.radius):cue.radius;record.data[37]=cue.state==="locked"?1:cue.state==="completed"?2:cue.state==="open"?3:4;record.data[38]=interaction;record.data[3]=packed.length+1;packed.push(record);
@@ -349,6 +384,11 @@
       else {data[17] = config.opacity ?? 1;data[18]=(config.softness || 0)/Math.max(1,(config.rect?.[2] || 1)*canvas.clientWidth);data[19]=(config.softness || 0)/Math.max(1,(config.rect?.[3] || 1)*canvas.clientHeight);}
       device.queue.writeBuffer(buffer, 0, data);
       pass.setBindGroup(0, group0);
+      if(particleOnly()) {
+        let group=bindings.get(buffer);
+        if(!group){group=device.createBindGroup({layout:layout1,entries:[{binding:3,resource:{buffer}}]});bindings.set(buffer,group);bindGroups++;}
+        pass.setBindGroup(1,group);return;
+      }
       let sources=bindings.get(buffer);if(!sources)bindings.set(buffer,sources=new WeakMap());
       let auxiliaries=sources.get(source);if(!auxiliaries)sources.set(source,auxiliaries=new WeakMap());
       let group=auxiliaries.get(aux);
@@ -363,8 +403,9 @@
         device.limits.maxTextureDimension2D / Math.max(1, canvas.clientWidth, canvas.clientHeight));
       const width = Math.max(2, Math.round(canvas.clientWidth * ratio));
       const height = Math.max(2, Math.round(canvas.clientHeight * ratio));
-      if (canvas.width === width && canvas.height === height && targets.length) return;
+      if (canvas.width === width && canvas.height === height && (particleOnly() || targets.length)) return;
       canvas.width = width; canvas.height = height; targets.forEach(t => t.texture.destroy());
+      if(particleOnly())return;
       targets = [texture(width, height, "rgba16float"), texture(width, height, "rgba16float"), ...Array.from({ length: 3 }, () => texture(Math.max(2, width >> 2), Math.max(2, height >> 2), "rgba16float"))];
       computeGroup=device.createBindGroup({layout:pipeline.adapt.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:uniform}},{binding:1,resource:targets[1].view},{binding:2,resource:{buffer:exposureBuffer}}]});bindGroups++;
     }
@@ -392,7 +433,7 @@
               if(uploadGeneration!==generation){created.texture.destroy();return null;}
               uploaded.set(cacheKey,created);spriteFallbacks.set(fallbackKey,created);return created;
             })
-            .catch(caught => { console.warn(caught?.message||caught);return null; })
+            .catch(caught => { if(uploadGeneration===generation)console.warn(caught?.message||caught);return null; })
             .finally(() => { pendingUploads.delete(cacheKey); });
           pendingUploads.set(cacheKey,pending);
         }
@@ -414,11 +455,24 @@
     }
     function renderFrame(timestamp) {
       raf = 0;
-      if (!active() || !canvas?.isConnected || !background || document.hidden) return;
+      if (!active() || !canvas?.isConnected || (!particleOnly() && !background) || document.hidden) return;
       try {
         const start = performance.now(); refreshSettings(); resize(); globals(timestamp); drawCursor = 0;
         const encoder = device.createCommandEncoder({ label: "Cinematic frame" });
         const begin = (view, loadOp = "clear") => encoder.beginRenderPass({ colorAttachments: [{ view, clearValue: [0, 0, 0, 0], loadOp, storeOp: "store" }] });
+        if(particleOnly()) {
+          if(!packed.some(e=>e.key==="particles"&&e.data[1])){dispose();return;}
+          // Black is neutral under the canvas's screen composite. This preserves
+          // the shader's additive light (including glow) without dark alpha halos.
+          const pass=encoder.beginRenderPass({colorAttachments:[{view:context.getCurrentTexture().createView(),clearValue:[0,0,0,1],loadOp:"clear",storeOp:"store"}]});
+          pass.setPipeline(pipeline.particle);
+          packed.forEach((e,index)=>{if(e.key==="particles"&&e.data[1]){bind(pass,null,null,{flags:[index,0,0,0]});pass.draw(6,e.data[16]);}});
+          pass.end();device.queue.submit([encoder.finish()]);frame++;lastDraws=drawCursor;
+          averageMs=averageMs?averageMs*.95+(performance.now()-start)*.05:performance.now()-start;
+          if(!presented&&!pendingPresentation){pendingPresentation=true;const token=generation;device.queue.onSubmittedWorkDone().then(()=>{if(token!==generation||!active())return;pendingPresentation=false;presented=true;status="ready";report();}).catch(caught=>{if(token===generation)fail(caught);});}
+          if(timestamp-lastReport>500){lastReport=timestamp;report();}
+          raf=requestAnimationFrame(renderFrame);return;
+        }
         const worldUV = [options.getCameraX()/options.getLevel().world.width, 0, (options.getViewportWorldWidth() || options.getLevel().world.width)/options.getLevel().world.width, 1];
         let pass = begin(targets[0].view); pass.setPipeline(pipeline.sprite);
         bind(pass, background, background, { uv: worldUV, appearance: options.getBackgroundAppearance?.() }); pass.draw(6);
@@ -496,26 +550,33 @@
       } catch (caught) { fail(caught); }
     }
     async function sync() {
-      if (!active()) { stop(); generation++; presented = false; pendingPresentation=false; lastShadowDraws=0; status = "inactive"; report(); return; }
-      const nextCanvas = document.querySelector("[data-cinematic-canvas]"); const level = options.getLevel();
-      if (!nextCanvas || !level) { stop(); return; }
+      const nextMode=options.getRenderer();
+      if(nextMode!==mode){dispose();mode=nextMode;}
+      if (!active() || (particleOnly()&&!hasParticles(options.getSettings(options.getLevel()?.id)))) { if(pipeline||loading)dispose();status="inactive";report();return; }
+      const nextCanvas = document.querySelector(particleOnly()?"[data-particle-fields-canvas]":"[data-cinematic-canvas]"); const level = options.getLevel();
+      // Level loading temporarily removes the canvas. Keep the established
+      // per-device depth cache, but cancel presentation and pending level work.
+      // Menu navigation and renderer switches explicitly dispose the owner.
+      if (!nextCanvas || !level) { stop();generation++;loading=null;return; }
       if (loading?.level === level.id && loading.canvas === nextCanvas) return loading.promise;
-      if (levelId === level.id && background && canvas === nextCanvas) {
+      if (levelId === level.id && (background || particleOnly()) && pipeline && canvas === nextCanvas) {
         // render() retains this canvas but replaces .gameShell. Restore its presentation
         // state synchronously, before the browser paints, not on the 500ms metrics tick.
-        document.querySelector(".gameShell")?.classList.toggle("cinematicReady", presented);
+        report();
         refreshSettings(); if (!raf) raf=requestAnimationFrame(renderFrame); return;
       }
       const token = ++generation; stop(); presented=false;pendingPresentation=false;report();
       const promise = (async () => {
         try {
-          await initialize(); if (token !== generation || !active()) return;
-          if (levelId !== level.id || !background) {
+          await initialize(token); if (token !== generation || !active()) return;
+          if (levelId !== level.id || (!particleOnly() && !background) || depthStatus==="loading" || depthStatus==="none") {
             releaseLevel(); levelId=level.id; status="loading-artwork";report();
+            if(!particleOnly()) {
             const img = new Image(); img.src=level.world.background;
             const uploadedBackground=await upload(img,null,{purpose:"level artwork",path:level.world.background});
             if (token !== generation || !active()) {uploadedBackground.texture.destroy();return;}
             background=uploadedBackground;
+            }
             await loadDepth(level,token);if(token!==generation || !active())return;
           }
           canvas=nextCanvas; context=canvas.getContext("webgpu"); if (!context) throw new Error("WebGPU canvas context unavailable");
@@ -526,7 +587,7 @@
       loading={level:level.id,canvas:nextCanvas,promise}; await promise; if(loading?.promise===promise) loading=null;
     }
     function stop() { if(raf)cancelAnimationFrame(raf);raf=0;lastTime=0;fps=0;averageMs=0;lastReport=0;report(); }
-    function dispose() { generation++;stop();releaseLevel();context?.unconfigure();context=null;canvas=null;levelId=null;status="idle";report(); }
+    function dispose() { generation++;stop();releaseLevel(false);releaseDepth();uniform?.destroy();effectBuffer?.destroy();exposureBuffer?.destroy();uniform=null;effectBuffer=null;exposureBuffer=null;pipeline=null;initPromise=null;loading=null;group0=null;layout0=null;layout1=null;sampler=null;context?.unconfigure();context=null;canvas=null;levelId=null;lastSprites=0;lastShadowDraws=0;lastGroundedSprites=0;lastGrounding=[];lastDraws=0;packed=[];error=null;status="idle";report(); }
     return { sync, stop, dispose, snapshot, refreshSettings, getSettings: () => contract.clone(settings) };
   }
   global.AtlasCinematicRenderer = { createRuntime, packEffects, shadowTarget, smoothShadow, receiverMatchedAlpha };

@@ -2,6 +2,8 @@ window.SVEN_WORLD_CONFIG = {
   "version": 1,
   "worlds": {
     "LVL-0032": {
+      "order": [],
+      "enabled": {},
       "isNew": true
     },
     "LVL-0013": {
@@ -10032,12 +10034,12 @@ window.SVEN_WORLD_CONFIG = {
           "items": [
             {
               "enabled": true,
-              "x": 741,
-              "y": 393,
+              "x": 296,
+              "y": 368,
               "color": "#ffe3bc",
               "shape": "ellipse",
-              "width": 2554,
-              "height": 560,
+              "width": 1210,
+              "height": 628,
               "softness": 0.6,
               "direction": -1,
               "count": 600,

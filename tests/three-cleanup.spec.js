@@ -59,10 +59,10 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
   window.setTimeout=(fn,ms,...args)=>timeout(fn,['stall','batch-stall'].includes(action)&&window.atStalledWait&&ms===90000?20000:ms,...args);
   const fence=GPUQueue.prototype.onSubmittedWorkDone;let stalledQueue;
   const requestDevice=GPUAdapter.prototype.requestDevice;
-  GPUAdapter.prototype.requestDevice=async function(...args){const device=await Reflect.apply(requestDevice,this,args);stalledQueue||=device.queue;return device;};
+  GPUAdapter.prototype.requestDevice=async function(...args){const device=await Reflect.apply(requestDevice,this,args);if(window.eval('voxelRenderer.getSettings')().renderer==='atlas-3d')stalledQueue=device.queue;return device;};
   GPUQueue.prototype.onSubmittedWorkDone=function(...args){if(window.stall&&stalledQueue===this)return new Promise(resolve=>window.finishStaleFence=resolve);return Reflect.apply(fence,this,args);};
   const adapter=navigator.gpu.requestAdapter.bind(navigator.gpu);
-  navigator.gpu.requestAdapter=(...args)=>{if(window.triggered&&window.destroyedDevices===0)return Promise.resolve(null);return adapter(...args);};
+  navigator.gpu.requestAdapter=(...args)=>{if(window.triggered&&window.destroyedDevices===window.destroyedBeforeFailure)return Promise.resolve(null);return adapter(...args);};
   const destroy=GPUDevice.prototype.destroy;
   GPUDevice.prototype.destroy=function(...args){window.destroyedDevices++;return Reflect.apply(destroy,this,args);};
   const write=GPUQueue.prototype.writeBuffer;let fail=false;
@@ -70,6 +70,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
   const shader=GPUDevice.prototype.createShaderModule;let failShader=false;
   GPUDevice.prototype.createShaderModule=function(...args){if(failShader){failShader=false;throw new DOMException('GPUDevice.createShaderModule: Unable to make shader module.','InvalidStateError');}return Reflect.apply(shader,this,args);};
   window.addEventListener('atlas-three-preparation',event=>{
+   if(!window.triggered)window.destroyedBeforeFailure=window.destroyedDevices;
    if(action==='shader-failure'){
     // Canonical Atlas has no late view-2 effect shaders. Inject at its first
     // actual warm-up shader creation; this tests recovery, not Safari's cause.
@@ -90,6 +91,7 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
  },action);
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1&rendererPreset=desktop-high`);
+ await expect.poll(()=>page.evaluate(()=>window.eval('cinematicRenderer.snapshot')().status)).toBe('ready');
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
  const initialPosition=await page.evaluate(()=>({x:window.eval('state.worldX'),y:window.eval('state.worldY')}));
  await expect.poll(()=>page.evaluate(()=>window.triggered),{timeout:240000}).toBe(true);
@@ -111,7 +113,9 @@ for(const action of ['failure','cancel','stall','stall-cancel','shader-failure',
  }
  const failed=['failure','stall','shader-failure','batch-stall'].includes(action);
  await expect.poll(()=>page.evaluate(()=>window.eval('threeRenderer.snapshot')().status),{timeout:30000}).toBe(failed?'error':'idle');
- expect(await page.evaluate(()=>window.destroyedDevices)).toBe(1);
+ // Illustrated's shared particle device is released before the Three device.
+ expect(await page.evaluate(()=>window.destroyedBeforeFailure)).toBe(1);
+ expect(await page.evaluate(()=>window.destroyedDevices)).toBe(2);
  if(failed){
   await expect(page.locator('[data-three-diagnostic]')).toContainText(action==='shader-failure'?'InvalidStateError: GPUDevice.createShaderModule':action==='batch-stall'?'TimeoutError: Wereld- en schaduwpipelines compileren 2/':action==='stall'?'TimeoutError: Warm-up 2/3':'RangeError: Range consisting');
   await expect(page.locator('[data-three-recover]')).toBeVisible();

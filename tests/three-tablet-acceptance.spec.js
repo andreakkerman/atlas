@@ -53,6 +53,9 @@ for(const height of [734,689])test(`Tablet Optimized real GPU acceptance: 1180x$
  const choose=async mode=>{if(!await page.locator(`[data-renderer-choice="${mode}"]`).isVisible())await page.locator('[data-graphics-action="toggle"]').click();await page.locator(`[data-renderer-choice="${mode}"]`).click();};
  try{
   for(let entry=0;entry<2;entry++){
+   // Finish the preceding 2D presentation before measuring Three allocations.
+   // Illustrated now uploads its native-resolution particle depthmap too.
+   await expect.poll(()=>page.evaluate(()=>window.eval('cinematicRenderer.snapshot')().status)).toBe('ready');
    const before=await page.evaluate(()=>({operations:window.tabletQA.operations.length,fences:window.tabletQA.fences,textures:window.tabletQA.textures.length}));
    await choose('atlas-3d');
    console.log(`Tablet ${height}, entry ${entry+1}: preparation started`);

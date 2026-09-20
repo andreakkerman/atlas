@@ -113,6 +113,18 @@ Require actual GPU-completed preparation, clean shader/native validation, render
 
 Chromium's tablet configuration and desktop WebKit navigation are not physical iPad Safari/WebGPU certification. A physical root-cause claim needs the actual failing operation and a regression failing before the fix. Preserve unresolved physical-device gaps explicitly; local FPS, historical pass counts and a synthetic injected error cannot close them.
 
+## Shared Particle Fields
+
+Illustrated and Cinematic use the same `cinematicLighting.particles` level settings, normalization, packing, presets, layer switches and GPU particle vertex/fragment shader in `cinematic-renderer.js` / `cinematic-shaders.js`. There are no per-mode particle defaults or overrides. The existing editor and world-config Apply path own all controls. Legacy Canvas2D scene effects remain separate and unchanged.
+
+The single runtime has two presentation paths. Cinematic retains its HDR additive particle pass and existing finishing. Illustrated lazily compiles only the particle pipeline and draws directly to a viewport-sized GPU canvas, screen-composited over the DOM artwork. Black is neutral in this additive presentation; particles do not replace artwork, actors or traditional effects. The canvas lives in the world track above foreground effects and below interaction markers; its viewport placement cancels the track's camera translation, while the shared shader projects world coordinates. HUD, dialogue, companions and editor controls remain above it. Illustrated does not allocate scene targets, sprite/artwork uploads, shadows, bloom or exposure resources.
+
+Both paths load the same authored `world.depthmap` or conventional `Levels/<id>/assets/depthmap.png`, using the same upload preparation, linear sampling, world-space five-tap filter, black-far/white-near convention and particle depth/spread/influence/softness comparison. Missing depth retains the existing flat fallback. No CPU depth approximation is used. Overall compositing may differ with Cinematic grading/bloom, but particle placement, motion and depth visibility do not.
+
+No active Illustrated fields means no particle GPU allocation or scheduler. Mode changes invalidate asynchronous work and release the prior pipelines, buffers, textures and cached depth; the broker-owned device is not destroyed by this runtime. Only one particle RAF can run. Ordinary UI remounts retain the same-mode canvas. Level changes retain the existing per-device depth cache; leaving the renderer or scene releases it. Visibility pauses/resumes the existing loop. Three acquisition still disposes this runtime before releasing the shared device.
+
+`tests/shared-particle-fields.spec.js` audits all 35 production level configurations (using the existing editor-preview option for hidden levels), exercises presets and live controls, and checks authored Riven Tides Drizzle / Stella Montis Snow in both modes. Fixed-time GPU readback compares actual depth-masked snow against depth disabled, including near-artwork suppression. Desktop and tablet-size camera screenshots supplement the coordinate and editor Apply tests in `cinematic-particle-bounds.spec.js`. These are not physical iPad Safari certification.
+
 ## Illustrated / Cinematic performance HUD
 
 The existing shared FPS toggle enables one foreground gameplay cadence sampler for both modes: RAF callbacks divided by elapsed foreground wall-clock time over approximately one second. This is main-thread callback cadence, not GPU-completed or physically presented FPS. Intentional effect/sprite rates do not replace it. The compact HUD shows FPS; Debug adds worst interval and estimated missed opportunities.

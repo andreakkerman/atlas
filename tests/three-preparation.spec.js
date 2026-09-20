@@ -114,9 +114,11 @@ test('debug journal survives reload and is absent from normal production UI',asy
  await page.goto(`${base}/?dev=editor&level=LVL-0001&debug3d=1`);
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
  await expect(page.locator('[data-three-diagnostic]')).toBeVisible();
- await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen');
+ // Illustrated now starts the shared particle device request. Three must
+ // first join that pending request before acquiring its own adapter.
+ await expect(page.locator('[data-three-diagnostic]')).toContainText('Vorige Cinematic/Voxel WebGPU-resources vrijgeven');
  await page.goto(`${base}/?debug3d=1`);
- await expect(page.locator('[data-tap-diagnostics]')).toContainText('Vorige voorbereiding (cancelled): Voorbereiding gestopt tijdens: WebGPU-adapter aanvragen');
+ await expect(page.locator('[data-tap-diagnostics]')).toContainText('Vorige voorbereiding (cancelled): Voorbereiding gestopt tijdens: Vorige Cinematic/Voxel WebGPU-resources vrijgeven');
  await page.goto(base);
  await expect(page.locator('[data-tap-diagnostics]')).toHaveCount(0);
  await expect(page.locator('body')).not.toContainText('Vorige voorbereiding');

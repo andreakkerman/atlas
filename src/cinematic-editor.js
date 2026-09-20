@@ -201,7 +201,7 @@
     }
     function render() {
       const settings = get();
-      return `<section class="cinematicEditor" data-cinematic-editor><h3>Experimental · Cinematic Lighting</h3><p>Separate from Illustrated effects. For classic Illustrated God Rays, use God Rays (Sun Presence) in the scene-effect library. World units in pixels. Drag a center, region corner, direction arrow or polygon vertex in the scene. Apply saves to this level.</p>
+      return `<section class="cinematicEditor" data-cinematic-editor><h3>Cinematic Lighting · shared Particle Fields</h3><p>Particle Fields and their depth settings are shared by Illustrated and Cinematic. Other lighting controls apply to Cinematic. For classic Illustrated God Rays, use God Rays (Sun Presence) in the scene-effect library. World units in pixels. Drag a center, region corner, direction arrow or polygon vertex in the scene. Apply saves to this level.</p>
         <p role="status" data-cinematic-status></p><button type="button" data-renderer-choice="cinematic">Preview Cinematic Lighting</button>
         <div class="cinematicActions"><button type="button" data-cinematic-action="reset-all">Reset all to neutral</button><label>Placement guides<select data-cinematic-guides>${["selected","all","hidden"].map(mode=>`<option value="${mode}" ${mode===view().guides?"selected":""}>${mode==="selected"?"Selected only":label(mode)}</option>`).join("")}</select></label></div>
         <div class="cinematicLayerTabs" role="tablist" aria-label="Cinematic layers">${Object.entries(api.layers).map(([key,def])=>`<button type="button" role="tab" data-cinematic-layer="${key}" aria-selected="${key===view().layer}">${def.label}</button>`).join("")}</div>
@@ -233,9 +233,9 @@
       updateFields();
     }
     function guideMarkup() {
-      if (!document.querySelector("[data-cinematic-editor]") || view().guides === "hidden" || options.getRenderer() !== "cinematic") return "";
+      if (!document.querySelector("[data-cinematic-editor]") || view().guides === "hidden" || !["illustrated", "cinematic"].includes(options.getRenderer())) return "";
       const settings = get();
-      const effectGuides=Object.entries(api.systems).filter(([key, def]) => def.type && visibleGroup(key)).map(([key]) => settings[key].items.filter(item=>inLayer(key,item)).map(item => {
+      const effectGuides=Object.entries(api.systems).filter(([key, def]) => def.type && visibleGroup(key) && (options.getRenderer() === "cinematic" || key === "particles")).map(([key]) => settings[key].items.filter(item=>inLayer(key,item)).map(item => {
         const w = item.radius ? item.radius*2*item.aspect : item.length || item.width, h = item.radius ? item.radius*2 : item.height || item.width*2;
         const attrs = `data-cinematic-handle="move" data-section="${key}" data-id="${item.id}"`;
         const active = view().system===key && selected(key, settings)?.id === item.id;
@@ -255,7 +255,7 @@
           ${active && item.direction !== undefined ? `<line x1="${item.x}" y1="${item.y}" x2="${item.x+Math.cos(item.direction*Math.PI/180)*120}" y2="${item.y+Math.sin(item.direction*Math.PI/180)*120}"/><circle cx="${item.x+Math.cos(item.direction*Math.PI/180)*120}" cy="${item.y+Math.sin(item.direction*Math.PI/180)*120}" r="10" data-cinematic-handle="direction" data-section="${key}" data-id="${item.id}"/>` : ""}
           ${active ? (item.points || []).map((p, i) => {const vertex=rotated(p.x*w,p.y*h);return `<circle cx="${vertex.x}" cy="${vertex.y}" r="9" data-cinematic-handle="vertex" data-index="${i}" data-section="${key}" data-id="${item.id}"/>`;}).join("") : ""}</g>`;
       }).join("")).join("");
-      const source=settings.characters,showSource=view().layer==="characters"&&view().system==="characters";
+      const source=settings.characters,showSource=options.getRenderer()==="cinematic"&&view().layer==="characters"&&view().system==="characters";
       const sourceGuide=showSource?`<g class="cinematicGuide selected cinematicShadowSourceGuide" data-cinematic-shadow-source><circle cx="${source.shadowLightSourceX}" cy="${source.shadowLightSourceY}" r="12" data-cinematic-handle="shadow-source" data-section="characters"><title>Shadow Light Source</title></circle><path d="M ${source.shadowLightSourceX-18} ${source.shadowLightSourceY} H ${source.shadowLightSourceX+18} M ${source.shadowLightSourceX} ${source.shadowLightSourceY-18} V ${source.shadowLightSourceY+18}"/><text x="${source.shadowLightSourceX+18}" y="${source.shadowLightSourceY-18}">Shadow Light Source</text></g>`:"";
       return effectGuides+sourceGuide;
     }

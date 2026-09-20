@@ -329,6 +329,9 @@ for (const key of Object.keys(contract.systems)) test(`GPU visible output and in
   if(key==="autoExposure")Object.assign(s[key],{minExposure:0.8,maxExposure:0.8,strength:1,adaptationSpeed:2});
   if(key==="finishing")Object.assign(s[key],{intensity:0.6,finalExposure:-0.2});
   if(key==="depth"){s.shafts={enabled:true,items:[contract.instance('shafts',{x:100,y:30,direction:55,length:1200,width:240,intensity:2,density:1.2})]};s.depth.perspective=0.2;}
+  // Depth and gameplay cues default to enabled. Make this an actual off/on
+  // comparison rather than comparing the enabled default with itself.
+  s[key].enabled=false;
   await settings(page,s);await nextFrames(page);const off=await page.screenshot({clip,path:info.outputPath(`${key}-off.png`)});
   s[key].enabled=true;await settings(page,s);await nextFrames(page,key==="autoExposure"?75:5);const on=await page.screenshot({clip,path:info.outputPath(`${key}-on.png`)});
   const difference=delta(off,on);console.log("PIXEL_DIFFERENCE",key,difference.toFixed(3));expect(difference).toBeGreaterThan(key==="rim"||key==="wrap"?0.01:0.05);
@@ -516,7 +519,7 @@ test("GPU grounding shadows are visible for Sven and Freya with live controls",a
   const counts=await page.evaluate(async()=>{let count=0;const write=GPUQueue.prototype.writeBuffer;GPUQueue.prototype.writeBuffer=function(buffer,offset,data,...rest){if(data instanceof Float32Array&&data.length===20&&data[11]===1)count++;return write.call(this,buffer,offset,data,...rest);};for(let i=0;i<3;i++)await new Promise(requestAnimationFrame);GPUQueue.prototype.writeBuffer=write;return count;});expect(counts).toBeGreaterThanOrEqual(6);await mode(page,'illustrated');expect(await page.locator('.cinematicViewportCanvas').count()).toBe(0);expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().shadowDraws)).toBe(0);await page.screenshot({path:info.outputPath('mode-return-illustrated.png')});await mode(page,'cinematic');await ready(page);await nextFrames(page);expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().shadowDraws)).toBeGreaterThan(0);await mode(page,'illustrated');expect(await page.locator('.cinematicViewportCanvas').count()).toBe(0);expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().shadowDraws)).toBe(0);console.log('SIMPLE_GROUNDING_SHADOW',{finalValues,visibleDelta,strengthDeltas,widthDelta,lengthDelta,softnessDelta,directionDelta,diffuseDelta,darkUnsuppressedDelta,darkSuppressedDelta,returnedDelta,offset,walk,counts});expect(log).toEqual([]);
 });
 
-test("Illustrated frame matches original HEAD and baseline editor opens Characters",async({page,browser},info)=>{
+test("Illustrated without Particle Fields matches original HEAD and baseline editor opens Characters",async({page,browser},info)=>{
   test.skip(info.project.name!=="desktop-chromium","One original/current visual comparison");
   const oldPage=await browser.newPage({viewport:{width:1280,height:800},reducedMotion:'reduce'});
   const git=require('child_process').execFileSync;
@@ -527,7 +530,7 @@ test("Illustrated frame matches original HEAD and baseline editor opens Characte
     }
     // The root document is served as /, not /index.html.
     await oldPage.route('**/?dev=editor',route=>route.fulfill({body:git('git',['show','HEAD:index.html'],{cwd:path.join(__dirname,'..'),encoding:'utf8'}),contentType:'text/html'}));
-    const freeze=async p=>{await scene(p);await mode(p,'illustrated');await p.evaluate(()=>{const runtime=window.eval('sceneEffectRuntime');runtime.pause();runtime.restart();window.eval('pauseAmbientAnimalTimers')();});};
+    const freeze=async p=>{await scene(p,'LVL-0005');await mode(p,'illustrated');await p.evaluate(()=>{const runtime=window.eval('sceneEffectRuntime');runtime.pause();runtime.restart();window.eval('pauseAmbientAnimalTimers')();});};
     await page.emulateMedia({reducedMotion:'reduce'});await freeze(oldPage);await freeze(page);
     const clip={x:400,y:80,width:700,height:400};const before=await oldPage.screenshot({clip,path:info.outputPath('original-illustrated.png')}),after=await page.screenshot({clip,path:info.outputPath('current-illustrated.png')});
     expect(delta(before,after)).toBeLessThan(0.25);
@@ -642,16 +645,19 @@ test("GPU particle presets change real motion parameters and remain editable",as
 test("GPU depth cache follows levels and reuses every conventional level map",async({page},info)=>{
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=="desktop-chromium","HTTP Chromium WebGPU run required");test.setTimeout(60000);
   const log=errors(page);await scene(page);await mode(page,'cinematic');await ready(page);
+  const initialLoads=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().depthLoads);
   for(const id of ['LVL-0002','LVL-0003','LVL-0001','LVL-0004']){
     await page.evaluate(async id=>window.eval('selectLevel')(id,{startImmediately:true,recordStart:false}),id);await ready(page);
     const result=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot());
     expect(result.levelId).toBe(id);expect(result.depthStatus).toBe('ready');
     expect(result.depthPath).toBe(`Levels/${id}/assets/depthmap.png`);
-    if(id==='LVL-0001')expect(result.depthLoads).toBe(3);if(id==='LVL-0004')expect(result.depthLoads).toBe(4);
-    await mode(page,'illustrated');await mode(page,'cinematic');await ready(page);
+    if(id==='LVL-0001')expect(result.depthLoads).toBe(initialLoads+2);if(id==='LVL-0004')expect(result.depthLoads).toBe(initialLoads+3);
   }
   const before=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot());await nextFrames(page,35);
-  const after=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot());expect(after.depthLoads).toBe(before.depthLoads);expect(after.bindGroups-before.bindGroups).toBeLessThan(12);expect(log).toEqual([]);
+  const after=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot());expect(after.depthLoads).toBe(before.depthLoads);expect(after.bindGroups-before.bindGroups).toBeLessThan(12);await mode(page,'illustrated');await ready(page);
+  expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().renderTargets)).toBe(0);
+  await mode(page,'cinematic');await ready(page);
+  expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().depthLoads)).toBe(after.depthLoads+2);expect(log).toEqual([]);
 });
 
 test("GPU delayed or missing depth never presents a partial or stale depth composite",async({page},info)=>{

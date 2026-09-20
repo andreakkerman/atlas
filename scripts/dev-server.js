@@ -333,12 +333,13 @@ function discoverAmbientAssetSets(files) {
         }
       } else {
         const roles = roleFor(group, ["a", "b", "framea", "frame-a", "frameb", "frame-b"]);
-        const frameA = roles.get("a") || roles.get("framea") || roles.get("frame-a") || "";
-        const frameB = roles.get("b") || roles.get("frameb") || roles.get("frame-b") || "";
-        if (frameA && frameB) {
-          result.flybys.push({ key: group.folder, label, frameA: relative(frameA), frameB: relative(frameB), sound });
+        const singleFrame = group.images.length === 1 ? group.images[0] : "";
+        const frameA = roles.get("a") || roles.get("framea") || roles.get("frame-a") || singleFrame;
+        const frameB = singleFrame ? null : roles.get("b") || roles.get("frameb") || roles.get("frame-b") || null;
+        if (frameA && (frameB || singleFrame)) {
+          result.flybys.push({ key: group.folder, label, frameA: relative(frameA), frameB: frameB ? relative(frameB) : null, sound });
         } else {
-          result.warnings.push(`${group.folder}: expected two flyby image frames named a/b or frame-a/frame-b.`);
+          result.warnings.push(`${group.folder}: expected one image or two flyby frames named a/b or frame-a/frame-b.`);
         }
       }
     });
@@ -437,7 +438,7 @@ function validateAmbientFlybys(value, levelId) {
       id: flyby.id,
       label: flyby.label,
       frameA: validateAmbientAsset(levelId, flyby.frameA, `ambientFlybys[${index}].frameA`, ambientImageExtensions),
-      frameB: validateAmbientAsset(levelId, flyby.frameB, `ambientFlybys[${index}].frameB`, ambientImageExtensions),
+      frameB: validateAmbientAsset(levelId, flyby.frameB, `ambientFlybys[${index}].frameB`, ambientImageExtensions, true) || null,
       sound: validateAmbientAsset(levelId, flyby.sound, `ambientFlybys[${index}].sound`, ambientAudioExtensions, true),
       path: pathPoints,
       scale: number("scale", 0.001),
@@ -455,6 +456,10 @@ function validateAmbientFlybys(value, levelId) {
       rotateAlongPath: Boolean(flyby.rotateAlongPath),
       maxRotationDeg: number("maxRotationDeg", 0, 180)
     };
+    if (flyby.soundTrigger !== undefined) {
+      if (!["during", "tap"].includes(flyby.soundTrigger)) throw new Error(`ambientFlybys[${index}].soundTrigger is invalid.`);
+      result.soundTrigger = flyby.soundTrigger;
+    }
     const motionProfile = flybyMotionProfiles.has(String(flyby.motionProfile || "smooth"))
       ? String(flyby.motionProfile || "smooth")
       : "smooth";

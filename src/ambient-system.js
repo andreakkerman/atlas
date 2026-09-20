@@ -260,6 +260,7 @@
     const pathCaches = new Map();
     const timers = new Map();
     const active = new Map();
+    const pendingStarts = new Map();
     const activeAudio = new Map();
     let levelId = null;
     let rafId = null;
@@ -304,7 +305,7 @@
         warn(`[Atlas] ${levelId} flyby "${config.id}" failed asset ${config.frameA}`);
         return state;
       }
-      try {
+      if (config.frameB) try {
         await assetCache.image(config.frameB);
         state.frameB = true;
       } catch {
@@ -366,7 +367,7 @@
 
     function scheduleIndependent(config) {
       const key = `one:${config.id}`;
-      if (timers.has(key) || active.has(config.id) || !readiness.get(keyFor(config.id))?.ready) return;
+      if (timers.has(key) || isBusy(config.id) || !readiness.get(keyFor(config.id))?.ready) return;
       timers.set(key, window.setTimeout(() => {
         timers.delete(key);
         if (!canRun()) return;
@@ -376,7 +377,7 @@
 
     function scheduleGroup(syncKey, members) {
       const key = `sync:${syncKey}`;
-      if (timers.has(key) || members.some((item) => active.has(item.id))) return;
+      if (timers.has(key) || members.some((item) => isBusy(item.id))) return;
       if (!members.every((item) => readiness.get(keyFor(item.id))?.ready)) return;
       timers.set(key, window.setTimeout(() => {
         timers.delete(key);
@@ -399,7 +400,7 @@
       const byPath = new Map();
       for (const config of members) {
         const ready = readiness.get(keyFor(config.id));
-        if (!config.sound || !ready?.sound) continue;
+        if (config.soundTrigger === "tap" || !config.sound || !ready?.sound) continue;
         const path = assetCache.normalize(config.sound);
         const previous = byPath.get(path);
         if (!previous || Number(config.soundVolume || 0) > Number(previous.soundVolume || 0)) {
@@ -407,25 +408,57 @@
         }
       }
       byPath.forEach((config, path) => {
-        const audio = new Audio(path);
-        audio.volume = 0;
         const key = `${triggerId}:${path}`;
-        activeAudio.set(key, { audio, path, triggerId, maxVolume: Number(config.soundVolume ?? 1) });
-        const finish = () => activeAudio.delete(key);
-        audio.addEventListener("ended", finish, { once: true });
-        audio.addEventListener("error", finish, { once: true });
-        audio.play().catch(finish);
+        playAudio(config, path, key, triggerId);
       });
     }
 
+    function playAudio(config, path, key, triggerId, instanceId = null) {
+      const audio = new Audio(path);
+      const state = { audio, path, triggerId, instanceId, maxVolume: Number(config.soundVolume ?? 1) };
+      audio.volume = instanceId ? Math.max(0, Math.min(1, getMasterVolume() * state.maxVolume)) : 0;
+      activeAudio.set(key, state);
+      const finish = () => { if (activeAudio.get(key) === state) activeAudio.delete(key); };
+      audio.addEventListener("ended", finish, { once: true });
+      audio.addEventListener("error", finish, { once: true });
+      audio.play().catch(finish);
+    }
+
+    function tap(id) {
+      const config = configById(id), instance = active.get(id);
+      const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
+      if (!instance || config?.soundTrigger !== "tap" || !config.sound ||
+          getScreen() !== "scene" || document.hidden || !getAudioUnlocked() ||
+          !readiness.get(keyFor(id))?.sound || shell?.dataset.active !== "true") return false;
+      const bounds = shell.getBoundingClientRect();
+      if (!bounds.width || !bounds.height || bounds.right <= 0 || bounds.bottom <= 0 ||
+          bounds.left >= window.innerWidth || bounds.top >= window.innerHeight) return false;
+      const path = assetCache.normalize(config.sound);
+      // Ignore repeated taps while this sound is playing, including another instance of it.
+      if ([...activeAudio.values()].some((state) => state.path === path)) return true;
+      playAudio(config, path, `tap:${path}`, instance.triggerId, id);
+      return true;
+    }
+
+    function isBusy(id) {
+      return active.has(id) || pendingStarts.has(id);
+    }
+
     function startTrigger(members, preview) {
+      // Preview and automatic triggers share ownership. Ignore a retrigger until done.
+      if (members.some((config) => isBusy(config.id))) return false;
       const triggerId = `flyby-${++triggerSequence}`;
       members.forEach((config) => {
-        const previous = active.get(config.id);
-        cancelActive(config.id);
-        if (previous) finishTriggerIfDone(previous.triggerId, previous.preview);
+        clearTimer(`one:${config.id}`);
+        if (config.syncKey) clearTimer(`sync:${String(config.syncKey).trim()}`);
+        pendingStarts.set(config.id, { triggerId, preview });
+      });
+      members.forEach((config) => {
         const delay = Math.max(0, Number(config.startDelayMs) || 0);
-        const start = () => startOne(config, triggerId, preview);
+        const start = () => {
+          pendingStarts.delete(config.id);
+          if (!startOne(config, triggerId, preview)) finishTriggerIfDone(triggerId, preview);
+        };
         if (delay) {
           const key = `start:${triggerId}:${config.id}`;
           timers.set(key, window.setTimeout(() => {
@@ -441,6 +474,7 @@
     }
 
     function startOne(config, triggerId, preview) {
+      if (active.has(config.id)) return false;
       if (!preview && !canRun()) return false;
       if (!readiness.get(keyFor(config.id))?.ready) return false;
       const cache = cacheFor(config);
@@ -474,12 +508,16 @@
     function previewSync(syncKey) {
       const members = groups().get(syncKey) || [];
       if (!members.length) return false;
-      startTrigger(members, true);
-      return true;
+      return Boolean(startTrigger(members, true));
     }
 
     function cancelActive(id) {
       active.delete(id);
+      for (const [key, state] of activeAudio) {
+        if (state.instanceId !== id) continue;
+        state.audio.pause();
+        activeAudio.delete(key);
+      }
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
       if (shell) {
         shell.dataset.active = "false";
@@ -489,12 +527,13 @@
 
     function finishTriggerIfDone(triggerId, preview) {
       if ([...active.values()].some((item) => item.triggerId === triggerId)) return;
+      if ([...pendingStarts.values()].some((item) => item.triggerId === triggerId)) return;
       for (const [key, state] of activeAudio) {
         if (state.triggerId !== triggerId) continue;
         state.audio.pause();
         activeAudio.delete(key);
       }
-      if (!preview) scheduleAll();
+      scheduleAll();
     }
 
     function updateAudio() {
@@ -504,7 +543,7 @@
           .map((item) => item.progress);
         const progress = progresses.length ? Math.max(...progresses) : 1;
         state.audio.volume = Math.max(0, Math.min(1,
-          getMasterVolume() * state.maxVolume * volumeEnvelope(progress)
+          getMasterVolume() * state.maxVolume * (state.instanceId ? 1 : volumeEnvelope(progress))
         ));
       }
     }
@@ -542,11 +581,13 @@
           shell.style.transform =
             `translate3d(${point.x * runtime.scaleX}px, ${point.y * runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale) || 0.2}) scaleX(${facing})`;
           const ready = readiness.get(keyFor(id));
-          const flapHz = Math.max(0, Number(config.flapFrequencyHz) || 0);
-          const frame = ready?.frameB && flapHz > 0
-            ? (Math.floor((runtime.distance / Math.max(1, Number(config.speed) || 260)) * flapHz * 2) % 2 ? "b" : "a")
-            : "a";
-          shell.dataset.frame = frame;
+          if (config.frameB && ready?.frameB) {
+            const flapHz = Math.max(0, Number(config.flapFrequencyHz) || 0);
+            const frame = flapHz > 0
+              ? (Math.floor((runtime.distance / Math.max(1, Number(config.speed) || 260)) * flapHz * 2) % 2 ? "b" : "a")
+              : "a";
+            shell.dataset.frame = frame;
+          }
           shell.dataset.progress = point.progress.toFixed(4);
           shell.dataset.rotation = rotation.toFixed(3);
         }
@@ -567,6 +608,7 @@
     function stopAll() {
       timers.forEach((timer) => window.clearTimeout(timer));
       timers.clear();
+      pendingStarts.clear();
       active.forEach((_, id) => cancelActive(id));
       active.clear();
       activeAudio.forEach(({ audio }) => audio.pause());
@@ -594,6 +636,7 @@
       invalidatePath,
       preview,
       previewSync,
+      tap,
       sync,
       stopAll,
       buildPathCache,

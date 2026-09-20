@@ -828,5 +828,46 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "speaker": "minnie",
       "text": "Dag, oude dam. Zorg goed voor je kleine plantjes."
     }
+  ],
+  "ambientFlybys": [
+    {
+      "id": "arc_wasp2",
+      "label": "arc_wasp2",
+      "frameA": "assets/ambient/flybys/arc_wasp/awc_wasp.png",
+      "frameB": null,
+      "sound": "assets/ambient/flybys/arc_wasp/arc_wasp.mp3",
+      "path": [
+        {
+          "x": 2291,
+          "y": 28
+        },
+        {
+          "x": 874,
+          "y": 153
+        },
+        {
+          "x": 99,
+          "y": -57
+        }
+      ],
+      "scale": 0.22,
+      "speed": 50,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": false,
+      "mirrorX": false,
+      "intervalMinMs": 5000,
+      "intervalMaxMs": 15000,
+      "syncKey": "",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": false,
+      "maxRotationDeg": 8,
+      "motionProfile": "smooth",
+      "wobble": 14,
+      "speedVariation": 0.14,
+      "flutterFrequency": 2.1
+    }
   ]
 };
