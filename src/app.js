@@ -124,11 +124,6 @@ const IMMEDIATE_COMPANION_EVENTS = new Set([
   "PATH_UNLOCKED"
 ]);
 const actorPlayback = { failedSources: new Set() };
-let actorPreloadError = null;
-const actorPreloadPromise = window.AtlasLocomotion.preloadAll().catch((error) => {
-  actorPreloadError = error;
-  return null;
-});
 
 let state = {
   screen: "launch"
@@ -180,7 +175,7 @@ const GUIDE_BLINK_PATHS = window.SVEN_GUIDE_BLINK_ASSETS || {};
 let levelLoadSequence = 0;
 const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
   loadImage: (src) => assetCache.image(src),
-  preloadSven: () => preloadActorAnimations(),
+  preloadSven: (selectedLevel) => preloadActorAnimations(selectedLevel),
   releaseImages: (paths) => assetCache.releaseImages(paths),
   persistentPaths: Object.values(GUIDE_BLINK_PATHS)
 });
@@ -363,18 +358,61 @@ let worldEditor = {
   message: ""
 };
 
+function mainCharacterId(selectedLevel = null, levelId = selectedLevel?.id ?? level?.id) {
+  const source = selectedLevel || (level?.id === levelId ? level : window.SVEN_LEVEL_DEFINITIONS[levelId]);
+  return window.AtlasPlayableCharacters.selected(source, worldResolver.levelSettings(levelId));
+}
+
+function characterTuning(levelId = level?.id) {
+  const source = level?.id === levelId ? level : window.SVEN_LEVEL_DEFINITIONS[levelId];
+  return window.AtlasPlayableCharacters.tuning(worldResolver.levelSettings(levelId), mainCharacterId(source, levelId));
+}
+
+function updateCharacterTuning(levelId, patch) {
+  const settings = worldResolver.levelSettings(levelId);
+  const source = level?.id === levelId ? level : window.SVEN_LEVEL_DEFINITIONS[levelId];
+  const id = mainCharacterId(source, levelId);
+  worldResolver.updateLevelSettings(levelId, { mainCharacterSettings: {
+    ...settings.mainCharacterSettings, [id]: { ...characterTuning(levelId), ...patch }
+  }});
+}
+
+let characterSwitchSequence = 0;
+async function selectMainCharacter(levelId, id) {
+  // Commit any pending field change to the currently selected character first.
+  document.activeElement?.blur();
+  const sequence = ++characterSwitchSequence, loadSequence = levelLoadSequence;
+  try {
+    await window.AtlasLocomotion.preloadAll({ characterId: id });
+    if (sequence !== characterSwitchSequence || loadSequence !== levelLoadSequence) return;
+    worldResolver.updateLevelSettings(levelId, { mainCharacter: id });
+    markWorldConfigDirty(levelId + ': playable character ' + id);
+    if (level?.id === levelId) {
+      stopMovement({ invalidateIntent: true });
+      locomotion.setCharacter(id);
+    }
+    render();
+  } catch (error) {
+    if (sequence !== characterSwitchSequence || loadSequence !== levelLoadSequence) return;
+    worldEditor.message = error.message;
+    walkPathEditor.message = error.message;
+    render();
+  }
+}
+
 function levelTuning(levelId = level?.id) {
   const settings = worldResolver.levelSettings(levelId);
+  const character = characterTuning(levelId);
   return {
-    spriteScale: clamp(Number(settings.spriteScale ?? 1), 0.5, 1.8),
-    movementSpeed: clamp(Number(settings.movementSpeed ?? 250), 80, 520),
-    animationSpeed: clamp(Number(settings.animationSpeed ?? 1), 0.5, 1.8),
+    spriteScale: clamp(Number(character.spriteScale ?? 1), 0.5, 1.8),
+    movementSpeed: clamp(Number(character.movementSpeed ?? 250), 80, 520),
+    animationSpeed: clamp(Number(character.animationSpeed ?? 1), 0.5, 1.8),
     backgroundBrightness: clamp(Number(settings.backgroundBrightness ?? 1), 0.5, 1.5),
     backgroundContrast: clamp(Number(settings.backgroundContrast ?? 1), 0.5, 1.5),
     backgroundSaturation: clamp(Number(settings.backgroundSaturation ?? 1), 0, 2),
     backgroundWarmth: clamp(Number(settings.backgroundWarmth ?? 0), -1, 1),
     backgroundTint: clamp(Number(settings.backgroundTint ?? 0), -1, 1),
-    ...window.AtlasCharacterAppearance.settings(settings, "sven", "sven")
+    ...window.AtlasCharacterAppearance.settings(character, "sven", "sven")
   };
 }
 
@@ -382,8 +420,9 @@ function emissiveGlowTuning(levelId = level?.id) {
   return window.AtlasEmissiveGlow.normalizeSettings(worldResolver.levelSettings(levelId).emissiveGlow);
 }
 
-function locomotionTuning() {
-  return worldResolver.locomotionSettings();
+function locomotionTuning(levelId = level?.id) {
+  const source = level?.id === levelId ? level : window.SVEN_LEVEL_DEFINITIONS[levelId];
+  return worldResolver.locomotionSettings(mainCharacterId(source, levelId));
 }
 
 function visualFilter(kind, levelId = level?.id) {
@@ -420,17 +459,18 @@ const locomotion = window.AtlasLocomotion.createController({
     }
   },
   onFrame: (locomotionState, frameIndex, src) => {
+    const currentActor = document.querySelector("[data-actor='sven']");
+    const mount = document.querySelector("[data-actor-mount='sven']");
+    if (!currentActor && !mount) return;
     const decodedActor = window.AtlasLocomotion.decodedImages.get(src);
     if (!decodedActor) {
       console.error(`[Atlas] Refused non-ready Sven frame: ${src}`);
       return;
     }
-    const currentActor = document.querySelector("[data-actor='sven']");
-    const mount = document.querySelector("[data-actor-mount='sven']");
-    if (!currentActor && !mount) return;
     const actor = decodedActor;
     actor.className = "svenSprite";
-    actor.alt = "Sven";
+    actor.alt = window.AtlasPlayableCharacters.characters[mainCharacterId()];
+    actor.dataset.characterId = mainCharacterId();
     actor.draggable = false;
     actor.decoding = "sync";
     actor.style.filter = visualFilter("sven");
@@ -1086,6 +1126,8 @@ async function prepareWorldEditor() {
     const config = await requestEditorApi("/__dev/world-config");
     worldResolver.setConfig(config);
     window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+    // The world inspector also edits levels that have not been played yet.
+    await Promise.all(levelCatalog.map(entry => loadLevelDefinition(entry)));
     worldEditor.apiAvailable = true;
     worldEditor.message = "Wereldconfiguratie geladen.";
     invalidateMenuAdventureStats();
@@ -1159,7 +1201,8 @@ function updateLevelSetting(levelId, key, value) {
   const range = numericRanges[key];
   const numericValue = Number(value);
   const nextValue = range ? clamp(Number.isFinite(numericValue) ? numericValue : levelTuning(levelId)[key], range[0], range[1]) : value;
-  worldResolver.updateLevelSettings(levelId, { [key]: nextValue });
+  if (Object.hasOwn(window.AtlasPlayableCharacters.tuningRanges, key)) updateCharacterTuning(levelId, { [key]: nextValue });
+  else worldResolver.updateLevelSettings(levelId, { [key]: nextValue });
   if (level?.id === levelId) normalizeLevel(level);
   markWorldConfigDirty(`${levelId}: ${key} aangepast.`);
   applyLiveTuningDom(levelId);
@@ -1194,27 +1237,18 @@ function updateEmissiveGlowSetting(levelId, key, value) {
   return next;
 }
 
-const GLOBAL_LOCOMOTION_RANGES = {
-  fromIdleMovement: [0, 2], loopMovement: [0.1, 2], toIdleMovement: [0, 1.5],
-  toIdleMaxDistance: [1, 200], turnMovement: [0.1, 2], stopEntryDistance: [1, 250],
-  shortMoveThreshold: [1, 300], shortMoveAnimationSpeed: [0.25, 4], shortMoveStartFrame: [0, 0.8],
-  shortMoveMaxFromIdleAnimation: [0.05, 1], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
-  toIdleAnimationSpeed: [0.25, 3], turnAnimationSpeed: [0.25, 3],
-  arrivalDynamicSpeedMin: [0.25, 2], arrivalDynamicSpeedMax: [0.25, 3],
-  blinkMinimumInterval: [250, 30000], blinkMaximumInterval: [250, 60000]
-};
-
-function updateLocomotionSetting(key, value) {
-  const range = GLOBAL_LOCOMOTION_RANGES[key];
+function updateLocomotionSetting(key, value, levelId = level?.id || worldEditor.selectedLevelId) {
+  const range = window.AtlasPlayableCharacters.locomotionRanges[key];
   if (!range) return;
-  const current = locomotionTuning();
+  const current = locomotionTuning(levelId);
   let nextValue = clamp(Number.isFinite(Number(value)) ? Number(value) : current[key], range[0], range[1]);
   if (key === "arrivalDynamicSpeedMin") nextValue = Math.min(nextValue, current.arrivalDynamicSpeedMax);
   if (key === "arrivalDynamicSpeedMax") nextValue = Math.max(nextValue, current.arrivalDynamicSpeedMin);
   if (key === "blinkMinimumInterval") nextValue = Math.min(nextValue, current.blinkMaximumInterval);
   if (key === "blinkMaximumInterval") nextValue = Math.max(nextValue, current.blinkMinimumInterval);
-  worldResolver.updateLocomotionSettings({ [key]: nextValue });
-  markWorldConfigDirty(`Sven locomotion (Global): ${key} aangepast.`);
+  const characterId = mainCharacterId(null, levelId);
+  worldResolver.updateLocomotionSettings({ [key]: nextValue }, characterId);
+  markWorldConfigDirty(`Player locomotion (${characterId}, global): ${key} aangepast.`);
   return nextValue;
 }
 
@@ -1257,16 +1291,15 @@ async function importLevelBackground(levelId, file) {
 }
 
 function frameSrc(animationName, frameIndex) {
-  return window.AtlasLocomotion.frameUrl(animationName, frameIndex);
+  return window.AtlasLocomotion.frameUrl(animationName, frameIndex, mainCharacterId());
 }
 
 function actorStateForMood() {
   return locomotion.snapshot().state;
 }
 
-async function preloadActorAnimations() {
-  await actorPreloadPromise;
-  if (actorPreloadError) throw actorPreloadError;
+async function preloadActorAnimations(selectedLevel = level) {
+  await window.AtlasLocomotion.preloadAll({ characterId: mainCharacterId(selectedLevel) });
 }
 
 function preloadMenuAssets() {
@@ -1607,18 +1640,22 @@ function guideBlinkDelay(runtime, callback, delay) {
   runtime.sequenceTimers.add(timer);
 }
 
+function guideBlinkEnabled(guideId) {
+  return level?.guides?.[guideId]?.blink !== false;
+}
+
 function setGuideBlinkFrame(guideId, frame) {
   const runtime = guideBlinkRuntime[guideId];
   runtime.frame = frame;
   const image = document.querySelector(`[data-guide-image="${guideId}"]`);
-  if (image) image.src = frame === "closed" && runtime.ready
+  if (image) image.src = frame === "closed" && runtime.ready && guideBlinkEnabled(guideId)
     ? readyAssetSrc(GUIDE_BLINK_PATHS[guideId])
     : image.dataset.openSrc;
 }
 
 function runGuideBlink(guideId, options = {}) {
   const runtime = guideBlinkRuntime[guideId];
-  if (!runtime?.ready || runtime.blinking || document.hidden || !document.querySelector(`[data-guide-image="${guideId}"]`)) return false;
+  if (!guideBlinkEnabled(guideId) || !runtime?.ready || runtime.blinking || document.hidden || !document.querySelector(`[data-guide-image="${guideId}"]`)) return false;
   window.clearTimeout(runtime.timer);
   runtime.timer = null;
   runtime.blinking = true;
@@ -1645,7 +1682,7 @@ function runGuideBlink(guideId, options = {}) {
 
 function scheduleGuideBlink(guideId) {
   const runtime = guideBlinkRuntime[guideId];
-  if (!runtime?.ready || runtime.timer || runtime.blinking || document.hidden || !document.querySelector(`[data-guide-image="${guideId}"]`)) return;
+  if (!guideBlinkEnabled(guideId) || !runtime?.ready || runtime.timer || runtime.blinking || document.hidden || !document.querySelector(`[data-guide-image="${guideId}"]`)) return;
   runtime.timer = window.setTimeout(() => {
     runtime.timer = null;
     runGuideBlink(guideId);
@@ -1654,7 +1691,7 @@ function scheduleGuideBlink(guideId) {
 
 function syncGuideBlinkTimers() {
   Object.keys(guideBlinkRuntime).forEach((guideId) => {
-    if (document.querySelector(`[data-guide-image="${guideId}"]`)) scheduleGuideBlink(guideId);
+    if (guideBlinkEnabled(guideId) && document.querySelector(`[data-guide-image="${guideId}"]`)) scheduleGuideBlink(guideId);
     else clearGuideBlinkState(guideBlinkRuntime[guideId]);
   });
 }
@@ -2005,7 +2042,7 @@ async function selectLevel(id, options = {}) {
 
   let selectedLevel;
   try {
-    [selectedLevel] = await Promise.all([loadLevelDefinition(entry), preloadActorAnimations()]);
+    selectedLevel = await loadLevelDefinition(entry);
   } catch (error) {
     if (loadSequence !== levelLoadSequence) return false;
     state = { screen: "menu", error: error.message };
@@ -2078,6 +2115,7 @@ async function selectLevel(id, options = {}) {
   }
   level = nextLevel;
   state = nextState;
+  locomotion.setCharacter(mainCharacterId());
   cinematicCueInteraction.hoveredId = null;
   cinematicCueInteraction.pressedId = null;
   walkNodesById = new Map(nextLevel.walkGraph.nodes.map((node) => [node.id, node]));
@@ -2158,7 +2196,8 @@ async function resetLocalAtlasData() {
 function effectiveLockedLevelIds() {
   return window.AtlasWorld.lockedLevelIds(worldResolver.allEnabledIds(), {
     location: window.location,
-    storage: window.localStorage
+    storage: window.localStorage,
+    isNew: worldResolver.isNew
   });
 }
 
@@ -3395,7 +3434,7 @@ function walkRoute(points, onArrive, intentToken = state.interactionToken) {
   }
   if (shortMove) {
     const animationState = `walk${shortDirection === "left" ? "Left" : "Right"}FromIdle`;
-    const frameCount = window.AtlasLocomotion.ANIMATIONS[animationState].frames;
+    const frameCount = window.AtlasLocomotion.animationSet(mainCharacterId())[animationState].frames;
     const distanceFraction = horizontalDistance / Math.max(1, config.shortMoveThreshold);
     const usedFraction = Math.min(distanceFraction, config.shortMoveMaxFromIdleAnimation);
     const frameStart = Math.min(frameCount - 1, Math.floor((frameCount - 1) * config.shortMoveStartFrame));
@@ -3459,7 +3498,7 @@ function beginShortToIdle(movement) {
   movement.shortToIdleStarted = true;
   const config = locomotionTuning();
   const stateName = `walk${movement.shortDirection === "left" ? "Left" : "Right"}ToIdle`;
-  const frameCount = window.AtlasLocomotion.ANIMATIONS[stateName].frames;
+  const frameCount = window.AtlasLocomotion.animationSet(mainCharacterId())[stateName].frames;
   const distanceFraction = movement.shortToIdleDistance <= 0
     ? 0
     : Math.min(1, movement.shortToIdleDistance / Math.max(0.0001, config.toIdleMaxDistance));
@@ -5949,7 +5988,7 @@ function renderEmissiveGlowControls(levelId) {
 
 function renderLevelTuningControls(levelId, options = {}) {
   const tuning = levelTuning(levelId);
-  const globalTuning = locomotionTuning();
+  const globalTuning = locomotionTuning(levelId);
   const settings = worldResolver.levelSettings(levelId);
   const includeCharacters = options.scope !== "graphics";
   const includeGraphics = options.scope !== "characters";
@@ -5957,7 +5996,7 @@ function renderLevelTuningControls(levelId, options = {}) {
     <label class="atlasConfigField"><span>${label}</span><input type="number" min="${min}" max="${max}" step="${step}" value="${value}" data-level-setting="${key}" data-level-id="${levelId}"></label>
   `;
   const globalControl = (label, key, value, min, max, step, factor = 1) => `
-    <label class="atlasConfigField"><span>${label} <em>(Global)</em></span><input type="number" min="${min}" max="${max}" step="${step}" value="${Number(value * factor).toFixed(step < 1 ? 2 : 0).replace(/\.00$/, "")}" data-locomotion-setting="${key}" data-value-factor="${factor}"></label>
+    <label class="atlasConfigField"><span>${label} <em>(Character / Global)</em></span><input type="number" min="${min}" max="${max}" step="${step}" value="${Number(value * factor).toFixed(step < 1 ? 2 : 0).replace(/\.00$/, "")}" data-locomotion-setting="${key}" data-level-id="${levelId}" data-value-factor="${factor}"></label>
   `;
   return `
     <div class="atlasLevelTuning" data-level-tuning="${levelId}">
@@ -5973,6 +6012,7 @@ function renderLevelTuningControls(levelId, options = {}) {
         </div>
       `}
       ${includeCharacters ? `<details class="editorNestedSection characterControlGroup" open data-editor-panel-key="sven-general"><summary>General</summary><div class="atlasTuningGrid">
+        <label class="atlasConfigField"><span>Playable character</span><select data-main-character="${levelId}">${Object.entries(window.AtlasPlayableCharacters.characters).map(([id,name]) => `<option value="${id}" ${id === mainCharacterId(level?.id === levelId ? level : window.SVEN_LEVEL_DEFINITIONS[levelId], levelId) ? 'selected' : ''}>${name}</option>`).join('')}</select></label>
         ${numberControl("Sprite Scale (Level)", "spriteScale", tuning.spriteScale, 0.5, 1.8, 0.05)}
         ${numberControl("Movement Speed (Level)", "movementSpeed", tuning.movementSpeed, 80, 520, 10)}
         ${numberControl("Animation Speed (Level)", "animationSpeed", tuning.animationSpeed, 0.5, 1.8, 0.05)}
@@ -5991,9 +6031,9 @@ function renderLevelTuningControls(levelId, options = {}) {
         </div>
       </details>` : ""}
       ${includeCharacters ? `<details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
-        <summary>Sven Locomotion</summary>
+        <summary>Player Locomotion</summary>
         <div class="atlasLocomotionGroups">
-          <fieldset><legend>Global — Movement</legend><div class="atlasTuningGrid">
+          <fieldset><legend>Character / Global — Movement</legend><div class="atlasTuningGrid">
             ${globalControl("From Idle Movement %", "fromIdleMovement", globalTuning.fromIdleMovement, 0, 200, 5, 100)}
             ${globalControl("Loop Movement %", "loopMovement", globalTuning.loopMovement, 10, 200, 5, 100)}
             ${globalControl("To Idle Movement %", "toIdleMovement", globalTuning.toIdleMovement, 0, 150, 5, 100)}
@@ -6001,13 +6041,13 @@ function renderLevelTuningControls(levelId, options = {}) {
             ${globalControl("Turn Movement %", "turnMovement", globalTuning.turnMovement, 10, 200, 5, 100)}
             ${globalControl("Stop Entry Distance", "stopEntryDistance", globalTuning.stopEntryDistance, 1, 250, 1)}
           </div></fieldset>
-          <fieldset><legend>Global — Short Moves</legend><div class="atlasTuningGrid">
+          <fieldset><legend>Character / Global — Short Moves</legend><div class="atlasTuningGrid">
             ${globalControl("Short Move Threshold", "shortMoveThreshold", globalTuning.shortMoveThreshold, 1, 300, 1)}
             ${globalControl("Short Move Animation Speed", "shortMoveAnimationSpeed", globalTuning.shortMoveAnimationSpeed, 0.25, 4, 0.05)}
             ${globalControl("Short Move Start Frame %", "shortMoveStartFrame", globalTuning.shortMoveStartFrame, 0, 80, 5, 100)}
             ${globalControl("Short Move Max From-Idle Animation %", "shortMoveMaxFromIdleAnimation", globalTuning.shortMoveMaxFromIdleAnimation, 5, 100, 5, 100)}
           </div></fieldset>
-          <fieldset><legend>Global — Animation</legend><div class="atlasTuningGrid">
+          <fieldset><legend>Character / Global — Animation</legend><div class="atlasTuningGrid">
             ${globalControl("From Idle Animation Speed", "fromIdleAnimationSpeed", globalTuning.fromIdleAnimationSpeed, 0.25, 3, 0.05)}
             ${globalControl("Loop Animation Speed", "loopAnimationSpeed", globalTuning.loopAnimationSpeed, 0.25, 3, 0.05)}
             ${globalControl("To Idle Animation Speed", "toIdleAnimationSpeed", globalTuning.toIdleAnimationSpeed, 0.25, 3, 0.05)}
@@ -6015,7 +6055,7 @@ function renderLevelTuningControls(levelId, options = {}) {
             ${globalControl("Arrival Dynamic Speed Min", "arrivalDynamicSpeedMin", globalTuning.arrivalDynamicSpeedMin, 0.25, 2, 0.05)}
             ${globalControl("Arrival Dynamic Speed Max", "arrivalDynamicSpeedMax", globalTuning.arrivalDynamicSpeedMax, 0.25, 3, 0.05)}
           </div></fieldset>
-          <fieldset><legend>Global — Idle</legend><div class="atlasTuningGrid">
+          <fieldset><legend>Character / Global — Idle</legend><div class="atlasTuningGrid">
             ${globalControl("Blink Minimum Interval (ms)", "blinkMinimumInterval", globalTuning.blinkMinimumInterval, 250, 30000, 250)}
             ${globalControl("Blink Maximum Interval (ms)", "blinkMaximumInterval", globalTuning.blinkMaximumInterval, 250, 60000, 250)}
           </div></fieldset>
@@ -6637,7 +6677,7 @@ function renderGuidePortrait([id, guide], activeSpeaker) {
       aria-label="${guide.name} laten spinnen"
       ${active ? 'aria-current="true"' : ""}
     >
-      <img src="${readyAssetSrc(guideBlinkRuntime[id]?.frame === "closed" && guideBlinkRuntime[id]?.ready ? GUIDE_BLINK_PATHS[id] : guide.portrait)}"
+      <img src="${readyAssetSrc(guideBlinkEnabled(id) && guideBlinkRuntime[id]?.frame === "closed" && guideBlinkRuntime[id]?.ready ? GUIDE_BLINK_PATHS[id] : guide.portrait)}"
         data-guide-image="${id}" data-open-src="${readyAssetSrc(guide.portrait)}" alt="${guide.name}" />
       <figcaption>${guide.name}</figcaption>
     </figure>
@@ -6842,7 +6882,7 @@ function renderWorldManagementPanel() {
 function renderMenu() {
   ensureMenuAdventureStats();
   const menuLevels = visibleLevelCatalog();
-  const heroIndex = menuLevels.length ? Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), menuLevels.length - 1) : 0;
+  const heroIndex = selectedMenuHeroIndex();
   const heroLevel = menuLevels[heroIndex];
   const supportingLevels = menuLevels;
   return `
@@ -6915,7 +6955,7 @@ function stopMenuAutoRotation() {
 }
 
 function menuAutoRotationAllowed() {
-  return state.screen === "menu" && !menuCarouselRuntime.paused && !document.hidden && !prefersReducedMotion();
+  return state.screen === "menu" && firstNewMenuHeroIndex() < 0 && !menuCarouselRuntime.paused && !document.hidden && !prefersReducedMotion();
 }
 
 function syncMenuAutoRotation() {
@@ -6927,8 +6967,14 @@ function syncMenuAutoRotation() {
   }, MENU_AUTO_ROTATE_MS);
 }
 
+function firstNewMenuHeroIndex(menuLevels = visibleLevelCatalog()) {
+  return menuLevels.findIndex(item => worldResolver.worldHasNew(item.id));
+}
+
 function selectedMenuHeroIndex() {
   const menuLevels = visibleLevelCatalog();
+  // A fresh menu state chooses its default once; redraws preserve manual selection.
+  if (state.menuHeroIndex === undefined) state.menuHeroIndex = Math.max(0, firstNewMenuHeroIndex(menuLevels));
   return menuLevels.length ? Math.min(Math.max(Number(state.menuHeroIndex) || 0, 0), menuLevels.length - 1) : 0;
 }
 
@@ -6968,6 +7014,7 @@ function setMenuHeroIndex(menuHeroIndex, options = {}) {
 function changeMenuHero(direction, options = {}) {
   const menuLevels = visibleLevelCatalog();
   if (!menuLevels.length || state.screen !== "menu") return;
+  if (options.auto && firstNewMenuHeroIndex(menuLevels) >= 0) return;
   setMenuHeroIndex(selectedMenuHeroIndex() + direction, options);
 }
 
@@ -7140,6 +7187,11 @@ function updateMenuAdventureBadges() {
   });
 }
 
+function renderNewWorldBadge(item) {
+  return worldResolver.worldHasNew(item.id)
+    ? `<span class="levelNewBadge">Nieuw</span>` : "";
+}
+
 function renderHeroLevelTile(item) {
   const launchEntry = worldResolver.firstEnabled(item.id);
   const locked = launchEntry && isLevelRecentlyLocked(launchEntry.id);
@@ -7147,6 +7199,7 @@ function renderHeroLevelTile(item) {
     <button class="levelTile heroLevelTile ${locked ? "levelTileLocked" : ""} ${state.menuHeroTransition ? "heroLevelTileTransition" : ""}" type="button" data-level="${launchEntry?.id || ""}" data-featured-level="${item.id}" aria-label="${item.title} ${locked ? "tijdelijk vergrendeld" : "starten"}" ${locked ? "aria-disabled=\"true\"" : ""}>
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
+      ${renderNewWorldBadge(item)}
       ${locked ? `<span class="levelLockIndicator" aria-hidden="true">🔒</span>` : ""}
       <span class="levelTileText">
         <span class="levelBadge">${adventureMenuBadge(item)}</span>
@@ -7166,6 +7219,7 @@ function renderLevelTile(item, index = 0, isActive = false) {
     <button class="${tileClass}" type="button" data-level="${launchEntry?.id || ""}" data-menu-tile="${item.id}" aria-pressed="${isActive ? "true" : "false"}" ${locked ? "aria-disabled=\"true\"" : ""}>
       <img src="${item.menu?.illustration}" alt="" />
       <span class="levelTileShade"></span>
+      ${renderNewWorldBadge(item)}
       ${locked ? `<span class="levelLockIndicator" aria-hidden="true">🔒</span>` : ""}
       <span class="levelTileText">
         <span class="levelBadge">${adventureMenuBadge(item)}</span>
@@ -7987,7 +8041,7 @@ app.addEventListener("click", (event) => {
     const action = actionTarget.dataset.action;
     if (action === "launch-enter") {
       menuCarouselRuntime.paused = false;
-      state = { screen: "menu", menuHeroIndex: 0 };
+      state = { screen: "menu" };
       render();
       return;
     }
@@ -8080,6 +8134,8 @@ app.addEventListener("input", (event) => {
     });
     return;
   }
+  const characterSelect = event.target.closest("[data-main-character]");
+  if (characterSelect) { if (event.type === "change") selectMainCharacter(characterSelect.dataset.mainCharacter, characterSelect.value); return; }
   const levelSetting = event.target.closest("[data-level-setting]");
   if (levelSetting) {
     updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
@@ -8088,7 +8144,7 @@ app.addEventListener("input", (event) => {
   const locomotionSetting = event.target.closest("[data-locomotion-setting]");
   if (locomotionSetting) {
     const factor = Number(locomotionSetting.dataset.valueFactor || 1);
-    updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor);
+    updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor, locomotionSetting.dataset.levelId);
     return;
   }
   const effectColor = event.target.closest("[data-effect-color]");
@@ -8171,6 +8227,8 @@ app.addEventListener("change", (event) => {
     render();
     return;
   }
+  const characterSelect = event.target.closest("[data-main-character]");
+  if (characterSelect) { if (event.type === "change") selectMainCharacter(characterSelect.dataset.mainCharacter, characterSelect.value); return; }
   const levelSetting = event.target.closest("[data-level-setting]");
   if (levelSetting) {
     updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
@@ -8179,7 +8237,7 @@ app.addEventListener("change", (event) => {
   const locomotionSetting = event.target.closest("[data-locomotion-setting]");
   if (locomotionSetting) {
     const factor = Number(locomotionSetting.dataset.valueFactor || 1);
-    const nextValue = updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor);
+    const nextValue = updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor, locomotionSetting.dataset.levelId);
     if (nextValue !== undefined) locomotionSetting.value = String(nextValue * factor);
     return;
   }
@@ -8498,6 +8556,9 @@ window.addEventListener("keydown", (event) => {
   }
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "l") {
     event.preventDefault();
+    // One deliberate press completes one scene. A held key can keep repeating
+    // after the player advances, but must not complete the newly loaded level.
+    if (event.repeat) return;
     sessionReport?.discard();
     completeCurrentSceneChallenges();
     return;
@@ -8565,7 +8626,6 @@ app.addEventListener("submit", (event) => {
   answerQuestion(form.querySelector("[data-open-answer]")?.value ?? "");
 });
 
-preloadActorAnimations();
 preloadMenuAssets();
 preloadGuideBlinkAssets();
 registerServiceWorker();

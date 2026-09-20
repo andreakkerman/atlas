@@ -28,7 +28,7 @@
     frontAtmosphere:"Amount of authored air in front of characters. Increase to embed them in mist while keeping their silhouettes readable.",
     atmosphere: "A soft volume of colored air. Depth keeps foreground objects clear while distant air accumulates haze. Use warm brown air in firelit interiors.",
     bloom: "A soft glow around the brightest sources. A higher threshold limits glow to brighter pixels; keep intensity controlled to retain painted detail.",
-    particles: "One particle field for weather, dust or sparks. Presets change motion, lifetime, shape and depth, and remain fully editable.",
+    particles: "One particle field for weather, dust or sparks. Position is its center; Width and Height follow the rotated guide axes (at Direction 90, Height spans horizontally). Presets change behavior without changing dimensions.",
     waterSurface: "Accentuates wave and reflection detail already present in the stable painted water with one evolving specular field. Scene depth keeps nearer artwork in front.",
     waterSparkles: "Adds discrete, clustered specular sparkles over authored water. Positions stay locked to world pixels while individual points twinkle; scene depth keeps foreground artwork in front.",
     characters: "Continuously blends scene light, depth tint and atmosphere into Sven, NPCs and animals, on top of their manual appearance.",
@@ -114,7 +114,8 @@
     density:"Amount of visible air or beam medium. Higher values thicken the effect; depth can keep foreground objects clear.",
     driftSpeed:"How fast haze drifts in world pixels per second. Zero holds its position; higher values move it faster.",
     driftDirection:"Haze travel direction: zero is right, 90 is down and -90 is up.",
-    count:"Number of particles in this field. Higher values increase coverage and GPU work without adding individual draw calls.",
+    count:"Particle count, or particles per 800 × 400 world-pixel region when Scale Count With Area is on. Limited to 20,000 rendered particles per field.",
+    scaleCountWithArea:"Maintain density when resizing: Count × Width × Height / 320,000, capped at 20,000. At the cap, density decreases but the entire region still receives particles.",
     size:"Particle radius in world pixels. Higher values make larger motes or thicker rain streaks.",
     sizeVariation:"Difference in size between particles. Zero is uniform; higher values give a wider range of sizes.",
     speed:"Particle travel speed in world pixels per second. Use slow speeds for dust and high speeds for rain.",
@@ -200,7 +201,7 @@
     }
     function render() {
       const settings = get();
-      return `<section class="cinematicEditor" data-cinematic-editor><h3>Experimental · Cinematic Lighting</h3><p>Separate from Illustrated effects. World units in pixels. Drag a center, region corner, direction arrow or polygon vertex in the scene. Apply saves to this level.</p>
+      return `<section class="cinematicEditor" data-cinematic-editor><h3>Experimental · Cinematic Lighting</h3><p>Separate from Illustrated effects. For classic Illustrated God Rays, use God Rays (Sun Presence) in the scene-effect library. World units in pixels. Drag a center, region corner, direction arrow or polygon vertex in the scene. Apply saves to this level.</p>
         <p role="status" data-cinematic-status></p><button type="button" data-renderer-choice="cinematic">Preview Cinematic Lighting</button>
         <div class="cinematicActions"><button type="button" data-cinematic-action="reset-all">Reset all to neutral</button><label>Placement guides<select data-cinematic-guides>${["selected","all","hidden"].map(mode=>`<option value="${mode}" ${mode===view().guides?"selected":""}>${mode==="selected"?"Selected only":label(mode)}</option>`).join("")}</select></label></div>
         <div class="cinematicLayerTabs" role="tablist" aria-label="Cinematic layers">${Object.entries(api.layers).map(([key,def])=>`<button type="button" role="tab" data-cinematic-layer="${key}" aria-selected="${key===view().layer}">${def.label}</button>`).join("")}</div>

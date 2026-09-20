@@ -17,12 +17,12 @@ Learning authoring belongs to [Learning Content Rules](ATLAS_LEARNING_CONTENT_RU
 | `id`, `title`, `description`, `storageKey`, `progressKey` | Identity, display and local gameplay/learning storage keys; validated nonempty strings. |
 | `subtitle`, `menu` | Additional presentation, alongside manifest menu metadata. |
 | `world` | Measured `width`, `height`, `background`; optional `aspectRatio` and artwork-sized `depthmap`. |
-| `player` | `startNode` and world-pixel `start`; start coordinates must match the authored start node. |
+| `player` | `startNode` and world-pixel `start`; start coordinates must match the authored start node. Optional `characterId` selects the default playable sprite set (`sven` or `sven_arc`); omitted means `sven`. |
 | `walkPath` or `walkGraph` | Authored route or legacy explicit graph; do not author both. |
 | `interactiveObjects` | Nonempty object registry: unique `id`, `type`, `label`, `center`, positive `radius`, valid `approachNode`. |
 | `hotspots`, `runes` | Interaction bindings to object IDs; runes remain the compatibility/progression container for challenge objects, including non-rune stories. |
 | `learningChallenges` | Optional authored challenge registry linked from runes; preferred for authored learning content. |
-| `challengeCharacter`, `guides` | Challenge presentation identity and guide configuration where used. |
+| `challengeCharacter`, `guides` | Challenge presentation identity and guide configuration where used. Guide `portrait` is level-specific; optional `blink: false` keeps custom portraits static when no matching blink art exists, without changing guide identity, hints or interactions. Omitted `blink` preserves default animation. |
 | `companion`, `challengeArt`, `spiritName`, `spiritLines` | Existing compatibility/presentation fields; these are still validated, not permission to remove them. `spiritLines` requires welcome/moving/allRunes/reward strings. |
 | `intro`, `areas`, `reward` | Nonempty introduction and area arrays; reward requires title, line and art. |
 | `levelSemantics`, `companionMoments` | Authored narrative context and event-driven companion dialogue. |
@@ -31,6 +31,8 @@ Learning authoring belongs to [Learning Content Rules](ATLAS_LEARNING_CONTENT_RU
 A hotspot has `id`, `objectId`, `type`, `name`, and `defaultAction`. A rune has `id`, `objectId`, `name`, `defaultAction`, `intro`, and `solved`, plus its challenge binding. References must resolve within the owning level. Asset paths are repository-relative; level artwork belongs with that level, shared libraries in `assets/`.
 
 Keep source data distinct from runtime normalization: the app derives a graph and applies world-setting overrides in memory. Do not persist that derived graph alongside its source path. General editor Apply also synchronizes player start and legacy interaction geometry; effect-only Apply preserves unrelated source sections.
+
+Playable selection is per level, never per world. Editor selection persists as `Levels/world-config.js` → `levels[id].mainCharacter`, overriding `player.characterId`. `mainCharacterSettings[characterId]` holds each sprite set's per-level scale, movement speed, level animation-speed multiplier and existing `sven*` appearance keys. Flat legacy presentation tuning remains standard Sven's fallback. Shared route/start coordinates, background appearance and all scene/Cinematic character lighting and shadows remain level settings. Only Player Locomotion is global per character: `characterLocomotion.sven` / `.sven_arc` in the same world-config file. The resolver reads the selected ID's global profile directly; stale per-level `locomotion` fields are ignored. Legacy top-level `locomotion` is imported for Sven only when its global profile is absent; saving writes the canonical character profiles. Registry defaults match the calibrated profiles (ARC From Idle Movement 25%, blink 1000–5000 ms), never the obsolete bootstrap profile.
 
 ## Coordinates, path and interaction geometry
 
@@ -65,6 +67,16 @@ Omitted `active` means active; only explicit `false` disables an authored challe
 Inactive challenges remain authored and editable, but do not appear as playable challenge targets/cues or contribute to active menu counts and required progression. Do not delete their variants or pretend they were solved. Existing completion records must not bypass a changed active set.
 
 Exit readiness uses the existing active-rune calculation. If any active rune's selected challenge explicitly sets `unlocksLevelProgression: true`, all such runes must be completed; otherwise all active runes are required. Prerequisite locking and renderer cues project this state rather than implementing a separate completion rule. See [active challenge regressions](../tests/challenge-active.spec.js).
+
+ARC Atlas follows Dam Battlegrounds → Buried City → Riven Tides → Stella Montis (`LVL-0032`–`LVL-0035`). Stella Montis is the current final level and uses the normal final reward with no next-level target. Its terminal/math, round-container/clock and crate/math challenges each contain four slots with two variants. The supplied level-local scene, depth and Valente assets use the standard loading/editor paths. `player.characterId: "sven_arc"` selects the existing global ARC Sven locomotion profile; no level-local locomotion copy is authored. Its Minnie opening line uses the ordinary `LEVEL_ENTER` moment.
+
+## Authored Nieuw status
+
+In `Levels/world-config.js`, `worlds[rootId].isNew: true` marks an adventure as Nieuw; its member levels inherit through the existing `connectedFrom` root resolver. Optional `levels[levelId].isNew` is a boolean override (false opts out); absent flags resolve to false. ARC Atlas currently authors only the world flag. Current level IDs each identify one playable scene; the world association is the shared parent boundary, with no separate scene flags or ARC ID list.
+
+`worldResolver.isNew(levelId)` is the effective replay policy. Nieuw levels bypass only the two-other-level replay cooldown. Plays remain recorded, and disabling/removing Nieuw immediately restores normal eligibility using that history. There is no first-seen timestamp or 72-hour expiry; any old browser timestamp is unused and needs no migration. Progression, exit requirements and saved completion are unchanged.
+
+The carousel represents worlds, not individual connected scenes. Its existing persistent card grid contains every enabled world once in authored order, independently of hero selection. A fresh menu selects the first enabled Nieuw world in that order; while any exists, automatic hero rotation is disabled. Manual arrows/dots retain the chosen hero for that menu session, including index zero, without snapping back. Returning to a fresh menu or reloading reapplies the default. With no Nieuw worlds, index zero and the existing automatic rotation behavior remain unchanged. There is no capacity limit or recommendation eviction. A world card shows Nieuw when any enabled member is effectively new; removing the status removes the badge and leaves ordinary carousel behavior. Do not add a second pinned-card list or launch a locked child directly. ARC Minnie intros continue using normal `companionMoments` / `LEVEL_ENTER` events.
 
 ## Characters and shared asset discovery
 

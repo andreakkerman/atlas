@@ -3,7 +3,6 @@
 
   const RECENT_STORAGE_KEY = "atlas.recent-levels.v1";
   const MAX_RECENT_LEVELS = 24;
-
   function clone(value) {
     return JSON.parse(JSON.stringify(value || {}));
   }
@@ -14,7 +13,7 @@
       version: 1,
       worlds: source.worlds && typeof source.worlds === "object" ? clone(source.worlds) : {},
       levels: source.levels && typeof source.levels === "object" ? clone(source.levels) : {},
-      locomotion: source.locomotion && typeof source.locomotion === "object" ? clone(source.locomotion) : {}
+      characterLocomotion: global.AtlasPlayableCharacters.locomotionProfiles(source.characterLocomotion, source.locomotion)
     };
   }
 
@@ -114,6 +113,17 @@
       else config.worlds[rootId].enabled[levelId] = false;
     }
 
+    // connectedFrom identifies the containing adventure; one scene per level today.
+    function isNew(levelId) {
+      if (!byId.has(levelId)) return false;
+      const authored = config.levels[levelId]?.isNew;
+      return typeof authored === "boolean" ? authored : config.worlds[rootIdFor(levelId)]?.isNew === true;
+    }
+
+    function worldHasNew(rootId) {
+      return enabledEntries(rootId).some(entry => isNew(entry.id));
+    }
+
     function levelSettings(levelId) {
       return config.levels[levelId] || {};
     }
@@ -127,17 +137,14 @@
       if (!Object.keys(config.levels[levelId]).length) delete config.levels[levelId];
     }
 
-    function locomotionSettings() {
-      return { ...(global.AtlasLocomotion?.DEFAULT_CONFIG || {}), ...(config.locomotion || {}) };
+    function locomotionSettings(characterId = "sven") {
+      global.AtlasPlayableCharacters.validateId(characterId);
+      return { ...config.characterLocomotion[characterId] };
     }
 
-    function updateLocomotionSettings(patch) {
-      config.locomotion = { ...(config.locomotion || {}) };
-      Object.entries(patch || {}).forEach(([key, value]) => {
-        if (value === undefined || value === null || value === "") delete config.locomotion[key];
-        else config.locomotion[key] = value;
-      });
-      if (!Object.keys(config.locomotion).length) delete config.locomotion;
+    function updateLocomotionSettings(patch, characterId = "sven") {
+      const next = { ...locomotionSettings(characterId), ...patch };
+      config.characterLocomotion = global.AtlasPlayableCharacters.locomotionProfiles({ ...config.characterLocomotion, [characterId]: next });
     }
 
     return {
@@ -154,6 +161,8 @@
       moveLevel,
       setWorldOrder,
       setEnabled,
+      isNew,
+      worldHasNew,
       levelSettings,
       updateLevelSettings,
       locomotionSettings,
@@ -188,7 +197,7 @@
     if (options.bypass ?? isDevelopmentHost(options.location)) return new Set();
     const enabled = [...new Set(enabledIds || [])];
     const recent = options.recent || readRecent(options.storage);
-    const locked = new Set(recent.slice(-2).filter((id) => enabled.includes(id)));
+    const locked = new Set(recent.slice(-2).filter((id) => enabled.includes(id) && !options.isNew?.(id)));
     if (enabled.length && enabled.every((id) => locked.has(id))) {
       const oldestLocked = recent.find((id) => locked.has(id));
       if (oldestLocked) locked.delete(oldestLocked);

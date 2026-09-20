@@ -537,6 +537,7 @@
 
     function textureForImage(image, fallbackKey) {
       if (!image?.complete || !image.naturalWidth) return null;
+      if (image.dataset?.characterId) fallbackKey = `${fallbackKey}:${image.dataset.characterId}`;
       const assetPath = image.dataset?.assetPath || image.getAttribute?.("src") || "";
       const decodedFrame = assetPath ? global.AtlasLocomotion?.decodedImages?.get(assetPath) : null;
       const sourceImage = decodedFrame?.complete && decodedFrame.naturalWidth ? decodedFrame : image;

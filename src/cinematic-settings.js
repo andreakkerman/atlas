@@ -39,6 +39,7 @@
   Object.assign(systems.atmosphere.fields, { depthBias: n(0.06, -0.4, 0.4) });
   Object.assign(systems.particles.fields, { layer: ["environment", "effects"], wind: n(0, -250, 250), streak: n(1, 1, 35), pulse: n(0, 0, 1), depthSpread: n(0.3, 0, 1), distribution: ["volume", "source"] });
   systems.particles.fields.speed = n(12, 0, 900);
+  systems.particles.fields.scaleCountWithArea = false;
   systems.shafts.fields.layer = ["globalLighting", "effects"];
   Object.assign(systems.characters.fields, { directionalInfluence: n(0.7, 0, 2), atmosphereInfluence: n(0.65, 0, 2), depthTint: n(0.18, 0, 1), grounding: n(0.12, 0, 0.5), sideLighting:n(0.7,0,1), frontAtmosphere:n(0.45,0,1) });
   const presets = {
@@ -54,8 +55,8 @@
       Dust: { color: "#d5bd8c", count: 800, size: 0.8, speed: 4, direction: 0, gravity: 0, turbulence: 0.45, wind: 1, lifetime: 30, streak: 1, glow: 0, opacity: 0.25, depth: 0.65, depthSpread: 0.35 },
       Embers: { layer: "effects", color: "#ff8331", count: 140, size: 1.05, sizeVariation:0.95, speed: 40, direction: -90, gravity: -1.5, turbulence: 1.2, wind: 3, lifetime: 5, streak: 1.8, glow: 1.6, opacity: 0.65, distribution: "source", depth: 0.85, depthSpread: 0.15 },
       Snow: { color: "#e2efff", count: 1600, size: 2.2, sizeVariation: 0.9, speed: 65, direction: 90, gravity: 0.6, turbulence: 1, wind: 18, lifetime: 18, streak: 1, glow: 0, opacity: 0.7, depth: 0.7, depthSpread: 0.6 },
-      Drizzle: { color: "#b4cfe2", count: 2400, size: 0.45, speed: 300, direction: 90, gravity: 3, turbulence: 0.04, wind: 22, lifetime: 4, streak: 7, glow: 0, opacity: 0.25, depth: 0.75, depthSpread: 0.45 },
-      "Heavy Rain": { color: "#bacfe7", count: 7500, size: 0.7, speed: 720, direction: 90, gravity: 8, turbulence: 0.08, wind: 120, lifetime: 2.2, streak: 23, glow: 0, opacity: 0.45, depth: 0.75, depthSpread: 0.5 },
+      Drizzle: { color: "#b4cfe2", count: 2400, scaleCountWithArea: true, size: 0.45, speed: 300, direction: 90, gravity: 3, turbulence: 0.04, wind: 22, lifetime: 4, streak: 7, glow: 0, opacity: 0.25, depth: 0.75, depthSpread: 0.45 },
+      "Heavy Rain": { color: "#bacfe7", count: 7500, scaleCountWithArea: true, size: 0.7, speed: 720, direction: 90, gravity: 8, turbulence: 0.08, wind: 120, lifetime: 2.2, streak: 23, glow: 0, opacity: 0.45, depth: 0.75, depthSpread: 0.5 },
       "Magic Motes": { layer: "effects", color: "#7de9e8", count: 250, size: 2.1, speed: 6, direction: -90, gravity: 0, turbulence: 2, wind: 0, lifetime: 14, streak: 1, glow: 1.4, opacity: 0.6, pulse: 0.65, depth: 0.8, depthSpread: 0.35 }
     },
     waterSparkles: {
@@ -123,10 +124,16 @@
     // does not leave gravity, streaks or pulsing from the previous preset behind.
     const defaults = instance(key);
     const behavior = Object.fromEntries(Object.keys(presets[key]?.[name] || {}).map(field => [field, defaults[field]]));
-    if (key === "particles") for (const field of ["layer", "pulse", "distribution", "sizeVariation", "randomness"]) behavior[field] = defaults[field];
+    if (key === "particles") for (const field of ["layer", "pulse", "distribution", "sizeVariation", "randomness", "scaleCountWithArea"]) behavior[field] = defaults[field];
     return instance(key, { ...item, ...behavior, ...presets[key]?.[name] });
   }
-  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets };
+  function particleCount(item) {
+    // Count is per default 800x400 region when area scaling is enabled.
+    // The established per-field cap reduces density, never spatial coverage.
+    const scale = item.scaleCountWithArea ? item.width * item.height / (800 * 400) : 1;
+    return Math.max(1, Math.min(systems.particles.fields.count.max, Math.round(item.count * scale)));
+  }
+  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount };
   global.AtlasCinematicSettings = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

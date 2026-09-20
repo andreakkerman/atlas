@@ -64,6 +64,12 @@ Effect instances select semantic slots, not arbitrary z-index values. Presentati
 
 Canvas2D effect tiers target High 60 Hz, Balanced 40 Hz and Reduced 24 Hz. Automatic detection selects Balanced for iPad and High otherwise; the existing document `data-effects-quality` override selects a runtime tier, and an instance's `qualityTier` can select its own resolving tier. Tiers reduce particles/layers/blur/shimmer segments through registry scaling and caps; these are targets, not measured FPS guarantees. Reduced motion separately applies preset-specific amount/speed/pulse/flicker scaling while retaining appropriate static presence; it does not automatically select the Reduced tier. Budget estimates/warnings are authoring aids; they do not silently alter route geometry or progression. These tiers are distinct from the 3D presets.
 
+## Playable character sprite sets
+
+Characters → General includes **Playable character**: Sven (`sven`) and ARC Sven (`sven_arc`). Switching decodes the selected set before replacing the preview, resets the shared animation controller and restores that character's saved tuning. General scale/movement speed/animation speed and Visual controls operate on the selected character's per-level settings bank; scene/Cinematic character lighting and shadows also remain per level. **Player Locomotion (Character / Global)** edits `world-config.js` → `characterLocomotion[characterId]`, affecting every level using that sprite set. The 18 detailed movement, transition timing, short-move and blink controls belong to that global profile; they remain separate from the level's Movement Speed and Animation Speed controls. Stale per-level locomotion fields are ignored. Apply uses the existing world-config save endpoint. No separate controller or ARC-specific level check is used.
+
+`src/playable-characters.js` defines the required animation folders and supported IDs. `scripts/generate-character-manifest.js` discovers and numerically sorts each folder's actual frames in `assets/characters/<id>/`, producing `ATLAS_CHARACTER_MANIFEST.playableCharacters`. Run the normal manifest generation after changing assets. Required folders are idle, idle_blink, turn_from_left_to_right, turn_from_right_to_left, and walk_left/right_from_idle, walk_left/right_loop, walk_left/right_to_idle. Frame counts may differ independently; transitions and loops use the selected list at the existing 24 FPS, while world movement stays time-based. Missing required sets fail validation/loading explicitly rather than borrowing standard Sven frames.
+
 ## Ambient animals and flybys
 
 Instances reuse central `assets/ambient/` libraries. The local discovery endpoint validates asset sets for self-service add/duplicate flows. Preserve supplied dimensions/aspect ratios; do not crop/rewrite assets or impose the obsolete fixed Sven sprite intake on ambient art. Missing/invalid sets must not create broken partial entries.
@@ -88,6 +94,8 @@ Challenge/exit cues project current active/completed/prerequisite/exit state. Th
 
 Cinematic settings are authored per level through world configuration. Renderer switching must release/recreate resources through the shared ownership policy in [Renderer Specification](renderer-current-spec.md), preserving gameplay and editor data. No historical showcase settings or old laboratory FPS count is a current acceptance promise.
 
+Particle Fields use a world-space center (`x`, `y`) and local `width`/`height`, rotated by Direction, matching the editor guide. Spawn/wrap coordinates and the region mask use that same rotated rectangle; camera movement only projects it into the viewport. At Drizzle's 90-degree direction, local Height controls horizontal coverage. Presets preserve authored dimensions. **Scale Count With Area** uses `Count × Width × Height / (800 × 400)`, rounded and bounded to 1–20,000 particles per field. The cap reduces density, never coverage. New/reapplied Drizzle and Heavy Rain presets enable this option; existing saved fields default to fixed counts, preserving their performance budget. Apply/reload uses the normal Cinematic world-config path. Focused GPU coordinate, editor persistence and desktop/tablet viewport coverage lives in `tests/cinematic-particle-bounds.spec.js`; emulated tablet checks do not replace physical iPad performance verification.
+
 ## Validation and migrated ownership
 
 Use the relevant suites listed in [Dev Tools](DEV_TOOLS.md). Verify controls change actual output, Apply/reload preserves intentional edits, Revert retains unrelated data, source/geometry/mask behavior agrees between preview and runtime, and desktop/iPad overlays remain visible and correctly interactive.
@@ -101,6 +109,10 @@ Use the relevant suites listed in [Dev Tools](DEV_TOOLS.md). Verify controls cha
 | World modes and dual-controls report | Renderer Specification: supported modes, export boundaries, input and resources. |
 
 Task-specific bans, rollout plans, fixed historic inventories and prescribed final reports are not migrated as permanent rules. Detailed parameter schemas remain in their shared source registries; unimplemented future features do not become requirements merely by appearing in an old brief.
+
+## Illustrated God Rays
+
+Classic Illustrated God Rays are the existing `sun-presence` preset, labeled **God Rays (Sun Presence)** in the library. LVL-0001 uses `golden-hour-sun`, source (163, 199), radius 134, seed 2011289740 and `rayEndAngle: 98`. Its unchanged `drawSunPresence` Canvas2D renderer draws bloom, animated rays, dust and heat shimmer on `worldLight`. Instances live in `level.sceneEffects`, with point-radius source geometry, sparse overrides and optional masks. Selection, move/radius handles, coordinates, duplicate/delete, preview and Apply all use the generic scene-effect editor; no migration is needed. The canvas shares the world track camera translation and scale, without separate ray parallax. Cinematic filters out this preset and uses only its separate `cinematicLighting.godRays` GPU implementation. Illustrated never reads that config.
 
 ## Illustrated challenge cue glow
 

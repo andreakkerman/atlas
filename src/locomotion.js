@@ -3,39 +3,9 @@
 
   const BASE_FPS = 24;
   const FRAME_MS = 1000 / BASE_FPS;
-  const ANIMATIONS = {
-    idle: { folder: "idle", frames: 1, loop: true },
-    idleBlink: { folder: "idle_blink", frames: 13, loop: false },
-    turnLeftToRight: { folder: "turn_from_left_to_right", frames: 12, loop: false, direction: "right" },
-    turnRightToLeft: { folder: "turn_from_right_to_left", frames: 19, loop: false, direction: "left" },
-    walkLeftFromIdle: { folder: "walk_left_from_idle", frames: 22, loop: false, direction: "left" },
-    walkLeftLoop: { folder: "walk_left_loop", frames: 13, loop: true, direction: "left" },
-    walkLeftToIdle: { folder: "walk_left_to_idle", frames: 18, loop: false, direction: "left" },
-    walkRightFromIdle: { folder: "walk_right_from_idle", frames: 16, loop: false, direction: "right" },
-    walkRightLoop: { folder: "walk_right_loop", frames: 13, loop: true, direction: "right" },
-    walkRightToIdle: { folder: "walk_right_to_idle", frames: 16, loop: false, direction: "right" }
-  };
-  const BASE_PATH = "assets/characters/sven";
-  const DEFAULT_CONFIG = Object.freeze({
-    fromIdleMovement: 0.72,
-    loopMovement: 1,
-    toIdleMovement: 0.36,
-    toIdleMaxDistance: 46,
-    turnMovement: 0.78,
-    stopEntryDistance: 56,
-    shortMoveThreshold: 90,
-    shortMoveAnimationSpeed: 2,
-    shortMoveStartFrame: 0.2,
-    shortMoveMaxFromIdleAnimation: 0.45,
-    fromIdleAnimationSpeed: 1.1,
-    loopAnimationSpeed: 1,
-    toIdleAnimationSpeed: 1.15,
-    turnAnimationSpeed: 1.15,
-    arrivalDynamicSpeedMin: 0.85,
-    arrivalDynamicSpeedMax: 1.2,
-    blinkMinimumInterval: 3000,
-    blinkMaximumInterval: 8000
-  });
+  const animationSet = (id = "sven") => global.AtlasPlayableCharacters.animationSet(id);
+  const ANIMATIONS = animationSet();
+  const DEFAULT_CONFIG = global.AtlasPlayableCharacters.defaultLocomotion.sven;
 
   function phaseForState(state) {
     if (state.endsWith("FromIdle")) return "fromIdle";
@@ -53,19 +23,13 @@
     return ["fromIdle", "loop", "toIdle", "turn"].includes(phaseForState(state));
   }
 
-  function frameUrl(state, frameIndex) {
-    const animation = ANIMATIONS[state] || ANIMATIONS.idle;
-    return `${BASE_PATH}/${animation.folder}/frame_${String(frameIndex + 1).padStart(3, "0")}.png`;
+  function frameUrl(state, frameIndex, characterId = "sven") {
+    const set = animationSet(characterId), animation = set[state] || set.idle;
+    return animation.urls[Math.max(0, Math.min(animation.frames - 1, frameIndex))];
   }
-
-  function allFrameUrls() {
-    return Object.keys(ANIMATIONS).flatMap((state) =>
-      Array.from({ length: ANIMATIONS[state].frames }, (_, index) => frameUrl(state, index))
-    );
-  }
-
-  function animationDuration(state, animationSpeed = 1, stateSpeed = 1) {
-    const animation = ANIMATIONS[state] || ANIMATIONS.idle;
+  function allFrameUrls(characterId = "sven") { return Object.values(animationSet(characterId)).flatMap(animation => animation.urls); }
+  function animationDuration(state, animationSpeed = 1, stateSpeed = 1, characterId = "sven") {
+    const set = animationSet(characterId), animation = set[state] || set.idle;
     return (animation.frames * FRAME_MS) / Math.max(0.01, animationSpeed * stateSpeed);
   }
 
@@ -95,12 +59,13 @@
     });
   }
 
-  let preloadPromise = null;
+  const preloadPromises = new Map();
   const decodedImages = new Map();
   function preloadAll(options = {}) {
-    if (preloadPromise && !options.force) return preloadPromise;
+    const characterId = options.characterId || "sven";
+    if (preloadPromises.has(characterId) && !options.force) return preloadPromises.get(characterId);
     const loader = options.loader || ((src) => loadDecodedImage(src, options.ImageCtor));
-    preloadPromise = Promise.all(allFrameUrls().map(async (src) => {
+    const preloadPromise = Promise.all(allFrameUrls(characterId).map(async (src) => {
       try {
         const image = await loader(src);
         decodedImages.set(src, image);
@@ -110,6 +75,8 @@
         throw error;
       }
     }));
+    preloadPromises.set(characterId, preloadPromise);
+    preloadPromise.catch(() => preloadPromises.delete(characterId));
     return preloadPromise;
   }
 
@@ -118,6 +85,8 @@
   }
 
   function createController(options = {}) {
+    let characterId = options.characterId || "sven";
+    let ANIMATIONS = animationSet(characterId);
     let state = "idle";
     let desiredDirection = null;
     let facing = "right";
@@ -131,14 +100,14 @@
     let blinkTimer = null;
     const idleListeners = new Set();
 
-    const getConfig = () => ({ ...DEFAULT_CONFIG, ...(options.getConfig?.() || {}) });
+    const getConfig = () => ({ ...global.AtlasPlayableCharacters.defaultLocomotion[characterId], ...(options.getConfig?.() || {}) });
     const getAnimationSpeed = () => Math.max(0.1, Number(options.getAnimationSpeed?.() || 1));
     const effectiveAnimationSpeed = (forState = state) => Math.max(
       0.1,
       getAnimationSpeed() * phaseAnimationSpeed(getConfig(), forState) * statePhaseSpeedMultiplier * stateSpeed
     );
     const emitState = () => options.onState?.(state, facing);
-    const emitFrame = (frame) => options.onFrame?.(state, frame, frameUrl(state, frame));
+    const emitFrame = (frame) => options.onFrame?.(state, frame, ANIMATIONS[state].urls[frame]);
 
     function clearBlinkTimer() {
       global.clearTimeout(blinkTimer);
@@ -220,7 +189,7 @@
     }
 
     function ensureRunning() {
-      if (!rafId && state !== "idle") rafId = global.requestAnimationFrame(tick);
+      if (!rafId && (state !== "idle" || ANIMATIONS.idle.frames > 1)) rafId = global.requestAnimationFrame(tick);
     }
 
     function setIntent(direction, intentOptions = {}) {
@@ -294,11 +263,12 @@
       return animationDuration(
         forState,
         getAnimationSpeed() * phaseAnimationSpeed(getConfig(), forState),
-        playbackSpeed
+        playbackSpeed, characterId
       );
     }
 
     return {
+      setCharacter(id) { const next = animationSet(id); characterId = id; ANIMATIONS = next; reset(); },
       setIntent,
       startTransitionWindow,
       attach,
@@ -310,6 +280,7 @@
         const elapsed = Math.max(0, (global.performance?.now?.() || Date.now()) - startedAt);
         const duration = stateDuration(state);
         return {
+          characterId,
           state,
           phase: phaseForState(state),
           desiredDirection,
@@ -334,6 +305,7 @@
     FRAME_MS,
     DEFAULT_CONFIG,
     ANIMATIONS,
+    animationSet,
     phaseForState,
     isMovementState,
     frameUrl,

@@ -3,8 +3,13 @@ const base = process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173';
 
 test.use({ reducedMotion: 'no-preference' });
 
+async function clearNewStatus(page) {
+  await page.evaluate(()=>{const r=window.eval("worldResolver"),c=r.getConfig();for(const item of Object.values(c.worlds))delete item.isNew;for(const item of Object.values(c.levels))delete item.isNew;r.setConfig(c);});
+}
+
 async function openMenu(page) {
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
+  await clearNewStatus(page);
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
   await page.waitForFunction(() => window.eval('menuAdventureStats.loaded'));
 }

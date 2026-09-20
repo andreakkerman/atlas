@@ -172,8 +172,8 @@
       controls: ["intensity", "amount", "speed", "size", "glow", "softness", "flickerAmount", "sparkAmount", "warmth", "pulseRate", "particleCap"]
     }),
     "sun-presence": preset({
-      id: "sun-presence", name: "Sun Presence", category: "Light and fire",
-      description: "Cinematic sun bloom with soft core, broad rays, warm air glow, shimmer and quiet sun dust.",
+      id: "sun-presence", name: "God Rays (Sun Presence)", category: "Light and fire",
+      description: "Classic Illustrated God Rays with sun bloom, broad animated rays, warm air glow, shimmer and quiet sun dust.",
       bestFor: "Visible sky suns, off-frame daylight sources, golden-hour scenes and warm atmospheric light.",
       avoidFor: "Torches, magical runes, sparks, smoke, fireflies or tiny object-bound glow.",
       visualSignature: "Readable warm sun source with directional soft rays, organic shimmer and fine drifting dust.",

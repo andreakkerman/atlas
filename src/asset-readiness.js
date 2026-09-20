@@ -70,7 +70,7 @@
     async function prepare(level, prepareOptions = {}) {
       const sequence = ++prepareSequence;
       const assets = collectCriticalAssets(level, prepareOptions);
-      await preloadSven();
+      await preloadSven(level);
       const results = await mapConcurrent(assets, Math.max(1, Number(options.imageDecodeConcurrency || 16)), async (asset) => {
         try {
           const image = await loadImage(asset.path);

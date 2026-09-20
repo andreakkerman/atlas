@@ -68,7 +68,8 @@ test.describe("Egypt adventure", () => {
   test("registers the five-level chain, Nebu, audio, challenges and clock anchors", () => {
     const { manifest, audio, levels } = loadEgyptLevels();
     const manifestIds = manifest.levels.map((level) => level.id);
-    expect(manifestIds.slice(-5)).toEqual(egyptIds);
+    const egyptStart = manifestIds.indexOf(egyptIds[0]);
+    expect(manifestIds.slice(egyptStart, egyptStart + egyptIds.length)).toEqual(egyptIds);
     expect(manifest.levels.find((level) => level.id === "LVL-0027").hiddenFromMenu).toBeFalsy();
     for (let index = 1; index < egyptIds.length; index += 1) {
       const entry = manifest.levels.find((level) => level.id === egyptIds[index]);

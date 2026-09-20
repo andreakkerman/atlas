@@ -553,6 +553,24 @@ button {
   width: min(56%, 520px);
 }
 
+.levelNewBadge {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  z-index: 4;
+  padding: 5px 9px;
+  border: 1px solid rgba(255, 231, 166, .45);
+  border-radius: 999px;
+  color: #ffe8a5;
+  background: rgba(12, 20, 19, .88);
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.levelTileLocked .levelNewBadge { top: 66px; }
+
 .levelBadge {
   width: max-content;
   padding: 6px 9px;

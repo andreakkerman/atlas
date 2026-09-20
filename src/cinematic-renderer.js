@@ -106,7 +106,7 @@
         if (key === "localLights") { v.set([item.flickerAmount, item.flickerSpeed, item.randomness, ["steady", "fire", "slowPulse", "arcane"].indexOf(item.behavior)], 16); v.set([item.colorSpill, item.characterInfluence, item.atmosphereInfluence, 0], 20); }
         if (key === "shafts") v.set([item.noiseAmount, item.noiseScale, item.noiseSpeed, 0], 16);
         if (key === "atmosphere") { v.set([item.driftSpeed, radians(item.driftDirection), item.turbulence, item.noiseScale], 16); v[20] = item.noiseDetail; }
-        if (key === "particles") { v.set([item.count, item.speed, item.turbulence, item.lifetime], 16); v.set([item.opacity, item.glow, item.gravity, item.randomness], 20); }
+        if (key === "particles") { v.set([contract.particleCount(item), item.speed, item.turbulence, item.lifetime], 16); v.set([item.opacity, item.glow, item.gravity, item.randomness], 20); }
         v.set([item.depth ?? 0.65, item.depthInfluence ?? 0, item.depthSoftness ?? 0.12, item.depthBias ?? item.depthSpread ?? 0], 24);
         if(key === "atmosphere") v.set([item.nearClear, item.farDensity, item.depthCurve, item.floorBias],28);
         if(key === "particles") v.set([item.wind, item.streak, item.pulse, item.distribution === "source" ? 1 : 0],28);
@@ -130,7 +130,7 @@
     let effective=contract.effective(settings), depthTexture, emptyDepth, depthStatus="none", depthPath=null, depthLoads=0, bindGroups=0, computeGroup;
     const depthCache=new Map(), bindings=new WeakMap(), shadowStates=new Map(), uploadDiagnostics=new Map();
     const active = () => options.getRenderer() === "cinematic";
-    const snapshot = () => ({ status, error, ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.item.count, 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
+    const snapshot = () => ({ status, error, ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.data[16], 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
     function report() {
       document.querySelector(".gameShell")?.classList.toggle("cinematicReady", active() && presented);
       options.onStatus?.(snapshot());
@@ -356,10 +356,13 @@
       pass.setBindGroup(1,group);
     }
     function resize() {
-      // Bound fill rate on Retina/iPad. Editor geometry stays in world coordinates.
-      const ratio = Math.min(global.devicePixelRatio || 1, 1.5);
-      const width = Math.max(2, Math.min(1920, Math.round(canvas.clientWidth * ratio)));
-      const height = Math.max(2, Math.min(1440, Math.round(canvas.clientHeight * ratio)));
+      // Characters share these targets with the scene. A sub-display-resolution
+      // target loses sprite detail before CSS upscales the final composite.
+      // Only the device limit may reduce resolution, uniformly on both axes.
+      const ratio = Math.min(global.devicePixelRatio || 1,
+        device.limits.maxTextureDimension2D / Math.max(1, canvas.clientWidth, canvas.clientHeight));
+      const width = Math.max(2, Math.round(canvas.clientWidth * ratio));
+      const height = Math.max(2, Math.round(canvas.clientHeight * ratio));
       if (canvas.width === width && canvas.height === height && targets.length) return;
       canvas.width = width; canvas.height = height; targets.forEach(t => t.texture.destroy());
       targets = [texture(width, height, "rgba16float"), texture(width, height, "rgba16float"), ...Array.from({ length: 3 }, () => texture(Math.max(2, width >> 2), Math.max(2, height >> 2), "rgba16float"))];
@@ -380,20 +383,21 @@
           rect = { ...rect.toJSON(), left: rect.left+(rect.width-width)/2, top: rect.bottom-height, width, height };
         }
         const cacheKey = source.currentSrc || source.src;
+        const fallbackKey = image.dataset.characterId ? `${key}:${image.dataset.characterId}` : key;
         let resource = uploaded.get(cacheKey);
         if (!resource && source.complete && source.naturalWidth && !pendingUploads.has(cacheKey)) {
           const uploadGeneration = generation;
           const pending = upload(source,null,{purpose:`sprite ${key}`,path})
             .then(created => {
               if(uploadGeneration!==generation){created.texture.destroy();return null;}
-              uploaded.set(cacheKey,created);spriteFallbacks.set(key,created);return created;
+              uploaded.set(cacheKey,created);spriteFallbacks.set(fallbackKey,created);return created;
             })
             .catch(caught => { console.warn(caught?.message||caught);return null; })
             .finally(() => { pendingUploads.delete(cacheKey); });
           pendingUploads.set(cacheKey,pending);
         }
-        if (resource) spriteFallbacks.set(key, resource);
-        else resource = spriteFallbacks.get(key);
+        if (resource) spriteFallbacks.set(fallbackKey, resource);
+        else resource = spriteFallbacks.get(fallbackKey);
         if (!resource) return;
         resource.used = frame;
         const animal=bounds.closest('.ambientAnimal,.ambientFlyby');
@@ -473,7 +477,7 @@
          if(effective.characters.showShadowContactDebug)for(const debug of contactDebug){bind(pass,background,background,{flags:[0,0,0,2],shadow:[debug.left.x,debug.left.y,debug.right.x,debug.right.y]});pass.draw(6);}
          drawLegacy("foregroundAtmosphere"); pass.end();
         const particleFields = packed.map((e, i) => ({ ...e, index: i })).filter(e => e.key === "particles" && e.data[1]);
-        if (particleFields.length) { pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.particle); for (const e of particleFields) { bind(pass, background, background, { flags: [e.index, 0, 0, 0] }); pass.draw(6, e.item.count); } pass.end(); }
+        if (particleFields.length) { pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.particle); for (const e of particleFields) { bind(pass, background, background, { flags: [e.index, 0, 0, 0] }); pass.draw(6, e.data[16]); } pass.end(); }
         if (effective.bloom.enabled) {
           full("extract", targets[2].view, targets[1], background);
           full("blur", targets[3].view, targets[2], background, { flags: [0, 0, 1/targets[2].width, 0] });

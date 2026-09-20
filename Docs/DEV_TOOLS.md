@@ -16,6 +16,8 @@ The main-menu world editor edits adventure ordering/visibility and level setting
 
 `Ctrl+Shift+L` is a development completion shortcut, not evidence of learning success. Do not use it to validate answers or earned learning records.
 
+The shortcut accepts one non-repeated keydown per press: holding it across a level transition must not complete the next level. It marks only the current scene's active challenges in memory, discards the current learning-session report, and suppresses earned completion saving at the debug-completed exit. It does not write challenge progress or learning-table records. A new level gets its own saved challenge state; a fresh key press can complete that scene for testing. Normal level-start replay history is still recorded. Reloading clears unsaved debug completion while retaining legitimate saved progress.
+
 ## Persistence boundaries
 
 The implementation authorities are [app editor handlers](../src/app.js) and [dev-server endpoints](../scripts/dev-server.js).
@@ -27,7 +29,7 @@ The implementation authorities are [app editor handlers](../src/app.js) and [dev
 | Effect-only level draft | The server keeps this in its `transientSceneEffectDrafts` map. It can survive a page reload while that server lives, but not a server restart; it does not overwrite an existing on-disk draft. |
 | Apply level content | Applies changed path/object/challenge/ambient/effect sections to `level.js`. General Apply uses an atomic level serialization and synchronizes start/legacy geometry. Effect-only Apply patches only the effect sections. |
 | Apply audio | Writes shared `src/audio-config.js`; audio is not isolated to one level file. |
-| Change level tuning/Cinematic/emissive settings | Updates the shared world resolver in memory. These settings are not covered by the level-draft JSON guarantee. |
+| Change level tuning/Cinematic/emissive settings or global per-character Player Locomotion | Updates the shared world resolver in memory. These settings are not covered by the level-draft JSON guarantee. |
 | Apply with dirty world settings / world-editor Save | Writes `Levels/world-config.js` through the shared API. This can include other staged world settings; inspect scope before saving. |
 | Revert in-level editor | Deletes the applicable draft and restores captured level/audio baselines plus tracked Cinematic/emissive originals. It does not reload every source file or universally undo unrelated world-editor settings. |
 | Background upload | Creates a new level asset through the upload endpoint before the world-setting save; this is a deliberate file-writing operation separate from Apply. |

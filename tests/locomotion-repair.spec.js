@@ -188,6 +188,7 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     });
     await page.goto(process.env.ATLAS_EDITOR_URL);
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
+    const otherLevelDefaults = await page.evaluate(() => window.eval("locomotionTuning")("LVL-0002"));
     await page.keyboard.press("Control+Shift+D");
     const panel = page.locator("[data-developer-tools]");
     await expect(panel).toBeVisible();
@@ -241,26 +242,29 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     await page.keyboard.press("Control+Shift+D");
     const otherPanel = page.locator("[data-developer-tools]");
     await otherPanel.locator('[data-editor-panel-key="sven-locomotion"] summary').click();
-    await expect(otherPanel.locator('[data-locomotion-setting="toIdleMaxDistance"]')).toHaveValue("49");
-    await expect(otherPanel.locator('[data-locomotion-setting="fromIdleMovement"]')).toHaveValue("0");
-    await expect(otherPanel.locator('[data-locomotion-setting="toIdleMovement"]')).toHaveValue("0");
-    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveThreshold"]')).toHaveValue("95");
+    const sharedProfile = await page.evaluate(() => window.eval("locomotionTuning")("LVL-0001"));
+    expect(await page.evaluate(() => window.eval("locomotionTuning")())).toEqual(sharedProfile);
+    for (const key of ["toIdleMaxDistance", "fromIdleMovement", "toIdleMovement", "shortMoveThreshold", "shortMoveAnimationSpeed", "shortMoveStartFrame", "shortMoveMaxFromIdleAnimation"]) {
+      const factor = ["shortMoveStartFrame", "shortMoveMaxFromIdleAnimation", "fromIdleMovement", "toIdleMovement"].includes(key) ? 100 : 1;
+      expect(Number(await otherPanel.locator(`[data-locomotion-setting="${key}"]`).inputValue())).toBeCloseTo(sharedProfile[key] * factor, 1);
+    }
     await expect(otherPanel.locator('[data-locomotion-setting="shortMoveMovement"]')).toHaveCount(0);
-    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveAnimationSpeed"]')).toHaveValue("2.40");
-    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveStartFrame"]')).toHaveValue("20");
-    await expect(otherPanel.locator('[data-locomotion-setting="shortMoveMaxFromIdleAnimation"]')).toHaveValue("35");
+    expect(await page.evaluate(() => window.eval("locomotionTuning")("LVL-0001"))).toMatchObject({
+      toIdleMaxDistance: 49, fromIdleMovement: 0, toIdleMovement: 0, shortMoveThreshold: 95,
+      shortMoveAnimationSpeed: 2.4, shortMoveStartFrame: 0.2, shortMoveMaxFromIdleAnimation: 0.35, loopAnimationSpeed: 1.1, stopEntryDistance: 61
+    });
     await expect(otherPanel.locator('[data-level-setting="movementSpeed"]')).not.toHaveValue("310");
 
     const migration = await page.evaluate(async () => {
       const config = await fetch("/__dev/world-config").then((response) => response.json());
-      config.locomotion.shortMoveMovement = 1.75;
+      config.locomotion = { shortMoveMovement: 1.75 };
       const response = await fetch("/__dev/world-config", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(config)
       });
       const payload = await response.json();
-      return { status: response.status, hasOldSetting: Object.hasOwn(payload.config.locomotion, "shortMoveMovement") };
+      return { status: response.status, hasOldSetting: Object.hasOwn(payload.config.characterLocomotion.sven, "shortMoveMovement") };
     });
     expect(migration).toEqual({ status: 200, hasOldSetting: false });
   } finally {

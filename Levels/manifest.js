@@ -88,14 +88,53 @@ window.SVEN_LEVEL_MANIFEST = {
       }
     },
     {
-      id: "LVL-0008",
-      title: "De Blokkenpoort",
-      subtitle: "Ontdek vijf blokkenkamers en vind de weg terug naar huis.",
-      script: "Levels/LVL-0008/level.js",
+      id: "LVL-0032",
+      title: "ARC Atlas",
+      subtitle: "Verken Dam Battlegrounds, Buried City, Riven Tides en Stella Montis met Valente.",
+      script: "Levels/LVL-0032/level.js",
       menu: {
-        illustration: "Levels/LVL-0008/assets/blokkenpoort-sealed-room.png",
-        badge: "5 plekken",
-        detail: "Blokkenkamers, portalen en Dutchtuber Job"
+        illustration: "Levels/LVL-0032/DamBattlegrounds.png",
+        badge: "12 opdrachten",
+        detail: "Dam Battlegrounds, Buried City, Riven Tides en Stella Montis"
+      }
+    },
+    {
+      id: "LVL-0033",
+      title: "Buried City",
+      subtitle: "Volg het zandpad door de verlaten stad.",
+      script: "Levels/LVL-0033/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0032",
+      menu: {
+        illustration: "Levels/LVL-0033/buriedcity.png",
+        badge: "Verbonden gebied",
+        detail: "Kerkklok, schoorsteen en ARC Probe"
+      }
+    },
+    {
+      id: "LVL-0034",
+      title: "Riven Tides",
+      subtitle: "Verken het strand onder de donkere avondlucht.",
+      script: "Levels/LVL-0034/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0033",
+      menu: {
+        illustration: "Levels/LVL-0034/riventides.png",
+        badge: "Verbonden gebied",
+        detail: "Zeecontainer, Raider Cache en blauwe koffer"
+      }
+    },
+    {
+      id: "LVL-0035",
+      title: "Stella Montis",
+      subtitle: "Verken het besneeuwde complex tussen de bergen.",
+      script: "Levels/LVL-0035/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0034",
+      menu: {
+        illustration: "Levels/LVL-0035/stellamontis.png",
+        badge: "Verbonden gebied",
+        detail: "Computerterminal, ronde container en voorraadkist"
       }
     },
     {
@@ -402,6 +441,17 @@ window.SVEN_LEVEL_MANIFEST = {
         illustration: "Levels/LVL-0000/assets/AtlasTestLevel.png",
         badge: "Developer Lab",
         detail: "Daglicht, water, waterval, grot en nacht in één benchmark"
+      }
+    },
+    {
+      id: "LVL-0008",
+      title: "De Blokkenpoort",
+      subtitle: "Ontdek vijf blokkenkamers en vind de weg terug naar huis.",
+      script: "Levels/LVL-0008/level.js",
+      menu: {
+        illustration: "Levels/LVL-0008/assets/blokkenpoort-sealed-room.png",
+        badge: "5 plekken",
+        detail: "Blokkenkamers, portalen en Dutchtuber Job"
       }
     }
   ]

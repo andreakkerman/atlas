@@ -18,6 +18,7 @@ function loadSceneEffectsApi() {
 }
 
 const sceneEffectsApi = loadSceneEffectsApi();
+const playableCharactersApi = require("../src/playable-characters.js");
 const cinematicSettingsApi = require("../src/cinematic-settings.js");
 
 function sendJson(response, status, payload) {
@@ -157,7 +158,7 @@ function catalogRootId(levelId, catalog) {
 
 function normalizeWorldConfig(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("World config must be an object.");
-  const result = { version: 1, worlds: {}, levels: {}, locomotion: {} };
+  const result = { version: 1, worlds: {}, levels: {}, characterLocomotion: {} };
   const catalog = loadLevelCatalog();
   const catalogById = new Map(catalog.map((entry) => [entry.id, entry]));
   Object.entries(value.worlds || {}).forEach(([worldId, world]) => {
@@ -173,11 +174,19 @@ function normalizeWorldConfig(value) {
       if (isEnabled === false) enabled[levelId] = false;
     });
     result.worlds[worldId] = { order: uniqueOrder, enabled };
+    if (world.isNew !== undefined) {
+      if (typeof world.isNew !== "boolean") throw new Error(`${worldId}.isNew must be boolean.`);
+      result.worlds[worldId].isNew = world.isNew;
+    }
   });
   Object.entries(value.levels || {}).forEach(([levelId, settings]) => {
     if (!catalogById.has(levelId)) throw new Error(`Unknown level settings: ${levelId}`);
     if (!settings || typeof settings !== "object" || Array.isArray(settings)) throw new Error(`Invalid settings for ${levelId}`);
     const next = {};
+    if (settings.isNew !== undefined) {
+      if (typeof settings.isNew !== "boolean") throw new Error(`${levelId}.isNew must be boolean.`);
+      next.isNew = settings.isNew;
+    }
     const ranges = {
       spriteScale: [0.5, 1.8], movementSpeed: [80, 520], animationSpeed: [0.5, 1.8],
       backgroundBrightness: [0.5, 1.5], backgroundContrast: [0.5, 1.5], backgroundSaturation: [0, 2],
@@ -213,29 +222,11 @@ function normalizeWorldConfig(value) {
       if (!settings.cinematicLighting || typeof settings.cinematicLighting !== "object" || Array.isArray(settings.cinematicLighting)) throw new Error(`${levelId}.cinematicLighting must be an object.`);
       next.cinematicLighting = cinematicSettingsApi.normalize(settings.cinematicLighting);
     }
+    if (settings.mainCharacter !== undefined) next.mainCharacter = playableCharactersApi.validateId(settings.mainCharacter);
+    if (settings.mainCharacterSettings !== undefined) next.mainCharacterSettings = playableCharactersApi.validateBank(settings.mainCharacterSettings);
     result.levels[levelId] = next;
   });
-  const locomotionRanges = {
-    fromIdleMovement: [0, 2], loopMovement: [0.1, 2], toIdleMovement: [0, 1.5],
-    toIdleMaxDistance: [1, 200], turnMovement: [0.1, 2], stopEntryDistance: [1, 250],
-    shortMoveThreshold: [1, 300], shortMoveAnimationSpeed: [0.25, 4], shortMoveStartFrame: [0, 0.8],
-    shortMoveMaxFromIdleAnimation: [0.05, 1], fromIdleAnimationSpeed: [0.25, 3], loopAnimationSpeed: [0.25, 3],
-    toIdleAnimationSpeed: [0.25, 3], turnAnimationSpeed: [0.25, 3],
-    arrivalDynamicSpeedMin: [0.25, 2], arrivalDynamicSpeedMax: [0.25, 3],
-    blinkMinimumInterval: [250, 30000], blinkMaximumInterval: [250, 60000]
-  };
-  Object.entries(locomotionRanges).forEach(([key, [min, max]]) => {
-    if (value.locomotion?.[key] === undefined) return;
-    const number = Number(value.locomotion[key]);
-    if (!Number.isFinite(number) || number < min || number > max) throw new Error(`locomotion.${key} is out of range.`);
-    result.locomotion[key] = number;
-  });
-  if ((result.locomotion.arrivalDynamicSpeedMin ?? 0) > (result.locomotion.arrivalDynamicSpeedMax ?? Infinity)) {
-    throw new Error("Arrival Dynamic Speed Min cannot exceed Max.");
-  }
-  if ((result.locomotion.blinkMinimumInterval ?? 0) > (result.locomotion.blinkMaximumInterval ?? Infinity)) {
-    throw new Error("Blink Minimum Interval cannot exceed Max.");
-  }
+  result.characterLocomotion = playableCharactersApi.locomotionProfiles(value.characterLocomotion, value.locomotion);
   return result;
 }
 
@@ -1145,7 +1136,10 @@ function contentType(filePath) {
 function serveStatic(response, url) {
   const decoded = decodeURIComponent(url.pathname);
   const relative = decoded === "/" ? "index.html" : decoded.replace(/^\/+/, "");
-  if (relative.replace(/\\/g, "/") === "assets/characters/manifest.js") writeCharacterManifest();
+  if (relative.replace(/\\/g, "/") === "assets/characters/manifest.js") {
+    try { writeCharacterManifest(); }
+    catch (error) { sendText(response, 422, error.message); return; }
+  }
   const filePath = path.resolve(rootDir, relative);
   if (!filePath.startsWith(rootDir + path.sep)) {
     sendText(response, 403, "Forbidden");

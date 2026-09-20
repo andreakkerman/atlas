@@ -7,7 +7,8 @@ window.SVEN_AUDIO_CONFIG = {
       "minecraft": "assets/audio/music/minecraft.mp3",
       "europeGrandTour": "assets/audio/music/europe_grand_tour.mp3",
       "leonardoLevel": "assets/audio/music/leonardo-level.mp3",
-      "egyptAdventure": "assets/audio/music/egypt_adventure.mp3"
+      "egyptAdventure": "assets/audio/music/egypt_adventure.mp3",
+      "arcAtlas": "assets/audio/music/arc_atlas.mp3"
     },
     "ambience": {
       "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
@@ -61,6 +62,30 @@ window.SVEN_AUDIO_CONFIG = {
     "musicVolume": 0.62
   },
   "levels": {
+    "LVL-0035": {
+      "music": "arcAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
+    "LVL-0034": {
+      "music": "arcAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
+    "LVL-0033": {
+      "music": "arcAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
+    "LVL-0032": {
+      "music": "arcAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
     "LVL-0000": {
       "music": "menu",
       "ambience": null,
@@ -256,7 +281,7 @@ window.SVEN_AUDIO_CONFIG = {
   },
   "volumes": {
     "master": 0.82,
-    "companionPurr": 0.9,
+    "companionPurr": 0.95,
     "sfx": {
       "uiClick": 0.75,
       "challengeOpen": 0.58,

@@ -475,8 +475,12 @@ fn randomIndex(value:u32) -> f32 { var h=value;h=(h^(h>>16u))*0x7feb352du;h=(h^(
   let velocity=vec2f(cos(e.v[3].x),sin(e.v[3].x))*e.v[4].y*mix(1.0,0.5+random.x,e.v[5].w)+vec2f(e.v[7].x,0);
   let swirl=vec2f(noise(vec2f(random.x*64.0,age*0.2)),noise(vec2f(age*0.2,random.y*64.0+9.0)))-0.5;
   let travel=velocity*age+vec2f(0,0.5*e.v[5].z*age*age)+swirl*e.v[4].z*50.0;
-  let distributed=(fract(random+travel/e.v[1].zw)-0.5)*e.v[1].zw;
-  let p=e.v[1].xy+select(distributed,(random-0.5)*e.v[1].zw*0.08+travel,e.v[7].w>0.5);
+  // Spawn and wrap in the same local rectangle used by region() and editor
+  // handles. Motion stays in world space; only the wrapping basis is rotated.
+  let localTravel=rotate(travel,e.v[3].x);
+  let distributed=(fract(random+localTravel/e.v[1].zw)-0.5)*e.v[1].zw;
+  let offsetFromSource=(random-0.5)*e.v[1].zw*0.08+localTravel;
+  let p=e.v[1].xy+rotate(select(distributed,offsetFromSource,e.v[7].w>0.5),-e.v[3].x);
   let corners=array<vec2f,6>(vec2f(-1,-1),vec2f(1,-1),vec2f(-1,1),vec2f(-1,1),vec2f(1,-1),vec2f(1,1));let uv=corners[vertex];
   let z=clamp(e.v[6].x+(random.y-0.5)*e.v[6].w,0.0,1.0);
   // Size is a world-space radius, independent of emission, DPR and target scale.

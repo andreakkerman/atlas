@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
-const { discoverCharacters } = require("./generate-character-manifest");
+const { discoverCharacters, discoverPlayableCharacters } = require("./generate-character-manifest");
+const playableCharacters = require("../src/playable-characters");
 
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
@@ -932,6 +933,7 @@ function validatePlayer(level, world, nodeIds, label) {
     return;
   }
   validateRequiredString(level.player.startNode, `${label}.player.startNode`);
+  try { playableCharacters.selected(level); } catch (error) { fail(`${label}: ${error.message}`); }
   if (isNonEmptyString(level.player.startNode) && !nodeIds.has(level.player.startNode)) {
     fail(`${label}.player.startNode references missing node: ${level.player.startNode}`);
   }
@@ -969,6 +971,7 @@ function validateLevel(entry) {
 }
 
 function main() {
+  try { discoverPlayableCharacters(); } catch (error) { fail(error.message); }
   const manifest = validateManifest();
   if (manifest) {
     validateAudioConfig(manifest);
