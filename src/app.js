@@ -555,6 +555,10 @@ function storedCompletedRunes(selectedLevel) {
   if (!selectedLevel?.storageKey) return new Set();
   try {
     const stored = JSON.parse(localStorage.getItem(selectedLevel.storageKey));
+    // Historical completion is not a resumable run. Legacy partial replay saves
+    // retain completedAt but add updatedAt; the earned reward replaces that record.
+    const runCompleted = stored?.runCompleted ?? Boolean(stored?.completedAt && !stored?.updatedAt);
+    if (runCompleted) return new Set();
     if (stored?.activeChallengeSignature !== activeChallengeSignature(selectedLevel)) return new Set();
     const activeIds = new Set(activeRunes(selectedLevel).map((rune) => rune.id));
     return new Set((stored?.completedRuneIds || []).filter((id) => activeIds.has(id)));
@@ -3929,6 +3933,7 @@ function saveCompletion() {
   const payload = {
     levelId: level.id,
     completedAt: new Date().toISOString(),
+    runCompleted: true,
     activeChallengeSignature: activeChallengeSignature(level),
     activeChallengeIds: activeRunes(level).map((rune) => rune.id),
     completedRuneIds: activeRunes(level).filter((rune) => state.completedRunes.has(rune.id)).map((rune) => rune.id),
@@ -4037,6 +4042,8 @@ function saveChallengeProgress() {
   try { previous = JSON.parse(localStorage.getItem(level.storageKey)) || {}; } catch {}
   localStorage.setItem(level.storageKey, JSON.stringify({
     ...previous,
+    // Preserve historical completedAt while saving this unfinished (possibly replay) run.
+    runCompleted: false,
     levelId: level.id,
     activeChallengeSignature: activeChallengeSignature(level),
     activeChallengeIds: activeRunes(level).map((rune) => rune.id),
@@ -4422,6 +4429,7 @@ function restart() {
   state.answered = 0;
   state.firstTryCorrect = 0;
   state.attempts = 0;
+  saveChallengeProgress();
   setGuideLine("welcome", level.spiritLines.welcome, "minnie");
   state.feedback = "";
   render();

@@ -88,6 +88,8 @@ test('Riven Tides persists only answered challenges, including partial reloads',
   await leave(page);
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem(window.eval('level.storageKey'))));
   expect(saved.completedRuneIds).toEqual(riven);expect(saved.completedAt).toBeTruthy();
-  await page.reload();await enter(page,'LVL-0034');expect(await completed(page)).toEqual(riven);
+  // Finishing closes this run; re-entry starts fresh while history remains earned.
+  await page.reload();await enter(page,'LVL-0034');expect(await completed(page)).toEqual([]);
+  expect(await page.evaluate(()=>window.eval('storedLevelIsComplete')(window.eval('level')))).toBe(true);
   expect(errors).toEqual([]);
 });

@@ -62,6 +62,8 @@ Variant selection is retained for the question attempt; wrong answers, hints and
 
 ## Active challenges and progression
 
+The existing per-level `storageKey` record separates historical completion (`completedAt`) from resumable challenge state (`completedRuneIds`, guarded by `runCompleted`). Answering a challenge saves an unfinished run (`runCompleted: false`), retaining historical completion; reaching the earned reward closes the run (`true`). Entry restores only unfinished runs with a matching active-challenge signature. A completed run starts fresh on re-entry without deleting history, statistics, or progression. Legacy records without the marker are finished when they have `completedAt` without `updatedAt`; the old challenge-progress writer added `updatedAt`, while the reward writer replaced the record without it. This preserves legacy partial replays too. No manual storage cleanup is required. Explicit restart persists an empty unfinished run. Current levels each own one scene; connected levels belong to a world and are not one shared challenge run. Nieuw changes replay eligibility only, not this lifecycle.
+
 Omitted `active` means active; only explicit `false` disables an authored challenge. A rune with one binding follows that challenge; a multi-binding rune is active if any linked challenge is active. Legacy runes remain active.
 
 Inactive challenges remain authored and editable, but do not appear as playable challenge targets/cues or contribute to active menu counts and required progression. Do not delete their variants or pretend they were solved. Existing completion records must not bypass a changed active set.
