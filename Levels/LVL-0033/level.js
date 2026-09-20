@@ -881,5 +881,58 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
       "speaker": "minnie",
       "text": "Dag, stille stad. Ik hoop dat de palmen blijven groeien."
     }
+  ],
+  "ambientFlybys": [
+    {
+      "id": "arc_snitch1",
+      "label": "arc_snitch1",
+      "frameA": "assets/ambient/flybys/arc_snitch/arc_snitch.png",
+      "frameB": null,
+      "sound": "assets/ambient/flybys/arc_snitch/arc_snitch.mp3",
+      "path": [
+        {
+          "x": 480,
+          "y": -18
+        },
+        {
+          "x": 589,
+          "y": 111
+        },
+        {
+          "x": 896,
+          "y": 224
+        },
+        {
+          "x": 1385,
+          "y": 237
+        },
+        {
+          "x": 1870,
+          "y": -26
+        }
+      ],
+      "scale": 0.22,
+      "speed": 50,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": false,
+      "mirrorX": false,
+      "intervalMinMs": 3000,
+      "intervalMaxMs": 8000,
+      "syncKey": "",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": false,
+      "maxRotationDeg": 8,
+      "soundTriggers": [
+        "during",
+        "tap"
+      ],
+      "motionProfile": "smooth",
+      "wobble": 14,
+      "speedVariation": 0.14,
+      "flutterFrequency": 2.1
+    }
   ]
 };

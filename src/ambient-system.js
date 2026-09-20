@@ -4,6 +4,19 @@
   const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
   const AUDIO_EXTENSIONS = new Set([".mp3", ".ogg", ".wav"]);
 
+  function soundTriggers(config = {}) {
+    return Array.isArray(config.soundTriggers)
+      ? ["during", "tap"].filter(trigger => config.soundTriggers.includes(trigger))
+      : [config.soundTrigger === "tap" ? "tap" : "during"];
+  }
+
+  function validSoundTriggers(config = {}) {
+    if (config.soundTriggers !== undefined) return Array.isArray(config.soundTriggers)
+      && config.soundTriggers.every(trigger => ["during", "tap"].includes(trigger))
+      && new Set(config.soundTriggers).size === config.soundTriggers.length;
+    return config.soundTrigger === undefined || ["during", "tap"].includes(config.soundTrigger);
+  }
+
   function normalizedAssetPath(value) {
     return String(value || "").trim().replace(/\\/g, "/").replace(/^\.\//, "");
   }
@@ -400,7 +413,7 @@
       const byPath = new Map();
       for (const config of members) {
         const ready = readiness.get(keyFor(config.id));
-        if (config.soundTrigger === "tap" || !config.sound || !ready?.sound) continue;
+        if (!soundTriggers(config).includes("during") || !config.sound || !ready?.sound) continue;
         const path = assetCache.normalize(config.sound);
         const previous = byPath.get(path);
         if (!previous || Number(config.soundVolume || 0) > Number(previous.soundVolume || 0)) {
@@ -414,6 +427,8 @@
     }
 
     function playAudio(config, path, key, triggerId, instanceId = null) {
+      // Both trigger sources share ownership of an already playing clip.
+      if ([...activeAudio.values()].some(state => state.path === path)) return;
       const audio = new Audio(path);
       const state = { audio, path, triggerId, instanceId, maxVolume: Number(config.soundVolume ?? 1) };
       audio.volume = instanceId ? Math.max(0, Math.min(1, getMasterVolume() * state.maxVolume)) : 0;
@@ -427,7 +442,7 @@
     function tap(id) {
       const config = configById(id), instance = active.get(id);
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
-      if (!instance || config?.soundTrigger !== "tap" || !config.sound ||
+      if (!instance || !soundTriggers(config).includes("tap") || !config.sound ||
           getScreen() !== "scene" || document.hidden || !getAudioUnlocked() ||
           !readiness.get(keyFor(id))?.sound || shell?.dataset.active !== "true") return false;
       const bounds = shell.getBoundingClientRect();
@@ -542,8 +557,13 @@
           .filter((item) => item.triggerId === state.triggerId)
           .map((item) => item.progress);
         const progress = progresses.length ? Math.max(...progresses) : 1;
+        // A short call can finish before a slow flight clears its fade-in.
+        // Keep the same envelope, bounded by both the flight and the clip:
+        // whichever finishes first owns the fade. Tap sounds remain unfaded.
+        const clipProgress = Number.isFinite(state.audio.duration) && state.audio.duration > 0
+          ? state.audio.currentTime / state.audio.duration : 0;
         state.audio.volume = Math.max(0, Math.min(1,
-          getMasterVolume() * state.maxVolume * (state.instanceId ? 1 : volumeEnvelope(progress))
+          getMasterVolume() * state.maxVolume * (state.instanceId ? 1 : volumeEnvelope(Math.max(progress, clipProgress)))
         ));
       }
     }
@@ -644,7 +664,9 @@
     };
   }
 
-  window.AtlasAmbientSystem = {
+  const api = {
+    soundTriggers,
+    validSoundTriggers,
     IMAGE_EXTENSIONS,
     AUDIO_EXTENSIONS,
     normalizedAssetPath,
@@ -658,4 +680,6 @@
     volumeEnvelope,
     createFlybyRuntime
   };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else window.AtlasAmbientSystem = api;
 })();

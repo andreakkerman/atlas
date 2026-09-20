@@ -20,6 +20,7 @@ function loadSceneEffectsApi() {
 const sceneEffectsApi = loadSceneEffectsApi();
 const playableCharactersApi = require("../src/playable-characters.js");
 const cinematicSettingsApi = require("../src/cinematic-settings.js");
+const ambientSystemApi = require("../src/ambient-system.js");
 
 function sendJson(response, status, payload) {
   response.writeHead(status, {
@@ -456,8 +457,10 @@ function validateAmbientFlybys(value, levelId) {
       rotateAlongPath: Boolean(flyby.rotateAlongPath),
       maxRotationDeg: number("maxRotationDeg", 0, 180)
     };
-    if (flyby.soundTrigger !== undefined) {
-      if (!["during", "tap"].includes(flyby.soundTrigger)) throw new Error(`ambientFlybys[${index}].soundTrigger is invalid.`);
+    if (!ambientSystemApi.validSoundTriggers(flyby)) throw new Error(`ambientFlybys[${index}].soundTriggers must contain unique during/tap values (or a valid legacy soundTrigger).`);
+    if (flyby.soundTriggers !== undefined) {
+      result.soundTriggers = ambientSystemApi.soundTriggers(flyby);
+    } else if (flyby.soundTrigger !== undefined) {
       result.soundTrigger = flyby.soundTrigger;
     }
     const motionProfile = flybyMotionProfiles.has(String(flyby.motionProfile || "smooth"))

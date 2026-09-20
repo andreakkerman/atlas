@@ -861,9 +861,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "startDelayMs": 0,
       "softness": 0,
       "saturation": 1,
-      "soundVolume": 0.65,
+      "soundVolume": 0.8,
       "rotateAlongPath": false,
       "maxRotationDeg": 8,
+      "soundTriggers": [
+        "during",
+        "tap"
+      ],
       "motionProfile": "smooth",
       "wobble": 14,
       "speedVariation": 0.14,

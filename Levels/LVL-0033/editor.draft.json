@@ -1,0 +1,65 @@
+{
+  "levelId": "LVL-0033",
+  "updatedAt": "2026-09-20T19:35:14.955Z",
+  "ambientFlybys": [
+    {
+      "id": "arc_snitch1",
+      "label": "arc_snitch1",
+      "frameA": "assets/ambient/flybys/arc_snitch/arc_snitch.png",
+      "frameB": null,
+      "sound": "assets/ambient/flybys/arc_snitch/arc_snitch.mp3",
+      "path": [
+        {
+          "x": 483,
+          "y": -22
+        },
+        {
+          "x": 611,
+          "y": 39
+        },
+        {
+          "x": 831,
+          "y": 31
+        },
+        {
+          "x": 1025,
+          "y": 85
+        },
+        {
+          "x": 1286,
+          "y": 56
+        },
+        {
+          "x": 1590,
+          "y": 56
+        },
+        {
+          "x": 1870,
+          "y": -26
+        }
+      ],
+      "scale": 0.22,
+      "speed": 50,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": false,
+      "mirrorX": false,
+      "intervalMinMs": 3000,
+      "intervalMaxMs": 8000,
+      "syncKey": "",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": false,
+      "maxRotationDeg": 8,
+      "soundTriggers": [
+        "during",
+        "tap"
+      ],
+      "motionProfile": "smooth",
+      "wobble": 14,
+      "speedVariation": 0.14,
+      "flutterFrequency": 2.1
+    }
+  ]
+}

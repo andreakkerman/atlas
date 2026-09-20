@@ -839,5 +839,117 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
       "speaker": "minnie",
       "text": "Ik zou nu best een warm plekje kunnen gebruiken."
     }
+  ],
+  "ambientFlybys": [
+    {
+      "id": "arc_snitch2",
+      "label": "arc_snitch2",
+      "frameA": "assets/ambient/flybys/arc_snitch/arc_snitch.png",
+      "frameB": null,
+      "sound": "assets/ambient/flybys/arc_snitch/arc_snitch.mp3",
+      "path": [
+        {
+          "x": 707,
+          "y": -38
+        },
+        {
+          "x": 747,
+          "y": 110
+        },
+        {
+          "x": 876,
+          "y": 84
+        },
+        {
+          "x": 999,
+          "y": 67
+        },
+        {
+          "x": 1121,
+          "y": 129
+        },
+        {
+          "x": 1218,
+          "y": 66
+        },
+        {
+          "x": 1258,
+          "y": -30
+        }
+      ],
+      "scale": 0.22,
+      "speed": 50,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": false,
+      "mirrorX": false,
+      "intervalMinMs": 3000,
+      "intervalMaxMs": 10000,
+      "syncKey": "",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": false,
+      "maxRotationDeg": 8,
+      "soundTriggers": [
+        "during",
+        "tap"
+      ],
+      "motionProfile": "smooth",
+      "wobble": 14,
+      "speedVariation": 0.14,
+      "flutterFrequency": 2.1
+    },
+    {
+      "id": "arc_wasp3",
+      "label": "arc_wasp3",
+      "frameA": "assets/ambient/flybys/arc_wasp/awc_wasp.png",
+      "frameB": null,
+      "sound": "assets/ambient/flybys/arc_wasp/arc_wasp.mp3",
+      "path": [
+        {
+          "x": 2231,
+          "y": 129
+        },
+        {
+          "x": 1668,
+          "y": 202
+        },
+        {
+          "x": 1018,
+          "y": 239
+        },
+        {
+          "x": 425,
+          "y": 141
+        },
+        {
+          "x": -57,
+          "y": 116
+        }
+      ],
+      "scale": 0.22,
+      "speed": 50,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": false,
+      "mirrorX": false,
+      "intervalMinMs": 8000,
+      "intervalMaxMs": 12000,
+      "syncKey": "",
+      "startDelayMs": 0,
+      "softness": 0,
+      "saturation": 1,
+      "soundVolume": 0.65,
+      "rotateAlongPath": false,
+      "maxRotationDeg": 8,
+      "soundTriggers": [
+        "during",
+        "tap"
+      ],
+      "motionProfile": "smooth",
+      "wobble": 25,
+      "speedVariation": 0.14,
+      "flutterFrequency": 2.1
+    }
   ]
 };

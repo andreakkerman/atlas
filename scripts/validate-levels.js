@@ -3,6 +3,7 @@ const path = require("path");
 const vm = require("vm");
 const { discoverCharacters, discoverPlayableCharacters } = require("./generate-character-manifest");
 const playableCharacters = require("../src/playable-characters");
+const ambientSystem = require("../src/ambient-system");
 
 const rootDir = path.resolve(__dirname, "..");
 const manifestPath = path.join(rootDir, "Levels", "manifest.js");
@@ -572,8 +573,8 @@ function validateAssets(level, entry, levelFolder, label) {
     assertCentralAmbientAsset(flyby.frameB, `${label}.ambientFlybys[${index}].frameB`, true);
     assertCentralAmbientAsset(flyby.sound, `${label}.ambientFlybys[${index}].sound`, true);
     const flybyLabel = `${label}.ambientFlybys[${index}]`;
-    if (flyby.soundTrigger !== undefined && !["during", "tap"].includes(flyby.soundTrigger)) {
-      fail(`${flybyLabel}.soundTrigger must be "during" or "tap".`);
+    if (!ambientSystem.validSoundTriggers(flyby)) {
+      fail(`${flybyLabel}.soundTriggers must contain unique during/tap values (or a valid legacy soundTrigger).`);
     }
     if (flyby.motionProfile !== undefined && !["smooth", "organic"].includes(flyby.motionProfile)) {
       fail(`${flybyLabel}.motionProfile must be "smooth" or "organic".`);

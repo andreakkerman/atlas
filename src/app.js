@@ -3243,7 +3243,10 @@ function updateAmbientFlybySetting(id, field, value) {
   const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile"]);
   if (booleans.has(field)) flyby[field] = Boolean(value);
   else if (field === "motionProfile") flyby[field] = String(value) === "organic" ? "organic" : "smooth";
-  else if (field === "soundTrigger") flyby[field] = value === "tap" ? "tap" : "during";
+  else if (field === "soundTriggers") {
+    flyby.soundTriggers = window.AtlasAmbientSystem.soundTriggers({ soundTriggers: value });
+    delete flyby.soundTrigger;
+  }
   else if (field === "frameB") flyby[field] = value || null;
   else if (strings.has(field)) flyby[field] = String(value);
   else flyby[field] = Number(value);
@@ -4641,7 +4644,7 @@ function renderAmbientAddForm(type) {
   const audio = (walkPathEditor.assets.audio || []).filter((path) => path.startsWith(audioPrefix));
   return `
     <form class="editorAddForm" data-add-${type}-form>
-      <label><span>Unique ID</span><input name="id" required pattern="[A-Za-z0-9_-]+" /></label>
+      <label><span>Unique ID</span><input name="id" required pattern="[A-Za-z0-9_\\-]+" /></label>
       <label><span>Label</span><input name="label" required /></label>
       <label><span>Discovered set</span><select name="assetSet">${renderAssetSetOptions(type)}</select></label>
       <label><span>${flyby ? "Frame A" : "Open frame"}</span><select name="${flyby ? "frameA" : "openFrame"}">${assetOptions(images)}</select></label>
@@ -4930,7 +4933,7 @@ function renderAmbientEditorControls(options = {}) {
           </details>
           <details class="editorNestedSection"><summary>Audio</summary>
             <label class="editorField"><span>Sound</span><select data-flyby-setting="sound" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.audio || [], flyby.sound, true)}</select></label>
-            <label class="editorField"><span>Sound Trigger</span><select data-flyby-setting="soundTrigger" data-flyby-id="${flyby.id}"><option value="during" ${flyby.soundTrigger !== "tap" ? "selected" : ""}>During Flyby</option><option value="tap" ${flyby.soundTrigger === "tap" ? "selected" : ""}>On Tap</option></select></label>
+            ${["during", "tap"].map(trigger => `<label class="editorToggle"><input type="checkbox" data-flyby-sound-trigger="${trigger}" data-flyby-id="${flyby.id}" ${window.AtlasAmbientSystem.soundTriggers(flyby).includes(trigger) ? "checked" : ""}/><span>${trigger === "during" ? "During Flyby" : "On Tap"}</span></label>`).join("")}
             ${renderFlybyField("Sound volume", flyby, "soundVolume", { min: 0, max: 1, step: 0.05 })}
           </details>
           <details class="editorNestedSection"><summary>Advanced</summary>
@@ -6321,9 +6324,12 @@ function renderAmbientFlyby(flyby) {
   const ready = ambientFlybyRuntime.readiness.get(`${level.id}:${flyby.id}`);
   if (!ready?.frameA) return "";
   const frameB = ready.frameB ? flyby.frameB : null;
+  // `enabled` is editing capability, not visibility; closed tools must leave
+  // gameplay input available on the development URL too.
+  const editing = debugOverlayEnabled && walkPathEditor.enabled;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
-      data-sound-trigger="${flyby.soundTrigger === "tap" && flyby.sound && state.screen === "scene" && !walkPathEditor.enabled ? "tap" : "during"}"
+      data-sound-trigger="${window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound && state.screen === "scene" && !editing ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
       <span class="ambientFlybyFrames">
@@ -7632,7 +7638,7 @@ app.addEventListener("focusout", (event) => {
 
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
-  const tappedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]');
+  const tappedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"]');
   if (tappedFlyby) {
     event.preventDefault();
     event.stopPropagation();
@@ -8328,6 +8334,16 @@ app.addEventListener("change", (event) => {
     updateFlybyPathPoint(flyby.id, walkPathEditor.selectedPathPoint, point);
     return;
   }
+  const soundTrigger = event.target.closest("[data-flyby-sound-trigger]");
+  if (soundTrigger) {
+    const flyby = (level.ambientFlybys || []).find(item => item.id === soundTrigger.dataset.flybyId);
+    if (!flyby) return;
+    const triggers = new Set(window.AtlasAmbientSystem.soundTriggers(flyby));
+    if (soundTrigger.checked) triggers.add(soundTrigger.dataset.flybySoundTrigger);
+    else triggers.delete(soundTrigger.dataset.flybySoundTrigger);
+    updateAmbientFlybySetting(flyby.id, "soundTriggers", [...triggers]);
+    return;
+  }
   const flybySetting = event.target.closest("[data-flyby-setting]");
   if (flybySetting) {
     const value = flybySetting.type === "checkbox"
@@ -8344,7 +8360,13 @@ app.addEventListener("change", (event) => {
 });
 
 app.addEventListener("pointerdown", (event) => {
-  if (event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]')) return;
+  const pressedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]');
+  if (pressedFlyby && event.isPrimary && event.button === 0) {
+    // Keep this moving sprite as the click target even if it moves away before
+    // release. Browser hit testing supplies the transformed screen-space bounds.
+    pressedFlyby.setPointerCapture(event.pointerId);
+    return;
+  }
   ensureAudioUnlocked();
   updateCinematicCueInteraction("pressed", cinematicCueIdForTarget(event.target));
   // Form controls must not pick a world/animal drag handle behind the panel.

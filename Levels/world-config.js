@@ -10393,7 +10393,7 @@ window.SVEN_WORLD_CONFIG = {
               "softness": 0.6,
               "direction": 91,
               "count": 2400,
-              "size": 0.45,
+              "size": 0.98,
               "sizeVariation": 0.6,
               "speed": 300,
               "turbulence": 0.04,
@@ -10505,7 +10505,9 @@ window.SVEN_WORLD_CONFIG = {
       "mainCharacterSettings": {
         "sven_arc": {
           "spriteScale": 0.85,
-          "movementSpeed": 200
+          "movementSpeed": 200,
+          "svenBrightness": 0.84,
+          "svenContrast": 0.95
         }
       }
     },

@@ -143,11 +143,12 @@ test('editor can add single-frame Wasp and Apply/reload slow tap settings',async
   const speed=page.locator('[data-flyby-id="testWasp"][data-flyby-setting="speed"]');
   await expect(speed).toHaveAttribute('min','1');await speed.fill('1');await speed.dispatchEvent('change');
   await page.locator('[data-flyby-editor-id="testWasp"] summary').filter({hasText:/^Audio$/}).click();
-  await page.locator('[data-flyby-id="testWasp"][data-flyby-setting="soundTrigger"]').selectOption('tap');
+  await page.locator('[data-flyby-id="testWasp"][data-flyby-sound-trigger="during"]').uncheck();
+  await page.locator('[data-flyby-id="testWasp"][data-flyby-sound-trigger="tap"]').check();
   await page.getByRole('button',{name:'Apply',exact:true}).click();
   await expect(page.getByText('Draft Status: Applied',{exact:true})).toBeVisible();
   await page.reload();await page.evaluate(()=>window.eval('selectLevel')('LVL-0016',{startImmediately:true}));
-  expect(await page.evaluate(()=>window.eval('level').ambientFlybys.find(x=>x.id==='testWasp'))).toMatchObject({speed:1,soundTrigger:'tap',frameA:image,frameB:null,sound});
+  expect(await page.evaluate(()=>window.eval('level').ambientFlybys.find(x=>x.id==='testWasp'))).toMatchObject({speed:1,soundTriggers:['tap'],frameA:image,frameB:null,sound});
  }finally{fs.writeFileSync(levelFile,original);if(draft===null){if(fs.existsSync(draftFile))fs.unlinkSync(draftFile);}else fs.writeFileSync(draftFile,draft);}
 });
 
