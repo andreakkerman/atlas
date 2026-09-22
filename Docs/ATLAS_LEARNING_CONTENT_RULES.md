@@ -51,6 +51,10 @@ Each slot may randomly select one authored variant when the question starts.
 
 The selected variant remains stable for the current question. Wrong answers, hints and rerenders do not reselect it; assisted completion resolves that same selected variant before advancing.
 
+Authored multiple-choice order is not gameplay presentation order. After selecting a variant, the runtime copies its choices and applies Fisher–Yates once, storing that order on the active question. Retries, hints, rerenders and responsive layout changes retain the same order. New question instances, including replays, receive a fresh shuffle (which may coincidentally repeat an order). Correctness uses the canonical answer value, independent of position. Open-answer questions are unaffected, and editor/authored arrays retain their original order.
+
+Existing reload persistence stores completed challenges, not the live question/variant or its choice order. Reopening an unfinished challenge after reload creates fresh question instances; no separate answer-order persistence is used.
+
 The restrictions on companions acting as teachers apply to ambient/narrative `companionMoments`. Authored `hintMinnie` and `hintMoose` learning hints intentionally may explain a strategy or answer. Keep these roles distinct; see [Companion Authoring Guide](COMPANION_AUTHORING_GUIDE.md).
 
 The player-facing principles above do not prohibit the existing separate Voortgang/session report or developer previews. Keep internal metadata out of the ordinary challenge presentation.

@@ -468,14 +468,25 @@
         if (config.syncKey) clearTimer(`sync:${String(config.syncKey).trim()}`);
         pendingStarts.set(config.id, { triggerId, preview });
       });
+      const startsByDelay = new Map();
       members.forEach((config) => {
         const delay = Math.max(0, Number(config.startDelayMs) || 0);
+        if (!startsByDelay.has(delay)) startsByDelay.set(delay, []);
+        startsByDelay.get(delay).push(config);
+      });
+      startsByDelay.forEach((starting, delay) => {
         const start = () => {
-          pendingStarts.delete(config.id);
-          if (!startOne(config, triggerId, preview)) finishTriggerIfDone(triggerId, preview);
+          const started = starting.filter(config => {
+            pendingStarts.delete(config.id);
+            return startOne(config, triggerId, preview);
+          });
+          // Atmospheric audio belongs to actual flight start, including offscreen
+          // starts. No camera, sprite bounds or player distance is consulted.
+          playTriggerAudio(started, triggerId);
+          finishTriggerIfDone(triggerId, preview);
         };
         if (delay) {
-          const key = `start:${triggerId}:${config.id}`;
+          const key = `start:${triggerId}:${delay}`;
           timers.set(key, window.setTimeout(() => {
             timers.delete(key);
             start();
@@ -484,7 +495,6 @@
           start();
         }
       });
-      playTriggerAudio(members, triggerId);
       return triggerId;
     }
 

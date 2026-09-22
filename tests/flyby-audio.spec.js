@@ -10,7 +10,7 @@ async function setup(page,trigger){
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.addInitScript(()=>{window.flybyPlays=[];const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){if(!this.src.includes('/flybys/'))return play.call(this);const row={audio:this,peak:0};window.flybyPlays.push(row);const monitor=setInterval(()=>row.peak=Math.max(row.peak,this.volume),10);this.addEventListener('ended',()=>clearInterval(monitor),{once:true});this.addEventListener('pause',()=>clearInterval(monitor),{once:true});return play.call(this).then(()=>{row.ok=true;},e=>{clearInterval(monitor);row.error=e.name;throw e;});};});
  await page.goto(base);
- await page.evaluate(async trigger=>{await window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false});const c=window.eval('level').ambientFlybys.find(x=>x.sound.includes('arc_wasp'));c.soundTrigger=trigger;window.waspId=c.id;window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();},trigger);
+ await page.evaluate(async trigger=>{await window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false});const c=window.eval('level').ambientFlybys.find(x=>x.sound.includes('arc_wasp'));delete c.soundTriggers;c.soundTrigger=trigger;window.waspId=c.id;window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();},trigger);
  await expect.poll(()=>page.evaluate(()=>window.eval('ambientFlybyRuntime').readiness.get('LVL-0032:'+window.waspId)?.sound)).toBe(true);
 }
 async function visible(page){
@@ -18,6 +18,31 @@ async function visible(page){
  await expect.poll(()=>page.evaluate(()=>document.querySelector(`[data-ambient-flyby="${window.waspId}"]`)?.dataset.progress)).not.toBeUndefined();
 }
 async function tap(page,info){const id=await page.evaluate(()=>window.waspId);const b=await page.locator(`[data-ambient-flyby="${id}"]`).boundingBox();if(info.project.name.startsWith('ipad'))await page.touchscreen.tap(b.x+b.width/2,b.y+b.height/2);else await page.mouse.click(b.x+b.width/2,b.y+b.height/2);}
+for(const position of ['offscreen','visible'])test(`During audio starts once at actual ${position} flight start, independent of player distance`,async({page})=>{
+ await setup(page,'during');
+ await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-graphics-action="toggle"]').click();
+ await page.evaluate(position=>{
+  const s=window.eval('state'),r=window.eval('ambientFlybyRuntime'),c=window.eval('level').ambientFlybys.find(c=>c.id===window.waspId);
+  s.worldX=position==='offscreen'?100:1800;s.cameraX=window.eval('getDesiredCameraX')();
+  delete c.soundTriggers;c.soundTrigger='during';c.startDelayMs=800;c.speed=1;c.path=[{x:1800,y:300},{x:2400,y:300}];c.intervalMinMs=200;c.intervalMaxMs=200;
+  r.invalidatePath(c.id);r.stopAll();window.eval('render')();
+ },position);
+ // Use the ordinary scheduler, not the tap handler or a preview seek.
+ await expect.poll(()=>page.evaluate(()=>[...window.eval('ambientFlybyRuntime').timers.keys()].some(k=>k.startsWith('start:')))).toBe(true);
+ expect(await page.evaluate(()=>window.eval('ambientFlybyRuntime').active.size)).toBe(0);
+ expect(await page.evaluate(()=>window.flybyPlays.length)).toBe(0);
+ await expect.poll(()=>page.evaluate(()=>window.eval('ambientFlybyRuntime').active.has(window.waspId))).toBe(true);
+ expect(await page.evaluate(()=>window.flybyPlays.length)).toBe(1);
+ await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0].ok)).toBe(true);
+ const b=await page.locator('[data-ambient-flyby]').boundingBox();
+ if(position==='offscreen')expect(b.x).toBeGreaterThan(page.viewportSize().width);
+ else {expect(b.x).toBeLessThan(page.viewportSize().width);expect(b.x+b.width).toBeGreaterThan(0);}
+ await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0].audio.currentTime)).toBeGreaterThan(0);
+ await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0].peak)).toBeGreaterThan(await page.evaluate(()=>window.eval('audioMasterVolume')()*window.eval('level').ambientFlybys[0].soundVolume*.9));
+ await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0].audio.ended)).toBe(true);
+ expect(await page.evaluate(()=>window.flybyPlays.length)).toBe(1);
+ expect(await page.evaluate(()=>window.eval('ambientFlybyRuntime').active.size)).toBe(1);
+});
 test('authored short Wasp call reaches instance gain before it ends during a slow flight',async({page})=>{
  await setup(page,'during');await page.mouse.click(700,400);
  await page.evaluate(()=>window.eval('ambientFlybyRuntime').preview(window.waspId));
@@ -53,7 +78,7 @@ test('Wasp and control sound return audio MIME and native decode; non-silent PCM
 });
 for(const trigger of ['during','tap'])test(`existing two-frame swift uses native ${trigger} playback`,async({page},info)=>{
  await setup(page,trigger);
- await page.evaluate(async trigger=>{await window.eval('selectLevel')('LVL-0016',{startImmediately:true,recordStart:false});const c=window.eval('level').ambientFlybys.find(x=>x.sound);c.soundTrigger=trigger;window.waspId=c.id;window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();},trigger);
+ await page.evaluate(async trigger=>{await window.eval('selectLevel')('LVL-0016',{startImmediately:true,recordStart:false});const c=window.eval('level').ambientFlybys.find(x=>x.sound);delete c.soundTriggers;c.soundTrigger=trigger;window.waspId=c.id;window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();},trigger);
  await expect.poll(()=>page.evaluate(()=>window.eval('ambientFlybyRuntime').readiness.get('LVL-0016:'+window.waspId)?.sound)).toBe(true);
  if(trigger==='during')await page.mouse.click(700,400);
  await visible(page);

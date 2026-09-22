@@ -3759,8 +3759,8 @@ function answerFor(question) {
   return question.answer ?? question.a * question.b;
 }
 
-function shuffleQuestions(questions) {
-  const shuffled = [...questions];
+function shuffledCopy(items) {
+  const shuffled = [...items];
   for (let index = shuffled.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1));
     [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
@@ -3783,7 +3783,7 @@ function selectChallengeQuestions(rune) {
       .filter(Boolean)
       .filter(isLearningChallengeActive);
   }
-  return shuffleQuestions(rune.questions).slice(0, 4);
+  return shuffledCopy(rune.questions).slice(0, 4);
 }
 
 function currentChallengeQuestions() {
@@ -3792,6 +3792,11 @@ function currentChallengeQuestions() {
   if (current?.variants) {
     const selected = current.variants[Math.floor(Math.random() * current.variants.length)];
     questions[state.questionIndex] = { ...selected, atlasSlotId: current.id };
+    // The selected question owns its order for retries, hints and redraws.
+    // Never shuffle the shared authored choices or shuffle during rendering.
+    if (selected.answerMode === "multipleChoice") {
+      questions[state.questionIndex].choices = shuffledCopy(selected.choices);
+    }
   }
   return questions;
 }
@@ -6329,6 +6334,7 @@ function renderAmbientFlyby(flyby) {
   const editing = debugOverlayEnabled && walkPathEditor.enabled;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
+      data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.softness, flyby.saturation]))}"
       data-sound-trigger="${window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound && state.screen === "scene" && !editing ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
@@ -7518,6 +7524,9 @@ function render() {
     updateWorldDom();threeRenderer.sync();return;
   }
   const editorUiState = captureEditorUiState();
+  const retainedFlybys = new Map([...app.querySelectorAll('[data-ambient-flyby]')]
+    .filter(node => ambientFlybyRuntime.active.has(node.dataset.ambientFlyby))
+    .map(node => [node.dataset.ambientFlyby, node]));
   const retainedCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const retainedThreeCanvas = app.querySelector("[data-three-canvas]");
   const retainedVoxelCanvas = app.querySelector("[data-voxel-canvas]");
@@ -7548,6 +7557,15 @@ function render() {
     app.innerHTML = renderScene();
   }
 
+  // Walk arrival and other scene refreshes must not reset an active visual to
+  // the inactive template until the next ambient RAF. Retain its decoded images,
+  // current frame and transform synchronously, as with the existing canvases.
+  for (const replacement of app.querySelectorAll('[data-ambient-flyby]')) {
+    const retained = retainedFlybys.get(replacement.dataset.ambientFlyby);
+    if (!retained || retained.dataset.flybyVisual !== replacement.dataset.flybyVisual) continue;
+    retained.dataset.soundTrigger = replacement.dataset.soundTrigger;
+    replacement.replaceWith(retained);
+  }
   const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const replacementThreeCanvas = app.querySelector("[data-three-canvas]");
   if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) replacementThreeCanvas.replaceWith(retainedThreeCanvas);

@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v206-flyby-triggers";
+const CACHE_NAME = "svenadventure-static-v208-flyby-continuity";
 const CORE_ASSETS = [
   "Levels/LVL-0035/level.js",
   "Levels/LVL-0035/stellamontis.png",
