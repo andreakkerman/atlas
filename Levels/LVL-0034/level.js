@@ -805,8 +805,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0034"] = {
       "sound": "assets/ambient/flybys/bastion_walk/bastion.mp3",
       "path": [
         {
-          "x": 295,
-          "y": 479
+          "x": 338,
+          "y": 493
         },
         {
           "x": 462,
@@ -836,7 +836,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0034"] = {
       "startDelayMs": 0,
       "softness": 0.5,
       "saturation": 1,
-      "soundVolume": 0.5,
+      "soundVolume": 0.4,
       "rotateAlongPath": false,
       "maxRotationDeg": 8,
       "frames": [
