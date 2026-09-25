@@ -335,12 +335,15 @@ function discoverAmbientAssetSets(files) {
       } else {
         const roles = roleFor(group, ["a", "b", "framea", "frame-a", "frameb", "frame-b"]);
         const singleFrame = group.images.length === 1 ? group.images[0] : "";
-        const frameA = roles.get("a") || roles.get("framea") || roles.get("frame-a") || singleFrame;
-        const frameB = singleFrame ? null : roles.get("b") || roles.get("frameb") || roles.get("frame-b") || null;
-        if (frameA && (frameB || singleFrame)) {
-          result.flybys.push({ key: group.folder, label, frameA: relative(frameA), frameB: frameB ? relative(frameB) : null, sound });
+        const ordered = [...group.images].sort((a,b)=>a.localeCompare(b,"en",{numeric:true,sensitivity:"base"}) || a.localeCompare(b,"en"));
+        const namedB = roles.get("b") || roles.get("frameb") || roles.get("frame-b");
+        const frameA = ordered.length>2 ? ordered[0] : roles.get("a") || roles.get("framea") || roles.get("frame-a") || singleFrame || ordered.find(path=>path!==namedB);
+        const frameB = ordered.length===2 ? ordered.find(path=>path!==frameA) : null;
+        if (frameA) {
+          const frames=(ordered.length===2?[frameA,frameB]:ordered).map(relative);
+          result.flybys.push({ key: group.folder, label, frames, frameA: relative(frameA), frameB: frameB ? relative(frameB) : null, sound });
         } else {
-          result.warnings.push(`${group.folder}: expected one image or two flyby frames named a/b or frame-a/frame-b.`);
+          result.warnings.push(`${group.folder}: expected at least one flyby image.`);
         }
       }
     });
@@ -438,7 +441,7 @@ function validateAmbientFlybys(value, levelId) {
     const result = {
       id: flyby.id,
       label: flyby.label,
-      frameA: validateAmbientAsset(levelId, flyby.frameA, `ambientFlybys[${index}].frameA`, ambientImageExtensions),
+      frameA: validateAmbientAsset(levelId, ambientSystemApi.framesFor(flyby)[0], `ambientFlybys[${index}].frameA`, ambientImageExtensions),
       frameB: validateAmbientAsset(levelId, flyby.frameB, `ambientFlybys[${index}].frameB`, ambientImageExtensions, true) || null,
       sound: validateAmbientAsset(levelId, flyby.sound, `ambientFlybys[${index}].sound`, ambientAudioExtensions, true),
       path: pathPoints,
@@ -451,12 +454,16 @@ function validateAmbientFlybys(value, levelId) {
       intervalMaxMs: Math.round(number("intervalMaxMs", 0)),
       syncKey: String(flyby.syncKey || ""),
       startDelayMs: Math.round(number("startDelayMs", 0)),
-      softness: number("softness", 0),
-      saturation: number("saturation", 0),
+      softness: flyby.softness === undefined ? 0 : number("softness", 0),
+      saturation: flyby.saturation === undefined ? 1 : number("saturation", 0),
       soundVolume: number("soundVolume", 0, 1),
       rotateAlongPath: Boolean(flyby.rotateAlongPath),
       maxRotationDeg: number("maxRotationDeg", 0, 180)
     };
+    const sequenceErrors=ambientSystemApi.sequenceErrors(flyby);
+    if(sequenceErrors.length)throw new Error(`ambientFlybys[${index}]: ${sequenceErrors.join('; ')}`);
+    if(flyby.frames!==undefined)result.frames=flyby.frames.map((p,i)=>validateAmbientAsset(levelId,p,`ambientFlybys[${index}].frames[${i}]`,ambientImageExtensions));
+    for(const field of ['playback','animationFps','movementEndFrame','endBehavior','depthOcclusion','depthBias','actions','enabled','brightness','contrast','warmth','tint'])if(flyby[field]!==undefined)result[field]=flyby[field];
     if (!ambientSystemApi.validSoundTriggers(flyby)) throw new Error(`ambientFlybys[${index}].soundTriggers must contain unique during/tap values (or a valid legacy soundTrigger).`);
     if (flyby.soundTriggers !== undefined) {
       result.soundTriggers = ambientSystemApi.soundTriggers(flyby);

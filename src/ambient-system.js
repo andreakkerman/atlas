@@ -4,6 +4,63 @@
   const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
   const AUDIO_EXTENSIONS = new Set([".mp3", ".ogg", ".wav"]);
 
+  const actions = new Map();
+  function registerAction(id, handler) {
+    if (!/^[\w-]+$/.test(id) || typeof handler !== "function") throw new Error("Invalid flyby action registration.");
+    actions.set(id, handler);
+    return () => { if (actions.get(id) === handler) actions.delete(id); };
+  }
+  function framesFor(config) { return Array.isArray(config.frames) ? config.frames : [config.frameA, config.frameB].filter(Boolean); }
+  function playbackFor(config) { return config.playback || (config.frames ? "static" : config.frameB ? "legacy" : "static"); }
+  const graphicsControls = {
+    brightness: {label:'Brightness', min:0, max:2, step:0.01, neutral:1, help:'1 = neutral'},
+    contrast: {label:'Contrast', min:0, max:2, step:0.01, neutral:1, help:'1 = neutral'},
+    saturation: {label:'Saturation', min:0, max:2, step:0.01, neutral:1, help:'1 = neutral; 0 = grayscale'},
+    warmth: {label:'Warmth', min:-1, max:1, step:0.01, neutral:0, help:'Negative = cooler; positive = warmer'},
+    tint: {label:'Tint', min:-1, max:1, step:0.01, neutral:0, help:'Negative = greener; positive = more magenta'},
+    softness: {label:'Softness', min:0, max:8, step:0.25, neutral:0, help:'Blur in pixels; 0 = neutral'}
+  };
+  function graphicsFor(config) {
+    return Object.fromEntries(Object.entries(graphicsControls).map(([key,control])=>[key,
+      Number.isFinite(config[key]) ? Math.max(control.min,Math.min(['softness','saturation'].includes(key)?Infinity:control.max,config[key])) : control.neutral]));
+  }
+  function hasColorAdjustment(config) {
+    const g=graphicsFor(config);
+    return g.brightness!==1 || g.contrast!==1 || g.warmth!==0 || g.tint!==0;
+  }
+  function canvasVisual(config) { return Boolean(config.frames || config.depthOcclusion || config.playback || hasColorAdjustment(config)); }
+  // Process only the current frame, in straight-alpha sRGB. Never modify alpha or
+  // retained source images. Temperature/tint offsets have zero Rec.709 luminance.
+  function adjustGraphics(pixels, config) {
+    const g=graphicsFor(config), data=pixels.data;
+    const rShift=0.12*g.warmth+0.08*g.tint, bShift=-0.12*g.warmth+0.08*g.tint;
+    const gShift=-(0.2126*rShift+0.0722*bShift)/0.7152;
+    for(let i=0;i<data.length;i+=4) if(data[i+3]) {
+      data[i]=255*((data[i]/255*g.brightness-0.5)*g.contrast+0.5+rShift);
+      data[i+1]=255*((data[i+1]/255*g.brightness-0.5)*g.contrast+0.5+gShift);
+      data[i+2]=255*((data[i+2]/255*g.brightness-0.5)*g.contrast+0.5+bShift);
+    }
+    return pixels;
+  }
+  function depthPathFor(level) { return level.world.depthmap || `Levels/${level.id}/assets/depthmap.png`; }
+  function sequenceErrors(config) {
+    const errors = [], frames = framesFor(config);
+    for(const [field,control] of Object.entries(graphicsControls)) {
+      const max=['softness','saturation'].includes(field)?Infinity:control.max;
+      if(config[field]!==undefined && (!Number.isFinite(config[field]) || config[field]<control.min || config[field]>max))errors.push(`${field} must be finite and between ${control.min} and ${max}`);
+    }
+    if (config.frames !== undefined && (!Array.isArray(config.frames) || !frames.length || frames.some(p => typeof p !== "string" || !p) || new Set(frames).size !== frames.length)) errors.push("frames must be a nonempty unique ordered array of image paths");
+    if (config.playback !== undefined && !["static", "loop", "once"].includes(config.playback)) errors.push("invalid playback");
+    if (config.animationFps !== undefined && (!Number.isFinite(config.animationFps) || config.animationFps < 1 || config.animationFps > 60)) errors.push("animationFps must be 1–60");
+    if (config.movementEndFrame !== undefined && (!Number.isInteger(config.movementEndFrame) || config.movementEndFrame < 1 || config.movementEndFrame > frames.length)) errors.push("movementEndFrame must identify a frame (1-based)");
+    if (config.endBehavior !== undefined && !["despawn", "hold"].includes(config.endBehavior)) errors.push("invalid endBehavior");
+    if (config.depthOcclusion !== undefined && typeof config.depthOcclusion !== "boolean") errors.push("depthOcclusion must be boolean");
+    if (config.enabled !== undefined && typeof config.enabled !== "boolean") errors.push("enabled must be boolean");
+    if (config.depthBias !== undefined && (!Number.isFinite(config.depthBias) || Math.abs(config.depthBias) > 1)) errors.push("depthBias must be -1–1");
+    if (config.actions !== undefined && (!config.actions || typeof config.actions !== "object" || Array.isArray(config.actions) || Object.entries(config.actions).some(([k,v]) => !["onTap", "onAnimationComplete"].includes(k) || (v !== null && (typeof v !== "string" || !/^[\w-]+$/.test(v)))))) errors.push("actions must map onTap/onAnimationComplete to action IDs or null");
+    return errors;
+  }
+
   function soundTriggers(config = {}) {
     return Array.isArray(config.soundTriggers)
       ? ["during", "tap"].filter(trigger => config.soundTriggers.includes(trigger))
@@ -278,6 +335,127 @@
     let levelId = null;
     let rafId = null;
     let triggerSequence = 0;
+    let preparation = 0;
+    let depth = null;
+    let depthDebug = false;
+    const previewIds = new Set();
+    let editVersion = 0;
+    let depthPreparation = null;
+    const assetPreparations = new Map();
+    const preparingStates = new Map();
+
+    function previewState(id) {
+      const instance=active.get(id);
+      return instance?.preview ? (instance.paused ? 'paused' : 'playing') : 'idle';
+    }
+
+    function stopPreview(id) {
+      for (const key of id ? [id] : [...previewIds]) {
+        const instance=active.get(key);
+        if(instance?.preview) {
+          for(const [audioKey,value] of activeAudio) if(value.triggerId===instance.triggerId){value.audio.pause();activeAudio.delete(audioKey);}
+          cancelActive(key);
+        }
+        previewIds.delete(key);
+      }
+      if(![...active.values()].some(item=>!item.held&&!item.paused)&&!activeAudio.size){window.cancelAnimationFrame(rafId);rafId=null;}
+      options.onPreviewChange?.();
+    }
+
+    function togglePreview(id) {
+      const instance=active.get(id);
+      if(instance&&!instance.preview){
+        stopPreview();instance.preview=true;
+        const config=configById(id);
+        instance.legacyPhase=(instance.distance/Math.max(1,Number(config.speed)||260))*Math.max(0,Number(config.flapFrequencyHz)||0)*2;
+        if(playbackFor(config)==='legacy')instance.frameIndex=Math.floor(instance.legacyPhase)%framesFor(config).length;
+        previewIds.add(id);options.onPreviewChange?.();return true;
+      }
+      if(!instance?.preview){stopPreview();return preview(id);}
+      instance.paused=!instance.paused;
+      instance.lastTime=0;
+      if(instance.paused && ![...active.values()].some(item=>!item.held&&!item.paused)&&!activeAudio.size){window.cancelAnimationFrame(rafId);rafId=null;}
+      else ensureRaf();
+      options.onPreviewChange?.();
+      return true;
+    }
+
+    function refreshPreviews() {
+      for(const runtime of active.values()) if((runtime.preview || runtime.held) && !runtime.rebuilding) {
+        const config=configById(runtime.id);if(!config)continue;
+        const cache=cacheFor(config),point=pointAtDistance(cache,runtime.distance);
+        const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
+        const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
+        const shell=document.querySelector(`[data-ambient-flyby="${CSS.escape(runtime.id)}"]`);
+        if(!shell)continue;
+        shell.style.setProperty('--flyby-softness',`${Math.max(0,Number(config.softness)||0)}px`);
+        shell.style.setProperty('--flyby-saturation',String(Math.max(0,Number(config.saturation??1))));
+        shell.style.transform=`translate3d(${point.x*runtime.scaleX}px, ${point.y*runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale)||0.2}) scaleX(${facing})`;
+        shell.dataset.active='true';
+        drawPreparedFrame(config,runtime,shell,point,rotation,facing);
+      }
+    }
+
+    async function prepareDepth(selectedLevel) {
+      if(depth)return;
+      if(depthPreparation)return depthPreparation;
+      const token=preparation;
+      depthPreparation=(async()=>{
+        const img=await assetCache.image(depthPathFor(selectedLevel));
+        if(token!==preparation)return;
+        const surface=document.createElement('canvas');surface.width=img.naturalWidth;surface.height=img.naturalHeight;
+        const ctx=surface.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+        depth={data:ctx.getImageData(0,0,surface.width,surface.height).data,width:surface.width,height:surface.height};
+        surface.width=surface.height=0;
+      })();
+      try{await depthPreparation;}finally{if(token===preparation)depthPreparation=null;}
+    }
+
+    async function updateLevel(previous) {
+      if(levelId!==getLevel()?.id)return prepareLevel(getLevel());
+      const version=++editVersion, token=preparation, tasks=[];
+      const old=new Map(previous.map(c=>[c.id,c]));
+      for(const key of timers.keys())if(key.startsWith('one:')||key.startsWith('sync:'))clearTimer(key);
+      for(const config of previous)if(!configById(config.id)||configById(config.id).enabled===false){readiness.delete(keyFor(config.id));pathCaches.delete(keyFor(config.id));}
+      for(const [id,runtime] of active)if(!configById(id)||configById(id).enabled===false){if(runtime.preview)stopPreview(id);else cancelActive(id);}
+      for(const config of getLevel().ambientFlybys||[]) {
+        if(config.enabled===false)continue;
+        const before=old.get(config.id),runtime=active.get(config.id);
+        const assetsChanged=!before || JSON.stringify(framesFor(before))!==JSON.stringify(framesFor(config)) || !readiness.get(keyFor(config.id))?.ready || assetPreparations.has(keyFor(config.id));
+        if(runtime && before){
+          for(const sound of activeAudio.values())if(sound.triggerId===runtime.triggerId)sound.maxVolume=Number(config.soundVolume??1);
+          if(JSON.stringify([before.path,before.motionProfile,before.wobble])!==JSON.stringify([config.path,config.motionProfile,config.wobble]))runtime.distance=runtime.progress*cacheFor(config).totalLength;
+          if(playbackFor(before)!==playbackFor(config)||assetsChanged){
+            runtime.animationTime=playbackFor(config)==='once'?runtime.progress*Math.max(0,(config.movementEndFrame??framesFor(config).length)-1):0;
+            runtime.animationStep=Math.floor(runtime.animationTime);runtime.frameIndex=runtime.animationStep%framesFor(config).length;runtime.animationComplete=false;runtime.held=false;
+            runtime.drawKey=null;
+          }
+          if(assetsChanged)runtime.rebuilding=true;
+        }
+        if(assetsChanged)tasks.push(prepareOne(config));
+        else if(before?.sound!==config.sound && config.sound){readiness.get(keyFor(config.id)).sound=false;tasks.push(assetCache.sound(config.sound).then(()=>{const ready=readiness.get(keyFor(config.id));if(ready)ready.sound=true;}));}
+      }
+      if((getLevel().ambientFlybys||[]).some(c=>c.enabled!==false&&c.depthOcclusion)&&!depth)tasks.push(prepareDepth(getLevel()));
+      // Compatible changes with prepared assets are synchronous, including paused masks.
+      if(!tasks.length){refreshPreviews();scheduleAll();return;}
+      try{await Promise.all(tasks);}catch(error){warn(`[Atlas] Flyby preview update failed: ${error.message}`);}
+      if(version!==editVersion||token!==preparation)return;
+      for(const runtime of active.values()) {runtime.rebuilding=false;runtime.lastTime=0;runtime.drawKey=null;}
+      refreshPreviews();ensureRaf();scheduleAll();
+    }
+
+    function setDepthDebug(enabled) {
+      depthDebug = Boolean(enabled && options.canDebug?.());
+      for (const runtime of active.values()) {
+        runtime.drawKey = null;
+        if (runtime.lastDraw) {
+          const {point,rotation,facing}=runtime.lastDraw;
+          const shell=document.querySelector(`[data-ambient-flyby="${CSS.escape(runtime.id)}"]`);
+          drawPreparedFrame(configById(runtime.id),runtime,shell,point,rotation,facing);
+        }
+      }
+      return depthDebug;
+    }
 
     function keyFor(id) {
       return `${levelId || getLevel()?.id}:${id}`;
@@ -307,19 +485,44 @@
       pathCaches.delete(keyFor(id));
     }
 
-    async function prepareOne(config) {
+    function prepareOne(config) {
+      const key=keyFor(config.id),signature=JSON.stringify([framesFor(config),canvasVisual(config),config.sound]);
+      const pending=assetPreparations.get(key);
+      if(pending?.signature===signature)return pending.promise;
+      const entry={signature};
+      entry.promise=prepareOneAssets(config).finally(()=>{if(assetPreparations.get(key)===entry)assetPreparations.delete(key);});
+      assetPreparations.set(key,entry);
+      return entry.promise;
+    }
+
+    async function prepareOneAssets(config) {
+      const token = preparation;
       const key = keyFor(config.id);
       const state = { frameA: false, frameB: false, sound: false, ready: false };
-      readiness.set(key, state);
+      preparingStates.set(key,state);
+      if(!readiness.has(key))readiness.set(key, state);
       try {
-        await assetCache.image(config.frameA);
+        const errors = sequenceErrors(config);
+        if (errors.length) throw new Error(errors.join("; "));
+        if (canvasVisual(config)) {
+          state.images = [];
+          for (const path of framesFor(config)) {
+            const image = await assetCache.image(path);
+            if (token !== preparation) return state;
+            state.images.push(image);
+          }
+          if (state.images.some(img => img.naturalWidth !== state.images[0].naturalWidth || img.naturalHeight !== state.images[0].naturalHeight)) throw new Error("Sequence frame dimensions must match");
+        } else state.images=[await assetCache.image(config.frameA)];
         state.frameA = true;
-      } catch {
-        warn(`[Atlas] ${levelId} flyby "${config.id}" failed asset ${config.frameA}`);
+      } catch (error) {
+        state.images = null;
+        state.error = error.message;
+        if(token===preparation&&preparingStates.get(key)===state)readiness.set(key,state);
+        warn(`[Atlas] ${levelId} flyby "${config.id}": ${error.message}`);
         return state;
       }
-      if (config.frameB) try {
-        await assetCache.image(config.frameB);
+      if (!canvasVisual(config) && config.frameB) try {
+        state.images.push(await assetCache.image(config.frameB));
         state.frameB = true;
       } catch {
         warn(`[Atlas] ${levelId} flyby "${config.id}" flap frame disabled: ${config.frameB}`);
@@ -331,19 +534,40 @@
           warn(`[Atlas] ${levelId} flyby "${config.id}" sound disabled: ${config.sound}`);
         });
       }
+      if (token !== preparation || preparingStates.get(key)!==state || configById(config.id)?.enabled===false) return state;
       state.ready = true;
+      readiness.set(key,state);
+      preparingStates.delete(key);
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(config.id)}"]`);
       if (shell) shell.dataset.ready = "true";
       sync();
       return state;
     }
 
-    function prepareLevel(selectedLevel) {
+    async function prepareLevel(selectedLevel) {
       stopAll();
+      const token = ++preparation;
+      ++editVersion;depthPreparation=null;assetPreparations.clear();preparingStates.clear();
+      depth = null;
       levelId = selectedLevel?.id || null;
       readiness.clear();
       pathCaches.clear();
-      return Promise.all((selectedLevel?.ambientFlybys || []).map(prepareOne));
+      if ((selectedLevel?.ambientFlybys || []).some(c => c.enabled!==false && c.depthOcclusion)) {
+        try {
+          await prepareDepth(selectedLevel);
+          if (token !== preparation) return;
+        } catch (error) { warn(`[Atlas] Flyby depth preparation failed: ${error.message}`); return; }
+      }
+      return Promise.all((selectedLevel?.ambientFlybys || []).filter(c=>c.enabled!==false).map(prepareOne));
+    }
+
+    function dispatch(config, trigger, instance) {
+      const id = config.actions?.[trigger];
+      if (!id) return;
+      const handler = actions.get(id);
+      if (!handler) { warn(`[Atlas] Unknown flyby action: ${id}`); return; }
+      try { handler({trigger, flybyId:config.id, levelId, instance, config}); }
+      catch (error) { warn(`[Atlas] Flyby action ${id}: ${error.message}`); }
     }
 
     function clearTimer(key) {
@@ -354,6 +578,7 @@
     function groups() {
       const result = new Map();
       for (const config of getLevel()?.ambientFlybys || []) {
+        if(config.enabled===false)continue;
         const key = String(config.syncKey || "").trim();
         if (!key) continue;
         if (!result.has(key)) result.set(key, []);
@@ -379,28 +604,30 @@
     }
 
     function scheduleIndependent(config) {
+      if(config.enabled===false||previewIds.has(config.id))return;
       const key = `one:${config.id}`;
       if (timers.has(key) || isBusy(config.id) || !readiness.get(keyFor(config.id))?.ready) return;
       timers.set(key, window.setTimeout(() => {
         timers.delete(key);
-        if (!canRun()) return;
+        if (!canRun() || options.isEditing?.() || previewIds.has(config.id)) return;
         startTrigger([config], false);
       }, randomDelay(config)));
     }
 
     function scheduleGroup(syncKey, members) {
+      if(members.some(c=>previewIds.has(c.id)))return;
       const key = `sync:${syncKey}`;
       if (timers.has(key) || members.some((item) => isBusy(item.id))) return;
       if (!members.every((item) => readiness.get(keyFor(item.id))?.ready)) return;
       timers.set(key, window.setTimeout(() => {
         timers.delete(key);
-        if (!canRun()) return;
+        if (!canRun() || options.isEditing?.() || members.some(c=>previewIds.has(c.id))) return;
         startTrigger(members, false);
       }, randomDelay(members[0])));
     }
 
     function scheduleAll() {
-      if (!canRun()) return;
+      if (!canRun() || options.isEditing?.()) return;
       const syncGroups = groups();
       for (const config of getLevel().ambientFlybys || []) {
         if (!String(config.syncKey || "").trim()) scheduleIndependent(config);
@@ -433,6 +660,7 @@
       const state = { audio, path, triggerId, instanceId, maxVolume: Number(config.soundVolume ?? 1) };
       audio.volume = instanceId ? Math.max(0, Math.min(1, getMasterVolume() * state.maxVolume)) : 0;
       activeAudio.set(key, state);
+      ensureRaf();
       const finish = () => { if (activeAudio.get(key) === state) activeAudio.delete(key); };
       audio.addEventListener("ended", finish, { once: true });
       audio.addEventListener("error", finish, { once: true });
@@ -442,12 +670,12 @@
     function tap(id) {
       const config = configById(id), instance = active.get(id);
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
-      if (!instance || !soundTriggers(config).includes("tap") || !config.sound ||
-          getScreen() !== "scene" || document.hidden || !getAudioUnlocked() ||
-          !readiness.get(keyFor(id))?.sound || shell?.dataset.active !== "true") return false;
+      if (!instance || getScreen() !== "scene" || document.hidden || shell?.dataset.active !== "true") return false;
       const bounds = shell.getBoundingClientRect();
       if (!bounds.width || !bounds.height || bounds.right <= 0 || bounds.bottom <= 0 ||
           bounds.left >= window.innerWidth || bounds.top >= window.innerHeight) return false;
+      dispatch(config, "onTap", instance);
+      if (!soundTriggers(config).includes("tap") || !config.sound || !getAudioUnlocked() || !readiness.get(keyFor(id))?.sound) return Boolean(config.actions?.onTap);
       const path = assetCache.normalize(config.sound);
       // Ignore repeated taps while this sound is playing, including another instance of it.
       if ([...activeAudio.values()].some((state) => state.path === path)) return true;
@@ -470,7 +698,7 @@
       });
       const startsByDelay = new Map();
       members.forEach((config) => {
-        const delay = Math.max(0, Number(config.startDelayMs) || 0);
+        const delay = preview ? 0 : Math.max(0, Number(config.startDelayMs) || 0);
         if (!startsByDelay.has(delay)) startsByDelay.set(delay, []);
         startsByDelay.get(delay).push(config);
       });
@@ -499,6 +727,7 @@
     }
 
     function startOne(config, triggerId, preview) {
+      if(config.enabled===false)return false;
       if (active.has(config.id)) return false;
       if (!preview && !canRun()) return false;
       if (!readiness.get(keyFor(config.id))?.ready) return false;
@@ -517,6 +746,13 @@
       });
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(config.id)}"]`);
       if (shell) {
+        if (canvasVisual(config)) {
+          const runtime=active.get(config.id),point=pointAtDistance(cache,0);
+          const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
+          const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
+          shell.style.transform=`translate3d(${point.x*runtime.scaleX}px, ${point.y*runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale)||0.2}) scaleX(${facing})`;
+          drawPreparedFrame(config,runtime,shell,point,rotation,facing);
+        }
         shell.dataset.active = "true";
         shell.style.willChange = "transform";
       }
@@ -527,12 +763,16 @@
     function preview(id) {
       const config = configById(id);
       if (!config) return false;
-      return Boolean(startTrigger([config], true));
+      previewIds.add(id);
+      const started=Boolean(startTrigger([config], true));
+      options.onPreviewChange?.();
+      return started;
     }
 
     function previewSync(syncKey) {
       const members = groups().get(syncKey) || [];
       if (!members.length) return false;
+      members.forEach(c=>previewIds.add(c.id));
       return Boolean(startTrigger(members, true));
     }
 
@@ -558,7 +798,8 @@
         state.audio.pause();
         activeAudio.delete(key);
       }
-      scheduleAll();
+      if(preview)options.onPreviewChange?.();
+      else scheduleAll();
     }
 
     function updateAudio() {
@@ -578,6 +819,66 @@
       }
     }
 
+    function drawPreparedFrame(config, runtime, shell, point, rotation, facing) {
+      const canvas = shell?.querySelector?.('[data-flyby-canvas]');
+      const images = readiness.get(keyFor(config.id))?.images;
+      if (!canvas || !images?.length) return;
+      const image = images[runtime.frameIndex || 0];
+      if (options.canDebug?.()) runtime.lastDraw = {point,rotation,facing};
+      const width = image.naturalWidth, height = image.naturalHeight;
+      if (canvas.width !== width || canvas.height !== height) {canvas.width=width;canvas.height=height;runtime.drawKey=null;}
+      const g=graphicsFor(config);
+      const debug=depthDebug && config.depthOcclusion && depth;
+      shell.style.setProperty('--flyby-softness',`${debug?0:g.softness}px`);
+      shell.style.setProperty('--flyby-saturation',String(debug?1:g.saturation));
+      const key = [runtime.frameIndex || 0, config.scale, config.depthBias, depthDebug, ...Object.values(g), ...(config.depthOcclusion ? [point.x,point.y,rotation,facing] : [])].join(':');
+      if (runtime.drawCanvas === canvas && runtime.drawKey === key) return;
+      runtime.drawCanvas=canvas;runtime.drawKey=key;
+      const ctx=canvas.getContext('2d');ctx.clearRect(0,0,width,height);ctx.drawImage(image,0,0);
+      if(!debug && hasColorAdjustment(config))ctx.putImageData(adjustGraphics(ctx.getImageData(0,0,width,height),config),0,0);
+      if (config.depthOcclusion && depth) {
+        const world=getLevel().world, scale=Number(config.scale)||0.2, angle=rotation*Math.PI/180, cos=Math.cos(angle),sin=Math.sin(angle);
+        const sample=(x,y)=>depth.data[(Math.max(0,Math.min(depth.height-1,Math.round(y/world.height*(depth.height-1))))*depth.width+Math.max(0,Math.min(depth.width-1,Math.round(x/world.width*(depth.width-1)))))*4]/255;
+        const groundY=height*0.46*scale;
+        const actorDepth=Math.max(0,Math.min(1,sample(point.x-sin*groundY/runtime.scaleX,point.y+cos*groundY/runtime.scaleY)+Number(config.depthBias||0)));
+        const mask=runtime.mask || (runtime.mask=document.createElement('canvas'));
+        if(mask.width!==width||mask.height!==height){mask.width=width;mask.height=height;runtime.maskPixels=null;}
+        const maskCtx=mask.getContext('2d'),pixels=runtime.maskPixels || (runtime.maskPixels=maskCtx.createImageData(width,height));
+        const maskKey=[point.x,point.y,rotation,facing,scale,config.depthBias].join(':');
+        if(runtime.maskKey!==maskKey){
+        for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+          const dx=(x+0.5-width/2)*scale*facing,dy=(y+0.5-height/2)*scale;
+          const scene=sample(point.x+(cos*dx-sin*dy)/runtime.scaleX,point.y+(sin*dx+cos*dy)/runtime.scaleY);
+          pixels.data[(y*width+x)*4+3]=Math.round(255*Math.max(0,Math.min(1,(actorDepth-scene)/0.01+1)));
+        }
+        maskCtx.putImageData(pixels,0,0);runtime.maskKey=maskKey;
+        }
+        ctx.globalCompositeOperation='destination-in';ctx.drawImage(mask,0,0);ctx.globalCompositeOperation='source-over';
+        if (depthDebug) {
+          const foot = {x:point.x-sin*groundY/runtime.scaleX,y:point.y+cos*groundY/runtime.scaleY};
+          const rawDepth = sample(foot.x,foot.y);
+          runtime.depthDebug = {world:{x:point.x,y:point.y},foot,
+            uv:{x:foot.x/world.width,y:foot.y/world.height},
+            pixel:{x:Math.max(0,Math.min(depth.width-1,Math.round(foot.x/world.width*(depth.width-1)))),y:Math.max(0,Math.min(depth.height-1,Math.round(foot.y/world.height*(depth.height-1))))},
+            rawDepth,bias:Number(config.depthBias||0),actorDepth};
+          // Diagnostics intentionally show the original silhouette, including hidden pixels.
+          ctx.clearRect(0,0,width,height);ctx.drawImage(image,0,0);
+          const overlay=ctx.getImageData(0,0,width,height);
+          for(let i=0;i<overlay.data.length;i+=4){
+            const visible=pixels.data[i+3]/255;
+            overlay.data[i]=Math.round(255*(1-visible));overlay.data[i+1]=Math.round(220*visible);overlay.data[i+2]=0;
+          }
+          ctx.putImageData(overlay,0,0);
+          ctx.save();ctx.translate(width/2,height*.96);ctx.scale(facing,1);
+          ctx.strokeStyle='white';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,0);ctx.lineTo(8,0);ctx.moveTo(0,-8);ctx.lineTo(0,8);ctx.stroke();
+          ctx.font='14px monospace';ctx.fillStyle='black';ctx.fillRect(-155,-65,310,20);ctx.fillStyle='white';
+          ctx.fillText(`${rawDepth.toFixed(3)} + ${Number(config.depthBias||0).toFixed(3)} = ${actorDepth.toFixed(3)}`,-150,-50);ctx.restore();
+        } else delete runtime.depthDebug;
+      }
+      canvas.dataset.frameIndex=String(runtime.frameIndex||0);
+      canvas.dataset.revision=String(Number(canvas.dataset.revision||0)+1);
+    }
+
     function tick(timestamp) {
       rafId = null;
       const completed = [];
@@ -587,14 +888,26 @@
           completed.push([runtime, id]);
           continue;
         }
+        if (runtime.held || runtime.paused || runtime.rebuilding) continue;
         if (!runtime.lastTime) runtime.lastTime = timestamp;
         const delta = Math.max(0, Math.min(0.1, (timestamp - runtime.lastTime) / 1000));
         runtime.lastTime = timestamp;
         const cache = cacheFor(config);
         runtime.elapsed += delta;
-        runtime.distance += Math.max(1, Number(config.speed) || 260)
-          * organicSpeedFactor(config, runtime.elapsed, runtime.progress)
-          * delta;
+        const frames=framesFor(config), playback=playbackFor(config), fps=Number(config.animationFps)||24;
+        // Never omit an authored pose after a slow frame. FPS is the target;
+        // under load animation and Once movement slow together rather than skip.
+        const animationTime=Math.min((runtime.animationTime||0)+delta*fps+1e-7,(runtime.animationStep||0)+1);
+        runtime.animationTime=animationTime;
+        const animationFrame=Math.floor(animationTime);
+        runtime.animationStep=animationFrame;
+        runtime.frameIndex=playback==='loop'?animationFrame%frames.length:playback==='once'?Math.min(frames.length-1,animationFrame):0;
+        if(playback==='legacy'&&runtime.preview){runtime.legacyPhase=(runtime.legacyPhase||0)+delta*Math.max(0,Number(config.flapFrequencyHz)||0)*2;runtime.frameIndex=Math.floor(runtime.legacyPhase)%frames.length;}
+        if (playback==='once') {
+          const end=Math.max(0,(config.movementEndFrame ?? frames.length)-1);
+          runtime.distance=cache.totalLength*(end?Math.min(1,animationTime/end):1);
+        } else runtime.distance += Math.max(1, Number(config.speed) || 260)
+          * organicSpeedFactor(config, runtime.elapsed, runtime.progress) * delta;
         const point = pointAtDistance(cache, runtime.distance);
         runtime.progress = point.progress;
         const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
@@ -611,9 +924,12 @@
           shell.style.transform =
             `translate3d(${point.x * runtime.scaleX}px, ${point.y * runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale) || 0.2}) scaleX(${facing})`;
           const ready = readiness.get(keyFor(id));
-          if (config.frameB && ready?.frameB) {
+          if ((canvasVisual(config) || runtime.preview) && shell.querySelector('[data-flyby-canvas]')) {
+            if (playback==='legacy' && frames.length>1 && !runtime.preview) runtime.frameIndex=Math.floor((runtime.distance/Math.max(1,Number(config.speed)||260))*Math.max(0,Number(config.flapFrequencyHz)||0)*2)%2;
+            drawPreparedFrame(config,runtime,shell,point,rotation,facing);
+          } else if (config.frameB && ready?.frameB) {
             const flapHz = Math.max(0, Number(config.flapFrequencyHz) || 0);
-            const frame = flapHz > 0
+            const frame = runtime.preview ? (runtime.frameIndex%2?'b':'a') : flapHz > 0
               ? (Math.floor((runtime.distance / Math.max(1, Number(config.speed) || 260)) * flapHz * 2) % 2 ? "b" : "a")
               : "a";
             shell.dataset.frame = frame;
@@ -621,47 +937,65 @@
           shell.dataset.progress = point.progress.toFixed(4);
           shell.dataset.rotation = rotation.toFixed(3);
         }
-        if (runtime.distance >= cache.totalLength) completed.push([runtime, id]);
+        const animationComplete=playback==='once' && runtime.frameIndex===frames.length-1;
+        if (animationComplete && !runtime.animationComplete) {
+          runtime.animationComplete=true;
+          dispatch(config,'onAnimationComplete',runtime);
+        }
+        // Despawn only after the last pose has had its display interval. Hiding
+        // it in the same tick that draws it would skip that pose on screen.
+        if (playback==='once' ? animationComplete && (config.endBehavior==='hold' || animationTime>=frames.length) : runtime.distance>=cache.totalLength) {
+          if(config.endBehavior==='hold')runtime.held=true;
+          else completed.push([runtime,id]);
+        }
       }
       updateAudio();
       completed.forEach(([runtime, id]) => {
         cancelActive(id);
         finishTriggerIfDone(runtime.triggerId, runtime.preview);
       });
-      if (active.size) ensureRaf();
+      ensureRaf();
     }
 
     function ensureRaf() {
-      if (!rafId && active.size) rafId = window.requestAnimationFrame(tick);
+      if (!rafId && ([...active.values()].some(item=>!item.held&&!item.paused&&!item.rebuilding) || activeAudio.size)) rafId = window.requestAnimationFrame(tick);
     }
 
-    function stopAll() {
+    function stopAll({preserveHeld=false,preservePreviews=false} = {}) {
       timers.forEach((timer) => window.clearTimeout(timer));
       timers.clear();
       pendingStarts.clear();
-      active.forEach((_, id) => cancelActive(id));
-      active.clear();
-      activeAudio.forEach(({ audio }) => audio.pause());
-      activeAudio.clear();
+      active.forEach((instance, id) => { if(!(preserveHeld&&instance.held) && !(preservePreviews&&instance.preview)) cancelActive(id); });
+      if(!preservePreviews)previewIds.clear();
+      activeAudio.forEach((value,key) => {
+        if(preservePreviews&&[...active.values()].some(i=>i.preview&&i.triggerId===value.triggerId))return;
+        value.audio.pause();activeAudio.delete(key);
+      });
       if (rafId) window.cancelAnimationFrame(rafId);
       rafId = null;
     }
 
     function sync() {
       if (!canRun()) {
-        stopAll();
+        const sameScene=getLevel()?.id===levelId && ["scene","challenge","correct"].includes(getScreen());
+        stopAll({preserveHeld:sameScene,preservePreviews:sameScene&&!document.hidden});
+        ensureRaf();
         return;
       }
       scheduleAll();
     }
 
+    function releaseLevel() {stopAll();++preparation;++editVersion;assetPreparations.clear();preparingStates.clear();depthPreparation=null;readiness.clear();pathCaches.clear();depth=null;levelId=null;}
+
     return {
       readiness,
+      setDepthDebug,
       pathCaches,
       timers,
       active,
       activeAudio,
       prepareLevel,
+      updateLevel,previewState,togglePreview,stopPreview,refreshPreviews,
       cacheFor,
       invalidatePath,
       preview,
@@ -669,12 +1003,16 @@
       tap,
       sync,
       stopAll,
+      releaseLevel,
       buildPathCache,
       pointAtDistance
     };
   }
 
   const api = {
+    framesFor, playbackFor, canvasVisual, depthPathFor, sequenceErrors, registerAction,
+    graphicsControls, graphicsFor, adjustGraphics,
+    actionIds: () => [...actions.keys()],
     soundTriggers,
     validSoundTriggers,
     IMAGE_EXTENSIONS,

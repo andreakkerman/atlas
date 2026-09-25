@@ -217,7 +217,9 @@ test.describe("ambient editor usability", () => {
     const originalLevel = fs.readFileSync(levelPath, "utf8");
     const originalDraft = fs.existsSync(draftPath) ? fs.readFileSync(draftPath, "utf8") : null;
     try {
-      await startItaly(page, process.env.ATLAS_EDITOR_URL);
+      const httpEditor = new URL(process.env.ATLAS_EDITOR_URL);
+      httpEditor.searchParams.set('dev', 'editor');
+      await startItaly(page, httpEditor.href);
       await page.keyboard.press("Control+Shift+D");
       await page.getByRole("button", { name: "Graphics", exact: true }).click();
       await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();

@@ -304,7 +304,7 @@
     async function loadDepth(level, token) {
       // Every Atlas level owns the conventional assets/depthmap.png. An explicit
       // world.depthmap can still override that path for future special cases.
-      const path=level.world.depthmap || `Levels/${level.id}/assets/depthmap.png`;
+      const path=global.AtlasAmbientSystem.depthPathFor(level);
       depthPath=path;depthStatus=path?"loading":"none";depthTexture=emptyDepth;
       if(path && !depthCache.has(path)) {
         let resource=null;
@@ -411,6 +411,7 @@
     }
     function sprites(stage) {
       const entries = [];
+      for(const [key,resource] of uploaded)if(key instanceof HTMLCanvasElement && !key.isConnected){resource.texture.destroy();uploaded.delete(key);for(const [id,fallback] of spriteFallbacks)if(fallback===resource)spriteFallbacks.delete(id);}
       const add = (image, bounds, key, character = false, mirror = false) => {
         if (!image || !bounds) return;
         let rect = bounds.getBoundingClientRect();
@@ -423,9 +424,14 @@
           const width = source.naturalWidth*scale, height = source.naturalHeight*scale;
           rect = { ...rect.toJSON(), left: rect.left+(rect.width-width)/2, top: rect.bottom-height, width, height };
         }
-        const cacheKey = source.currentSrc || source.src;
+        const dynamic = image.hasAttribute('data-flyby-canvas');
+        const cacheKey = dynamic ? image : source.currentSrc || source.src;
         const fallbackKey = image.dataset.characterId ? `${key}:${image.dataset.characterId}` : key;
         let resource = uploaded.get(cacheKey);
+        if(dynamic && (!resource || resource.revision!==image.dataset.revision)) {
+          resource=uploadDynamicCanvas(image,resource,{purpose:`sprite ${key}`,path:`prepared flyby ${key}`});
+          resource.revision=image.dataset.revision;uploaded.set(cacheKey,resource);
+        }
         if (!resource && source.complete && source.naturalWidth && !pendingUploads.has(cacheKey)) {
           const uploadGeneration = generation;
           const pending = upload(source,null,{purpose:`sprite ${key}`,path})
@@ -443,10 +449,15 @@
         resource.used = frame;
         const animal=bounds.closest('.ambientAnimal,.ambientFlyby');
         const style=getComputedStyle(animal || bounds);
+        let flybyUV;
+        if(dynamic){
+          const m=new DOMMatrix(style.transform),det=m.a*m.d-m.b*m.c;
+          flybyUV=[m.d*rect.width/det/image.width,-m.b*rect.width/det/image.height,-m.c*rect.height/det/image.width,m.a*rect.height/det/image.height];
+        }
         const grounding=!animal&&character?displayedGrounding(analyzeSpriteGrounding(source),mirror):null;
-        entries.push({ key, resource, grounding, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, +key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
+        entries.push({ key, resource, grounding, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
       };
-      document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => { const img = el.querySelector(el.dataset.frame === "b" ? ".ambientFlybyFrameB" : ".ambientFlybyFrameA"); add(img, img, `flyby:${el.dataset.ambientFlyby}`,true); });
+      document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => { const img = el.querySelector('[data-flyby-canvas]') || el.querySelector(el.dataset.frame === "b" ? ".ambientFlybyFrameB" : ".ambientFlybyFrameA"); add(img, img, `flyby:${el.dataset.ambientFlyby}`,true); });
       document.querySelectorAll(".ambientAnimal[data-ready='true']").forEach(el => add(el.querySelector(el.dataset.frame === "closed" ? ".ambientAnimalClosed" : ".ambientAnimalOpen"), el, `animal:${el.dataset.ambientAnimal}`, true, el.dataset.mirrorX === "true"));
       document.querySelectorAll("[data-npc-challenge] [data-npc-sprite]").forEach(img => { const el = img.closest("[data-npc-challenge]"); add(img, el, `npc:${el.dataset.npcChallenge}`, true, Number(el.dataset.npcFacingScale) < 0); });
       const actor = document.querySelector("[data-actor='sven']"); add(actor, actor, "actor:sven", true);

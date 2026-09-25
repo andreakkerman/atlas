@@ -181,6 +181,9 @@ const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
 });
 const npcEditorReadyImages = new Map();
 const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
+  canDebug: () => EDITOR_DEV_MODE,
+  isEditing: () => debugOverlayEnabled && walkPathEditor.enabled,
+  onPreviewChange: () => updateFlybyPreviewButtons(),
   getLevel: () => level,
   getScreen: () => state.screen,
   assetCache,
@@ -918,9 +921,13 @@ function setLevelAmbientAnimals(animals) {
   preloadAmbientAnimals(level);
 }
 
-function setLevelAmbientFlybys(flybys) {
+function setLevelAmbientFlybys(flybys, {renderAfter=true} = {}) {
+  const previous=level.ambientFlybys || [];
   level.ambientFlybys = cloneAmbientFlybys(flybys);
-  ambientFlybyRuntime.prepareLevel(level);
+  const current = level, authored = level.ambientFlybys;
+  return ambientFlybyRuntime.updateLevel(previous).then(() => {
+    if(renderAfter && level===current && level.ambientFlybys===authored) render();
+  });
 }
 
 function setLevelSceneEffects(effects, groups = level.sceneEffectGroups || []) {
@@ -2099,6 +2106,12 @@ async function selectLevel(id, options = {}) {
     assetReadiness.discard(assetPlan);
     return false;
   }
+  const failedFlyby=(nextLevel.ambientFlybys||[]).find(c=>c.enabled!==false&&(c.frames||c.depthOcclusion)&&!ambientFlybyRuntime.readiness.get(`${nextLevel.id}:${c.id}`)?.ready);
+  if(failedFlyby){
+    const failure=ambientFlybyRuntime.readiness.get(`${nextLevel.id}:${failedFlyby.id}`)?.error;
+    assetReadiness.discard(assetPlan);ambientFlybyRuntime.releaseLevel();
+    state={screen:"menu",error:`Flyby ${failedFlyby.id} preparation failed: ${failure||'depth or frame unavailable'}`};render();return false;
+  }
   assetPlan.failed.forEach((failure) => console.warn(
     `[Atlas] Optional visual disabled before level reveal: ${failure.path} (${failure.kinds.join(", ")})`
   ));
@@ -2238,7 +2251,7 @@ function returnToMenu() {
   levelLoadSequence += 1;
   assetReadiness.supersede();
   stopMovement({ invalidateIntent: true });
-  ambientFlybyRuntime.stopAll();
+  ambientFlybyRuntime.releaseLevel();
   sceneEffectRuntime.dispose();
   voxelRenderer.dispose();
   cinematicRenderer.dispose();
@@ -3141,6 +3154,11 @@ async function addAmbientFlybyFromEditor() {
   const id = String(data.get("id") || "").trim();
   const label = String(data.get("label") || "").trim();
   const assetSet = discoveredAssetSetByKey("flyby", String(data.get("assetSet") || ""));
+  const frames = assetSet?.frames?.length > 2 ? [...assetSet.frames] : null;
+  const playback = String(data.get("playback") || "");
+  if(frames && !["static","loop","once"].includes(playback)) {
+    walkPathEditor.message="Kies Static, Loop of Once voor de sequence.";render();return;
+  }
   const frameA = String(data.get("frameA") || assetSet?.frameA || "");
   const frameB = String(data.get("frameB") || "") || null;
   const sound = String(data.get("sound") || "");
@@ -3155,7 +3173,10 @@ async function addAmbientFlybyFromEditor() {
     return;
   }
   try {
-    await Promise.all([assetCache.image(frameA), ...(frameB ? [assetCache.image(frameB)] : [])]);
+    const requiredFrames=frames || [frameA,frameB].filter(Boolean);
+    const button=form.querySelector('[data-debug-action="add-flyby"]');
+    button.disabled=true;button.textContent="Frames voorbereiden…";
+    for(let i=0;i<requiredFrames.length;i+=16) await Promise.all(requiredFrames.slice(i,i+16).map(path=>assetCache.image(path)));
   } catch {
     walkPathEditor.message = "Een gekozen flybyframe ontbreekt of is ongeldig.";
     render();
@@ -3166,6 +3187,7 @@ async function addAmbientFlybyFromEditor() {
     label,
     frameA,
     frameB,
+    ...(frames ? {frames,playback,animationFps:24,endBehavior:"despawn"} : {}),
     sound,
     path: [
       { x: -180, y: 190 },
@@ -3191,7 +3213,8 @@ async function addAmbientFlybyFromEditor() {
     speedVariation: 0.14,
     flutterFrequency: 2.1
   };
-  setLevelAmbientFlybys([...(level.ambientFlybys || []), flyby]);
+  await setLevelAmbientFlybys([...(level.ambientFlybys || []), flyby]);
+  ambientFlybyRuntime.stopPreview();
   walkPathEditor.selectedObjectType = "flyby";
   walkPathEditor.selectedObjectId = id;
   walkPathEditor.currentFlyby = flyby;
@@ -3218,6 +3241,7 @@ function duplicateSelectedAmbient() {
     const source = (level.ambientFlybys || []).find((item) => item.id === id);
     if (!source) return;
     const copy = cloneAmbientFlybys([source])[0];
+    ambientFlybyRuntime.stopPreview();
     copy.id = uniqueAmbientId(source.id);
     copy.label = `${source.label || source.id} kopie`;
     setLevelAmbientFlybys([...(level.ambientFlybys || []), copy]);
@@ -3239,8 +3263,8 @@ function updateAmbientFlybySetting(id, field, value) {
   const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
   const flyby = flybys.find((item) => item.id === id);
   if (!flyby) return;
-  const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath"]);
-  const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile"]);
+  const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath", "depthOcclusion", "enabled"]);
+  const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile", "playback", "endBehavior"]);
   if (booleans.has(field)) flyby[field] = Boolean(value);
   else if (field === "motionProfile") flyby[field] = String(value) === "organic" ? "organic" : "smooth";
   else if (field === "soundTriggers") {
@@ -3248,6 +3272,7 @@ function updateAmbientFlybySetting(id, field, value) {
     delete flyby.soundTrigger;
   }
   else if (field === "frameB") flyby[field] = value || null;
+  else if (field === "onTap" || field === "onAnimationComplete") flyby.actions={...flyby.actions,[field]:value||null};
   else if (strings.has(field)) flyby[field] = String(value);
   else flyby[field] = Number(value);
   if (field === "wobble") flyby.wobble = Math.max(0, Number(flyby.wobble) || 0);
@@ -3260,10 +3285,18 @@ function updateAmbientFlybySetting(id, field, value) {
       if (member.syncKey === flyby.syncKey) member[field] = flyby[field];
     });
   }
-  setLevelAmbientFlybys(flybys);
+  if(window.AtlasAmbientSystem.graphicsControls[field])flyby[field]=window.AtlasAmbientSystem.graphicsFor(flyby)[field];
+  const needsCanvas=window.AtlasAmbientSystem.canvasVisual(flyby) && !document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"] [data-flyby-canvas]`);
+  const inline=!needsCanvas && new Set(['depthBias','scale','speed','animationFps','brightness','contrast','warmth','tint','softness','saturation','soundVolume','maxRotationDeg']).has(field);
+  setLevelAmbientFlybys(flybys,{renderAfter:!inline});
   walkPathEditor.currentFlyby = flyby;
   markEditorModified(`${flyby.id}: ${field} aangepast.`);
-  render();
+  if(inline){
+    for(const input of document.querySelectorAll(`[data-flyby-id="${CSS.escape(id)}"][data-flyby-setting="${CSS.escape(field)}"]`)){
+      const factor=Number(input.dataset.valueScale||1);
+      if(Number(input.value)*factor!==Number(flyby[field]))input.value=String(Number(flyby[field])/factor);
+    }
+  }else render();
 }
 
 function updateFlybyPathPoint(id, index, point) {
@@ -4652,6 +4685,7 @@ function renderAmbientAddForm(type) {
       <label><span>Unique ID</span><input name="id" required pattern="[A-Za-z0-9_\\-]+" /></label>
       <label><span>Label</span><input name="label" required /></label>
       <label><span>Discovered set</span><select name="assetSet">${renderAssetSetOptions(type)}</select></label>
+      ${flyby ? '<p data-flyby-sequence-summary hidden></p><label data-flyby-sequence-playback hidden><span>Playback</span><select name="playback"><option value="">Choose playback</option><option value="static">Static</option><option value="loop">Loop</option><option value="once">Once</option></select></label>' : ''}
       <label><span>${flyby ? "Frame A" : "Open frame"}</span><select name="${flyby ? "frameA" : "openFrame"}">${assetOptions(images)}</select></label>
       <label><span>${flyby ? "Frame B" : "Closed frame"}</span><select name="${flyby ? "frameB" : "closedFrame"}">${flyby ? '<option value="">N/A</option>' : ''}${assetOptions(images)}</select></label>
       <label><span>Sound</span><select name="sound">${assetOptions(audio, "", true)}</select></label>
@@ -4665,11 +4699,37 @@ function renderFlybyField(label, flyby, field, options = {}) {
     <label class="editorToggle"><input type="checkbox" data-flyby-setting="${field}" data-flyby-id="${flyby.id}" ${flyby[field] ? "checked" : ""}/><span>${label}</span></label>
   `;
   return `
-    <label class="editorField"><span>${label}</span><input type="${options.type || "number"}"
+    <label class="editorField" title="${options.help || ''}"><span>${label}</span><input type="${options.type || "number"}"
       ${options.min !== undefined ? `min="${options.min}"` : ""} ${options.max !== undefined ? `max="${options.max}"` : ""}
       step="${options.step || "1"}" value="${options.display ? options.display(flyby[field]) : flyby[field]}"
       data-flyby-setting="${field}" data-flyby-id="${flyby.id}" data-value-scale="${options.scale || 1}"/></label>
   `;
+}
+
+function updateFlybyPreviewButtons() {
+  for(const button of document.querySelectorAll('[data-debug-action="preview-flyby"]')) {
+    const status=ambientFlybyRuntime.previewState(button.dataset.flybyId);
+    button.textContent=status==='paused'?'Resume Preview':status==='playing'?'Pause Preview':'Preview Flyby';
+  }
+  for(const button of document.querySelectorAll('[data-debug-action="stop-preview-flyby"]'))button.hidden=ambientFlybyRuntime.previewState(button.dataset.flybyId)==='idle';
+}
+
+function renderFlybyPreviewControls(flyby) {
+  const status=ambientFlybyRuntime.previewState(flyby.id);
+  return `<button type="button" data-debug-action="preview-flyby" data-flyby-id="${flyby.id}">${status==='paused'?'Resume Preview':status==='playing'?'Pause Preview':'Preview Flyby'}</button>
+    <button type="button" data-debug-action="stop-preview-flyby" data-flyby-id="${flyby.id}" ${status==='idle'?'hidden':''}>Stop Preview</button>`;
+}
+
+function renderFlybySequenceControls(flyby) {
+  const api=window.AtlasAmbientSystem,frames=api.framesFor(flyby),mode=api.playbackFor(flyby);
+  const select=(label,field,choices,value)=>`<label class="editorField"><span>${label}</span><select data-flyby-setting="${field}" data-flyby-id="${flyby.id}">${choices.map(([id,title])=>`<option value="${id}" ${id===value?'selected':''}>${title}</option>`).join('')}</select></label>`;
+  return `${flyby.frames ? `<p>${frames.length} prepared frames · ${frames[0].split('/').slice(-2,-1)[0]}</p>${select('Playback','playback',[['static','Static'],['loop','Loop'],['once','Once']],mode)}
+    ${mode!=='static'?renderFlybyField('Animation FPS',flyby,'animationFps',{min:1,max:60,display:v=>v??24}):''}
+    ${mode==='once'?renderFlybyField('Movement End Frame',{...flyby,movementEndFrame:flyby.movementEndFrame??frames.length},'movementEndFrame',{min:1,max:frames.length}):''}
+    ${select('End Behavior','endBehavior',[['despawn','Despawn'],['hold','Hold Final Frame']],flyby.endBehavior||'despawn')}` : ''}
+    ${renderFlybyField('Depth Occlusion',flyby,'depthOcclusion',{toggle:true})}
+    ${flyby.depthOcclusion?renderFlybyField('Depth Bias (− farther / + nearer)',{...flyby,depthBias:flyby.depthBias??0},'depthBias',{min:-1,max:1,step:0.001})+'<p>Added to foot depth, then clamped to 0–1. Try small negative values (e.g. −0.10) to move behind scenery.</p>':''}
+    ${['onTap',...(mode==='once'?['onAnimationComplete']:[])].map(trigger=>select(trigger==='onTap'?'On Tap Action':'On Animation Complete Action',trigger,[['','None'],...[...new Set([...api.actionIds(),flyby.actions?.[trigger]].filter(Boolean))].map(id=>[id,id])],flyby.actions?.[trigger]||'')).join('')}`;
 }
 
 function renderFlybyMotionProfile(flyby) {
@@ -4908,21 +4968,24 @@ function renderAmbientEditorControls(options = {}) {
             ${renderFlybyField("Speed px/s", flyby, "speed", { min: 1, max: 2000, step: 1 })}
             <div class="animalEditorActions">
               <button type="button" data-debug-action="edit-flight-path" data-flyby-id="${flyby.id}">Edit flight path</button>
-              <button type="button" data-debug-action="preview-flyby" data-flyby-id="${flyby.id}">Preview flyby</button>
+              ${renderFlybyPreviewControls(flyby)}
               <button type="button" data-debug-action="duplicate-selected">Duplicate selected</button>
               <button type="button" data-debug-action="delete-flyby" data-flyby-id="${flyby.id}">Delete</button>
             </div>
           </div>
           <details class="editorNestedSection" open><summary>Assets</summary>
+            ${flyby.frames ? `<p>${flyby.frames.length} frames · ${flyby.frames[0].split('/').slice(-2,-1)[0]}</p>` : `
             <label class="editorField"><span>Frame A</span><select data-flyby-setting="frameA" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.images || [], flyby.frameA)}</select></label>
             <label class="editorField"><span>Frame B</span><select data-flyby-setting="frameB" data-flyby-id="${flyby.id}"><option value="" ${!flyby.frameB ? "selected" : ""}>N/A</option>${assetOptions(walkPathEditor.assets.images || [], flyby.frameB)}</select></label>
+            `}
           </details>
           <details class="editorNestedSection" open><summary>Animation</summary>
+            ${renderFlybyField("Enabled", {...flyby,enabled:flyby.enabled!==false}, "enabled", {toggle:true})}${renderFlybySequenceControls(flyby)}
             ${renderFlybyMotionProfile(flyby)}
             ${renderFlybyField("Wobble", flyby, "wobble", { min: 0, max: 80, step: 1, display: (v) => Number(v ?? 14) })}
             ${renderFlybyField("Speed variation", flyby, "speedVariation", { min: 0, max: 0.45, step: 0.01, display: (v) => Number(v ?? 0.14) })}
             ${renderFlybyField("Flutter frequency", flyby, "flutterFrequency", { min: 0.1, max: 8, step: 0.1, display: (v) => Number(v ?? 2.1) })}
-            ${renderFlybyField("Flap Hz", flyby, "flapFrequencyHz", { min: 0, max: 20, step: 0.5 })}
+            ${!flyby.frames && flyby.frameB ? renderFlybyField("Flap Hz", flyby, "flapFrequencyHz", { min: 0, max: 20, step: 0.5 }) : ''}
             ${renderFlybyField("Face flight direction", flyby, "faceFlightDirection", { toggle: true })}
             ${renderFlybyField("Manual mirror", flyby, "mirrorX", { toggle: true })}
             ${renderFlybyField("Rotate along path", flyby, "rotateAlongPath", { toggle: true })}
@@ -4941,9 +5004,8 @@ function renderAmbientEditorControls(options = {}) {
             ${["during", "tap"].map(trigger => `<label class="editorToggle"><input type="checkbox" data-flyby-sound-trigger="${trigger}" data-flyby-id="${flyby.id}" ${window.AtlasAmbientSystem.soundTriggers(flyby).includes(trigger) ? "checked" : ""}/><span>${trigger === "during" ? "During Flyby" : "On Tap"}</span></label>`).join("")}
             ${renderFlybyField("Sound volume", flyby, "soundVolume", { min: 0, max: 1, step: 0.05 })}
           </details>
-          <details class="editorNestedSection"><summary>Advanced</summary>
-            ${renderFlybyField("Softness", flyby, "softness", { min: 0, max: 8, step: 0.25 })}
-            ${renderFlybyField("Saturation", flyby, "saturation", { min: 0, max: 2, step: 0.05 })}
+          <details class="editorNestedSection"><summary>Graphics</summary>
+            ${Object.entries(window.AtlasAmbientSystem.graphicsControls).map(([field,control])=>renderFlybyField(control.label,flyby,field,{...control,display:()=>window.AtlasAmbientSystem.graphicsFor(flyby)[field]})).join('')}
           </details>
         </div>` : ""}
       <details class="editorNestedSection"><summary>Add ambient flyby</summary>${renderAmbientAddForm("flyby")}</details>
@@ -6197,7 +6259,7 @@ function renderFlightPathWorkspace() {
         <button type="button" data-debug-action="add-flight-point" class="${walkPathEditor.addingFlybyPoint ? "editorObjectSelected" : ""}">Add point</button>
         <button type="button" data-debug-action="delete-flight-point">Delete selected point</button>
         <button type="button" data-debug-action="reverse-flight-path">Reverse path</button>
-        <button type="button" data-debug-action="preview-flyby" data-flyby-id="${flyby.id}">Preview flyby</button>
+        ${renderFlybyPreviewControls(flyby)}
         <button type="button" data-debug-action="fit-flight-path">Fit flight path</button>
         <button type="button" data-debug-action="fit-flight-level">Fit level</button>
         <button type="button" data-debug-action="done-flight-path">Done</button>
@@ -6329,18 +6391,21 @@ function renderAmbientFlyby(flyby) {
   const ready = ambientFlybyRuntime.readiness.get(`${level.id}:${flyby.id}`);
   if (!ready?.frameA) return "";
   const frameB = ready.frameB ? flyby.frameB : null;
+  const canvasVisual = window.AtlasAmbientSystem.canvasVisual(flyby) || (EDITOR_DEV_MODE && debugOverlayEnabled && ambientFlybyRuntime.active.get(flyby.id)?.preview);
   // `enabled` is editing capability, not visibility; closed tools must leave
   // gameplay input available on the development URL too.
   const editing = debugOverlayEnabled && walkPathEditor.enabled;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
-      data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.softness, flyby.saturation]))}"
-      data-sound-trigger="${window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound && state.screen === "scene" && !editing ? "tap" : "during"}"
+      data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.frames, flyby.depthOcclusion, flyby.depthBias, flyby.softness, flyby.saturation, canvasVisual]))}"
+      data-sound-trigger="${((window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound) || flyby.actions?.onTap) && state.screen === "scene" && !editing ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
       <span class="ambientFlybyFrames">
+        ${canvasVisual ? `<canvas class="ambientFlybyFrame" data-flyby-canvas width="${ready.images[0].naturalWidth}" height="${ready.images[0].naturalHeight}"></canvas>` : `
         <img class="ambientFlybyFrame ambientFlybyFrameA" src="${readyAssetSrc(flyby.frameA)}" alt="" draggable="false" decoding="sync"/>
         ${frameB ? `<img class="ambientFlybyFrame ambientFlybyFrameB" src="${readyAssetSrc(frameB)}" alt="" draggable="false" decoding="sync"/>` : ""}
+        `}
       </span>
     </span>
   `;
@@ -7477,6 +7542,8 @@ function captureEditorUiState() {
     result.details.push({ base, index, open: details.open });
   });
   const active = document.activeElement;
+  if(active?.matches?.('[data-flyby-setting]'))result.flybyFocus={id:active.dataset.flybyId,field:active.dataset.flybySetting};
+  if(active?.matches?.('[data-debug-action="preview-flyby"], [data-debug-action="stop-preview-flyby"]'))result.flybyButton=active.dataset.flybyId;
   if(active?.matches?.('[data-cinematic-setting]')) result.cinematicFocus={section:active.dataset.cinematicSection,key:active.dataset.cinematicSetting};
   if (active?.matches?.("[data-level-setting], [data-locomotion-setting]")) {
     result.focus = {
@@ -7512,6 +7579,13 @@ function restoreEditorUiState(saved) {
     if (input?.setSelectionRange && saved.focus.start !== null) input.setSelectionRange(saved.focus.start, saved.focus.end);
   }
   if(saved.cinematicFocus) document.querySelector(`[data-cinematic-section="${CSS.escape(saved.cinematicFocus.section)}"][data-cinematic-setting="${CSS.escape(saved.cinematicFocus.key)}"]`)?.focus({preventScroll:true});
+  if(saved.flybyFocus || saved.flybyButton){
+    // Restore after expanding details; restoring against collapsed content clamps scrollTop.
+    const input=document.querySelector(saved.flybyFocus ? `[data-flyby-id="${CSS.escape(saved.flybyFocus.id)}"][data-flyby-setting="${CSS.escape(saved.flybyFocus.field)}"]` : `[data-debug-action="preview-flyby"][data-flyby-id="${CSS.escape(saved.flybyButton)}"]`);
+    input?.focus({preventScroll:true});
+    const root=input?.closest('[data-developer-tools]');
+    if(root)root.scrollTop=saved.roots['[data-developer-tools]']||0;
+  }
 }
 
 function render() {
@@ -7562,10 +7636,15 @@ function render() {
   // current frame and transform synchronously, as with the existing canvases.
   for (const replacement of app.querySelectorAll('[data-ambient-flyby]')) {
     const retained = retainedFlybys.get(replacement.dataset.ambientFlyby);
-    if (!retained || retained.dataset.flybyVisual !== replacement.dataset.flybyVisual) continue;
+    const preview=ambientFlybyRuntime.active.get(replacement.dataset.ambientFlyby)?.preview;
+    if (!retained || (retained.dataset.flybyVisual !== replacement.dataset.flybyVisual && !(preview && retained.querySelector('[data-flyby-canvas]') && replacement.querySelector('[data-flyby-canvas]')))) continue;
     retained.dataset.soundTrigger = replacement.dataset.soundTrigger;
+    retained.dataset.flybyVisual = replacement.dataset.flybyVisual;
+    retained.style.setProperty('--flyby-softness',replacement.style.getPropertyValue('--flyby-softness'));
+    retained.style.setProperty('--flyby-saturation',replacement.style.getPropertyValue('--flyby-saturation'));
     replacement.replaceWith(retained);
   }
+  ambientFlybyRuntime.refreshPreviews();
   const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const replacementThreeCanvas = app.querySelector("[data-three-canvas]");
   if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) replacementThreeCanvas.replaceWith(retainedThreeCanvas);
@@ -7857,6 +7936,7 @@ app.addEventListener("click", (event) => {
   if (ambientSelector) {
     event.preventDefault();
     event.stopPropagation();
+    if(walkPathEditor.selectedObjectId!==ambientSelector.dataset.selectAmbientId)ambientFlybyRuntime.stopPreview();
     walkPathEditor.selectedObjectType = ambientSelector.dataset.selectAmbientType;
     walkPathEditor.selectedObjectId = ambientSelector.dataset.selectAmbientId;
     render();
@@ -7941,9 +8021,11 @@ app.addEventListener("click", (event) => {
     if (action === "add-flyby") addAmbientFlybyFromEditor();
     if (action === "duplicate-selected") duplicateSelectedAmbient();
     if (action === "delete-flyby") deleteAmbientFlyby(debugActionTarget.dataset.flybyId);
-    if (action === "preview-flyby") ambientFlybyRuntime.preview(debugActionTarget.dataset.flybyId);
+    if (action === "preview-flyby") {ambientFlybyRuntime.togglePreview(debugActionTarget.dataset.flybyId);render();}
+    if (action === "stop-preview-flyby") {ambientFlybyRuntime.stopPreview(debugActionTarget.dataset.flybyId);render();}
     if (action === "preview-sync-flybys") ambientFlybyRuntime.previewSync(debugActionTarget.dataset.syncKey);
     if (action === "edit-flight-path") {
+      if(walkPathEditor.selectedObjectId!==debugActionTarget.dataset.flybyId)ambientFlybyRuntime.stopPreview();
       walkPathEditor.selectedObjectType = "flyby";
       walkPathEditor.selectedObjectId = debugActionTarget.dataset.flybyId;
       walkPathEditor.pathMode = true;
@@ -8155,6 +8237,11 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const flybyInput=event.target.closest('[data-flyby-setting]');
+  if(flybyInput?.type==='number' && flybyInput.value!=='' && flybyInput.validity.valid){
+    updateAmbientFlybySetting(flybyInput.dataset.flybyId,flybyInput.dataset.flybySetting,Number(flybyInput.value)*Number(flybyInput.dataset.valueScale||1));
+    return;
+  }
   const npcSetting = event.target.closest("[data-npc-setting]");
   if (npcSetting && npcSetting.tagName !== "SELECT" && npcSetting.type !== "checkbox") {
     updateChallengeNpcSetting(npcSetting.dataset.challengeId, npcSetting.dataset.npcSetting, npcSetting.value);
@@ -8227,6 +8314,12 @@ app.addEventListener("change", (event) => {
     const form = flybySet.closest('form');
     const set = discoveredAssetSetByKey("flyby", flybySet.value);
     form.elements.frameB.disabled = Boolean(set && !set.frameB);
+    const sequence=Boolean(set?.frames?.length>2);
+    form.elements.frameA.closest('label').hidden=sequence;
+    form.elements.frameB.closest('label').hidden=sequence;
+    form.querySelector('[data-flyby-sequence-playback]').hidden=!sequence;
+    const summary=form.querySelector('[data-flyby-sequence-summary]');summary.hidden=!sequence;
+    summary.textContent=sequence?`${set.label} · Frames: ${set.frames.length} · Sound: ${set.sound.split('/').at(-1)}`:'';
     if (set) for (const field of ["frameA", "frameB", "sound"]) form.elements[field].value = set[field] || "";
     return;
   }
@@ -8572,7 +8665,7 @@ document.addEventListener("visibilitychange", () => {
   if (document.hidden) {
     stopMenuAutoRotation();
     pauseAmbientAnimalTimers();
-    ambientFlybyRuntime.stopAll();
+    ambientFlybyRuntime.stopAll({preserveHeld:true});
     sceneEffectRuntime.stop();
     voxelRenderer.stop();
     cinematicRenderer.stop();
@@ -8649,6 +8742,7 @@ window.addEventListener("keydown", (event) => {
       return;
     }
     debugOverlayEnabled = !debugOverlayEnabled;
+    if(!debugOverlayEnabled)ambientFlybyRuntime.stopPreview();
     if (level && ["scene", "challenge", "correct"].includes(state.screen)) {
       render();
     }

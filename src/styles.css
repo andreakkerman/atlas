@@ -2650,6 +2650,8 @@ button {
   contain: layout paint;
 }
 
+.editorAddForm label[hidden], .editorAddForm p[hidden] { display: none; }
+
 .ambientFlyby[data-active="true"][data-ready="true"] {
   opacity: 1;
 }

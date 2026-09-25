@@ -74,6 +74,8 @@ test.describe('Atlas first-person LVL-0001',()=>{
   try{
    await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
    await page.goto(process.env.ATLAS_EDITOR_URL);await page.evaluate(()=>localStorage.clear());await page.reload();
+   // Keep this navigation fixture on LVL-0001 regardless of authored Nieuw hero priority.
+   await page.evaluate(()=>{const resolver=window.eval('worldResolver'),config=resolver.getConfig();for(const item of Object.values(config.worlds))delete item.isNew;for(const item of Object.values(config.levels))delete item.isNew;resolver.setConfig(config);});
    await tap(page.getByRole('button',{name:'Start avontuur'}));
    await expect(page.getByRole('heading',{name:'Kies een avontuur'})).toBeVisible();
    await tap(page.locator('.heroLevelTile'));

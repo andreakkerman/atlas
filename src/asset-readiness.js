@@ -28,8 +28,13 @@
       add(animal.closedFrame, "ambient-animal-closed", false, animal.id);
     });
     (level?.ambientFlybys || []).forEach((flyby) => {
-      add(flyby.frameA, "ambient-flyby-a", false, flyby.id);
-      add(flyby.frameB, "ambient-flyby-b", false, flyby.id);
+      if(flyby.enabled===false)return;
+      if (flyby.frames) flyby.frames.forEach(path=>add(path,"ambient-flyby-sequence",true,flyby.id));
+      else {
+        add(flyby.frameA, "ambient-flyby-a", false, flyby.id);
+        add(flyby.frameB, "ambient-flyby-b", false, flyby.id);
+      }
+      if (flyby.depthOcclusion) add(global.AtlasAmbientSystem.depthPathFor(level),"flyby-depth",true,flyby.id);
     });
     add(level?.challengeCharacter?.portrait, "challenge-portrait", true);
     add(level?.challengeArt, "challenge-art", true);
@@ -77,10 +82,15 @@
           if (!image || !image.complete || !image.naturalWidth) throw new Error(`Image is not render-ready: ${asset.path}`);
           return { ...asset, image, ready: true };
         } catch (error) {
-          if (asset.required) throw new Error(`Critical image failed: ${asset.path}. ${error.message || error}`);
           return { ...asset, image: null, ready: false, error: error.message || String(error) };
         }
       });
+      const failure=results.find(item=>item.required&&!item.ready);
+      if(failure){
+        const activePaths=new Set(active?.images.keys()||[]);
+        releaseImages(assets.map(a=>a.path).filter(p=>!activePaths.has(p)&&!persistentPaths.has(p)));
+        throw new Error(`Critical image failed: ${failure.path}. ${failure.error}`);
+      }
       const images = new Map(results.filter((item) => item.ready).map((item) => [item.path, item.image]));
       return {
         sequence,

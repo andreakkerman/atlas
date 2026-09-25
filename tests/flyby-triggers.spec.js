@@ -85,7 +85,8 @@ for(const triggers of combinations)test(`Snitch discovery and checkbox ${trigger
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base+'/?dev=editor');await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
  if(!await page.evaluate(()=>window.eval('debugOverlayEnabled')))await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
- await expect(page.locator('[data-flyby-id="arc_wasp2"][data-flyby-sound-trigger="during"]')).not.toBeChecked();
+ // The current authored Wasp enables both triggers; each Snitch combination is tested below.
+ await expect(page.locator('[data-flyby-id="arc_wasp2"][data-flyby-sound-trigger="during"]')).toBeChecked();
  await expect(page.locator('[data-flyby-id="arc_wasp2"][data-flyby-sound-trigger="tap"]')).toBeChecked();
  await page.locator('summary').filter({hasText:/^Add ambient flyby$/}).click();
  const form=page.locator('[data-add-flyby-form]');

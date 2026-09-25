@@ -98,6 +98,10 @@ Illustrated and Cinematic use the same level coordinates and gameplay. Cinematic
 
 ## Validation
 
+Flybys may use an ordered `frames` array instead of legacy `frameA`/`frameB`. Optional `playback`, `animationFps`, `movementEndFrame`, `endBehavior`, `depthOcclusion`, `depthBias`, `enabled` and `actions` are validated by the shared ambient contract and persisted through normal draft/Apply. All referenced sequence frames are required decoded level assets; disabled instances are not prepared or scheduled. The [Flyby contract](EDITOR_AND_EFFECTS.md#multi-frame-flybys) owns playback, depth, action and held-state semantics.
+
+Optional flat Flyby graphics fields `brightness`, `contrast`, `warmth`, `tint` extend existing `saturation` and `softness`; missing values are neutral, with no migration. They are per authored instance and shared by Illustrated/Cinematic. See [per-instance Graphics](EDITOR_AND_EFFECTS.md#per-instance-graphics) for ranges, colour direction, live preview and alpha/depth processing.
+
 Run `npm.cmd run validate:levels` for schema/reference/asset checks after intentional content changes, then applicable audit/report and browser tests described in [Dev Tools](DEV_TOOLS.md). Structural validation is not proof of narrative quality, accurate artistic placement or full runtime behavior. Preserve existing authored content in editor regression fixtures and inspect the final diff.
 
 `challengeArt`, `companion.portrait` and `challengeCharacter.portrait` accept existing level-local files or the portrait of a shared character recognized by the same discovery function used to generate the NPC manifest. Shared characters must have their portrait and discoverable idle frames; arbitrary library files, missing files and directories are not valid portrait references. The validator checks current assets rather than trusting a stale generated manifest. World backgrounds, menu illustrations and reward artwork retain their level-local checks. See [shared character asset regressions](../tests/level-character-assets.spec.js).

@@ -569,7 +569,8 @@ function validateAssets(level, entry, levelFolder, label) {
     assertCentralAmbientAsset(animal.sound, `${label}.ambientAnimals[${index}].sound`, true);
   });
   (level.ambientFlybys || []).forEach((flyby, index) => {
-    assertCentralAmbientAsset(flyby.frameA, `${label}.ambientFlybys[${index}].frameA`);
+    ambientSystem.framesFor(flyby).forEach((p,i)=>assertCentralAmbientAsset(p,`${label}.ambientFlybys[${index}].frames[${i}]`));
+    for(const error of ambientSystem.sequenceErrors(flyby))fail(`${label}.ambientFlybys[${index}]: ${error}`);
     assertCentralAmbientAsset(flyby.frameB, `${label}.ambientFlybys[${index}].frameB`, true);
     assertCentralAmbientAsset(flyby.sound, `${label}.ambientFlybys[${index}].sound`, true);
     const flybyLabel = `${label}.ambientFlybys[${index}]`;

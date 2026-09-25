@@ -377,6 +377,7 @@ fn appearance(input:vec3f) -> vec3f {
     return vec4f(receiver*0.08*alpha,alpha);
   }
   var uv=d.uv.xy+in.uv*d.uv.zw;if(d.flags.y>0.5){uv.x=1.0-uv.x;}
+  if(d.flags.z>1.5){uv=vec2f(0.5)+mat2x2f(d.uv.xy,d.uv.zw)*(in.uv-vec2f(0.5));}
   let sourceInside=select(0.0,1.0,all(uv>=vec2f(0))&&all(uv<=vec2f(1)));
   var sample=textureSampleLevel(source,linearSampler,clamp(uv,vec2f(0),vec2f(1)),0);sample.a*=sourceInside;
   if(d.extra.z>0.0 || d.extra.w>0.0){
