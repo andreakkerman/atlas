@@ -10,7 +10,8 @@ async function enter(page,mode='illustrated',extra={}){
  await page.keyboard.press('Control+Shift+D');
  await page.evaluate(()=>window.eval('ambientFlybyRuntime').stopAll());
  await page.evaluate(()=>document.querySelectorAll('[data-developer-tools] details').forEach(d=>d.open=true));
- if(mode==='cinematic' && await page.evaluate(()=>Boolean(navigator.gpu)))await expect(page.locator('.gameShell')).toHaveClass(/cinematicReady/);
+ if(await page.evaluate(()=>Boolean(navigator.gpu)))await expect(page.locator('.gameShell')).toHaveClass(mode==='cinematic'?/cinematicReady/:/particleFieldsReady/);
+ await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
  await page.clock.install();
  await page.clock.pauseAt(await page.evaluate(()=>new Date(Date.now()+100).toISOString()));
 }

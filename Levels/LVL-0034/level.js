@@ -919,7 +919,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0034"] = {
       "endBehavior": "despawn",
       "depthOcclusion": true,
       "depthBias": -0.12,
-      "brightness": 0.8,
+      "brightness": 0.45,
       "contrast": 0.98,
       "warmth": 0,
       "tint": 0,

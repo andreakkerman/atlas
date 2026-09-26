@@ -174,6 +174,9 @@ const guideBlinkRuntime = {
 const GUIDE_BLINK_PATHS = window.SVEN_GUIDE_BLINK_ASSETS || {};
 let levelLoadSequence = 0;
 const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
+  onStatus: text => {
+    document.querySelectorAll('[data-preparation-status]').forEach(node=>{node.textContent=text;});
+  },
   loadImage: (src) => assetCache.image(src),
   preloadSven: (selectedLevel) => preloadActorAnimations(selectedLevel),
   releaseImages: (paths) => assetCache.releaseImages(paths),
@@ -230,15 +233,19 @@ const voxelRenderer = window.AtlasVoxelRenderer.createRuntime({
 const emissiveGlowRenderer = window.AtlasEmissiveGlow.createRuntime({
   getLevel: () => level,
   getRenderer: () => window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id !== "LVL-0001" ? "illustrated" : voxelRenderer.getSettings().renderer,
-  getSettings: (levelId) => worldResolver.levelSettings(levelId).emissiveGlow
+  getSettings: (levelId) => ({ ...worldResolver.levelSettings(levelId).emissiveGlow,
+    ...(illustratedFeatures(levelId).globalLighting ? { enabled:false } : {}) })
 });
 const cinematicOriginals = new Map();
+const illustratedOriginals = new Map();
 let cinematicStatus = { status: "idle", ready: false };
 const cinematicCueInteraction = { hoveredId: null, pressedId: null };
 const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
+  getPreparedImage: path => assetCache.images.get(assetCache.normalize(path)),
   getLevel: () => level,
   getRenderer: () => window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id !== "LVL-0001" ? "illustrated" : voxelRenderer.getSettings().renderer,
   getSettings: (id) => worldResolver.levelSettings(id).cinematicLighting,
+  getFeatures: (id) => illustratedFeatures(id),
   getGameplayCues: () => cinematicGameplayCues(),
   getCameraX: () => level ? getCameraX() : 0,
   getViewportWorldWidth: () => state.viewportWorldWidth,
@@ -251,7 +258,8 @@ const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
     : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))).groundingShadow : false,
   onStatus: (snapshot) => {
     cinematicStatus = snapshot;
-    const label = snapshot.mode === "illustrated" ? "Particle Fields" : "Cinematic";
+    syncPreparationCover(snapshot);
+    const label = snapshot.mode === "illustrated" ? "Illustrated Graphics" : "Cinematic";
     const message = snapshot.error ? `${label} unavailable: ${snapshot.error}` : `${label} · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
     document.querySelectorAll("[data-cinematic-status]").forEach(node => { node.textContent = message; node.dataset.status = snapshot.status; });
     document.querySelectorAll("[data-cinematic-error]").forEach(node => { node.textContent = snapshot.error ? message : ""; node.hidden = !snapshot.error; });
@@ -1189,6 +1197,9 @@ function persistWorldConfigRequest() {
 }
 
 function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
+  if (!editorValuesEqual(payload?.config?.levels?.[level?.id]?.illustratedFeatures, worldResolver.levelSettings(level?.id).illustratedFeatures)) {
+    throw new Error("Illustrated Graphics was not saved. Restart the editor server and Apply again.");
+  }
   const expectedCinematic = worldResolver.levelSettings(level?.id).cinematicLighting;
   if (expectedCinematic && !editorValuesEqual(window.AtlasCinematicSettings.normalize(payload?.config?.levels?.[level?.id]?.cinematicLighting), window.AtlasCinematicSettings.normalize(expectedCinematic))) {
     throw new Error("Cinematic Lighting was not saved. Restart the editor server and Apply again.");
@@ -1200,6 +1211,20 @@ function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
   worldResolver.setConfig(payload.config);
   window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
   cinematicOriginals.delete(level?.id);
+  illustratedOriginals.delete(level?.id);
+}
+
+function illustratedFeatures(id = level?.id) {
+  return window.AtlasCinematicSettings.illustratedFeatures(worldResolver.levelSettings(id).illustratedFeatures);
+}
+
+function updateIllustratedFeature(id, key, value) {
+  if (!Object.hasOwn(window.AtlasCinematicSettings.illustratedDefaults, key)) return;
+  if (!illustratedOriginals.has(id)) illustratedOriginals.set(id, { settings:cloneOptionalConfig(worldResolver.levelSettings(id).illustratedFeatures), worldDirty:worldEditor.dirty });
+  worldResolver.updateLevelSettings(id, { illustratedFeatures:{ ...illustratedFeatures(id), [key]:Boolean(value) } });
+  markWorldConfigDirty(`${id}: Illustrated Graphics aangepast.`);
+  markEditorModified("Illustrated Graphics aangepast. Apply slaat dit level op.");
+  render();
 }
 
 function updateLevelSetting(levelId, key, value) {
@@ -2034,6 +2059,9 @@ function loadLevelDefinition(entry) {
 
 async function selectLevel(id, options = {}) {
   const loadSequence = ++levelLoadSequence;
+  window.AtlasWebGPUCapabilities.cancelPending({retryTransient:true});
+  assetReadiness.beginStatus(loadSequence);
+  assetReadiness.setStatus(loadSequence,"Level laden...");
   const entry = levelCatalog.find((item) => item.id === id) || levelCatalog[0];
   if (!entry) return false;
   if (!worldResolver.entryIsAvailable(entry)) {
@@ -2055,6 +2083,7 @@ async function selectLevel(id, options = {}) {
   let selectedLevel;
   try {
     selectedLevel = await loadLevelDefinition(entry);
+    if(loadSequence!==levelLoadSequence)return false;
   } catch (error) {
     if (loadSequence !== levelLoadSequence) return false;
     state = { screen: "menu", error: error.message };
@@ -2069,9 +2098,13 @@ async function selectLevel(id, options = {}) {
   await prepareWalkPathEditorForLevel(selectedLevel);
   if (loadSequence !== levelLoadSequence) return false;
   const nextLevel = normalizeLevel(selectedLevel);
+  const selectedRenderer=voxelRenderer.getSettings().renderer;
+  const effectiveRenderer=window.AtlasGraphicsModes.isThree(selectedRenderer)&&nextLevel.id!=="LVL-0001"?"illustrated":selectedRenderer;
+  const assetOptions={guideBlinkPaths:GUIDE_BLINK_PATHS,prepareDepth:Boolean(navigator.gpu)&&window.AtlasCinematicRenderer.requiresGPU(effectiveRenderer,worldResolver.levelSettings(nextLevel.id).cinematicLighting,illustratedFeatures(nextLevel.id))};
   let assetPlan;
   try {
-    assetPlan = await assetReadiness.prepare(nextLevel, { guideBlinkPaths: GUIDE_BLINK_PATHS });
+    assetReadiness.setStatus(loadSequence,"Sprites laden...");
+    assetPlan = await assetReadiness.prepare(nextLevel, assetOptions);
   } catch (error) {
     if (
       nextLevel.world.background !== nextLevel.__atlasDefaultBackground &&
@@ -2080,7 +2113,7 @@ async function selectLevel(id, options = {}) {
       console.warn(`[Atlas] Background override failed before reveal: ${nextLevel.world.background}. Using ${nextLevel.__atlasDefaultBackground}.`);
       nextLevel.world.background = nextLevel.__atlasDefaultBackground;
       try {
-        assetPlan = await assetReadiness.prepare(nextLevel, { guideBlinkPaths: GUIDE_BLINK_PATHS });
+        assetPlan = await assetReadiness.prepare(nextLevel, assetOptions);
       } catch (fallbackError) {
         if (loadSequence !== levelLoadSequence) return false;
         state = { screen: "menu", error: fallbackError.message || String(fallbackError) };
@@ -2116,6 +2149,7 @@ async function selectLevel(id, options = {}) {
     `[Atlas] Optional visual disabled before level reveal: ${failure.path} (${failure.kinds.join(", ")})`
   ));
   assetReadiness.activate(assetPlan);
+  assetReadiness.setStatus(loadSequence,"Omgeving voorbereiden...");
   sceneEffectRuntime.prepareLevel(nextLevel);
   if (!entry.developerOnly) {
     const adventure = adventureEntryFor(entry);
@@ -2143,6 +2177,7 @@ async function selectLevel(id, options = {}) {
   }
   document.title = nextLevel.title;
   preloadLevelSounds(nextLevel);
+  assetReadiness.setStatus(loadSequence,"");
   if (!options.deferRender) render();
   return true;
 }
@@ -2249,6 +2284,8 @@ function resolvedNextLevelId(levelId = level?.id) {
 
 function returnToMenu() {
   levelLoadSequence += 1;
+  window.AtlasWebGPUCapabilities.cancelPending();
+  assetReadiness.beginStatus(levelLoadSequence);
   assetReadiness.supersede();
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.releaseLevel();
@@ -2685,6 +2722,12 @@ async function revertWalkPathDraft() {
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
     setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
     setAudioConfig(walkPathEditor.originalAudioConfig);
+    if (illustratedOriginals.has(level.id)) {
+      const original = illustratedOriginals.get(level.id);
+      worldResolver.updateLevelSettings(level.id, { illustratedFeatures:original.settings });
+      worldEditor.dirty = original.worldDirty;
+      illustratedOriginals.delete(level.id);
+    }
     if (cinematicOriginals.has(level.id)) {
       const original = cinematicOriginals.get(level.id);
       worldResolver.updateLevelSettings(level.id, { cinematicLighting: original.settings });
@@ -6053,7 +6096,7 @@ function renderEmissiveGlowControls(levelId) {
   return `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
     <summary>Emissive Glow (Illustrated)</summary>
     <p>This legacy artwork glow is used only by Illustrated Mode. Cinematic Mode uses Effects → Emissive / bloom.</p>
-    <fieldset class="atlasEmissiveGlowControls">
+    <fieldset class="atlasEmissiveGlowControls" ${voxelRenderer.getSettings().renderer === "illustrated" && illustratedFeatures(levelId).globalLighting ? 'disabled title="Suppressed while Global Lighting is on; saved settings are preserved."' : ""}>
       <label class="atlasToggleField"><input type="checkbox" data-emissive-setting="enabled" data-level-id="${levelId}" ${emissiveGlow.enabled ? "checked" : ""}> <span>Enabled</span></label>
       <label class="graphicsRange">Intensity <output data-emissive-output="intensity">${emissiveGlow.intensity.toFixed(2)}</output>
         <input type="range" min="0" max="1.25" step="0.01" value="${emissiveGlow.intensity}" data-emissive-setting="intensity" data-level-id="${levelId}">
@@ -6273,7 +6316,7 @@ function renderFlightPathWorkspace() {
 function renderWorldStage() {
   const selectedRenderer = voxelRenderer.getSettings().renderer;
   const renderer = window.AtlasGraphicsModes.isThree(selectedRenderer) && level.id !== "LVL-0001" ? "illustrated" : selectedRenderer;
-  const fieldCanvas = `<canvas class="${renderer === "illustrated" ? "particleFieldsCanvas" : "cinematicViewportCanvas"}" ${renderer === "illustrated" ? "data-particle-fields-canvas" : "data-cinematic-canvas"} data-cinematic-mode="${renderer}" data-cinematic-level="${level.id}" aria-label="${renderer === "illustrated" ? "Particle Fields" : "WebGPU Cinematic"}"></canvas>`;
+  const fieldCanvas = `${renderer === "illustrated" ? `<canvas class="illustratedShadowCanvas" data-illustrated-shadow-canvas data-shadow-level="${level.id}" aria-hidden="true"></canvas>` : ""}<canvas class="${renderer === "illustrated" ? "particleFieldsCanvas" : "cinematicViewportCanvas"}" ${renderer === "illustrated" ? "data-particle-fields-canvas" : "data-cinematic-canvas"} data-cinematic-mode="${renderer}" data-cinematic-level="${level.id}" aria-label="${renderer === "illustrated" ? "Particle Fields" : "WebGPU Cinematic"}"></canvas>`;
   const emissiveGlow = window.AtlasEmissiveGlow.normalizeSettings(worldResolver.levelSettings(level.id).emissiveGlow);
   const actorPosition = worldToScreen({ x: state.worldX, y: state.worldY }, "track");
   const svenClasses = [
@@ -6302,7 +6345,7 @@ function renderWorldStage() {
         style="--camera-percent:${getCameraPercent()}; --world-scale:${state.worldScale}"
       >
         <img class="worldArt" src="${readyAssetSrc(level.world.background)}" data-asset-path="${level.world.background}" style="filter:${visualFilter("background")}" alt="Een doorlopend bospad naar de Vikingtempel" />
-        <canvas class="emissiveGlowCanvas" data-emissive-glow-canvas aria-hidden="true" ${renderer === "illustrated" && emissiveGlow.enabled ? "" : "hidden"}></canvas>
+        <canvas class="emissiveGlowCanvas" data-emissive-glow-canvas aria-hidden="true" ${renderer === "illustrated" && emissiveGlow.enabled && !illustratedFeatures().globalLighting ? "" : "hidden"}></canvas>
         <div class="forestMist"></div>
         ${renderSceneEffectCanvases()}
         ${renderer === "illustrated" ? fieldCanvas : ""}
@@ -6398,7 +6441,7 @@ function renderAmbientFlyby(flyby) {
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
       data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.frames, flyby.depthOcclusion, flyby.depthBias, flyby.softness, flyby.saturation, canvasVisual]))}"
-      data-sound-trigger="${((window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound) || flyby.actions?.onTap) && state.screen === "scene" && !editing ? "tap" : "during"}"
+      data-sound-trigger="${((window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound) || flyby.actions?.onTap) && state.screen === "scene" && (!editing || ambientFlybyRuntime.active.get(flyby.id)?.preview) ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
       <span class="ambientFlybyFrames">
@@ -6620,6 +6663,19 @@ function renderDisplayToggles() {
   `;
 }
 
+function renderIllustratedFeatureControls(id) {
+  const flags = illustratedFeatures(id);
+  const toggle = (key, label, child = false) => `<label class="atlasToggleField${child ? " illustratedFeatureChild" : ""}"><input type="checkbox" data-illustrated-feature="${key}" data-level-id="${id}" ${flags[key] ? "checked" : ""} ${child && !flags.globalLighting ? "disabled" : ""}><span>${label}</span></label>`;
+  return `<div class="illustratedFeatureControls" data-illustrated-features>
+    ${toggle("globalLighting", "Global Lighting")}
+    ${toggle("globalGrading", "Global Grading", true)}
+    ${toggle("areaDirectionalLights", "Area Directional Lights", true)}
+    ${toggle("sceneDepth", "Scene Depth", true)}
+    ${toggle("characterShadows", "Character Shadows")}
+    ${toggle("particleFields", "Particle Fields")}
+  </div>`;
+}
+
 function renderGraphicsSettings() {
   if (!graphicsSettingsOpen) return "";
   const settings = voxelRenderer.getSettings();
@@ -6637,6 +6693,7 @@ function renderGraphicsSettings() {
         ${window.AtlasGraphicsModes.list(settings.renderer).filter(mode=>mode.group===group).map(mode=>`<button type="button" data-renderer-choice="${mode.id}" aria-pressed="${mode.selected}" ${mode.enabled?'':'disabled title="Desktop only"'}>${mode.label}${mode.enabled?'':'<small>Desktop only</small>'}</button>`).join('')}
       </div></fieldset>`).join('')}
       <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
+      ${settings.renderer === "illustrated" && level ? renderIllustratedFeatureControls(level.id) : ""}
       <fieldset><legend>Weergave-informatie</legend><div class="displayToggles">
         ${renderDisplayToggles()}
       </div></fieldset>
@@ -7251,17 +7308,38 @@ function renderProgress() {
   `;
 }
 
-function renderLoading() {
+function renderLoading(message = state.message || "Laden...", showMenu = true) {
+  const container=showMenu?'main':'section';
   return `
-    <main class="menuScreen loadingScreen" aria-busy="true" aria-live="polite">
+    <${container} class="menuScreen loadingScreen" aria-busy="true" aria-live="polite">
       <section class="menuHeader atlasLoadingCard">
         <p class="eyebrow">Atlas</p>
         <span class="atlasLoadingSpinner" aria-hidden="true"></span>
-        <h1>${state.message || "Laden..."}</h1>
-        <p>Beelden worden klaargezet voor vloeiende weergave.</p>
+        <h1>${message}</h1>
+        <p class="preparationStatus" data-preparation-status role="status">${assetReadiness.status()}</p>
+        ${showMenu ? '<button type="button" class="menuReturnButton" data-action="menu">Menu</button>' : ''}
       </section>
-    </main>
+    </${container}>
   `;
+}
+
+function syncPreparationCover(snapshot = cinematicStatus) {
+  const shell=document.querySelector('.gameShell');
+  const preparing=!snapshot.error && !snapshot.ready && ["requesting-device","recovering","compiling-pipelines","loading-artwork","rendering-first-frame"].includes(snapshot.status);
+  let cover=document.querySelector('[data-gpu-preparation]');
+  if(!shell || !preparing){
+    cover?.remove();
+    document.querySelectorAll('[data-gpu-preparation-inert]').forEach(node=>{node.inert=false;delete node.dataset.gpuPreparationInert;});
+    if(state.screen!=="loading")assetReadiness.setStatus(levelLoadSequence,"");return;
+  }
+  const text=snapshot.status==="recovering" ? "Grafische engine herstellen..." : snapshot.status==="requesting-device" ? (window.AtlasWebGPUCapabilities.snapshot().previouslyReady && !window.AtlasWebGPUCapabilities.snapshot().deviceReady ? "Grafische engine herstellen..." : "Grafische engine starten...") : "Effecten voorbereiden...";
+  assetReadiness.setStatus(levelLoadSequence,text);
+  if(!cover){
+    stopMovement({invalidateIntent:true});
+    cover=document.createElement('div');cover.className='gpuPreparationCover';cover.dataset.gpuPreparation='true';
+    cover.innerHTML=renderLoading('Avontuur voorbereiden...',false);shell.append(cover);
+    [...shell.children].filter(node=>node!==cover&&!node.inert&&!node.matches('.gameplayTopControls, [data-graphics-settings]')).forEach(node=>{node.inert=true;node.dataset.gpuPreparationInert='true';});
+  }
 }
 
 function adventureMenuBadge(item) {
@@ -7601,6 +7679,7 @@ function render() {
   const retainedFlybys = new Map([...app.querySelectorAll('[data-ambient-flyby]')]
     .filter(node => ambientFlybyRuntime.active.has(node.dataset.ambientFlyby))
     .map(node => [node.dataset.ambientFlyby, node]));
+  const retainedShadowCanvas = app.querySelector("[data-illustrated-shadow-canvas]");
   const retainedCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const retainedThreeCanvas = app.querySelector("[data-three-canvas]");
   const retainedVoxelCanvas = app.querySelector("[data-voxel-canvas]");
@@ -7645,6 +7724,8 @@ function render() {
     replacement.replaceWith(retained);
   }
   ambientFlybyRuntime.refreshPreviews();
+  const replacementShadowCanvas = app.querySelector("[data-illustrated-shadow-canvas]");
+  if(retainedShadowCanvas && replacementShadowCanvas && retainedShadowCanvas.dataset.shadowLevel === level?.id) replacementShadowCanvas.replaceWith(retainedShadowCanvas);
   const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const replacementThreeCanvas = app.querySelector("[data-three-canvas]");
   if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) replacementThreeCanvas.replaceWith(retainedThreeCanvas);
@@ -7733,13 +7814,28 @@ app.addEventListener("focusout", (event) => {
   syncMenuAutoRotation();
 });
 
+let flybyPress = null;
+function flybyHitAt(event) {
+  if(!event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"]'))return null;
+  const seen=new Set();
+  for(const element of document.elementsFromPoint(event.clientX,event.clientY)){
+    const shell=element.closest('[data-ambient-flyby][data-sound-trigger="tap"]');
+    if(!shell || seen.has(shell))continue;
+    seen.add(shell);
+    const hit=ambientFlybyRuntime.hitTest(shell.dataset.ambientFlyby,event.clientX,event.clientY);
+    if(hit)return hit;
+  }
+  return null;
+}
 app.addEventListener("click", (event) => {
   ensureAudioUnlocked();
   const tappedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"]');
-  if (tappedFlyby) {
+  const press=flybyPress;flybyPress=null;
+  if (tappedFlyby || press?.hit) {
     event.preventDefault();
     event.stopPropagation();
-    ambientFlybyRuntime.tap(tappedFlyby.dataset.ambientFlyby);
+    const hit=press ? (press.released && press.valid ? press.hit : null) : flybyHitAt(event);
+    if(hit)ambientFlybyRuntime.tap(hit.id,hit);
     return;
   }
   const displayToggle = event.target.closest('[data-display-toggle]');
@@ -8350,6 +8446,11 @@ app.addEventListener("change", (event) => {
     if (key === "enabled") render();
     return;
   }
+  const illustratedFeature = event.target.closest("[data-illustrated-feature]");
+  if (illustratedFeature) {
+    updateIllustratedFeature(illustratedFeature.dataset.levelId, illustratedFeature.dataset.illustratedFeature, illustratedFeature.checked);
+    return;
+  }
   const graphicsQuality = event.target.closest("[data-graphics-quality]");
   if (graphicsQuality) {
     voxelRenderer.updateSettings({ quality: graphicsQuality.value });
@@ -8471,11 +8572,12 @@ app.addEventListener("change", (event) => {
 });
 
 app.addEventListener("pointerdown", (event) => {
+  if(event.isPrimary)flybyPress=null;
   const pressedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]');
   if (pressedFlyby && event.isPrimary && event.button === 0) {
-    // Keep this moving sprite as the click target even if it moves away before
-    // release. Browser hit testing supplies the transformed screen-space bounds.
-    pressedFlyby.setPointerCapture(event.pointerId);
+    const hit=flybyHitAt(event);
+    flybyPress={pointerId:event.pointerId,hit,released:false,valid:false};
+    if(hit)document.querySelector(`[data-ambient-flyby="${CSS.escape(hit.id)}"]`).setPointerCapture(event.pointerId);
     return;
   }
   ensureAudioUnlocked();
@@ -8636,7 +8738,10 @@ window.addEventListener("pointermove", (event) => {
   updateDraggedWalkPathPoint(event);
 });
 
-window.addEventListener("pointerup", () => {
+window.addEventListener("pointercancel",(event)=>{if(flybyPress?.pointerId===event.pointerId)flybyPress=null;});
+window.addEventListener("blur",()=>{flybyPress=null;});
+window.addEventListener("pointerup", (event) => {
+  if(flybyPress?.pointerId===event.pointerId){flybyPress.released=true;flybyPress.valid=ambientFlybyRuntime.validateHit(flybyPress.hit);}
   const finishedAnimalDrag = Boolean(walkPathEditor.draggingAnimalId);
   updateCinematicCueInteraction("pressed", null);
   if (walkPathEditor.effectDrag && walkPathEditor.effectDrag.type !== "pan") {
@@ -8657,8 +8762,14 @@ window.addEventListener("pointerup", () => {
   if (finishedAnimalDrag) render();
 });
 
+let resumePreparingThree = false;
+window.AtlasWebGPUCapabilities.subscribe(snapshot=>{
+  if(snapshot.suspended && ["loading","warming"].includes(threeStatus.status)){
+    resumePreparingThree=true;threeRenderer.suspend();
+  }
+});
 window.addEventListener("pagehide", () => threeRenderer.suspend());
-window.addEventListener("pageshow", event => { if(event.persisted)threeRenderer.resume(); });
+window.addEventListener("pageshow", event => { if(event.persisted){resumePreparingThree=false;threeRenderer.resume();} });
 
 document.addEventListener("visibilitychange", () => {
   syncFpsDisplay(true);
@@ -8669,7 +8780,8 @@ document.addEventListener("visibilitychange", () => {
     sceneEffectRuntime.stop();
     voxelRenderer.stop();
     cinematicRenderer.stop();
-    threeRenderer.stop();
+    if(["loading","warming"].includes(threeStatus.status)){resumePreparingThree=true;threeRenderer.suspend();}
+    else threeRenderer.stop();
     Object.values(guideBlinkRuntime).forEach(clearGuideBlinkState);
   } else {
     syncMenuAutoRotation();
@@ -8677,7 +8789,8 @@ document.addEventListener("visibilitychange", () => {
     syncGuideBlinkTimers();
     ambientFlybyRuntime.sync();
     sceneEffectRuntime.sync();
-    threeRenderer.sync();
+    if(resumePreparingThree){resumePreparingThree=false;threeRenderer.resume();}
+    else threeRenderer.sync();
     voxelRenderer.sync();
     cinematicRenderer.sync();
     emissiveGlowRenderer.sync();

@@ -326,6 +326,8 @@ fn appearance(input:vec3f) -> vec3f {
   return clamp(vec3f(dot(c,vec3f(0.213+co*0.787-si*0.213,0.715-co*0.715-si*0.715,0.072-co*0.072+si*0.928)),dot(c,vec3f(0.213-co*0.213+si*0.143,0.715+co*0.285+si*0.140,0.072-co*0.072-si*0.283)),dot(c,vec3f(0.213-co*0.213-si*0.787,0.715-co*0.715+si*0.715,0.072+co*0.928+si*0.072))),vec3f(0),vec3f(1));
 }
 @fragment fn sprite(in:Vertex) -> @location(0) vec4f {
+  // Copy an already-linear scene when no field contribution is selected.
+  if(d.flags.w>2.5){return textureSampleLevel(source,linearSampler,in.uv,0);}
   if(d.flags.w>1.5){
     let size=vec2f(g.v[2].x,g.v[1].x);let p=in.uv*size;let a=d.appearance.xy*size;let b=d.appearance.zw*size;let ab=b-a;let t=clamp(dot(p-a,ab)/max(dot(ab,ab),0.0001),0.0,1.0);let lineDistance=length(p-(a+ab*t));let pointDistance=min(length(p-a),length(p-b));let lineAlpha=1.0-smoothstep(1.0,2.2,lineDistance);let pointAlpha=1.0-smoothstep(3.5,5.5,pointDistance);let alpha=max(lineAlpha,pointAlpha);return vec4f(vec3f(0.02,0.42,1.0)*alpha,alpha);
   }
@@ -374,6 +376,12 @@ fn appearance(input:vec3f) -> vec3f {
     let receiverMatching=smoothstep(0.0,1.0,g.v[21].z);
     let localContribution=mix(authoredContribution,matchedContribution,receiverMatching);
     let alpha=silhouette*localContribution;
+    if(g.v[2].z>0.5){
+      // Browser overlays blend in sRGB. Encode the same linear receiver result
+      // into premultiplied colour so the shared opacity retains its meaning.
+      let composite=toSRGB(max(receiver*(1.0-alpha*0.92),vec3f(0)));
+      return vec4f(max(vec3f(0),composite-toSRGB(max(receiver,vec3f(0)))*(1.0-alpha)),alpha);
+    }
     return vec4f(receiver*0.08*alpha,alpha);
   }
   var uv=d.uv.xy+in.uv*d.uv.zw;if(d.flags.y>0.5){uv.x=1.0-uv.x;}

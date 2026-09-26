@@ -20,6 +20,7 @@
     };
 
     add(level?.world?.background, "background", true);
+    if(options.prepareDepth)add(global.AtlasAmbientSystem.depthPathFor(level),"scene-depth",false);
     add(level?.companion?.portrait, "companion-portrait", true);
     Object.values(level?.guides || {}).forEach((guide) => add(guide?.portrait, "guide-portrait", true));
     Object.entries(options.guideBlinkPaths || {}).forEach(([guideId, path]) => add(path, "guide-blink", false, guideId));
@@ -58,6 +59,13 @@
     const persistentPaths = new Set((options.persistentPaths || []).map(normalize));
     let active = null;
     let prepareSequence = 0;
+    let statusOwner = null, statusText = "";
+    function setStatus(owner, text) {
+      if(owner !== statusOwner)return;
+      if(statusText===text)return;
+      statusText=text;options.onStatus?.(text);
+    }
+    function beginStatus(owner) {statusOwner=owner;setStatus(owner,"");}
 
     async function mapConcurrent(items, limit, operation) {
       const results = new Array(items.length);
@@ -131,6 +139,7 @@
     }
 
     return {
+      beginStatus, setStatus, status: () => statusText,
       prepare,
       activate,
       discard,

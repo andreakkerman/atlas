@@ -3,6 +3,7 @@
 
   const IMAGE_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
   const AUDIO_EXTENSIONS = new Set([".mp3", ".ogg", ".wav"]);
+  const FLYBY_HIT_ALPHA_THRESHOLD = 32;
 
   const actions = new Map();
   function registerAction(id, handler) {
@@ -330,6 +331,69 @@
     const pathCaches = new Map();
     const timers = new Map();
     const active = new Map();
+    let hitCanvas = null;
+
+    function displayedFrame(id) {
+      const shell=document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`), instance=active.get(id);
+      if(!shell || !instance || shell.dataset.active!=='true' || !readiness.get(keyFor(id))?.ready)return null;
+      const canvas=shell.querySelector('[data-flyby-canvas]');
+      const index=canvas?Number(canvas.dataset.frameIndex||0):(shell.dataset.frame==='b'?1:0);
+      const image=readiness.get(keyFor(id)).images?.[index];
+      if(!image)return null;
+      return {shell,instance,canvas,image,width:canvas?.width||image.naturalWidth,height:canvas?.height||image.naturalHeight};
+    }
+
+    // Interaction-only, bounded current-frame readback; never prepare a hitmask
+    // per animation frame. Debug overlays are replaced with source × depth alpha.
+    function hitAlpha(id, u, v) {
+      const frame=displayedFrame(id), config=configById(id);
+      if(!frame || !config || !Number.isFinite(u+v) || u<0 || v<0 || u>=1 || v>=1)return 0;
+      const {canvas,image,width,height,instance,shell}=frame, x=Math.floor(u*width), y=Math.floor(v*height);
+      const debug=depthDebug && config.depthOcclusion && instance.mask;
+      const source=canvas&&!debug?canvas:image;
+      const read=(sx,sy,w,h)=>{
+        const scratch=hitCanvas||(hitCanvas=document.createElement('canvas'));
+        if(scratch.width!==w||scratch.height!==h){scratch.width=w;scratch.height=h;}
+        const ctx=scratch.getContext('2d',{willReadFrequently:true});ctx.clearRect(0,0,w,h);ctx.drawImage(source,-sx,-sy);
+        if(debug){ctx.globalCompositeOperation='destination-in';ctx.drawImage(instance.mask,-sx,-sy);ctx.globalCompositeOperation='source-over';}
+        return ctx.getImageData(0,0,w,h).data;
+      };
+      const softness=graphicsFor(config).softness;
+      if(!softness)return read(x,y,1,1)[3];
+      // Match the existing Cinematic five-tap alpha blur. Illustrated CSS blur
+      // is Gaussian in frame-local CSS pixels (bounded to a 129×129 readback).
+      if(document.querySelector('.gameShell.cinematicReady')){
+        const rect=(canvas||shell.querySelector('.ambientFlybyFrame')).getBoundingClientRect();
+        const dx=softness*width/Math.max(1,rect.width),dy=softness*height/Math.max(1,rect.height);
+        const sample=(px,py)=>read(Math.floor(Math.max(0,Math.min(width-1,px))),Math.floor(Math.max(0,Math.min(height-1,py))),1,1)[3];
+        return sample(x,y)*.4+(sample(x-dx,y)+sample(x+dx,y)+sample(x,y-dy)+sample(x,y+dy))*.15;
+      }
+      const sigma=Math.min(softness*width/Math.max(1,shell.offsetWidth),64/3),radius=Math.ceil(sigma*3),size=radius*2+1;
+      const pixels=read(x-radius,y-radius,size,size);let sum=0,weight=0;
+      for(let py=-radius;py<=radius;py++)for(let px=-radius;px<=radius;px++){
+        const w=Math.exp(-(px*px+py*py)/(2*sigma*sigma));weight+=w;sum+=pixels[((py+radius)*size+px+radius)*4+3]*w;
+      }
+      return sum/weight;
+    }
+
+    function hitTest(id, clientX, clientY) {
+      const frame=displayedFrame(id);if(!frame)return null;
+      const {shell,instance}=frame,rect=shell.getBoundingClientRect();
+      if(clientX<rect.left||clientX>=rect.right||clientY<rect.top||clientY>=rect.bottom||!rect.width||!rect.height)return null;
+      // The world track translates for the camera; viewport sizing is already
+      // reflected in the current rect. Invert the sprite's scale/mirror/rotation
+      // around its centre, independent of authored path or previous RAF state.
+      const m=new DOMMatrix(getComputedStyle(shell).transform),det=m.a*m.d-m.b*m.c;
+      if(!Number.isFinite(det)||Math.abs(det)<1e-9)return null;
+      const dx=clientX-(rect.left+rect.right)/2,dy=clientY-(rect.top+rect.bottom)/2;
+      const u=((m.d*dx-m.c*dy)/det)/shell.offsetWidth+.5;
+      const v=((-m.b*dx+m.a*dy)/det)/shell.offsetHeight+.5;
+      return hitAlpha(id,u,v)>FLYBY_HIT_ALPHA_THRESHOLD?{id,triggerId:instance.triggerId,u,v}:null;
+    }
+
+    function validateHit(hit) {
+      return Boolean(hit && active.has(hit.id) && active.get(hit.id).triggerId===hit.triggerId && hitAlpha(hit.id,hit.u,hit.v)>FLYBY_HIT_ALPHA_THRESHOLD);
+    }
     const pendingStarts = new Map();
     const activeAudio = new Map();
     let levelId = null;
@@ -667,7 +731,8 @@
       audio.play().catch(finish);
     }
 
-    function tap(id) {
+    function tap(id, hit) {
+      if(!hit || hit.id!==id || !validateHit(hit))return false;
       const config = configById(id), instance = active.get(id);
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
       if (!instance || getScreen() !== "scene" || document.hidden || shell?.dataset.active !== "true") return false;
@@ -985,7 +1050,7 @@
       scheduleAll();
     }
 
-    function releaseLevel() {stopAll();++preparation;++editVersion;assetPreparations.clear();preparingStates.clear();depthPreparation=null;readiness.clear();pathCaches.clear();depth=null;levelId=null;}
+    function releaseLevel() {stopAll();++preparation;++editVersion;assetPreparations.clear();preparingStates.clear();depthPreparation=null;readiness.clear();pathCaches.clear();depth=null;hitCanvas=null;levelId=null;}
 
     return {
       readiness,
@@ -1001,6 +1066,7 @@
       preview,
       previewSync,
       tap,
+      hitTest, hitAlpha, validateHit,
       sync,
       stopAll,
       releaseLevel,
@@ -1011,7 +1077,7 @@
 
   const api = {
     framesFor, playbackFor, canvasVisual, depthPathFor, sequenceErrors, registerAction,
-    graphicsControls, graphicsFor, adjustGraphics,
+    graphicsControls, graphicsFor, adjustGraphics, FLYBY_HIT_ALPHA_THRESHOLD,
     actionIds: () => [...actions.keys()],
     soundTriggers,
     validSoundTriggers,

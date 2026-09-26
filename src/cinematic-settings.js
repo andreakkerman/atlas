@@ -133,7 +133,29 @@
     const scale = item.scaleCountWithArea ? item.width * item.height / (800 * 400) : 1;
     return Math.max(1, Math.min(systems.particles.fields.count.max, Math.round(item.count * scale)));
   }
-  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount };
+  const illustratedDefaults = Object.freeze({ globalLighting:false, globalGrading:true, areaDirectionalLights:true, sceneDepth:true, characterShadows:false, particleFields:true });
+  function illustratedFeatures(value) {
+    return Object.fromEntries(Object.entries(illustratedDefaults).map(([key, fallback]) => [key, typeof value?.[key] === "boolean" ? value[key] : fallback]));
+  }
+  // A runtime projection, never a second authored lighting configuration.
+  function forIllustrated(value, features) {
+    const result = effective(normalize(value)), flags = illustratedFeatures(features);
+    const allowed = new Set(["grading", "areaLights", "depth", "characters", "particles"]);
+    for (const key of Object.keys(systems)) if (!allowed.has(key)) result[key].enabled = false;
+    result.grading.enabled &&= flags.globalLighting && flags.globalGrading;
+    result.areaLights.enabled &&= flags.globalLighting && flags.areaDirectionalLights;
+    result.particles.enabled &&= flags.particleFields;
+    result.areaLights.enabled &&= result.areaLights.items.some(item => item.enabled);
+    result.particles.enabled &&= result.particles.items.some(item => item.enabled);
+    result.characters.enabled = false; // Relighting, wrap and rim are not part of this feature set.
+    result.characters.groundingShadow &&= flags.characterShadows && result.layers.characters !== false;
+    if (!flags.globalLighting || !flags.sceneDepth) result.depth.perspective = 0;
+    // Depth sampling remains available to independently enabled particle masks.
+    result.depth.enabled &&= (flags.globalLighting && (flags.sceneDepth || flags.areaDirectionalLights)) ||
+      (result.particles.enabled && result.particles.items.some(item => item.enabled && item.depthInfluence > 0));
+    return result;
+  }
+  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount, illustratedDefaults, illustratedFeatures, forIllustrated };
   global.AtlasCinematicSettings = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

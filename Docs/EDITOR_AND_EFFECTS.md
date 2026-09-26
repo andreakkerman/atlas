@@ -92,7 +92,11 @@ Each authored ID is reserved from trigger time (including `startDelayMs`) throug
 
 During Flyby requests one-shot playback when the flight actually starts (after any `startDelayMs`), not when its recurrence is scheduled. It is global, non-spatial atmospheric audio: offscreen starts play immediately without viewport, camera, player proximity or distance attenuation checks. Existing audio unlock/readiness and master mute/volume still apply. The smooth fade uses the greater of flight progress and media playback progress, so short calls remain audible on slow flights. On Tap flies silently unless During is also enabled. Both sources use the same active-audio ownership, master × instance volume and cleanup: a currently playing path is ignored, and ended/error/rejected playback releases ownership so a later tap can play again. No ARC-specific audio channel is used.
 
-Gameplay uses the rendered sprite's native transformed hit bounds, including mirror/rotation and camera offset. Pointer capture retains the pressed flyby until release, preventing movement from redirecting its click to the world. The runtime still rejects inactive/offscreen/despawned instances. Taps are disabled while editor tools are open (including minimized tools), but closing tools enables gameplay taps even on `?dev=editor`; editing capability alone does not block input. Non-interactive renderer status banners remain pointer-transparent.
+Flyby On Tap uses transformed bounds followed by current-frame alpha **strictly above 32/255**. Transparent padding, faint anti-aliased fringe and depth-hidden pixels are ignored. The inverse rendered transform accounts for scale, mirror/facing, rotation and current camera translation. Canvas Flybys sample their current masked output; legacy A/B uses the displayed prepared image. Depth diagnostics instead sample source × current depth mask, excluding diagnostic colours/text. Softness samples the existing presentation alpha: a local Gaussian for Illustrated (bounded 129×129 region; extreme legacy blur is capped for hit testing), or Cinematic's five-tap kernel. RGB Graphics controls never determine hit eligibility.
+
+Candidates retain browser stacking order; an alpha miss on the top Flyby continues to visible Flybys below. Only a visible press captures a Flyby. Release and click revalidate the same flight ID and captured local point against the current frame/depth result, preserving moving-press capture while rejecting despawn, replacement flights and newly hidden pixels. Cancel/blur clears press state. Sampling happens only during interactions, using a small reusable scratch canvas released on level exit; no fetch/decode, per-frame hit work or full-sequence mask cache is added.
+
+Ordinary gameplay Flybys remain non-interactive while tools are open. Explicit manual previews can be tapped (including paused/held previews); minimize the panel to expose the scene. Editor controls retain input priority. Closing tools enables normal gameplay taps even on `?dev=editor`; editing capability alone does not block input. Non-interactive renderer status banners remain pointer-transparent.
 
 All four sound combinations work for single- and two-frame flybys. `assets/ambient/flybys/arc_snitch/` is discovered generically as Frame A `arc_snitch.png`, Frame B **N/A** (null), and Sound `arc_snitch.mp3`. It has no second-frame load or flap animation, and is available for manual placement only. Selecting Wasp, Snitch or a two-frame set immediately fills the same Add form. No Snitch placement is added to an authored level.
 
@@ -114,7 +118,7 @@ Compatible edits update in place: depth occlusion/bias, scale, mirror/facing, ro
 
 Path/curve edits retarget the same normalized path progress. A frame-set or playback-mode change automatically prepares/reconfigures the preview while retaining playing/paused ownership; the frame phase resets for Static/Loop, or maps existing path progress to the new Once movement phase. Exact frame identity is not preserved across incompatible asset/mode changes. Existing decoded images are shared, pending identical asset/depth preparation is coalesced, and the previous canvas is retained while replacement assets prepare. Disabling/deleting the Flyby stops its preview.
 
-Manual previews start immediately, ignoring recurrence/start-delay scheduling; normal gameplay still honors authored delays and recurrence. Preview completion does not schedule another flight or a synchronized respawn. During audio starts once; Pause/Resume neither restarts nor rewinds it (an already-playing clip may finish while paused). Stop releases preview audio. Completion actions keep their once-only flag, and editor-open tap restrictions are unchanged. Live tuning still uses ordinary draft autosave and explicit **Apply** for source persistence; preview controls themselves do not save.
+Manual previews start immediately, ignoring recurrence/start-delay scheduling; normal gameplay still honors authored delays and recurrence. Preview completion does not schedule another flight or a synchronized respawn. During audio starts once; Pause/Resume neither restarts nor rewinds it (an already-playing clip may finish while paused). Stop releases preview audio. Completion actions keep their once-only flag. Explicit manual previews support alpha-aware taps outside editor controls; ordinary gameplay instances retain editor-open tap restrictions. Live tuning still uses ordinary draft autosave and explicit **Apply** for source persistence; preview controls themselves do not save.
 
 Discovery exposes naturally/numerically ordered `frames` (1, 2 or N images) plus optional sound. Legacy `frameA`/optional `frameB` retains its exact distance/flap-Hz A/B timing without migration. For 3+ frames the Add form shows a compact sequence summary and requires an explicit Static/Loop/Once choice; folder names never select behavior. `frames` is authoritative when present.
 
@@ -180,3 +184,22 @@ Classic Illustrated God Rays are the existing `sun-presence` preset, labeled **G
 Illustrated circular challenge hotspots keep their existing CSS pulse and add a transient `magical-glow` / `rune` instance on the shared `worldLight` canvas. The inner effect uses the Rune particle defaults, omits both the central radial light field and solid core, and uses a clipped radius inside the existing 20 CSS-pixel ring inset. It follows world coordinates, viewport size and stable level/rune seeds. NPC sprite hotspots retain their existing presentation.
 
 These are built-in gameplay decorations, not authored `sceneEffects`: no level writes, editor entries or extra settings are introduced. They share the existing scheduler, quality/reduced-motion handling and pause/visibility lifecycle. Inactive/completed hotspots have no inner glow. Other rendering modes and authored Rune presets are unchanged. Editor effect isolation applies to authored effects; gameplay cues remain present until the shared preview is paused.
+
+### Selective Illustrated Graphics
+
+The existing Graphics menu shows six per-level gates only while Illustrated is selected, without an additional section title:
+
+- Global Lighting
+  - Global Grading
+  - Area Directional Lights
+  - Scene Depth
+- Character Shadows
+- Particle Fields
+
+`Levels/world-config.js` → `levels[id].illustratedFeatures` contains booleans `globalLighting` (default false), `globalGrading` (true), `areaDirectionalLights` (true), `sceneDepth` (true), `characterShadows` (false), and `particleFields` (true). Missing fields use these defaults; old levels need no migration. The child defaults are inactive until the master is enabled. Particle Fields retains existing Illustrated weather by default.
+
+These are participation gates, not duplicate authoring settings. They reuse `cinematicLighting.grading`, `areaLights`, `depth`, `characters` and `particles`, including existing authored system/item/layer switches. Detailed authoring stays in the existing editor. Turning the master off disables and greys the three visible children without changing their saved values. Character Shadows and Particle Fields remain independent.
+
+Changes preview live through the world resolver and stage in the normal world-config Apply path. Revert restores the feature baseline, and Apply/reload preserves all six choices. This is not browser-local renderer preference storage or a separate level-draft format.
+
+Global Lighting suppresses the existing Illustrated Emissive Glow runtime and disables its editor fieldset while preserving every authored glow value. Turning the master off restores that saved setting. Global Lighting's master also suppresses glow when every child is off. No Light Shafts, Auto Exposure, Vignette/Finishing, God Rays or Effects capability is enabled by these gates; existing traditional Illustrated effects remain available. Cinematic does not consult these gates.

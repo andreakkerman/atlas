@@ -121,6 +121,12 @@
     }
     return records;
   }
+  function requiresGPU(mode, value, features) {
+    if(mode === "cinematic")return true;
+    const s=contract.forIllustrated(value, features);
+    return mode === "illustrated" && (s.grading.enabled || s.areaLights.enabled && s.areaLights.items.some(item=>item.enabled) ||
+      s.depth.enabled && s.depth.perspective > 0 || s.characters.groundingShadow || s.particles.enabled && s.particles.items.some(item=>item.enabled));
+  }
   function createRuntime(options) {
     let device, context, canvas, pipeline, uniform, effectBuffer, exposureBuffer, sampler, group0, layout0, layout1;
     let background, levelId, loading, generation = 0, raf = 0, lastTime = 0, frame = 0, lastReport = 0;
@@ -129,19 +135,21 @@
     let pendingPresentation = false, presented = false, lastSprites = 0, lastDraws = 0, lastShadowDraws = 0, lastGroundedSprites = 0, lastGrounding = [], initPromise, frameDt=1/60;
     let effective=contract.effective(settings), depthTexture, emptyDepth, depthStatus="none", depthPath=null, depthLoads=0, bindGroups=0, computeGroup;
     const depthCache=new Map(), bindings=new WeakMap(), shadowStates=new Map(), uploadDiagnostics=new Map(), observedDevices=new WeakSet();
-    // One owner/RAF for both presentations. Illustrated only prepares the particle
-    // pipeline; it never uploads artwork/sprites or runs Cinematic scene passes.
-    let mode = null;
-    const particleOnly = () => mode === "illustrated";
-    const hasParticles = value => { const s=contract.effective(contract.normalize(value));return s.particles.enabled && s.particles.items.some(item=>item.enabled); };
+    // One owner/device/RAF. Classic Illustrated keeps the direct particle path;
+    // selected world contributions reuse only the required shared scene passes.
+    let mode = null, illustratedScene = false, shadowOverlay = false, recipe = "", shadowCanvas, shadowContext;
+    const particleOnly = () => mode === "illustrated" && !illustratedScene && !shadowOverlay;
     const active = () => options.getRenderer() === mode && (mode === "cinematic" || mode === "illustrated");
-    const snapshot = () => ({ status, error, mode, pipelines:Object.keys(pipeline || {}), renderTargets:targets.length, buffers:(uniform?1:0)+(effectBuffer?1:0)+(exposureBuffer?1:0)+drawBuffers.length, scheduled:Boolean(raf), ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.data[16], 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
+    const snapshot = () => ({ status, error, mode, illustratedScene, shadowOverlay, effective:contract.clone(effective), pipelines:Object.keys(pipeline || {}), renderTargets:targets.length, buffers:(uniform?1:0)+(effectBuffer?1:0)+(exposureBuffer?1:0)+drawBuffers.length, scheduled:Boolean(raf), ready: presented, levelId, frame, averageMs, fps, sprites: lastSprites, drawCalls: lastDraws, shadowDraws: lastShadowDraws, groundedSprites:lastGroundedSprites, grounding:lastGrounding, shadowStates:[...shadowStates].map(([key,value])=>({key,...value})), particles: packed.filter(e => e.key === "particles" && e.data[1]).reduce((n, e) => n + e.data[16], 0), waterSurfaces: packed.filter(e => e.key === "waterSurface" && e.data[1]).length, waterSparkles: packed.filter(e => e.key === "waterSparkles" && e.data[1]).length, depthStatus, depthPath, depthLoads, depthCached:depthCache.size, textureUploads:[...uploadDiagnostics.values()], bindGroups, resolution: canvas ? [canvas.width, canvas.height] : [0, 0], backend: "WebGPU" });
     function report() {
-      document.querySelector(".gameShell")?.classList.toggle("cinematicReady", active() && !particleOnly() && presented);
-      document.querySelector(".gameShell")?.classList.toggle("particleFieldsReady", active() && particleOnly() && presented);
+      document.querySelector(".gameShell")?.classList.toggle("cinematicReady", active() && mode === "cinematic" && presented);
+      document.querySelector(".gameShell")?.classList.toggle("illustratedSceneReady", active() && mode === "illustrated" && illustratedScene && presented);
+      document.querySelector(".gameShell")?.classList.toggle("particleFieldsReady", active() && (particleOnly() || shadowOverlay) && presented);
+      document.querySelector(".gameShell")?.classList.toggle("illustratedShadowsReady", active() && shadowOverlay && presented);
       options.onStatus?.(snapshot());
     }
     function fail(caught, fallback = "frame-error") {
+      if(caught?.atlasWebGPUCategory === "acquisition-cancelled")return;
       stop(); error = caught?.message || String(caught); status = caught?.atlasWebGPUCategory || fallback; presented = false; report();
       // An in-scene error banner is intentional; do not silently claim a successful GPU fallback.
     }
@@ -155,6 +163,7 @@
         status = "requesting-device"; report();
         const acquiredDevice = await global.AtlasWebGPUCapabilities.requestDevice("cinematic");
         if(token!==generation)return;
+        if(device && device!==acquiredDevice)releaseDepth();
         device=acquiredDevice;
         const currentDevice = device;
         if(!observedDevices.has(device)) {
@@ -163,11 +172,9 @@
         device.lost.then(info => {
           if (device !== currentDevice) return;
           const wasActive=active() && Boolean(pipeline || loading);
-          stop(); generation++; global.AtlasWebGPUCapabilities.forgetDevice(device);
-          releaseLevel(false); uniform?.destroy(); effectBuffer?.destroy(); exposureBuffer?.destroy();
-          releaseDepth();
-          uniform=null;effectBuffer=null;exposureBuffer=null;pipeline=null;initPromise=null;context=null;canvas=null;
-          if (wasActive) fail(new Error(`WebGPU device lost: ${info.message || info.reason}`), "device-lost");
+          global.AtlasWebGPUCapabilities.forgetDevice(currentDevice);
+          dispose();device=null;
+          if(wasActive){status="recovering";report();if(!document.hidden && !global.AtlasWebGPUCapabilities.snapshot().suspended)sync();}
         });
         }
         status = "compiling-pipelines"; report();
@@ -203,14 +210,19 @@
         const create = (fragment, vertex = "fullscreen", format = "rgba16float", blend) => device.createRenderPipelineAsync({ label: `Cinematic ${fragment}`, layout, vertex: { module, entryPoint: vertex }, fragment: { module, entryPoint: fragment, targets: [{ format, ...(blend ? { blend } : {}) }] }, primitive: { topology: "triangle-list" } });
         const alpha = { color: { srcFactor: "one", dstFactor: "one-minus-src-alpha" }, alpha: { srcFactor: "one", dstFactor: "one-minus-src-alpha" } };
         const add = { color: { srcFactor: "one", dstFactor: "one" }, alpha: { srcFactor: "zero", dstFactor: "one" } };
-        const result = await Promise.all([create("sprite", "quad", "rgba16float", alpha), create("field"), create("bloomExtract"), create("blur"), create("finish", "fullscreen", navigator.gpu.getPreferredCanvasFormat()), create("particleColor", "particle", "rgba16float", add)]);
+        const selected = mode === "illustrated" ? contract.forIllustrated(options.getSettings(options.getLevel()?.id), options.getFeatures?.(options.getLevel()?.id)) : null;
+        const names = shadowOverlay ? ["sprite", "shadow", ...(selected.particles.enabled ? ["particle"] : [])] : ["sprite", ...(!selected || selected.areaLights.enabled ? ["field"] : []), ...(!selected ? ["extract", "blur"] : []), "finish", ...(!selected || selected.particles.enabled ? ["particle"] : [])];
+        const factories = {sprite:()=>create("sprite","quad","rgba16float",alpha),shadow:()=>create("sprite","quad",navigator.gpu.getPreferredCanvasFormat(),alpha),field:()=>create("field"),extract:()=>create("bloomExtract"),blur:()=>create("blur"),finish:()=>create("finish","fullscreen",navigator.gpu.getPreferredCanvasFormat()),particle:()=>create("particleColor","particle",shadowOverlay ? navigator.gpu.getPreferredCanvasFormat() : "rgba16float",add)};
+        const result = await Promise.all(names.map(name=>factories[name]()));
         if(token!==generation)return;
-        const nextPipeline = Object.fromEntries(["sprite", "field", "extract", "blur", "finish", "particle"].map((key, i) => [key, result[i]]));
+        const nextPipeline = Object.fromEntries(names.map((key, i) => [key, result[i]]));
+        if(mode === "cinematic") {
         const adaptationModule = device.createShaderModule({ label: "Cinematic adaptation", code: global.AtlasCinematicShaders.autoExposure });
         const adaptationInfo = await adaptationModule.getCompilationInfo();
         const adaptationErrors = adaptationInfo.messages.filter(m => m.type === "error");
         if (adaptationErrors.length) throw new Error(adaptationErrors.map(m => `${m.lineNum}:${m.linePos} ${m.message}`).join("\n"));
         nextPipeline.adapt = await device.createComputePipelineAsync({ layout: "auto", compute: { module: adaptationModule, entryPoint: "adapt" } });
+        }
         if(token!==generation)return;
         uniform = device.createBuffer({ size: 512, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
         effectBuffer = device.createBuffer({ size: 128 * 256, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
@@ -300,7 +312,12 @@
     function bindDepth() {
       group0=device.createBindGroup({layout:layout0,entries:[... (particleOnly()?[uniform,effectBuffer]:[uniform,effectBuffer,exposureBuffer]).map((buffer,binding)=>({binding,resource:{buffer}})),{binding:3,resource:depthTexture.view},{binding:4,resource:sampler}]});bindGroups++;
     }
-    function releaseDepth() { for(const resource of depthCache.values()) resource?.texture.destroy();depthCache.clear();emptyDepth?.texture.destroy();emptyDepth=null;depthTexture=null;depthStatus="none";depthPath=null; }
+    function releaseDepth(retainCached = false) { if(!retainCached){for(const resource of depthCache.values()) resource?.texture.destroy();depthCache.clear();}emptyDepth?.texture.destroy();emptyDepth=null;depthTexture=null;depthStatus="none";depthPath=null; }
+    function imageFor(path) {
+      const prepared=options.getPreparedImage?.(path);
+      if(prepared)return prepared;
+      const image=new Image();image.src=path;return Promise.resolve(image);
+    }
     async function loadDepth(level, token) {
       // Every Atlas level owns the conventional assets/depthmap.png. An explicit
       // world.depthmap can still override that path for future special cases.
@@ -308,7 +325,7 @@
       depthPath=path;depthStatus=path?"loading":"none";depthTexture=emptyDepth;
       if(path && !depthCache.has(path)) {
         let resource=null;
-        try { const img=new Image();img.src=path;resource=await upload(img,null,{purpose:"scene depthmap",path});if(token!==generation){resource.texture.destroy();return;}depthLoads++; }
+        try { const img=await imageFor(path);if(token!==generation)return;resource=await upload(img,null,{purpose:"scene depthmap",path});if(token!==generation){resource.texture.destroy();return;}depthLoads++; }
         catch(caught) { if(token!==generation)return;console.warn(caught?.message||caught); }
         depthCache.set(path,resource);
       }
@@ -332,13 +349,14 @@
     }
     function refreshSettings() {
       const value = options.getSettings(options.getLevel()?.id);
-      const cues=particleOnly()?[]:options.getGameplayCues?.() || [];
-      const key = JSON.stringify([value,cues]);
+      const features=options.getFeatures?.(options.getLevel()?.id);
+      const cues=mode === "illustrated"?[]:options.getGameplayCues?.() || [];
+      const key = JSON.stringify([value,features,cues]);
       if (key === settingsKey) return;
       // Keep the authored record indices in both modes: the particle shader
       // derives its deterministic seeds from them. Only dispatch is mode-specific.
-      settingsKey = key; settings = contract.normalize(value); effective=contract.effective(settings);packed = packEffects(settings);
-      if(!particleOnly() && effective.gameplayCues.enabled) for(const cue of cues.slice(0,48)) {
+      settingsKey = key; settings = contract.normalize(value); effective=mode === "illustrated" ? contract.forIllustrated(value,features) : contract.effective(settings);packed = packEffects(effective);
+      if(mode === "cinematic" && effective.gameplayCues.enabled) for(const cue of cues.slice(0,48)) {
         const interaction=cue.interaction==="pressed"?2:cue.interaction==="hover"?1:0,boost=interaction===2?1.55:interaction===1?1.28:1;
         const item=contract.instance("localLights",{id:cue.id,x:cue.x,y:cue.y,radius:Math.max(70,cue.radius*2.5)*(interaction?1.08:1),color:cue.color,intensity:cue.intensity*effective.gameplayCues.intensity*0.2*boost,falloff:1,depthInfluence:0.35,characterInfluence:effective.gameplayCues.characterInfluence,behavior:cue.state==="available"||cue.state==="open"?"slowPulse":"steady",flickerAmount:0.12});
         const single=contract.normalize({localLights:{enabled:true,items:[item]}});const record=packEffects(single)[0];record.key="gameplayCues";record.data[36]=cue.state==="available"?Math.max(44,cue.radius):cue.state==="open"?Math.max(70,cue.radius):cue.radius;record.data[37]=cue.state==="locked"?1:cue.state==="completed"?2:cue.state==="open"?3:4;record.data[38]=interaction;record.data[3]=packed.length+1;packed.push(record);
@@ -354,7 +372,7 @@
       put(1, [level.world.height, timestamp / 1000, packed.length, dt]);
       const s = effective;
       const graded = s.grading.enabled && (s.grading.exposure !== 0 || s.grading.highlights !== 0 || s.grading.shadows !== 0 || s.grading.warmth !== 0 || s.grading.tint !== 0);
-      put(2, [level.world.width, packed.some(e => e.data[1] && (e.data[0] < 4 || e.data[0] === 6 || e.data[0] === 7 || e.data[0] === 8)) || s.bloom.enabled || graded ? 1 : 0, 0, 0]);
+      put(2, [level.world.width, packed.some(e => e.data[1] && (e.data[0] < 4 || e.data[0] === 6 || e.data[0] === 7 || e.data[0] === 8)) || s.bloom.enabled || graded ? 1 : 0, +shadowOverlay, 0]);
       put(3, [+s.grading.enabled, s.grading.exposure, s.grading.contrast, s.grading.saturation]);
       put(4, [s.grading.highlights, s.grading.shadows, 0, s.grading.warmth]); put(5, [s.grading.tint, s.grading.blackPoint, 0, 0]);
       put(7, [+s.characters.enabled, s.characters.ambientInfluence, s.characters.localInfluence, s.characters.colorSpill]); put(8, [s.characters.intensityResponse, s.characters.directionalInfluence, s.characters.atmosphereInfluence, s.characters.depthTint]);
@@ -406,13 +424,15 @@
       if (canvas.width === width && canvas.height === height && (particleOnly() || targets.length)) return;
       canvas.width = width; canvas.height = height; targets.forEach(t => t.texture.destroy());
       if(particleOnly())return;
-      targets = [texture(width, height, "rgba16float"), texture(width, height, "rgba16float"), ...Array.from({ length: 3 }, () => texture(Math.max(2, width >> 2), Math.max(2, height >> 2), "rgba16float"))];
-      computeGroup=device.createBindGroup({layout:pipeline.adapt.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:uniform}},{binding:1,resource:targets[1].view},{binding:2,resource:{buffer:exposureBuffer}}]});bindGroups++;
+      if(shadowCanvas){shadowCanvas.width=width;shadowCanvas.height=height;}
+      targets = [texture(width, height, "rgba16float"), ...(!shadowOverlay ? [texture(width, height, "rgba16float")] : []), ...(mode === "cinematic" ? Array.from({ length: 3 }, () => texture(Math.max(2, width >> 2), Math.max(2, height >> 2), "rgba16float")) : [])];
+      if(pipeline.adapt){computeGroup=device.createBindGroup({layout:pipeline.adapt.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:uniform}},{binding:1,resource:targets[1].view},{binding:2,resource:{buffer:exposureBuffer}}]});bindGroups++;}
     }
     function sprites(stage) {
       const entries = [];
       for(const [key,resource] of uploaded)if(key instanceof HTMLCanvasElement && !key.isConnected){resource.texture.destroy();uploaded.delete(key);for(const [id,fallback] of spriteFallbacks)if(fallback===resource)spriteFallbacks.delete(id);}
       const add = (image, bounds, key, character = false, mirror = false) => {
+        if(shadowOverlay && key !== "actor:sven" && !key.startsWith("npc:"))return;
         if (!image || !bounds) return;
         let rect = bounds.getBoundingClientRect();
         if (!rect.width || !rect.height || rect.right < stage.left || rect.left > stage.right) return;
@@ -454,7 +474,7 @@
           const m=new DOMMatrix(style.transform),det=m.a*m.d-m.b*m.c;
           flybyUV=[m.d*rect.width/det/image.width,-m.b*rect.width/det/image.height,-m.c*rect.height/det/image.width,m.a*rect.height/det/image.height];
         }
-        const grounding=!animal&&character?displayedGrounding(analyzeSpriteGrounding(source),mirror):null;
+        const grounding=!animal&&character&&effective.characters.groundingShadow?displayedGrounding(analyzeSpriteGrounding(source),mirror):null;
         entries.push({ key, resource, grounding, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
       };
       document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => { const img = el.querySelector('[data-flyby-canvas]') || el.querySelector(el.dataset.frame === "b" ? ".ambientFlybyFrameB" : ".ambientFlybyFrameA"); add(img, img, `flyby:${el.dataset.ambientFlyby}`,true); });
@@ -464,49 +484,7 @@
       if (uploaded.size > 96) for (const [key, resource] of uploaded) { if (resource.used < frame - 2 && ![...spriteFallbacks.values()].includes(resource)) { resource.texture.destroy(); uploaded.delete(key); } }
       return entries;
     }
-    function renderFrame(timestamp) {
-      raf = 0;
-      if (!active() || !canvas?.isConnected || (!particleOnly() && !background) || document.hidden) return;
-      try {
-        const start = performance.now(); refreshSettings(); resize(); globals(timestamp); drawCursor = 0;
-        const encoder = device.createCommandEncoder({ label: "Cinematic frame" });
-        const begin = (view, loadOp = "clear") => encoder.beginRenderPass({ colorAttachments: [{ view, clearValue: [0, 0, 0, 0], loadOp, storeOp: "store" }] });
-        if(particleOnly()) {
-          if(!packed.some(e=>e.key==="particles"&&e.data[1])){dispose();return;}
-          // Black is neutral under the canvas's screen composite. This preserves
-          // the shader's additive light (including glow) without dark alpha halos.
-          const pass=encoder.beginRenderPass({colorAttachments:[{view:context.getCurrentTexture().createView(),clearValue:[0,0,0,1],loadOp:"clear",storeOp:"store"}]});
-          pass.setPipeline(pipeline.particle);
-          packed.forEach((e,index)=>{if(e.key==="particles"&&e.data[1]){bind(pass,null,null,{flags:[index,0,0,0]});pass.draw(6,e.data[16]);}});
-          pass.end();device.queue.submit([encoder.finish()]);frame++;lastDraws=drawCursor;
-          averageMs=averageMs?averageMs*.95+(performance.now()-start)*.05:performance.now()-start;
-          if(!presented&&!pendingPresentation){pendingPresentation=true;const token=generation;device.queue.onSubmittedWorkDone().then(()=>{if(token!==generation||!active())return;pendingPresentation=false;presented=true;status="ready";report();}).catch(caught=>{if(token===generation)fail(caught);});}
-          if(timestamp-lastReport>500){lastReport=timestamp;report();}
-          raf=requestAnimationFrame(renderFrame);return;
-        }
-        const worldUV = [options.getCameraX()/options.getLevel().world.width, 0, (options.getViewportWorldWidth() || options.getLevel().world.width)/options.getLevel().world.width, 1];
-        let pass = begin(targets[0].view); pass.setPipeline(pipeline.sprite);
-        bind(pass, background, background, { uv: worldUV, appearance: options.getBackgroundAppearance?.() }); pass.draw(6);
-        const drawLegacy = slot => {
-          const retained = (options.getLevel().sceneEffects || []).some(effect => effect.enabled !== false && !contract.replacedPresets.has(effect.presetId) && (effect.layerSlot || global.AtlasSceneEffects.presetById(effect.presetId)?.layerSlot || "worldAtmosphere") === slot);
-          if (!retained) return;
-          const el = document.querySelector(`[data-scene-effects-canvas="${slot}"]`);
-          if (!el?.width || !el.height) return;
-          if (!el.getContext("2d")) return;
-          let resource = effectTextures.get(slot);
-          if (resource && (resource.width !== el.width || resource.height !== el.height)) { resource.texture.destroy(); resource = null; }
-          resource = uploadDynamicCanvas(el, resource, {purpose:`legacy scene effects ${slot}`,path:`canvas:${slot}`}); effectTextures.set(slot, resource);
-          bind(pass, resource, background, { uv: worldUV }); pass.draw(6);
-        };
-        drawLegacy("backgroundAtmosphere"); drawLegacy("worldAtmosphere"); drawLegacy("worldLight");
-        pass.end();
-        const full = (type, target, source, auxiliary, config) => { const p = begin(target); p.setPipeline(pipeline[type]); bind(p, source, auxiliary, config); p.draw(3); p.end(); };
-        full("field", targets[1].view, targets[0], background);
-        // Characters sample the field themselves; a second scene-wide light multiply would
-        // double-light sprites and defeat the character influence control.
-        const entries = sprites(canvas.getBoundingClientRect()); lastSprites = entries.length;
-        const shadowEntries=entries.filter(item => item.shadow);lastShadowDraws=shadowEntries.length;
-        pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.sprite);
+    function drawShadows(pass, shadowEntries) {
         lastGroundedSprites=0;lastGrounding=[];const contactDebug=[];
          for (const entry of shadowEntries) {
           const [x,y,w,h]=entry.rect;
@@ -525,13 +503,76 @@
           }else{const extent=h*2.4;bind(pass,entry.resource,targets[0],{rect:[centerX-extent*.5,footY-extent*.5,extent,extent],flags:[groundline,entry.flags[1],grounding.center,1],shadow:[state.angle,state.length,w/h,effective.characters.shadowScale],extra:[leftBottom,rightBottom,grounding.split,0]});}
            pass.draw(6);
          }
+
+      return contactDebug;
+    }
+    function renderFrame(timestamp) {
+      raf = 0;
+      if (!active() || !canvas?.isConnected || (!particleOnly() && !background) || document.hidden) return;
+      try {
+        const start = performance.now(); refreshSettings(); resize(); globals(timestamp); drawCursor = 0;
+        const encoder = device.createCommandEncoder({ label: "Cinematic frame" });
+        const begin = (view, loadOp = "clear") => encoder.beginRenderPass({ colorAttachments: [{ view, clearValue: [0, 0, 0, 0], loadOp, storeOp: "store" }] });
+        if(particleOnly() || shadowOverlay) {
+          if(!shadowOverlay && !packed.some(e=>e.key==="particles"&&e.data[1])){dispose();return;}
+          if(shadowOverlay) {
+            let receiver=begin(targets[0].view);receiver.setPipeline(pipeline.sprite);
+            bind(receiver,background,background,{uv:[options.getCameraX()/options.getLevel().world.width,0,(options.getViewportWorldWidth()||options.getLevel().world.width)/options.getLevel().world.width,1],appearance:options.getBackgroundAppearance?.()});receiver.draw(6);receiver.end();
+            const entries=sprites(canvas.getBoundingClientRect()).filter(entry=>entry.shadow);lastSprites=entries.length;lastShadowDraws=entries.length;
+            const shadows=begin(shadowContext.getCurrentTexture().createView());shadows.setPipeline(pipeline.shadow);drawShadows(shadows,entries);shadows.end();
+          }
+          // Black is neutral under the canvas's screen composite. This preserves
+          // the shader's additive light (including glow) without dark alpha halos.
+          const pass=encoder.beginRenderPass({colorAttachments:[{view:context.getCurrentTexture().createView(),clearValue:[0,0,0,1],loadOp:"clear",storeOp:"store"}]});
+          if(pipeline.particle){pass.setPipeline(pipeline.particle);
+          packed.forEach((e,index)=>{if(e.key==="particles"&&e.data[1]){bind(pass,shadowOverlay?background:null,shadowOverlay?background:null,{flags:[index,0,0,0]});pass.draw(6,e.data[16]);}});}
+          pass.end();device.queue.submit([encoder.finish()]);frame++;lastDraws=drawCursor;
+          averageMs=averageMs?averageMs*.95+(performance.now()-start)*.05:performance.now()-start;
+          if(!presented&&!pendingPresentation&&pendingUploads.size===0){pendingPresentation=true;const token=generation;device.queue.onSubmittedWorkDone().then(()=>{if(token!==generation||!active())return;pendingPresentation=false;presented=true;status="ready";report();}).catch(caught=>{if(token===generation)fail(caught);});}
+          if(timestamp-lastReport>500){lastReport=timestamp;report();}
+          raf=requestAnimationFrame(renderFrame);return;
+        }
+        const worldUV = [options.getCameraX()/options.getLevel().world.width, 0, (options.getViewportWorldWidth() || options.getLevel().world.width)/options.getLevel().world.width, 1];
+        let pass = begin(targets[0].view); pass.setPipeline(pipeline.sprite);
+        bind(pass, background, background, { uv: worldUV, appearance: options.getBackgroundAppearance?.() }); pass.draw(6);
+        const drawLegacy = slot => {
+          const retained = mode === "illustrated" || (options.getLevel().sceneEffects || []).some(effect => effect.enabled !== false && !contract.replacedPresets.has(effect.presetId) && (effect.layerSlot || global.AtlasSceneEffects.presetById(effect.presetId)?.layerSlot || "worldAtmosphere") === slot);
+          if (!retained) return;
+          const el = document.querySelector(`[data-scene-effects-canvas="${slot}"]`);
+          if (!el?.width || !el.height) return;
+          if (!el.getContext("2d")) return;
+          let resource = effectTextures.get(slot);
+          if (resource && (resource.width !== el.width || resource.height !== el.height)) { resource.texture.destroy(); resource = null; }
+          resource = uploadDynamicCanvas(el, resource, {purpose:`legacy scene effects ${slot}`,path:`canvas:${slot}`}); effectTextures.set(slot, resource);
+          bind(pass, resource, background, { uv: worldUV }); pass.draw(6);
+        };
+        drawLegacy("backgroundAtmosphere");
+        if(mode === "cinematic"){drawLegacy("worldAtmosphere"); drawLegacy("worldLight");}
+        pass.end();
+        const full = (type, target, source, auxiliary, config) => { const p = begin(target); p.setPipeline(pipeline[type]); bind(p, source, auxiliary, config); p.draw(3); p.end(); };
+        if(pipeline.field) full("field", targets[1].view, targets[0], background);
+        else { pass=begin(targets[1].view);pass.setPipeline(pipeline.sprite);bind(pass,targets[0],background,{flags:[0,0,0,3]});pass.draw(6);pass.end(); }
+        // Characters sample the field themselves; a second scene-wide light multiply would
+        // double-light sprites and defeat the character influence control.
+        const entries = sprites(canvas.getBoundingClientRect()); lastSprites = entries.length;
+        const shadowEntries=entries.filter(item => item.shadow);lastShadowDraws=shadowEntries.length;
+        pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.sprite);
+        const contactDebug=mode === "cinematic" ? drawShadows(pass,shadowEntries) : [];
          pass.end();
          // Visible characters are deliberately isolated from the larger shadow
          // quads. A two-device-pixel transparent gutter keeps linear filtering
          // and raster coverage away from the exact frame edge without changing
          // the original sprite-to-screen mapping.
          pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.sprite);
+         let illustratedLayer=0;
+         const advanceIllustratedLayers = next => {
+           if(mode !== "illustrated")return;
+           if(illustratedLayer<1 && next>=1)drawLegacy("worldAtmosphere");
+           if(illustratedLayer<2 && next>=2){drawLegacy("worldLight");contactDebug.push(...drawShadows(pass,shadowEntries));}
+           illustratedLayer=next;
+         };
          for (const entry of entries) {
+           advanceIllustratedLayers(entry.key.startsWith("flyby:") ? 0 : entry.key.startsWith("animal:") ? 1 : 2);
            let visible=entry;
            if(entry.key==="actor:sven"||entry.key.startsWith("npc:")){
              const padX=2/canvas.width,padY=2/canvas.height,[x,y,w,h]=entry.rect,uvPadX=padX/Math.max(w,1/canvas.width),uvPadY=padY/Math.max(h,1/canvas.height);
@@ -539,6 +580,7 @@
            }
            bind(pass, entry.resource, background, visible); pass.draw(6);
          }
+         advanceIllustratedLayers(2);
          if(effective.characters.showShadowContactDebug)for(const debug of contactDebug){bind(pass,background,background,{flags:[0,0,0,2],shadow:[debug.left.x,debug.left.y,debug.right.x,debug.right.y]});pass.draw(6);}
          drawLegacy("foregroundAtmosphere"); pass.end();
         const particleFields = packed.map((e, i) => ({ ...e, index: i })).filter(e => e.key === "particles" && e.data[1]);
@@ -548,11 +590,11 @@
           full("blur", targets[3].view, targets[2], background, { flags: [0, 0, 1/targets[2].width, 0] });
           full("blur", targets[4].view, targets[3], background, { flags: [0, 0, 0, 1/targets[3].height] });
         }
-        const compute = encoder.beginComputePass(); compute.setPipeline(pipeline.adapt); compute.setBindGroup(0,computeGroup); compute.dispatchWorkgroups(1); compute.end();
-        full("finish", context.getCurrentTexture().createView(), targets[1], targets[4]);
+        if(pipeline.adapt){const compute = encoder.beginComputePass(); compute.setPipeline(pipeline.adapt); compute.setBindGroup(0,computeGroup); compute.dispatchWorkgroups(1); compute.end();}
+        full("finish", context.getCurrentTexture().createView(), targets[1], targets[4] || background);
         device.queue.submit([encoder.finish()]); frame++; lastDraws = drawCursor;
         averageMs = averageMs ? averageMs*0.95+(performance.now()-start)*0.05 : performance.now()-start;
-        if (!presented && !pendingPresentation) {
+        if (!presented && !pendingPresentation && pendingUploads.size===0) {
           pendingPresentation = true; const token = generation; const targetCanvas = canvas;
           device.queue.onSubmittedWorkDone().then(() => { if(token !== generation || targetCanvas !== canvas || !active()) return; pendingPresentation=false;presented=true;status="ready";report(); }).catch(caught => { if (token === generation && active()) fail(caught); });
         }
@@ -561,14 +603,27 @@
       } catch (caught) { fail(caught); }
     }
     async function sync() {
+      if(document.hidden || global.AtlasWebGPUCapabilities.snapshot().suspended)return;
       const nextMode=options.getRenderer();
       if(nextMode!==mode){dispose();mode=nextMode;}
-      if (!active() || (particleOnly()&&!hasParticles(options.getSettings(options.getLevel()?.id)))) { if(pipeline||loading)dispose();status="inactive";report();return; }
-      const nextCanvas = document.querySelector(particleOnly()?"[data-particle-fields-canvas]":"[data-cinematic-canvas]"); const level = options.getLevel();
+      const selected=contract.forIllustrated(options.getSettings(options.getLevel()?.id),options.getFeatures?.(options.getLevel()?.id));
+      const scene=Boolean(selected.grading.enabled || selected.areaLights.enabled && selected.areaLights.items.some(item=>item.enabled) || selected.depth.enabled && selected.depth.perspective>0);
+      const overlay=!scene && selected.characters.groundingShadow;
+      const nextRecipe=JSON.stringify([scene,overlay,selected.areaLights.enabled,selected.particles.enabled,selected.depth.enabled]);
+      if(mode === "illustrated" && recipe!==nextRecipe){dispose(true);illustratedScene=scene;shadowOverlay=overlay;recipe=nextRecipe;}
+      if(mode !== "illustrated"){illustratedScene=false;shadowOverlay=false;recipe="";}
+      if (!active() || !requiresGPU(mode,options.getSettings(options.getLevel()?.id),options.getFeatures?.(options.getLevel()?.id))) { if(pipeline||loading||depthCache.size)dispose();status="inactive";report();return; }
+      const nextCanvas = document.querySelector(mode === "illustrated"?"[data-particle-fields-canvas]":"[data-cinematic-canvas]"); const level = options.getLevel();
       // Level loading temporarily removes the canvas. Keep the established
       // per-device depth cache, but cancel presentation and pending level work.
       // Menu navigation and renderer switches explicitly dispose the owner.
-      if (!nextCanvas || !level) { stop();generation++;loading=null;return; }
+      if (!nextCanvas || !level) { stop();generation++;loading=null;initPromise=null;return; }
+      if(global.AtlasWebGPUCapabilities.snapshot().needsValidation){
+        const token=generation;status="recovering";presented=false;report();
+        try{await global.AtlasWebGPUCapabilities.requestDevice("cinematic");}
+        catch(caught){if(token===generation)fail(caught);return;}
+        if(token!==generation)return;
+      }
       if (loading?.level === level.id && loading.canvas === nextCanvas) return loading.promise;
       if (levelId === level.id && (background || particleOnly()) && pipeline && canvas === nextCanvas) {
         // render() retains this canvas but replaces .gameShell. Restore its presentation
@@ -583,23 +638,34 @@
           if (levelId !== level.id || (!particleOnly() && !background) || depthStatus==="loading" || depthStatus==="none") {
             releaseLevel(); levelId=level.id; status="loading-artwork";report();
             if(!particleOnly()) {
-            const img = new Image(); img.src=level.world.background;
+            const img = await imageFor(level.world.background);if(token!==generation)return;
             const uploadedBackground=await upload(img,null,{purpose:"level artwork",path:level.world.background});
             if (token !== generation || !active()) {uploadedBackground.texture.destroy();return;}
             background=uploadedBackground;
             }
-            await loadDepth(level,token);if(token!==generation || !active())return;
+            if(mode === "cinematic" || selected.depth.enabled) await loadDepth(level,token);
+            else {depthStatus="unused";bindDepth();}
+            if(token!==generation || !active())return;
           }
+          if(canvas && canvas!==nextCanvas)context?.unconfigure();
           canvas=nextCanvas; context=canvas.getContext("webgpu"); if (!context) throw new Error("WebGPU canvas context unavailable");
           context.configure({ device, format: navigator.gpu.getPreferredCanvasFormat(), alphaMode: "opaque" });
+          if(shadowOverlay){const nextShadow=document.querySelector('[data-illustrated-shadow-canvas]');if(shadowCanvas && shadowCanvas!==nextShadow)shadowContext?.unconfigure();shadowCanvas=nextShadow;shadowContext=shadowCanvas.getContext('webgpu');shadowContext.configure({device,format:navigator.gpu.getPreferredCanvasFormat(),alphaMode:'premultiplied'});}
           refreshSettings(); error=null;status="rendering-first-frame";report();raf=requestAnimationFrame(renderFrame);
         } catch(caught) { if(token===generation) fail(caught,"renderer-initialization-failed"); }
       })();
       loading={level:level.id,canvas:nextCanvas,promise}; await promise; if(loading?.promise===promise) loading=null;
     }
     function stop() { if(raf)cancelAnimationFrame(raf);raf=0;lastTime=0;fps=0;averageMs=0;lastReport=0;report(); }
-    function dispose() { generation++;stop();releaseLevel(false);releaseDepth();uniform?.destroy();effectBuffer?.destroy();exposureBuffer?.destroy();uniform=null;effectBuffer=null;exposureBuffer=null;pipeline=null;initPromise=null;loading=null;group0=null;layout0=null;layout1=null;sampler=null;context?.unconfigure();context=null;canvas=null;levelId=null;lastSprites=0;lastShadowDraws=0;lastGroundedSprites=0;lastGrounding=[];lastDraws=0;packed=[];error=null;status="idle";report(); }
+    function dispose(retainDepth = false) { generation++;stop();releaseLevel(false);releaseDepth(retainDepth);uniform?.destroy();effectBuffer?.destroy();exposureBuffer?.destroy();uniform=null;effectBuffer=null;exposureBuffer=null;pipeline=null;initPromise=null;loading=null;group0=null;layout0=null;layout1=null;sampler=null;shadowContext?.unconfigure();shadowContext=null;shadowCanvas=null;context?.unconfigure();context=null;canvas=null;levelId=null;lastSprites=0;lastShadowDraws=0;lastGroundedSprites=0;lastGrounding=[];lastDraws=0;packed=[];error=null;status="idle";report(); }
+    function suspend() { if(loading || initPromise)dispose();else stop(); }
+    global.AtlasWebGPUCapabilities.subscribe(value=>{
+      if(["requesting-device","recovering"].includes(status) && value.status==="recovering"){status="recovering";report();}
+    });
+    global.addEventListener("pagehide",suspend);
+    global.addEventListener("pageshow",()=>sync());
+    document.addEventListener("visibilitychange",()=>{if(document.hidden)suspend();});
     return { sync, stop, dispose, snapshot, refreshSettings, getSettings: () => contract.clone(settings) };
   }
-  global.AtlasCinematicRenderer = { createRuntime, packEffects, shadowTarget, smoothShadow, receiverMatchedAlpha };
+  global.AtlasCinematicRenderer = { createRuntime, requiresGPU, packEffects, shadowTarget, smoothShadow, receiverMatchedAlpha };
 })(window);

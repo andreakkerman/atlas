@@ -4,7 +4,7 @@ const path = require("path");
 const { pathToFileURL } = require("url");
 
 const root = path.join(__dirname, "..");
-const gameUrl = pathToFileURL(path.join(root, "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "index.html")).toString();
 
 test.describe("Atlas critical image readiness", () => {
   test.setTimeout(90_000);
@@ -271,7 +271,8 @@ test.describe("Atlas critical image readiness", () => {
       return {
         loaded,
         configured: window.eval("level.world.background"),
-        rendered: image?.getAttribute("src"),
+        rendered: image?.getAttribute("data-asset-path"),
+        usesPreparedSource: image?.getAttribute("src") === window.eval("readyAssetSrc")(override),
         naturalWidth: image?.naturalWidth,
         held: plan.images.has(override)
       };
@@ -280,6 +281,7 @@ test.describe("Atlas critical image readiness", () => {
       loaded: true,
       configured: "Levels/LVL-0002/assets/temple-interior.png",
       rendered: "Levels/LVL-0002/assets/temple-interior.png",
+      usesPreparedSource: true,
       naturalWidth: 2172,
       held: true
     });

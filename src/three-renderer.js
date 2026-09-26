@@ -644,7 +644,7 @@
       }catch(caught){failRuntime(caught,'3D-frame');}
     }
     async function sync() {
-      if(suspended)return;
+      if(suspended || document.hidden)return;
       let token=generation,operation='3D-startpad controleren';
       const checkpoint=label=>{operation=diagnostic=label;debugMark(label);report();};
       try {

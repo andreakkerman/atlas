@@ -1,5 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const path=require('path');
+const {flybyPixel}=require('./flyby-hit-fixture');
 require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,'..'));
 let errors;
 test.beforeEach(async({page})=>{errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});});
@@ -31,8 +32,11 @@ test('development URL with editor closed keeps genuine gameplay tap input enable
 for(const renderer of ['illustrated','cinematic'])test(`moving desktop ${renderer} flyby retains a press until release`,async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium','Desktop press/release regression');
  await scene(page,{renderer});await spawn(page);
- const b=await page.locator('[data-ambient-flyby]').boundingBox(),x=b.x+b.width-8,y=b.y+b.height/2;
- await page.mouse.move(x,y);await page.mouse.down();expect(await page.evaluate(()=>window.inputTrace.find(e=>e.type==='pointerdown').target)).toBe('arc_wasp2');await page.waitForTimeout(350);await page.mouse.up();
+ // The old right-bound point was transparent padding. Press prepared opaque art,
+ // then restore flight speed so this still verifies capture during movement.
+ await page.evaluate(()=>{const c=window.eval('level').ambientFlybys.find(c=>c.id===flybyId);window.pressSpeed=c.speed;c.speed=1;});
+ const {x,y}=await flybyPixel(page,await page.evaluate(()=>flybyId));
+ await page.mouse.move(x,y);await page.mouse.down();expect(await page.evaluate(()=>window.inputTrace.find(e=>e.type==='pointerdown').target)).toBe('arc_wasp2');await page.evaluate(()=>{window.eval('level').ambientFlybys.find(c=>c.id===flybyId).speed=pressSpeed;});const startTransform=await page.locator('[data-ambient-flyby]').evaluate(e=>e.style.transform);await page.waitForTimeout(350);expect(await page.locator('[data-ambient-flyby]').evaluate(e=>e.style.transform)).not.toBe(startTransform);await page.mouse.up();
  await expect.poll(()=>page.evaluate(()=>window.plays.length)).toBe(1);
  await expect.poll(()=>page.evaluate(()=>window.plays[0].ok)).toBe(true);
  await expect.poll(()=>page.evaluate(()=>window.plays[0].audio.currentTime)).toBeGreaterThan(0);

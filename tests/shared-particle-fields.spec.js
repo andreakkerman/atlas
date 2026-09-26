@@ -130,12 +130,20 @@ test('Illustrated without fields never acquires a GPU; late work cannot revive a
   const faults=errors(page);await open(page,'LVL-0005');
   expect(await page.evaluate(()=>window.AtlasWebGPUCapabilities.snapshot().deviceReady)).toBe(false);
   expect((await snapshot(page)).buffers).toBe(0);
-  let release;const held=new Promise(resolve=>release=resolve);
-  await page.route('**/LVL-0035/depthmap.png',async route=>{await held;await route.continue();});
+  // Depth is now part of image readiness. Hold its GPU upload preparation,
+  // after preload, to keep testing stale renderer work rather than blocking entry.
+  await page.evaluate(()=>{
+    const create=window.createImageBitmap.bind(window),held=new Promise(resolve=>window.releaseDepthUpload=resolve);
+    window.createImageBitmap=async(source,...args)=>{
+      const depth=await window.eval('assetCache').images.get('Levels/LVL-0035/depthmap.png');
+      if(source===depth)await held;
+      return create(source,...args);
+    };
+  });
   await page.evaluate(()=>window.eval('selectLevel')('LVL-0035',{startImmediately:true,recordStart:false}));
   await expect.poll(async()=>(await snapshot(page)).depthStatus).toBe('loading');
   await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'cinematic'});window.eval('render')();window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});window.eval('render')();});
-  await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));release();await ready(page);
+  await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));await page.evaluate(()=>window.releaseDepthUpload());await ready(page);
   expect((await snapshot(page)).levelId).toBe('LVL-0034');expect((await snapshot(page)).depthPath).toContain('LVL-0034');
   await page.evaluate(()=>window.eval('returnToMenu')());
   const idle=await snapshot(page);expect(idle.ready).toBe(false);expect(idle.buffers).toBe(0);expect(idle.depthCached).toBe(0);expect(idle.scheduled).toBe(false);expect(faults).toEqual([]);

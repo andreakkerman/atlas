@@ -29,9 +29,9 @@ The implementation authorities are [app editor handlers](../src/app.js) and [dev
 | Effect-only level draft | The server keeps this in its `transientSceneEffectDrafts` map. It can survive a page reload while that server lives, but not a server restart; it does not overwrite an existing on-disk draft. |
 | Apply level content | Applies changed path/object/challenge/ambient/effect sections to `level.js`. General Apply uses an atomic level serialization and synchronizes start/legacy geometry. Effect-only Apply patches only the effect sections. |
 | Apply audio | Writes shared `src/audio-config.js`; audio is not isolated to one level file. |
-| Change level tuning/Cinematic/emissive settings or global per-character Player Locomotion | Updates the shared world resolver in memory. These settings are not covered by the level-draft JSON guarantee. |
+| Change level tuning/Cinematic/emissive settings or Illustrated feature gates or global per-character Player Locomotion | Updates the shared world resolver in memory. These settings are not covered by the level-draft JSON guarantee. |
 | Apply with dirty world settings / world-editor Save | Writes `Levels/world-config.js` through the shared API. This can include other staged world settings; inspect scope before saving. |
-| Revert in-level editor | Deletes the applicable draft and restores captured level/audio baselines plus tracked Cinematic/emissive originals. It does not reload every source file or universally undo unrelated world-editor settings. |
+| Revert in-level editor | Deletes the applicable draft and restores captured level/audio baselines plus tracked Cinematic/emissive/Illustrated-feature originals. It does not reload every source file or universally undo unrelated world-editor settings. |
 | Background upload | Creates a new level asset through the upload endpoint before the world-setting save; this is a deliberate file-writing operation separate from Apply. |
 | Play, answer, reset local data | Uses existing browser storage/progress handlers; does not rewrite authored level files. |
 

@@ -10,7 +10,10 @@ test('pagehide cancels a late device and prevents restart until pageshow',async(
  });
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base+'/?dev=editor&level=LVL-0001');
- await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-renderer-choice="atlas-3d"]').click();
+ // Select before the bounded acquisition timeout; WebKit's animated pointer
+ // clicks can otherwise consume a retry before this lifecycle test even hides.
+ await page.waitForFunction(()=>window.eval('state.screen')==='scene');
+ await page.evaluate(()=>{window.eval('voxelRenderer.updateSettings')({renderer:'atlas-3d'});window.eval('render')();});
  await expect.poll(()=>page.evaluate(()=>window.deviceRequested)).toBe(true);
  await page.evaluate(()=>{
   dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));

@@ -219,6 +219,14 @@ function normalizeWorldConfig(value) {
       if (!Number.isFinite(sensitivity) || sensitivity < 0 || sensitivity > 1) throw new Error(`${levelId}.emissiveGlow.sensitivity is out of range.`);
       next.emissiveGlow = { enabled: glow.enabled, intensity, radius, sensitivity };
     }
+    if (settings.illustratedFeatures !== undefined) {
+      const flags = settings.illustratedFeatures;
+      if (!flags || typeof flags !== "object" || Array.isArray(flags)) throw new Error(`${levelId}.illustratedFeatures must be an object.`);
+      for (const [key, value] of Object.entries(flags)) {
+        if (!Object.hasOwn(cinematicSettingsApi.illustratedDefaults, key) || typeof value !== "boolean") throw new Error(`${levelId}.illustratedFeatures.${key} must be a supported boolean.`);
+      }
+      next.illustratedFeatures = cinematicSettingsApi.illustratedFeatures(flags);
+    }
     if (settings.cinematicLighting !== undefined) {
       if (!settings.cinematicLighting || typeof settings.cinematicLighting !== "object" || Array.isArray(settings.cinematicLighting)) throw new Error(`${levelId}.cinematicLighting must be an object.`);
       next.cinematicLighting = cinematicSettingsApi.normalize(settings.cinematicLighting);

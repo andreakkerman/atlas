@@ -261,6 +261,7 @@
     let adapter = null;
     let device = null;
     let devicePromise = null;
+    let generation = 0;
     let sampler = null;
     let pipelines = null;
     let context = null;
@@ -347,34 +348,40 @@
     }
 
     async function initializeDevice() {
+      const token=generation;
       if (device && pipelines) return device;
       status = "requesting-adapter";
       report();
       if (!gpuCapabilities) throw new Error("Atlas WebGPU capability broker is unavailable.");
       try {
-        device = await gpuCapabilities.requestDevice("voxel");
+        const acquired=await gpuCapabilities.requestDevice("voxel");
+        if(token!==generation)throw gpuCapabilities.capabilityError("acquisition-cancelled","Voxel preparation cancelled.");
+        device = acquired;
         adapter = global.__ATLAS_WEBGPU_SESSION__?.adapter || null;
       } catch (caught) {
         throw caught;
       }
       status = "compiling-pipelines";
       report();
-      device.lost.then((info) => {
-        error = new Error(`WebGPU device lost: ${info.message || info.reason}`);
-        status = "device-lost";
-        ready = false;
-        gpuCapabilities.forgetDevice(device);
-        device = null;
-        report();
+      const currentDevice=device;
+      device.lost.then(() => {
+        if(device!==currentDevice)return;
+        gpuCapabilities.forgetDevice(currentDevice);
+        dispose();fallbackDepth?.texture?.destroy();fallbackDepth=null;
+        device=null;pipelines=null;sampler=null;devicePromise=null;error=null;
+        status="recovering";report();
+        if(!document.hidden && !gpuCapabilities.snapshot().suspended)sync();
       });
       sampler = device.createSampler({ magFilter: "linear", minFilter: "linear", addressModeU: "clamp-to-edge", addressModeV: "clamp-to-edge" });
       device.addEventListener?.("uncapturederror", (event) => {
+        if(device!==currentDevice || !isVoxelRenderer(settings.renderer))return;
         console.error(`[Atlas Voxel] WebGPU validation: ${event.error?.message || event.error}`);
       });
       const format = global.navigator.gpu.getPreferredCanvasFormat();
       const compileModule = (code, label) => {
         const module = device.createShaderModule({ code, label });
         module.getCompilationInfo?.().then((info) => {
+          if(token!==generation)return;
           const failures = info.messages.filter((message) => message.type === "error");
           if (failures.length) console.error(`[Atlas Voxel] ${label} WGSL compilation failed:\n${failures.map((message) => `${message.lineNum}:${message.linePos} ${message.message}`).join("\n")}`);
         });
@@ -406,7 +413,10 @@
 
     function ensureDevice() {
       if (device && pipelines) return Promise.resolve(device);
-      if (!devicePromise) devicePromise = initializeDevice().finally(() => { devicePromise = null; });
+      if (!devicePromise) {
+        const pending=initializeDevice().finally(() => { if(devicePromise===pending)devicePromise = null; });
+        devicePromise=pending;
+      }
       return devicePromise;
     }
 
@@ -675,14 +685,16 @@
       if (!presented && !presentationPending) {
         presentationPending = true;
         const submittedCanvas = canvas;
+        const token = generation;
         device.queue.onSubmittedWorkDone().then(() => {
-          if (canvas !== submittedCanvas || !ready || presented) return;
+          if (token!==generation || canvas !== submittedCanvas || !ready || presented) return;
           presentationPending = false;
           presented = true;
           status = "ready";
           report();
           schedule();
         }).catch((caught) => {
+          if(token!==generation)return;
           presentationPending = false;
           console.warn(`[Atlas Voxel] First-frame presentation check failed: ${caught?.message || caught}`);
           schedule();
@@ -712,10 +724,12 @@
     }
 
     function schedule() {
-      if (!rafId && isVoxelRenderer(settings.renderer) && !document.hidden) rafId = requestAnimationFrame(renderFrame);
+      if (!rafId && isVoxelRenderer(settings.renderer) && !document.hidden && !gpuCapabilities.snapshot().suspended) rafId = requestAnimationFrame(renderFrame);
     }
 
     async function sync() {
+      if(document.hidden || gpuCapabilities.snapshot().suspended)return;
+      const token=generation;
       if (!isVoxelRenderer(settings.renderer)) {
         stop();
         ready = false;
@@ -729,14 +743,19 @@
       const nextCanvas = document.querySelector("[data-voxel-canvas]");
       if (!level || !nextCanvas) return;
       try {
+        if(gpuCapabilities.snapshot().needsValidation)await gpuCapabilities.requestDevice("voxel");
+        if(token!==generation)return;
         await ensureDevice();
+        if(token!==generation)return;
         const canvasChanged = configureCanvas(nextCanvas);
         if (currentLevelId !== level.id || !background) await prepareLevel(level);
+        if(token!==generation)return;
         ready = true;
         status = canvasChanged || !presented ? "rendering-first-frame" : "ready";
         report();
         schedule();
       } catch (caught) {
+        if(token!==generation || caught?.atlasWebGPUCategory==="acquisition-cancelled")return;
         error = caught instanceof Error ? caught : new Error(String(caught));
         const category = error.atlasWebGPUCategory;
         status = category === "api-unavailable"
@@ -757,7 +776,14 @@
       rafId = 0;
     }
 
+    const suspend = () => {if(devicePromise || (!ready && currentLevelId))dispose();else stop();};
+    global.addEventListener("pagehide",suspend);
+    global.addEventListener("pageshow",()=>sync());
+    document.addEventListener("visibilitychange",()=>{if(document.hidden)suspend();});
+
     function dispose() {
+      generation++;
+      devicePromise=null;
       stop();
       context?.unconfigure?.();
       loadToken += 1;
@@ -765,6 +791,7 @@
       if (depth && depth !== fallbackDepth) depth.texture?.destroy?.();
       msaaTexture?.destroy?.();
       depthBuffer?.destroy?.();
+      msaaTexture=null;depthBuffer=null;
       spriteTextures.forEach((item) => item.texture?.destroy?.());
       effectTextures.forEach((item) => item.texture?.destroy?.());
       uniformBuffers.forEach((item) => item.destroy?.());

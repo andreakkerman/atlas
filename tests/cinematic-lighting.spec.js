@@ -452,10 +452,11 @@ test("GPU neutral grading preserves pixels and malformed shader failure is recov
   await mode(page,'illustrated');await page.evaluate(()=>{window.AtlasCinematicShaders.autoExposure=window.savedShader;});await mode(page,'cinematic');await ready(page);
 });
 
-test("GPU device loss is reported and a fresh device can recover",async({page},info)=>{
+test("GPU device loss recovers automatically without an unavailable warning",async({page},info)=>{
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=="desktop-chromium","HTTP Chromium WebGPU run required");
-  await scene(page);await mode(page,'cinematic');await ready(page);await page.evaluate(async()=>{const d=await window.AtlasWebGPUCapabilities.requestDevice('qa');d.destroy();});
-  await expect(page.locator('[data-cinematic-error]')).toContainText('device lost');await expect(page.locator('.gameShell')).not.toHaveClass(/cinematicReady/);
+  await scene(page);await mode(page,'cinematic');await ready(page);await page.evaluate(async()=>{window.lostDevice=await window.AtlasWebGPUCapabilities.requestDevice('qa');window.lostDevice.destroy();});
+  await expect.poll(()=>page.evaluate(()=>window.AtlasWebGPUCapabilities.snapshot().deviceReady&&window.__ATLAS_WEBGPU_SESSION__.device!==window.lostDevice)).toBe(true);
+  await ready(page);await expect(page.locator('[data-cinematic-error]')).toBeHidden();
   await mode(page,'illustrated');await mode(page,'cinematic');await ready(page);
 });
 
@@ -664,10 +665,12 @@ test("GPU delayed or missing depth never presents a partial or stale depth compo
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=="desktop-chromium","HTTP Chromium WebGPU run required");
   let release,requested;const held=new Promise(resolve=>release=resolve),request=new Promise(resolve=>requested=resolve);
   await page.route('**/LVL-0001/assets/depthmap.png',async route=>{requested();await held;await route.continue();});
-  await scene(page);await mode(page,'cinematic');await request;
+  await page.goto(runtimeUrl);
+  await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'cinematic'});window.pendingDepthLevel=window.eval('selectLevel')('LVL-0001',{startImmediately:true,recordStart:false});});await request;
   expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().ready)).toBe(false);
-  await expect(page.locator('.gameShell')).not.toHaveClass(/cinematicReady/);
-  await page.evaluate(async()=>window.eval('selectLevel')('LVL-0003',{startImmediately:true,recordStart:false}));release();await ready(page);
+  await expect(page.locator('#app')).toHaveAttribute('data-screen','loading');
+  await expect(page.locator('[data-cinematic-canvas]')).toHaveCount(0);
+  await page.evaluate(async()=>window.eval('selectLevel')('LVL-0003',{startImmediately:true,recordStart:false}));release();expect(await page.evaluate(()=>window.pendingDepthLevel)).toBe(false);await ready(page);
   expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().depthPath)).toContain('LVL-0003');
   await page.unroute('**/LVL-0001/assets/depthmap.png');
   await page.route('**/LVL-0002/assets/depthmap.png',route=>route.fulfill({status:200,contentType:'image/png',body:Buffer.from('invalid optional image')}));

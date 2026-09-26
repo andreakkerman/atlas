@@ -22,9 +22,13 @@ async function enter(page,configs,options={}){
  await page.goto(base+(options.editor?'/?dev=editor':''));
  expect(await page.evaluate(()=>window.sequenceRequests.length)).toBe(0);
  await page.evaluate(async()=>{if(!await window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}))return;const s=window.eval('state');s.worldX=1100;s.cameraX=window.eval('getDesiredCameraX')();window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();});
+ await expect.poll(()=>page.evaluate(()=>{
+  const s=window.eval('cinematicRenderer').snapshot();
+  return window.eval('state').screen!=='scene'||s.ready||Boolean(s.error)||s.status==='inactive';
+ })).toBe(true);
 }
 async function spawn(page,id){await page.evaluate(id=>window.eval('ambientFlybyRuntime').preview(id),id);}
-async function tap(page,id,info){const b=await page.locator(`[data-ambient-flyby="${id}"]`).boundingBox();if(info.project.name.startsWith('ipad'))await page.touchscreen.tap(b.x+b.width/2,b.y+b.height/2);else await page.mouse.click(b.x+b.width/2,b.y+b.height/2);}
+async function tap(page,id,info){await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);const b=await page.locator(`[data-ambient-flyby="${id}"]`).boundingBox();if(info.project.name.startsWith('ipad'))await page.touchscreen.tap(b.x+b.width/2,b.y+b.height/2);else await page.mouse.click(b.x+b.width/2,b.y+b.height/2);}
 
 test('discovery reports both complete, naturally ordered independent sequences',async({request})=>{
  const data=await(await request.get(base+'/__dev/levels/LVL-0032/ambient-assets')).json();
