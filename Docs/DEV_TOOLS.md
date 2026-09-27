@@ -43,6 +43,12 @@ Keep existing drafts intact during unrelated development. Browser preview, draft
 
 ## Editing and asset workflow
 
+Application icons are generated from `assets/branding/app-icon-source.png` with
+`python scripts/generate-app-icons.py` (Pillow). See the [branding guide](../assets/branding/README.md)
+for provenance and maskable composition. When replacing the icon identity, update
+the versioned URLs in HTML, manifest and service-worker precache together, and bump
+the worker cache version. Keep intro artwork independent of application icons.
+
 - Characters: Sven tuning, shared NPC General/Visual controls and ambient animals. NPC discovery reads the generated character manifest; run `npm.cmd run generate:characters` after library changes. Do not edit generated manifest entries by hand or normalize source image sizes as an incidental edit.
 - Challenges: select existing anchors, edit their geometry and active state, and preview authored questions/clock data. Keep IDs, variants and progression references intact unless intentionally changing them.
 - Graphics: use the existing Cinematic layers, procedural preset library, geometry/mask controls, flyby paths and shared audio controls. [Editor and Effects](EDITOR_AND_EFFECTS.md) defines their invariants.
@@ -84,3 +90,17 @@ Test files supply their editor navigation; inspect a fixture before changing the
 Persistence tests must use the repository's draft/source-restoration fixtures. Do not run competing persistence or GPU suites against shared mutable files/devices. Check desktop and both iPad orientations for affected layout/input; emulation does not certify physical Safari GPU behavior.
 
 For documentation-only work, validate links, implementation claims and the diff; do not run GPU suites or asset-generating commands without a relevant change. Finish with `git diff --check` and inspect `git status`/the diff for unintended source, asset or draft modifications. Report pre-existing failures separately from regressions caused by the change.
+
+## Production intro and startup
+
+Normal navigation opens the five-second Atlas reveal. The visible Start button retains the accessible name `Start avontuur`. A pointer gesture during animation completes the final frame; that same gesture cannot enter Atlas. Reduced motion uses the final frame immediately. Direct `?dev=editor&level=...` links retain their editor entry behavior.
+
+`src/bootstrap.js` loads the intro first and evaluates the existing application scripts, in their original order, only after intro teardown. Atlas then opens its existing menu and audio handler. The old launch panel is retired. Tests that inspect application globals must activate Start and wait for the menu first; level-loading interception should be installed after the application scripts have loaded.
+
+The production source is `src/intro/` with assets in `assets/intro/`. It was promoted from the approved logo-reveal lab: the shaders and source artwork are unchanged, and the finalized defaults are fixed in `settings.js`. The transparent PNG supplies the emblem; the reference JPEG supplies only the approved wordmark sampling, and the magic reference supplies flow texture. Lab tuning controls, storage overrides, routes, capture files and obsolete film experiments are not production dependencies.
+
+The intro owns one temporary WebGL2 context. Every allocation (including partial initialization), image load, RAF and listener is scoped to that instance. Start aborts pending loads/listeners, deletes resources, loses the disposable context, and removes the DOM before Atlas evaluates. Hidden documents stop work; visibility and context restoration restart from the beginning. Context loss and initialization/loading failures expose a static final screen and working Start immediately. Asset and module loads have bounded fallback deadlines. No particle/timestamp restoration is attempted.
+
+The service worker caches all production intro modules and assets in v216 and removes prior cache versions on activation. Registration also works after the window load event, because the app now boots after Start.
+
+Regression coverage: `tests/atlas-intro.spec.js` checks natural completion, touch/click separation, delayed loads, failure fallbacks, real context-loss events, visibility restart, and instrumented allocation/listener/RAF teardown before application loading. Run with the standard menu and iPad startup suites. Real Chromium GPU checks use `ATLAS_WEBGPU_QA=1`; WebKit emulation does not certify physical iPad Safari or installed-PWA behavior.

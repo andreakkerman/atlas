@@ -705,11 +705,11 @@ test.describe("SvenAdventure", () => {
 
   test("includes the core PWA shell metadata", async ({ page }) => {
     await page.goto(gameUrl);
-    await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "manifest.webmanifest");
+    await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "manifest.webmanifest?v=atlas-compass-1");
     await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#10201d");
     await expect(page.locator('meta[name="apple-mobile-web-app-capable"]')).toHaveAttribute("content", "yes");
     await expect(page.locator('meta[name="apple-mobile-web-app-title"]')).toHaveAttribute("content", "Atlas");
-    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "assets/branding/icon-180.png");
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute("href", "assets/branding/icon-180.png?v=atlas-compass-1");
     const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "manifest.webmanifest"), "utf8"));
     expect(manifest.name).toBe("Atlas");
     expect(manifest.short_name).toBe("Atlas");

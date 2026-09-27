@@ -8,46 +8,52 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Atlas" />
     <title>Atlas</title>
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/branding/icon-32.png" />
-    <link rel="icon" type="image/png" sizes="64x64" href="assets/branding/icon-64.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/branding/icon-180.png" />
-    <link rel="preload" href="assets/branding/launch-hero.png" as="image" />
-    <link rel="preload" href="assets/sven.png" as="image" />
+    <link rel="manifest" href="manifest.webmanifest?v=atlas-compass-1" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/branding/icon-32.png?v=atlas-compass-1" />
+    <link rel="icon" type="image/png" sizes="64x64" href="assets/branding/icon-64.png?v=atlas-compass-1" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/branding/icon-180.png?v=atlas-compass-1" />
     <link rel="stylesheet" href="src/styles.css" />
-    <script defer src="Levels/manifest.js"></script>
-    <script defer src="Levels/world-config.js"></script>
-    <script defer src="assets/characters/manifest.js"></script>
-    <script defer src="src/atlas-world.js"></script>
-    <script defer src="src/playable-characters.js"></script>
-    <script defer src="src/locomotion.js"></script>
-    <script defer src="src/audio-config.js"></script>
-    <script defer src="src/session-report.js"></script>
-    <script defer src="src/ambient-system.js"></script>
-    <script defer src="src/asset-readiness.js"></script>
-    <script defer src="src/scene-effects.js"></script>
-    <script defer src="src/webgpu-capabilities.js"></script>
-    <script defer src="src/character-appearance.js"></script>
-    <script defer src="src/three-presets.js"></script>
-    <script defer src="src/graphics-modes.js"></script>
-    <script defer src="src/voxel-renderer.js"></script>
-    <script defer src="src/emissive-glow.js"></script>
-    <script defer src="src/cinematic-settings.js"></script>
-    <script defer src="src/cinematic-shaders.js"></script>
-    <script defer src="src/cinematic-renderer.js"></script>
-    <script defer src="src/cinematic-editor.js"></script>
-    <script defer src="src/three-texture-budget.js"></script>
-    <script defer src="src/three-input.js"></script>
-    <script defer src="src/three-runtime-diagnostics.js"></script>
-    <script defer src="src/three-gpu-diagnostics.js"></script>
-    <script defer src="src/atlas-world-policy.js"></script>
-    <script defer src="src/three-renderer.js"></script>
+    <link rel="stylesheet" href="src/intro/intro.css" />
+    <script defer src="src/bootstrap.js"></script>
+    <script data-atlas-src="Levels/manifest.js"></script>
+    <script data-atlas-src="Levels/world-config.js"></script>
+    <script data-atlas-src="assets/characters/manifest.js"></script>
+    <script data-atlas-src="src/atlas-world.js"></script>
+    <script data-atlas-src="src/playable-characters.js"></script>
+    <script data-atlas-src="src/locomotion.js"></script>
+    <script data-atlas-src="src/audio-config.js"></script>
+    <script data-atlas-src="src/session-report.js"></script>
+    <script data-atlas-src="src/ambient-system.js"></script>
+    <script data-atlas-src="src/asset-readiness.js"></script>
+    <script data-atlas-src="src/scene-effects.js"></script>
+    <script data-atlas-src="src/webgpu-capabilities.js"></script>
+    <script data-atlas-src="src/character-appearance.js"></script>
+    <script data-atlas-src="src/three-presets.js"></script>
+    <script data-atlas-src="src/graphics-modes.js"></script>
+    <script data-atlas-src="src/voxel-renderer.js"></script>
+    <script data-atlas-src="src/emissive-glow.js"></script>
+    <script data-atlas-src="src/cinematic-settings.js"></script>
+    <script data-atlas-src="src/cinematic-shaders.js"></script>
+    <script data-atlas-src="src/cinematic-renderer.js"></script>
+    <script data-atlas-src="src/cinematic-editor.js"></script>
+    <script data-atlas-src="src/three-texture-budget.js"></script>
+    <script data-atlas-src="src/three-input.js"></script>
+    <script data-atlas-src="src/three-runtime-diagnostics.js"></script>
+    <script data-atlas-src="src/three-gpu-diagnostics.js"></script>
+    <script data-atlas-src="src/atlas-world-policy.js"></script>
+    <script data-atlas-src="src/three-renderer.js"></script>
   <script type="importmap">{"imports":{"three":"./assets/vendor/three/three.webgpu.min.js","three/webgpu":"./assets/vendor/three/three.webgpu.min.js","three/tsl":"./assets/vendor/three/three.tsl.min.js"}}</script>
-    <script defer src="src/tap-diagnostics.js"></script>
-    <script defer src="src/gameplay-cadence.js"></script>
-    <script defer src="src/app.js"></script>
+    <script data-atlas-src="src/tap-diagnostics.js"></script>
+    <script data-atlas-src="src/gameplay-cadence.js"></script>
+    <script data-atlas-src="src/app.js"></script>
   </head>
   <body>
     <div id="app"></div>
+    <section id="atlas-intro" data-state="loading" aria-label="Atlas intro">
+      <img id="atlas-intro-static" src="assets/intro/atlas-transparent.png" alt="" />
+      <canvas aria-label="ATLAS" role="img"></canvas>
+      <span class="intro-wordmark">ATLAS</span>
+      <button id="atlas-intro-start" type="button" aria-label="Start avontuur" disabled><span>Start</span></button>
+    </section>
   </body>
 </html>

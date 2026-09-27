@@ -41,6 +41,7 @@ for (const kind of ['fps', 'debug']) {
 test('level loading title fits its panel', async ({ page }, info) => {
   await page.goto(base + '/');
   await activate(page.getByRole('button', { name: 'Start avontuur', exact: true }), page);
+  await expect(page.locator('.menuScreen')).toBeVisible();
   let release;
   const held = new Promise(resolve => { release = resolve; });
   await page.route('**/Levels/**', async route => { await held; await route.continue(); });

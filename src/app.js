@@ -126,7 +126,7 @@ const IMMEDIATE_COMPANION_EVENTS = new Set([
 const actorPlayback = { failedSources: new Set() };
 
 let state = {
-  screen: "launch"
+  screen: "menu"
 };
 
 const MENU_AUTO_ROTATE_MS = 10000;
@@ -1341,7 +1341,6 @@ async function preloadActorAnimations(selectedLevel = level) {
 
 function preloadMenuAssets() {
   [
-    "assets/branding/launch-hero.png",
     ...visibleLevelCatalog().map((item) => item.menu?.illustration)
   ]
     .filter(Boolean)
@@ -1933,10 +1932,6 @@ function syncAudioForState() {
   if (!audioState.unlocked) return;
 
   const master = audioMasterVolume();
-  if (state.screen === "launch") {
-    stopAmbience();
-    return;
-  }
   if (state.screen === "menu" || !level) {
     const menuMusicKey = audioConfig.menu?.music || "menu";
     setLoopAudio("music", menuMusicKey, audioTrackPath("music", menuMusicKey), master * clampVolume(audioConfig.menu?.musicVolume ?? 0.65));
@@ -1965,9 +1960,9 @@ function registerServiceWorker() {
   if (!window.location.protocol.startsWith("http")) return;
   if (EDITOR_DEV_MODE) return;
 
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch(() => {});
-  }, { once: true });
+  const register = () => navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  if (document.readyState === "complete") register();
+  else window.addEventListener("load", register, { once: true });
 }
 
 function playSfx(key) {
@@ -6961,20 +6956,6 @@ function syncPerformanceHud() {
   }
 }
 
-function renderLaunch() {
-  return `
-    <main class="launchScreen">
-      <img class="launchBackdrop" src="assets/branding/launch-hero.png" alt="" />
-      <section class="launchPanel">
-        <p class="eyebrow">Welkom</p>
-        <h1>Atlas</h1>
-        <p>Wat ga je vandaag ontdekken?</p>
-        <button class="primaryButton" type="button" data-action="launch-enter">Start avontuur</button>
-      </section>
-    </main>
-  `;
-}
-
 function renderWorldManagementPanel() {
   if (!worldEditor.open) return "";
   const roots = worldResolver.rootEntries();
@@ -7688,9 +7669,7 @@ function render() {
   const retainedEmissiveLevel = retainedEmissiveCanvas?.dataset.emissiveLevel;
   app.dataset.screen = state.screen;
   app.dataset.criticalAssetsReady = String(Boolean(state.criticalAssetsReady));
-  if (state.screen === "launch") {
-    app.innerHTML = renderLaunch();
-  } else if (state.screen === "menu") {
+  if (state.screen === "menu") {
     app.innerHTML = renderMenu();
   } else if (state.screen === "progress") {
     app.innerHTML = renderProgress();
@@ -8264,12 +8243,6 @@ app.addEventListener("click", (event) => {
   if (actionTarget) {
     playSfx("uiClick");
     const action = actionTarget.dataset.action;
-    if (action === "launch-enter") {
-      menuCarouselRuntime.paused = false;
-      state = { screen: "menu" };
-      render();
-      return;
-    }
     if (action === "menu-previous" || action === "menu-next") {
       const direction = action === "menu-next" ? 1 : -1;
       changeMenuHero(direction, { manual: true });
@@ -8909,6 +8882,10 @@ preloadMenuAssets();
 preloadGuideBlinkAssets();
 registerServiceWorker();
 render();
+if (app.dataset.introEntered) {
+  delete app.dataset.introEntered;
+  ensureAudioUnlocked();
+}
 if (DIRECT_DEV_LEVEL_ID) {
   selectLevel(DIRECT_DEV_LEVEL_ID, { startImmediately: true, recordStart: false, allowDisabledForEditor: true }).catch((error) => {
     console.error(`[Atlas] Direct development level failed: ${error?.message || error}`);

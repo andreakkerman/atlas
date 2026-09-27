@@ -118,8 +118,12 @@ test('debug journal survives reload and is absent from normal production UI',asy
  // first join that pending request before acquiring its own adapter.
  await expect(page.locator('[data-three-diagnostic]')).toContainText('Vorige Cinematic/Voxel WebGPU-resources vrijgeven');
  await page.goto(`${base}/?debug3d=1`);
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  await expect(page.locator('[data-tap-diagnostics]')).toContainText('Vorige voorbereiding (cancelled): Voorbereiding gestopt tijdens: Vorige Cinematic/Voxel WebGPU-resources vrijgeven');
  await page.goto(base);
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  await expect(page.locator('[data-tap-diagnostics]')).toHaveCount(0);
  await expect(page.locator('body')).not.toContainText('Vorige voorbereiding');
  expect(await page.evaluate(()=>Event.prototype.preventDefault===window.originalPreventDefault)).toBe(true);

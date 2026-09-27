@@ -5,6 +5,8 @@ for(const jsDestroy of [false,true])test(`device-loss evidence distinguishes Jav
  await page.route('**/assets/vendor/three/loaders/*.js',r=>r.fulfill({contentType:'application/javascript',body:'export class GLTFLoader {} export class HDRLoader {} export class DRACOLoader {}'}));
  await page.route('**/assets/vendor/three/three.webgpu.min.js',r=>r.fulfill({contentType:'application/javascript',body:'export class WebGPURenderer {constructor(){this.backend={}} init(){window.engineInit=true;return new Promise(()=>{})} dispose(){}}'}));
  await page.goto(base+'/?debug3d=1');
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  const result=await page.evaluate(async jsDestroy=>{
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   let lose;const device=new EventTarget();device.lost=new Promise(resolve=>lose=resolve);device.destroy=()=>lose({reason:'destroyed',message:''});
@@ -24,6 +26,8 @@ test('a throwing renderer disposer cannot retain the owned device or hide the st
  await page.route('**/assets/vendor/three/loaders/*.js',route=>route.fulfill({contentType:'application/javascript',body:'export class GLTFLoader {} export class HDRLoader {} export class DRACOLoader {}'}));
  await page.route('**/assets/vendor/three/three.webgpu.min.js',route=>route.fulfill({contentType:'application/javascript',body:`export class WebGPURenderer {constructor(){this.backend={context:{unconfigure(){window.unconfigured++}}}} async init(){throw new RangeError('injected initialization failure')} dispose(){throw new Error('injected disposer failure')}}`}));
  await page.goto(base);
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  const result=await page.evaluate(async()=>{
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   window.unconfigured=0;let destroyed=0;
@@ -36,6 +40,8 @@ test('a throwing renderer disposer cannot retain the owned device or hide the st
 
 test('device arriving after cancellation is destroyed and cannot revive startup',async({page})=>{
  await page.goto(base);
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  const result=await page.evaluate(async()=>{
   document.querySelector('#app').innerHTML='<canvas data-three-canvas></canvas>';
   let resolveDevice,destroyed=0,requested=false;

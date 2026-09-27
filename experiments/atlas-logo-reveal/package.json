@@ -1,0 +1,10 @@
+{
+  "name": "atlas-logo-reveal-lab",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Isolated, reference-faithful Atlas logo formation study",
+  "scripts": {
+    "start": "node serve.cjs",
+    "test": "playwright test --config playwright.config.cjs"
+  }
+}

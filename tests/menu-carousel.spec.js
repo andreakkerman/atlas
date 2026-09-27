@@ -9,8 +9,10 @@ async function clearNewStatus(page) {
 
 async function openMenu(page) {
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
-  await clearNewStatus(page);
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
+  await page.locator('.menuScreen').waitFor();
+  await clearNewStatus(page);
+  await page.evaluate(() => { window.eval('state').menuHeroIndex = 0; window.eval('menuCarouselRuntime').paused = false; window.eval('render')(); });
   await page.waitForFunction(() => window.eval('menuAdventureStats.loaded'));
 }
 
@@ -89,13 +91,19 @@ test('late adventure counts update badges without rebuilding the menu', async ({
 
 test('delayed carousel artwork cannot change menu geometry or scroll', async ({ page }) => {
   await page.goto(base + '/', { waitUntil: 'domcontentloaded' });
-  const artwork = await page.evaluate(() => new URL(
-    window.eval('visibleLevelCatalog')()[1].menu.illustration, location.href
-  ).href);
+  // Read the existing world resolver without starting the application early.
+  const sandbox = { window: {} }, vm = require('node:vm');
+  for (const path of ['Levels/manifest.js', 'Levels/world-config.js', 'src/playable-characters.js', 'src/atlas-world.js']) {
+    const response = await page.request.get(base + '/' + path);
+    vm.runInNewContext(await response.text(), sandbox);
+  }
+  const w = sandbox.window, config = w.AtlasWorld.createWorldResolver(w.SVEN_LEVEL_MANIFEST.levels, w.SVEN_WORLD_CONFIG);
+  const artwork = new URL(config.rootEntries().filter(item => config.enabledEntries(item.id).length)[1].menu.illustration, base).href;
   let release;
   const held = new Promise(resolve => { release = resolve; });
   await page.route(artwork, async route => { await held; await route.continue(); });
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
+  await expect(page.locator('.menuScreen')).toBeVisible();
   await page.waitForFunction(() => window.eval('menuAdventureStats.loaded'));
   const original = await rememberMenu(page);
   try {

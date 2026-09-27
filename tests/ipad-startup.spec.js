@@ -30,8 +30,18 @@ test('Atlas navigation works without Pointer Lock APIs',async({page})=>{
  await page.screenshot({path:`qa-screenshots/usability/tap-diagnostics-${test.info().project.name}.png`});
  expect(errors).toEqual([]);
 });
+// These fixtures target Three's adapter, not the earlier shared Illustrated
+// acquisition. Let that acquisition settle so the ownership barrier can finish.
+function installPendingThreeAdapter(captureFirst) {
+ let count=0;
+ Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:()=>{
+  if(!window.eval('threeRenderer.snapshot')().diagnostic.startsWith('WebGPU-adapter aanvragen'))return Promise.resolve(null);
+  return new Promise((resolve,reject)=>{if(captureFirst&&++count===1)window.rejectOldAdapter=reject;});
+ }}});
+}
+
 test('startup reaches adapter diagnostics without Pointer Lock APIs',async({page})=>{
- await page.addInitScript(()=>Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:()=>new Promise(()=>{})}}));
+ await page.addInitScript(installPendingThreeAdapter,false);
  await page.goto(`${base}/?dev=editor&level=LVL-0001`);
  await page.locator('[data-graphics-action="toggle"]').tap();
  await page.locator('[data-renderer-choice="atlas-3d"]').tap();
@@ -65,10 +75,7 @@ for(const boundary of ['requestAdapter','requestDevice'])test(`names and recover
 });
 test('cancelled rejection cannot overwrite a new startup or leave an input shield',async({page})=>{
  await page.goto(`${base}/?dev=editor&level=LVL-0001`);
- await page.evaluate(()=>{
-  let count=0;
-  Object.defineProperty(navigator,'gpu',{configurable:true,value:{requestAdapter:()=>new Promise((resolve,reject)=>{if(++count===1)window.rejectOldAdapter=reject;})}});
- });
+ await page.evaluate(installPendingThreeAdapter,true);
  const choose=async mode=>{await page.locator('[data-graphics-action="toggle"]').tap();await page.locator(`[data-renderer-choice="${mode}"]`).tap();};
  await choose('atlas-3d');
  await expect(page.locator('[data-three-diagnostic]')).toContainText('WebGPU-adapter aanvragen');
@@ -82,7 +89,8 @@ test('cancelled rejection cannot overwrite a new startup or leave an input shiel
  await expect(page.locator('[data-three-recover]')).toBeVisible();
  await page.getByRole('button',{name:'Terug naar menu'}).tap();
  await expect(page.locator('[data-three-loading], [data-three-canvas], [data-three-move]')).toHaveCount(0);
- await page.locator('.heroLevelTile').tap();
+ // Reenter the supported fixture level, independent of the featured adventure.
+ await page.locator('[data-menu-tile="LVL-0001"]').tap();
  await page.getByRole('button',{name:'Start avontuur'}).tap();
  // The selected 3D mode persists across Menu. Its new preparation must shield
  // Illustrated until the user explicitly recovers to that mode.
@@ -129,6 +137,8 @@ test('Illustrated challenge form remains touch editable and submits normally',as
 });
 test('synchronous cleanup and status errors cannot strand the initial loader',async({page})=>{
  await page.goto(base);
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).tap();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  const evidence=await page.evaluate(async()=>{
   document.querySelector('#app').innerHTML='<div class="gameShell"><canvas data-three-canvas></canvas><div data-three-loading><h2 data-three-loading-title></h2><p data-three-diagnostic>WebGPU controleren…</p><button data-three-recover hidden>Terug</button></div></div>';
   let cleaned=false;

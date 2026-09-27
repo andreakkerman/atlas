@@ -1,0 +1,2 @@
+const { defineConfig } = require('@playwright/test');
+module.exports=defineConfig({testDir:'.',testMatch:'lab.spec.cjs',outputDir:'./test-results',timeout:60000,workers:1,reporter:'list',use:{baseURL:'http://127.0.0.1:4186',viewport:{width:1440,height:900},deviceScaleFactor:1,reducedMotion:'no-preference'},projects:[{name:'chromium',use:{browserName:'chromium',channel:'chromium'}},{name:'webkit',use:{browserName:'webkit'}}]});

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#031c1c">
+  <title>Atlas · The making of a mark</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="lab.css">
+</head>
+<body>
+  <main aria-label="Atlas logo reveal">
+    <canvas id="scene" aria-label="Cyan silk and golden dust form the Atlas compass"></canvas>
+    <button id="start" type="button" aria-disabled="true" tabindex="-1"><span>Start</span></button>
+    <p id="error" hidden role="alert"></p>
+  </main>
+  <button id="tools-toggle" aria-controls="tools" aria-expanded="false" title="Edit visuals (E)">Edit <span>↗</span></button>
+  <aside id="tools" hidden aria-label="Visual lab controls">
+    <div class="panel-top">
+    <header><div><small>ATLAS / VISUAL TUNING</small><h1>Edit the intro</h1></div><button id="hide" title="Clean presentation (Esc)" aria-label="Close Edit mode">×</button></header>
+    <div class="transport"><button id="replay">↺ Replay from start</button><button id="pause">Pause</button><button id="settled">Final frame</button></div>
+    <label class="timeline">Timeline <output id="time-value">0.00 s</output><input id="timeline" type="range" min="0" max="5" step="0.01" value="0"></label>
+    <div class="stage"><i></i><span id="stage">Empty</span><span id="fps">—</span></div>
+    <div class="select-row"><label for="jump">Inspect phase</label><select id="jump"><option value="">Jump to…</option><option value="empty">Empty</option><option value="arrival">Arrival</option><option value="formation">Mid formation</option><option value="emblem">Emblem complete</option><option value="ignition">Glyph ignition</option><option value="wordmark">Wordmark fade</option><option value="handoff">Energy handoff</option><option value="start">Start fade</option><option value="settled">Final hold</option></select></div>
+    <div class="select-row"><label for="preset">Development preset</label><select id="preset"><option value="custom" disabled>Custom</option></select></div>
+    <div class="transport"><button id="store-a">Store A</button><button id="compare" disabled>Compare A</button><button id="reset">Restore Defaults</button></div>
+    <div class="transport"><button id="copy">Copy Settings</button><button id="export">Export JSON</button></div>
+    <p id="timing-summary"></p>
+    </div>
+    <div id="sliders"></div>
+    <footer><p id="settings-status" role="status" aria-live="polite"></p><span>E / H edit · Esc clean · R replay · Space pause<br>← / → scrub 0.1s · Shift + arrows 0.01s</span></footer>
+    <div id="export-area" hidden><label for="settings-json">Current settings JSON</label><textarea id="settings-json" readonly rows="8"></textarea><button id="close-export">Close JSON</button></div>
+  </aside>
+  <script type="module" src="lab.js"></script>
+</body>
+</html>
