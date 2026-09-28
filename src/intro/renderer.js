@@ -6,6 +6,7 @@ export function createRenderer(canvas, button, images) {
  const settings={...defaults};
  let gl, ready=false, time=0, idleClock=0, wordmarkOffset=0;
  let W=0,H=0,DPR=1,layout=[0,0,1],programs={},buffers={};
+ let buttonBounds={left:0,top:0,width:0,height:0};
  let texture,emblemTexture,flowTexture,fxTexture,fxBuffer,fxWidth,fxHeight;
  let bgTexture,bgBuffer,bgWidth,bgHeight,bloomTexture,bloomBuffer;
  const resources=new Map(['Shader','Program','Buffer','Texture','Framebuffer'].map(k=>[k,new Set()]));
@@ -77,7 +78,30 @@ function resize(){
  gl.bindFramebuffer(gl.FRAMEBUFFER,null);
 }
 
-// A single continuous carrier: a long incoming S-curve becomes an orbital path.
+// The same carrier follows the actual button border after the downward handoff.
+// Bounds include its reveal translation and compensate for the artwork drift.
+function buttonContour(progress){
+ const {left,top,width,height}=buttonBounds,r=6/layout[2];
+ const horizontal=width-2*r,vertical=height-2*r,arc=Math.PI*r/2;
+ const perimeter=2*(horizontal+vertical)+4*arc;
+ let d=((progress%1+1)%1*perimeter+horizontal/2)%perimeter;
+ const corners=[[left+width-r,top+r,-Math.PI/2],[left+width-r,top+height-r,0],[left+r,top+height-r,Math.PI/2],[left+r,top+r,Math.PI]];
+ for(let side=0;side<4;side++){
+  const length=side%2?vertical:horizontal;
+  if(d<=length){
+   if(side===0)return [left+r+d,top];
+   if(side===1)return [left+width,top+r+d];
+   if(side===2)return [left+width-r-d,top+height];
+   return [left,top+height-r-d];
+  }
+  d-=length;
+  if(d<=arc){const [x,y,a]=corners[side],angle=a+d/r;return [x+Math.cos(angle)*r,y+Math.sin(angle)*r];}
+  d-=arc;
+ }
+ return [left+width/2,top];
+}
+
+// A single continuous carrier: arrival, emblem orbit, descent, button contour.
 // Every strand and particle samples this field, including the deposition front.
 function path(u,t,strand=0){
  const s=strand, phase=t*.36*settings.speed;
@@ -90,12 +114,15 @@ function path(u,t,strand=0){
   const a=Math.PI+u*TAU;
   const r=.222+Math.sin(s*1.7+u*8.+phase*.3)*.017*smooth(0,.18,u)*(1-smooth(1.55,1.75,u));
   x=.5+Math.cos(a)*r;y=.375+Math.sin(a)*r;
- } else {
+ } else if(u<2.75) {
   // The existing carrier peels from the lower compass, brushes the wordmark,
-  // and arrives on the Start inlay. No second emitter or particle system.
+  // and meets the top of Start's contour. No second emitter or particle system.
   const v=clamp(u-1.75),z=1-v;
-  x=z*z*z*.5+3*z*z*v*.18+3*z*v*v*.84+v*v*v*.5;
-  y=.597+(z*z*z*.597+3*z*z*v*.597+3*z*v*v*.86+v*v*v*.96-.597)*settings.handoffPath;
+  const target=buttonContour(0);
+  x=z*z*z*.5+3*z*z*v*.18+3*z*v*v*target[0]+v*v*v*target[0];
+  y=.597+(z*z*z*.597+3*z*z*v*.597+3*z*v*v*(target[1]-.12)+v*v*v*target[1]-.597)*settings.handoffPath;
+ } else {
+  return buttonContour(u-2.75);
  }
  const spread=Math.sin(s*7.13)*(.018+(1-smooth(-.45,0,u))*.10)*settings.depth;
  const wave=Math.sin(u*10.*settings.turbulenceFrequency+phase+s*1.7)*.011*settings.turbulence;
@@ -107,13 +134,16 @@ function path(u,t,strand=0){
 }
 function headAt(t){
  const phase=timing(settings),orbitEnd=phase.formation+settings.formationDuration*1.2/1.3;
- if(t>=phase.handoff){const v=clamp((t-phase.handoff)/settings.handoffDuration);return 1.75+v+v*v-v*v*v;}
+ if(t>=settings.buttonStart)return 2.75+1.25*clamp((t-settings.buttonStart)/.65);
+ // Keep advancing into the button contour: the previous cubic had zero
+ // velocity at arrival, producing a visible stop before the perimeter flow.
+ if(t>=phase.handoff){const v=clamp((t-phase.handoff)/(settings.buttonStart-phase.handoff));return 1.75+v;}
  if(t>=orbitEnd)return 1.+(t-orbitEnd)/Math.max(.05,phase.handoff-orbitEnd)*.75;
  if(t>=phase.formation)return (t-phase.formation)/(orbitEnd-phase.formation);
  const v=clamp((t-phase.arrival)/(phase.formation-phase.arrival)),s=(-1.66*v+2.66)*v*v;
  return mix(-1.35,0,s);
 }
-function envelope(t){const phase=timing(settings),tail=settings.handoffDuration/1.2;return smooth(phase.arrival,phase.arrival+.33*(phase.formation-phase.arrival)/.55,t)*mix(1,.14,smooth(2.05,2.50,formationClock(t)))*(1-smooth(phase.handoffEnd-.20*tail,phase.handoffEnd+.25*tail,t))*settings.magicIntensity*mix(1,settings.handoffIntensity,handoffMix(t));}
+function envelope(t){const phase=timing(settings);return smooth(phase.arrival,phase.arrival+.33*(phase.formation-phase.arrival)/.55,t)*mix(1,.14,smooth(2.05,2.50,formationClock(t)))*(1-smooth(4.65,4.95,t))*settings.magicIntensity*mix(1,settings.handoffIntensity,handoffMix(t))*mix(1,1.8,smooth(4.05,4.3,t));}
 
 function makeRibbons(t,front){
  const data=[];
@@ -130,7 +160,8 @@ function makeRibbons(t,front){
    const p=path(u,t,s),a=path(u-.002,t,s),b=path(u+.002,t,s);
    const dx=b[0]-a[0],dy=b[1]-a[1],norm=Math.hypot(dx,dy)||1;
    const twist=.65+.35*Math.sin(v*13.-t*.3+s*.9);
-   const w=width*twist*(.4+.6*Math.sin(Math.PI*v));
+   const contour=smooth(2.5,2.75,u);
+   const w=mix(width,3/layout[2],contour)*twist*(.4+.6*Math.sin(Math.PI*v));
    return [p[0]-dy/norm*w*side,p[1]+dx/norm*w*side,v,side,s];
   }
   for(let i=0;i<N;i++){
@@ -151,9 +182,10 @@ function makeParticles(t,front){
   const p=path(u,t,Math.floor(b*26));
   const age=(t*.15*settings.speed*settings.particleSpeed/settings.particleLifetime+c)%1;
   const life=Math.sin(age*Math.PI)**2;
-  const width=(.008+Math.pow(b,3)*.072)*settings.particleSpread;
+  const contour=smooth(2.5,2.75,u);
+  const width=mix((.008+Math.pow(b,3)*.072)*settings.particleSpread,(1+b*3)/layout[2],contour);
   p[0]+=Math.sin(d*TAU+t*.14*settings.particleSpeed)*width;
-  p[1]+=Math.cos(e*TAU+t*.19*settings.particleSpeed)*width+(age-.5)*.014;
+  p[1]+=Math.cos(e*TAU+t*.19*settings.particleSpeed)*width+(age-.5)*mix(.014,2/layout[2],contour);
   const sparkle=f>1-.007*settings.sparkleFrequency&&settings.largeSparkles>0;
   const size=(sparkle?(7+f*4)*settings.largeSparkles:.8+Math.pow(f,5)*3.3)*settings.particleSize;
   const alpha=env*life*(sparkle?.28:.35+b*.55)*(1-smooth(.8,1,a))*settings.particleBrightness;
@@ -186,6 +218,9 @@ function render(){
  const t=time;
  const drift=Math.sin(t*.18)*settings.drift*.003*layout[2];
  const home=layout[0];layout[0]+=drift;
+ updateButton(t);
+ const rect=button.getBoundingClientRect(),gap=4;
+ buttonBounds={left:(rect.left-gap-layout[0])/layout[2],top:(rect.top-gap-layout[1])/layout[2],width:(rect.width+2*gap)/layout[2],height:(rect.height+2*gap)/layout[2]};
  const ribbonsBack=makeRibbons(t,false),ribbonsFront=makeRibbons(t,true),particlesBack=makeParticles(t,false),particlesFront=makeParticles(t,true);
  const active=envelope(t)>.001||settings.ambientParticles>0;
  if(active){
@@ -206,7 +241,6 @@ function render(){
  use(programs.ribbon,t);gl.uniform1f(programs.ribbon.uniforms.silk,envelope(t)*.75*settings.depth);geometry(programs.ribbon,ribbonsFront,gl.TRIANGLES);
  use(programs.particle,t);geometry(programs.particle,particlesFront,gl.POINTS);
  layout[0]=home;
- updateButton(t);
 
 }
 function updateButton(t){

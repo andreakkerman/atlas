@@ -200,7 +200,11 @@ const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
   getTransientEffects: () => illustratedChallengeGlows(),
-  shouldRenderEffect: (effect) => !(voxelRenderer.getSettings().renderer === "cinematic" || (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id === "LVL-0001")) || !window.AtlasCinematicSettings.replacedPresets.has(effect.presetId),
+  hasOverlay: () => challengeFx.enabled(),
+  drawOverlay: (ctx,time) => challengeFx.draw(ctx,time),
+  stopOverlay: () => challengeFx.suspend?.(),
+  shouldRenderEffect: (effect) => !(challengeFx.enabled() && isLegacyInteractionCue(effect)) &&
+    (!(voxelRenderer.getSettings().renderer === "cinematic" || (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id === "LVL-0001")) || !window.AtlasCinematicSettings.replacedPresets.has(effect.presetId)),
   warn: (message) => console.warn(message)
 });
 let graphicsSettingsOpen = false;
@@ -228,6 +232,39 @@ const voxelRenderer = window.AtlasVoxelRenderer.createRuntime({
     Object.entries(liveMetrics).forEach(([key, value]) => {
       document.querySelectorAll(`[data-voxel-metric="${key}"]`).forEach((element) => { element.textContent = value; });
     });
+  }
+});
+const challengeFxApi=window.AtlasChallengeFx||{
+  editor:()=>'<p>Challenge FX unavailable. Existing visuals remain active.</p>',
+  createRuntime:()=>({enabled:()=>false,draw:()=>{},cancel:()=>{},dispose:()=>{},unlockAudio:()=>{},complete:()=>false})
+};
+const challengeFx = challengeFxApi.createRuntime({
+  enabled: () => voxelRenderer.getSettings().renderer === 'illustrated' && voxelRenderer.getSettings().challengeFx.enabled && !!level,
+  settings: () => voxelRenderer.getSettings().challengeFx,
+  screen: () => state.screen,
+  audioUnlocked: () => audioState.unlocked,
+  masterVolume: () => audioMasterVolume(),
+  audioPath: () => 'assets/audio/sfx/magical-knowledge-transfer.mp3',
+  scene: () => {
+    const track=document.querySelector('.worldTrack')?.getBoundingClientRect();
+    // Completion sources include NPCs even though their idle marker list does not.
+    const anchors=activeRunes().map(rune=>{
+      const object=interactiveObjectForTarget(rune);
+      if(!object)return null;
+      const npc=!!npcChallengeForRune(rune);
+      const torso=npc&&document.querySelector(`[data-npc-challenge="${CSS.escape(rune.id)}"] [data-npc-sprite]`)?.getBoundingClientRect();
+      const point=torso?.width&&track?.width
+        ? {x:(torso.left+torso.width*.5-track.left)*level.world.width/track.width,y:(torso.top+torso.height*.48-track.top)*level.world.height/track.height}
+        : object.center;
+      return{id:rune.id,x:point.x,y:point.y,idleMarker:!npc,liveSource:npc,highlight:cinematicCueInteraction.hoveredId===`challenge-${rune.id}`};
+    }).filter(Boolean);
+    const exit=hotspotById(level.exitHotspotId||'templeGate'),exitObject=exit&&interactiveObjectForTarget(exit);
+    const spriteImage=document.querySelector('[data-actor="sven"]');
+    const sprite=spriteImage?.getBoundingClientRect();
+    const player=sprite&&track?.width?[(sprite.left+sprite.width*.5-track.left)*level.world.width/track.width,(sprite.top+sprite.height*.48-track.top)*level.world.height/track.height]:[state.worldX,state.worldY-70];
+    const occluder=spriteImage?.complete&&spriteImage.naturalWidth&&track?.width&&sprite?.width
+      ? {image:spriteImage,x:(sprite.left-track.left)*level.world.width/track.width,y:(sprite.top-track.top)*level.world.height/track.height,width:sprite.width*level.world.width/track.width,height:sprite.height*level.world.height/track.height}:null;
+    return{id:level.id,world:level.world,anchors,markers:anchors.filter(a=>a.idleMarker&&!state.completedRunes.has(a.id)),completed:state.completedRunes,player,occluder,exit:isLevelExitReady()&&exitObject?[exitObject.center.x,exitObject.center.y]:null};
   }
 });
 const emissiveGlowRenderer = window.AtlasEmissiveGlow.createRuntime({
@@ -1950,6 +1987,7 @@ function syncAudioForState() {
 }
 
 function ensureAudioUnlocked() {
+  challengeFx.unlockAudio();
   if (audioState.unlocked) return;
   audioState.unlocked = true;
   syncAudioForState();
@@ -2088,6 +2126,7 @@ async function selectLevel(id, options = {}) {
 
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.stopAll();
+  challengeFx.dispose();
   sceneEffectRuntime.dispose();
   resetAmbientAnimalTimers();
   await prepareWalkPathEditorForLevel(selectedLevel);
@@ -2284,6 +2323,7 @@ function returnToMenu() {
   assetReadiness.supersede();
   stopMovement({ invalidateIntent: true });
   ambientFlybyRuntime.releaseLevel();
+  challengeFx.dispose();
   sceneEffectRuntime.dispose();
   voxelRenderer.dispose();
   cinematicRenderer.dispose();
@@ -4410,6 +4450,7 @@ function nextQuestion() {
 
   render();
   queueNpcSuccessAnimation(rune.id);
+  challengeFx.complete(rune.id);
 }
 
 function showReward() {
@@ -4500,6 +4541,7 @@ function restart() {
   state.questionTracked = false;
   state.assistedCompletionAvailable = false;
   state.completedRunes = new Set();
+  challengeFx.dispose();
   state.devCompletionActive = false;
   state.levelExitReadyFromSaved = storedLevelIsComplete(level);
   state.seenObjects = new Set();
@@ -6343,6 +6385,7 @@ function renderWorldStage() {
         <canvas class="emissiveGlowCanvas" data-emissive-glow-canvas aria-hidden="true" ${renderer === "illustrated" && emissiveGlow.enabled && !illustratedFeatures().globalLighting ? "" : "hidden"}></canvas>
         <div class="forestMist"></div>
         ${renderSceneEffectCanvases()}
+        ${challengeFx.enabled() ? '<canvas class="challengeFxCanvas" data-challenge-fx-canvas aria-hidden="true"></canvas>' : ''}
         ${renderer === "illustrated" ? fieldCanvas : ""}
         ${(level.ambientAnimals || []).map(renderAmbientAnimal).join("")}
         ${(level.ambientFlybys || []).map(renderAmbientFlyby).join("")}
@@ -6371,7 +6414,21 @@ function renderWorldStage() {
 }
 
 // Gameplay-only projection: no authored instances, IDs or editor persistence change.
+// Older authored Rune effects predate target bindings: identify their source inside
+// an authored interaction hit area, rather than by effect IDs or character names.
+// Decorative glows elsewhere and all other scene-effect presets stay untouched.
+function isLegacyInteractionCue(effect, targetOnly = null) {
+  if (effect?.presetId !== 'magical-glow' || effect.variantId !== 'rune') return false;
+  const source = effect.geometry;
+  if (!['point', 'pointRadius'].includes(source?.type)) return false;
+  return (targetOnly ? [targetOnly] : [...(level?.runes || []), ...(level?.hotspots || [])]).some(target => {
+    const object = interactiveObjectForTarget(target);
+    return object && Math.hypot(source.x-object.center.x, source.y-object.center.y) <= (object.radius || 24);
+  });
+}
+
 function illustratedChallengeGlows() {
+  if (challengeFx.enabled()) return [];
   if (!level || voxelRenderer.getSettings().renderer !== "illustrated") return [];
   const stage = document.querySelector('[data-world-stage]');
   const scale = stage?.getBoundingClientRect().height / level.world.height;
@@ -6549,8 +6606,9 @@ function renderHotspot(hotspot) {
       style="${objectTrackStyle(object)}"
       type="button"
       data-hotspot="${hotspot.id}"
+      data-legacy-rune-cue="${(level.sceneEffects || []).some(effect => isLegacyInteractionCue(effect, hotspot))}"
       data-object="${object.id}"
-      ${isExit ? `data-exit-hotspot="true" data-exit-ready="${exitReady}" data-hotspot-cue="${exitReady ? "exit-ready" : "none"}"` : ""}
+      ${isExit ? `data-exit-hotspot="true" data-exit-ready="${exitReady}" data-hotspot-cue="${exitReady && !challengeFx.enabled() ? "exit-ready" : "none"}"` : ""}
       data-world-center-x="${object.center.x}"
       data-world-center-y="${object.center.y}"
       data-radius="${object.radius}"
@@ -6598,7 +6656,7 @@ function renderRuneHotspot(rune) {
         data-npc-facing="${config.facing}"
         data-npc-facing-scale="${npcFacingScale(npcChallenge)}"
         data-challenge-active="${active}"
-        data-hotspot-cue="${active && !done ? "challenge" : "none"}"
+        data-hotspot-cue="${active && !done && !challengeFx.enabled() ? "challenge" : "none"}"
         data-world-center-x="${object.center.x}"
         data-world-center-y="${object.center.y}"
         data-approach-node="${object.approachNode || ""}"
@@ -6618,7 +6676,7 @@ function renderRuneHotspot(rune) {
       type="button"
       data-rune="${rune.id}"
       data-object="${object.id}"
-      data-hotspot-cue="${active && !done ? "challenge" : "none"}"
+      data-hotspot-cue="${active && !done && !challengeFx.enabled() ? "challenge" : "none"}"
       data-challenge-active="${active}"
       data-world-center-x="${object.center.x}"
       data-world-center-y="${object.center.y}"
@@ -6668,6 +6726,7 @@ function renderIllustratedFeatureControls(id) {
     ${toggle("sceneDepth", "Scene Depth", true)}
     ${toggle("characterShadows", "Character Shadows")}
     ${toggle("particleFields", "Particle Fields")}
+    ${challengeFxApi.editor(voxelRenderer.getSettings().challengeFx)}
   </div>`;
 }
 
@@ -7648,6 +7707,8 @@ function restoreEditorUiState(saved) {
 }
 
 function render() {
+  if(voxelRenderer.getSettings().renderer!=='illustrated' || !voxelRenderer.getSettings().challengeFx.enabled || !['scene','challenge','correct'].includes(state.screen)) challengeFx.dispose();
+  app.dataset.challengeFxActive=String(challengeFx.enabled());
   // A redundant scene refresh must not detach Safari's active GPU canvas while
   // preparation is submitting work. Navigation and Graphics changes still render.
   const preparingCanvas=app.querySelector('[data-three-canvas]');
@@ -8306,6 +8367,23 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  const fxInput=event.target.closest('[data-challenge-fx]');
+  if(fxInput){
+    if(fxInput.type==='number'&&(fxInput.value===''||!Number.isFinite(Number(fxInput.value))))return;
+    const value=voxelRenderer.getSettings().challengeFx,key=fxInput.dataset.challengeFx;
+    if(key==='mode'){value.mode=fxInput.value;value.enabled=value.mode!=='legacy';}
+    else if(key==='enabled'){value.enabled=fxInput.checked;value.mode=value.enabled?'canvas':'legacy';}
+    else if(key==='volume')value.volume=Number(fxInput.value);
+    else{const [group,field]=key.split('.');value[group][field]=Number(fxInput.value);}
+    voxelRenderer.updateSettings({challengeFx:value});
+    const normalized=voxelRenderer.getSettings().challengeFx;
+    for(const output of document.querySelectorAll('[data-challenge-fx-value]')){
+      const [group,field]=output.dataset.challengeFxValue.split('.');
+      output.value=field?normalized[group][field]:normalized[group];
+    }
+    if(key==='enabled'||key==='mode'){render();document.querySelector('[data-challenge-fx-controls]')?.setAttribute('open','');challengeFx.unlockAudio();}
+    return;
+  }
   const flybyInput=event.target.closest('[data-flyby-setting]');
   if(flybyInput?.type==='number' && flybyInput.value!=='' && flybyInput.validity.valid){
     updateAmbientFlybySetting(flybyInput.dataset.flybyId,flybyInput.dataset.flybySetting,Number(flybyInput.value)*Number(flybyInput.dataset.valueScale||1));
@@ -8741,8 +8819,8 @@ window.AtlasWebGPUCapabilities.subscribe(snapshot=>{
     resumePreparingThree=true;threeRenderer.suspend();
   }
 });
-window.addEventListener("pagehide", () => threeRenderer.suspend());
-window.addEventListener("pageshow", event => { if(event.persisted){resumePreparingThree=false;threeRenderer.resume();} });
+window.addEventListener("pagehide", () => {threeRenderer.suspend();challengeFx.suspend?.();});
+window.addEventListener("pageshow", event => { if(event.persisted){resumePreparingThree=false;threeRenderer.resume();sceneEffectRuntime.sync();} });
 
 document.addEventListener("visibilitychange", () => {
   syncFpsDisplay(true);

@@ -124,11 +124,27 @@
         if (element.complete && element.naturalWidth) finish();
       });
       const useObjectUrl = window.location?.protocol === "http:" || window.location?.protocol === "https:";
+      // Keep retries inside the cached promise: every preparation/runtime caller
+      // joins the same request and decode, using the exact versioned asset key.
+      const fetchBlob = async () => {
+        const delays = [250, 750];
+        for (let attempt = 0; ; attempt++) {
+          try {
+            const response = await window.fetch(key);
+            if (!response.ok) {
+              const error = new Error(`Image request failed (${response.status}): ${key}`);
+              error.retryable = response.status === 408 || response.status === 429 || response.status >= 500;
+              throw error;
+            }
+            return await response.blob();
+          } catch (error) {
+            if (attempt >= delays.length || !(error.retryable || error instanceof TypeError)) throw error;
+            await new Promise(resolve => window.setTimeout(resolve, delays[attempt]));
+          }
+        }
+      };
       const promise = (useObjectUrl
-        ? window.fetch(key).then((response) => {
-          if (!response.ok) throw new Error(`Image request failed (${response.status}): ${key}`);
-          return response.blob();
-        }).then((blob) => {
+        ? fetchBlob().then((blob) => {
           const objectUrl = window.URL.createObjectURL(blob);
           return decodeSource(objectUrl, objectUrl).catch((error) => {
             window.URL.revokeObjectURL(objectUrl);

@@ -18,6 +18,7 @@
   const PRESETS = VOXEL_PRESETS;
   const DEFAULT_SETTINGS = Object.freeze({
     version: VERSION,
+    challengeFx: Object.freeze({ enabled: false }),
     renderer: "illustrated",
     quality: "high",
     debugView: "final",
@@ -201,6 +202,7 @@
     const base = { ...DEFAULT_SETTINGS, ...(presetTable[quality] || presetTable.high), ...input, renderer };
     return {
       version: VERSION,
+      challengeFx: global.AtlasChallengeFx?.normalize(input.challengeFx) || {enabled:false},
       renderer,
       quality,
       voxelSize: clamp(base.voxelSize, 1, 10),

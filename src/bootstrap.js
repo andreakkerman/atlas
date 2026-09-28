@@ -25,7 +25,7 @@
  for(const source of document.querySelectorAll('script[data-atlas-src]')){
   await new Promise((resolve,reject)=>{
    const script=document.createElement('script');script.src=source.dataset.atlasSrc;
-   script.onload=resolve;script.onerror=()=>reject(new Error('Atlas script unavailable: '+script.src));
+   script.onload=resolve;script.onerror=()=>source.hasAttribute('data-atlas-optional')?resolve():reject(new Error('Atlas script unavailable: '+script.src));
    document.head.append(script);
   });
  }

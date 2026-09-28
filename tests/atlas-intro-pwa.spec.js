@@ -1,5 +1,7 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
+const workerSource=require('node:fs').readFileSync(require('node:path').join(__dirname,'..','service-worker.js'),'utf8');
+const currentCache=workerSource.match(/const CACHE_NAME = "([^"]+)"/)[1];
 test.use({serviceWorkers:'allow'});
 test('delayed boot registers PWA, upgrades cache, and reloads intro offline',async({page,context})=>{
  test.setTimeout(60000);
@@ -26,16 +28,16 @@ test('delayed boot registers PWA, upgrades cache, and reloads intro offline',asy
  // Exercise the actual worker/cache upgrade without consuming a second GPU.
  await page.addInitScript(()=>{Object.defineProperty(navigator,'gpu',{configurable:true,value:undefined});const get=HTMLCanvasElement.prototype.getContext;HTMLCanvasElement.prototype.getContext=function(type,...args){return type==='webgl2'?null:get.call(this,type,...args);};});
  await page.goto(origin);
- await page.evaluate(()=>caches.open('svenadventure-static-v216-production-intro'));
+ await page.evaluate(()=>caches.open('svenadventure-static-v217-compass-icons'));
  await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
  await expect(page.locator('.menuScreen')).toBeVisible();
  await expect.poll(()=>page.evaluate(()=>window.eval('audioState.music')?.paused)).toBe(false);
  await page.evaluate(()=>navigator.serviceWorker.ready);
- await expect.poll(()=>page.evaluate(()=>caches.keys())).toEqual(['svenadventure-static-v217-compass-icons']);
- const introAssets=await page.evaluate(async()=>{
-  const cache=await caches.open('svenadventure-static-v217-compass-icons');
+ await expect.poll(()=>page.evaluate(()=>caches.keys())).toEqual([currentCache]);
+ const introAssets=await page.evaluate(async cacheName=>{
+  const cache=await caches.open(cacheName);
   return (await cache.keys()).map(r=>new URL(r.url).pathname).filter(p=>p.includes('/intro/')||p.endsWith('/bootstrap.js'));
- });
+ },currentCache);
  expect(introAssets).toHaveLength(10);
  await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
  await disconnect();

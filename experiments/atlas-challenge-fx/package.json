@@ -1,0 +1,1 @@
+{"name":"atlas-challenge-fx-lab","private":true,"type":"module","scripts":{"start":"node serve.cjs","test":"playwright test --config playwright.config.cjs"}}

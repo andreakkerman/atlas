@@ -1,5 +1,8 @@
-const CACHE_NAME = "svenadventure-static-v217-compass-icons";
+const CACHE_NAME = "svenadventure-static-v227-continuous-intro-flow";
 const CORE_ASSETS = [
+  "src/challenge-stardust/runtime.js", "src/challenge-stardust/webgpu.js", "src/challenge-stardust/gpu-particles.js", "src/challenge-stardust/gpu-shaders.js",
+  "src/challenge-fx-settings.js", "src/challenge-fx-visuals.js", "src/challenge-fx.js",
+  "assets/audio/sfx/magical-knowledge-transfer.mp3",
   "src/bootstrap.js",
   "src/intro/intro.js",
   "src/intro/renderer.js",

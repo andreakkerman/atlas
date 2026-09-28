@@ -27,7 +27,7 @@ outer ticks, remains inside the central circle of radius 40% specified by the
 All PNGs are opaque, square, and retain the supplied emblem proportions.
 
 HTML and manifest icon URLs use `?v=atlas-compass-1`; the service worker precaches
-those exact URLs in `svenadventure-static-v217-compass-icons`. Replacing the seven
+those exact URLs (introduced in cache v217; see `service-worker.js` for the current version). Replacing the seven
 existing PNGs removes the old illustrated icon without leaving duplicate assets.
 `launch-hero.png` is separate legacy artwork, not an application-icon reference.
 

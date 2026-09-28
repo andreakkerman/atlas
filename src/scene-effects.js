@@ -1964,7 +1964,7 @@
     const performanceRank = { Low: 1, Medium: 2, High: 3 };
 
     function canvases() {
-      return [...document.querySelectorAll("[data-scene-effects-canvas]")];
+      return [...document.querySelectorAll("[data-scene-effects-canvas], [data-challenge-fx-canvas]")];
     }
 
     function prepareLevel(selectedLevel) {
@@ -2008,14 +2008,27 @@
     }
 
     function canRun() {
-      return Boolean(getLevel()?.id === levelId && ["scene", "challenge", "correct"].includes(getScreen()) && !document.hidden && !paused && (resolved.length || transient.length));
+      return Boolean(getLevel()?.id === levelId && ["scene", "challenge", "correct"].includes(getScreen()) && !document.hidden && !paused && (resolved.length || transient.length || options.hasOverlay?.()));
     }
 
     function sizeCanvas(canvas) {
       const current = getLevel();
       if (!current) return false;
-      if (canvas.width !== current.world.width) canvas.width = current.world.width;
-      if (canvas.height !== current.world.height) canvas.height = current.world.height;
+      let width = current.world.width, height = current.world.height;
+      if (canvas.hasAttribute('data-challenge-fx-canvas')) {
+        // This DOM overlay bypasses the painted-scene compositor. Rasterize at
+        // its displayed size, including responsive world scaling, like the lab.
+        // Bound Retina allocation without changing any scene/3D render targets.
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return false;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2,
+          8192 / Math.max(rect.width, rect.height),
+          Math.sqrt(8000000 / (rect.width * rect.height)));
+        width = Math.max(1, Math.floor(rect.width * dpr));
+        height = Math.max(1, Math.floor(rect.height * dpr));
+      }
+      if (canvas.width !== width) canvas.width = width;
+      if (canvas.height !== height) canvas.height = height;
       return true;
     }
 
@@ -2034,6 +2047,15 @@
         if (!sizeCanvas(canvas)) continue;
         const ctx = canvas.getContext("2d");
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if(canvas.hasAttribute('data-challenge-fx-canvas')){
+          ctx.save();
+          try {
+            const world = getLevel().world;
+            ctx.setTransform(canvas.width / world.width, 0, 0, canvas.height / world.height, 0, 0);
+            options.drawOverlay?.(ctx,timestamp);
+          } finally {ctx.restore();}
+          continue;
+        }
         resolved.filter((effect) => effect.layerSlot === canvas.dataset.sceneEffectsCanvas).forEach((effect) => drawResolved(ctx, effect, time));
         transient.filter(effect => effect.layerSlot === canvas.dataset.sceneEffectsCanvas).forEach(effect => {
           // Reuse the preset renderer, but contain gameplay decoration within its cue.
@@ -2059,6 +2081,7 @@
     }
 
     function stop() {
+      options.stopOverlay?.();
       if (rafId) cancelAnimationFrame(rafId);
       rafId = null;
       canvases().forEach((canvas) => canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height));

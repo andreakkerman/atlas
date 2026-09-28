@@ -6,11 +6,17 @@ const { pathToFileURL } = require("url");
 const root = path.join(__dirname, "..");
 const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "index.html")).toString();
 
+async function openMenu(page) {
+  await page.goto(gameUrl);
+  await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+  await expect(page.locator(".menuScreen")).toBeVisible();
+}
+
 test.describe("Atlas critical image readiness", () => {
   test.setTimeout(90_000);
 
   test("collects and deduplicates active-level critical imagery", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openMenu(page);
     const result = await page.evaluate(() => {
       const level = {
         id: "TEST",
@@ -36,7 +42,7 @@ test.describe("Atlas critical image readiness", () => {
   });
 
   test("deduplicates decode work, holds ready images, releases level scope and fails critical images", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openMenu(page);
     const productionDedup = await page.evaluate(async () => {
       const cache = window.AtlasAmbientSystem.createAssetCache();
       const first = cache.image("assets/ambient/animals/owl/owl-open.png");
@@ -89,7 +95,7 @@ test.describe("Atlas critical image readiness", () => {
   });
 
   test("superseded asynchronous preparation cannot become current and is releasable", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openMenu(page);
     const result = await page.evaluate(async () => {
       let resolveImage;
       const released = [];
@@ -115,7 +121,7 @@ test.describe("Atlas critical image readiness", () => {
     const consoleErrors = [];
     page.on("requestfailed", (request) => failures.push(request.url()));
     page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
-    await page.goto(gameUrl);
+    await openMenu(page);
     const loadingObserved = await page.evaluate(async () => {
       const promise = window.eval("selectLevel")("LVL-0001", { startImmediately: true });
       const during = {
@@ -157,7 +163,7 @@ test.describe("Atlas critical image readiness", () => {
   });
 
   test("rapid first-use transitions never expose a blank or unrenderable Sven frame", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openMenu(page);
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
     const result = await page.evaluate(async () => {
       const invalid = [];
@@ -198,7 +204,7 @@ test.describe("Atlas critical image readiness", () => {
     page.on("request", (request) => {
       if (afterReady && request.resourceType() === "image") lateImages.push(request.url());
     });
-    await page.goto(gameUrl);
+    await openMenu(page);
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
     afterReady = true;
     const animal = await page.evaluate(async () => {
@@ -239,7 +245,7 @@ test.describe("Atlas critical image readiness", () => {
   });
 
   test("level-scoped images are replaced while the shared Sven cache remains", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openMenu(page);
     const result = await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0001", { startImmediately: true });
       const first = window.eval("assetReadiness.snapshot()");
@@ -261,7 +267,7 @@ test.describe("Atlas critical image readiness", () => {
   });
 
   test("a runtime background override is decoded before its first visible scene", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openMenu(page);
     const result = await page.evaluate(async () => {
       const override = "Levels/LVL-0002/assets/temple-interior.png";
       window.eval("worldResolver.updateLevelSettings")("LVL-0001", { backgroundOverride: override });
@@ -298,7 +304,7 @@ test.describe("Atlas critical image readiness", () => {
     page.on("request", (request) => {
       if (ready && request.resourceType() === "image") lateImages.push(request.url());
     });
-    await page.goto(process.env.ATLAS_EDITOR_URL);
+    await openMenu(page);
     await page.evaluate(() => {
       window.__atlasSlowLoadDone = false;
       window.eval("selectLevel")("LVL-0001", { startImmediately: true, recordStart: false })
@@ -324,7 +330,7 @@ test.describe("Atlas critical image readiness", () => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       await route.continue();
     });
-    await page.goto(process.env.ATLAS_EDITOR_URL);
+    await openMenu(page);
     const result = await page.evaluate(async () => {
       const pending = window.eval("selectLevel")("LVL-0001", { startImmediately: true, recordStart: false });
       await new Promise((resolve) => setTimeout(resolve, 40));

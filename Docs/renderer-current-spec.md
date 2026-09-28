@@ -24,6 +24,8 @@ Cinematic uploads sprites at their decoded source dimensions. Its two main HDR t
 
 FPS/Debug controls in Graphics and the menu settings area share session state. The selected renderer and graphics preferences use the existing browser-local settings loader/saver in [voxel-renderer.js](../src/voxel-renderer.js), which normalizes through the mode registry; its filename does not mean those preferences belong only to Voxel. Authored world/level tuning instead uses the world resolver and editor save path. Do not add separate state for new access points. Loading milestones follow real completion boundaries, never an estimated timer or artificial percentage.
 
+Illustrated Challenge effects has an independent `challengeFx.mode` selector: Legacy, Canvas 2D and WebGPU Living Stardust. The latter owns a lazy, bounded native device for particle/bloom rendering and composites its finished image into the shared high-DPI challenge overlay, including live sprite-alpha occlusion. It does not change Cinematic or Three world targets/presets. All modes share challenge state, anchors, audio and the existing scene-effects scheduler. Legacy/Canvas selection, level/menu exit and suspension release the stardust GPU resources; unsupported or lost devices report a Canvas fallback. See [Editor and Effects](EDITOR_AND_EFFECTS.md#illustrated-challenge-fx) for controls and allocation bounds.
+
 ## Real/Atlas assets and authoring
 
 Real loads `Levels/LVL-0001/3d/real-3d.glb`; Atlas loads `atlas-3d.glb` from that directory. The preserved authoring checkpoints are respectively `lvl0001.blend` and `lvl0001-stylized.blend`. Local Blender files are ignored; runtime GLBs are versioned. The shared route and gameplay anchors must remain compatible with the level.
@@ -93,6 +95,8 @@ There is one shared acquisition promise. Hiding/pagehide, menu cancellation and 
 
 The asset-readiness coordinator owns the secondary status under **Avontuur voorbereiden...**, scoped to the current level-load generation. `Level laden...` accompanies definition/draft loading; `Sprites laden...` accompanies character, NPC, ambient and Flyby image/decode readiness; `Omgeving voorbereiden...` accompanies scene-effect setup. Shared GPU acquisition uses `Grafische engine starten...` or `Grafische engine herstellen...`; pipeline compilation, artwork/depth upload and the first GPU-completed frame use `Effecten voorbereiden...`. The scene remains covered until readiness or the final fallback. Menu and Graphics remain accessible above the cover; underlying gameplay is inert. Success, cancellation and failure clear status. The secondary line reserves space and updates in place through a polite status region. There are no progress percentages, artificial stage delays, or audio status: current audio preloading is not an awaited readiness barrier. Three retains its existing real preparation stages and recovery controls.
 
+Critical NPC imagery includes the portrait and every frame of every manifest animation, using the same versioned paths as runtime. The shared image-cache promise retries transient HTTP 408/429/5xx and network failures up to three attempts (250 ms and 750 ms waits), then awaits image decode and checks renderable pixels. Permanent HTTP errors and decode failures reject preparation. All critical image promises must succeed before the plan becomes ready; runtime uses its retained blob URLs without another network fetch. Exhaustion returns to the menu with the critical asset error, and the failed plan releases its images so a later launch can retry.
+
 The service worker retains its existing versioned static-cache and refreshable-asset strategy; a cache version update delivers the changed runtime. It is not the recovery mechanism. Playwright blocks workers, so installed-PWA update and physical iPad background/resume still require device testing. Synthetic lifecycle/device failures test recovery handling, not an iPadOS root cause.
 
 Preparation operations have bounded cancellation/watchdog handling. Compact visible-frame completion has its existing foreground stall watchdog; hidden-tab throttling must not masquerade as a GPU hang. Do not hide an error by merely stopping animation while the UI reports ready, or by extending timeouts until a test passes.
@@ -156,5 +160,15 @@ Illustrated retains its traditional effects and excludes Cinematic finishing. It
 ## Disposable startup reveal
 
 The production intro in `src/intro/` is a separate WebGL2 subsystem with its approved DPR cap of 2, full-resolution foreground, half-resolution atmosphere and third-resolution magic/bloom targets. Its shaders, authored assets and five-second defaults are preserved from the accepted reveal. It imports no gameplay graphics presets.
+
+The final carrier descends past ATLAS to the top of Start at 4.2 seconds, then
+follows the button's measured contour clockwise before fading from 4.65 to 4.95
+seconds. The descending carrier advances through arrival without easing to zero
+velocity, avoiding a stop before the border sweep. Ribbons and particles reuse the existing path, buffers and passes;
+their spread narrows along the border. Button bounds account for its reveal
+translation, viewport size and artwork drift. At the five-second endpoint all
+transient magic is gone, including when a pointer gesture completes the intro.
+`tests/atlas-intro-button-flow.spec.js` captures exact production frames and checks
+particle coverage on all four edges and disappearance at completion.
 
 The intro is destroyed before application scripts initialize any gameplay runtime. All owned GL allocations are tracked even if initialization fails; teardown unbinds state, deletes resources and finally loses the disposable context. No intro RAF, event listeners or pending image loads survive Start. Backgrounding stops rendering; foreground/context restoration rebuilds from the start. The static Start fallback remains available without a recoverable context. See [startup contract](DEV_TOOLS.md#production-intro-and-startup) and `tests/atlas-intro.spec.js`.
