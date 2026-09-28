@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
-test('world FX follow Sven silhouette while absorb stays visible; ambient rune decoration toggles',async({page},info)=>{
+test('idle FX follow Sven silhouette while transfer and absorb stay in front; ambient rune decoration toggles',async({page},info)=>{
   await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
   await page.goto(base+'/?dev=editor&level=LVL-0001');
   await expect(page.locator('[data-actor="sven"]')).toBeVisible();
@@ -35,12 +35,27 @@ test('world FX follow Sven silhouette while absorb stays visible; ambient rune d
     const a=plain.getImageData(0,0,w.width,w.height).data,b=hidden.getImageData(0,0,w.width,w.height).data;
     let removed=0,leaked=0,outsideChanged=0;
     for(let i=3;i<a.length;i+=4){if(m[i]===255&&a[i]>20){removed++;if(b[i]>1)leaked++;}if(m[i]===0&&a[i]!==b[i])outsideChanged++;}
-    return{removed,leaked,outsideChanged,absorb:absorb.getImageData(...point,1,1).data[3],sourceIsLive:o.image===document.querySelector('[data-actor="sven"]')};
+    const foreground=[];
+    // Isolate both moving components over actual opaque sprite pixels. With
+    // world occlusion applied too late their alpha is incorrectly cut away.
+    for(const releaseMarker of [false,true]){
+      const settings={...s,flow:{...s.flow,arc:0,curvature:0,turbulence:0,spread:0,intensity:releaseMarker?0:s.flow.intensity}};
+      const sequence={origin:point,bend:point,age:s.flow.duration*.8,releaseMarker};
+      const visible=surface(),masked=surface(),moving={...sample,markers:[]};
+      window.occlusionPaint(visible,settings,{...moving,occluder:null},sequence,1);
+      window.occlusionPaint(masked,settings,moving,sequence,1);
+      const expected=visible.getImageData(0,0,w.width,w.height).data,actual=masked.getImageData(0,0,w.width,w.height).data;
+      let covered=0,changed=0;
+      for(let i=3;i<expected.length;i+=4)if(m[i]===255&&expected[i]>10){covered++;if(actual[i]!==expected[i])changed++;}
+      foreground.push({covered,changed});
+    }
+    return{removed,leaked,outsideChanged,foreground,absorb:absorb.getImageData(...point,1,1).data[3],sourceIsLive:o.image===document.querySelector('[data-actor="sven"]')};
   });
   expect(pixels.removed).toBeGreaterThan(10);
   expect(pixels.leaked).toBe(0);
   expect(pixels.outsideChanged).toBe(0);
   expect(pixels.absorb).toBeGreaterThan(0);
+  for(const part of pixels.foreground){expect(part.covered).toBeGreaterThan(10);expect(part.changed).toBe(0);}
   expect(pixels.sourceIsLive).toBe(true);
   await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
   await page.screenshot({path:info.outputPath('sven-in-front-of-marker.png')});

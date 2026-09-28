@@ -1,4 +1,4 @@
-const CACHE_NAME = "svenadventure-static-v227-continuous-intro-flow";
+const CACHE_NAME = "svenadventure-static-v228-transfer-foreground";
 const CORE_ASSETS = [
   "src/challenge-stardust/runtime.js", "src/challenge-stardust/webgpu.js", "src/challenge-stardust/gpu-particles.js", "src/challenge-stardust/gpu-shaders.js",
   "src/challenge-fx-settings.js", "src/challenge-fx-visuals.js", "src/challenge-fx.js",

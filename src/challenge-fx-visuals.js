@@ -193,13 +193,6 @@ function drawExitVisual(ctx,e,elapsed,point,{rand,smooth},finish){
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     scene.markers.forEach(anchor => marker(anchor, -1, anchor.highlight ? s.marker.highlight : 1));
-    if (sequence) {
-      const t = sequence.age;
-      if (sequence.releaseMarker !== false && t < s.flow.duration) {
-        marker({id:sequence.runeId,x:origin[0],y:origin[1]},t/s.flow.duration);
-      }
-      if (t < s.flow.duration) transfer(t, t / s.flow.duration);
-    }
     if (scene.exit) drawExitVisual(ctx, s.exit, clock, scene.exit, {
       rand, smooth
     },s.renderer);
@@ -213,8 +206,14 @@ function drawExitVisual(ctx,e,elapsed,point,{rand,smooth},finish){
       ctx.drawImage(o.image, o.x, o.y, o.width, o.height);
       ctx.restore();
     }
-    // Absorption belongs on Sven; it is intentionally drawn after world occlusion.
+    // Released motes, transfer and absorption belong in front of Sven. Keep
+    // them on this same overlay, after masking only idle markers and the exit.
     if (sequence) {
+      const t = sequence.age;
+      if (sequence.releaseMarker !== false && t < s.flow.duration) {
+        marker({id:sequence.runeId,x:origin[0],y:origin[1]},t/s.flow.duration);
+      }
+      if (t < s.flow.duration) transfer(t, t / s.flow.duration);
       const elapsed = sequence.age - s.flow.duration,
         duration = s.timing.absorbDuration + s.absorb.settle;
       if (elapsed >= 0 && elapsed < duration) {

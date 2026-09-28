@@ -209,7 +209,7 @@ Level/reset/menu/mode/Legacy transitions dispose transient FX and audio ownershi
 
 ### Selective Illustrated Graphics
 
-Challenge FX world visuals (markers, transfer and exit) are occluded by the live decoded Sven sprite alpha in world coordinates. This keeps the high-DPI overlay behind Sven in both GPU-composited and fallback presentations without new sprite uploads. Canvas absorption is drawn afterward on Sven; Living Stardust ends at arrival. Ambient hotspots spatially associated with authored Rune effects suppress their generic button decoration when either enhancement is selected; interaction and Legacy styling remain intact.
+Canvas Challenge FX idle markers and exit visuals are occluded by the live decoded Sven sprite alpha in world coordinates. Released challenge motes, the transfer stream and its landing/absorption are drawn afterward, in front of Sven on the same high-DPI overlay. This ordering also applies to Canvas fallback, without another canvas, scheduler or sprite upload. Living Stardust retains its sprite-alpha occlusion and ends at arrival. Ambient hotspots spatially associated with authored Rune effects suppress their generic button decoration when either enhancement is selected; interaction and Legacy styling remain intact.
 
 The existing Graphics menu shows six per-level gates only while Illustrated is selected, without an additional section title:
 
