@@ -81,8 +81,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
     },
     {
       "id": "car-approach",
-      "x": 231,
-      "y": 538,
+      "x": 172,
+      "y": 535,
       "role": "approach"
     },
     {
@@ -92,8 +92,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
     },
     {
       "id": "lootCrate-approach",
-      "x": 1068,
-      "y": 600,
+      "x": 943,
+      "y": 588,
       "role": "approach"
     },
     {
@@ -108,8 +108,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
     },
     {
       "id": "raiderCache-approach",
-      "x": 1891,
-      "y": 573,
+      "x": 1844,
+      "y": 583,
       "role": "approach"
     },
     {

@@ -81,8 +81,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0034"] = {
     },
     {
       "id": "seaContainer-approach",
-      "x": 351,
-      "y": 565,
+      "x": 268,
+      "y": 559,
       "role": "approach"
     },
     {
@@ -92,8 +92,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0034"] = {
     },
     {
       "id": "raiderCache-approach",
-      "x": 830,
-      "y": 595,
+      "x": 763,
+      "y": 587,
       "role": "approach"
     },
     {
@@ -103,7 +103,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0034"] = {
     },
     {
       "id": "blueSuitcase-approach",
-      "x": 1474,
+      "x": 1383,
       "y": 581,
       "role": "approach"
     },

@@ -81,8 +81,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
     },
     {
       "id": "terminal-approach",
-      "x": 475,
-      "y": 616,
+      "x": 389,
+      "y": 615,
       "role": "approach"
     },
     {
@@ -92,14 +92,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
     },
     {
       "id": "roundContainer-approach",
-      "x": 1323,
-      "y": 616,
+      "x": 1258,
+      "y": 614,
       "role": "approach"
     },
     {
       "id": "crate-approach",
-      "x": 1500,
-      "y": 615,
+      "x": 1428,
+      "y": 618,
       "role": "approach"
     },
     {

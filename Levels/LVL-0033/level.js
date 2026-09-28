@@ -103,8 +103,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
     },
     {
       "id": "arcProbe-approach",
-      "x": 1450,
-      "y": 576,
+      "x": 1337,
+      "y": 571,
       "role": "approach"
     },
     {
@@ -891,20 +891,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
       "sound": "assets/ambient/flybys/arc_snitch/arc_snitch.mp3",
       "path": [
         {
-          "x": 480,
-          "y": -18
+          "x": 483,
+          "y": -22
         },
         {
-          "x": 589,
-          "y": 111
+          "x": 611,
+          "y": 39
         },
         {
-          "x": 896,
-          "y": 224
+          "x": 831,
+          "y": 31
         },
         {
-          "x": 1385,
-          "y": 237
+          "x": 1025,
+          "y": 85
+        },
+        {
+          "x": 1286,
+          "y": 56
+        },
+        {
+          "x": 1590,
+          "y": 56
         },
         {
           "x": 1870,
