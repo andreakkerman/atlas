@@ -186,12 +186,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       "moose": "natte stenen, routekeuzes en de veilige uitgang"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "island-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Zonlicht! Deze grot heeft eindelijk goede manieren."
+      "text": "Zonlicht! We zijn bijna buiten."
     },
     {
       "id": "island-boat-attention",
@@ -205,14 +212,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "islandWheel",
       "speaker": "minnie",
-      "text": "Een stuurwiel in een grot. Daar zit een route achter."
+      "text": "Een stuurwiel in een grot. Die valt wel op."
     },
     {
       "id": "island-map-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "islandMap",
       "speaker": "moose",
-      "text": "De eilandkaart is droog. Iemand dacht vooruit."
+      "text": "De kaart is nog goed leesbaar. Handig."
     },
     {
       "id": "island-solved",
@@ -230,13 +237,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
       "id": "island-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De eilandpoort wacht nog. Eerst nog {remainingChallenges}."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we naar buiten."
     },
     {
       "id": "island-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De route klopt. Sven kan naar buiten."
+      "text": "De route is vrij. We kunnen naar buiten."
     },
     {
       "id": "island-complete",
@@ -283,8 +290,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "6 × 8 = ?",
               "answer": 48,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48."
             },
             {
@@ -296,8 +302,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "5 × 6 = ?",
               "answer": 30,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -320,8 +325,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 42,
                 48
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 6 en tel nog 6 erbij.",
+              "hintParameters": {"a":6,"b":6},
               "explanation": "6 × 6 = 36."
             },
             {
@@ -339,8 +343,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 48,
                 54
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -363,8 +366,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-              "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+              "hintParameters": {"a":16,"b":8},
               "explanation": "16 : 8 = 2."
             },
             {
@@ -376,8 +378,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "2 × 7 = ?",
               "answer": 14,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 2 en 2 × 2.",
+              "hintParameters": {"a":2,"b":7},
               "explanation": "2 × 7 = 14."
             }
           ]
@@ -400,8 +401,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 54,
                 63
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -419,8 +419,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 35,
                 42
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 4 en 2 × 4.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 × 7 = 28."
             }
           ]
@@ -450,8 +449,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 30,
                 36
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+              "hintParameters": {"a":4,"b":6},
               "explanation": "4 × 6 = 24."
             },
             {
@@ -463,8 +461,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "6 × 7 = ?",
               "answer": 42,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 6 en 2 × 6.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             }
           ]
@@ -487,8 +484,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 30,
                 35
               ],
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 5 sprongen van 5.",
+              "hintParameters": {"a":5,"b":5},
               "explanation": "5 × 5 = 25."
             },
             {
@@ -500,8 +496,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "Een touw bij het stuurwiel is 20 meter lang. Nemo verdeelt het in 4 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 5,
-              "hintMinnie": "Verdeel de totale lengte eerlijk over 4 gelijke stukken.",
-              "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 20.",
+              "hintParameters": {"a":20,"b":4},
               "explanation": "20 : 4 = 5 meter."
             }
           ]
@@ -524,8 +519,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 18,
                 21
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":3},
               "explanation": "5 × 3 = 15."
             },
             {
@@ -543,8 +537,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 7,
                 8
               ],
-              "hintMinnie": "Verdeel 18 eerlijk over 3 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 18.",
+              "hintParameters": {"a":18,"b":3},
               "explanation": "18 : 3 = 6."
             }
           ]
@@ -561,8 +554,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "Nemo verdeelt 21 koerskaarten eerlijk over 7 reddingsboten. Hoeveel kaarten krijgt iedere boot?",
               "answer": 3,
-              "hintMinnie": "Verdeel 21 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 21.",
+              "hintParameters": {"a":21,"b":7},
               "explanation": "21 : 7 = 3."
             },
             {
@@ -574,8 +566,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "6 × 9 = ?",
               "answer": 54,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+              "hintParameters": {"a":6,"b":9},
               "explanation": "6 × 9 = 54."
             }
           ]
@@ -605,8 +596,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 42,
                 49
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 5 en 2 × 5.",
+              "hintParameters": {"a":5,"b":7},
               "explanation": "5 × 7 = 35."
             },
             {
@@ -618,8 +608,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
               "answerMode": "open",
               "prompt": "2 × 3 = ?",
               "answer": 6,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6."
             }
           ]
@@ -642,8 +631,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 6,
                 8
               ],
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Verdubbel 2.",
+              "hintParameters": {"a":2,"b":2},
               "explanation": "2 × 2 = 4."
             },
             {
@@ -661,8 +649,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 27,
                 36
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+              "hintParameters": {"a":2,"b":9},
               "explanation": "2 × 9 = 18."
             }
           ]
@@ -685,8 +672,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-              "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+              "hintParameters": {"a":16,"b":8},
               "explanation": "16 : 8 = 2."
             },
             {
@@ -704,8 +690,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 60,
                 70
               ],
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "5 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":5,"b":10},
               "explanation": "5 × 10 = 50."
             }
           ]
@@ -728,8 +713,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 14,
                 16
               ],
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Verdubbel 6.",
+              "hintParameters": {"a":6,"b":2},
               "explanation": "6 × 2 = 12."
             },
             {
@@ -747,8 +731,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0007"] = {
                 16,
                 18
               ],
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 2.",
-              "hintMoose": "Verdubbel 7.",
+              "hintParameters": {"a":7,"b":2},
               "explanation": "7 × 2 = 14."
             }
           ]

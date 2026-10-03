@@ -1,0 +1,37 @@
+[
+  {
+    "Algorithm": "SHA256",
+    "Hash": "FCEAC20AF74B693A9B99EEE129BE4C94692B89DBC4F6B71F449F0F8554B00A70",
+    "Path": "D:\\DevProjects\\SvenAdventure\\src\\app.js"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "55CAD0107181E18C4A825E2FC9A96E4261367694E707C68A2A1B0AA9814B97FC",
+    "Path": "D:\\DevProjects\\SvenAdventure\\src\\ambient-system.js"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "A38C1DFC71AD65AAF0D2365AB49FC69D34B72802DA855089CFCDF900EF8E576C",
+    "Path": "D:\\DevProjects\\SvenAdventure\\src\\cinematic-renderer.js"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "18CFEC004CFCA391F5706E7BEE42D475616A6DC040BD1CF272AD6EBB46EE83BA",
+    "Path": "D:\\DevProjects\\SvenAdventure\\src\\cinematic-settings.js"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "397EF5A95841CF6A2D81D209AEF998F6142E4E8C01C9D09DA096842D321E5211",
+    "Path": "D:\\DevProjects\\SvenAdventure\\src\\voxel-renderer.js"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "B54E693846C00EC1551B5D26BBD0389718C2BDEC1504118AF38AABA6F75CE73A",
+    "Path": "D:\\DevProjects\\SvenAdventure\\service-worker.js"
+  },
+  {
+    "Algorithm": "SHA256",
+    "Hash": "E2DCD13F651820FE2C4D64DA588F68AB4395368EF8196F32A54F12EBA49F5175",
+    "Path": "D:\\DevProjects\\SvenAdventure\\Levels\\world-config.js"
+  }
+]

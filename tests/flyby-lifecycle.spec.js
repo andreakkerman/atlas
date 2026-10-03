@@ -5,7 +5,7 @@ async function harness(configs){
  const document={hidden:false,querySelector:s=>s==='.worldTrack'?{getBoundingClientRect:()=>({width:1000,height:500})}:shells.get(s.match(/"(.*?)"/)?.[1])};
  const window={setTimeout:(fn,ms)=>{const id=++seq;timers.set(id,{fn,at:now+ms});return id;},clearTimeout:id=>timers.delete(id),requestAnimationFrame:fn=>(raf=fn,1),cancelAnimationFrame:()=>{raf=null;},matchMedia:()=>({matches:false})};
  const level={id:'test',world:{width:1000,height:500},ambientFlybys:configs.map(c=>({frameA:'a.png',speed:1,path:[{x:0,y:0},{x:20,y:0}],intervalMinMs:1000,intervalMaxMs:1000,...c}))};
- for(const c of level.ambientFlybys)shells.set(c.id,{dataset:{},style:{}});
+ for(const c of level.ambientFlybys)shells.set(c.id,{dataset:{},style:{},querySelector:()=>null});
  vm.runInNewContext(fs.readFileSync('src/ambient-system.js','utf8'),{window,document,CSS:{escape:x=>x}});
  let screen='scene';const r=window.AtlasAmbientSystem.createFlybyRuntime({getLevel:()=>level,getScreen:()=>screen,assetCache:{image:async p=>{loads.push(p);return {};},normalize:x=>x}});
  await r.prepareLevel(level);

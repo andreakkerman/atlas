@@ -6,7 +6,8 @@ const snap=p=>p.evaluate(()=>window.eval('cinematicRenderer').snapshot());
 const ready=async p=>expect.poll(async()=>(await snap(p)).error||(await snap(p)).status,{timeout:25000}).toBe('ready');
 async function open(page){
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
- await page.goto(base+'/?dev=editor');
+ await page.goto(base+'/?dev=editor&level=LVL-0034');
+ await page.waitForFunction(()=>window.eval('typeof selectLevel')==='function');
  await page.evaluate(async()=>{window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});await window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false,allowDisabledForEditor:true});});
 }
 async function flags(page,value){await page.evaluate(value=>{window.eval('worldResolver').updateLevelSettings('LVL-0034',{illustratedFeatures:value});window.eval('render')();},value);}

@@ -4,6 +4,8 @@ const riven=['seaContainer','raiderCache','blueSuitcase'];
 async function boot(page){
   await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
   await page.goto(base+'/?atlasSessionTest=1');
+  await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+  await expect(page.locator('.menuScreen')).toBeVisible();
 }
 async function enter(page,id){await page.evaluate(id=>window.eval('selectLevel')(id,{startImmediately:true}),id);}
 async function completed(page){return page.evaluate(()=>[...window.eval('state.completedRunes')]);}
@@ -74,22 +76,24 @@ for(const scenario of ['fresh','normal','shortcut'])test(`ARC progress isolation
   for(const [id,value] of Object.entries(previous))expect(await page.evaluate(id=>localStorage.getItem(window.SVEN_LEVEL_DEFINITIONS[id].storageKey),id)).toBe(value);
   expect(errors).toEqual([]);
 });
-test('Riven Tides persists only answered challenges, including partial reloads',async({page})=>{
+test('Riven Tides resets partial runs while earned completion remains durable',async({page})=>{
+  test.setTimeout(120000); // 20 real answers across a discarded partial run and full earned run, plus three boots.
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   await boot(page);await enter(page,'LVL-0034');
-  for(let i=0;i<riven.length;i++){
+  for(let i=0;i<2;i++){
     await solve(page,riven[i]);
     expect(await completed(page)).toEqual(riven.slice(0,i+1));
     await expect(page.locator('[data-rune].runeDone')).toHaveCount(i+1);
-    await page.reload();await enter(page,'LVL-0034');
-    expect(await completed(page)).toEqual(riven.slice(0,i+1));
   }
+  await boot(page);await enter(page,'LVL-0034');
+  expect(await completed(page)).toEqual([]);
+  for(const id of riven)await solve(page,id);
   expect(await page.evaluate(()=>window.eval('isLevelExitReady')())).toBe(true);
   await leave(page);
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem(window.eval('level.storageKey'))));
   expect(saved.completedRuneIds).toEqual(riven);expect(saved.completedAt).toBeTruthy();
   // Finishing closes this run; re-entry starts fresh while history remains earned.
-  await page.reload();await enter(page,'LVL-0034');expect(await completed(page)).toEqual([]);
+  await boot(page);await enter(page,'LVL-0034');expect(await completed(page)).toEqual([]);
   expect(await page.evaluate(()=>window.eval('storedLevelIsComplete')(window.eval('level')))).toBe(true);
   expect(errors).toEqual([]);
 });

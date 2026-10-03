@@ -1,0 +1,39 @@
+
+Running 14 tests using 1 worker
+
+(node:50008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (3.0s)
+  ok  2 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (1.7s)
+  ok  3 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at desktop (4.7s)
+  ok  4 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at desktop-wide (5.1s)
+  ok  5 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at tablet-landscape (4.9s)
+  ok  6 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at tablet-portrait (5.5s)
+  ok  7 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (117ms)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.4302563924937268[39m, actorMae: [33m1.196200568970864[39m }
+SPRITE_FILTER_PARITY [33m1[39m { domImpact: [33m0.1787487045219004[39m, fullImpact: [33m0.19543991708940162[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.32567735032866885[39m, actorMae: [33m1.7010819648039972[39m }
+  ok  8 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1 (5.7s)
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.4402813697870965[39m, actorMae: [33m1.3320356213512383[39m }
+SPRITE_FILTER_PARITY [33m2[39m { domImpact: [33m0.17892598047237224[39m, fullImpact: [33m0.18775909561992035[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.3406258178235502[39m, actorMae: [33m2.088054300304934[39m }
+  ok  9 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2 (10.4s)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.3835067418971985,"fps":58.88125613208654},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5431476939387836,"fps":57.4162679432387},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.49616043706678553,"fps":58.605196326725306},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4975925951926577,"fps":58.708414872798436},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4765253052913139,"fps":58.765915766795636}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.31239703086604104,"fps":57.74783445554528},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4129281260010853,"fps":57.870370369704986},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4513081132520821,"fps":57.03422053038059},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.49898254310696016,"fps":59.04349537423348},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4858929687284268,"fps":58.54800936631934}}
+  ok 10 [desktop-chromium] › tests\illustrated-compositor.spec.js:74:1 › producer revisions suppress empty and unchanged uploads across recovery (13.4s)
+  ok 11 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 (15.3s)
+  ok 12 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 2 (15.4s)
+Tablet 734, entry 1: preparation started
+Tablet 734, entry 1: ready, 4 frames prepared
+Tablet 734, entry 2: preparation started
+Tablet 734, entry 2: ready, 4 frames prepared
+  ok 13 [desktop-chromium] › tests\three-tablet-acceptance.spec.js:7:31 › Tablet Optimized real GPU acceptance: 1180x734 (1.4m)
+Tablet 689, entry 1: preparation started
+Tablet 689, entry 1: ready, 4 frames prepared
+Tablet 689, entry 2: preparation started
+Tablet 689, entry 2: ready, 4 frames prepared
+  ok 14 [desktop-chromium] › tests\three-tablet-acceptance.spec.js:7:31 › Tablet Optimized real GPU acceptance: 1180x689 (1.4m)
+
+  14 passed (4.2m)

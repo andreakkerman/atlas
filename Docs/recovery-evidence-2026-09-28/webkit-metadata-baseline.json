@@ -1,0 +1,34 @@
+[
+  {
+    "path": "assets/ambient/flybys/arc_wasp/arc_wasp.mp3",
+    "status": 200,
+    "atResolution": {
+      "duration": 1.46275,
+      "ready": 4,
+      "network": 2,
+      "error": null
+    },
+    "later": {
+      "duration": 1.46275,
+      "ready": 4,
+      "network": 2,
+      "error": null
+    }
+  },
+  {
+    "path": "assets/ambient/flybys/common-swift/common-swift-call.mp3",
+    "status": 200,
+    "atResolution": {
+      "duration": 0,
+      "ready": 2,
+      "network": 2,
+      "error": null
+    },
+    "later": {
+      "duration": 5.6424375,
+      "ready": 4,
+      "network": 2,
+      "error": null
+    }
+  }
+]

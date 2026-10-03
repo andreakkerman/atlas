@@ -253,6 +253,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "moose": "oude stenen, veilige stappen en de zware poort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "runenpoort-enter",
@@ -286,7 +292,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "wind",
       "speaker": "minnie",
-      "text": "Ik ben benieuwd wat we bij deze opdracht ontdekken."
+      "text": "Freya staat bij de tempel. Laten we naar haar toe gaan."
     },
     {
       "id": "runenpoort-progress",
@@ -298,7 +304,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "id": "runenpoort-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De poort wacht nog. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de tempelpoort open."
     },
     {
       "id": "runenpoort-complete",
@@ -310,7 +316,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
       "id": "runenpoort-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "minnie",
-      "text": "Je kunt verder! Op naar de tempel."
+      "text": "De tempelpoort is open. Op naar de tempel."
     }
   ],
   "areas": [
@@ -365,8 +371,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "5 × 10 = ?",
               "answer": 50,
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "5 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":5,"b":10},
               "explanation": "5 × 10 = 50."
             },
             {
@@ -384,8 +389,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 40,
                 48
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -402,8 +406,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "Rond het zonneteken liggen 4 kringen met elk 7 gouden schijfjes. Hoeveel schijfjes zijn dat samen?",
               "answer": 28,
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 × 7 = 28."
             },
             {
@@ -415,8 +418,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "2 × 4 = ?",
               "answer": 8,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 2 twee keer.",
+              "hintParameters": {"a":2,"b":4},
               "explanation": "2 × 4 = 8."
             }
           ]
@@ -439,8 +441,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 81,
                 90
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 8 en haal 8 eraf.",
+              "hintParameters": {"a":8,"b":9},
               "explanation": "8 × 9 = 72."
             },
             {
@@ -452,8 +453,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "5 × 5 = ?",
               "answer": 25,
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 5 sprongen van 5.",
+              "hintParameters": {"a":5,"b":5},
               "explanation": "5 × 5 = 25."
             }
           ]
@@ -476,8 +476,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 63,
                 70
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 8 en 2 × 8.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             },
             {
@@ -495,8 +494,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-              "hintMoose": "Omdat 5 × 7 = 35, is 35 : 5 = 7.",
+              "hintParameters": {"a":35,"b":5},
               "explanation": "35 : 5 = 7."
             }
           ]
@@ -520,8 +518,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "Voor het steenteken bouwt de Viking 3 stapels van 8 stenen. Hoeveel stenen gebruikt hij?",
               "answer": 24,
-              "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 3 drie keer.",
+              "hintParameters": {"a":3,"b":8},
               "explanation": "3 × 8 = 24."
             },
             {
@@ -539,8 +536,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 18,
                 24
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 2 en tel nog 2 erbij.",
+              "hintParameters": {"a":2,"b":6},
               "explanation": "2 × 6 = 12."
             }
           ]
@@ -557,8 +553,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "7 × 10 = ?",
               "answer": 70,
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "7 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":7,"b":10},
               "explanation": "7 × 10 = 70."
             },
             {
@@ -576,8 +571,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 56,
                 64
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48."
             }
           ]
@@ -600,8 +594,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-              "hintMoose": "Omdat 5 × 4 = 20, is 20 : 5 = 4.",
+              "hintParameters": {"a":20,"b":5},
               "explanation": "20 : 5 = 4."
             },
             {
@@ -619,8 +612,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 72,
                 80
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+              "hintParameters": {"a":8,"b":8},
               "explanation": "8 × 8 = 64."
             }
           ]
@@ -637,8 +629,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "2 × 9 = ?",
               "answer": 18,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+              "hintParameters": {"a":2,"b":9},
               "explanation": "2 × 9 = 18."
             },
             {
@@ -656,8 +647,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Verdeel 63 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 63.",
+              "hintParameters": {"a":63,"b":7},
               "explanation": "63 : 7 = 9."
             }
           ]
@@ -701,8 +691,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 2 = 14, is 14 : 7 = 2.",
+              "hintParameters": {"a":14,"b":7},
               "explanation": "14 : 7 = 2."
             },
             {
@@ -714,8 +703,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "6 × 2 = ?",
               "answer": 12,
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Verdubbel 6.",
+              "hintParameters": {"a":6,"b":2},
               "explanation": "6 × 2 = 12."
             }
           ]
@@ -738,8 +726,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-              "hintMoose": "Omdat 4 × 9 = 36, is 36 : 4 = 9.",
+              "hintParameters": {"a":36,"b":4},
               "explanation": "36 : 4 = 9."
             },
             {
@@ -757,8 +744,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-              "hintMoose": "Omdat 6 × 4 = 24, is 24 : 6 = 4.",
+              "hintParameters": {"a":24,"b":6},
               "explanation": "24 : 6 = 4."
             }
           ]
@@ -775,8 +761,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "Op de havenmarkt koopt de Viking 5 vlaggen voor 6 munten per stuk. Hoeveel munten betaalt hij?",
               "answer": 30,
-              "hintMinnie": "Er zijn 5 gelijke bedragen van 6 munten.",
-              "hintMoose": "Reken 5 × 5 en tel er nog 5 bij op.",
+              "hintParameters": {"a":5,"b":6,"currency":"munten"},
               "explanation": "5 × 6 = 30 munten."
             },
             {
@@ -794,8 +779,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 6,
                 7
               ],
-              "hintMinnie": "Verdeel 25 eerlijk over 5 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 5 welk getal uitkomt op 25.",
+              "hintParameters": {"a":25,"b":5},
               "explanation": "25 : 5 = 5."
             }
           ]
@@ -818,8 +802,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
                 63,
                 70
               ],
-              "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             },
             {
@@ -831,8 +814,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0001"] = {
               "answerMode": "open",
               "prompt": "Aan 6 vlaggenmasten hangen elk 4 linten. Hoeveel linten hangen er in totaal?",
               "answer": 24,
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 4.",
-              "hintMoose": "Verdubbel 6 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":6,"b":4},
               "explanation": "6 × 4 = 24."
             }
           ]

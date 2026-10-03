@@ -74,8 +74,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 10,
               "prompt": "20 : 2 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":20,"b":2},
               "explanation": "20 : 2 = 10, want 2 × 10 = 20."
             },
             {
@@ -87,8 +86,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 63,
               "prompt": "Leonardo heeft 90 gram materiaal bij de latten en gebruikt 27 gram. Hoeveel gram blijft over?",
-              "hintMinnie": "Kijk wat er van het eerste aantal afgaat.",
-              "hintMoose": "Trek eerst de tientallen af en daarna de lossen.",
+              "hintParameters": {"a":90,"b":27,"strategy":"subtraction","unit":"gram"},
               "explanation": "90 - 27 = 63."
             }
           ]
@@ -105,8 +103,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 10,
               "prompt": "Bij de latten maakt Sven van 30 meetkaartjes 3 gelijke stapels. Hoeveel kaartjes liggen op elke stapel?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":30,"b":3},
               "explanation": "30 : 3 = 10, want 3 × 10 = 30.",
               "choices": [
                 9,
@@ -124,8 +121,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 3,
               "prompt": "Bij de latten verdeelt Sven 12 onderdelen over 4 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":12,"b":4},
               "explanation": "12 : 4 = 3, want 4 × 3 = 12."
             }
           ]
@@ -142,8 +138,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 15,
               "prompt": "5 × 3 = ?",
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":5,"b":3},
               "explanation": "5 × 3 = 15.",
               "choices": [
                 10,
@@ -161,8 +156,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 24,
               "prompt": "6 × 4 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":4},
               "explanation": "6 × 4 = 24."
             }
           ]
@@ -179,8 +173,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 4,
               "prompt": "20 : 5 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":20,"b":5},
               "explanation": "20 : 5 = 4, want 5 × 4 = 20.",
               "choices": [
                 3,
@@ -198,8 +191,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 100,
               "prompt": "Bij de latten liggen 10 rijen met 10 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 10 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":10,"b":10},
               "explanation": "10 × 10 = 100.",
               "choices": [
                 90,
@@ -229,8 +221,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 42,
               "prompt": "Leonardo tekent 6 vakken met 7 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 6 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             },
             {
@@ -242,8 +233,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 3,
               "prompt": "30 : 10 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":30,"b":10},
               "explanation": "30 : 10 = 3, want 10 × 3 = 30."
             }
           ]
@@ -260,8 +250,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 43,
               "prompt": "De proef bij de brugliggers duurt eerst 18 minuten en daarna nog 25 minuten. Hoeveel minuten duurt het samen?",
-              "hintMinnie": "Kijk welke twee aantallen je samenneemt.",
-              "hintMoose": "Tel eerst de tientallen en daarna de lossen.",
+              "hintParameters": {"a":18,"b":25,"strategy":"duration_addition","unit":"minuten"},
               "explanation": "18 + 25 = 43."
             },
             {
@@ -273,8 +262,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 8,
               "prompt": "Bij de brugliggers verdeelt Sven 48 onderdelen over 6 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":48,"b":6},
               "explanation": "48 : 6 = 8, want 6 × 8 = 48.",
               "choices": [
                 7,
@@ -297,8 +285,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 10,
               "prompt": "Leonardo verdeelt 70 stukjes bij de brugliggers in 7 gelijke groepen. Hoeveel stukjes krijgt elke groep?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":70,"b":7},
               "explanation": "70 : 7 = 10, want 7 × 10 = 70."
             },
             {
@@ -310,8 +297,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 77,
               "prompt": "7 × 11 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":11},
               "explanation": "7 × 11 = 77.",
               "choices": [
                 70,
@@ -334,8 +320,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 88,
               "prompt": "8 × 11 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":11},
               "explanation": "8 × 11 = 88."
             },
             {
@@ -347,8 +332,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 6,
               "prompt": "48 : 8 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":48,"b":8},
               "explanation": "48 : 8 = 6, want 8 × 6 = 48.",
               "choices": [
                 5,
@@ -528,8 +512,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 2,
               "prompt": "8 : 4 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":8,"b":4},
               "explanation": "8 : 4 = 2, want 4 × 2 = 8.",
               "choices": [
                 1,
@@ -547,8 +530,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 72,
               "prompt": "Bij de kettingen liggen 9 rijen met 8 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 9 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72.",
               "choices": [
                 63,
@@ -571,8 +553,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 4,
               "prompt": "Leonardo tekent 2 vakken met 2 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 2 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":2,"b":2},
               "explanation": "2 × 2 = 4."
             },
             {
@@ -584,8 +565,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 5,
               "prompt": "25 : 5 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":25,"b":5},
               "explanation": "25 : 5 = 5, want 5 × 5 = 25."
             }
           ]
@@ -602,8 +582,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 75,
               "prompt": "Leonardo telt bij de kettingen 46 markeringen en voegt er 29 toe. Hoeveel markeringen zijn er samen?",
-              "hintMinnie": "Kijk welke twee aantallen je samenneemt.",
-              "hintMoose": "Tel eerst de tientallen en daarna de lossen.",
+              "hintParameters": {"a":46,"b":29,"strategy":"addition","unit":"markeringen"},
               "explanation": "46 + 29 = 75."
             },
             {
@@ -615,8 +594,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 7,
               "prompt": "Bij de kettingen maakt Sven van 42 meetkaartjes 6 gelijke stapels. Hoeveel kaartjes liggen op elke stapel?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7, want 6 × 7 = 42.",
               "choices": [
                 6,
@@ -639,8 +617,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "open",
               "answer": 9,
               "prompt": "Bij de kettingen verdeelt Sven 63 onderdelen over 7 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":63,"b":7},
               "explanation": "63 : 7 = 9, want 7 × 9 = 63."
             },
             {
@@ -652,8 +629,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
               "answerMode": "multipleChoice",
               "answer": 120,
               "prompt": "10 × 12 = ?",
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":10,"b":12},
               "explanation": "10 × 12 = 120.",
               "choices": [
                 110,
@@ -1069,12 +1045,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
       "moose": "rustige rekenstrategie en controle"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "HOTSPOT_ATTENTION_FIRST",
+      "CHALLENGE_SUCCESS"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0022-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Proceno voelt als een kasteel dat heel lang heeft nagedacht."
+      "text": "Kijk naar die muren en die hoge poort. Proceno is stevig gebouwd."
     },
     {
       "id": "LVL-0022-attention",
@@ -1092,13 +1075,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0022"] = {
       "id": "LVL-0022-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Brug getest, poort vrij. Doorlopen."
+      "text": "De brug is klaar. Door naar Umbrie."
     },
     {
       "id": "LVL-0022-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De poortbalk blijft liggen. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de poortbalk omhoog."
     }
   ],
   "menu": {

@@ -1,0 +1,135 @@
+
+Running 40 tests using 1 worker
+
+(node:40068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40068) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+REPLAY_EVIDENCE {"screen":"scene","pending":true,"runes":[{"id":"terminal","disabled":true},{"id":"roundContainer","disabled":true},{"id":"crate","disabled":true}],"done":[]}
+  ok  1 [ipad-landscape] › tests\audit-disposable.spec.js:20:1 › audit: earned final reward then replay retains transition lock (32.1s)
+RESUME_EVIDENCE {"before":{"runCompleted":false,"levelId":"LVL-0035","activeChallengeSignature":"terminal|roundContainer|crate","activeChallengeIds":["terminal","roundContainer","crate"],"completedRuneIds":["terminal"],"answered":4,"firstTryCorrect":4,"attempts":4,"updatedAt":"2026-09-28T16:00:54.223Z"},"resumed":{"done":["terminal"],"answered":0,"correct":0},"after":{"levelId":"LVL-0035","completedAt":"2026-09-28T16:01:17.588Z","runCompleted":true,"activeChallengeSignature":"terminal|roundContainer|crate","activeChallengeIds":["terminal","roundContainer","crate"],"completedRuneIds":["terminal","roundContainer","crate"],"answered":8,"firstTryCorrect":8,"attempts":8},"reward":"\n      \n      \n        LVL-0035\n        Stella Montis voltooid\n        Samen met Valente heeft Sven alle drie de plekken in Stella Montis onderzocht.\n        ARC Atlas voltooid\n        \n          8 vragen beantwoord\n          67% in één keer goed\n          8 pogingen\n        \n        Menu\n        Speel nog een keer\n      \n    "}
+  ok  2 [ipad-landscape] › tests\audit-disposable.spec.js:31:1 › audit: resume retains solved rune but drops earned counters (38.6s)
+  ok  3 [ipad-landscape] › tests\challenge-fx-ownership.spec.js:39:1 › native fallback owns one play, follows live target, honors volume/mute and stops on arrival (19ms)
+  ok  4 [ipad-landscape] › tests\challenge-fx-ownership.spec.js:72:1 › visibility cancels playback, and only actual completion reset re-enables delivery (3ms)
+  ok  5 [ipad-landscape] › tests\challenge-fx-ownership.spec.js:91:1 › late Web Audio loading cannot start a cancelled sequence (2ms)
+  ok  6 [ipad-landscape] › tests\challenge-fx-ownership.spec.js:112:1 › projection failure is contained and restores legacy cue presentation (1ms)
+  ok  7 [ipad-landscape] › tests\challenge-fx-ownership.spec.js:120:1 › NPC source stays live independently of idle markers and never restarts audio (2ms)
+  x   8 [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay (4ms)
+(node:5732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5732) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  9 [ipad-landscape] › tests\flyby-lifecycle.spec.js:25:1 › delayed group members reserve their IDs through the entire flight (7ms)
+  x  10 [ipad-landscape] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate (2ms)
+(node:34860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 11 [ipad-landscape] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (22.7s)
+  ok 12 [ipad-landscape] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (21.7s)
+  ok 13 [ipad-landscape] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (28.0s)
+  ok 14 [ipad-landscape] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (18.1s)
+  ok 15 [ipad-landscape] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (6.7s)
+  ok 16 [ipad-landscape] › tests\menu-settings.spec.js:10:5 › fps stays shared from menu (14.1s)
+  ok 17 [ipad-landscape] › tests\menu-settings.spec.js:10:5 › fps stays shared from graphics (10.8s)
+  ok 18 [ipad-landscape] › tests\menu-settings.spec.js:10:5 › debug stays shared from menu (14.0s)
+  ok 19 [ipad-landscape] › tests\menu-settings.spec.js:10:5 › debug stays shared from graphics (10.8s)
+  ok 20 [ipad-landscape] › tests\menu-settings.spec.js:41:1 › level loading title fits its panel (12.3s)
+(node:35540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+REPLAY_EVIDENCE {"screen":"scene","pending":true,"runes":[{"id":"terminal","disabled":true},{"id":"roundContainer","disabled":true},{"id":"crate","disabled":true}],"done":[]}
+  ok 21 [ipad-portrait] › tests\audit-disposable.spec.js:20:1 › audit: earned final reward then replay retains transition lock (35.4s)
+RESUME_EVIDENCE {"before":{"runCompleted":false,"levelId":"LVL-0035","activeChallengeSignature":"terminal|roundContainer|crate","activeChallengeIds":["terminal","roundContainer","crate"],"completedRuneIds":["terminal"],"answered":4,"firstTryCorrect":4,"attempts":4,"updatedAt":"2026-09-28T16:04:49.659Z"},"resumed":{"done":["terminal"],"answered":0,"correct":0},"after":{"levelId":"LVL-0035","completedAt":"2026-09-28T16:05:15.371Z","runCompleted":true,"activeChallengeSignature":"terminal|roundContainer|crate","activeChallengeIds":["terminal","roundContainer","crate"],"completedRuneIds":["terminal","roundContainer","crate"],"answered":8,"firstTryCorrect":8,"attempts":8},"reward":"\n      \n      \n        LVL-0035\n        Stella Montis voltooid\n        Samen met Valente heeft Sven alle drie de plekken in Stella Montis onderzocht.\n        ARC Atlas voltooid\n        \n          8 vragen beantwoord\n          67% in één keer goed\n          8 pogingen\n        \n        Menu\n        Speel nog een keer\n      \n    "}
+  ok 22 [ipad-portrait] › tests\audit-disposable.spec.js:31:1 › audit: resume retains solved rune but drops earned counters (42.0s)
+  ok 23 [ipad-portrait] › tests\challenge-fx-ownership.spec.js:39:1 › native fallback owns one play, follows live target, honors volume/mute and stops on arrival (23ms)
+  ok 24 [ipad-portrait] › tests\challenge-fx-ownership.spec.js:72:1 › visibility cancels playback, and only actual completion reset re-enables delivery (3ms)
+  ok 25 [ipad-portrait] › tests\challenge-fx-ownership.spec.js:91:1 › late Web Audio loading cannot start a cancelled sequence (2ms)
+  ok 26 [ipad-portrait] › tests\challenge-fx-ownership.spec.js:112:1 › projection failure is contained and restores legacy cue presentation (2ms)
+  ok 27 [ipad-portrait] › tests\challenge-fx-ownership.spec.js:120:1 › NPC source stays live independently of idle markers and never restarts audio (3ms)
+  x  28 [ipad-portrait] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay (4ms)
+(node:42632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42632) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 29 [ipad-portrait] › tests\flyby-lifecycle.spec.js:25:1 › delayed group members reserve their IDs through the entire flight (7ms)
+  x  30 [ipad-portrait] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate (2ms)
+(node:32324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32324) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 31 [ipad-portrait] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (24.0s)
+  ok 32 [ipad-portrait] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (21.4s)
+  ok 33 [ipad-portrait] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (25.4s)
+  ok 34 [ipad-portrait] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (17.3s)
+  ok 35 [ipad-portrait] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (6.9s)
+  ok 36 [ipad-portrait] › tests\menu-settings.spec.js:10:5 › fps stays shared from menu (14.5s)
+  ok 37 [ipad-portrait] › tests\menu-settings.spec.js:10:5 › fps stays shared from graphics (10.9s)
+  ok 38 [ipad-portrait] › tests\menu-settings.spec.js:10:5 › debug stays shared from menu (13.9s)
+  ok 39 [ipad-portrait] › tests\menu-settings.spec.js:10:5 › debug stays shared from graphics (10.7s)
+  ok 40 [ipad-portrait] › tests\menu-settings.spec.js:41:1 › level loading title fits its panel (12.5s)
+
+
+  1) [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+
+    TypeError: shell.querySelector is not a function
+        at tick (evalmachine.<anonymous>:1008:66)
+        at Object.advance (D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:12:167)
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:16:74
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3045:9
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2537:11
+        at TimeoutManager.withRunnable (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:1816:14)
+        at TestInfoImpl._runWithTimeout (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2535:7)
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3043:7
+        at WorkerMain._runTest (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3016:5)
+        at WorkerMain.runTestGroup (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2911:9)
+
+  2) [ipad-landscape] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate 
+
+    TypeError: shell.querySelector is not a function
+        at tick (evalmachine.<anonymous>:1008:66)
+        at Object.advance (D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:12:167)
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:37:49
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3045:9
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2537:11
+        at TimeoutManager.withRunnable (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:1816:14)
+        at TestInfoImpl._runWithTimeout (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2535:7)
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3043:7
+        at WorkerMain._runTest (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3016:5)
+        at WorkerMain.runTestGroup (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2911:9)
+
+  3) [ipad-portrait] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+
+    TypeError: shell.querySelector is not a function
+        at tick (evalmachine.<anonymous>:1008:66)
+        at Object.advance (D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:12:167)
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:16:74
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3045:9
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2537:11
+        at TimeoutManager.withRunnable (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:1816:14)
+        at TestInfoImpl._runWithTimeout (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2535:7)
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3043:7
+        at WorkerMain._runTest (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3016:5)
+        at WorkerMain.runTestGroup (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2911:9)
+
+  4) [ipad-portrait] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate 
+
+    TypeError: shell.querySelector is not a function
+        at tick (evalmachine.<anonymous>:1008:66)
+        at Object.advance (D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:12:167)
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:37:49
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3045:9
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2537:11
+        at TimeoutManager.withRunnable (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:1816:14)
+        at TestInfoImpl._runWithTimeout (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2535:7)
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3043:7
+        at WorkerMain._runTest (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3016:5)
+        at WorkerMain.runTestGroup (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2911:9)
+
+  4 failed
+    [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+    [ipad-landscape] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate 
+    [ipad-portrait] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+    [ipad-portrait] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate 
+  36 passed (7.8m)

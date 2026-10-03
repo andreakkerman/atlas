@@ -1,0 +1,15 @@
+
+Running 2 tests using 1 worker
+
+(node:40964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\flyby-audio.spec.js:76:1 › Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available (6.5s)
+(node:36260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [ipad-landscape] › tests\flyby-audio.spec.js:76:1 › Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available (7.1s)
+
+  2 passed (15.0s)

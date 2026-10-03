@@ -1,0 +1,1098 @@
+{
+  "LVL-0004-1": {
+    "inventory": [
+      {
+        "tag": "IMG",
+        "class": "worldArt",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "emissiveGlowCanvas",
+        "z": "10",
+        "blend": "plus-lighter",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "DIV",
+        "class": "forestMist",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "linear-gradient(90deg, rgba(0, 0, 0, 0) 44%, rgba(18, 28, 22, 0.18) 50%, rgba(0, 0, 0, 0) 56%), linear-gradient(rgba(0, 0, 0, 0) 62%, rgba(19, 12, 7, 0.16))"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "backgroundAtmosphere",
+        "z": "15",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldAtmosphere",
+        "z": "25",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldLight",
+        "z": "35",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "foregroundAtmosphere",
+        "z": "45",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "illustratedShadowCanvas",
+        "z": "39",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "particleFieldsCanvas",
+        "z": "46",
+        "blend": "screen",
+        "opacity": "0",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "ambientAnimal ",
+        "z": "30",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "ambientAnimal ",
+        "z": "30",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "worldHotspot hotspot-gate ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(255, 228, 140, 0.06), rgba(255, 228, 140, 0.02) 42%, rgba(0, 0, 0, 0) 68%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "SPAN",
+        "class": "svenInWorld sven-idle sven-facing-right",
+        "z": "40",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",
+        "background": "none"
+      }
+    ],
+    "cases": {
+      "base": {
+        "parity": {
+          "mae": 0.010802583167844333,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "mist": {
+        "parity": {
+          "mae": 2.0024619375298265,
+          "over8": 0.07551224618605581,
+          "max": 52
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "backgroundAtmosphere": {
+        "parity": {
+          "mae": 0.010700980618544005,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldAtmosphere": {
+        "parity": {
+          "mae": 0.010700980618544005,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldLight": {
+        "parity": {
+          "mae": 8.317265505934513,
+          "over8": 0.3452023584106898,
+          "max": 70
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "foregroundAtmosphere": {
+        "parity": {
+          "mae": 0.10455364152773287,
+          "over8": 0.0041518496282270355,
+          "max": 43
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "actor": {
+        "parity": {
+          "mae": 0.11411621176434367,
+          "over8": 0.0035395403254360443,
+          "max": 80
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "shadow": {
+        "parity": {
+          "mae": 0.11484320879323881,
+          "over8": 0.003535691744023153,
+          "max": 80
+        },
+        "restore": {
+          "mae": 0.000004233439554180329,
+          "over8": 0,
+          "max": 1
+        }
+      },
+      "particles": {
+        "parity": {
+          "mae": 0.016054742222016964,
+          "over8": 0.00018858048923166921,
+          "max": 63
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "combined": {
+        "parity": {
+          "mae": 10.293935405409567,
+          "over8": 0.446306131559907,
+          "max": 80
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  "LVL-0001-1": {
+    "inventory": [
+      {
+        "tag": "IMG",
+        "class": "worldArt",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "emissiveGlowCanvas",
+        "z": "10",
+        "blend": "plus-lighter",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "DIV",
+        "class": "forestMist",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "linear-gradient(90deg, rgba(0, 0, 0, 0) 44%, rgba(18, 28, 22, 0.18) 50%, rgba(0, 0, 0, 0) 56%), linear-gradient(rgba(0, 0, 0, 0) 62%, rgba(19, 12, 7, 0.16))"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "backgroundAtmosphere",
+        "z": "15",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldAtmosphere",
+        "z": "25",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldLight",
+        "z": "35",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "foregroundAtmosphere",
+        "z": "45",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "illustratedShadowCanvas",
+        "z": "39",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "particleFieldsCanvas",
+        "z": "46",
+        "blend": "screen",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "ambientAnimal ",
+        "z": "30",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "worldHotspot hotspot-ambient ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(255, 228, 140, 0.06), rgba(255, 228, 140, 0.02) 42%, rgba(0, 0, 0, 0) 68%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "worldHotspot hotspot-gate ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(255, 228, 140, 0.06), rgba(255, 228, 140, 0.02) 42%, rgba(0, 0, 0, 0) 68%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot npcChallengeHotspot   ",
+        "z": "38",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg) drop-shadow(rgba(0, 0, 0, 0.34) 0px 13px 9px)",
+        "background": "none"
+      },
+      {
+        "tag": "SPAN",
+        "class": "svenInWorld sven-idle sven-facing-right",
+        "z": "40",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",
+        "background": "none"
+      }
+    ],
+    "cases": {
+      "base": {
+        "parity": {
+          "mae": 0.01300974460813744,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "mist": {
+        "parity": {
+          "mae": 2.5295024553949412,
+          "over8": 0.09388498899305715,
+          "max": 61
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "backgroundAtmosphere": {
+        "parity": {
+          "mae": 0.012962791914900167,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldAtmosphere": {
+        "parity": {
+          "mae": 0.012962791914900167,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldLight": {
+        "parity": {
+          "mae": 3.812185378469496,
+          "over8": 0.1586847088163303,
+          "max": 70
+        },
+        "restore": {
+          "mae": 0.000012700318662540988,
+          "over8": 0,
+          "max": 1
+        }
+      },
+      "foregroundAtmosphere": {
+        "parity": {
+          "mae": 0.23221070213519296,
+          "over8": 0.00954255761326375,
+          "max": 49
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "actor": {
+        "parity": {
+          "mae": 0.11811026955464216,
+          "over8": 0.0035476223464031157,
+          "max": 111
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "shadow": {
+        "parity": {
+          "mae": 0.11822765128773534,
+          "over8": 0.0035472374882618268,
+          "max": 111
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "particles": {
+        "parity": {
+          "mae": 0.025698517526439753,
+          "over8": 0.000506473313936483,
+          "max": 57
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "combined": {
+        "parity": {
+          "mae": 6.49933419541557,
+          "over8": 0.2740151480164411,
+          "max": 111
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  "LVL-0004-2": {
+    "inventory": [
+      {
+        "tag": "IMG",
+        "class": "worldArt",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "emissiveGlowCanvas",
+        "z": "10",
+        "blend": "plus-lighter",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "DIV",
+        "class": "forestMist",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "linear-gradient(90deg, rgba(0, 0, 0, 0) 44%, rgba(18, 28, 22, 0.18) 50%, rgba(0, 0, 0, 0) 56%), linear-gradient(rgba(0, 0, 0, 0) 62%, rgba(19, 12, 7, 0.16))"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "backgroundAtmosphere",
+        "z": "15",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldAtmosphere",
+        "z": "25",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldLight",
+        "z": "35",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "foregroundAtmosphere",
+        "z": "45",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "illustratedShadowCanvas",
+        "z": "39",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "particleFieldsCanvas",
+        "z": "46",
+        "blend": "screen",
+        "opacity": "0",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "ambientAnimal ",
+        "z": "30",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "ambientAnimal ",
+        "z": "30",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "worldHotspot hotspot-gate ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(255, 228, 140, 0.06), rgba(255, 228, 140, 0.02) 42%, rgba(0, 0, 0, 0) 68%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "SPAN",
+        "class": "svenInWorld sven-idle sven-facing-right",
+        "z": "40",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",
+        "background": "none"
+      }
+    ],
+    "cases": {
+      "base": {
+        "parity": {
+          "mae": 0.011082375036561523,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "mist": {
+        "parity": {
+          "mae": 2.001680483073939,
+          "over8": 0.07551715312735725,
+          "max": 55
+        },
+        "restore": {
+          "mae": 0.04604211887498268,
+          "over8": 0,
+          "max": 3
+        }
+      },
+      "backgroundAtmosphere": {
+        "parity": {
+          "mae": 0.010947578472575008,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldAtmosphere": {
+        "parity": {
+          "mae": 0.010947578472575008,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldLight": {
+        "parity": {
+          "mae": 8.315004271925368,
+          "over8": 0.34497067380963375,
+          "max": 71
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "foregroundAtmosphere": {
+        "parity": {
+          "mae": 0.10461993334256993,
+          "over8": 0.004151945842762358,
+          "max": 40
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "actor": {
+        "parity": {
+          "mae": 0.10143917701935067,
+          "over8": 0.00291443448944719,
+          "max": 88
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "shadow": {
+        "parity": {
+          "mae": 0.10212662987422835,
+          "over8": 0.0029087578318631752,
+          "max": 88
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "particles": {
+        "parity": {
+          "mae": 0.01629508613125202,
+          "over8": 0.00018983127819085884,
+          "max": 63
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "combined": {
+        "parity": {
+          "mae": 10.27828110808356,
+          "over8": 0.44543192629196876,
+          "max": 88
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      }
+    }
+  },
+  "LVL-0001-2": {
+    "inventory": [
+      {
+        "tag": "IMG",
+        "class": "worldArt",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "emissiveGlowCanvas",
+        "z": "10",
+        "blend": "plus-lighter",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "DIV",
+        "class": "forestMist",
+        "z": "10",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "linear-gradient(90deg, rgba(0, 0, 0, 0) 44%, rgba(18, 28, 22, 0.18) 50%, rgba(0, 0, 0, 0) 56%), linear-gradient(rgba(0, 0, 0, 0) 62%, rgba(19, 12, 7, 0.16))"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "backgroundAtmosphere",
+        "z": "15",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldAtmosphere",
+        "z": "25",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "worldLight",
+        "z": "35",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "sceneEffectsCanvas",
+        "slot": "foregroundAtmosphere",
+        "z": "45",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "illustratedShadowCanvas",
+        "z": "39",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "CANVAS",
+        "class": "particleFieldsCanvas",
+        "z": "46",
+        "blend": "screen",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "ambientAnimal ",
+        "z": "30",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "worldHotspot hotspot-ambient ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(255, 228, 140, 0.06), rgba(255, 228, 140, 0.02) 42%, rgba(0, 0, 0, 0) 68%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "worldHotspot hotspot-gate ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(255, 228, 140, 0.06), rgba(255, 228, 140, 0.02) 42%, rgba(0, 0, 0, 0) 68%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot    ",
+        "z": "50",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "none",
+        "background": "radial-gradient(circle, rgba(46, 230, 220, 0.08), rgba(46, 230, 220, 0.03) 34%, rgba(0, 0, 0, 0) 62%)"
+      },
+      {
+        "tag": "BUTTON",
+        "class": "runeHotspot npcChallengeHotspot   ",
+        "z": "38",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg) drop-shadow(rgba(0, 0, 0, 0.34) 0px 13px 9px)",
+        "background": "none"
+      },
+      {
+        "tag": "SPAN",
+        "class": "svenInWorld sven-idle sven-facing-right",
+        "z": "40",
+        "blend": "normal",
+        "opacity": "1",
+        "filter": "drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",
+        "background": "none"
+      }
+    ],
+    "cases": {
+      "base": {
+        "parity": {
+          "mae": 0.013126645268554012,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "mist": {
+        "parity": {
+          "mae": 2.5289698117273973,
+          "over8": 0.09395262781138872,
+          "max": 59
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "backgroundAtmosphere": {
+        "parity": {
+          "mae": 0.01303966732862267,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldAtmosphere": {
+        "parity": {
+          "mae": 0.01303966732862267,
+          "over8": 0,
+          "max": 1
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "worldLight": {
+        "parity": {
+          "mae": 3.8143877291830233,
+          "over8": 0.15873233501131484,
+          "max": 70
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "foregroundAtmosphere": {
+        "parity": {
+          "mae": 0.23246846087532136,
+          "over8": 0.009518119121291892,
+          "max": 51
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "actor": {
+        "parity": {
+          "mae": 0.11934220046490863,
+          "over8": 0.0034801759571421974,
+          "max": 127
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "shadow": {
+        "parity": {
+          "mae": 0.11945015317354023,
+          "over8": 0.003478636524577041,
+          "max": 127
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "particles": {
+        "parity": {
+          "mae": 0.025733635831832385,
+          "over8": 0.0004995458673932788,
+          "max": 60
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      },
+      "combined": {
+        "parity": {
+          "mae": 6.5020231030342215,
+          "over8": 0.27406258178235504,
+          "max": 118
+        },
+        "restore": {
+          "mae": 0,
+          "over8": 0,
+          "max": 0
+        }
+      }
+    }
+  }
+}

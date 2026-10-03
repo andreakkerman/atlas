@@ -18,6 +18,10 @@ test.afterEach(async ({ page }) => {
 
 async function start(page, levelId = "LVL-0001", editor = false) {
   await page.goto(editor ? editorUrl : gameUrl);
+  if (!editor) {
+    await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+    await expect(page.locator(".menuScreen")).toBeVisible();
+  }
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true, allowDisabledForEditor: true });
@@ -332,6 +336,7 @@ test.describe("NPC challenge presentation", () => {
   });
 
   for (const facing of ["native", "mirrored"]) test(`renders ${facing} NPC artwork consistently through idle, variants, pass, completed hold and reload`, async ({ page }) => {
+    test.setTimeout(60000); // Two NPC fixtures, each with initial bootstrap and a fresh reload.
     const scale = facing === "mirrored" ? -1 : 1;
     const transform = `matrix(${scale}, 0, 0, 1, 0, 0)`;
     const errors = [];
@@ -378,7 +383,6 @@ test.describe("NPC challenge presentation", () => {
         states.push(snapshot("pass"));
         window.eval("setNpcCompleted")(entry);
         window.eval("state.completedRunes").add(runeId);
-        window.eval("saveChallengeProgress")();
         states.push(snapshot("completed"));
         return states;
       }, fixture);
@@ -397,6 +401,8 @@ test.describe("NPC challenge presentation", () => {
       expect(beforeReload.at(-1).path).toContain("idle_to_pass/");
 
       await page.reload();
+      await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+      await expect(page.locator(".menuScreen")).toBeVisible();
       await page.evaluate(async ({ levelId, runeId, facing }) => {
         await window.eval("selectLevel")(levelId, { startImmediately: true });
         window.eval("walkPathEditor.apiAvailable = false");
@@ -416,13 +422,13 @@ test.describe("NPC challenge presentation", () => {
         };
       });
       expect(reloaded).toMatchObject({
-        animation: "completed",
+        animation: "idle",
         facing: fixture.facing,
         facingScale: scale,
         layerTransform: beforeReload[0].layerTransform,
         imageTransform: "none"
       });
-      expect(reloaded.path).toContain("idle_to_pass/");
+      expect(reloaded.path).toContain("idle/");
     }
 
     expect(await page.evaluate(() => [undefined, "left", "right", "native"].map((facing) =>
@@ -514,7 +520,7 @@ test.describe("NPC challenge presentation", () => {
     expect(await page.evaluate(() => window.eval("state.screen"))).toBe("scene");
   });
 
-  test("supports non-final NPCs, persists completion, does not replay pass, and loops multi-frame base idle", async ({ page }) => {
+  test("supports non-final NPCs, resets completion on reload, and loops multi-frame base idle", async ({ page }) => {
     await start(page);
     await page.evaluate(async () => {
       const challenge = window.eval("learningChallengeById")("wind");
@@ -541,9 +547,11 @@ test.describe("NPC challenge presentation", () => {
     });
     expect(await page.evaluate(() => window.eval("isLevelExitReady")())).toBe(false);
     await page.reload();
+    await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+    await expect(page.locator(".menuScreen")).toBeVisible();
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
-    expect(await page.evaluate(() => window.eval("state.completedRunes.has('wind')"))).toBe(true);
-    await expect(page.locator("[data-npc-challenge='wind']")).toHaveAttribute("data-npc-animation", "completed");
+    expect(await page.evaluate(() => window.eval("state.completedRunes.has('wind')"))).toBe(false);
+    await expect(page.locator("[data-npc-challenge='wind']")).toHaveAttribute("data-npc-animation", "idle");
     const reloaded = await page.locator("[data-npc-challenge='wind'] [data-npc-sprite]").evaluate((image) => ({
       path: image.dataset.assetPath,
       frame: image.dataset.frame
@@ -552,8 +560,9 @@ test.describe("NPC challenge presentation", () => {
       const entry = window.eval("npcAnimationRuntime.entries").get("LVL-0001:wind");
       return { completed: entry.completed, successDueAt: entry.successDueAt, variantDueAt: entry.variantDueAt };
     });
-    expect(reloaded.path).toContain("idle_to_pass/");
-    expect(terminal).toEqual({ completed: true, successDueAt: null, variantDueAt: Number.POSITIVE_INFINITY });
+    expect(reloaded.path).toContain("idle/");
+    expect(terminal).toMatchObject({ completed: false, successDueAt: null });
+    expect(Number.isFinite(terminal.variantDueAt)).toBe(true);
     await page.waitForTimeout(350);
     expect(await page.locator("[data-npc-challenge='wind'] [data-npc-sprite]").evaluate((image) => ({ path: image.dataset.assetPath, frame: image.dataset.frame }))).toEqual(reloaded);
   });

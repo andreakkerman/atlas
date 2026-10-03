@@ -64,8 +64,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "7 × 8 = ?",
               "answer": 56,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 7 groepjes van 8.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             },
             {
@@ -83,8 +82,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 36,
                 42
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -101,8 +99,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "De molenaar vult 9 zakken met elk 9 scheppen graan. Hoeveel scheppen graan zijn dat samen?",
               "answer": 81,
-              "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 9 × 10 en haal er daarna 9 af.",
+              "hintParameters": {"a":9,"b":9},
               "explanation": "9 × 9 = 81."
             },
             {
@@ -120,8 +117,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 35,
                 40
               ],
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 5.",
-              "hintMoose": "Tel 6 sprongen van 5.",
+              "hintParameters": {"a":6,"b":5},
               "explanation": "6 × 5 = 30."
             }
           ]
@@ -138,8 +134,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "Atlas koopt 3 zakjes meel voor 9 euro per stuk. Hoeveel euro betaalt hij?",
               "answer": 27,
-              "hintMinnie": "Er zijn 3 gelijke bedragen van 9 euro.",
-              "hintMoose": "Reken 3 × 10 en haal er daarna 3 af.",
+              "hintParameters": {"a":3,"b":9,"currency":"euro"},
               "explanation": "3 × 9 = 27 euro."
             },
             {
@@ -151,8 +146,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "9 × 6 = ?",
               "answer": 54,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+              "hintParameters": {"a":9,"b":6},
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -169,8 +163,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "6 × 10 = ?",
               "answer": 60,
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "6 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":6,"b":10},
               "explanation": "6 × 10 = 60."
             },
             {
@@ -182,8 +175,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "5 × 8 = ?",
               "answer": 40,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+              "hintParameters": {"a":5,"b":8},
               "explanation": "5 × 8 = 40."
             }
           ]
@@ -207,8 +199,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "6 × 8 = ?",
               "answer": 48,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48."
             },
             {
@@ -226,8 +217,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 64,
                 72
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -244,8 +234,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "De kaasboer verdeelt 16 kaasjes eerlijk over 4 planken. Hoeveel kaasjes liggen op iedere plank?",
               "answer": 4,
-              "hintMinnie": "Verdeel 16 eerlijk over 4 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 16.",
+              "hintParameters": {"a":16,"b":4},
               "explanation": "16 : 4 = 4."
             },
             {
@@ -263,8 +252,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 27,
                 36
               ],
-              "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 2 × 10 en haal er daarna 2 af.",
+              "hintParameters": {"a":2,"b":9},
               "explanation": "2 × 9 = 18."
             }
           ]
@@ -281,8 +269,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
               "answerMode": "open",
               "prompt": "8 × 6 = ?",
               "answer": 48,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 8 en tel nog 8 erbij.",
+              "hintParameters": {"a":8,"b":6},
               "explanation": "8 × 6 = 48."
             },
             {
@@ -300,8 +287,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Verdeel 14 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 14.",
+              "hintParameters": {"a":14,"b":7},
               "explanation": "14 : 7 = 2."
             }
           ]
@@ -324,8 +310,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 40,
                 48
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             },
             {
@@ -343,8 +328,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 24,
                 30
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+              "hintParameters": {"a":3,"b":6},
               "explanation": "3 × 6 = 18."
             }
           ]
@@ -379,8 +363,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 4,
                 "minute": 15
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 4.",
               "explanation": "De grote wijzer staat op de 3 en de kleine wijzer net na de 4. Het is kwart over vier."
             },
             {
@@ -403,8 +385,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 8,
                 "minute": 45
               },
-              "hintMinnie": "De grote wijzer wijst naar de 9.",
-              "hintMoose": "Op de 9 betekent de grote wijzer kwart voor. De kleine wijzer staat bijna op de 9.",
               "explanation": "Het is kwart voor negen."
             }
           ]
@@ -432,8 +412,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 9,
                 "minute": 45
               },
-              "hintMinnie": "De grote wijzer staat op de 9.",
-              "hintMoose": "Op de 9 betekent de grote wijzer kwart voor. Kijk daarna naar het volgende uur.",
               "explanation": "Het is kwart voor tien."
             },
             {
@@ -456,8 +434,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 1,
                 "minute": 15
               },
-              "hintMinnie": "De grote wijzer staat op de 3.",
-              "hintMoose": "Op de 3 betekent de grote wijzer kwart over. De kleine wijzer staat net na de 1.",
               "explanation": "Het is kwart over één."
             }
           ]
@@ -485,8 +461,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 2,
                 "minute": 15
               },
-              "hintMinnie": "Kijk waar de grote wijzer staat.",
-              "hintMoose": "De grote wijzer op de 3 betekent kwart over. De kleine wijzer staat net na de 2.",
               "explanation": "Het is kwart over twee."
             },
             {
@@ -509,8 +483,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 11,
                 "minute": 45
               },
-              "hintMinnie": "De grote wijzer wijst naar de 9.",
-              "hintMoose": "Kwart voor kijkt naar het uur dat bijna begint.",
               "explanation": "Het is kwart voor twaalf."
             }
           ]
@@ -538,8 +510,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 6,
                 "minute": 45
               },
-              "hintMinnie": "De grote wijzer wijst naar de 9.",
-              "hintMoose": "De kleine wijzer staat bijna bij de 7, dus het is kwart voor zeven.",
               "explanation": "Het is kwart voor zeven."
             },
             {
@@ -562,8 +532,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "hour": 5,
                 "minute": 15
               },
-              "hintMinnie": "Zoek de grote wijzer op de 3.",
-              "hintMoose": "De kleine wijzer staat net na de 5.",
               "explanation": "Het is kwart over vijf."
             }
           ]
@@ -703,6 +671,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "moose": "de stevige brug, de route en de reispoort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "nl-enter",
@@ -715,21 +690,21 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "windmill",
       "speaker": "minnie",
-      "text": "Die molen zwaait met vier grote armen. Volgens mij telt hij mee."
+      "text": "Kijk hoe groot die vier wieken zijn."
     },
     {
       "id": "nl-cheeseCart-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "cheeseCart",
       "speaker": "minnie",
-      "text": "Al die kazen staan in keurige stapels. Daar verstopt zich vast een som."
+      "text": "Al die kazen liggen in keurige stapels."
     },
     {
       "id": "nl-canalClock-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "canalClock",
       "speaker": "minnie",
-      "text": "Die klok kijkt over de gracht alsof hij precies weet wanneer we weggaan."
+      "text": "Die klok is vanaf de hele gracht te zien."
     },
     {
       "id": "nl-windmill-solved",
@@ -762,13 +737,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
       "id": "nl-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De reispoort wacht nog op {remainingChallenges}. De poort is geduldig. Ik ook."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de reispoort open."
     },
     {
       "id": "nl-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De reispoort is klaar. Engeland is de volgende halte."
+      "text": "De reispoort is open. Engeland is de volgende halte."
     },
     {
       "id": "nl-complete",

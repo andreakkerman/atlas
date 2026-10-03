@@ -1,0 +1,2758 @@
+[
+  {
+    "Path": "Docs/ATLAS_INTRO_INTEGRATION_QA.md",
+    "Hash": "D4D8D4D1A76BD24B64B4F47971FB8BDAC8EC96E0CDA3A6879FA8D6AD2BA5EBC0"
+  },
+  {
+    "Path": "Docs/ATLAS_LEARNING_CONTENT_RULES.md",
+    "Hash": "F21CC2E4C7733ED185D3B8BC7534C78F2D858666CEC9AF500459E1E9563EBF8F"
+  },
+  {
+    "Path": "Docs/COMPANION_AUTHORING_GUIDE.md",
+    "Hash": "6213A92CD6F8B7CFB1C34359FD7A362C6D84D55F8FCCE002D67F5EADA2DC926A"
+  },
+  {
+    "Path": "Docs/DEV_TOOLS.md",
+    "Hash": "EC0689A5FBB74A5EA6928E3F16B3BFADB63600C8D230956C73455AF80928E87A"
+  },
+  {
+    "Path": "Docs/EDITOR_AND_EFFECTS.md",
+    "Hash": "C36668F197BDC3B2527E4E4B72403FF274075007EA5EC06644ACCF46C5A4DE5A"
+  },
+  {
+    "Path": "Docs/LEVEL_CONTRACT.md",
+    "Hash": "4ACA8CAE7D1C3C0B767D066AEC78B4696DF79B112709BACF839A38C81EF2A7FF"
+  },
+  {
+    "Path": "Docs/VISION.md",
+    "Hash": "56BB2FAEF86304A801581BDEC930B7DF50BC95BFF214318287252399BDACEABC"
+  },
+  {
+    "Path": "Docs/archive/README.md",
+    "Hash": "873F2655539EFD31C7FFE76D4B46F6D05DC5925D3846C96010DBDCBCF4B6B948"
+  },
+  {
+    "Path": "Docs/archive/architecture/DECISIONS.md",
+    "Hash": "9A9AD1F2FA18757955D4B125B8C20857514F28B0C1424DE72C502781AA30BEF7"
+  },
+  {
+    "Path": "Docs/archive/architecture/GENERATION_PIPELINE.md",
+    "Hash": "140B03CC98A7FD5387C25A71773C0649106C9227697A400022916FADD2A1D441"
+  },
+  {
+    "Path": "Docs/archive/architecture/LEVEL_METADATA.md",
+    "Hash": "72FD1C57B4C0B62C530A56ED1EA1D4B6D30F5ABB7A4335B8F4DC5A887920B370"
+  },
+  {
+    "Path": "Docs/archive/architecture/PREPRODUCTION.md",
+    "Hash": "5F3F1439410B42B8CE14DD09533E85406DD1A551C4B6FD381BC980EEF9CEF405"
+  },
+  {
+    "Path": "Docs/archive/architecture/SvenAdventure-current-state-handoff.md",
+    "Hash": "42665B42B707044CD801A7543E3EB58028F745F53394A7F47D21931AF780794A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-art-measurements.json",
+    "Hash": "1D78E40DCAFADACDFDA7A4E71EC530043E355060966C1DD37D25431B1808C599"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-art-pass.md",
+    "Hash": "D8E366668A87392F35F9C150B538EB6FA3775F9E4131CF335BF39A46FF53CBB9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-cohesion-integrity.json",
+    "Hash": "ED37D792FF21BFF1976D67544A5D7D02F56021CB720CF6C379A360FE29D39D1A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-cohesion-measurements.json",
+    "Hash": "0BA552CB15E3EBEF1C088B981D954DCAEB06EBCD678C51B3D38D412870FB514D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-cohesion-pass.md",
+    "Hash": "3DC92AF8E6332D0698ABE2618F835A20AAF6B1DF3FA6AD7E1AD9BBDFE9599CB7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-cohesion-v176-measurements.json",
+    "Hash": "E69633CD8160B23240A556D9EB177F0C7DCB8B1DEC6BE66C5644795A62E3DC0B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-cohesion-v176-review.md",
+    "Hash": "F17B2B9C0DC2E08EA099C9455C9C4AC6356462ADAEFD26A1D99F44810918EE00"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-composition-measurements.json",
+    "Hash": "03EA1FCA3694EBE61B91FFD1F14D1FFC4FCF204DD52851E12CBA9A86E8B85B1A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-composition-performance.md",
+    "Hash": "A00E9A46E0969F767AF2783E7EC5E49760EA61ADC32026E39D03949FCAD526C5"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-curated-foliage.md",
+    "Hash": "FA9F53115ABBF5B2DEDA86894E936D5F299753573F9C29FBE182F1843B249899"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-curated-measurements.json",
+    "Hash": "91704D26ED0594E86EEE11411A9CFF98C93A0072279BFB2860A9922EA821727A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-dual-controls-lane.md",
+    "Hash": "211E0F167BE22CB94597FA40A445AEBDE773F06A4EB642E39E348E9664F66255"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-evening-measurements.json",
+    "Hash": "646BF0618BF362BA4541827BB3986D701A127B42BD8A1DB4E1DE81884859C518"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-evening-pass.md",
+    "Hash": "9A8DEC3974418E902564FEB73F6036634B88D69D4AC40E50039996B860D2534D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-final-polish-measurements.json",
+    "Hash": "9119CFD7C9452224732D52F1BF3FFE439DFF7E7EAA013CAFD83D96462AB2F6FC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-final-polish.md",
+    "Hash": "9EDCB8099F58CE8597569C6B06C6BEC7C66550C4A143FB94589F2F2F594CBCFC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-foliage-measurements.json",
+    "Hash": "292FA1C2579A0BB1A46A2D1C7714BD67ADCBAF6BF8FCF0AF8598D176E0417AB2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-foliage-pass.md",
+    "Hash": "AAB24A6C7099A41F7CA8F9D1F6655AE112815AA0C56047856CE71D6043A4332F"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-golden-hour-measurements.json",
+    "Hash": "BB87F2F5BB5A4416F91A2EA484F9C3148C7A6C95D78EB8E21DF53072A0567A6E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-golden-hour-pass.md",
+    "Hash": "58BB4F4D7C567F2C74A93D8E6F042080543CCF94AE718723EBABEBC255E05D91"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-grass-coverage-measurements.json",
+    "Hash": "EADD466185511C5A4AE3CE4CFA0FD814EAC9210AE930A393FF633A663B8E1F0D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-grass-coverage-pass.md",
+    "Hash": "7F879579485EBC653C85B25966A00C67BE23828CA67F676B05E90D2F9CB2F094"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-grass-measurements.json",
+    "Hash": "48D71B6C41BA89F8A2B06E7851A338D96515799CBB02F5CABB9B3D0E744C44BC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-grass-pines.md",
+    "Hash": "42F927D3127E17CDEF3EE63C8CE07F7E17DFC91B67FE77C1DF4343EAE980C42C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-morning-measurements.json",
+    "Hash": "C08DB7DA4AC0AF14B696AE68218BF1719A4602F6464FCFB5F17C65CBF7FB287D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-morning-pass.md",
+    "Hash": "620C46D6967BD1EDB649A19FE29CB9498E6D2FE4D36015591B12859930118A23"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-organic-path-measurements.json",
+    "Hash": "C2EAA368E21D12DE1E7CA1CC6991AD228DA021ACCBF7137F6BD2D9C92382E527"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-organic-path-pass.md",
+    "Hash": "92814DF8F820A26D226DA48D5B729FBFBD4782AF3DB654481F684ED9BB91EEBE"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-panorama-measurements.json",
+    "Hash": "E74198B6935A98337AA974B18808918B4AA09BEDCB0E4477722FC005D450DCAC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-panorama-pass.md",
+    "Hash": "6DDFD3D2794913D24A84657FA6C1533C3A02464AC5088BDD662647F26FBA92E2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-path-evening-measurements.json",
+    "Hash": "48C0BF905690FDAF17C43DA108659276CEB73BD65E1420E6BD7DE63F2C6EAECB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-path-evening-pass.md",
+    "Hash": "6971326300E70BAE28E0FBC55F17164E5A7622C64EC1F05373A24F5B853AB25A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-premium-measurements.json",
+    "Hash": "6A8CDE7FFA088EC964530C0EF442FC3705CD4FC46FBD864FD35688C75519480C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-premium-pass.md",
+    "Hash": "E5B9724FD619D3BB13BB5426144E909CB3AE15B5BA782DC45B619B134F6BB2D7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-reference-ferns.md",
+    "Hash": "212DAA42CBA879E9B57DD0375D851B8CB81E1144B33B1CBD60DA57CF6A40CCAB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-renderer-efficiency-measurements.json",
+    "Hash": "CFDF21BF7F9753E068A2D7A1F0257DE220A6D5C7FB42FE1579CC0ABF5359C6D1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-renderer-efficiency-pass.md",
+    "Hash": "1BDE578D0446857F1EA7C1814EA16FFE9C64D51E0A94BC4042B46D63E7238F2C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-temple-measurements.json",
+    "Hash": "6AC713D426C581E967E5D16E120B648CED8052ECAFAA2E5193E5895C72BF37A8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/atlas-temple-review.md",
+    "Hash": "D97F72A51D89FD017EFE26BBC41F00DCE5C25E76AF47D02188614C7F37955D70"
+  },
+  {
+    "Path": "Docs/archive/art-passes/faceted-forest.md",
+    "Hash": "4E6F0E7C3607F520B28C15899323FB8260A5CF1BFE7E1B702D813B4ECF3E76DC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-controls/landscape.png",
+    "Hash": "0FFF552D2CDCE904FF4911707CF4148F573D5C8037DA3C58273BFB4C7FD94A8B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-controls/portrait.png",
+    "Hash": "E7A85044E689EF8A43965A41F29CA7E93ED72AC839AE604E5211F0C880D1A9B3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-final-polish/after-forest.png",
+    "Hash": "1CD80854C9CF828CE2B18185BF4DC1AC0727439E8C80636905F8AE8708EFA3D7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-final-polish/after-rune.png",
+    "Hash": "A5B42279CA22E0DBAC784F9287B73379461C17674333854DFF5C63362C3D7DD7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-final-polish/after-temple.png",
+    "Hash": "20E6B3A9CB9F9A2D446FE467B1DA32735A45986193005100816DC8A4C63982EF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-final-polish/before-forest.png",
+    "Hash": "CEEC0DBEDE90F725FE3D9B5273C532F5417A4D305AFA3EB5290C1E2F466A01EF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-final-polish/before-rune.png",
+    "Hash": "28A33918B5EED9934FB0F72FEFBB669D4AC95A3583F015FA5A41C245468D1AB4"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-final-polish/before-temple.png",
+    "Hash": "F1D2CA7BF1681A2D3F11126F6DCBF70E48EEDDCA978DA8FC4822D2AFBA53554C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-golden-hour/after-hill.png",
+    "Hash": "8B32E5BC8E214B3E9055F7B0FBC08891ED3FDDE65EFE3AA0547BC815F6DDDBDD"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-golden-hour/after-sun.png",
+    "Hash": "E6273F448C5F95BD87E90D7A30DDCF49AD89F7B58697687CC60E8A6E96BDDFB6"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-golden-hour/before-hill.png",
+    "Hash": "0EF4C79EF5D2A3E4B361E1FFD282F078D9CBF365E35B3542007EDF33F2CDEFCF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-golden-hour/before-sun.png",
+    "Hash": "E89586C4229DBE64EA830C6C0BE1AE9C9434D152D17230B48E41BAFF1A6C4FE2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-grass-coverage/after.png",
+    "Hash": "17325B2167DF5E189A789AD67FF36A3AC6C0D45A4254227B106AE61981129AD8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-grass-coverage/before.png",
+    "Hash": "9E4C1399D4AB6620EF86B3F62475DE4F0E1828DE8A8574ADC9D0ADE02FF0B083"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/after-1.png",
+    "Hash": "E5AA553BCBF71B34340C4E8271352086DABA91A3D5D9D5A8327CD5B12FDDDDB2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/after-2.png",
+    "Hash": "046634331CF34AF882A1F197C57AC18B8CC0276EDC2189718668AAD617565500"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/after-3.png",
+    "Hash": "3F48F7DE0FC1723610A7D3EB186C5AB34DF760BF7E0E7BA7E62297832940094F"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/after-4.png",
+    "Hash": "2A4E18D1C94BBC9968B6E651B619EB766B4AE826D08FF098175F53435C1420FA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/before-1.png",
+    "Hash": "14185E00237CEA2554D0BFAC03D4CCDB37FDE733FF11D678F3C868486D015082"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/before-2.png",
+    "Hash": "C7E4FBEA19A3211E87400FB8A4AF99BA31DBE4F931B1CC7DDCE8FC3F1116AB7A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/before-3.png",
+    "Hash": "5C5E2AA16176BCC3932D5E89EB6CAB510FFC30D39CB81D22FB204462BB4D5DB9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v161/before-4.png",
+    "Hash": "C94056B37B2448E449A4D370299B6FB7597A7BCCC1978EBC18BD6C68521B87DA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/runtime-1.png",
+    "Hash": "06A62A1C7D922D8C1FAFA56A65EBD3C5B5941A38A7F1FF7E4836C37672598D22"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/runtime-2.png",
+    "Hash": "9D2599D9AA5041C5AC827BBA22721AECD7FBCD2864516BFA35C2020DE809A90C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/runtime-3.png",
+    "Hash": "19B22B5C8BEE7A222126E6ED837F0128F445ED35B828573B87484FAA54AA264E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/runtime-4.png",
+    "Hash": "CBB98EAF7C63713E79BDD4160A38E219557A0D43CAD21D868ABA86E8FC92ED7C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/target-1B.png",
+    "Hash": "E72E3F687BB32D49527171DF838E53ADD4F839D7934C3FAEC78320FFD68CA95D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/target-2B.png",
+    "Hash": "6E0EB5634C2096AD76E8A8032094960B540A31DE0713341E61C22D9D8B3D6342"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/target-3B.png",
+    "Hash": "63C94077BB90D1F0995F614294B2033662B7367F6716457DF1390DA6204711B7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v162/target-4B.png",
+    "Hash": "5EE7C44D1039CBDA46FB797FCE14CD9589E01E414CBCD20970FF922EAB44256D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v163/reference.jpg",
+    "Hash": "ADDDB3FFC7C2A86B99C3CBB0D0212CFA063837F09623B8276CE5BF4E204FD913"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v163/runtime-1.png",
+    "Hash": "72DE6BBA82EFDE3A1D01FEE5F26B889F698FEFCE21D28BD30939964ABBE54018"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v163/runtime-2.png",
+    "Hash": "7D87DCFD5E3CBA6C8BE298E95B3E5573401FBF819B1F9ED21627F2F2ADC979FC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v163/runtime-3.png",
+    "Hash": "0CF27A0D103FD80B8958523DFEF1E46AFB2A873D6AB3603FB1C2E5BA617D9D56"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v163/runtime-4.png",
+    "Hash": "FA962EFCF72F49B3934AB67224C0B1230ED0DB71B56A109F050B7D8920869AF9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v164/reference.jpg",
+    "Hash": "ADDDB3FFC7C2A86B99C3CBB0D0212CFA063837F09623B8276CE5BF4E204FD913"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v164/runtime-1.png",
+    "Hash": "6C0CD7C61B8B07ED1118857227C136EF0FA828C274316FF6E12BE660A647C7C2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v164/runtime-2.png",
+    "Hash": "3BC8D422B4446812E322B4D045925AE2C1CE251E64F1BBFA67EEF51FB789BB57"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v164/runtime-3.png",
+    "Hash": "ED37F914BB7AC9D693560F74F6EF3B153594975CB3F7AEEBD50D01751E81A7B1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v164/runtime-4.png",
+    "Hash": "82F0D7279FE42F098BC9F7884CC2DE9C8D902563B14E9BD8A26A177791DB7BCB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/before-1.png",
+    "Hash": "F7EA0271A8088575107EC34E5F794385DB3415A9DA4F8A2628360EACAD78F174"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/before-2.png",
+    "Hash": "E4A4901273B0F0CE65E3D10A1523344A5523E1BB0268DFB05E016E16512FEC63"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/before-3.png",
+    "Hash": "2C7EBD4D2E386D3F2D0B0025213B0002AE150DD3DA50F26431E8DCDF25DEC3C3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/before-4.png",
+    "Hash": "3ECA854AFC436D4B32C22BDA6F9C52551C6F1CC5914BAD89B8BC8AADA6CE3836"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/fern-close.png",
+    "Hash": "418C6BD5882C95E68F8B9EAB22C40999D65C8082E825E69088922891D4A8A2AC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/runtime-1.png",
+    "Hash": "F85C1080660C26510E6DD73F00B474724AB32244DD12F63959F84D0909D543BB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/runtime-2.png",
+    "Hash": "C622F8AAC20D03FEA639BB313B8F1A42632A67670C4AF19106F1AE43E8D7B5EA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/runtime-3.png",
+    "Hash": "6348D86B543672EED0F69780A61DE604E4BDC50DE466D2E5E7E413723F521A83"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v165/runtime-4.png",
+    "Hash": "AEC14933484274CCE8FD997439FE94C6870FFF41A94058530D8F8083A2F589BF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/after-1.png",
+    "Hash": "5C9E21C29CFCC54D4F826116FB5279114D53A3FFC9C459DAD5E78AE2B4AEAA9B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/after-2.png",
+    "Hash": "CAAD1D175C94611DF9DF3BDC66D046DE536B3A54B2BD7C465E13C5CF41DE6172"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/after-3.png",
+    "Hash": "CA0BE2748F2AC820B01E04217B1E48600198ABA19F76FFBAD29E3E4429BE104B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/after-4.png",
+    "Hash": "D5DC06106B8B6B854AED7CD154236E04217E00E7C53B9E46434CDCE63103B643"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/baseline-1.png",
+    "Hash": "83B043726A439758DCBA9FC0A09041E96D0CFFB9EF805218EF0FE293B790FDC0"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/baseline-2.png",
+    "Hash": "7FE5BB0B53F08C61BAA99977A2C57BA8134979C4B93B45DBF6E9F5E7DA34A498"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/baseline-3.png",
+    "Hash": "54B3BADEFDA3098504A644206C5C86F949AD9503CF48B5ABD052954DB106F53B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/baseline-4.png",
+    "Hash": "022709DCE65BF4040416A28B0BAD38BBEC36BD1EFBDB185F85F751555EE5AA4C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/foliage-close.png",
+    "Hash": "00D7D96B4D45263696EF6CE65C6544A2856157F7364D3B92750D8B8DC6B45745"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/grass1.png",
+    "Hash": "48B1ABCD8705B1A35B0E000BDF8BD919528F80CE53009AD8DFAC08DF530128A1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/grass2-light.png",
+    "Hash": "1B531624F085509DE0D6338260240C20A4CBBC3FAB89031CBCB29CB854D47705"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v166/grass2.png",
+    "Hash": "C94E0EEAF0DD3ECB624B822C8FD1462A16E15C159E16C2B3EF387E3BAE888B8F"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/before-fern-close.png",
+    "Hash": "846819815BDB62F3A5BAAC51646F4EA138585A6D3648426E8B81818B21442F99"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/before-view-1.png",
+    "Hash": "ACB67AA391D6F996BAFA45430433EBCDC933A113E2D837043BE553B72D1DF333"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/before-view-2.png",
+    "Hash": "9623ED37B70DA04F7984BEE2FC83FBCF823CD97C3FCADD3F41B1DAF7F5A30A5D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/before-view-3.png",
+    "Hash": "409E2A0D081DBEDA44F838E73640EA5DF0FB5A252FF8C67CCF409F8192577382"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/before-view-4.png",
+    "Hash": "F32A04EB4726D5732E45B6AF2A0C4758815018FD453EB715291776AD7E768B31"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-fern-close.png",
+    "Hash": "0930CA7987DB6D43239C6D1D9ACF75EE98AC4A01ABCBA33DA99D28103622D6A0"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-sun-1017.png",
+    "Hash": "6129FBCCFDCC297B9718A5CBBFE993C778778FC498FA277A9E9500F18C73565A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-sun-175.png",
+    "Hash": "381337243661C973FE99C54FCA8A641F2F34EB28411C74388C75C5C2DB8E15AB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-sun-650.png",
+    "Hash": "4969FA3FA5C2F0678E5F0F93B87321CEAE1D3E501B4ED404A0441940B94A8D9B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-view-1.png",
+    "Hash": "F192C5ACC9AD2D007502D3378A6433739418360FD1C864D12B5BA5921D432BC9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-view-2.png",
+    "Hash": "E1E29928039977B1D074150E5CA277366AF9F358C044C3299FA518CD57E8D7FA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-view-3.png",
+    "Hash": "CEF33350B2B162AA55A3D8404A6C0E7DDB81B566D1AFE43C5B758CA7232FA1CB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/off-view-4.png",
+    "Hash": "ABCD5652099D54F9C5A4BE8686F0E33FD0B87C08959677D4C80F436490CDD04C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-fern-close.png",
+    "Hash": "5C15F5989B7C5CA7CB87568DFEDCD82E98DC40FEAAEC1784FADF3675F4F01A82"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-sun-1017.png",
+    "Hash": "7F6E8B403AC22E94C477967C92E7BA8C7343B2D2B193DAC0F778EF7FB6C6142E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-sun-175.png",
+    "Hash": "1EE4E7B3F53C7A795B6C5692FC949DC154D7661C3644F670A677FFF9E6279115"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-sun-650.png",
+    "Hash": "58C1BA036AAFC4402284E29E51B514D5E1788924C06EDAF4258E2EDEF1CFC86B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-view-1.png",
+    "Hash": "21931FADD39A795BA8CCFAE77F7700618CF9A4831BDBCEFABE7DB8A7AC634584"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-view-2.png",
+    "Hash": "243B4F0DF979060AD4652E17406EC8F62D90C6FE41936C86C0F693FB0CD2AF31"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-view-3.png",
+    "Hash": "52071CAC1E60E58A6B4B0294A871E92C2AB8D28EBF6E424739102A1DC8339516"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v167/on-view-4.png",
+    "Hash": "F8C03C673A2FD30EFF3EBA38DE21681E0D099FECDC9C332C916A8C568805ADDA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-fern-close.png",
+    "Hash": "33E3521413BD4EF72F2374BE6678916FB26D8678153C3C7612DE2295937692A4"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-first-rune.png",
+    "Hash": "E1D2CF44801DD90BA8BF43C92BC651A9828C7807E0F52ED1E184872706D5EC7E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-rock-1.png",
+    "Hash": "D495C7DA9314EDFB5416AAB3B88E03ED89569A6A439EF589A94F883D4065E3E9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-rock-2.png",
+    "Hash": "87E4602B571FB4B743687F3C8C2D250CAE7A0C94336E0BA2539E6CE3CE644DB8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-rock-3.png",
+    "Hash": "3D51F9EA4FE08665B0817B5A93E74645F89CE3135E8708AC9DC9E8202389FD3D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-rock-4.png",
+    "Hash": "ABF7D70D3D6CBC35127127E33EC68871F8EC4A603ED2AAFAE22978CE71D62BC9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-sun-1017.png",
+    "Hash": "8EA574192D017830534ADAEA4B9FCBF6C611256D2184699F0886DD537F106AC9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-sun-175.png",
+    "Hash": "F2C5B9082A246EFBD5EAC0852A7F7B6F4751A5E372F80D40ACF6A4FD5F5670BF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-sun-650.png",
+    "Hash": "4F74E69B977E77E2E0698ECA088FE4083D69F4EB4B395A77CD6D39F695C075BE"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-temple.png",
+    "Hash": "399A4A9DCFD0136807572EA4F4238BFD11AAF72867FDA0DE63983F8F1F496378"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-view-1.png",
+    "Hash": "FA4FFC5D38A128C9781C6836002C88EBEAE2D48373C09632BD6E46B0CAF10AC1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-view-2.png",
+    "Hash": "C86930E738E9CD3EDB3C68B05DFF93EB1B1AAEE8F88E5E2E8A3AEBCAD126EFF8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-view-3.png",
+    "Hash": "5FCB3A9F752E25EF9100ACCB1BC81AD4638457737CE36C8850E6DF4FB773FF59"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/after-view-4.png",
+    "Hash": "A30FC8206C7B751895B27214F48CF4E2077445480DBC6BBA9760E6D7517EF9D1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-fern-close.png",
+    "Hash": "0525B4CB04E8E7E106290E39CF0684324A00F365B17894EA40EA03C8B1B9FEA7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-first-rune.png",
+    "Hash": "7B383866D2891790A0562C6DC7C646C0F148BC6B7DBBACC1030AA345515DB53B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-rock-1.png",
+    "Hash": "6EC497DB93D73452836FDFF41364ED03315C587B86C1526D3D781D50D67D82C9"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-rock-2.png",
+    "Hash": "40703A361289B8B4A09E9CB84C730213B9BD0B6D04FEE6174CA74D0C7D81FA24"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-rock-3.png",
+    "Hash": "B3525C102BC2EF99B6539A16D27F9A6E7021326E6F082672EFB3AFCA918929BA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-rock-4.png",
+    "Hash": "6742B2EB7CC6EBDC03360F9E434FD52B14AA77B11FA1BFC5AB61824E54B7F68F"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-sun-1017.png",
+    "Hash": "3FFB693EC7A52A4B2ABA082ADDC956779B953C8E3642DC57A3F88CC302D4169E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-sun-175.png",
+    "Hash": "EF0378E9296CF9BD61AE0BFBDC8195CDD6E4848AC93AD715567F6F643D30F7F8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-sun-650.png",
+    "Hash": "4C49D833F0BB242A6B17F37C42096E31E365704211359664FECDD42BC08516EF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-temple.png",
+    "Hash": "47F3D3BBED873D60F5B33C441B902000F61C197EEFE20CD8A67D106C4D1ED25C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-view-1.png",
+    "Hash": "5FB0DE4A2751AABD8F13EBE4FB6C5F4F0384C547293371587DF1131A0ECAB979"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-view-2.png",
+    "Hash": "0E3B4E56F241F83A28837F10CFEFEDAC86790CADC5FC3B6CE563D72C8BE05354"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-view-3.png",
+    "Hash": "5E5DDAEA4AD29A8DEF353A4E750B85E3AF3EBF26B1936DCC74E052DF78D781AF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v168/before-view-4.png",
+    "Hash": "2DF491ADABEC0810A0C8CD9F07A0F6C1C5FDD1EF477D0C93C2E32D28B4525CC4"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-sun-1017.png",
+    "Hash": "F3B803F1477AE21128A802F81143882D7AA90F8F113E4E4E5A5F845B16A6A928"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-sun-175.png",
+    "Hash": "CC2744FB7B241ACCBD195CEEFEE6C392A2EEF2F9B95AE2001F67A0160AC14EF6"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-sun-650.png",
+    "Hash": "71ABEC06633F73B2B6EF9A429C03DA83E2BE4EAD3BD7CA70F6EEC40C5C5C0901"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-view-1.png",
+    "Hash": "2B2B29418905DF7F2C4548A9D8212F55EEE64F85AB078E572DAD5DCE7EC5B55B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-view-2.png",
+    "Hash": "132AC634A3DC9510093461490F8E980F02D81B0B6A49036DFE327BB3AF092706"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-view-3.png",
+    "Hash": "192675CFE44DD7D2490538F86CABAE44310D1B94C6ED101B18903C022DE14B60"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/after-view-4.png",
+    "Hash": "D3717C6B3479D444C2984547C05C6E62A5F2E26BC0EFEF2ACC34E3583D71913C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-sun-1017.png",
+    "Hash": "3EA570D0FD70C071F9953A03F7BC16036847ACAC6D80D74A275900C3BAF52EF1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-sun-175.png",
+    "Hash": "04DAC47B55388FF9798F6A1695969DF097AAD92EF850E3F21811D0B6B64713A0"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-sun-650.png",
+    "Hash": "CEDC109B2A2B767C24AA252878230835B97EA5360AFC0E05617F08A228D484D3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-view-1.png",
+    "Hash": "9217FFA98228199D58A4F3E37E4A6CDC7505EECF480733FA34150DCAFA90EC2E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-view-2.png",
+    "Hash": "1ACE3964DE447794F7E553469A346E429FE3AC60E25689844E1DEAE6A53F104C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-view-3.png",
+    "Hash": "05570BE9D7642FDA559B0E7BDADC03535C1305C4224C6C9A0D6BAF3CD7874D86"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v169/before-view-4.png",
+    "Hash": "251B781037C433F7FC7D139B9B2384284CF50C233DE4F8FC5C3F682114E4ADF3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-sun-1017.png",
+    "Hash": "2C435036CDADDF5623E006E6B96380E9FFA347F9BE9ACCC697BFE3DC8E6D7F7E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-sun-175.png",
+    "Hash": "6ABD629A570236BEB3F65DFC1343CA34E935C1274C00BB52BC9FE2C7C020A4FC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-sun-650.png",
+    "Hash": "4365688F61BD5F8406EF5E32C73BA04B007325A34AE63F90B04997152DAB242D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-view-1.png",
+    "Hash": "AAA206E10AB998E4C248CD37898A2FC4213B352CD4CD1255B415714593A68CAA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-view-2.png",
+    "Hash": "7631FCF7B1E3F47B562D4F25DEF743E07A817B9DD2410191296D233A46ECB3CC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-view-3.png",
+    "Hash": "B55678BB80D89C46A4B2E6B785B0A695A441A7619F2D418D73CF86ED5B3596E2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/before-view-4.png",
+    "Hash": "6F595E4ADF3B96095F1541E771E7562374AAEDB58D8BC181ABC934A222675AED"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-sun-1017.png",
+    "Hash": "151A23BFCD7DFCA81E1DB82D1A88C5D864B7D24ED3D37E5BD7AC69EE7C480476"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-sun-175.png",
+    "Hash": "070A429CACBD36A2BB6DA3C41D136303D6F8B958D53908E2355AB91017367C72"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-sun-650.png",
+    "Hash": "5D93026B1254575B315D6D72BB7058401028011B7BB74034D629F98F41DB1806"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-view-1.png",
+    "Hash": "A4BBC8D46A822B4849A32D4F8D5985D91D4C5B968770E3D2C28EA754EA4A03AC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-view-2.png",
+    "Hash": "A9B85A00C647F8E8503053A5887B02533BBA2051A453795D080D055950BDCC8A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-view-3.png",
+    "Hash": "609542CC84BC2C72B7C59F85BCE7FB77AD652DAFFF9AEAA6D2FE6C03F2811B1B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/final-view-4.png",
+    "Hash": "48FFA86D1F4F5CD8F5D62B1233C9FD5247FFBA4A040946BE3C0493BA1BBD35A1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path-1017.png",
+    "Hash": "6086B26E28D58D1B535E3D28BB965DD40D867BF25E871994B7E6C2C653B7B6EB"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path-175.png",
+    "Hash": "B1889D17F2B96AC21F5DF77259C07C4EF26A3C3B8CFD04C58F32B668EAD3CEAC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path-650.png",
+    "Hash": "DDD6ABCB70AAA109EFB2A624209BD8C37345B673D76B86904BDB5AD10986FE96"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path1.png",
+    "Hash": "8DEC5995AF4A43DC935A56D5F92BB79F683A736BF8CD5B49CB3661D49EE33D9B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path2.png",
+    "Hash": "3F74DC7E80D9468F09A3B5D12B4BF2DF104076683D4792BCA9492D0BCE14C4D4"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path3.png",
+    "Hash": "94DFAB5871062131EFFFD0FF816E5A473967505F7E77B1A7F954C65C8EC75CCE"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v171/path4.png",
+    "Hash": "B0A75426DB8C6E4C75B9467A50957F2F93B866450692A420ECB42008FBADF4DD"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/before-path.png",
+    "Hash": "BFF7682B15C8E72E6B789B91A40C5DBDE9865FCAEA4AB9CAD47832ACBFA318D3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/before-view-1.png",
+    "Hash": "6660FB778C74BC789153C0726959CE54F7C6596EED463D39378D111DD820ED33"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/before-view-2.png",
+    "Hash": "5B2251A07721D1AEAA337A5C7BB3644C93C747E8634750078C4B0607CD1FAB7C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/before-view-3.png",
+    "Hash": "4029BA0047D79BE3D098E03317C4917DC5548D059E91661894AFDAAF1C89865E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/before-view-4.png",
+    "Hash": "C01EF43A06E211CF84DC4691954EB95DAE774B6121DE64C7A57433A809BD68B6"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/final-view-1.png",
+    "Hash": "DA5AC27B1AADE223C3DA0834ADEDC1C92C30D63F9DAF6F3FFDD25B204B4FB40D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/final-view-2.png",
+    "Hash": "F5EB1B975A3BC08AF0F2B17BE111DF2872545C6A0ACACEAC2351DF3D6FA777E7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/final-view-3.png",
+    "Hash": "5F89BC07EC93880CB84CC60738F7223EE4B3A2591805910BC90AD9323DA6667C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/final-view-4.png",
+    "Hash": "B6B29C5B624A999A0AEB8AED38B67A96510D114A0A154A718A09EF797CB61522"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/graphics-controls.png",
+    "Hash": "C1C1F61DE3662049ECCA681C4B2A81E27524BDA9DAE5ECF7F981787BC963B6C0"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/panorama-4.png",
+    "Hash": "189ADF5CE3B817B0DA51C89107BA52AA20D1DD0329C3302D980231B83A01601A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/path-175.png",
+    "Hash": "EFCFDC01008B68CABA750F28D9EEC324C6B9D793A18D31DD7C9F6D69F6A23C3D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/path-650.png",
+    "Hash": "3225F33035DAC4AA1CB4ADC7DB8AA95F97C1BFEB671270147C095CB120C9FBB3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/second-rune-context.png",
+    "Hash": "0D3151076D2153AA022EB1129A0989AD9C9D9550B8B09A482E6F484952CD0A64"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/second-rune.png",
+    "Hash": "D8B8BCE63BE97D731A8DD757C67CC8CF5B89F0E00AFD1BC260E72C5C7E85D50A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v172/sun-1017.png",
+    "Hash": "E3F0110001ABA551DCD8A256E138C53227ED63C32120975A2FE1009D60ED1E05"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/before-path.png",
+    "Hash": "D69AE2B6B35D6AA0538CC9A5A6A7B8667BDC8DF8B30A1C5A72344A848E4ADFDF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/path-1017.png",
+    "Hash": "7326AEEE9F9449A73E0601689BA7BE601F1CDD71514ED678987C14533B3E8679"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/path-1322.png",
+    "Hash": "3AAF02724DA8BCF90507515BA3C1414480E24417381D5495A2F4631D8E187C49"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/path-1617.png",
+    "Hash": "DF9ADE95DE31EF1A32F2F4398FA5C7EE519F2521984B33BF8B1C5117033C3526"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/path-1697.png",
+    "Hash": "8E4FE7013476B92DDE82DBAB9112CCD220D4E1891E928F3AA5B8E2CF61EE518A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/path-175.png",
+    "Hash": "1F14A9B0B388A298F29AB12A83F20006BB9A06B4D8A5DBEF9438A08B6B8437FC"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v173/path-650.png",
+    "Hash": "4D0633F1F244B149B94A1E8AFB3D6B769EF73BA58A116854348512CC75C1F19D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v174/background-after.png",
+    "Hash": "8D168358130BDBAF344735B9656E2445C446C2933E283263367D5CE846CAF0A4"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v174/background-before.png",
+    "Hash": "C481420A15B562A1D129AB7DAC09650451AF5F750588233BFB2D152DA11CA268"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v174/evening-sun.png",
+    "Hash": "A0AF796EE0CFB115439C6EBD178F1489DFE5560B6CEEEF0ACAB6E51E00AB7FDA"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v174/forest-floor.png",
+    "Hash": "E19838E581F171CEDEE769AE2B60F3DF33D01785AA6C59BEA015BB8A7306A05C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v174/path-after.png",
+    "Hash": "7B6CEE660D17A9D4A89601BE3C8C291B06E0F29E6B13801A07FAADBDB127D727"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v174/path-before.png",
+    "Hash": "E7623C1A72A409E30359909A799A5CC517F03E831DFBEA32D606432DEAD7330A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/direction-3.png",
+    "Hash": "B153BEDB9F1AE6A9F78782DFD63C02FF92EC01C79329DD392A9BAECCC5D9E8EF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/direction-6.png",
+    "Hash": "25C3CDE97BBD8268F5E685E48CCB22C7E97E8A99A64C3C9AC8328BC0A92FEA40"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/first-rune.png",
+    "Hash": "3719F89029763E6E3F5FD92887E3C073E8D8F408CF713EA64F9764D923E54B45"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/hill-approach.png",
+    "Hash": "9F6801DDBC2600EB357F6C83CD52CD67D2CB418E0EB8AF248F09CB74A0D46BB7"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/hill-side.png",
+    "Hash": "1EA1EB8CCD2D522CAED6B102C785D17B994CA21B70354495DBE9E20EDA7014F2"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/path-1017.png",
+    "Hash": "03AD463B1E444660E170CD43222A87EC13A04CDD6EDE27B301802D1239559EA3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/return-path-1322.png",
+    "Hash": "3D5EDCCBA3B83E25C703FC513FA4A68C2D8A31C226DE322B456C6E7E49C925A6"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/return-path-650.png",
+    "Hash": "91CA910D847F8937C6977E3C3BAC887FC5E9CCEBACA2B7EF1A78F5E47B9739FF"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/rune-one-approach.png",
+    "Hash": "E96DCDFF1333065FC91DEB2FEED1CEF7D617899D2C2AC201E275FDEEC569F282"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/rune-two-approach.png",
+    "Hash": "429454BF88EFA785E669DAFB8E02D5C2446A0171DD4C5B9780FF4F926D7B25A8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/second-rune-context.png",
+    "Hash": "9C834E0570B2CD7E42EC892D0BE069BDC4814EC3D20D814A00F1366486D28349"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/second-rune.png",
+    "Hash": "313A535065E70C393907733193A5C5EDDD29FC39340E8060928A36B6326A6655"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/sky-clipping.json",
+    "Hash": "56A4A5306CB8E34DDBB9EE086F0629F888E8007727027B0ECD76F3783BD6FB2A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/temple-back.png",
+    "Hash": "2BF26E2D1B9AECB4120D7822F955E16303BC0C570D0C2CC67EEF5752CC65D876"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v175/temple.png",
+    "Hash": "C5DFC580599514850F2D4D22F224D1D3D71CDE68486280558074A018A2744DA3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/floor-colors.json",
+    "Hash": "4F3DD20EA7BA7E39AA86788C18FEEBD99ABE0429A67A72CA17DF680CD4741566"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/path-650-after.png",
+    "Hash": "6B29E79810C230008846C60624086D297870E38795DCE270596B2781A2F9C2B8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/path-650-before.png",
+    "Hash": "D6BF7AEAD367F1F4046FEAE3B19CC8A0BCA7B5BAC08B77A900F5B3B004B40F2C"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/return-path-1017-after.png",
+    "Hash": "4643698C3F320C9310880E4E5362EC69103DAB745107630A3714F438E272240E"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/return-path-1017-before.png",
+    "Hash": "4809AA8423B798134C0A8FA80701B00F3D0720DC8943EAB3466A45DB4375A1E8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/second-rune-context-after.png",
+    "Hash": "D01322D9860FD7C19EB8D07CA2BCCBCE456F181C5C586B00F6B50B266F4DB534"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/second-rune-context-before.png",
+    "Hash": "9C834E0570B2CD7E42EC892D0BE069BDC4814EC3D20D814A00F1366486D28349"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/sky-clipping.json",
+    "Hash": "56A4A5306CB8E34DDBB9EE086F0629F888E8007727027B0ECD76F3783BD6FB2A"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/temple-after.png",
+    "Hash": "0A77362B6BE998B8051310435488B05CD64D0C6CE79BFFEED2EFDFC59FE52FFD"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/temple-before.png",
+    "Hash": "C5DFC580599514850F2D4D22F224D1D3D71CDE68486280558074A018A2744DA3"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-1-after.png",
+    "Hash": "641675885060967DB558A6B918924BA5E53FC5ACBEF91375319F1AE8463C9E2B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-1-before.png",
+    "Hash": "F5B6BF88C6EBCD26F32556625142ED4D6F3F04E4409C471E32F5BA72CC6D09A1"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-2-after.png",
+    "Hash": "20ED7E3AD1D716419308723F8D71E3E4CA1B7659878761C1E28C64E784BC0540"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-2-before.png",
+    "Hash": "1F99CB051DF85BCD73D024E51855F0C65E1E9430AAA47F1694D2606308C7EB0D"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-3-after.png",
+    "Hash": "A4B4C3BBA2D2D0D19E7F967E5F3E6ADCE886C2796B5EE15A106DB37D7ABAFBF8"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-3-before.png",
+    "Hash": "2C22C2ECB5E44FD951CB19DE5D1584BD0991212A44AA98B574465AFDE73302CD"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-4-after.png",
+    "Hash": "71E6E75FC6D91A7462293D2F7D842A49B9A4AF6E27B107167F32EBB54C9E4D1B"
+  },
+  {
+    "Path": "Docs/archive/art-passes/images/atlas-v176/view-4-before.png",
+    "Hash": "710A74217AA62F44DE2EDB0B9365D1609763F42679066915E5F9B99D83898BF2"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/ATLAS_PROCEDURAL_SCENE_EFFECTS_AND_EDITOR_SPEC_v2.md",
+    "Hash": "8D1FA5A7E133EAD76F08FB2F279DD7F807AD0DEBAD72424C5AB7C7C8833202FC"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/ATLAS_SCENE_EFFECTS_IMPLEMENTATION.md",
+    "Hash": "EADE016D586B516F77D0347EB5825F6F09B7BB447E0954E427DFEB3D0F105956"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/ATLAS_SCENE_EFFECTS_PRESET_QUALITY_PASS.md",
+    "Hash": "18C9B9AF9F0D085E957319D6DFD0935BE07850B09C4C20A29032432557E8C0F0"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/CINEMATIC_LIGHTING_LAB.md",
+    "Hash": "6A31EA601408D8344F97994F3CF2BC0FC5BFC919EC55158DA3D9A7BD33342A5C"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/CODEX_AMBIENT_FLYBY_AND_EDITOR_SPEC.md",
+    "Hash": "CD91F5CC8DDDDCC3B6C9C8CAD940ED707B467849398CEAF2C575D1E1CF3D128F"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/evidence/character-baseline-additional.log",
+    "Hash": "B3FB344E1410148CC8F0F9C68A566C26C239AEB7B0E57A3BB1BEE1DE0D345FF1"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/evidence/character-baseline.log",
+    "Hash": "BB646051EDBC40322C5255664F3E8E5887B06BD680BD43A4AD771642CE8FE500"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/evidence/character-controls-qa.md",
+    "Hash": "61CB8D8139C6160D68BF646565EDAC45698B8A76973E5C50DDB2D36878F240A0"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/evidence/character-final.log",
+    "Hash": "E40DF5638F8EC0BC9848131BF28470C27E567BD2BDE917E8F4A3A549C34760C8"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/evidence/character-gpu-final.log",
+    "Hash": "3C534A24979D9F407AD4014B7E206FD6A399375AA08F2A1E65FC1DC399E7393A"
+  },
+  {
+    "Path": "Docs/archive/implementation-briefs/evidence/character-ipad-chromium.log",
+    "Hash": "CA3364A7419E796D7398ABD75D2E787DBAB6920C74898303F0E03E6D587B12EC"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_CLOCK_QUESTION_AUDIT.md",
+    "Hash": "3181F2C374E5BAD77CF0400CE321D4ADCF4BDD621250BAAB810A79F5FC2AF6DB"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_CLOCK_QUESTION_REVIEW.md",
+    "Hash": "9D7100AA4D72B3FC375CA1B6C8089002072B26C994950DB87C4D4EB7889E077B"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_LEONARDO_CLOCK_QUESTION_AUDIT.md",
+    "Hash": "AB7806D96E043A9D773A318704131B9A442514746A2D60F950E7ACF69C4A6E62"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_LEONARDO_QUESTION_AUDIT.md",
+    "Hash": "DFD0F9E721681E1542BD10D027F703D92483F84B2FE5B62AFD0614B6AC49DCEC"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_LEONARDO_QUESTION_VARIANTS.csv",
+    "Hash": "6A64FAADD47B4E6E9982305E527B53755D13EC75443596BB5941B978C51E6B0F"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_STORY_QUESTION_AUDIT.md",
+    "Hash": "5C718D5C3F47E514761AF749CDDD8FAB91546B6B0AA00BA37493F34EBD451AF5"
+  },
+  {
+    "Path": "Docs/archive/learning-reviews/ATLAS_STORY_QUESTION_REVIEW.md",
+    "Hash": "941B07BA2803EB54D4B0E6E82F83EFC20C96B3C2F7B26CC515C21DF7DE8C6E6E"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-baseline-restoration.md",
+    "Hash": "27510B2C1DB737BBAD2CDCF3BCB7BE530EF204ADC33195D725225BC3862650A7"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-execution-performance.md",
+    "Hash": "2C418A63A6B2B959945319CF7129DD695BB5C7B625C3CAD1FDC848B54BAA0731"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-gpu-ownership.md",
+    "Hash": "CADEEC1960BF7549C5E487DAEB8F09376D5A1DCF7CD00A5775882A27C80A6E50"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-gpu-validation.md",
+    "Hash": "43330FDC290B6613DF7E5759CE10E4F9A8AC6D52DC84500C4029F7CAA695F82C"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-ipad-shader-boundary.md",
+    "Hash": "126B9FB572E822E4EA99F23329AA116BF0373410205C410107DF4EF3370B8114"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-loading-isolation.md",
+    "Hash": "36888B3A2651233E8C7C4F935C4FF1ABCCBC85B73B92B3A72EFEB231D6BB4D5F"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-lvl-0001.md",
+    "Hash": "8383C3E3C556E20AD9B99F0A8992058467368348DE688EAFBF2EA371EF4EA172"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-page-lifecycle.md",
+    "Hash": "A2C78E4DF098F4DC7CFA231DA776E50A2A0FBD80FB5CEFA63FB8FE0EEDAF3F4E"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-performance-measurements.json",
+    "Hash": "C5492229584F793C8F92BE9DB7D6A1826225B8547EFD8B03EC251FC8482D3E5B"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-presentation-memory.md",
+    "Hash": "05601280CB287C663019B6BB73529856FDF65A2F22C25DA5FB7A6D83CE4CF729"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-shadow-preparation.md",
+    "Hash": "1C864F5A0D205C788E5621F215F1838E910D09EBD3AA7F71023E6C769C1B1A91"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-tablet-range-investigation.md",
+    "Hash": "119A416B41307F8043381E8CBD2C7099D46C9457EC9649BE4AD1E9D06372E94E"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/3d-world-modes.md",
+    "Hash": "4B30F9B67ED041C254837743AFF3F0C2731A794D7DEC1392341C3169CEDA94AF"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/carousel-before/.last-run.json",
+    "Hash": "5377BB1DDC52EECC04FEC1C4721979858D461FF00B5AF50683B6884FDD4F04C9"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/carousel-before/menu-carousel-manual-next--a304c-p-the-scrolled-menu-mounted-desktop-chromium/error-context.md",
+    "Hash": "8A8D50DE3AF7E21EBB5E7E393D6A839FACFC73AAFA77756089D027EEAA55F426"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/cinematic-route-before/.last-run.json",
+    "Hash": "C95D22CF51C81D6977624B83537388C8176223DDA19097A117B53B77CE6EB52A"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/cinematic-route-before/cinematic-route-overlay-ci-0526e-d-follows-editor-visibility-desktop-chromium/error-context.md",
+    "Hash": "4400FEA56C2E714318F999CA0402FCA488B291D42D08FB5B97A8294EDFE55507"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/.last-run.json",
+    "Hash": "0343B35F60B6471E4546D0F46D0301B0544799C1B55674634FD54A767EC285D6"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-0.png",
+    "Hash": "842B764FFE00DFB28329C24666C4BBB75E74BD98F4BDA655AA71C00B07EEF372"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-1.png",
+    "Hash": "B892C7B4650F1F185A03EFBFA76D1AECD159006650E10EE75226E761B4C98DF5"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-2.png",
+    "Hash": "158D08D63F594C7AC6B98CFDF050E152B700718FC29B8592CE8DE8C4CAE9C951"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-3.png",
+    "Hash": "926C561983D40243A69E5A01038A04F0B70DAA4FAAE80FC8388831D3726D7912"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-4.png",
+    "Hash": "C481420A15B562A1D129AB7DAC09650451AF5F750588233BFB2D152DA11CA268"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-5.png",
+    "Hash": "2E3FCD2A327A0BF43745BB1384E9BFC8678BF55A202B6606DB0559B7EF346765"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-6.png",
+    "Hash": "C499C81A8B53DB904E0355DA6F7A3B886819600BE7B6CAFFCCB493FF549AFD0F"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/direction-7.png",
+    "Hash": "EB30836D85ACB556AECF1A2789B2AFB0D6BCDE75B18D48EE755B8A72FFE41964"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/error-context.md",
+    "Hash": "F6EA0D391E76D5998BC30D8CF687B386FD3E15110D7BCEBC41EA14BF64D4436C"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/picks.json",
+    "Hash": "E02B2DBE626E308DC24D8C769E37633AD44BA57E77C5823B7BB09F56001E10D6"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/reverse-detail.png",
+    "Hash": "7662F1876ED2C8DEE2251A6AC97BE8DE41F40BA5DAE1F6D2E7308758415C87F9"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/sky-clipping.json",
+    "Hash": "1F5A472E8FB29C33424AD940E443BA428E910A2A56B4C81A6C05B52E675969B7"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/sky-sun.png",
+    "Hash": "E84F41052A784C7814AE1AC67172186DD28B319159B5E5C8B9B30A43ADAE8865"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/evidence/premium-sky-regression-before/atlas-premium-visual-premium-full-direction-visual-audit-desktop-chromium/temple-back.png",
+    "Hash": "974A54A2BD270E108257D98395177C1B933CECD431A238BE43506C7F6AEEF4F3"
+  },
+  {
+    "Path": "Docs/archive/renderer-investigations/v158-tablet-baseline.md",
+    "Hash": "0BFCDCED568BD17D76C9A5DCAC631A6232B699C9D08175198DC0A6DD8B9A0052"
+  },
+  {
+    "Path": "Docs/focused-fog-animation-reference.html",
+    "Hash": "868486F0C046BEACAC0F06BF24B9BEE07CBFA99BE4B899F55068FFE2D509A351"
+  },
+  {
+    "Path": "Docs/fog-animation-reference.html",
+    "Hash": "FC666147AFBD468FDB886BD23E7B7EB04F9319A4E4DBE4862E0CA8DDA414FF6E"
+  },
+  {
+    "Path": "Docs/renderer-current-spec.md",
+    "Hash": "5352A929A97BF7F0BC0ADB11076416E17BD7F3B2E1D7B16A8A807FABC1169572"
+  },
+  {
+    "Path": "Docs/stars-animation-reference.html",
+    "Hash": "B48220BA1002F5771D247151282849CF0479C9A7AFA89F6292E84CB22B5EC7E1"
+  },
+  {
+    "Path": "Docs/sun-animation-reference.html",
+    "Hash": "7E2E9CEC81A8A191ED3A6774FBE5DD6DB2F99E54685BDA98F9F184E2D223DECB"
+  },
+  {
+    "Path": "Docs/water-animation-reference.html",
+    "Hash": "AF55508C66B502DEDBCB4665EA9AA1235493C977C16AD08B2DE305D5EDAD13E8"
+  },
+  {
+    "Path": "Levels/LVL-0000/assets/AtlasTestLevel.png",
+    "Hash": "D0C8E0B26BA9DD9AF254A755B574E8E7CD70E2A81375EA6D3E1D0C2595F2C44E"
+  },
+  {
+    "Path": "Levels/LVL-0000/assets/depthmap.png",
+    "Hash": "073E75E71BDDC3327BB28725610F2608840381173F1DDC5E22AAFFCAAF2D37D3"
+  },
+  {
+    "Path": "Levels/LVL-0000/level.js",
+    "Hash": "00612EAE69D14D8609C10D8C243C4D131C0F2563F415B4E8ACAA01716BEEC097"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/SOURCES.md",
+    "Hash": "81F982D90EF4CF8C3FB27EE5F1C9D996D8BD007CEF2EDEDEFB0266BA47F76078"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-3d.glb",
+    "Hash": "C6D9A6CA1D40E7A0D7E75ADA75CC29EF781E8F067A5F189FFF6D99EF87E55536"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-art-ledger.json",
+    "Hash": "8B8511766115D1FCC8305579047B06F985283615F4F388F55FBB4101DB2D2C03"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-cohesion-ledger.json",
+    "Hash": "8C59F91B6893C570FBD310C15AA8D41C6939581C8DEE1FAAEB74A80BAEA3A2FF"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-cohesion-v176-ledger.json",
+    "Hash": "EFFB7BA162DDF9382D91AC80FE05AE7347E3D349ADE4C1167027761D64CCB6BE"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-composition-ledger.json",
+    "Hash": "5C7303397BCD24B3CB5C4AE3FDDB479104D22C702C9D4A92B98C5EBD53D01B6E"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-curated-grounding.json",
+    "Hash": "AF08C1E093663F4FAC7752E8D902C7A8066FF251E70F34FD86ABDD1426EF4CC5"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-curated-ledger.json",
+    "Hash": "81FE167D24C5AEC717B428028B2D5182F58EF8BF9085B40B25043B7C9BC72F42"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-evening-ledger.json",
+    "Hash": "8AD492571CFF217E75C485E4848020F292EDF1C8F7F41566F8C8BDCA248CCEEA"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-evening-rock-grounding.json",
+    "Hash": "AC408E221EA679514CCD9572C86C470CD79779068A6610F7F1111CC0534E04BC"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-fern-ledger.json",
+    "Hash": "4FF5D52A0039BD210F344AA0F1D66CB10541A4ED501BD2AB1B0D77BC88B94611"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-foliage-ledger.json",
+    "Hash": "40D18CA7EC3281426CAB4EE3DA5BF5E29899450E08D928C3358581FDF79831EB"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-grass-coverage-ledger.json",
+    "Hash": "E8B7C390CC93EB8282DD61A4E10C42CA72F218F38F6EE7A2E627874F042FCFB0"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-morning-ledger.json",
+    "Hash": "5E1B0F820C2A96732A3347E70B2F76D1E7CC28CD71CF11A6ABCD43CFC28206D7"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-organic-path-audit.json",
+    "Hash": "ADBC86B0D1C1C41E2C550DC21F3594C83C6D3D93D1727F976E3347FA898414D8"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-organic-path-ledger.json",
+    "Hash": "51210064BF929EA3B558E7CA29B5696EEE2DCD6B3467F6DD4FDCAFA7BCE75DD5"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-panorama-ledger.json",
+    "Hash": "23649A82AB2CEBA57339313CAE0E42A002529A6097A4C792963B6956D61359E9"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-path-evening-ledger.json",
+    "Hash": "0C7C21147397F75875E77CC11FF9469E6310D6C0A9A531D6FED9E6387B46C4B2"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-premium-ledger.json",
+    "Hash": "A35306FDF9FB7FB7DB9E798C910DDDCD30366BFB225BC65A122A0F414F16CB14"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-premium-rock-audit.json",
+    "Hash": "FB59B87390C842E0958E7C47A4524FADA44003EFD01681676860D23E9EDFECB7"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-temple-review-ledger.json",
+    "Hash": "264D3CEAE2404BB3491868C33F3FC4E3D749960F4ECB37F48EC04844A7D2A032"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/atlas-temple-rune-audit.json",
+    "Hash": "B89049DE6C2209AF35E4906CC072D65DD5B6E13064F2EEBBDC9E82C494650FF5"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/qwantani_sunset_puresky_2k.hdr",
+    "Hash": "D66E08231E9C09CA40C6D035214AE8EFB638782745C82ADDBB2A063FA32CABEF"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/real-3d.glb",
+    "Hash": "57A2E0589DF616D2D91A2D40E93169BD5FFEA4D5281D06414C6E3096C2D8A086"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/route.json",
+    "Hash": "68AA2D8255A4DFCE166C3A99B0E47D6350E9E14149EE6970A889B0638D92D319"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/sky.jpg",
+    "Hash": "FA6329EB2826A17D8B52F0BD0B789718F8583BE5CDCCA187BB288C1EBB62EAC7"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/stylized-budget.json",
+    "Hash": "17EB36D58EF9D69F269222511E563D3B522D7BC1CA57FF98F424227A62C10F7A"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/Fern_living_green.001.png",
+    "Hash": "C7D65049549EFB8B76B6DDFD7BF2B18968F84023AB9B8E69E2ABA92E58C2810D"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/Fern_living_green.png",
+    "Hash": "9D0E4112C6C2B22213378309B8B6DA0FA894F303060C281E30124D01B576FB17"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/Fir_needles.001.png",
+    "Hash": "53D5B00207711837297A3A68DB86DCA380D8E8DC4EA56A81D7DCF78ADD672DC1"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/Fir_needles.png",
+    "Hash": "5C7E263EA5D17F97BF49D6DE4133197865462669B07C2237C4698FDCDD9D3BBC"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/Moss_velvet.001.png",
+    "Hash": "0FE0FE9FFDF4DF2A21E2B2C1C9C45A596F2D861E9B3032CC4BF012378DD0AC81"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/Moss_velvet.png",
+    "Hash": "E5E1B397C8474A782747F95AD01F8BB9887D03806A396AC695B360488EF87FE5"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_10.jpg",
+    "Hash": "1D5C63D39E67AF44E96CC9D5752273982BC5C82C9855695DADA4ABC2FC20575D"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_11.jpg",
+    "Hash": "E09258C7F055156A7607F1B21DCCF38C7EFD847E7D030271D5FFCC4A722DF37D"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_4.jpg",
+    "Hash": "E4D557FF61A0B42712A58E8A2E91C6010738977D4E172B7AF47ABD7D406AE735"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_5.jpg",
+    "Hash": "FCC8900B8F1D67D3FF242AD3111B91D2A72D8183C850F1D8AE21EAF9C67A5BA4"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_6.jpg",
+    "Hash": "AA23FA930C6303490F842F7C016C19D838263E8E4538D42508A9332E3FD76B69"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_7.jpg",
+    "Hash": "E96D6125C5A6E678EB2CE67B0EA94CD2FE83E391F67A478473D8AD855DC05335"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_8.jpg",
+    "Hash": "ABC91717BC60C831F2CD86AD06A5C575AC0E5BD11870B1E7B6DCEFC122FC64DB"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/forrest_ground_01_9.jpg",
+    "Hash": "3DA52F2F2182F2CF0A7B417E10764EE1FF446DF0BC9FB12D49C4E3570EA3EFFE"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/gate-carved-albedo.png",
+    "Hash": "AB3EDA256EDF939D5C716DF62ACD6EC76D5889BD7E988CE757C89BEA151D6C2C"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/gate-carved-normal.png",
+    "Hash": "A456FBFF6AAD2F37322AC3CC40D01CD5F8A78C70ACF16A0F2D552916E38FAC1A"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_10.jpg",
+    "Hash": "EDF078E30F5DA62D19C9E607DE2D0AF54305C9096B7A323A36D18436D934A18A"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_4.jpg",
+    "Hash": "EC059BBF8A1DFB00AC22161ACE6F7839D9986F92FCA025833DB41619DC3F994E"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_5.jpg",
+    "Hash": "B8470BBC53E9688A780E7EAD674C606E6BE462AD009528269B714D2D15D88440"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_6.jpg",
+    "Hash": "C3EC4658F31C7DB09BAAA75E309438296123731F3FD21A2D10EE1945251975A2"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_7.jpg",
+    "Hash": "B2FC3A05D8811000D50A1027F800F16432FA7C45191CEECAF9970DB3E28DBB31"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_8.jpg",
+    "Hash": "AA44F50320A759B7B5222DB143B3E0BEF8211E1C1943C8674ACA357C03AFEA08"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/knotted_pine_bark_9.jpg",
+    "Hash": "82D90F24D2C0D6B0D87389850C48A28CE01B14FE88C8EA83A378F52773620DF0"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_rock_Diffuse.jpg",
+    "Hash": "98ECBD1D19953433F5909B79958992B1DA2B45ADDBEE772D1D4C27287F368499"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_rock_Rough.jpg",
+    "Hash": "341C4F85E9B350738D30E82E616177316CC5FCBC3E8B5EE9777DB47DFC5E6B7A"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_rock_nor_gl.jpg",
+    "Hash": "78C05B52EB78617FCCE4FDE7A9AC4872A9725FB2D13AFF33248CBDB9C6330563"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_10.jpg",
+    "Hash": "ECB8C608FDCEA5A21BFD9AD553DBB6B0A74C7D2CDD5F8A3A16E9E83B18126C42"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_4.jpg",
+    "Hash": "4C41E62E3C6B0AF73B89BD3C9C46C55F3723A36789475D3FF76FE112D89D45E2"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_5.jpg",
+    "Hash": "837C64A4EC2C7AE43EAD3086383D15B188A69A959B5188958793B81AD7387470"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_6.jpg",
+    "Hash": "5B0BC44304093EBB2307D91FE6F7F7B0C4AF1CCBD84025A8C36C97DA981BE5CB"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_7.jpg",
+    "Hash": "ED51F92E22C19515FB0EBCA4F7BA12CF0F3C4E601CD0993755F165E9208DAD50"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_8.jpg",
+    "Hash": "0152E7CDED27A63EBA92ECC74EBA841AD50151F436D528B7A561C4470DC0FC95"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/mossy_stone_wall_9.jpg",
+    "Hash": "D2FBF7E2B3C19F046E9FA827596818AB1FD429F00B58D364205711D078B54022"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/pine_bark_Diffuse.jpg",
+    "Hash": "741F333AB9F8A0996D8A53905B5AC792FAB77D7CCB8CAC5FBAED8C99B9F6ABD5"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/pine_bark_Rough.jpg",
+    "Hash": "A86618F6358A97410B15D226D0B3D52BB203AED8D9A29CFA355769B95DF94D03"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/pine_bark_nor_gl.jpg",
+    "Hash": "E91D024441A698523472EF2001BE2EADE2F73005D798466C7ACD3EC5D585667F"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_10.jpg",
+    "Hash": "9EF398EEBEF2A9477DAA6A260EBE85003DE0790BB7D8F7E5FD0D80B6943EA70E"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_4.jpg",
+    "Hash": "C66DE7F7B48EF1BA542C17AF780787CA6D43DA2160A46FF3544DD9FCDF65CA30"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_5.jpg",
+    "Hash": "D95F1B4972E7D83AB4B02688B28661B60B60F8991B50D4EA6E989E3221D01F47"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_6.jpg",
+    "Hash": "63BB4105E6F60B5968DA785AFC292B94026A5AFA6F18388E98B00232E9E2C433"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_7.jpg",
+    "Hash": "CC27725B9BD4B3482823CED876EA5A4FF4CEF8485A8193F6F071B56A3A2BB14D"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_8.jpg",
+    "Hash": "E8EF6D94411F6B8396425426C08D9848FEB0C81AC29C4A6ACAE28342786F17A1"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/rock_boulder_dry_9.jpg",
+    "Hash": "72A3C96D563FC17AC36C568802E106222E6480512D98E07318E1F431CEA33DD6"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/runestone-carved-albedo.png",
+    "Hash": "9CDE0F251A5E348DB70AFE1AC45DAE063213F4DA72784362684E154BEF218B22"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/runestone-carved-normal.png",
+    "Hash": "E4E1135F86797A2886AFDB99AB726C669DBEEEC3D5D0E5945AD8D687EED2AFAA"
+  },
+  {
+    "Path": "Levels/LVL-0001/3d/textures/spruce-spray.png",
+    "Hash": "C35665364DA62472F2418507D6C6EA218039E231C74A48AA25C6F0F90D08EF13"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/depthmap.png",
+    "Hash": "A671E105FE94CE01D30995D19F1013AE3855187518663EDC79B6E1CB1BEA4D8B"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/forest-path.png",
+    "Hash": "CAC6C11A06955E63310A47BC381DED480AA5F3BABDEC206567E008085FA16C4D"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/level-1-wide-world.png",
+    "Hash": "022D2E5C4FDAA90280EB4441AB34FC052D2C8A77068CF237EC31C0EBB2CBFD65"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/reward.png",
+    "Hash": "A2AD62A810161177F79ECD661F443AEC98299745E593AC26F4EC2B3DC954677B"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/rune-stones.png",
+    "Hash": "950B31EFF43AD5417E4ED27FD008700792B978EA58FF7D8C106F699F9FFA4A64"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/temple-gate.png",
+    "Hash": "E82F38A7617DD748D5AF5C393820955491CC1980E9FBEA0E3E213CE29E7D288D"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/viking-spirit.png",
+    "Hash": "730927BCA7DAA5A006A523F1F442C7C8FFD8BFF527126343419869D71694BFFB"
+  },
+  {
+    "Path": "Levels/LVL-0001/assets/viking-temple.png",
+    "Hash": "9D553DEB184E07FA16A4E420E8C31284530C6E5AAF7C9CE9F5F133B6F3CC8084"
+  },
+  {
+    "Path": "Levels/LVL-0001/level.js",
+    "Hash": "B8D457268146A1D7EFB5496E267C340E33F9A6EBCB48FD6D47BB4A3B3F8E5C58"
+  },
+  {
+    "Path": "Levels/LVL-0002/assets/depthmap.png",
+    "Hash": "B2826A9190E98DA339242E6DBB017177C3EABF9FBF0778925D98AD68AF5983F4"
+  },
+  {
+    "Path": "Levels/LVL-0002/assets/steenpriester.png",
+    "Hash": "2D0A842E15B248D8EC0DF662360299E92B57AF52070CA6CCF8B768880BABAABA"
+  },
+  {
+    "Path": "Levels/LVL-0002/assets/temple-interior.png",
+    "Hash": "281FDDAE55E5E701057634E15528029E7900F612C06AB0EBD2022F03034F02D0"
+  },
+  {
+    "Path": "Levels/LVL-0002/level.js",
+    "Hash": "1C0EF1A662599B88AA3F6AEE7569ADDA1242952D6C4AB3A6333A9EB5C78AB053"
+  },
+  {
+    "Path": "Levels/LVL-0003/assets/depthmap.png",
+    "Hash": "C405825863FF9AA2C6C950E6DBB14FF0E59FB486AFCD45EE1C40A94042F7DCB5"
+  },
+  {
+    "Path": "Levels/LVL-0003/assets/havenmeester-eivar.png",
+    "Hash": "E43EEEA6F1C8393A16800CF62798BC8593FD32F37566F347FC972E0E7132ECE2"
+  },
+  {
+    "Path": "Levels/LVL-0003/assets/viking-harbor.png",
+    "Hash": "6651C45BD2358A65A61C9665B881A6BBBBFF802629387A8F8B58763899310DF3"
+  },
+  {
+    "Path": "Levels/LVL-0003/level.js",
+    "Hash": "4AB23AD11C36AB9EBEE7965C21076BE00659CC2C39579DDEAF9F0E0D55D0AE82"
+  },
+  {
+    "Path": "Levels/LVL-0004/assets/captain-nemo.png",
+    "Hash": "991BDF3BF6376DBBD4ED0EB22A16E34E1EA6DA0603A5B15A1A7DDFE4400103C3"
+  },
+  {
+    "Path": "Levels/LVL-0004/assets/depthmap.png",
+    "Hash": "C7700D33ED59D9AF183FF1593DC294A628EFE860F19301627FBDBFD545784DC2"
+  },
+  {
+    "Path": "Levels/LVL-0004/assets/nautilus-harbor.png",
+    "Hash": "C387ECF9E2DF3BE9063F94D15CE2185EA51D36326CCAC620BD4EC02344590DED"
+  },
+  {
+    "Path": "Levels/LVL-0004/level.js",
+    "Hash": "69A43C6B2ED78856DCB2991B53B6EEAC4F09A4658F5995AE79148BBACE3D4F65"
+  },
+  {
+    "Path": "Levels/LVL-0005/assets/captain-nemo.png",
+    "Hash": "991BDF3BF6376DBBD4ED0EB22A16E34E1EA6DA0603A5B15A1A7DDFE4400103C3"
+  },
+  {
+    "Path": "Levels/LVL-0005/assets/depthmap.png",
+    "Hash": "43EF547ED20861875077B1AD18CB5211F2427C180C8335E55916294CF206EB77"
+  },
+  {
+    "Path": "Levels/LVL-0005/assets/nautilus-salon.png",
+    "Hash": "31BCFE64BC4D06DF4455D18E8DF2B227B4A1DECD32EC2D08E0E7737CAE1A4BA4"
+  },
+  {
+    "Path": "Levels/LVL-0005/level.js",
+    "Hash": "E482AB02F02150CA6D85601C90BE9753A541D2D4FF8545CB04266144FF1C69DB"
+  },
+  {
+    "Path": "Levels/LVL-0006/assets/captain-nemo.png",
+    "Hash": "991BDF3BF6376DBBD4ED0EB22A16E34E1EA6DA0603A5B15A1A7DDFE4400103C3"
+  },
+  {
+    "Path": "Levels/LVL-0006/assets/depthmap.png",
+    "Hash": "4DE1F7D76A5BCF5FB77CB1EF16A995D1281C6D8F140FF02707DF80A44A69E149"
+  },
+  {
+    "Path": "Levels/LVL-0006/assets/nautilus-mini-sub.png",
+    "Hash": "72211BD9D9D08B962956E3AE2BA9D14C8C31CEE8BDCB72EB94B5F79F4EB4EBE4"
+  },
+  {
+    "Path": "Levels/LVL-0006/level.js",
+    "Hash": "6569E50308E463E2A4115AE57E6E9CEDAC60DC68694A9EA140BE634E4EAD4063"
+  },
+  {
+    "Path": "Levels/LVL-0007/assets/captain-nemo.png",
+    "Hash": "991BDF3BF6376DBBD4ED0EB22A16E34E1EA6DA0603A5B15A1A7DDFE4400103C3"
+  },
+  {
+    "Path": "Levels/LVL-0007/assets/depthmap.png",
+    "Hash": "94285FB89639AE6B95F54D18AE266FE1C79F9D38F4825BE57D61B35FB1B035CC"
+  },
+  {
+    "Path": "Levels/LVL-0007/assets/tropical-island-escape.png",
+    "Hash": "7D20A1ECBB14A13C1D1D5543719A4EEFC605D32EB3389F1D82AF0937A8563187"
+  },
+  {
+    "Path": "Levels/LVL-0007/level.js",
+    "Hash": "60E31542F326B6F04E96D08C7C5483B18C2675D8F4CFC23F66031BA3C714012C"
+  },
+  {
+    "Path": "Levels/LVL-0008/assets/blokkenpoort-sealed-room.png",
+    "Hash": "E01B0C3D593E7F7BBA164D1911C4C9BC301A3C5C3D52CC573DC4096DFB4DEB16"
+  },
+  {
+    "Path": "Levels/LVL-0008/assets/depthmap.png",
+    "Hash": "07ECA19A9A5233089E3B3E797659BDE18640BDB7D2198B97E0A66B4F26FD4634"
+  },
+  {
+    "Path": "Levels/LVL-0008/assets/dutchtuber-job.png",
+    "Hash": "ECFC82DC6AE2409DD1167A686E10F72F1CD563E3E6BB0AE5B3D7B49903856A5A"
+  },
+  {
+    "Path": "Levels/LVL-0008/level.js",
+    "Hash": "63666B04C4E8E86E5E68FE0D66E81B2A663107C9F77919B48002E16CFB9FE226"
+  },
+  {
+    "Path": "Levels/LVL-0009/assets/blokkenpoort-awakened-room.png",
+    "Hash": "EF777C1A580CADBC5B3BB6BE8713E08FB7C9FF8814C0D63A8774CAE42F5BD885"
+  },
+  {
+    "Path": "Levels/LVL-0009/assets/depthmap.png",
+    "Hash": "2FC922DC5565235C20C0877A7D1CE591959BE4086ACADBF0FBFEEF97547E30B9"
+  },
+  {
+    "Path": "Levels/LVL-0009/assets/dutchtuber-job.png",
+    "Hash": "ECFC82DC6AE2409DD1167A686E10F72F1CD563E3E6BB0AE5B3D7B49903856A5A"
+  },
+  {
+    "Path": "Levels/LVL-0009/level.js",
+    "Hash": "B3524F1ECCBFD1F1AAC2897660C85D8674EF8864595F64D326BF574F41B9188D"
+  },
+  {
+    "Path": "Levels/LVL-0010/assets/blokkenpoort-beach-room.png",
+    "Hash": "BF342F294A928C3E80345079BF9DB90683EE9010C3B75CB305E016CC66DCDC79"
+  },
+  {
+    "Path": "Levels/LVL-0010/assets/depthmap.png",
+    "Hash": "635F000783ED3F554ABD53470BD352738DDFBAD07E18AC815761DE05BB8817F6"
+  },
+  {
+    "Path": "Levels/LVL-0010/assets/dutchtuber-job.png",
+    "Hash": "ECFC82DC6AE2409DD1167A686E10F72F1CD563E3E6BB0AE5B3D7B49903856A5A"
+  },
+  {
+    "Path": "Levels/LVL-0010/level.js",
+    "Hash": "605BB2329C91603041E0A90DA764CBC9A5BDF5A9A6CC05DC99EC8FE35106B083"
+  },
+  {
+    "Path": "Levels/LVL-0011/assets/blokkenpoort-nether-trial.png",
+    "Hash": "52D192E2155E1D66E3DDAD3CC8C847D89F15D3BC131386ADB151441E772797B1"
+  },
+  {
+    "Path": "Levels/LVL-0011/assets/depthmap.png",
+    "Hash": "230DE01484007528A463814CE0C3935ACD7302971C84052CA10C0734D30C0821"
+  },
+  {
+    "Path": "Levels/LVL-0011/assets/dutchtuber-job.png",
+    "Hash": "ECFC82DC6AE2409DD1167A686E10F72F1CD563E3E6BB0AE5B3D7B49903856A5A"
+  },
+  {
+    "Path": "Levels/LVL-0011/level.js",
+    "Hash": "0A1369BEC646993B20F90B66BC5A69866EDA6B982C8885DA523A56F79E56796D"
+  },
+  {
+    "Path": "Levels/LVL-0012/assets/blokkenpoort-way-home.png",
+    "Hash": "3B66DE42DBD9F5443563314A1EBAC25D6A5C5FDCBB95EB4325E3046511C6C032"
+  },
+  {
+    "Path": "Levels/LVL-0012/assets/depthmap.png",
+    "Hash": "0DA58114AA6E34A44A3B105E4E1A555B6C182EA8F02808436582E2595C9EBE75"
+  },
+  {
+    "Path": "Levels/LVL-0012/assets/dutchtuber-job.png",
+    "Hash": "ECFC82DC6AE2409DD1167A686E10F72F1CD563E3E6BB0AE5B3D7B49903856A5A"
+  },
+  {
+    "Path": "Levels/LVL-0012/level.js",
+    "Hash": "3A90F4C40AA8348DB4A1BBDFC30C0F4A689CD64B8C979F84FC46EB9AB199DC2B"
+  },
+  {
+    "Path": "Levels/LVL-0013/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0013/assets/depthmap.png",
+    "Hash": "0C58A33C50DE7057096CED90A08B8D01CC3F01A192028578ABDEDCE374857161"
+  },
+  {
+    "Path": "Levels/LVL-0013/assets/nederland.png",
+    "Hash": "58E711EF40F3C71D6A36B33629D01B6556156EEDB9B6CDAEE17342E3FD11A8D8"
+  },
+  {
+    "Path": "Levels/LVL-0013/level.js",
+    "Hash": "0268D757BD0228D281B3EF2A9916698BE617403D12E1445917605FFF1EAE9D23"
+  },
+  {
+    "Path": "Levels/LVL-0014/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0014/assets/depthmap.png",
+    "Hash": "BAF61E90DB635EA27CAD84B9A324FDCF313D6C64D77CC9FA942EDDA2B6231499"
+  },
+  {
+    "Path": "Levels/LVL-0014/assets/engeland.png",
+    "Hash": "4CB7BB9456F669DEC542D7C3B50B1C12F89D8905F1F90734D92631BA91FB6D27"
+  },
+  {
+    "Path": "Levels/LVL-0014/level.js",
+    "Hash": "EAB7FAEF4CDF27B06DC045AA849B2D0D73A2CDFD6440407A3E2D809FBCB11A24"
+  },
+  {
+    "Path": "Levels/LVL-0015/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0015/assets/depthmap.png",
+    "Hash": "4855AA7ACBD3FAC62CDB01A7B88849CF81A145C42C1F094CE72F7A3432CA77BB"
+  },
+  {
+    "Path": "Levels/LVL-0015/assets/frankrijk.png",
+    "Hash": "FE140B4E6FD1AB9D5626555DFF03A28A883AEA8DDD90CD4A4314C377212F56EB"
+  },
+  {
+    "Path": "Levels/LVL-0015/level.js",
+    "Hash": "71D382B900A2012CCF9E9C5FEFC620F73FAD4E62713E083D52031CDC5B943A11"
+  },
+  {
+    "Path": "Levels/LVL-0016/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0016/assets/depthmap.png",
+    "Hash": "A40380A9EF867012AE861E235C6A87D3FCA0E6B373CEEF7EFF425861C438C7D0"
+  },
+  {
+    "Path": "Levels/LVL-0016/assets/italie.png",
+    "Hash": "6CFD2BAC6C83C11F4532E69CDE1A25D5D5D35D45F9EF8492C7931658FD1FA0F4"
+  },
+  {
+    "Path": "Levels/LVL-0016/level.js",
+    "Hash": "0E00FB826EF30254584FEE1FAC90D45905E2DC0E758A39F5F7AAA0FBCF9C8539"
+  },
+  {
+    "Path": "Levels/LVL-0017/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0017/assets/depthmap.png",
+    "Hash": "2B78C88435F66DE4FDE9107C8685C3EE0506AC31A5E2F83B28A15BE427313753"
+  },
+  {
+    "Path": "Levels/LVL-0017/assets/oostenrijk.png",
+    "Hash": "D852B9DB60CF7BBB496DA427BA9D8552D9EBC9A134E1F97401912278DD560753"
+  },
+  {
+    "Path": "Levels/LVL-0017/level.js",
+    "Hash": "6FFBE59C3CCF5809162FDCC8349EF26B1576DDE9A74631BC6424AC330DC17782"
+  },
+  {
+    "Path": "Levels/LVL-0018/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0018/assets/depthmap.png",
+    "Hash": "F32BFBA46B684682D5D464992CA6872A3DA60899FB4948BCE0561C44E9AC1CCF"
+  },
+  {
+    "Path": "Levels/LVL-0018/assets/noorwegen.png",
+    "Hash": "C6732894CB7D36861C5516DE8D48450C8B45B812A632637C2B15B5095DC2A0E6"
+  },
+  {
+    "Path": "Levels/LVL-0018/level.js",
+    "Hash": "400471FD24A648BB87263E106231A93A4949B626C23560F8784FEB7DB53C08D2"
+  },
+  {
+    "Path": "Levels/LVL-0019/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0019/assets/depthmap.png",
+    "Hash": "EE0AFB43D278BE4DDE420D8AC0E6361507A66B5FBB6147E8FB91BCC19F0ECE3E"
+  },
+  {
+    "Path": "Levels/LVL-0019/assets/zweden.png",
+    "Hash": "C9803DB3E5F8008559AFD782485A94A26777B84666D67FFAD99955F77568500C"
+  },
+  {
+    "Path": "Levels/LVL-0019/level.js",
+    "Hash": "FAD820F40E17DE56522713CC1CED7C951636A40D8273E01EFC72879EEA6B9FC5"
+  },
+  {
+    "Path": "Levels/LVL-0020/assets/atlas-de-reiziger.png",
+    "Hash": "6720EF6E4E73E35522ED5B1F420009875BD7FE65D351411820F4F4B71B19CB7B"
+  },
+  {
+    "Path": "Levels/LVL-0020/assets/depthmap.png",
+    "Hash": "FDF2C657963542E20F6EFA5CD15F85F7EAF21BD6EFEFBD090ADFE397F77DAA09"
+  },
+  {
+    "Path": "Levels/LVL-0020/assets/rheden.png",
+    "Hash": "57DE9A434988FA836045E707A02E66AECFEA5B7BF6C4E24BB31760BD62EE34FE"
+  },
+  {
+    "Path": "Levels/LVL-0020/level.js",
+    "Hash": "AE7B3B1BF60C160F6836051B9F63BB8DD64D450F5768C2565403A39EC82005E1"
+  },
+  {
+    "Path": "Levels/LVL-0021/assets/depthmap.png",
+    "Hash": "C168C493768D57E1190A97EBD2EE38128C24D6253578B59FC9129232A25DE6F6"
+  },
+  {
+    "Path": "Levels/LVL-0021/assets/leonardo-da-vinci.png",
+    "Hash": "39FEF7230E341178750B645161C93AFB1D66034E42B0656800EB64130961C316"
+  },
+  {
+    "Path": "Levels/LVL-0021/assets/rome.png",
+    "Hash": "7F60E1A5029B03BBC2050A65DED52076A1F0CD2FD04C4637EE0F239BDF8F082F"
+  },
+  {
+    "Path": "Levels/LVL-0021/level.js",
+    "Hash": "1AF80154A0CC9DA026A9ECFDDE606A85403ED25BDD203EEA98CF84F4766B17BA"
+  },
+  {
+    "Path": "Levels/LVL-0022/assets/depthmap.png",
+    "Hash": "F24C53238141116553F0D73627908F46E22E0DE088E4403A61D6D9F32C52F4F8"
+  },
+  {
+    "Path": "Levels/LVL-0022/assets/leonardo-da-vinci.png",
+    "Hash": "39FEF7230E341178750B645161C93AFB1D66034E42B0656800EB64130961C316"
+  },
+  {
+    "Path": "Levels/LVL-0022/assets/proceno.png",
+    "Hash": "6E3556368459A2C73C087537A61693F180532BBC9655B60A4290CB1D1AE702AF"
+  },
+  {
+    "Path": "Levels/LVL-0022/level.js",
+    "Hash": "A220F38F767D35797FBF58D9684BEB1373CCC66197404E7926C8254FDA4BB401"
+  },
+  {
+    "Path": "Levels/LVL-0023/assets/depthmap.png",
+    "Hash": "03BDAA40B5F343C0C3309589A815DBAFCEBB6620C5C65EA52B10CE0CF0E4B0A9"
+  },
+  {
+    "Path": "Levels/LVL-0023/assets/leonardo-da-vinci.png",
+    "Hash": "39FEF7230E341178750B645161C93AFB1D66034E42B0656800EB64130961C316"
+  },
+  {
+    "Path": "Levels/LVL-0023/assets/umbria.png",
+    "Hash": "0F781014301B5C10879770D048FEBCD7F973837D82C055216F610E3536D2DAEF"
+  },
+  {
+    "Path": "Levels/LVL-0023/level.js",
+    "Hash": "409C828DEA0C9BE8CE265AD01B73CB101945CA2971B5C4FF5C4EC60157897FD1"
+  },
+  {
+    "Path": "Levels/LVL-0024/assets/depthmap.png",
+    "Hash": "8164022B2A76DCECA9E0DF99CC8EC8EE9CC7A077017DA26726EE0D8C21CDCB66"
+  },
+  {
+    "Path": "Levels/LVL-0024/assets/leonardo-da-vinci.png",
+    "Hash": "39FEF7230E341178750B645161C93AFB1D66034E42B0656800EB64130961C316"
+  },
+  {
+    "Path": "Levels/LVL-0024/assets/marche.png",
+    "Hash": "DCE26507B1511383DB99896146EAC1A98AA4F71112666F9D07605A1451A09874"
+  },
+  {
+    "Path": "Levels/LVL-0024/level.js",
+    "Hash": "702BC42D195D7461F880F0FFD7E5CFE92DCCCC95FFA56B15F33722D1F0E3D793"
+  },
+  {
+    "Path": "Levels/LVL-0025/assets/depthmap.png",
+    "Hash": "7CF595CFD0EB78F0FD1B5F66240BBB575BA3F250A79E5914485CDD51F5246342"
+  },
+  {
+    "Path": "Levels/LVL-0025/assets/florence.png",
+    "Hash": "ABD84C8DA191A77E81131CC976B48B2EB372CFAB216971CA4F1D71753DA8C61A"
+  },
+  {
+    "Path": "Levels/LVL-0025/assets/leonardo-da-vinci.png",
+    "Hash": "39FEF7230E341178750B645161C93AFB1D66034E42B0656800EB64130961C316"
+  },
+  {
+    "Path": "Levels/LVL-0025/level.js",
+    "Hash": "5C6C2E0057630742F69124B7B7677ABF6DE724A9EDF3AB7DB9763CF9323C6DAC"
+  },
+  {
+    "Path": "Levels/LVL-0026/assets/depthmap.png",
+    "Hash": "4C08E87038E7E6FECB1DD1620B4315EB284B9403B10BFFBE301BDC2A3333C8C2"
+  },
+  {
+    "Path": "Levels/LVL-0026/assets/leonardo-da-vinci.png",
+    "Hash": "39FEF7230E341178750B645161C93AFB1D66034E42B0656800EB64130961C316"
+  },
+  {
+    "Path": "Levels/LVL-0026/assets/vinci.png",
+    "Hash": "0DD132B8F4A7ECFDE708191C35AB51C02C00D3213D87141AA5C4073699E47A57"
+  },
+  {
+    "Path": "Levels/LVL-0026/level.js",
+    "Hash": "C016A916C07129CB9E5F905A783248144E49A5412137196121977365FD42AF3B"
+  },
+  {
+    "Path": "Levels/LVL-0027/assets/cairo_museum.png",
+    "Hash": "2C5F040B5A8F43D7FB8DAA85BFE47BEB4297669DB607FB499C1781D676E82F1D"
+  },
+  {
+    "Path": "Levels/LVL-0027/assets/depthmap.png",
+    "Hash": "BEE5463433D7758FB6E662037C94A2F2E6F386687EFF60D21A8338E103E1F7DA"
+  },
+  {
+    "Path": "Levels/LVL-0027/assets/nebu.png",
+    "Hash": "52B60CDCC05CBCE47C2DE757C6A646D06DAE393D79777BC15CCCB4A075D09134"
+  },
+  {
+    "Path": "Levels/LVL-0027/level.js",
+    "Hash": "6D4997E13A98DC20F7B7ED0E2055C7247A7EE5DB426E03C06DB36B7EBF98DA0A"
+  },
+  {
+    "Path": "Levels/LVL-0028/assets/depthmap.png",
+    "Hash": "11CB1DC754F64499D9D68A699E95A1980FD49386BE2A97702C1591663D9F24B8"
+  },
+  {
+    "Path": "Levels/LVL-0028/assets/nebu.png",
+    "Hash": "52B60CDCC05CBCE47C2DE757C6A646D06DAE393D79777BC15CCCB4A075D09134"
+  },
+  {
+    "Path": "Levels/LVL-0028/assets/pyramid_build.png",
+    "Hash": "CD7822B742E8A95B5A5350AD7A874B935CF0BF03D34CA774C3F3D058C89C0FD3"
+  },
+  {
+    "Path": "Levels/LVL-0028/level.js",
+    "Hash": "6ED0C2B8ECC201E8BE4DC710DE2699F973EE87F722756B5339A9FE510EB6BEC6"
+  },
+  {
+    "Path": "Levels/LVL-0029/assets/depthmap.png",
+    "Hash": "DB43455CB759B337DA1F126DB4860327ED6BC1D219039BBFC306AFC1FB1E1F63"
+  },
+  {
+    "Path": "Levels/LVL-0029/assets/nebu.png",
+    "Hash": "52B60CDCC05CBCE47C2DE757C6A646D06DAE393D79777BC15CCCB4A075D09134"
+  },
+  {
+    "Path": "Levels/LVL-0029/assets/tutanchamon_tomb.png",
+    "Hash": "77145A2645ADA59B342F6F2C9D6766CB04130A630E8196F17C2C665B0E4D6E4E"
+  },
+  {
+    "Path": "Levels/LVL-0029/level.js",
+    "Hash": "54E2482ECEBB4FFD97990E1C8CE9DCE9BFA277997EFF9D7E11B1969903F223E8"
+  },
+  {
+    "Path": "Levels/LVL-0030/assets/abu_simbel.png",
+    "Hash": "F40F60AE78570708496CE19639D95D5020A1161CD165FED96B2C362221343D32"
+  },
+  {
+    "Path": "Levels/LVL-0030/assets/depthmap.png",
+    "Hash": "5707F1BBFA892B160AE83835467D59CBBCA35E1C40E39E0C9CDA7DABCD26E21D"
+  },
+  {
+    "Path": "Levels/LVL-0030/assets/nebu.png",
+    "Hash": "52B60CDCC05CBCE47C2DE757C6A646D06DAE393D79777BC15CCCB4A075D09134"
+  },
+  {
+    "Path": "Levels/LVL-0030/level.js",
+    "Hash": "CECFA2CAC6DC207FBDE3BB4F445C425D52F0F6FA0A22C3ED1175149D67935276"
+  },
+  {
+    "Path": "Levels/LVL-0031/assets/cairo_museum_return.png",
+    "Hash": "8A757C17B193E4AC5BCCF4D33AC8C0F10D780A06A293891B11D857AE72570D60"
+  },
+  {
+    "Path": "Levels/LVL-0031/assets/depthmap.png",
+    "Hash": "5BDED0F8FD1048CCF9DAE32888927F14A40B30B66EF64EA3841CE4B01279E639"
+  },
+  {
+    "Path": "Levels/LVL-0031/assets/nebu.png",
+    "Hash": "52B60CDCC05CBCE47C2DE757C6A646D06DAE393D79777BC15CCCB4A075D09134"
+  },
+  {
+    "Path": "Levels/LVL-0031/level.js",
+    "Hash": "79E79D4934C6566A208CE9962574140350A94F4897E408BA0FD9E1CD0448DDBA"
+  },
+  {
+    "Path": "Levels/LVL-0032/DamBattlegrounds.png",
+    "Hash": "FDB203B7EA62D506B58599B47B65DA047B685AD79AFEBCF9B4E8D88D22A11387"
+  },
+  {
+    "Path": "Levels/LVL-0032/Valente.png",
+    "Hash": "B234A633E185D1D3BF53AD0FC2078E96A91FB622A45AECCA50E2122C97481B1E"
+  },
+  {
+    "Path": "Levels/LVL-0032/depthmap.png",
+    "Hash": "3E87F4B40881CC997F9E446739AA42C7AB743946EA76EB5964C5114A1F066421"
+  },
+  {
+    "Path": "Levels/LVL-0032/level.js",
+    "Hash": "D56C0D939C97CA01E8967CFA4AA68F4C4D8016BD94528B8927D2EFDBE530B25A"
+  },
+  {
+    "Path": "Levels/LVL-0033/Valente.png",
+    "Hash": "B234A633E185D1D3BF53AD0FC2078E96A91FB622A45AECCA50E2122C97481B1E"
+  },
+  {
+    "Path": "Levels/LVL-0033/buriedcity.png",
+    "Hash": "4788A1137A16D895D704C61F406C9F8D53C1A1616A1CD437D69D613AD10457B8"
+  },
+  {
+    "Path": "Levels/LVL-0033/depthmap.png",
+    "Hash": "9E1357FD8E6BDF3F78C19EC5B0DE5806A7AF4F6D1F0C4F7B61C3935DBDB4AED5"
+  },
+  {
+    "Path": "Levels/LVL-0033/level.js",
+    "Hash": "8E8E57DAFCFFF38154E68D0FE8B4CBA1A2611299C4E079295503BFE6F9A224B5"
+  },
+  {
+    "Path": "Levels/LVL-0034/Valente.png",
+    "Hash": "B234A633E185D1D3BF53AD0FC2078E96A91FB622A45AECCA50E2122C97481B1E"
+  },
+  {
+    "Path": "Levels/LVL-0034/depthmap.png",
+    "Hash": "0D480BECC0A289A0A45406F55EBD04CBF803CA8CE9B6E1F0BAD6B1A1B3C4518E"
+  },
+  {
+    "Path": "Levels/LVL-0034/level.js",
+    "Hash": "084826CE9115FCDB23B8245BF2B2642ABF1939191678EA4F8474ED9C94F2932B"
+  },
+  {
+    "Path": "Levels/LVL-0034/riventides.png",
+    "Hash": "00F2D986C22DABE31EA1CA7681CF42A51535DFC098B6401459C18C5864409DFA"
+  },
+  {
+    "Path": "Levels/LVL-0035/Valente.png",
+    "Hash": "B234A633E185D1D3BF53AD0FC2078E96A91FB622A45AECCA50E2122C97481B1E"
+  },
+  {
+    "Path": "Levels/LVL-0035/depthmap.png",
+    "Hash": "3EC6D31D55F314BAABDE583CCAAD9CD9C18350A435C393D632615D5B5659596B"
+  },
+  {
+    "Path": "Levels/LVL-0035/level.js",
+    "Hash": "D50977AA600B523D7B7B62B43C7FE26293DFD51BFDEC615D377B5FCAF84A344C"
+  },
+  {
+    "Path": "Levels/LVL-0035/stellamontis.png",
+    "Hash": "1646F332684CFB22D281AED9E7AF146CCD5634C9335D0C44076C5C371CAC864E"
+  },
+  {
+    "Path": "Levels/manifest.js",
+    "Hash": "E0C58B693FF5C1041CB39FFEF781D5E2A79D594385C1F5934A7BF1083092B59B"
+  },
+  {
+    "Path": "Levels/world-config.js",
+    "Hash": "E2DCD13F651820FE2C4D64DA588F68AB4395368EF8196F32A54F12EBA49F5175"
+  },
+  {
+    "Path": "service-worker.js",
+    "Hash": "B54E693846C00EC1551B5D26BBD0389718C2BDEC1504118AF38AABA6F75CE73A"
+  },
+  {
+    "Path": "src/ambient-system.js",
+    "Hash": "55CAD0107181E18C4A825E2FC9A96E4261367694E707C68A2A1B0AA9814B97FC"
+  },
+  {
+    "Path": "src/app.js",
+    "Hash": "8A9DC6C49C5EC6197BF8383F31B5EA384C2C72C032477E6A8FE720CE20D22BD9"
+  },
+  {
+    "Path": "src/asset-readiness.js",
+    "Hash": "05181E3CBC2F1D1F5EAECFFB618C31A7B0D0780F3B0AEC4E0A217B314B8337BA"
+  },
+  {
+    "Path": "src/atlas-world-policy.js",
+    "Hash": "68613C9E8DD2DEAF6510BF956862C78584E4A90250AF8FBC6E85F90770AEBA78"
+  },
+  {
+    "Path": "src/atlas-world.js",
+    "Hash": "BD94F187BDA8A54E1D1FC30E519F7A3E0CF113B455C0A90354DD4709965BE171"
+  },
+  {
+    "Path": "src/audio-config.js",
+    "Hash": "2B34AA56027F84BFD5348D769E01F50FAD513E23265573464713C9DE90A25C21"
+  },
+  {
+    "Path": "src/bootstrap.js",
+    "Hash": "6E1C70887EA391DA80C23219EBF5E0CEF92BBCA195827A7212A77B0B7F0C71D2"
+  },
+  {
+    "Path": "src/challenge-fx-settings.js",
+    "Hash": "4BCF2F8039368B2D4F35037C7EE3E7F6B4C2AD12D49C903B1174C679701DEA0F"
+  },
+  {
+    "Path": "src/challenge-fx-visuals.js",
+    "Hash": "051533965E7EE88C375AFA1E0D74808F2A0569BD2FEF0431CDF370F1CAC151D4"
+  },
+  {
+    "Path": "src/challenge-fx.js",
+    "Hash": "CAD2ABD61DE426125D3ECCA470CD99642AAE7AC1014D78118FC4A948C85C22ED"
+  },
+  {
+    "Path": "src/challenge-stardust/gpu-particles.js",
+    "Hash": "40FC806E75B2FE65D73F5ED948FD3C9958CCCD70A7BE669F71FAC4A81C8B54B1"
+  },
+  {
+    "Path": "src/challenge-stardust/gpu-shaders.js",
+    "Hash": "433CA2D5E15B7D3D157541F1D15029D724617A98558F20818175A6B40414FD78"
+  },
+  {
+    "Path": "src/challenge-stardust/runtime.js",
+    "Hash": "72A7F7039BBC8DB0275010A34E3D7D8C9D5B3FE56F8ABBECF350D90F17E07D7A"
+  },
+  {
+    "Path": "src/challenge-stardust/webgpu.js",
+    "Hash": "9093E57EE10CF3F0FDB2705984437F93D2C6B546A0B8DF193A48C6824EAE9C72"
+  },
+  {
+    "Path": "src/character-appearance.js",
+    "Hash": "9024D99C526F27ECC3A60415A4EF6E0E0A5F30F1946DCD1033757FA3B46B77B5"
+  },
+  {
+    "Path": "src/cinematic-editor.js",
+    "Hash": "362A90EA18E91155B38E9F109F8457A3B414CA7EC86CB28F862E79A93BE67753"
+  },
+  {
+    "Path": "src/cinematic-renderer.js",
+    "Hash": "A38C1DFC71AD65AAF0D2365AB49FC69D34B72802DA855089CFCDF900EF8E576C"
+  },
+  {
+    "Path": "src/cinematic-settings.js",
+    "Hash": "18CFEC004CFCA391F5706E7BEE42D475616A6DC040BD1CF272AD6EBB46EE83BA"
+  },
+  {
+    "Path": "src/cinematic-shaders.js",
+    "Hash": "E0412EBC3ECB036BD0BE50E23DC6993F936E63402D8B2F2BB7F08AE639433EFD"
+  },
+  {
+    "Path": "src/emissive-glow.js",
+    "Hash": "3D264F8C4EE16E30B89DFAD13FE4427AB70995BC6A81654AD0625ED9FC67211C"
+  },
+  {
+    "Path": "src/gameplay-cadence.js",
+    "Hash": "E6C50F9A7828CF03A58F13F2CA1714680A0568BF219949E5B944A97E31DB1EFB"
+  },
+  {
+    "Path": "src/graphics-modes.js",
+    "Hash": "5D43DD9C0E4B4CA4438FCF0BCE2A34AD51E9F745EDA23CA29FAF587633349BEA"
+  },
+  {
+    "Path": "src/intro/intro.css",
+    "Hash": "53A8028170B18914ED0307F2ACC4DABD77EA5CC896D5C012CF0A7D4513E6F268"
+  },
+  {
+    "Path": "src/intro/intro.js",
+    "Hash": "3487EB9B6111AD18D87CFE5FFDB700DF2DCE626ABBABD814A01B99F113F7FD36"
+  },
+  {
+    "Path": "src/intro/logo-material.js",
+    "Hash": "50C90D32111E02E0F4BAAB05F99D8E2730DAE9BC3A0D9F465D3478D09F704F04"
+  },
+  {
+    "Path": "src/intro/renderer.js",
+    "Hash": "F6FBB11E928AB8D3E4A348B986E8B65DE58C5D933C1C97FF9D25FE61E2112EFA"
+  },
+  {
+    "Path": "src/intro/settings.js",
+    "Hash": "8DFE8423A378698EC153BFA6D6F096A9A9B6E985C40CD17905E9F13EB0FFDB5A"
+  },
+  {
+    "Path": "src/intro/shaders.js",
+    "Hash": "ADD84A815E16DB0ED7B80555646756C7C245AB5B8E886DA37226071CE13AE54C"
+  },
+  {
+    "Path": "src/locomotion.js",
+    "Hash": "36F6093780997781FD2759CD535FD7559727FAB01270DA16ECA66201A0352AF6"
+  },
+  {
+    "Path": "src/playable-characters.js",
+    "Hash": "DC777F99F2989368B34A0CDB5CE2A4780BCA905E797262FEF15058B86C62FBAE"
+  },
+  {
+    "Path": "src/scene-effects.js",
+    "Hash": "756FCAC1AB6307748BF899EE9A23C8AC26668D17E6C42A1186DD2D7E97BC26B6"
+  },
+  {
+    "Path": "src/session-report.js",
+    "Hash": "F79F1BC62D1F3D4A38342D346B5EADF140F801D303F83AFFB7B0A863F5B3B2DF"
+  },
+  {
+    "Path": "src/styles.css",
+    "Hash": "CC397FC8F4554FDD2FE85D006F3009990F68842B091A05B6CC156BE2D2EE5266"
+  },
+  {
+    "Path": "src/tap-diagnostics.js",
+    "Hash": "7CEC3E724A6104351B6DE6F31613B6E06DF5410B1240A4FC52C1116BBE4FCA45"
+  },
+  {
+    "Path": "src/three-gpu-diagnostics.js",
+    "Hash": "78155DDCA6809944FDC6803F60FD298F52CA89608C63712179855E7747BE4B7D"
+  },
+  {
+    "Path": "src/three-input.js",
+    "Hash": "FEAB3D5399368232C15C57F3E28CB9F22D6C553D0561A3B788EF4C9B7DEF21AF"
+  },
+  {
+    "Path": "src/three-presets.js",
+    "Hash": "1413365933F6B65DD3C26A61661AB702883B0C85D2626CD67E50C80CBB72DB21"
+  },
+  {
+    "Path": "src/three-renderer.js",
+    "Hash": "D87776BF67116BA3FFF071D906F56637D1DCB0E0EF6C4C86620DCDDEACAACCD8"
+  },
+  {
+    "Path": "src/three-runtime-diagnostics.js",
+    "Hash": "2D639126F006DDE67284C4E6DFEE133AD808F5586F4D3306054B5AB0A32264B3"
+  },
+  {
+    "Path": "src/three-texture-budget.js",
+    "Hash": "64E05A2BFD71074FE74A5ADCF236027634111F4D4A065EF0A796A4C917851DB0"
+  },
+  {
+    "Path": "src/voxel-renderer.js",
+    "Hash": "397EF5A95841CF6A2D81D209AEF998F6142E4E8C01C9D09DA096842D321E5211"
+  },
+  {
+    "Path": "src/webgpu-capabilities.js",
+    "Hash": "9262E277AA05C8FD6EB947D1FB0AFEF991BCF84E3A83D47E7D092250594032A1"
+  },
+  {
+    "Path": "tests/ambient-animals.spec.js",
+    "Hash": "F04EBF1BB2B04A987BCBA1CA4F842CA2745013E846B9539B08DDBAF345E00F13"
+  },
+  {
+    "Path": "tests/ambient-flybys.spec.js",
+    "Hash": "463331B5A4893D4C379B96EA11E6D59058808F74AB2090E3BC6EC5635720E905"
+  },
+  {
+    "Path": "tests/ambient-library.spec.js",
+    "Hash": "6286478B03390043CA9AC996CD0D5B616C12B3A506740D6639B6C5E8E33DCEFC"
+  },
+  {
+    "Path": "tests/answer-shuffle.spec.js",
+    "Hash": "A655F16508A701CA3A98077727528E640DACFCDBFD9731DA2B28272F3CC6B778"
+  },
+  {
+    "Path": "tests/arc-atlas.spec.js",
+    "Hash": "64CCE7DCD1FE1DEC909991FFEF1F50D5CD33A440A752142C49F24AD2775B4A0A"
+  },
+  {
+    "Path": "tests/arc-challenge-progress.spec.js",
+    "Hash": "17B454155D3B1E2D2E5934A47BCB72147B96155881B5E798961B9F9C7D53AD93"
+  },
+  {
+    "Path": "tests/arc-effects-guides.spec.js",
+    "Hash": "2296311EA5A4FA8A6E3591170767485D011F082745E7EA62B52237A67DB7D682"
+  },
+  {
+    "Path": "tests/asset-cold-start.spec.js",
+    "Hash": "D783A3248F929A2011F5C517E1C5AEC8B8FE8B3FA52A7527D2F653B513FE3782"
+  },
+  {
+    "Path": "tests/asset-readiness.spec.js",
+    "Hash": "34FCB277A56A6DB2EEB6247B2077ACAF4E76F9B6BF8F8F7509749B20FB82AC11"
+  },
+  {
+    "Path": "tests/atlas-composition-performance.spec.js",
+    "Hash": "DD4B6B6409761EAC52DE98448F79F35DC053EA8794B0CF1CCEDF73B94FE1A983"
+  },
+  {
+    "Path": "tests/atlas-controls-webgpu.spec.js",
+    "Hash": "0F8CFE1FA60C0ECF88EE36594B6C279FC07AF0CA871FFB9DB9676BE1372FB08E"
+  },
+  {
+    "Path": "tests/atlas-dual-touch.spec.js",
+    "Hash": "1EB2FF848E849529FB16398023BED9439F5A5E41D979A124075E5F0660202204"
+  },
+  {
+    "Path": "tests/atlas-evening.spec.js",
+    "Hash": "F5CB7F41BCA376DA922F4F4486935BD2AB85C7AB2E756702B5C18C786956947C"
+  },
+  {
+    "Path": "tests/atlas-grass-benchmark.spec.js",
+    "Hash": "7A494985C8A1F2FDC49BFA647B4C40B7D1B4996F5B1806C6B68C361A09356251"
+  },
+  {
+    "Path": "tests/atlas-grass-budget.spec.js",
+    "Hash": "6503F280CA804F2A63B88F18CE238B125CF70F457A007672F3D4F26B27975888"
+  },
+  {
+    "Path": "tests/atlas-grass-coverage.spec.js",
+    "Hash": "24397870103929C87414FFD1BD44146D8836EA69C7A9021E03970D6FDCCE4B44"
+  },
+  {
+    "Path": "tests/atlas-intro-button-flow.spec.js",
+    "Hash": "59829BB727BEF85982255BEF9DEDCF292EBAE275B78A8B67D587C6C3290FCCE3"
+  },
+  {
+    "Path": "tests/atlas-intro-pwa.spec.js",
+    "Hash": "94ABCF5501CBD26C384B11572CAC7BE95D86CAC8A73D1146906BAA7D5A7F4388"
+  },
+  {
+    "Path": "tests/atlas-intro.spec.js",
+    "Hash": "74CB7D38C03E6C760B93C36FB754CF00C338F168BA87D554D5DFFE3CA4DAB942"
+  },
+  {
+    "Path": "tests/atlas-lane.spec.js",
+    "Hash": "3FAC25F71AE747220E46961F3F0A32FAEA8D8E2E6F20430B70FF2F335B93EDA9"
+  },
+  {
+    "Path": "tests/atlas-material-cost.spec.js",
+    "Hash": "37DFC378F0983407580ACDA06C8D05F16E835F2E87CFE7CF509CCBB8A9CD1DC7"
+  },
+  {
+    "Path": "tests/atlas-morning.spec.js",
+    "Hash": "9E99025C45C4BC05867B9111DCC453A2DC13DD4F1037A1382BB9859810A76749"
+  },
+  {
+    "Path": "tests/atlas-path-evening.spec.js",
+    "Hash": "EB6BACC1008BD0512073150A9722089AC7EB1B5D34FB049F894E5B6AB66B6CE9"
+  },
+  {
+    "Path": "tests/atlas-premium-visual.spec.js",
+    "Hash": "C6E3C8A4FCF9DBA0BED944A607A7E4FEDCD747175BA979ADD4EE06C2A8BE8E68"
+  },
+  {
+    "Path": "tests/atlas-production-pass.spec.js",
+    "Hash": "41496E1DACE0B8177CB108ED0DCD3BD914D0EC016AB5F1D1DCE198C436998288"
+  },
+  {
+    "Path": "tests/atlas-running.spec.js",
+    "Hash": "23BC362A5DB2E340DF3866E00D24F64720ED9152A36B5A4BD75F139F5E7C9AB0"
+  },
+  {
+    "Path": "tests/atlas-static-transforms.spec.js",
+    "Hash": "B7C26B10534EC791B2E615A619DC369D6F2A26459C09F7E5FC8BBAF6A1338FD4"
+  },
+  {
+    "Path": "tests/atlas-world-policy.spec.js",
+    "Hash": "55BADB835BEF063B420BB160ACA2FC48F65CA9F75592CE9FB9AF0F80DCD0C5D3"
+  },
+  {
+    "Path": "tests/buried-city.spec.js",
+    "Hash": "606045642AC41D9823BBCE6923E9B196356908543E7DC47BF706B1A9F9F78E9E"
+  },
+  {
+    "Path": "tests/challenge-active.spec.js",
+    "Hash": "7329333D4C583B1B72C0BD597F6A0FA5FFA62D831E3D1BF5617331978471DF85"
+  },
+  {
+    "Path": "tests/challenge-canvas-particles.spec.js",
+    "Hash": "31F75712410D8094C8B34B7930417C2B51E5A51D1C649800FA2BA5943B4DA70F"
+  },
+  {
+    "Path": "tests/challenge-fx-occlusion.spec.js",
+    "Hash": "363037CB03823FDEA6808F3FF6F700360371B4FC0DED11DE0E998767B42D0B10"
+  },
+  {
+    "Path": "tests/challenge-fx-ownership.spec.js",
+    "Hash": "2716DDCA1C71E57D00E0986079257F5C093AA73FC6D0A16A5EEB30EC1EF69BAA"
+  },
+  {
+    "Path": "tests/challenge-fx-resolution.spec.js",
+    "Hash": "915067910476386A3749EC6BA2D7982BD97F57E141C58739631F750331796939"
+  },
+  {
+    "Path": "tests/challenge-fx.spec.js",
+    "Hash": "B1FC23E32D41BFFA82D1241E64D7E7DE853A1747B9B0736EEDDE31C5228CA207"
+  },
+  {
+    "Path": "tests/challenge-stardust.spec.js",
+    "Hash": "E77E75A77DD97628AD288F12DD57B0E736B2FD4221FCB543C15013CF57DBCE27"
+  },
+  {
+    "Path": "tests/character-discovery.spec.js",
+    "Hash": "D298A21A62ADAA882B18359EE3FCB155FB22C59961A18D9C764A575A924CB7FA"
+  },
+  {
+    "Path": "tests/character-locomotion-scope.spec.js",
+    "Hash": "A83D083C5A1BB34290FC4668BCDA1BAA153D03E61BCB335F2AE66A5F7F4AA90C"
+  },
+  {
+    "Path": "tests/cinematic-fx-lab.spec.js",
+    "Hash": "2FFB35EC27E8D6381C2C54D1B47AF6B245DEB9C8E85400FA48ADF7007FE8B227"
+  },
+  {
+    "Path": "tests/cinematic-lighting.spec.js",
+    "Hash": "2D921DCD39B0DBC023ABF40276FF3EA15D3939900E54E4DAFB8BB7B6B8974FD5"
+  },
+  {
+    "Path": "tests/cinematic-particle-bounds.spec.js",
+    "Hash": "F3BB4776F48570C7A96C9234A797986826C5DD3EFF3EE528A7145270EEBFA7D8"
+  },
+  {
+    "Path": "tests/cinematic-route-overlay.spec.js",
+    "Hash": "68EDA09A39E284C228C6DB6E0CDADAE13CC95CCDA980DAB504B58C72E92AF1BC"
+  },
+  {
+    "Path": "tests/cinematic-sharpness.spec.js",
+    "Hash": "89F14D7CFF995CB7610A67F36E2AD8929731D07C5D0F71EBA62E49B070E57AF3"
+  },
+  {
+    "Path": "tests/display-controls.spec.js",
+    "Hash": "4ABD56CA436AF2A2625CA83BA1A153B4B308DD0FE80FB44CAE1738E72058A11D"
+  },
+  {
+    "Path": "tests/editor-draft-fixture.js",
+    "Hash": "9A278431770A9F9948C37DC82B5193FBF2D47CC8EE5CF6F5D27F687B4494C1F4"
+  },
+  {
+    "Path": "tests/editor-interactions.spec.js",
+    "Hash": "5B26D77CBBBA6091B6710E4F978ED8EE862D8A24B0F0E33B8D296EF6C6C4C5E3"
+  },
+  {
+    "Path": "tests/egypt.spec.js",
+    "Hash": "297022A5A8CF0DB51E1D1F763AAE1EC93709149333AC0C779C3CADAA25845358"
+  },
+  {
+    "Path": "tests/emissive-glow.spec.js",
+    "Hash": "B8D11125944CD6080C4955D690280F6A64A57A428E4DA0035687C9D3F1EAC28B"
+  },
+  {
+    "Path": "tests/europa.spec.js",
+    "Hash": "9D0824C610E5CE2D86BB6721CC8309FA469DB2FA9BCC0583A0694C67A3FAC1CE"
+  },
+  {
+    "Path": "tests/flyby-alpha-hit.spec.js",
+    "Hash": "490B0FA4050BFC800F01A6032227B0AFD686B18C6B48EDDD2A475B68C7D5E368"
+  },
+  {
+    "Path": "tests/flyby-audio.spec.js",
+    "Hash": "8EDB6EA4D0F8597BC0AD37913BC1150EAA24901B70C4958414DF5B723813B7FC"
+  },
+  {
+    "Path": "tests/flyby-continuity.spec.js",
+    "Hash": "D715E53FC804DA3B8E311887E15A10D322AEA2FFE8726235139A46029CFEC617"
+  },
+  {
+    "Path": "tests/flyby-graphics-output.spec.js",
+    "Hash": "27F26BE972F4CAA987B163C0FF0ACA4682A4BF939DF6BEC006386D268FE3EAD4"
+  },
+  {
+    "Path": "tests/flyby-graphics.spec.js",
+    "Hash": "4728825DE8E98717A06A6CBA23C762DB8E984F7783F4CE6B3D719CFAEC07E3FC"
+  },
+  {
+    "Path": "tests/flyby-hit-fixture.js",
+    "Hash": "0EDDD4AE16BA9CA9ECDD4B17B49A6C9D48BE208D8D38A08014DFB007B3AB4F0D"
+  },
+  {
+    "Path": "tests/flyby-interaction.spec.js",
+    "Hash": "D5129EE0AB994D5EEFC42923EAC848947720327B8FD59B7554E4C9454266B695"
+  },
+  {
+    "Path": "tests/flyby-lifecycle.spec.js",
+    "Hash": "F5037254C8B801B78E28317C00E08B223CA11A6D86CEC2276161DE074514ACC4"
+  },
+  {
+    "Path": "tests/flyby-preview.spec.js",
+    "Hash": "DE2999BD49D78742182830768E9E451F08FA1E66992CA3FF18D3CE1F2102B632"
+  },
+  {
+    "Path": "tests/flyby-real-depth.spec.js",
+    "Hash": "DCB11C1193E5016AB1F41B90903B5561F5D815EA10DDAD0D0CC58CFD09578675"
+  },
+  {
+    "Path": "tests/flyby-sequences.spec.js",
+    "Hash": "BBBDE5D56640909025EEF5CAB2F956ED5B422917CE136D51C188268982C724B1"
+  },
+  {
+    "Path": "tests/flyby-triggers.spec.js",
+    "Hash": "F9171C85055484C57641CD82B979BE90C04F339C86CAC3F9EA690AD5FF155834"
+  },
+  {
+    "Path": "tests/gameplay-cadence.spec.js",
+    "Hash": "B0C74119A5A9AEF9D727DFCDDBAA7D70EC46DB8E1E044BAD1F89994CD240965E"
+  },
+  {
+    "Path": "tests/graphics-modes.spec.js",
+    "Hash": "B872E19922FF4BB8687B292D4F4612FF3E52912F6107721952501D6DC3A482EB"
+  },
+  {
+    "Path": "tests/graphics-world-switch.spec.js",
+    "Hash": "6405C116931E5DD40A1A381D3BDA86A1009B7D8074FFC655E374A677F71CC24F"
+  },
+  {
+    "Path": "tests/illustrated-challenge-glow.spec.js",
+    "Hash": "A775E37C8E7262C52181D453EBD339FD6FE564BF31A47D18F45A8A90A172188B"
+  },
+  {
+    "Path": "tests/illustrated-features.spec.js",
+    "Hash": "C5411F2D072619A590056FB2A0BA6A0332627BBA62FD23BD4855E41EDA3C9C0E"
+  },
+  {
+    "Path": "tests/illustrated-god-rays.spec.js",
+    "Hash": "7E68DE966A96D752ADB50540E4FD4A10E4F831BE005719CC6762644D56C70D8C"
+  },
+  {
+    "Path": "tests/ipad-startup.spec.js",
+    "Hash": "DDA57C590BF33D9BDF1F6FD8801A8E1087007E08C1225975C5A8A1F5E804E4CC"
+  },
+  {
+    "Path": "tests/leonardo.spec.js",
+    "Hash": "584E45F966692F6808A9D022A7DF80AF3A703E5B4D2073488E1A22223BECF170"
+  },
+  {
+    "Path": "tests/level-character-assets.spec.js",
+    "Hash": "BBF9BC0A247242C03C530736736BA47951C72E3B251DDCA5AE9E5693AA1CC40F"
+  },
+  {
+    "Path": "tests/level-state-isolation.spec.js",
+    "Hash": "DDFBECC9A14AAD5AEB300D7827D7480F518EBEE606C5FF87F96D70F67E609F6F"
+  },
+  {
+    "Path": "tests/local-development-reset.spec.js",
+    "Hash": "110E7DECCCAD42F340608366F24C0662876868A5F0005AE69F48978D86B64BE1"
+  },
+  {
+    "Path": "tests/locomotion-repair.spec.js",
+    "Hash": "9FB608B7E3D6F0E5C09EB46F02584527BAE5B39E2D72B6C1B4A1EFEAD9E37F03"
+  },
+  {
+    "Path": "tests/menu-carousel.spec.js",
+    "Hash": "CC7447F6DE18CE2726B1F9770FA73EBAAFCCDBCCE0DB5B29C5EAC3D0331E699A"
+  },
+  {
+    "Path": "tests/menu-settings.spec.js",
+    "Hash": "EFDAFF35BAA05D5972590BB7537FB3B103EA30FD5495D82E74D490E5C3AEB984"
+  },
+  {
+    "Path": "tests/new-content.spec.js",
+    "Hash": "C41EF52AE1F7FAA82E6D361F9DCD1BDC02ECEB2678E947F0029AE1BECDB58319"
+  },
+  {
+    "Path": "tests/nieuw-hero.spec.js",
+    "Hash": "63C4CB7B75D8DCD0D524278381A0266353F631E96F79D8403010ED865F84B806"
+  },
+  {
+    "Path": "tests/npc-challenges.spec.js",
+    "Hash": "BC73F4D35506911A2B1BE40553F645FA87D5099116E8E5958E4ED619123D4A05"
+  },
+  {
+    "Path": "tests/npc-ui.spec.js",
+    "Hash": "4FA37C4A7670C4F1CAEAFF23B55BC3C9807705A8B4EC67F8E68147D50C16D729"
+  },
+  {
+    "Path": "tests/playable-characters.spec.js",
+    "Hash": "703F2F570CA29EDE0A53CF35F837D0A6D5F3269F7F7055B6E580F9CF685F4ECC"
+  },
+  {
+    "Path": "tests/progression-copy.spec.js",
+    "Hash": "61AFEEF7323EBFBC5402771AB73D2717A088F50E54FC93BA736AEC1BD41B981B"
+  },
+  {
+    "Path": "tests/render-layers.spec.js",
+    "Hash": "B48AFB109FC2B441D943BB83E99F0AD909E49159E1ADBB27F33A4753838956BD"
+  },
+  {
+    "Path": "tests/replay-run.spec.js",
+    "Hash": "C31F082FC4A1FE86082F4EB7E543E1D464890E856B2331FDC12C21B0C3B340D1"
+  },
+  {
+    "Path": "tests/riven-tides.spec.js",
+    "Hash": "8B64A420A94BC1FD79CEA6962FBFCC6990A513AA4059FFA19906F5652D3CCFAA"
+  },
+  {
+    "Path": "tests/runenpoort.spec.js",
+    "Hash": "9C14211C6365B8C1D7E6D4558D519D083C2CB334DFB5DFBA641B14B1384A3208"
+  },
+  {
+    "Path": "tests/scene-effects.spec.js",
+    "Hash": "C81A3C17478D78D52B5C5F1AE4DB633B333F955060BD139DB8CD58356C9581D3"
+  },
+  {
+    "Path": "tests/session-report.spec.js",
+    "Hash": "1522AA80B5144097C2C2AC1995B2D341FD88F9937ADD9B1CD95BEE7F16CE7F8C"
+  },
+  {
+    "Path": "tests/shared-particle-fields.spec.js",
+    "Hash": "FA7454B70BA4F8556C9BFBE967C6790D6B903DA25F8237EF71AF7764E7247855"
+  },
+  {
+    "Path": "tests/short-move-repair.spec.js",
+    "Hash": "29B1DFD5362E4278E4D000FBCBFB223AB2D4210F73B0F7CFA44C0881B43B5248"
+  },
+  {
+    "Path": "tests/stella-montis.spec.js",
+    "Hash": "ACDD4C203AE67C3C209B50D3FBE54A660367CD83C51B067D31BCB02A68C3EECB"
+  },
+  {
+    "Path": "tests/three-cleanup.spec.js",
+    "Hash": "06AC2EE06928F4F823DF71529987F7CC82677A751090D2B28E37882A874C3BCB"
+  },
+  {
+    "Path": "tests/three-gpu-diagnostics.spec.js",
+    "Hash": "B087292E4F8C478B5DABF83962BA7C90073A6D55FD8897A7AB4C61342DEF5416"
+  },
+  {
+    "Path": "tests/three-gpu-pressure.spec.js",
+    "Hash": "EC7D873BC9DA323BDF275F0F60DF3E46341C941FB9E20ECE3311695F92F7F961"
+  },
+  {
+    "Path": "tests/three-loading-isolation.spec.js",
+    "Hash": "4A9E4E29536B658BDFC89FCB4937B52D66D27DBAC18BBEE4AC88EA28E2DEDCD6"
+  },
+  {
+    "Path": "tests/three-native-input.spec.js",
+    "Hash": "22B8477CB08B031C802A091F673975A3FD2DE0CE8E80390638A8420F8A24BABA"
+  },
+  {
+    "Path": "tests/three-page-lifecycle.spec.js",
+    "Hash": "A53D0BCD41751EC6E1FE983572142A815EECC9D31396E93E0C9C2EC3FDE8A7E8"
+  },
+  {
+    "Path": "tests/three-performance-diagnostics.spec.js",
+    "Hash": "BFCFEDAB8CD3DDC9FE3D08FACB1E3A3FA2B479FC448F7CAAEE50BE69CA5EA1D5"
+  },
+  {
+    "Path": "tests/three-performance.spec.js",
+    "Hash": "3DC9B566C66CAB64EAFF9855D96C29CAC7570965B8A8B1E924020BBBD4CCDE92"
+  },
+  {
+    "Path": "tests/three-preparation.spec.js",
+    "Hash": "70782AF2EF295A2B0E7E89246E7A9349B1B4CE273BAC01201C382E7AC09ADE44"
+  },
+  {
+    "Path": "tests/three-presets.spec.js",
+    "Hash": "6712321AAE0FDF97CF63E2AFC2149BDEF956ECCAAF2CF8031EE6F4F6A84103E8"
+  },
+  {
+    "Path": "tests/three-renderer.spec.js",
+    "Hash": "79217487F45C7E38D980C5B3D4464952EEC2DD3E3BB871746CA0221E89834EAF"
+  },
+  {
+    "Path": "tests/three-tablet-acceptance.spec.js",
+    "Hash": "580E67B19957E06D50ED6ACCB308442BD368B2BC17CB9D170DE6DA4496E6B058"
+  },
+  {
+    "Path": "tests/three-texture-budget.spec.js",
+    "Hash": "89FAD38E90B0230EC4B9A379C053676C4114C50B52C592DC63632F38BFD21701"
+  },
+  {
+    "Path": "tests/voxel-renderer.spec.js",
+    "Hash": "79EDE2CC67B3898579FBF817728B3C2D3DBD3AD34482B2FE9DF832242FCEA6CA"
+  },
+  {
+    "Path": "tests/webgpu-capabilities.spec.js",
+    "Hash": "E4BB2DD1855726433F6A4C7FABD1FEF3DEA869C9F08DFCFDA2E5F1EE4C26194D"
+  },
+  {
+    "Path": "tests/webgpu-recovery.spec.js",
+    "Hash": "933488EB62751EFBDAC44C3BEDBAD46DA733B25B51A9C09AC1E03BABB80324ED"
+  }
+]

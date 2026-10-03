@@ -1,0 +1,38 @@
+
+Running 29 tests using 1 worker
+
+(node:38924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\atlas-world-policy.spec.js:4:1 › Atlas coarsens only opaque repeated nature and keeps useful shadows (9ms)
+  ok  2 [desktop-chromium] › tests\atlas-world-policy.spec.js:15:1 › Atlas art export keeps shared foliage, scenic closure and no rejected haze sheets (11ms)
+  ok  3 [desktop-chromium] › tests\atlas-world-policy.spec.js:30:1 › historical composition ledger and current protected gameplay files remain intact (68ms)
+  ok  4 [desktop-chromium] › tests\atlas-world-policy.spec.js:39:1 › export uses intact curated source geometry and shared meshes, with all old ferns removed (50ms)
+  ok  5 [desktop-chromium] › tests\atlas-world-policy.spec.js:63:1 › curated export keeps audited root transforms, uniform scaling and untouched source files (23.5s)
+  ok  6 [desktop-chromium] › tests\atlas-world-policy.spec.js:88:1 › 80 pines span the map and grass is one shared inexpensive non-shadowing mesh (715ms)
+  ok  7 [desktop-chromium] › tests\challenge-fx-ownership.spec.js:39:1 › native fallback owns one play, follows live target, honors volume/mute and stops on arrival (12ms)
+  ok  8 [desktop-chromium] › tests\challenge-fx-ownership.spec.js:72:1 › visibility cancels playback, and only actual completion reset re-enables delivery (3ms)
+  ok  9 [desktop-chromium] › tests\challenge-fx-ownership.spec.js:91:1 › late Web Audio loading cannot start a cancelled sequence (1ms)
+  ok 10 [desktop-chromium] › tests\challenge-fx-ownership.spec.js:112:1 › projection failure is contained and restores legacy cue presentation (1ms)
+  ok 11 [desktop-chromium] › tests\challenge-fx-ownership.spec.js:120:1 › NPC source stays live independently of idle markers and never restarts audio (2ms)
+  ok 12 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Windows desktop (1ms)
+  ok 13 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Mac laptop (1ms)
+  ok 14 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Windows touchscreen laptop (0ms)
+  ok 15 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: iPad UA (1ms)
+  ok 16 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: iPad desktop Safari (1ms)
+  ok 17 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: iPad trackpad and narrow split view (0ms)
+  ok 18 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Android tablet (1ms)
+  ok 19 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Android tablet mobile UA (1ms)
+  ok 20 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Windows slate (1ms)
+  ok 21 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: ChromeOS touch-first (0ms)
+  ok 22 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: browser form factor (1ms)
+  ok 23 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: viewport fallback (0ms)
+  ok 24 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: Android phone (0ms)
+  ok 25 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: iPhone (1ms)
+  ok 26 [desktop-chromium] › tests\three-presets.spec.js:23:3 › preset detection: small desktop window (0ms)
+  ok 27 [desktop-chromium] › tests\three-presets.spec.js:28:1 › preset settings use valid WebGPU sample counts, not unsupported 2x (3ms)
+  ok 28 [desktop-chromium] › tests\three-presets.spec.js:38:1 › browser signals retain iPad MacIntel identity and support query overrides (1ms)
+  ok 29 [desktop-chromium] › tests\three-presets.spec.js:47:1 › session selection stays stable after viewport and input changes (1ms)
+
+  29 passed (25.0s)

@@ -1,0 +1,75 @@
+
+Running 4 tests using 1 worker
+
+(node:42300) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42300) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+AUDIT_TAP {"id":"arc_wasp2","x":585.4766845703125,"y":125.75512313842773,"hit":{"id":"arc_wasp2","triggerId":"flyby-1","u":0.5059149084618221,"v":0.5000050442277892},"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/f7363cdb-6658-4fc6-9da8-1c90594c0691\" alt=\"\" dr","active":true,"trigger":"tap"}
+AUDIT_TAP {"id":"arc_wasp2","x":577.189453125,"y":125.75072860717773,"hit":{"id":"arc_wasp2","triggerId":"flyby-1","u":0.5,"v":0.5},"element":"<section class=\"menuHeader atlasLoadingCard\">\n        <p class=\"eyebrow\">Atlas</p>\n        <span class=\"atlasLoadingSpinner\" aria-hidden=\"true\"></span>\n        <h1>Avontuur voorber","active":true,"trigger":"tap"}
+AUDIT_TAP {"id":"arc_wasp2","x":582.7142333984375,"y":125.75365829467773,"hit":{"id":"arc_wasp2","triggerId":"flyby-1","u":0.5,"v":0.5},"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/f7363cdb-6658-4fc6-9da8-1c90594c0691\" alt=\"\" dr","active":true,"trigger":"tap"}
+  ok 1 [desktop-chromium] › tests\audit-flyby-native.spec.js:53:1 › authored Wasp tap passes through noninteractive status; native audio ends and can replay (3.3s)
+AUDIT_TAP {"id":"italyCommonSwift","x":847.2254638671875,"y":173.0313720703125,"hit":null,"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/05bfc811-d951-4e7c-83e8-932ca826aaa5\" alt=\"\" dr","active":true,"trigger":"tap"}
+  x  2 [desktop-chromium] › tests\audit-flyby-native.spec.js:79:39 › existing two-frame swift uses native tap playback (11.6s)
+(node:34564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+AUDIT_TAP {"id":"arc_wasp2","x":484.6400146484375,"y":127.3246841430664,"hit":{"id":"arc_wasp2","triggerId":"flyby-1","u":0.5,"v":0.5},"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/67c36b81-9224-4a08-aead-0982d885de04\" alt=\"\" dr","active":true,"trigger":"tap"}
+AUDIT_TAP {"id":"arc_wasp2","x":473.4521484375,"y":127.3187370300293,"hit":{"id":"arc_wasp2","triggerId":"flyby-1","u":0.5,"v":0.5},"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/67c36b81-9224-4a08-aead-0982d885de04\" alt=\"\" dr","active":true,"trigger":"tap"}
+AUDIT_TAP {"id":"arc_wasp2","x":490.9051513671875,"y":127.3280143737793,"hit":{"id":"arc_wasp2","triggerId":"flyby-1","u":0.5,"v":0.5},"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/67c36b81-9224-4a08-aead-0982d885de04\" alt=\"\" dr","active":true,"trigger":"tap"}
+  ok 3 [ipad-landscape] › tests\audit-flyby-native.spec.js:53:1 › authored Wasp tap passes through noninteractive status; native audio ends and can replay (9.9s)
+AUDIT_TAP {"id":"italyCommonSwift","x":713.2784423828125,"y":177.38719177246094,"hit":null,"element":"<span class=\"ambientFlybyFrames\">\n        \n        <img class=\"ambientFlybyFrame ambientFlybyFrameA\" src=\"blob:http://127.0.0.1:4173/1a226339-0dbc-497a-b48d-f0009d67e547\" alt=\"\" dr","active":true,"trigger":"tap"}
+  x  4 [ipad-landscape] › tests\audit-flyby-native.spec.js:79:39 › existing two-frame swift uses native tap playback (12.8s)
+
+
+  1) [desktop-chromium] › tests\audit-flyby-native.spec.js:79:39 › existing two-frame swift uses native tap playback 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mundefined[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      84 |  await visible(page);
+      85 |  if(trigger==='tap'){expect(await page.evaluate(()=>window.flybyPlays.length)).toBe(0);await tap(page,info);}
+    > 86 |  await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0]?.ok)).toBe(true);
+         |                                                                     ^
+      87 |  await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0]?.audio.currentTime)).toBeGreaterThan(0);
+      88 |  expect(await page.locator('[data-ambient-flyby="italyCommonSwift"] img').count()).toBe(2);
+      89 |  await page.evaluate(()=>window.eval('ambientFlybyRuntime').stopAll());expect(await page.evaluate(()=>window.flybyPlays[0].audio.paused)).toBe(true);
+        at D:\DevProjects\SvenAdventure\tests\audit-flyby-native.spec.js:86:69
+
+    Error Context: test-results\audit-flyby-native-existin-8490b-ft-uses-native-tap-playback-desktop-chromium\error-context.md
+
+    Error Context: test-results\audit-flyby-native-existin-8490b-ft-uses-native-tap-playback-desktop-chromium\error-context.md
+
+  2) [ipad-landscape] › tests\audit-flyby-native.spec.js:79:39 › existing two-frame swift uses native tap playback 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mundefined[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      84 |  await visible(page);
+      85 |  if(trigger==='tap'){expect(await page.evaluate(()=>window.flybyPlays.length)).toBe(0);await tap(page,info);}
+    > 86 |  await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0]?.ok)).toBe(true);
+         |                                                                     ^
+      87 |  await expect.poll(()=>page.evaluate(()=>window.flybyPlays[0]?.audio.currentTime)).toBeGreaterThan(0);
+      88 |  expect(await page.locator('[data-ambient-flyby="italyCommonSwift"] img').count()).toBe(2);
+      89 |  await page.evaluate(()=>window.eval('ambientFlybyRuntime').stopAll());expect(await page.evaluate(()=>window.flybyPlays[0].audio.paused)).toBe(true);
+        at D:\DevProjects\SvenAdventure\tests\audit-flyby-native.spec.js:86:69
+
+    Error Context: test-results\audit-flyby-native-existin-8490b-ft-uses-native-tap-playback-ipad-landscape\error-context.md
+
+    Error Context: test-results\audit-flyby-native-existin-8490b-ft-uses-native-tap-playback-ipad-landscape\error-context.md
+
+  2 failed
+    [desktop-chromium] › tests\audit-flyby-native.spec.js:79:39 › existing two-frame swift uses native tap playback 
+    [ipad-landscape] › tests\audit-flyby-native.spec.js:79:39 › existing two-frame swift uses native tap playback 
+  2 passed (38.4s)

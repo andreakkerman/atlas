@@ -3,22 +3,25 @@ const { test, expect } = require("@playwright/test");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
-const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const testUrl = `${gameUrl}?atlasSessionTest=1`;
 
 async function cleanOpen(page, url = testUrl) {
   await page.goto(url);
   await page.evaluate(() => localStorage.clear());
   await page.reload();
+  await enterMenu(page);
 }
 
 async function enterMenu(page) {
-  await page.getByRole("button", { name: "Start avontuur" }).click();
+  if (!(await page.locator('.menuScreen').count())) {
+    await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+  }
   await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
 }
 
 async function startHeroAdventure(page) {
-  await page.locator(".heroLevelTile").click();
+  await page.locator('[data-menu-tile="LVL-0001"]').click();
 }
 
 async function createSyntheticSession(page, start, title = "De Runenpoort") {
@@ -170,6 +173,7 @@ test.describe("Atlas Session Report v0.1", () => {
   });
 
   test("does not collect in ordinary Playwright, editor, or debug completion", async ({ page }) => {
+    test.setTimeout(60000); // Three full bootstrap/level-entry cycles across reporting modes.
     await cleanOpen(page, gameUrl);
     await enterMenu(page);
     await startHeroAdventure(page);

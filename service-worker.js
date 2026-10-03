@@ -1,4 +1,5 @@
-const CACHE_NAME = "svenadventure-static-v228-transfer-foreground";
+const CACHE_PREFIX = "svenadventure-static-";
+const CACHE_NAME = "svenadventure-static-v239-spelling-grading";
 const CORE_ASSETS = [
   "src/challenge-stardust/runtime.js", "src/challenge-stardust/webgpu.js", "src/challenge-stardust/gpu-particles.js", "src/challenge-stardust/gpu-shaders.js",
   "src/challenge-fx-settings.js", "src/challenge-fx-visuals.js", "src/challenge-fx.js",
@@ -35,6 +36,7 @@ const CORE_ASSETS = [
   "manifest.webmanifest?v=atlas-compass-1",
   "src/styles.css",
   "src/session-report.js",
+  "src/challenge-hints.js",
   "src/ambient-system.js",
   "src/asset-readiness.js",
   "src/scene-effects.js",
@@ -122,7 +124,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) => Promise.all(
-      keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      keys.filter((key) => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map((key) => caches.delete(key))
     )).then(() => self.clients.claim())
   );
 });

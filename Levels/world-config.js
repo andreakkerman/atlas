@@ -328,6 +328,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.42,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 89,
               "id": "lab-waterfall-air-mist",
               "name": "lab-waterfall-air-mist"
             }
@@ -938,6 +939,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -10,
               "id": "canopy-dust",
               "name": "canopy-dust"
             }
@@ -1346,6 +1348,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "brazier-embers",
               "name": "brazier-embers"
             },
@@ -1379,6 +1382,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-a8929fb0-3831-4077-bea3-9e2e7e75e7c6",
               "name": "particles-a8929fb0-3831-4077-bea3-9e2e7e75e7c6"
             },
@@ -1412,6 +1416,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-962ab503-da3e-4bfd-870c-44502f2b6281",
               "name": "particles-962ab503-da3e-4bfd-870c-44502f2b6281"
             },
@@ -1445,6 +1450,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f"
             },
@@ -1478,6 +1484,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-72c61f27-cc0a-43ca-89af-76c50973846e",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f copy"
             },
@@ -1511,6 +1518,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-bb05775a-4f3a-4658-a275-63f1971a832b",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f copy copy"
             },
@@ -1544,6 +1552,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-35d09ac9-543f-4b49-88d3-cec507bd1d55",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f copy copy copy"
             }
@@ -2043,6 +2052,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "harbor-embers",
               "name": "harbor-embers"
             },
@@ -2076,6 +2086,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-167b223c-a15c-467b-afba-93f17ab57747",
               "name": "harbor-embers copy"
             },
@@ -2109,6 +2120,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-f98bb590-a27d-427c-af6c-bdb7b2a3e79d",
               "name": "harbor-embers copy 2"
             },
@@ -2142,6 +2154,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "particles-eb74d083-74b5-4982-8fca-3e84819ff125",
               "name": "harbor-embers copy 3"
             }
@@ -2417,6 +2430,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "tropical-pollen",
               "name": "tropical-pollen"
             }
@@ -3413,6 +3427,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "island-pollen",
               "name": "island-pollen"
             },
@@ -3446,6 +3461,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 89,
               "id": "particles-mtmr2l65",
               "name": "particles-mtmr2l65",
               "points": [
@@ -3912,6 +3928,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "source",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "sealed-left-embers",
               "name": "sealed-left-embers"
             },
@@ -3945,6 +3962,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "source",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "sealed-right-embers",
               "name": "sealed-right-embers"
             }
@@ -4163,6 +4181,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "netherlands-pollen",
               "name": "netherlands-pollen"
             }
@@ -4419,6 +4438,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "italy-dust",
               "name": "italy-dust"
             }
@@ -4637,6 +4657,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "alpine-air",
               "name": "alpine-air"
             }
@@ -4855,6 +4876,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -10,
               "id": "posbank-pollen",
               "name": "posbank-pollen"
             }
@@ -5073,6 +5095,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "rome-dust",
               "name": "rome-dust"
             }
@@ -5374,6 +5397,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "source",
               "scaleCountWithArea": false,
+              "boundsRotation": -105,
               "id": "marche-forge-embers",
               "name": "marche-forge-embers"
             }
@@ -5717,6 +5741,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "tomb-dust",
               "name": "tomb-dust"
             }
@@ -5935,6 +5960,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "sweden-pollen",
               "name": "sweden-pollen"
             }
@@ -6229,6 +6255,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "museum-dust",
               "name": "museum-dust"
             }
@@ -6523,6 +6550,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "return-museum-dust",
               "name": "return-museum-dust"
             }
@@ -6816,6 +6844,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "awakened-embers",
               "name": "awakened-embers"
             }
@@ -7033,6 +7062,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "beach-room-pollen",
               "name": "beach-room-pollen"
             }
@@ -7351,6 +7381,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -90,
               "id": "nether-embers",
               "name": "nether-embers"
             }
@@ -7878,6 +7909,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "england-pollen",
               "name": "england-pollen"
             }
@@ -8095,6 +8127,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "france-pollen",
               "name": "france-pollen"
             }
@@ -8339,6 +8372,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "fjord-air",
               "name": "fjord-air"
             }
@@ -8588,6 +8622,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -4,
               "id": "proceno-work-dust",
               "name": "proceno-work-dust"
             }
@@ -8806,6 +8841,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -15,
               "id": "umbria-pollen",
               "name": "umbria-pollen"
             }
@@ -9099,6 +9135,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "florence-air-dust",
               "name": "florence-air-dust"
             }
@@ -9392,6 +9429,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 0,
               "id": "vinci-dust",
               "name": "vinci-dust"
             }
@@ -9610,6 +9648,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -5,
               "id": "giza-dust",
               "name": "giza-dust"
             }
@@ -9860,6 +9899,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -4,
               "id": "abu-simbel-dust",
               "name": "abu-simbel-dust"
             }
@@ -10062,6 +10102,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -1,
               "id": "particles-mu9khytk",
               "name": "particles-mu9khytk"
             }
@@ -10209,14 +10250,14 @@ window.SVEN_WORLD_CONFIG = {
           "items": [
             {
               "enabled": true,
-              "x": 462,
-              "y": 363,
+              "x": 502,
+              "y": 349,
               "color": "#ffe3bc",
               "shape": "ellipse",
               "width": 3261,
               "height": 599,
               "softness": 0.6,
-              "direction": 0,
+              "direction": -1,
               "count": 600,
               "size": 1.3,
               "sizeVariation": 0.6,
@@ -10230,15 +10271,51 @@ window.SVEN_WORLD_CONFIG = {
               "depth": 0.65,
               "depthInfluence": 1,
               "depthSoftness": 0.12,
-              "layer": "environment",
+              "layer": "effects",
               "wind": 0,
               "streak": 1,
               "pulse": 0,
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": -1,
               "id": "particles-mu9km1r5",
               "name": "particles-mu9km1r5"
+            },
+            {
+              "enabled": true,
+              "x": 1003,
+              "y": 513,
+              "color": "#d7b780",
+              "shape": "rectangle",
+              "width": 2226,
+              "height": 218,
+              "softness": 0.6,
+              "direction": 0,
+              "count": 480,
+              "size": 0.65,
+              "sizeVariation": 0.6,
+              "speed": 34.8,
+              "turbulence": 0.5,
+              "lifetime": 24,
+              "opacity": 1,
+              "glow": 0,
+              "gravity": 0,
+              "randomness": 0.8,
+              "depth": 0.65,
+              "depthInfluence": 0,
+              "depthSoftness": 0.12,
+              "layer": "effects",
+              "wind": 8.76,
+              "streak": 1.8,
+              "pulse": 0,
+              "depthSpread": 0.3,
+              "distribution": "ribbon",
+              "scaleCountWithArea": false,
+              "boundsRotation": 4,
+              "id": "buried-city-sand",
+              "seed": 33019,
+              "name": "Low windblown sand"
             }
           ]
         },
@@ -10412,6 +10489,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.45,
               "distribution": "volume",
               "scaleCountWithArea": true,
+              "boundsRotation": 91,
               "id": "particles-mu9levw0",
               "name": "particles-mu9levw0"
             }
@@ -10590,6 +10668,7 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.6,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "boundsRotation": 90,
               "id": "particles-mu9mgbk7",
               "name": "particles-mu9mgbk7"
             }

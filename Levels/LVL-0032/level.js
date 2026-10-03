@@ -183,8 +183,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "7 × 8 = ?",
               "answer": 56,
-              "hintMinnie": "Denk aan 7 groepjes van 8.",
-              "hintMoose": "Reken eerst 6 × 8 = 48. Tel er nog 8 bij.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             },
             {
@@ -202,8 +201,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 54,
                 72
               ],
-              "hintMinnie": "Denk aan 6 groepjes van 9.",
-              "hintMoose": "Reken eerst 5 × 9 = 45. Tel er nog 9 bij.",
+              "hintParameters": {"a":6,"b":9},
               "explanation": "6 × 9 = 54."
             }
           ]
@@ -226,8 +224,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 24,
                 36
               ],
-              "hintMinnie": "Denk aan 4 groepjes van 6.",
-              "hintMoose": "Reken eerst 3 × 6 = 18. Tel er nog 6 bij.",
+              "hintParameters": {"a":4,"b":6},
               "explanation": "4 × 6 = 24."
             },
             {
@@ -239,8 +236,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "8 × 3 = ?",
               "answer": 24,
-              "hintMinnie": "Denk aan 8 groepjes van 3.",
-              "hintMoose": "Reken eerst 7 × 3 = 21. Tel er nog 3 bij.",
+              "hintParameters": {"a":8,"b":3},
               "explanation": "8 × 3 = 24."
             }
           ]
@@ -257,8 +253,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "Valente heeft 6 doosjes met elk 7 bouten. Hoeveel bouten zijn dat samen?",
               "answer": 42,
-              "hintMinnie": "Denk aan 6 groepjes van 7.",
-              "hintMoose": "Reken eerst 5 × 7 = 35. Tel er nog 7 bij.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             },
             {
@@ -276,8 +271,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 20,
                 28
               ],
-              "hintMinnie": "Denk aan 5 groepjes van 4.",
-              "hintMoose": "Reken eerst 4 × 4 = 16. Tel er nog 4 bij.",
+              "hintParameters": {"a":5,"b":4},
               "explanation": "5 × 4 = 20."
             }
           ]
@@ -294,8 +288,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "56 : 7 = ?",
               "answer": 8,
-              "hintMinnie": "Hoeveel keer 7 past in 56?",
-              "hintMoose": "Gebruik de keersom: 8 × 7 = 56.",
+              "hintParameters": {"a":56,"b":7},
               "explanation": "56 : 7 = 8, want 8 × 7 = 56."
             },
             {
@@ -313,8 +306,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 7,
                 6
               ],
-              "hintMinnie": "Hoeveel keer 9 past in 54?",
-              "hintMoose": "Gebruik de keersom: 6 × 9 = 54.",
+              "hintParameters": {"a":54,"b":9},
               "explanation": "54 : 9 = 6, want 6 × 9 = 54."
             }
           ]
@@ -338,8 +330,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "8 × 8 = ?",
               "answer": 64,
-              "hintMinnie": "Denk aan 8 groepjes van 8.",
-              "hintMoose": "Reken eerst 7 × 8 = 56. Tel er nog 8 bij.",
+              "hintParameters": {"a":8,"b":8},
               "explanation": "8 × 8 = 64."
             },
             {
@@ -357,8 +348,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 36,
                 44
               ],
-              "hintMinnie": "Denk aan 9 groepjes van 4.",
-              "hintMoose": "Reken eerst 8 × 4 = 32. Tel er nog 4 bij.",
+              "hintParameters": {"a":9,"b":4},
               "explanation": "9 × 4 = 36."
             }
           ]
@@ -381,8 +371,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 42,
                 54
               ],
-              "hintMinnie": "Denk aan 7 groepjes van 6.",
-              "hintMoose": "Reken eerst 6 × 6 = 36. Tel er nog 6 bij.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             },
             {
@@ -394,8 +383,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "3 × 5 = ?",
               "answer": 15,
-              "hintMinnie": "Denk aan 3 groepjes van 5.",
-              "hintMoose": "Reken eerst 2 × 5 = 10. Tel er nog 5 bij.",
+              "hintParameters": {"a":3,"b":5},
               "explanation": "3 × 5 = 15."
             }
           ]
@@ -418,8 +406,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 32,
                 48
               ],
-              "hintMinnie": "Denk aan 4 groepjes van 8.",
-              "hintMoose": "Reken eerst 3 × 8 = 24. Tel er nog 8 bij.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             },
             {
@@ -431,8 +418,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "Valente verdeelt 42 batterijen gelijk over 6 tasjes. Hoeveel batterijen krijgt elk tasje?",
               "answer": 7,
-              "hintMinnie": "Hoeveel keer 6 past in 42?",
-              "hintMoose": "Gebruik de keersom: 7 × 6 = 42.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7, want 7 × 6 = 42."
             }
           ]
@@ -455,8 +441,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 10,
                 9
               ],
-              "hintMinnie": "Hoeveel keer 8 past in 72?",
-              "hintMoose": "Gebruik de keersom: 9 × 8 = 72.",
+              "hintParameters": {"a":72,"b":8},
               "explanation": "72 : 8 = 9, want 9 × 8 = 72."
             },
             {
@@ -468,8 +453,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "24 : 4 = ?",
               "answer": 6,
-              "hintMinnie": "Hoeveel keer 4 past in 24?",
-              "hintMoose": "Gebruik de keersom: 6 × 4 = 24.",
+              "hintParameters": {"a":24,"b":4},
               "explanation": "24 : 4 = 6, want 6 × 4 = 24."
             }
           ]
@@ -493,8 +477,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "9 × 7 = ?",
               "answer": 63,
-              "hintMinnie": "Denk aan 9 groepjes van 7.",
-              "hintMoose": "Reken eerst 8 × 7 = 56. Tel er nog 7 bij.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             },
             {
@@ -512,8 +495,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 48,
                 60
               ],
-              "hintMinnie": "Denk aan 8 groepjes van 6.",
-              "hintMoose": "Reken eerst 7 × 6 = 42. Tel er nog 6 bij.",
+              "hintParameters": {"a":8,"b":6},
               "explanation": "8 × 6 = 48."
             }
           ]
@@ -536,8 +518,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 30,
                 36
               ],
-              "hintMinnie": "Denk aan 10 groepjes van 3.",
-              "hintMoose": "Reken eerst 9 × 3 = 27. Tel er nog 3 bij.",
+              "hintParameters": {"a":10,"b":3},
               "explanation": "10 × 3 = 30."
             },
             {
@@ -549,8 +530,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "7 × 4 = ?",
               "answer": 28,
-              "hintMinnie": "Denk aan 7 groepjes van 4.",
-              "hintMoose": "Reken eerst 6 × 4 = 24. Tel er nog 4 bij.",
+              "hintParameters": {"a":7,"b":4},
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -567,8 +547,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "In de voorraad liggen 3 dozen met elk 6 lampen. Hoeveel lampen zijn dat samen?",
               "answer": 18,
-              "hintMinnie": "Denk aan 3 groepjes van 6.",
-              "hintMoose": "Reken eerst 2 × 6 = 12. Tel er nog 6 bij.",
+              "hintParameters": {"a":3,"b":6},
               "explanation": "3 × 6 = 18."
             },
             {
@@ -586,8 +565,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 45,
                 63
               ],
-              "hintMinnie": "Denk aan 5 groepjes van 9.",
-              "hintMoose": "Reken eerst 4 × 9 = 36. Tel er nog 9 bij.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             }
           ]
@@ -610,8 +588,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 9,
                 8
               ],
-              "hintMinnie": "Hoeveel keer 5 past in 40?",
-              "hintMoose": "Gebruik de keersom: 8 × 5 = 40.",
+              "hintParameters": {"a":40,"b":5},
               "explanation": "40 : 5 = 8, want 8 × 5 = 40."
             },
             {
@@ -623,8 +600,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "Een fles water kost 2 euro. Valente koopt 6 flessen. Hoeveel euro betaalt hij?",
               "answer": 12,
-              "hintMinnie": "Denk aan 6 groepjes van 2.",
-              "hintMoose": "Reken eerst 5 × 2 = 10. Tel er nog 2 bij.",
+              "hintParameters": {"a":6,"b":2,"currency":"euro"},
               "explanation": "6 × 2 = 12."
             }
           ]
@@ -764,6 +740,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "moose": "stevige bestrating en de oude dam"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": ["CHALLENGE_OPEN", "CHALLENGE_SUCCESS", "LEVEL_PROGRESS_MILESTONE"],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "arc-car-attention",
@@ -777,7 +757,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "lootCrate",
       "speaker": "moose",
-      "text": "Die kist heeft het hier lang uitgehouden. Stevig spul."
+      "text": "Die kist is nog dicht. Misschien zit er iets bruikbaars in."
     },
     {
       "id": "arc-cache-attention",
@@ -787,16 +767,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "text": "Dat rode lampje brandt nog. Zou hier nog stroom zijn?"
     },
     {
-      "id": "arc-milestone",
-      "event": "LEVEL_PROGRESS_MILESTONE",
-      "speaker": "moose",
-      "text": "Vanaf hier zie je pas hoe groot die dam is."
-    },
-    {
       "id": "arc-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Valente blijft nog even bij de dam. Ik blijf bij Valente."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we verder."
     },
     {
       "id": "arc-enter",
@@ -805,22 +779,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "text": "Dam Battlegrounds… ooit gaf deze dam stroom. Nu wemelt het hier van de ARC."
     },
     {
-      "id": "arc-open",
-      "event": "CHALLENGE_OPEN",
-      "speaker": "moose",
-      "text": "Valente kent deze plek. Dat stelt me gerust."
-    },
-    {
-      "id": "arc-success",
-      "event": "CHALLENGE_SUCCESS",
-      "speaker": "minnie",
-      "text": "Zo krijgt dit verlaten plekje weer een verhaal."
-    },
-    {
       "id": "arc-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Een stevige dam. En een stevige wandeling achter de rug."
+      "text": "We zijn klaar bij de dam. Op naar Buried City."
     },
     {
       "id": "arc-complete",

@@ -1,0 +1,348 @@
+[
+  {
+    "label": "delayed-readiness",
+    "requests": 1,
+    "audio": {
+      "plays": [],
+      "starts": [
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        }
+      ],
+      "errors": []
+    },
+    "screen": "scene",
+    "active": [
+      "italyCommonSwift",
+      "italyCommonSwift-copy",
+      "italyCommonSwift-copy-copy",
+      "italyCommonSwift-copy-2"
+    ],
+    "visuals": [
+      {
+        "id": "italyCommonSwift",
+        "rect": {
+          "x": 1602.7537841796875,
+          "y": 103.79071807861328,
+          "width": 75.5830078125,
+          "height": 75.58306121826172,
+          "top": 103.79071807861328,
+          "right": 1678.3367919921875,
+          "bottom": 179.373779296875,
+          "left": 1602.7537841796875
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy",
+        "rect": {
+          "x": 1577.5880126953125,
+          "y": 72.85308837890625,
+          "width": 65.754150390625,
+          "height": 65.75422668457031,
+          "top": 72.85308837890625,
+          "right": 1643.3421630859375,
+          "bottom": 138.60731506347656,
+          "left": 1577.5880126953125
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy-copy",
+        "rect": {
+          "x": 1579.0738525390625,
+          "y": 48.246360778808594,
+          "width": 54.91455078125,
+          "height": 54.91453552246094,
+          "top": 48.246360778808594,
+          "right": 1633.9884033203125,
+          "bottom": 103.16089630126953,
+          "left": 1579.0738525390625
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy-2",
+        "rect": {
+          "x": 1611.176025390625,
+          "y": 138.32249450683594,
+          "width": 49.662109375,
+          "height": 49.66204833984375,
+          "top": 138.32249450683594,
+          "right": 1660.838134765625,
+          "bottom": 187.9845428466797,
+          "left": 1611.176025390625
+        }
+      }
+    ],
+    "ready": [
+      {
+        "id": "LVL-0016:italyCommonSwift",
+        "sound": true,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy",
+        "sound": true,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-copy",
+        "sound": true,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-2",
+        "sound": true,
+        "ready": true
+      }
+    ],
+    "media": [],
+    "owners": 0
+  },
+  {
+    "label": "released-audio",
+    "requests": 2,
+    "audio": {
+      "plays": [
+        {
+          "src": "http://127.0.0.1:12723/assets/ambient/flybys/common-swift/common-swift-call.mp3",
+          "at": 10857.000000000002,
+          "events": [
+            {
+              "type": "waiting",
+              "at": 10873.000000000002,
+              "time": 0,
+              "ready": 0
+            },
+            {
+              "type": "playing",
+              "at": 10919,
+              "time": 0,
+              "ready": 4
+            },
+            {
+              "type": "pause",
+              "at": 14190,
+              "time": 3.2560551,
+              "ready": 4
+            }
+          ],
+          "peak": 0.5084,
+          "time": 3.2323259,
+          "paused": false,
+          "ok": true
+        }
+      ],
+      "starts": [
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        }
+      ],
+      "errors": []
+    },
+    "screen": "scene",
+    "active": [],
+    "visuals": [],
+    "ready": [
+      {
+        "id": "LVL-0016:italyCommonSwift",
+        "sound": true,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy",
+        "sound": true,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-copy",
+        "sound": true,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-2",
+        "sound": true,
+        "ready": true
+      }
+    ],
+    "media": [],
+    "owners": 0
+  },
+  {
+    "label": "delayed-menu-cleanup",
+    "requests": 2,
+    "audio": {
+      "plays": [
+        {
+          "src": "http://127.0.0.1:12723/assets/ambient/flybys/common-swift/common-swift-call.mp3",
+          "at": 10857.000000000002,
+          "events": [
+            {
+              "type": "waiting",
+              "at": 10873.000000000002,
+              "time": 0,
+              "ready": 0
+            },
+            {
+              "type": "playing",
+              "at": 10919,
+              "time": 0,
+              "ready": 4
+            },
+            {
+              "type": "pause",
+              "at": 14190,
+              "time": 3.2560551,
+              "ready": 4
+            }
+          ],
+          "peak": 0.5084,
+          "time": 3.2323259,
+          "paused": false,
+          "ok": true
+        }
+      ],
+      "starts": [
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-1",
+          "at": 7298,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-2",
+          "at": 10873.000000000002,
+          "sound": true,
+          "visible": false
+        }
+      ],
+      "errors": []
+    },
+    "screen": "menu",
+    "active": [],
+    "visuals": [],
+    "ready": [],
+    "media": [],
+    "owners": 0
+  }
+]

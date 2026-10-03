@@ -1,0 +1,12 @@
+{
+  "level": "LVL-0004",
+  "channel": "chromium",
+  "headed": false,
+  "sampleMs": 5000,
+  "sourceHashes": {
+    "src/cinematic-renderer.js": "b39ccd69852cd934eee2dd919accfe7b719d111f8d9f297a976dc067c565877a",
+    "src/cinematic-shaders.js": "ddb5d8a6b359bbb3011b61e3ad75cf42594aec760baaacf6733a57d1f348bd6f",
+    "src/scene-effects.js": "a79e6730d2ed22d9beaa24e6919114edd7d003b1400937e1f088793315e437df",
+    "src/locomotion.js": "36f6093780997781fd2759cd535fd7559727fab01270da16eca66201a0352af6"
+  }
+}

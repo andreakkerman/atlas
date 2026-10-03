@@ -1,3 +1,4 @@
+const challengeHints = require('../src/challenge-hints');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.join(__dirname,'..');
@@ -18,7 +19,7 @@ test('Buried City has measured object anchors, reachable approaches and complete
   expect(c.questions).toHaveLength(4);
   for(const slot of c.questions)expect(slot.variants).toHaveLength(2);
   for(const [j,v] of c.questions.flatMap(s=>s.variants).entries()){
-   expect(v.hintMinnie).toBeTruthy();expect(v.hintMoose).toBeTruthy();
+   expect(challengeHints.resolve(l.id, v, 'minnie')).toBeTruthy();expect(challengeHints.resolve(l.id, v, 'moose')).toBeTruthy();
    if(i===0){expect(v.family).toBe('clock_reading');expect(v.visual.type).toBe('clock');expect(v.answerMode).toBe('multipleChoice');expect(v.answer).toBe(answers[j]);}
    else {const equation=v.explanation.match(/^(\d+) ([×:]) (\d+) = (\d+)/);expect(equation).toBeTruthy();expect(equation[2]==='×'?+equation[1]*+equation[3]:+equation[1]/+equation[3]).toBe(v.answer);}
    if(v.choices){expect(new Set(v.choices).size).toBe(4);expect(v.choices).toContain(v.answer);}

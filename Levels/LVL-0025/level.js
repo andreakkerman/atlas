@@ -74,8 +74,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 66,
               "prompt": "6 × 11 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":11},
               "explanation": "6 × 11 = 66.",
               "choices": [
                 60,
@@ -93,8 +92,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 84,
               "prompt": "7 × 12 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":12},
               "explanation": "7 × 12 = 84."
             }
           ]
@@ -111,8 +109,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 96,
               "prompt": "8 × 12 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":12},
               "explanation": "8 × 12 = 96.",
               "choices": [
                 88,
@@ -130,8 +127,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 117,
               "prompt": "9 × 13 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":13},
               "explanation": "9 × 13 = 117."
             }
           ]
@@ -148,8 +144,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 26,
               "prompt": "2 × 13 = ?",
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":2,"b":13},
               "explanation": "2 × 13 = 26.",
               "choices": [
                 24,
@@ -167,8 +162,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 20,
               "prompt": "10 × 2 = ?",
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":10,"b":2},
               "explanation": "10 × 2 = 20."
             }
           ]
@@ -185,8 +179,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 6,
               "prompt": "3 × 2 = ?",
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":3,"b":2},
               "explanation": "3 × 2 = 6.",
               "choices": [
                 3,
@@ -204,8 +197,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 16,
               "prompt": "4 × 4 = ?",
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":4,"b":4},
               "explanation": "4 × 4 = 16."
             }
           ]
@@ -229,8 +221,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 20,
               "prompt": "5 × 4 = ?",
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":5,"b":4},
               "explanation": "5 × 4 = 20.",
               "choices": [
                 15,
@@ -248,8 +239,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 30,
               "prompt": "6 × 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":5},
               "explanation": "6 × 5 = 30."
             }
           ]
@@ -266,8 +256,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 35,
               "prompt": "7 × 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":5},
               "explanation": "7 × 5 = 35.",
               "choices": [
                 28,
@@ -285,8 +274,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 40,
               "prompt": "8 × 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":5},
               "explanation": "8 × 5 = 40."
             }
           ]
@@ -303,8 +291,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 45,
               "prompt": "9 × 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":5},
               "explanation": "9 × 5 = 45.",
               "choices": [
                 36,
@@ -322,8 +309,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 12,
               "prompt": "2 × 6 = ?",
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":2,"b":6},
               "explanation": "2 × 6 = 12."
             }
           ]
@@ -340,8 +326,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 60,
               "prompt": "10 × 6 = ?",
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":10,"b":6},
               "explanation": "10 × 6 = 60.",
               "choices": [
                 50,
@@ -359,8 +344,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 21,
               "prompt": "3 × 7 = ?",
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":3,"b":7},
               "explanation": "3 × 7 = 21."
             }
           ]
@@ -384,8 +368,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 8,
               "prompt": "4 × 2 = ?",
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":4,"b":2},
               "explanation": "4 × 2 = 8.",
               "choices": [
                 4,
@@ -403,8 +386,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 25,
               "prompt": "5 × 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":5,"b":5},
               "explanation": "5 × 5 = 25."
             }
           ]
@@ -421,8 +403,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 18,
               "prompt": "6 × 3 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":3},
               "explanation": "6 × 3 = 18.",
               "choices": [
                 12,
@@ -440,8 +421,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 42,
               "prompt": "7 × 6 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -458,8 +438,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 32,
               "prompt": "8 × 4 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":4},
               "explanation": "8 × 4 = 32.",
               "choices": [
                 24,
@@ -477,8 +456,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 54,
               "prompt": "9 × 6 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":6},
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -495,8 +473,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "multipleChoice",
               "answer": 10,
               "prompt": "2 × 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":2,"b":5},
               "explanation": "2 × 5 = 10.",
               "choices": [
                 8,
@@ -514,8 +491,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               "answerMode": "open",
               "answer": 70,
               "prompt": "10 × 7 = ?",
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":10,"b":7},
               "explanation": "10 × 7 = 70."
             }
           ]
@@ -550,8 +526,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 11,
                 "minute": 5
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over elf."
             },
             {
@@ -574,8 +548,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 1,
                 "minute": 20
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor half twee."
             }
           ]
@@ -603,8 +575,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 4,
                 "minute": 35
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over half vijf."
             },
             {
@@ -627,8 +597,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 6,
                 "minute": 50
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor zeven."
             }
           ]
@@ -656,8 +624,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 8,
                 "minute": 10
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien over acht."
             },
             {
@@ -680,8 +646,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 10,
                 "minute": 25
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf voor half elf."
             }
           ]
@@ -709,8 +673,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 12,
                 "minute": 40
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien over half een."
             },
             {
@@ -733,8 +695,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
                 "hour": 2,
                 "minute": 55
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf voor drie."
             }
           ]
@@ -1038,12 +998,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
       "moose": "rustige rekenstrategie en controle"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "HOTSPOT_ATTENTION_FIRST",
+      "CHALLENGE_SUCCESS"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0025-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Het atelier ruikt naar verfpotjes, hout en bijna-af tekeningen."
+      "text": "Het atelier staat vol verfpotjes, hout en half afgemaakte tekeningen."
     },
     {
       "id": "LVL-0025-attention",
@@ -1061,13 +1028,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
       "id": "LVL-0025-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Perspectief klopt. Door naar Vinci."
+      "text": "Alles klaar in het atelier. Door naar Vinci."
     },
     {
       "id": "LVL-0025-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De atelierdeur wacht nog. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de atelierdeur open."
     }
   ],
   "menu": {

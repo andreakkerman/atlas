@@ -153,6 +153,9 @@
         })
         : decodeSource(key)
       ).catch((error) => {
+        // Keep one in-flight attempt (including its retries), but let a later
+        // preparation retry a definitive failure. Never evict a replacement.
+        if (images.get(key) === promise) images.delete(key);
         warn(error.message);
         throw error;
       });
@@ -188,6 +191,9 @@
         if (typeof element.load === "function") element.load();
         window.setTimeout(finish, 1800);
       }).catch((error) => {
+        // Preload failure is retryable on the next request, independently of
+        // native playback rejection. Successful and pending loads stay shared.
+        if (audio.get(key) === promise) audio.delete(key);
         warn(error.message);
         throw error;
       });

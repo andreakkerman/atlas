@@ -11,6 +11,8 @@ test.afterEach(async ({ page }) => { await page.goto("about:blank"); });
 
 async function start(page, levelId) {
   await page.goto(gameUrl);
+  await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+  await expect(page.locator(".menuScreen")).toBeVisible();
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true });
@@ -63,10 +65,13 @@ for (const fixture of [
     await expect(exit).toHaveAttribute("data-exit-ready", String(final));
     if (!final) {
       await expect(page.locator(".teamMeta")).not.toContainText("Je kunt verder");
-      await expect(page.locator(".teamMessage")).toContainText(`${index + 1} van de ${ids.length}`);
-      if (index === order.length - 2) await expect(page.locator(".teamMessage")).toContainText("Nog 1 opdracht te doen.");
+      // Milestone chatter is now explicitly suppressed by the approved ledger.
+      await expect(page.locator(".teamMessage")).not.toContainText(`${index + 1} van de ${ids.length}`);
+      await page.evaluate(() => { window.eval("emitCompanionEvent")("EXIT_BLOCKED"); window.eval("render")(); });
+      await expect(page.locator(".teamMessage")).toContainText(`Nog ${ids.length - index - 1} ${index === order.length - 2 ? "opdracht" : "opdrachten"} te gaan.`);
     } else {
-      await expect(page.locator(".teamMessage")).toContainText("Je kunt verder!");
+      const approved = await page.evaluate(() => window.eval("level").companionMoments.find(m => m.event === "PATH_UNLOCKED").text);
+      await expect(page.locator(".teamMessage")).toHaveText(approved);
       await expect(page.locator(".teamMeta")).toContainText("Je kunt verder");
     }
   }
@@ -105,14 +110,16 @@ for (const presentationType of ["standard", "npc"]) test(`${presentationType}: r
     window.eval("emitCompanionEvent")("EXIT_BLOCKED");
     window.eval("render")();
   });
-  await expect(page.locator(".teamMessage")).toContainText("Eerst nog 1 opdracht afronden.");
+  await expect(page.locator(".teamMessage")).toHaveText(presentationType === "standard"
+    ? "Je kunt nog niet verder. Eerst nog 1 opdracht afronden."
+    : "Nog 1 opdracht te gaan. Daarna kan de tempelpoort open.");
   await completeChallenge(page, "wind", "Opdracht afronden");
   await expect(page.locator("[data-exit-hotspot]")).toHaveAttribute("data-exit-ready", "true");
   await expect(page.locator(".teamMeta")).toContainText("1/2 opdrachten voltooid · Je kunt verder");
   await expect(page.locator(".teamMessage")).toHaveText("Je kunt verder. Hier kun je nog 1 opdracht doen.");
   await completeChallenge(page, "steen", "Opdracht afronden");
   await expect(page.locator(".teamMessage")).toHaveText(presentationType === "standard"
-    ? "Alle opdrachten zijn voltooid. Je kunt verder!" : "Je kunt verder! Op naar de tempel.");
+    ? "Alle opdrachten zijn voltooid. Je kunt verder!" : "De tempelpoort is open. Op naar de tempel.");
 });
 
 test("Standard prerequisites show a locked message and next-level labels follow configured routes", async ({ page }) => {

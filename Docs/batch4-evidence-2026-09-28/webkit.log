@@ -1,0 +1,20 @@
+
+Running 10 tests using 1 worker
+
+(node:40196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40196) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (6.5s)
+  ok  2 [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (4.8s)
+  ok  3 [ipad-landscape] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (22.2s)
+  ok  4 [ipad-landscape] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (20.5s)
+  ok  5 [ipad-landscape] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (26.1s)
+  ok  6 [ipad-landscape] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (16.8s)
+  ok  7 [ipad-landscape] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (6.7s)
+  ok  8 [ipad-landscape] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (412ms)
+  -   9 [ipad-landscape] › tests\illustrated-compositor.spec.js:25:1 › neutral Illustrated ownership preserves frozen production composition
+  -  10 [ipad-landscape] › tests\illustrated-compositor.spec.js:47:1 › producer revisions suppress empty and unchanged uploads across recovery
+
+  2 skipped
+  8 passed (1.7m)

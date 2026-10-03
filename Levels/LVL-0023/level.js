@@ -74,8 +74,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 24,
               "prompt": "3 × 8 = ?",
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":3,"b":8},
               "explanation": "3 × 8 = 24."
             },
             {
@@ -87,8 +86,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 3,
               "prompt": "24 : 8 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":24,"b":8},
               "explanation": "24 : 8 = 3, want 8 × 3 = 24.",
               "choices": [
                 2,
@@ -111,8 +109,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 18,
               "prompt": "Bij de meetstrepen liggen 3 rijen met 6 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 3 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":3,"b":6},
               "explanation": "3 × 6 = 18.",
               "choices": [
                 15,
@@ -130,8 +127,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 32,
               "prompt": "Leonardo tekent 4 vakken met 8 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 4 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -148,8 +144,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 4,
               "prompt": "36 : 9 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":36,"b":9},
               "explanation": "36 : 9 = 4, want 9 × 4 = 36."
             },
             {
@@ -161,8 +156,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 69,
               "prompt": "Bij de meetstrepen staan 85 waterstrepen en Sven wist 16 proefstrepen weg. Hoeveel strepen blijven staan?",
-              "hintMinnie": "Kijk wat er van het eerste aantal afgaat.",
-              "hintMoose": "Trek eerst de tientallen af en daarna de lossen.",
+              "hintParameters": {"a":85,"b":16,"strategy":"subtraction","unit":"strepen"},
               "explanation": "85 - 16 = 69."
             }
           ]
@@ -179,8 +173,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 2,
               "prompt": "Bij de meetstrepen verdeelt Sven 12 onderdelen over 6 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":12,"b":6},
               "explanation": "12 : 6 = 2, want 6 × 2 = 12.",
               "choices": [
                 1,
@@ -198,8 +191,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 4,
               "prompt": "Leonardo verdeelt 28 stukjes bij de meetstrepen in 7 gelijke groepen. Hoeveel stukjes krijgt elke groep?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":28,"b":7},
               "explanation": "28 : 7 = 4, want 7 × 4 = 28."
             }
           ]
@@ -379,8 +371,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 7,
               "prompt": "42 : 6 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7, want 6 × 7 = 42.",
               "choices": [
                 6,
@@ -398,8 +389,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 36,
               "prompt": "Sven legt bij de boten 6 stapels met 6 kleine onderdelen. Hoeveel onderdelen liggen er samen?",
-              "hintMinnie": "Zoek 6 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":6,"b":6},
               "explanation": "6 × 6 = 36.",
               "choices": [
                 30,
@@ -422,8 +412,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 56,
               "prompt": "Op de boten staan 7 groepjes van 8. Hoeveel zijn dat samen?",
-              "hintMinnie": "Zoek 7 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             },
             {
@@ -435,8 +424,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 16,
               "prompt": "8 × 2 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":2},
               "explanation": "8 × 2 = 16.",
               "choices": [
                 8,
@@ -459,8 +447,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 27,
               "prompt": "9 × 3 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":3},
               "explanation": "9 × 3 = 27."
             },
             {
@@ -472,8 +459,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 9,
               "prompt": "63 : 7 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":63,"b":7},
               "explanation": "63 : 7 = 9, want 7 × 9 = 63.",
               "choices": [
                 8,
@@ -496,8 +482,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 80,
               "prompt": "Bij de boten liggen 8 rijen met 10 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 8 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":8,"b":10},
               "explanation": "8 × 10 = 80.",
               "choices": [
                 72,
@@ -515,8 +500,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 27,
               "prompt": "Leonardo tekent 9 vakken met 3 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 9 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":9,"b":3},
               "explanation": "9 × 3 = 27."
             }
           ]
@@ -713,8 +697,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 2,
                 "minute": 0
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Twee uur."
             },
             {
@@ -737,8 +719,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 4,
                 "minute": 15
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart over vier."
             }
           ]
@@ -766,8 +746,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 6,
                 "minute": 30
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Half zeven."
             },
             {
@@ -790,8 +768,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 8,
                 "minute": 45
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart voor negen."
             }
           ]
@@ -819,8 +795,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 10,
                 "minute": 5
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over tien."
             },
             {
@@ -843,8 +817,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 12,
                 "minute": 20
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor half een."
             }
           ]
@@ -872,8 +844,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 3,
                 "minute": 35
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over half vier."
             },
             {
@@ -896,8 +866,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
                 "hour": 5,
                 "minute": 50
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor zes."
             }
           ]
@@ -1421,12 +1389,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "moose": "rustige rekenstrategie en controle"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "HOTSPOT_ATTENTION_FIRST",
+      "CHALLENGE_SUCCESS"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0023-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Umbrie glanst nat en stil. Die kist weet iets."
+      "text": "Umbrie is nat en stil. Daar staat een kist bij het water."
     },
     {
       "id": "LVL-0023-attention",
@@ -1450,7 +1425,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "id": "LVL-0023-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De sluis blijft dicht. Hier moet nog iets op niveau komen."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de sluis open."
     }
   ],
   "menu": {

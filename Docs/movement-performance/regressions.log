@@ -1,0 +1,25 @@
+
+Running 8 tests using 1 worker
+
+(node:46780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at desktop (5.6s)
+  ok 2 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at desktop-wide (5.2s)
+  ok 3 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at tablet-landscape (5.4s)
+  ok 4 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at tablet-portrait (5.4s)
+  ok 5 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (121ms)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.4331951692606105[39m, actorMae: [33m1.2477247906807427[39m }
+SPRITE_FILTER_PARITY [33m1[39m { domImpact: [33m0.1787487045219004[39m, fullImpact: [33m0.1864158893798069[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.32701819609292015[39m, actorMae: [33m1.733109225173592[39m }
+  ok 6 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1 (5.8s)
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.45020917039979064[39m, actorMae: [33m1.505925656271488[39m }
+SPRITE_FILTER_PARITY [33m2[39m { domImpact: [33m0.17892598047237224[39m, fullImpact: [33m0.18585934516991218[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.3468502247571545[39m, actorMae: [33m2.23682446085455[39m }
+  ok 7 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2 (10.3s)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.35661832325455617,"fps":57.77007509910841},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.522365359034186,"fps":57.11022272857261},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4631988058377644,"fps":58.32037324903722},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4990446216782831,"fps":58.263740531467704},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4382871674754708,"fps":58.19592628381428}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.34404090333091153,"fps":58.98545025422106},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.42640534876719516,"fps":57.328492261306444},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4502206265043118,"fps":58.4339696123005},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5246401219161089,"fps":58.651026393645374},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4749080851501853,"fps":58.32037324903722}}
+  ok 8 [desktop-chromium] › tests\illustrated-compositor.spec.js:74:1 › producer revisions suppress empty and unchanged uploads across recovery (13.4s)
+
+  8 passed (52.9s)

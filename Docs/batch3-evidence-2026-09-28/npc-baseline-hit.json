@@ -1,0 +1,13 @@
+[
+  {
+    "name": "desktop",
+    "screen": "scene",
+    "target": "Praat met Freya"
+  },
+  {
+    "name": "ipad",
+    "screen": "scene",
+    "target": "Praat met Freya",
+    "interceptor": "Runenpoort"
+  }
+]

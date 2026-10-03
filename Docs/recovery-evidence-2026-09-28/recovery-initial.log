@@ -1,0 +1,95 @@
+
+Running 6 tests using 1 worker
+
+(node:40452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40452) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\asset-recovery.spec.js:47:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (3.2s)
+  x  2 [desktop-chromium] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (11.5s)
+(node:43260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43260) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [desktop-chromium] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works (1.7s)
+(node:38332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38332) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 [ipad-landscape] › tests\asset-recovery.spec.js:47:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (9.3s)
+  x  5 [ipad-landscape] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (11.7s)
+(node:41328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41328) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  6 [ipad-landscape] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works (11.7s)
+
+
+  1) [desktop-chromium] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mundefined[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      94 |   expect(await page.evaluate(() => window.recoveryLoads)).toBe(loads + 1);
+      95 |   await schedule(page);
+    > 96 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0]?.ok)).toBe(true);
+         |                                                                             ^
+      97 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.currentTime)).toBeGreaterThan(0);
+      98 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = 0);
+      99 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBe(0);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:96:77
+
+    Error Context: test-results\asset-recovery-failed-Flyb-a0025-ve-scheduled-playback-works-desktop-chromium\error-context.md
+
+  2) [ipad-landscape] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      81 |   });
+      82 |   await boot(page); await enter(page);
+    > 83 |   await expect.poll(() => requests).toBeGreaterThan(0);
+         |                                     ^
+      84 |   await expect.poll(() => page.evaluate(() => window.recoveryFailures)).toBeGreaterThan(0);
+      85 |   await schedule(page);
+      86 |   expect(await page.evaluate(() => window.recoveryPlays.length)).toBe(0);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:83:37
+
+    Error Context: test-results\asset-recovery-failed-Flyb-a0025-ve-scheduled-playback-works-ipad-landscape\error-context.md
+
+  3) [ipad-landscape] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      81 |   });
+      82 |   await boot(page); await enter(page);
+    > 83 |   await expect.poll(() => requests).toBeGreaterThan(0);
+         |                                     ^
+      84 |   await expect.poll(() => page.evaluate(() => window.recoveryFailures)).toBeGreaterThan(0);
+      85 |   await schedule(page);
+      86 |   expect(await page.evaluate(() => window.recoveryPlays.length)).toBe(0);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:83:37
+
+    Error Context: test-results\asset-recovery-failed-Flyb-22119-ve-scheduled-playback-works-ipad-landscape\error-context.md
+
+  3 failed
+    [desktop-chromium] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+    [ipad-landscape] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+    [ipad-landscape] › tests\asset-recovery.spec.js:76:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works 
+  3 passed (50.6s)

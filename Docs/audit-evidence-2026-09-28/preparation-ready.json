@@ -1,0 +1,1498 @@
+{
+  "snapshot": {
+    "operationTimings": [
+      {
+        "label": "Vorige Cinematic/Voxel WebGPU-resources vrijgeven",
+        "ms": 9.599999994039536
+      },
+      {
+        "label": "WebGPU-adapter aanvragen (navigator.gpu: ja)",
+        "ms": 7.200000002980232
+      },
+      {
+        "label": "WebGPU-device aanvragen",
+        "ms": 26.099999994039536
+      },
+      {
+        "label": "Three.js WebGPU-modules laden",
+        "ms": 24.599999994039536
+      },
+      {
+        "label": "renderer.init uitvoeren",
+        "ms": 0.5
+      },
+      {
+        "label": "Routegegevens laden",
+        "ms": 2.2999999970197678
+      },
+      {
+        "label": "Textuur decoderen 1/23",
+        "ms": 85.5
+      },
+      {
+        "label": "Textuur decoderen 2/23",
+        "ms": 85.5
+      },
+      {
+        "label": "Textuur decoderen 3/23",
+        "ms": 68.5
+      },
+      {
+        "label": "Textuur decoderen 4/23",
+        "ms": 5
+      },
+      {
+        "label": "Textuur decoderen 5/23",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Textuur decoderen 6/23",
+        "ms": 19
+      },
+      {
+        "label": "Textuur decoderen 7/23",
+        "ms": 18.799999997019768
+      },
+      {
+        "label": "Textuur decoderen 8/23",
+        "ms": 36.6000000089407
+      },
+      {
+        "label": "Textuur decoderen 9/23",
+        "ms": 12.599999994039536
+      },
+      {
+        "label": "Textuur decoderen 10/23",
+        "ms": 16.100000008940697
+      },
+      {
+        "label": "Textuur decoderen 11/23",
+        "ms": 15.5
+      },
+      {
+        "label": "Textuur decoderen 12/23",
+        "ms": 62.19999998807907
+      },
+      {
+        "label": "Textuur decoderen 13/23",
+        "ms": 33.5
+      },
+      {
+        "label": "Textuur decoderen 14/23",
+        "ms": 92.6000000089407
+      },
+      {
+        "label": "Textuur decoderen 15/23",
+        "ms": 72.59999999403954
+      },
+      {
+        "label": "Textuur decoderen 16/23",
+        "ms": 29.799999997019768
+      },
+      {
+        "label": "Textuur decoderen 17/23",
+        "ms": 14.300000011920929
+      },
+      {
+        "label": "Textuur decoderen 18/23",
+        "ms": 8.5
+      },
+      {
+        "label": "Textuur decoderen 19/23",
+        "ms": 92.79999999701977
+      },
+      {
+        "label": "Textuur decoderen 20/23",
+        "ms": 60.29999999701977
+      },
+      {
+        "label": "Textuur decoderen 21/23",
+        "ms": 37
+      },
+      {
+        "label": "Textuur decoderen 22/23",
+        "ms": 43.20000000298023
+      },
+      {
+        "label": "Textuur decoderen 23/23",
+        "ms": 38.79999999701977
+      },
+      {
+        "label": "Draco-mesh voorbereiden 1/208",
+        "ms": 20.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 2/208",
+        "ms": 7
+      },
+      {
+        "label": "Draco-mesh voorbereiden 3/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 4/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 5/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 6/208",
+        "ms": 17.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 7/208",
+        "ms": 16
+      },
+      {
+        "label": "Draco-mesh voorbereiden 8/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 9/208",
+        "ms": 16.19999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 10/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 11/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 12/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 13/208",
+        "ms": 22.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 14/208",
+        "ms": 10.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 15/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 16/208",
+        "ms": 17.30000001192093
+      },
+      {
+        "label": "Draco-mesh voorbereiden 17/208",
+        "ms": 16.19999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 18/208",
+        "ms": 16.80000001192093
+      },
+      {
+        "label": "Draco-mesh voorbereiden 19/208",
+        "ms": 23.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 20/208",
+        "ms": 10.100000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 21/208",
+        "ms": 17.19999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 22/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 23/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 24/208",
+        "ms": 15.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 25/208",
+        "ms": 17.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 26/208",
+        "ms": 27.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 27/208",
+        "ms": 4.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 28/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 29/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 30/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 31/208",
+        "ms": 17.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 32/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 33/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 34/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 35/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 36/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 37/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 38/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 39/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 40/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 41/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 42/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 43/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 44/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 45/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 46/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 47/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 48/208",
+        "ms": 16.69999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 49/208",
+        "ms": 17.30000001192093
+      },
+      {
+        "label": "Draco-mesh voorbereiden 50/208",
+        "ms": 16
+      },
+      {
+        "label": "Draco-mesh voorbereiden 51/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 52/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 53/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 54/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 55/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 56/208",
+        "ms": 16.19999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 57/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 58/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 59/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 60/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 61/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 62/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 63/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 64/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 65/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 66/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 67/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 68/208",
+        "ms": 16.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 69/208",
+        "ms": 17.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 70/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 71/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 72/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 73/208",
+        "ms": 17.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 74/208",
+        "ms": 16.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 75/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 76/208",
+        "ms": 17.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 77/208",
+        "ms": 15.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 78/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 79/208",
+        "ms": 17.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 80/208",
+        "ms": 15.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 81/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 82/208",
+        "ms": 17.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 83/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 84/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 85/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 86/208",
+        "ms": 16.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 87/208",
+        "ms": 17.100000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 88/208",
+        "ms": 16.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 89/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 90/208",
+        "ms": 17.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 91/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 92/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 93/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 94/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 95/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 96/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 97/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 98/208",
+        "ms": 16
+      },
+      {
+        "label": "Draco-mesh voorbereiden 99/208",
+        "ms": 17.100000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 100/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 101/208",
+        "ms": 16.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 102/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 103/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 104/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 105/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 106/208",
+        "ms": 17.100000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 107/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 108/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 109/208",
+        "ms": 17.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 110/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 111/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 112/208",
+        "ms": 21.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 113/208",
+        "ms": 11.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 114/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 115/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 116/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 117/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 118/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 119/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 120/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 121/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 122/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 123/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 124/208",
+        "ms": 17.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 125/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 126/208",
+        "ms": 16.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 127/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 128/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 129/208",
+        "ms": 16.69999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 130/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 131/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 132/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 133/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 134/208",
+        "ms": 16
+      },
+      {
+        "label": "Draco-mesh voorbereiden 135/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 136/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 137/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 138/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 139/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 140/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 141/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 142/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 143/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 144/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 145/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 146/208",
+        "ms": 16.30000001192093
+      },
+      {
+        "label": "Draco-mesh voorbereiden 147/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 148/208",
+        "ms": 17.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 149/208",
+        "ms": 17.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 150/208",
+        "ms": 15.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 151/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 152/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 153/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 154/208",
+        "ms": 16.899999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 155/208",
+        "ms": 16
+      },
+      {
+        "label": "Draco-mesh voorbereiden 156/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 157/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 158/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 159/208",
+        "ms": 16.69999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 160/208",
+        "ms": 17.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 161/208",
+        "ms": 15.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 162/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 163/208",
+        "ms": 17.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 164/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 165/208",
+        "ms": 17.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 166/208",
+        "ms": 16.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 167/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 168/208",
+        "ms": 17.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 169/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 170/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 171/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 172/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 173/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 174/208",
+        "ms": 16.69999998807907
+      },
+      {
+        "label": "Draco-mesh voorbereiden 175/208",
+        "ms": 16.900000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 176/208",
+        "ms": 16.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 177/208",
+        "ms": 17.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 178/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 179/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 180/208",
+        "ms": 16.5
+      },
+      {
+        "label": "Draco-mesh voorbereiden 181/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 182/208",
+        "ms": 17.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 183/208",
+        "ms": 16.100000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 184/208",
+        "ms": 17.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 185/208",
+        "ms": 16.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 186/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 187/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 188/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 189/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 190/208",
+        "ms": 17.200000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 191/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 192/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 193/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 194/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 195/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 196/208",
+        "ms": 16.700000002980232
+      },
+      {
+        "label": "Draco-mesh voorbereiden 197/208",
+        "ms": 16.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 198/208",
+        "ms": 16.599999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 199/208",
+        "ms": 17.299999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 200/208",
+        "ms": 16.100000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 201/208",
+        "ms": 17
+      },
+      {
+        "label": "Draco-mesh voorbereiden 202/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "Draco-mesh voorbereiden 203/208",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 204/208",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "Draco-mesh voorbereiden 205/208",
+        "ms": 17.400000005960464
+      },
+      {
+        "label": "Draco-mesh voorbereiden 206/208",
+        "ms": 16.099999994039536
+      },
+      {
+        "label": "Draco-mesh voorbereiden 207/208",
+        "ms": 16.600000008940697
+      },
+      {
+        "label": "Draco-mesh voorbereiden 208/208",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "GLB downloaden en decoderen",
+        "ms": 4530.29999999702
+      },
+      {
+        "label": "Wereld opdelen in ruimtelijke instanties",
+        "ms": 55.099999994039536
+      },
+      {
+        "label": "HDR laden en decoderen",
+        "ms": 92.20000000298023
+      },
+      {
+        "label": "HDR verkleinen tot 512 pixels",
+        "ms": 30.099999994039536
+      },
+      {
+        "label": "HDR-omgeving en hemeldome voorbereiden",
+        "ms": 2.4000000059604645
+      },
+      {
+        "label": "Licht, moss-materialen en post-processing opbouwen",
+        "ms": 16.799999997019768
+      },
+      {
+        "label": "NPC-frame decoderen",
+        "ms": 5.5
+      },
+      {
+        "label": "GPU-textuur uploaden 1/25: mossy_rock_Diffuse (1024×1024)",
+        "ms": 33.80000001192093
+      },
+      {
+        "label": "GPU-textuur uploaden 2/25: mossy_rock_nor_gl (1024×1024)",
+        "ms": 15.599999994039536
+      },
+      {
+        "label": "GPU-textuur uploaden 3/25: mossy_rock_Rough (1024×1024)",
+        "ms": 16.099999994039536
+      },
+      {
+        "label": "GPU-textuur uploaden 4/25: Atlas shared boulder palette 512 (512×512)",
+        "ms": 17
+      },
+      {
+        "label": "GPU-textuur uploaden 5/25: PathRocks_Diffuse.png (512×512)",
+        "ms": 18.099999994039536
+      },
+      {
+        "label": "GPU-textuur uploaden 6/25: atlas-evening-floor-512 (512×512)",
+        "ms": 13.5
+      },
+      {
+        "label": "GPU-textuur uploaden 7/25: Leaves (1024×1024)",
+        "ms": 17.799999997019768
+      },
+      {
+        "label": "GPU-textuur uploaden 8/25: DesertMarigold_BaseColor (1024×1024)",
+        "ms": 15.400000005960464
+      },
+      {
+        "label": "GPU-textuur uploaden 9/25: Bark_NormalTree (1024×1024)",
+        "ms": 16.5
+      },
+      {
+        "label": "GPU-textuur uploaden 10/25: Bark_NormalTree_Normal (1024×1024)",
+        "ms": 16.69999998807907
+      },
+      {
+        "label": "GPU-textuur uploaden 11/25: Leaf_Pine_C (1024×1024)",
+        "ms": 15.899999991059303
+      },
+      {
+        "label": "GPU-textuur uploaden 12/25: runestone-carved-albedo (512×1024)",
+        "ms": 19.80000001192093
+      },
+      {
+        "label": "GPU-textuur uploaden 13/25: runestone-carved-normal (512×1024)",
+        "ms": 13.099999994039536
+      },
+      {
+        "label": "GPU-textuur uploaden 14/25: mossy_stone_wall_4 (1024×1024)",
+        "ms": 20.099999994039536
+      },
+      {
+        "label": "GPU-textuur uploaden 15/25: mossy_stone_wall_6 (1024×1024)",
+        "ms": 16.400000005960464
+      },
+      {
+        "label": "GPU-textuur uploaden 16/25: mossy_stone_wall_10 (1024×1024)",
+        "ms": 16.100000008940697
+      },
+      {
+        "label": "GPU-textuur uploaden 17/25: shrub_01_diff-shrub_01_alpha_1k (1024×1024)",
+        "ms": 16
+      },
+      {
+        "label": "GPU-textuur uploaden 18/25: Moss_velvet.001 (256×256)",
+        "ms": 13.400000005960464
+      },
+      {
+        "label": "GPU-textuur uploaden 19/25: pine_bark_Diffuse (1024×1024)",
+        "ms": 16.5
+      },
+      {
+        "label": "GPU-textuur uploaden 20/25: pine_bark_nor_gl (1024×1024)",
+        "ms": 20
+      },
+      {
+        "label": "GPU-textuur uploaden 21/25: pine_bark_Rough (1024×1024)",
+        "ms": 14.299999997019768
+      },
+      {
+        "label": "GPU-textuur uploaden 22/25: gate-carved-albedo (819×1024)",
+        "ms": 17.80000001192093
+      },
+      {
+        "label": "GPU-textuur uploaden 23/25: gate-carved-normal (819×1024)",
+        "ms": 13.800000011920929
+      },
+      {
+        "label": "GPU-textuur uploaden 24/25: beeld (392×584)",
+        "ms": 16.399999991059303
+      },
+      {
+        "label": "GPU-textuur uploaden 25/25: beeld (512×256)",
+        "ms": 20.200000002980232
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 1/30",
+        "ms": 714.9000000059605
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 2/30",
+        "ms": 640.2999999970198
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 3/30",
+        "ms": 552.7999999970198
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 4/30",
+        "ms": 511.5
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 5/30",
+        "ms": 547.7999999970198
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 6/30",
+        "ms": 548.2000000029802
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 7/30",
+        "ms": 680.7999999970198
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 8/30",
+        "ms": 586.7000000029802
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 9/30",
+        "ms": 509.29999999701977
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 10/30",
+        "ms": 476.59999999403954
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 11/30",
+        "ms": 577.5
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 12/30",
+        "ms": 575.2000000029802
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 13/30",
+        "ms": 550
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 14/30",
+        "ms": 530.8999999910593
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 15/30",
+        "ms": 524.4000000059605
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 16/30",
+        "ms": 674.7999999970198
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 17/30",
+        "ms": 498.70000000298023
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 18/30",
+        "ms": 541.5
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 19/30",
+        "ms": 505.29999999701977
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 20/30",
+        "ms": 533.5
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 21/30",
+        "ms": 514.2000000029802
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 22/30",
+        "ms": 619
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 23/30",
+        "ms": 470.20000000298023
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 24/30",
+        "ms": 533.1000000089407
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 25/30",
+        "ms": 620.0999999940395
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 26/30",
+        "ms": 520.4000000059605
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 27/30",
+        "ms": 524
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 28/30",
+        "ms": 572.1000000089407
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 29/30",
+        "ms": 517.5
+      },
+      {
+        "label": "Wereld- en schaduwpipelines compileren 30/30",
+        "ms": 111.1000000089407
+      },
+      {
+        "label": "Warm-up 1/3: schaduwen",
+        "ms": 134.20000000298023
+      },
+      {
+        "label": "Warm-up 2/3: schaduwen",
+        "ms": 43.599999994039536
+      },
+      {
+        "label": "Warm-up 3/3: schaduwen",
+        "ms": 33.599999994039536
+      },
+      {
+        "label": "Eerste speelbare frame op volledige resolutie + GPU afronden",
+        "ms": 36.400000005960464
+      }
+    ],
+    "status": "ready",
+    "error": null,
+    "worldMode": "atlas-3d",
+    "configuration": {
+      "device": {
+        "deviceClass": "tablet",
+        "reason": "iPad / touch-capable Mac platform",
+        "nativeTouch": true
+      },
+      "preset": {
+        "id": "atlas-canonical",
+        "name": "Atlas 3D",
+        "worldSamples": 1,
+        "effectSamples": 1,
+        "dprCap": 0.75,
+        "shadowSize": 1024,
+        "volumeResolution": 0,
+        "volumeSteps": 0,
+        "gtao": false,
+        "bloom": false,
+        "anisotropy": 2,
+        "textureCap": 1024,
+        "environmentCap": 512
+      },
+      "compact": true,
+      "batchedWarmup": true,
+      "presentationSamples": 1,
+      "presentationDepth": false,
+      "override": false
+    },
+    "actualEffects": {
+      "gtao": false,
+      "bloom": false,
+      "volumeSteps": 0,
+      "volumeResolution": 0,
+      "fxaa": true,
+      "lightingMode": "golden-evening",
+      "sunDirection": [
+        -38,
+        28,
+        24
+      ],
+      "forestFloor": true
+    },
+    "textureBudget": {
+      "sourceBytes": 218369368,
+      "resizedBytes": 77225984,
+      "releasedSourceBytes": 193989976,
+      "images": 23,
+      "resized": 14,
+      "maxLongEdge": 1024,
+      "cap": 1024
+    },
+    "rendererSettings": "tablet · Atlas 3D\nUitvoering compact: sequentieel, 1 GPU-frame\nMSAA wereld 1× / effecten 1× / presentatie 1× · DPR-cap 0.75\nSchaduw 1024² · GTAO uit · Volume uit\nBloom uit · Anisotropie 2 · Textuur-cap 1024\nOmgeving HDR 512×256 / PMREM 384×512",
+    "failurePhase": null,
+    "deviceDestruction": null,
+    "ready": true,
+    "preparation": "",
+    "diagnostic": "Eerste speelbare frame op volledige resolutie + GPU afronden — gelukt",
+    "debug": true,
+    "preparationStrategy": "compact",
+    "releasedImageBytes": 77225984,
+    "frameSampled": false,
+    "input": {
+      "transport": "native touch IDs / mouse pointers",
+      "moveId": null,
+      "lookId": null,
+      "walk": 0,
+      "turn": 0,
+      "lookX": 0,
+      "lookY": 0,
+      "lastEvent": "idle",
+      "lastReset": "initial",
+      "capture": "none",
+      "counts": {
+        "down": 0,
+        "motion": 0,
+        "end": 0,
+        "cancel": 0,
+        "rebind": 1
+      },
+      "allowed": true
+    },
+    "movement": {
+      "applied": 0
+    },
+    "preparationCompleted": 5,
+    "preparationTotal": 5,
+    "preparationMs": 21808.90000000596,
+    "inputType": "touch",
+    "warmupViews": 4,
+    "warmupTotal": 4,
+    "fps": 0,
+    "averageMs": 0,
+    "backend": "WebGPU",
+    "firstPerson": true,
+    "levelId": "LVL-0001",
+    "source": "Levels/LVL-0001/3d/atlas-3d.glb",
+    "camera": [
+      0,
+      1.58,
+      0
+    ],
+    "yaw": -0.08,
+    "pitch": 0.015,
+    "positionIndex": 0,
+    "target": null,
+    "drawCalls": 422,
+    "triangles": 1683366,
+    "resolution": [
+      1770,
+      1101
+    ],
+    "frames": 2
+  },
+  "views": [
+    {
+      "width": 512,
+      "height": 318,
+      "camera": [
+        0,
+        1.58,
+        0
+      ],
+      "pipelines": 873
+    },
+    {
+      "width": 512,
+      "height": 318,
+      "camera": [
+        9,
+        4.03,
+        -40
+      ],
+      "pipelines": 873
+    },
+    {
+      "width": 512,
+      "height": 318,
+      "camera": [
+        18,
+        6.97,
+        -56
+      ],
+      "pipelines": 873
+    }
+  ],
+  "pipelines": 873,
+  "groups": {
+    "startup | Atlas Cinematic shared fields | Atlas Cinematic shared fields | samples=undefined": 1,
+    "startup | mipmapVertex | mipmapFragment | samples=undefined": 3,
+    "startup | mipmapVertex | flipYFragment | samples=undefined": 1,
+    "Wereld- en schaduwpipelines compileren 1/30 | vertex | fragment | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 1/30 | vertex_PMREM_equirect | fragment_PMREM_equirect | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 1/30 | vertex_PMREM_blur | fragment_PMREM_blur | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 1/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 9,
+    "Wereld- en schaduwpipelines compileren 1/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 7,
+    "Wereld- en schaduwpipelines compileren 1/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 2/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 2/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 11,
+    "Wereld- en schaduwpipelines compileren 2/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 5,
+    "Wereld- en schaduwpipelines compileren 3/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 3/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 12,
+    "Wereld- en schaduwpipelines compileren 3/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 4/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 4/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 7,
+    "Wereld- en schaduwpipelines compileren 4/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 9,
+    "Wereld- en schaduwpipelines compileren 5/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 5/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 5/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 12,
+    "Wereld- en schaduwpipelines compileren 6/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 6/30 | vertex_Atlas path palette.001 | fragment_Atlas boulder palette | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 7/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 5,
+    "Wereld- en schaduwpipelines compileren 7/30 | vertex_Leaves | fragment_Leaves | samples=1": 11,
+    "Wereld- en schaduwpipelines compileren 7/30 | vertex_Atlas path palette.001 | fragment_Atlas boulder palette | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 7/30 | vertex_forrest_ground_01 | fragment_forrest_ground_01 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 5,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_DesertMarigold_mat | fragment_Atlas boulder palette | samples=1": 3,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_mat4 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_Leaves | fragment_Leaves | samples=1": 8,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_mat5 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_mat9 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_mat2 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 8/30 | vertex_mat0 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_mat4 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_Purple_BellFlowers | fragment_mat4 | samples=1": 3,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_Green_BellFlowers | fragment_mat4 | samples=1": 3,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_mat5 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_mat9 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_mat2 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 9/30 | vertex_mat0 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 10/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 10/30 | vertex_Atlas shared grass | fragment_Atlas painted nature | samples=1": 14,
+    "Wereld- en schaduwpipelines compileren 10/30 | vertex_Bark_NormalTree | fragment_Bark_NormalTree | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 10/30 | vertex_Leaves_Pine | fragment_Leaves | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 11/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 11/30 | vertex_Bark_NormalTree | fragment_Bark_NormalTree | samples=1": 6,
+    "Wereld- en schaduwpipelines compileren 11/30 | vertex_Leaves_Pine | fragment_Leaves | samples=1": 10,
+    "Wereld- en schaduwpipelines compileren 12/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 12/30 | vertex_Bark_NormalTree | fragment_Bark_NormalTree | samples=1": 6,
+    "Wereld- en schaduwpipelines compileren 12/30 | vertex_Leaves_Pine | fragment_Leaves | samples=1": 10,
+    "Wereld- en schaduwpipelines compileren 13/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 13/30 | vertex_Bark_NormalTree | fragment_Bark_NormalTree | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 13/30 | vertex_Leaves_Pine | fragment_Leaves | samples=1": 14,
+    "Wereld- en schaduwpipelines compileren 14/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 14/30 | vertex_Bark_NormalTree | fragment_Bark_NormalTree | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 14/30 | vertex_Leaves_Pine | fragment_Leaves | samples=1": 15,
+    "Wereld- en schaduwpipelines compileren 15/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 15/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 3,
+    "Wereld- en schaduwpipelines compileren 15/30 | vertex_Leaves_Pine | fragment_Leaves | samples=1": 13,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 8,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_Atlas interlaced carved stone | fragment_Atlas interlaced carved stone | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_Turquoise rune light.001 | fragment_mat4 | samples=1": 3,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_Deep carved channels.001 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 16/30 | vertex_forrest_ground_01 | fragment_forrest_ground_01 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 17/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 17/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 15,
+    "Wereld- en schaduwpipelines compileren 17/30 | vertex_Turquoise rune light.001 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 18/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 18/30 | vertex_Atlas interlaced carved stone | fragment_Atlas interlaced carved stone | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 18/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 14,
+    "Wereld- en schaduwpipelines compileren 19/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 19/30 | vertex_mossy_stone_wall | fragment_rock_boulder_dry | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 19/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 11,
+    "Wereld- en schaduwpipelines compileren 19/30 | vertex_Stone incisions.001 | fragment_mat4 | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 20/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 20/30 | vertex_Deep carved channels.001 | fragment_mat4 | samples=1": 6,
+    "Wereld- en schaduwpipelines compileren 20/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 7,
+    "Wereld- en schaduwpipelines compileren 20/30 | vertex_mossy_stone_wall | fragment_rock_boulder_dry | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 20/30 | vertex_Stone incisions.001 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 21/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 21/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 15,
+    "Wereld- en schaduwpipelines compileren 21/30 | vertex_Weathered brazier iron | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 22/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 22/30 | vertex_Moss velvet.001 | fragment_Atlas boulder palette | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 22/30 | vertex_Weathered brazier iron | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 22/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 12,
+    "Wereld- en schaduwpipelines compileren 22/30 | vertex_Hazel broad leaves | fragment_Hazel broad leaves | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 23/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 23/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 24/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 24/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 25/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 15,
+    "Wereld- en schaduwpipelines compileren 25/30 | vertex_Atlas boulder palette | fragment_Atlas boulder palette | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 25/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 25/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 11,
+    "Wereld- en schaduwpipelines compileren 26/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 10,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_Atlas interlaced carved stone | fragment_Atlas interlaced carved stone | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 4,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 6,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_Turquoise rune light.001 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_Deep carved channels.001 | fragment_mat4 | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 27/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 28/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 28/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 29/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 16,
+    "Wereld- en schaduwpipelines compileren 29/30 | vertex_Atlas interlaced carved stone | fragment_Atlas interlaced carved stone | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 29/30 | vertex_Atlas painted nature | fragment_Atlas painted nature | samples=1": 10,
+    "Wereld- en schaduwpipelines compileren 29/30 | vertex_rock_boulder_dry | fragment_rock_boulder_dry | samples=1": 1,
+    "Wereld- en schaduwpipelines compileren 29/30 | vertex_knotted_pine_bark | fragment_rock_boulder_dry | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 29/30 | vertex_Atlas gate dragon relief | fragment_Atlas interlaced carved stone | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 30/30 | vertex_ShadowMaterial | fragment_ShadowMaterial | samples=1": 3,
+    "Wereld- en schaduwpipelines compileren 30/30 | vertex_Turquoise rune light.001 | fragment_mat4 | samples=1": 2,
+    "Wereld- en schaduwpipelines compileren 30/30 | vertex_Deep carved channels.001 | fragment_mat4 | samples=1": 1,
+    "Warm-up 1/3: schaduwen | vertex_RTT | fragment_RTT | samples=1": 1,
+    "Warm-up 1/3: schaduwen | vertex_PostProcessing | fragment_PostProcessing | samples=1": 1
+  },
+  "compilePeak": 1,
+  "journal": {
+    "operation": "3D gereed",
+    "state": "complete",
+    "lastCompleted": "3D gereed",
+    "strategy": "compact",
+    "rendererSettings": "tablet · Atlas 3D\nUitvoering compact: sequentieel, 1 GPU-frame\nMSAA wereld 1× / effecten 1× / presentatie 1× · DPR-cap 0.75\nSchaduw 1024² · GTAO uit · Volume uit\nBloom uit · Anisotropie 2 · Textuur-cap 1024\nOmgeving HDR 512×256 / PMREM 384×512\nAtlas: FXAA aan · avondzon -38/28/24 · bosbodem 512px actief",
+    "failure": null,
+    "at": "2026-09-28T16:12:46.196Z"
+  }
+}

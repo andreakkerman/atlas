@@ -3,11 +3,13 @@ const { test, expect } = require("@playwright/test");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
-const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const editorUrl = `${gameUrl}?dev=editor`;
 
 async function startItaly(page, url = gameUrl) {
   await page.goto(url);
+  await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
+  await expect(page.locator('.menuScreen')).toBeVisible();
   await page.evaluate(async () => {
     await window.eval("selectLevel")("LVL-0016", { startImmediately: true });
     window.eval("render")();

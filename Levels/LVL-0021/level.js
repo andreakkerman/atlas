@@ -74,8 +74,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 72,
               "prompt": "6 × 12 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":12},
               "explanation": "6 × 12 = 72.",
               "choices": [
                 66,
@@ -93,8 +92,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 91,
               "prompt": "7 × 13 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":13},
               "explanation": "7 × 13 = 91."
             }
           ]
@@ -111,8 +109,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 4,
               "prompt": "24 : 6 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":24,"b":6},
               "explanation": "24 : 6 = 4, want 6 × 4 = 24.",
               "choices": [
                 3,
@@ -130,8 +127,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 48,
               "prompt": "Bij de spiegels liggen 6 rijen met 8 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 6 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48.",
               "choices": [
                 42,
@@ -154,8 +150,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 70,
               "prompt": "Leonardo tekent 7 vakken met 10 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 7 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":7,"b":10},
               "explanation": "7 × 10 = 70."
             },
             {
@@ -167,8 +162,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "42 : 7 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":42,"b":7},
               "explanation": "42 : 7 = 6, want 7 × 6 = 42."
             }
           ]
@@ -185,8 +179,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 45,
               "prompt": "Bij de spiegels liggen eerst 28 onderdelen en Leonardo legt er 17 bij. Hoeveel onderdelen liggen er nu?",
-              "hintMinnie": "Kijk welke twee aantallen je samenneemt.",
-              "hintMoose": "Tel eerst de tientallen en daarna de lossen.",
+              "hintParameters": {"a":28,"b":17,"strategy":"addition","unit":"onderdelen"},
               "explanation": "28 + 17 = 45."
             },
             {
@@ -198,8 +191,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 3,
               "prompt": "Bij de spiegels maakt Sven van 24 meetkaartjes 8 gelijke stapels. Hoeveel kaartjes liggen op elke stapel?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":24,"b":8},
               "explanation": "24 : 8 = 3, want 8 × 3 = 24.",
               "choices": [
                 2,
@@ -229,8 +221,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 5,
               "prompt": "Bij de wielen verdeelt Sven 45 onderdelen over 9 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":45,"b":9},
               "explanation": "45 : 9 = 5, want 9 × 5 = 45."
             },
             {
@@ -242,8 +233,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 72,
               "prompt": "8 × 9 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":9},
               "explanation": "8 × 9 = 72.",
               "choices": [
                 64,
@@ -266,8 +256,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 81,
               "prompt": "9 × 9 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":9},
               "explanation": "9 × 9 = 81."
             },
             {
@@ -279,8 +268,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 7,
               "prompt": "14 : 2 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":14,"b":2},
               "explanation": "14 : 2 = 7, want 2 × 7 = 14.",
               "choices": [
                 6,
@@ -303,8 +291,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 40,
               "prompt": "Bij de wielen liggen 8 rijen met 5 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 8 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":8,"b":5},
               "explanation": "8 × 5 = 40.",
               "choices": [
                 32,
@@ -322,8 +309,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 63,
               "prompt": "Leonardo tekent 9 vakken met 7 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 9 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             }
           ]
@@ -340,8 +326,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 8,
               "prompt": "24 : 3 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":24,"b":3},
               "explanation": "24 : 3 = 8, want 3 × 8 = 24."
             },
             {
@@ -353,8 +338,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 45,
               "prompt": "Bij de wielen zijn 64 cm touw nodig en Sven gebruikt al 19 cm. Hoeveel cm blijft over?",
-              "hintMinnie": "Kijk wat er van het eerste aantal afgaat.",
-              "hintMoose": "Trek eerst de tientallen af en daarna de lossen.",
+              "hintParameters": {"a":64,"b":19,"strategy":"subtraction","unit":"cm"},
               "explanation": "64 - 19 = 45."
             }
           ]
@@ -378,8 +362,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 3,
               "prompt": "Bij de codexpagina's verdeelt Sven 12 onderdelen over 4 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":12,"b":4},
               "explanation": "12 : 4 = 3, want 4 × 3 = 12.",
               "choices": [
                 2,
@@ -397,8 +380,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 5,
               "prompt": "Leonardo verdeelt 25 stukjes bij de codexpagina's in 5 gelijke groepen. Hoeveel stukjes krijgt elke groep?",
-              "hintMinnie": "Verdeel het totaal in even grote groepen.",
-              "hintMoose": "Gebruik de omgekeerde keersom met de deler.",
+              "hintParameters": {"a":25,"b":5},
               "explanation": "25 : 5 = 5, want 5 × 5 = 25."
             }
           ]
@@ -415,8 +397,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 6,
               "prompt": "2 × 3 = ?",
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6.",
               "choices": [
                 4,
@@ -434,8 +415,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 40,
               "prompt": "10 × 4 = ?",
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":10,"b":4},
               "explanation": "10 × 4 = 40."
             }
           ]
@@ -452,8 +432,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 4,
               "prompt": "40 : 10 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":40,"b":10},
               "explanation": "40 : 10 = 4, want 10 × 4 = 40.",
               "choices": [
                 3,
@@ -471,8 +450,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "multipleChoice",
               "answer": 6,
               "prompt": "Bij de codexpagina's liggen 2 rijen met 3 delen. Hoeveel delen zijn dat samen?",
-              "hintMinnie": "Zoek 2 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6.",
               "choices": [
                 4,
@@ -495,8 +473,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 15,
               "prompt": "Leonardo tekent 3 vakken met 5 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintMinnie": "Zoek 3 groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van en reken die rustig uit.",
+              "hintParameters": {"a":3,"b":5},
               "explanation": "3 × 5 = 15."
             },
             {
@@ -508,8 +485,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "36 : 6 = ?",
-              "hintMinnie": "Welke keersom hoort hier omgekeerd bij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":36,"b":6},
               "explanation": "36 : 6 = 6, want 6 × 6 = 36."
             }
           ]
@@ -1101,40 +1077,47 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "moose": "rustige rekenstrategie en controle"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0021-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Rome glinstert alsof de muren geheime tekeningen bewaren."
+      "text": "Rome. Overal liggen tekeningen en modellen van Leonardo."
     },
     {
       "id": "LVL-0021-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "opticsTable",
       "speaker": "moose",
-      "text": "Let op waar het licht valt. Schaduw is ook informatie."
+      "text": "Kijk hoe het licht door die lenzen valt."
     },
     {
       "id": "LVL-0021-mechanical-model-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "mechanicalModel",
       "speaker": "minnie",
-      "text": "Dat mechanische model lijkt klaar om zijn geheim te laten zien."
+      "text": "Dat mechanische model heeft nogal wat bewegende delen."
     },
     {
       "id": "LVL-0021-central-codex-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "centralCodex",
       "speaker": "moose",
-      "text": "De codex ligt open. Kijk goed hoe Leonardo zijn ideeën ordende."
+      "text": "De codex ligt open. Leonardo heeft hier van alles in getekend."
     },
     {
       "id": "LVL-0021-engineering-table-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "engineeringTable",
       "speaker": "minnie",
-      "text": "Op die bouwtafel wacht een ontwerp dat nog afgemaakt wil worden."
+      "text": "Op die bouwtafel ligt een half afgemaakt ontwerp."
     },
     {
       "id": "LVL-0021-solved",
@@ -1152,13 +1135,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0021"] = {
       "id": "LVL-0021-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alle tekens staan goed. Door naar de volgende poort."
+      "text": "Alles klaar. Door naar Umbrie."
     },
     {
       "id": "LVL-0021-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De Romeinse poort wacht nog. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de Romeinse poort open."
     },
     {
       "id": "LVL-0021-complete",

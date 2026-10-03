@@ -1,0 +1,196 @@
+{
+  "gpu": true,
+  "status": {
+    "status": "adapter-unavailable",
+    "error": "WebGPU could not provide a compatible adapter.",
+    "mode": "illustrated",
+    "illustratedScene": false,
+    "shadowOverlay": true,
+    "effective": {
+      "version": 3,
+      "layers": {
+        "environment": true,
+        "globalLighting": true,
+        "effects": true,
+        "characters": true
+      },
+      "grading": {
+        "enabled": false,
+        "exposure": 0,
+        "contrast": 1,
+        "highlights": 0,
+        "shadows": 0,
+        "saturation": 1,
+        "warmth": 0,
+        "tint": 0,
+        "blackPoint": 0
+      },
+      "localLights": {
+        "enabled": false,
+        "items": []
+      },
+      "areaLights": {
+        "enabled": false,
+        "items": []
+      },
+      "shafts": {
+        "enabled": false,
+        "items": []
+      },
+      "atmosphere": {
+        "enabled": false,
+        "items": []
+      },
+      "bloom": {
+        "enabled": false,
+        "intensity": 0.25,
+        "threshold": 0.8,
+        "softKnee": 0.2,
+        "radius": 8,
+        "falloff": 1.5,
+        "colorInfluence": 0.8,
+        "localContribution": 0.3
+      },
+      "particles": {
+        "enabled": false,
+        "items": []
+      },
+      "characters": {
+        "enabled": false,
+        "groundingShadow": true,
+        "showShadowContactDebug": false,
+        "shadowLightSourceX": 161,
+        "shadowLightSourceY": 202,
+        "shadowShape": "silhouette",
+        "shadowGroundlineOffset": 0,
+        "shadowStrength": 5,
+        "shadowOpacity": 100,
+        "shadowSoftness": 0.72,
+        "shadowWidth": 1,
+        "shadowLength": 1,
+        "shadowScale": 1.2,
+        "shadowOffsetX": 0,
+        "shadowOffsetY": 0,
+        "shadowDirection": -10,
+        "shadowGlobalLightInfluence": 1,
+        "shadowLocalLightInfluence": 2,
+        "shadowDirectionSmoothing": 0.08,
+        "shadowDarkBackgroundSuppression": 0.85,
+        "shadowAtmosphereSuppression": 1,
+        "ambientInfluence": 0.15,
+        "localInfluence": 0.7,
+        "colorSpill": 0.65,
+        "intensityResponse": 0.6,
+        "directionalInfluence": 0.7,
+        "atmosphereInfluence": 0.65,
+        "depthTint": 0.18,
+        "grounding": 0.12,
+        "sideLighting": 0.7,
+        "frontAtmosphere": 0.45
+      },
+      "wrap": {
+        "enabled": false,
+        "strength": 0.1,
+        "radius": 2,
+        "colorInfluence": 0.7
+      },
+      "rim": {
+        "enabled": false,
+        "strength": 0.1,
+        "width": 1.5,
+        "colorResponse": 0.8,
+        "localInfluence": 0.8,
+        "ambientInfluence": 0.1
+      },
+      "autoExposure": {
+        "enabled": false,
+        "minExposure": -0.5,
+        "maxExposure": 0.5,
+        "adaptationSpeed": 0.25,
+        "strength": 0.4
+      },
+      "finishing": {
+        "enabled": false,
+        "intensity": 0.15,
+        "softness": 0.7,
+        "finalExposure": 0,
+        "finalContrast": 1
+      },
+      "godRays": {
+        "enabled": false,
+        "items": []
+      },
+      "waterSurface": {
+        "enabled": false,
+        "items": []
+      },
+      "waterSparkles": {
+        "enabled": false,
+        "items": []
+      },
+      "gameplayCues": {
+        "enabled": true,
+        "intensity": 1,
+        "characterInfluence": 1
+      },
+      "depth": {
+        "enabled": true,
+        "filterRadius": 1.5,
+        "perspective": 0
+      }
+    },
+    "pipelines": [],
+    "renderTargets": 0,
+    "buffers": 0,
+    "scheduled": false,
+    "ready": false,
+    "levelId": null,
+    "frame": 0,
+    "averageMs": 0,
+    "fps": 0,
+    "sprites": 0,
+    "drawCalls": 0,
+    "shadowDraws": 0,
+    "groundedSprites": 0,
+    "grounding": [],
+    "shadowStates": [],
+    "particles": 0,
+    "waterSurfaces": 0,
+    "waterSparkles": 0,
+    "depthStatus": "none",
+    "depthPath": null,
+    "depthLoads": 0,
+    "depthCached": 0,
+    "textureUploads": [],
+    "bindGroups": 0,
+    "resolution": [
+      0,
+      0
+    ],
+    "backend": "WebGPU"
+  },
+  "capability": {
+    "apiAvailable": true,
+    "apiObserved": true,
+    "adapterReady": false,
+    "deviceReady": false,
+    "initializedBy": null,
+    "status": "failed",
+    "previouslyReady": false,
+    "suspended": false,
+    "generation": 1,
+    "needsValidation": false,
+    "failureCategory": "adapter-unavailable",
+    "lastLoss": null,
+    "attempts": [
+      "high-performance",
+      "default",
+      "high-performance",
+      "default",
+      "high-performance",
+      "default",
+      "high-performance",
+      "default"
+    ]
+  }
+}

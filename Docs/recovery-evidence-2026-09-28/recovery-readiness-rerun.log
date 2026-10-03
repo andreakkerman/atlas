@@ -1,0 +1,124 @@
+
+Running 52 tests using 1 worker
+
+(node:31844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31844) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\asset-cold-start.spec.js:14:3 › cold-cache critical assets › first Runenpoort launch retries one Freya 503 before READY and reuses every prepared frame (13.6s)
+  ok  2 [desktop-chromium] › tests\asset-cold-start.spec.js:98:36 › cold-cache critical assets › HTTP 503 exhaustion never reports READY (7.3s)
+  ok  3 [desktop-chromium] › tests\asset-cold-start.spec.js:98:36 › cold-cache critical assets › HTTP 404 exhaustion never reports READY (6.5s)
+  ok  4 [desktop-chromium] › tests\asset-cold-start.spec.js:115:3 › cold-cache critical assets › prepare awaits image decode and rejects unusable pixels (5.8s)
+  ok  5 [desktop-chromium] › tests\asset-readiness.spec.js:18:3 › Atlas critical image readiness › collects and deduplicates active-level critical imagery (5.7s)
+  ok  6 [desktop-chromium] › tests\asset-readiness.spec.js:44:3 › Atlas critical image readiness › deduplicates decode work, holds ready images, releases level scope and fails critical images (5.7s)
+  ok  7 [desktop-chromium] › tests\asset-readiness.spec.js:97:3 › Atlas critical image readiness › superseded asynchronous preparation cannot become current and is releasable (5.6s)
+  ok  8 [desktop-chromium] › tests\asset-readiness.spec.js:119:3 › Atlas critical image readiness › real level reaches scene only after Sven and level imagery are decoded (6.4s)
+  ok  9 [desktop-chromium] › tests\asset-readiness.spec.js:165:3 › Atlas critical image readiness › rapid first-use transitions never expose a blank or unrenderable Sven frame (8.7s)
+  ok 10 [desktop-chromium] › tests\asset-readiness.spec.js:201:3 › Atlas critical image readiness › first Sven, animal and flyby playback discovers no new critical image request after READY (8.1s)
+  ok 11 [desktop-chromium] › tests\asset-readiness.spec.js:247:3 › Atlas critical image readiness › level-scoped images are replaced while the shared Sven cache remains (7.6s)
+  ok 12 [desktop-chromium] › tests\asset-readiness.spec.js:269:3 › Atlas critical image readiness › a runtime background override is decoded before its first visible scene (6.3s)
+  ok 13 [desktop-chromium] › tests\asset-readiness.spec.js:296:3 › Atlas critical image readiness › slow image delivery remains behind the preparing screen (8.3s)
+  ok 14 [desktop-chromium] › tests\asset-readiness.spec.js:327:3 › Atlas critical image readiness › leaving during a slow prepare cannot reveal the stale level (6.5s)
+  ok 15 [desktop-chromium] › tests\asset-recovery.spec.js:64:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (8.9s)
+  ok 16 [desktop-chromium] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (7.0s)
+  ok 17 [desktop-chromium] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works (7.4s)
+  ok 18 [desktop-chromium] › tests\asset-recovery.spec.js:132:1 › concurrent recovered Flybys share one preload and group playback; play rejection stays separate (7.1s)
+  ok 19 [desktop-chromium] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after menu (8.6s)
+  ok 20 [desktop-chromium] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after transition (9.3s)
+  ok 21 [desktop-chromium] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after restart (8.4s)
+  ok 22 [desktop-chromium] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after cancel (8.5s)
+  ok 23 [desktop-chromium] › tests\asset-recovery.spec.js:207:1 › pending recovered optional image cannot activate a superseded level (8.6s)
+  x  24 [desktop-chromium] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay (5ms)
+(node:48480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48480) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 25 [desktop-chromium] › tests\flyby-lifecycle.spec.js:25:1 › delayed group members reserve their IDs through the entire flight (9ms)
+  x  26 [desktop-chromium] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate (2ms)
+(node:50832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 27 [ipad-landscape] › tests\asset-cold-start.spec.js:14:3 › cold-cache critical assets › first Runenpoort launch retries one Freya 503 before READY and reuses every prepared frame (8.9s)
+  ok 28 [ipad-landscape] › tests\asset-cold-start.spec.js:98:36 › cold-cache critical assets › HTTP 503 exhaustion never reports READY (8.3s)
+  ok 29 [ipad-landscape] › tests\asset-cold-start.spec.js:98:36 › cold-cache critical assets › HTTP 404 exhaustion never reports READY (8.5s)
+  ok 30 [ipad-landscape] › tests\asset-cold-start.spec.js:115:3 › cold-cache critical assets › prepare awaits image decode and rejects unusable pixels (7.3s)
+  ok 31 [ipad-landscape] › tests\asset-readiness.spec.js:18:3 › Atlas critical image readiness › collects and deduplicates active-level critical imagery (7.0s)
+  ok 32 [ipad-landscape] › tests\asset-readiness.spec.js:44:3 › Atlas critical image readiness › deduplicates decode work, holds ready images, releases level scope and fails critical images (7.2s)
+  ok 33 [ipad-landscape] › tests\asset-readiness.spec.js:97:3 › Atlas critical image readiness › superseded asynchronous preparation cannot become current and is releasable (7.0s)
+  ok 34 [ipad-landscape] › tests\asset-readiness.spec.js:119:3 › Atlas critical image readiness › real level reaches scene only after Sven and level imagery are decoded (8.6s)
+  ok 35 [ipad-landscape] › tests\asset-readiness.spec.js:165:3 › Atlas critical image readiness › rapid first-use transitions never expose a blank or unrenderable Sven frame (10.0s)
+  ok 36 [ipad-landscape] › tests\asset-readiness.spec.js:201:3 › Atlas critical image readiness › first Sven, animal and flyby playback discovers no new critical image request after READY (9.3s)
+  ok 37 [ipad-landscape] › tests\asset-readiness.spec.js:247:3 › Atlas critical image readiness › level-scoped images are replaced while the shared Sven cache remains (9.9s)
+  ok 38 [ipad-landscape] › tests\asset-readiness.spec.js:269:3 › Atlas critical image readiness › a runtime background override is decoded before its first visible scene (8.1s)
+  ok 39 [ipad-landscape] › tests\asset-readiness.spec.js:296:3 › Atlas critical image readiness › slow image delivery remains behind the preparing screen (10.5s)
+  ok 40 [ipad-landscape] › tests\asset-readiness.spec.js:327:3 › Atlas critical image readiness › leaving during a slow prepare cannot reveal the stale level (7.9s)
+  ok 41 [ipad-landscape] › tests\asset-recovery.spec.js:64:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (12.7s)
+  ok 42 [ipad-landscape] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (11.3s)
+  ok 43 [ipad-landscape] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works (14.3s)
+  ok 44 [ipad-landscape] › tests\asset-recovery.spec.js:132:1 › concurrent recovered Flybys share one preload and group playback; play rejection stays separate (10.4s)
+  ok 45 [ipad-landscape] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after menu (11.9s)
+  ok 46 [ipad-landscape] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after transition (13.0s)
+  ok 47 [ipad-landscape] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after restart (11.8s)
+  ok 48 [ipad-landscape] › tests\asset-recovery.spec.js:178:69 › pending recovered audio cannot start stale playback after cancel (11.7s)
+  ok 49 [ipad-landscape] › tests\asset-recovery.spec.js:207:1 › pending recovered optional image cannot activate a superseded level (11.7s)
+  x  50 [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay (10ms)
+(node:36340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 51 [ipad-landscape] › tests\flyby-lifecycle.spec.js:25:1 › delayed group members reserve their IDs through the entire flight (11ms)
+  ok 52 [ipad-landscape] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate (4ms)
+
+
+  1) [desktop-chromium] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+
+    TypeError: shell.querySelector is not a function
+        at tick (evalmachine.<anonymous>:1014:66)
+        at Object.advance (D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:12:167)
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:16:74
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3045:9
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2537:11
+        at TimeoutManager.withRunnable (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:1816:14)
+        at TestInfoImpl._runWithTimeout (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2535:7)
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3043:7
+        at WorkerMain._runTest (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3016:5)
+        at WorkerMain.runTestGroup (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2911:9)
+
+  2) [desktop-chromium] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate 
+
+    TypeError: shell.querySelector is not a function
+        at tick (evalmachine.<anonymous>:1014:66)
+        at Object.advance (D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:12:167)
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:37:49
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3045:9
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2537:11
+        at TimeoutManager.withRunnable (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:1816:14)
+        at TestInfoImpl._runWithTimeout (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2535:7)
+        at D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3043:7
+        at WorkerMain._runTest (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:3016:5)
+        at WorkerMain.runTestGroup (D:\DevProjects\SvenAdventure\node_modules\playwright\lib\worker\workerProcessEntry.js:2911:9)
+
+  3) [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      20 |  h.advance(15000);expect(h.r.active.has('slow')).toBe(false);
+      21 |  h.advance(900);expect(h.r.active.has('slow')).toBe(false);
+    > 22 |  h.advance(100);expect(h.r.active.has('slow')).toBe(true);
+         |                                                ^
+      23 |  h.leave();h.advance(60000);expect(h.r.active.size).toBe(0);expect(h.r.timers.size).toBe(0);
+      24 | });
+      25 | test('delayed group members reserve their IDs through the entire flight',async()=>{
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:22:48
+
+    Error Context: test-results\flyby-lifecycle-preview-ca-2ab8e-ght-precedes-the-next-delay-ipad-landscape\error-context.md
+
+  3 failed
+    [desktop-chromium] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+    [desktop-chromium] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate 
+    [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+  49 passed (6.8m)

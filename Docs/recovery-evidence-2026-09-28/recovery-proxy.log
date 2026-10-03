@@ -1,0 +1,184 @@
+
+Running 18 tests using 1 worker
+
+(node:8440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\asset-recovery.spec.js:55:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (8.5s)
+  x   2 [desktop-chromium] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (11.6s)
+(node:40320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40320) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   3 [desktop-chromium] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works (12.0s)
+(node:35048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  4 [desktop-chromium] › tests\asset-recovery.spec.js:115:1 › concurrent recovered Flybys share one preload and group playback; play rejection stays separate (6.9s)
+  ok  5 [desktop-chromium] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after menu (8.3s)
+  ok  6 [desktop-chromium] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after transition (8.9s)
+  ok  7 [desktop-chromium] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after restart (8.2s)
+  ok  8 [desktop-chromium] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after cancel (8.2s)
+  ok  9 [desktop-chromium] › tests\asset-recovery.spec.js:190:1 › pending recovered optional image cannot activate a superseded level (8.4s)
+(node:43796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43796) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 10 [ipad-landscape] › tests\asset-recovery.spec.js:55:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (11.9s)
+  x  11 [ipad-landscape] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (14.5s)
+(node:26612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+RECOVERY DIAGNOSTIC {
+  plays: [
+    {
+      ok: [33mtrue[39m,
+      error: [90mundefined[39m,
+      ready: [33m4[39m,
+      src: [32m'http://127.0.0.1:2257/assets/ambient/flybys/arc_wasp/arc_wasp.mp3'[39m,
+      paused: [33mtrue[39m
+    },
+    {
+      ok: [33mtrue[39m,
+      error: [90mundefined[39m,
+      ready: [33m4[39m,
+      src: [32m'http://127.0.0.1:2257/assets/ambient/flybys/arc_wasp/arc_wasp.mp3'[39m,
+      paused: [33mtrue[39m
+    }
+  ],
+  loads: [33m2[39m,
+  failures: [33m1[39m,
+  unlocked: [33mtrue[39m,
+  readiness: [ { key: [32m'LVL-0032:arc_wasp2'[39m, ready: [33mtrue[39m, sound: [33mtrue[39m } ],
+  active: [ [32m'arc_wasp2'[39m ]
+}
+  x  12 [ipad-landscape] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works (18.2s)
+(node:9620) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9620) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 13 [ipad-landscape] › tests\asset-recovery.spec.js:115:1 › concurrent recovered Flybys share one preload and group playback; play rejection stays separate (10.0s)
+  ok 14 [ipad-landscape] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after menu (11.3s)
+  x  15 [ipad-landscape] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after transition (31.0m)
+(node:41456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41456) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 16 [ipad-landscape] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after restart (12.3s)
+  ok 17 [ipad-landscape] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after cancel (11.3s)
+  ok 18 [ipad-landscape] › tests\asset-recovery.spec.js:190:1 › pending recovered optional image cannot activate a superseded level (11.4s)
+
+
+  1) [desktop-chromium] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mundefined[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      102 |   expect(await page.evaluate(() => window.recoveryLoads)).toBe(loads + 1);
+      103 |   await schedule(page);
+    > 104 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0]?.ok)).toBe(true);
+          |                                                                             ^
+      105 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.currentTime)).toBeGreaterThan(0);
+      106 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = 0);
+      107 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBe(0);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:104:77
+
+    Error Context: test-results\asset-recovery-failed-Flyb-a0025-ve-scheduled-playback-works-desktop-chromium\error-context.md
+
+  2) [desktop-chromium] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m0.06711594366618004[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      105 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.currentTime)).toBeGreaterThan(0);
+      106 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = 0);
+    > 107 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBe(0);
+          |                                                                                      ^
+      108 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = .5);
+      109 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBeGreaterThan(0);
+      110 |   await page.evaluate(() => window.eval('returnToMenu')());
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:107:86
+
+    Error Context: test-results\asset-recovery-failed-Flyb-22119-ve-scheduled-playback-works-desktop-chromium\error-context.md
+
+  3) [ipad-landscape] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mundefined[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      102 |   await schedule(page);
+      103 |   expect(await page.evaluate(() => window.recoveryPlays.length)).toBe(0);
+    > 104 |   const before = requests, loads = await page.evaluate(() => window.recoveryLoads);
+          |                                                                             ^
+      105 |   if (boundary === 're-entry') await page.evaluate(() => window.eval('returnToMenu')());
+      106 |   failing = false;
+      107 |   if (boundary === 're-entry') await enter(page);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:104:77
+
+    Error Context: test-results\asset-recovery-failed-Flyb-a0025-ve-scheduled-playback-works-ipad-landscape\error-context.md
+
+  4) [ipad-landscape] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m0.508478096668212[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      114 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.currentTime)).toBeGreaterThan(0);
+      115 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = 0);
+    > 116 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBe(0);
+          |                                                                                      ^
+      117 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = .5);
+      118 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBeGreaterThan(0);
+      119 |   await page.evaluate(() => window.eval('returnToMenu')());
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:116:86
+
+    Error Context: test-results\asset-recovery-failed-Flyb-22119-ve-scheduled-playback-works-ipad-landscape\error-context.md
+
+  5) [ipad-landscape] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after transition 
+
+    [31mTest timeout of 90000ms exceeded while setting up "page".[39m
+
+    TypeError: Cannot read properties of null (reading 'evaluate')
+
+       9 | test.setTimeout(90000);
+      10 | test.afterEach(async ({ page }, info) => {
+    > 11 |   if (info.status !== info.expectedStatus) console.log('RECOVERY DIAGNOSTIC', await page.evaluate(() => ({
+         |                                                                                          ^
+      12 |     plays: window.recoveryPlays?.map(p => ({ ok: p.ok, error: p.error, ready: p.audio.readyState, src: p.audio.src, paused: p.audio.paused })),
+      13 |     loads: window.recoveryLoads, failures: window.recoveryFailures,
+      14 |     unlocked: window.eval('audioState.unlocked'),
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:11:90
+
+    Error: browserContext.newPage: Test timeout of 90000ms exceeded.
+
+    Error Context: test-results\asset-recovery-pending-rec-b037c-e-playback-after-transition-ipad-landscape\error-context.md
+
+  5 failed
+    [desktop-chromium] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+    [desktop-chromium] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works 
+    [ipad-landscape] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+    [ipad-landscape] › tests\asset-recovery.spec.js:84:53 › failed Flyby preload recovers at later re-entry and native scheduled playback works 
+    [ipad-landscape] › tests\asset-recovery.spec.js:161:69 › pending recovered audio cannot start stale playback after transition 
+  13 passed (34.0m)

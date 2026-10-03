@@ -186,12 +186,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       "moose": "druk, glad metaal en Nemo's precieze orde"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "salon-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Wauw, zelfs de muren klinken alsof we onder zee zijn."
+      "text": "Hoor je dat? Alles galmt hier."
     },
     {
       "id": "salon-chart-attention",
@@ -212,7 +219,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "logbookDesk",
       "speaker": "moose",
-      "text": "Een logboek op een vaste plek. Nemo verrast niemand."
+      "text": "Nemo's logboek ligt precies op zijn plek."
     },
     {
       "id": "salon-solved",
@@ -230,13 +237,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
       "id": "salon-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De ronde deur blijft dicht. Eerst nog {remainingChallenges}."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de ronde deur open."
     },
     {
       "id": "salon-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De salon is klaar. De ronde deur kan open."
+      "text": "De ronde deur is open. We kunnen verder."
     },
     {
       "id": "salon-complete",
@@ -283,8 +290,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Op de kapiteinskaart staan 8 routes met elk 10 koerspunten. Hoeveel koerspunten staan er in totaal?",
               "answer": 80,
-              "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 10.",
-              "hintMoose": "Vermenigvuldig 8 met 10: zet een nul achter 8.",
+              "hintParameters": {"a":8,"b":10},
               "explanation": "8 × 10 = 80."
             },
             {
@@ -296,8 +302,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "3 × 4 = ?",
               "answer": 12,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 3 twee keer.",
+              "hintParameters": {"a":3,"b":4},
               "explanation": "3 × 4 = 12."
             }
           ]
@@ -320,8 +325,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 7,
                 8
               ],
-              "hintMinnie": "Verdeel 36 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 36.",
+              "hintParameters": {"a":36,"b":6},
               "explanation": "36 : 6 = 6."
             },
             {
@@ -333,8 +337,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Op de kapiteinskaart staan 4 routes met elk 3 koerspunten. Hoeveel koerspunten staan er in totaal?",
               "answer": 12,
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 3.",
-              "hintMoose": "Verdubbel 4 en tel er nog 4 bij op.",
+              "hintParameters": {"a":4,"b":3},
               "explanation": "4 × 3 = 12."
             }
           ]
@@ -357,8 +360,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+              "hintParameters": {"a":63,"b":7},
               "explanation": "63 : 7 = 9."
             },
             {
@@ -376,8 +378,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 32,
                 36
               ],
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 7 twee keer.",
+              "hintParameters": {"a":7,"b":4},
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -394,8 +395,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "5 × 9 = ?",
               "answer": 45,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -407,8 +407,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "3 × 6 = ?",
               "answer": 18,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 3 en tel nog 3 erbij.",
+              "hintParameters": {"a":3,"b":6},
               "explanation": "3 × 6 = 18."
             }
           ]
@@ -432,8 +431,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Door het grote raam zwemmen 4 scholen met elk 6 vissen. Hoeveel vissen zijn dat samen?",
               "answer": 24,
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 4 × 5 en tel er nog 4 bij op.",
+              "hintParameters": {"a":4,"b":6},
               "explanation": "4 × 6 = 24."
             },
             {
@@ -445,8 +443,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Door het grote raam zwemmen 42 vissen in 7 even grote scholen. Hoeveel vissen zitten in iedere school?",
               "answer": 6,
-              "hintMinnie": "Verdeel 42 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 42.",
+              "hintParameters": {"a":42,"b":7},
               "explanation": "42 : 7 = 6."
             }
           ]
@@ -469,8 +466,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 20,
                 24
               ],
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 4 twee keer.",
+              "hintParameters": {"a":4,"b":4},
               "explanation": "4 × 4 = 16."
             },
             {
@@ -488,8 +484,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 80,
                 88
               ],
-              "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 9 drie keer.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72."
             }
           ]
@@ -506,8 +501,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "5 × 3 = ?",
               "answer": 15,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":3},
               "explanation": "5 × 3 = 15."
             },
             {
@@ -519,8 +513,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Door het grote raam zwemmen 36 vissen in 9 even grote scholen. Hoeveel vissen zitten in iedere school?",
               "answer": 4,
-              "hintMinnie": "Verdeel 36 eerlijk over 9 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 36.",
+              "hintParameters": {"a":36,"b":9},
               "explanation": "36 : 9 = 4."
             }
           ]
@@ -543,8 +536,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-              "hintMoose": "Omdat 5 × 9 = 45, is 45 : 5 = 9.",
+              "hintParameters": {"a":45,"b":5},
               "explanation": "45 : 5 = 9."
             },
             {
@@ -556,8 +548,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "9 × 4 = ?",
               "answer": 36,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 9 twee keer.",
+              "hintParameters": {"a":9,"b":4},
               "explanation": "9 × 4 = 36."
             }
           ]
@@ -587,8 +578,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Verdeel 8 eerlijk over 4 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 8.",
+              "hintParameters": {"a":8,"b":4},
               "explanation": "8 : 4 = 2."
             },
             {
@@ -606,8 +596,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 25,
                 30
               ],
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 4 sprongen van 5.",
+              "hintParameters": {"a":4,"b":5},
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -630,8 +619,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 7,
                 8
               ],
-              "hintMinnie": "Verdeel 36 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 36.",
+              "hintParameters": {"a":36,"b":6},
               "explanation": "36 : 6 = 6."
             },
             {
@@ -649,8 +637,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-              "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7."
             }
           ]
@@ -673,8 +660,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 24,
                 32
               ],
-              "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 2 drie keer.",
+              "hintParameters": {"a":2,"b":8},
               "explanation": "2 × 8 = 16."
             },
             {
@@ -686,8 +672,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "7 × 4 = ?",
               "answer": 28,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 7 twee keer.",
+              "hintParameters": {"a":7,"b":4},
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -704,8 +689,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "5 × 9 = ?",
               "answer": 45,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -717,8 +701,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "In het logboek staan 4 pagina's met elk 7 aantekeningen. Hoeveel aantekeningen zijn dat samen?",
               "answer": 28,
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 × 7 = 28."
             }
           ]

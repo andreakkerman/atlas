@@ -186,19 +186,26 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       "moose": "gesloten deuren, veilige stenen en het zware portaal"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "sealed-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Deze blokkenkamer houdt zijn adem in. Ik hoor het bijna."
+      "text": "Wat een vreemde blokkenkamer. Rechts gloeit iets paars."
     },
     {
       "id": "sealed-sword-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "diamondSword",
       "speaker": "minnie",
-      "text": "Dat diamantzwaard glimt veel te trots. Er zit vast een patroon in."
+      "text": "Dat diamantzwaard glimt behoorlijk."
     },
     {
       "id": "sealed-mask-attention",
@@ -230,13 +237,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
       "id": "sealed-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De rechterpoort blijft dicht. Eerst nog {remainingChallenges}."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de rechterpoort open."
     },
     {
       "id": "sealed-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De rechterpoort reageert. Nu netjes verder."
+      "text": "De rechterpoort gaat open. We kunnen verder."
     },
     {
       "id": "sealed-complete",
@@ -283,8 +290,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "9 × 7 = ?",
               "answer": 63,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 9 en 2 × 9.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             },
             {
@@ -296,8 +302,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "6 × 3 = ?",
               "answer": 18,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+              "hintParameters": {"a":6,"b":3},
               "explanation": "6 × 3 = 18."
             }
           ]
@@ -314,8 +319,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             },
             {
@@ -333,8 +337,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Welke som uit de tafel van 10 helpt?",
-              "hintMoose": "Omdat 10 × 7 = 70, is 70 : 10 = 7.",
+              "hintParameters": {"a":70,"b":10},
               "explanation": "70 : 10 = 7."
             }
           ]
@@ -357,8 +360,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 6,
                 7
               ],
-              "hintMinnie": "Verdeel 35 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 35.",
+              "hintParameters": {"a":35,"b":7},
               "explanation": "35 : 7 = 5."
             },
             {
@@ -370,8 +372,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 30 diamantblokken eerlijk over 6 kisten. Hoeveel blokken gaan in iedere kist?",
               "answer": 5,
-              "hintMinnie": "Verdeel 30 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 30.",
+              "hintParameters": {"a":30,"b":6},
               "explanation": "30 : 6 = 5."
             }
           ]
@@ -388,8 +389,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "3 × 3 = ?",
               "answer": 9,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+              "hintParameters": {"a":3,"b":3},
               "explanation": "3 × 3 = 9."
             },
             {
@@ -407,8 +407,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 63,
                 70
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 8 en 2 × 8.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             }
           ]
@@ -438,8 +437,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 4,
                 5
               ],
-              "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-              "hintMoose": "Omdat 9 × 3 = 27, is 27 : 9 = 3.",
+              "hintParameters": {"a":27,"b":9},
               "explanation": "27 : 9 = 3."
             },
             {
@@ -457,8 +455,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 60,
                 66
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+              "hintParameters": {"a":9,"b":6},
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -481,8 +478,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-              "hintMoose": "Omdat 5 × 9 = 45, is 45 : 5 = 9.",
+              "hintParameters": {"a":45,"b":5},
               "explanation": "45 : 5 = 9."
             },
             {
@@ -494,8 +490,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "Job bouwt 6 creepermaskers met elk 9 groene blokken. Hoeveel blokken gebruikt hij?",
               "answer": 54,
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 6 × 10 en haal er daarna 6 af.",
+              "hintParameters": {"a":6,"b":9},
               "explanation": "6 × 9 = 54."
             }
           ]
@@ -512,8 +507,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "80 : 10 = ?",
               "answer": 8,
-              "hintMinnie": "Welke som uit de tafel van 10 helpt?",
-              "hintMoose": "Omdat 10 × 8 = 80, is 80 : 10 = 8.",
+              "hintParameters": {"a":80,"b":10},
               "explanation": "80 : 10 = 8."
             },
             {
@@ -525,8 +519,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "Job bouwt 5 creepermaskers met elk 6 groene blokken. Hoeveel blokken gebruikt hij?",
               "answer": 30,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 5 × 5 en tel er nog 5 bij op.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -549,8 +542,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 12,
                 15
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+              "hintParameters": {"a":3,"b":3},
               "explanation": "3 × 3 = 9."
             },
             {
@@ -562,8 +554,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "3 × 2 = ?",
               "answer": 6,
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Verdubbel 3.",
+              "hintParameters": {"a":3,"b":2},
               "explanation": "3 × 2 = 6."
             }
           ]
@@ -587,8 +578,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "3 × 9 = ?",
               "answer": 27,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+              "hintParameters": {"a":3,"b":9},
               "explanation": "3 × 9 = 27."
             },
             {
@@ -606,8 +596,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 60,
                 66
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+              "hintParameters": {"a":9,"b":6},
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -624,8 +613,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "Voor de donkere poort bouwt Job 6 rijen van 10 portaalstenen. Hoeveel portaalstenen gebruikt hij?",
               "answer": 60,
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 10.",
-              "hintMoose": "Vermenigvuldig 6 met 10: zet een nul achter 6.",
+              "hintParameters": {"a":6,"b":10},
               "explanation": "6 × 10 = 60."
             },
             {
@@ -643,8 +631,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
                 24,
                 30
               ],
-              "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 3 × 5 en tel er nog 3 bij op.",
+              "hintParameters": {"a":3,"b":6},
               "explanation": "3 × 6 = 18."
             }
           ]
@@ -661,8 +648,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "Voor de donkere poort bouwt Job 7 rijen van 9 portaalstenen. Hoeveel portaalstenen gebruikt hij?",
               "answer": 63,
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 7 × 10 en haal er daarna 7 af.",
+              "hintParameters": {"a":7,"b":9},
               "explanation": "7 × 9 = 63."
             },
             {
@@ -674,8 +660,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "5 × 6 = ?",
               "answer": 30,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -692,8 +677,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "7 × 7 = ?",
               "answer": 49,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 7 en 2 × 7.",
+              "hintParameters": {"a":7,"b":7},
               "explanation": "7 × 7 = 49."
             },
             {
@@ -705,8 +689,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0008"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 42 portaalstenen eerlijk over 6 rijen. Hoeveel stenen komen in iedere rij?",
               "answer": 7,
-              "hintMinnie": "Verdeel 42 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 42.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7."
             }
           ]

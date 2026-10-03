@@ -1,0 +1,27 @@
+
+Running 14 tests using 1 worker
+
+(node:23424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23424) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\arc-challenge-progress.spec.js:79:1 › Riven Tides resets partial runs while earned completion remains durable (15.2s)
+  ok  2 [desktop-chromium] › tests\npc-challenges.spec.js:338:48 › NPC challenge presentation › renders native NPC artwork consistently through idle, variants, pass, completed hold and reload (25.2s)
+  ok  3 [desktop-chromium] › tests\npc-challenges.spec.js:338:48 › NPC challenge presentation › renders mirrored NPC artwork consistently through idle, variants, pass, completed hold and reload (25.2s)
+  ok  4 [desktop-chromium] › tests\npc-challenges.spec.js:523:3 › NPC challenge presentation › supports non-final NPCs, resets completion on reload, and loops multi-frame base idle (14.1s)
+  ok  5 [desktop-chromium] › tests\replay-run.spec.js:30:1 › full earned ARC sequence returns to a fresh Dam replay without losing history (37.3s)
+  ok  6 [desktop-chromium] › tests\replay-run.spec.js:82:1 › legacy completion and ordinary cooldown survive while unfinished runs reset (21.6s)
+  ok  7 [desktop-chromium] › tests\session-report.spec.js:175:3 › Atlas Session Report v0.1 › does not collect in ordinary Playwright, editor, or debug completion (19.3s)
+(node:43136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  8 [ipad-landscape] › tests\arc-challenge-progress.spec.js:79:1 › Riven Tides resets partial runs while earned completion remains durable (1.2m)
+  ok  9 [ipad-landscape] › tests\npc-challenges.spec.js:338:48 › NPC challenge presentation › renders native NPC artwork consistently through idle, variants, pass, completed hold and reload (30.9s)
+  ok 10 [ipad-landscape] › tests\npc-challenges.spec.js:338:48 › NPC challenge presentation › renders mirrored NPC artwork consistently through idle, variants, pass, completed hold and reload (29.8s)
+  ok 11 [ipad-landscape] › tests\npc-challenges.spec.js:523:3 › NPC challenge presentation › supports non-final NPCs, resets completion on reload, and loops multi-frame base idle (16.1s)
+  ok 12 [ipad-landscape] › tests\replay-run.spec.js:30:1 › full earned ARC sequence returns to a fresh Dam replay without losing history (3.6m)
+  ok 13 [ipad-landscape] › tests\replay-run.spec.js:82:1 › legacy completion and ordinary cooldown survive while unfinished runs reset (34.3s)
+  ok 14 [ipad-landscape] › tests\session-report.spec.js:175:3 › Atlas Session Report v0.1 › does not collect in ordinary Playwright, editor, or debug completion (35.6s)
+
+  14 passed (9.9m)

@@ -5,11 +5,16 @@ test.beforeEach(async({page})=>{errors=[];page.on('pageerror',e=>errors.push(e.m
 test.afterEach(()=>expect(errors).toEqual([]));
 const base=(process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173').split('?')[0].replace(/\/$/,'');
 const sound='assets/ambient/flybys/arc_wasp/arc_wasp.mp3';
+async function enterMenu(page){
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
+}
 async function setup(page,trigger){
  await page.emulateMedia({reducedMotion:'no-preference'});
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.addInitScript(()=>{window.flybyPlays=[];const play=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){if(!this.src.includes('/flybys/'))return play.call(this);const row={audio:this,peak:0};window.flybyPlays.push(row);const monitor=setInterval(()=>row.peak=Math.max(row.peak,this.volume),10);this.addEventListener('ended',()=>clearInterval(monitor),{once:true});this.addEventListener('pause',()=>clearInterval(monitor),{once:true});return play.call(this).then(()=>{row.ok=true;},e=>{clearInterval(monitor);row.error=e.name;throw e;});};});
  await page.goto(base);
+ await enterMenu(page);
  await page.evaluate(async trigger=>{await window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false});const c=window.eval('level').ambientFlybys.find(x=>x.sound.includes('arc_wasp'));delete c.soundTriggers;c.soundTrigger=trigger;window.waspId=c.id;window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();},trigger);
  await expect.poll(()=>page.evaluate(()=>window.eval('ambientFlybyRuntime').readiness.get('LVL-0032:'+window.waspId)?.sound)).toBe(true);
 }
@@ -70,7 +75,11 @@ test('authored Wasp tap passes through noninteractive status; native audio ends 
 
 test('Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available',async({page})=>{
  await page.goto(base);
+ await enterMenu(page);
  for(const path of [sound,'assets/ambient/flybys/common-swift/common-swift-call.mp3']){
+  // WebKit can emit loadeddata before publishing a nonzero duration. Observe
+  // native metadata readiness before taking the snapshot; keep all assertions.
+  await expect.poll(()=>page.evaluate(async path=>(await window.eval('assetCache').sound(path)).duration,path)).toBeGreaterThan(0);
   const result=await page.evaluate(async path=>{const response=await fetch(path),bytes=await response.arrayBuffer(),media=await window.eval('assetCache').sound(path),result={status:response.status,type:response.headers.get('content-type'),duration:media.duration,ready:media.readyState};const Context=window.AudioContext||window.webkitAudioContext;if(!Context)return result;const ctx=new Context();try{const buffer=await ctx.decodeAudioData(bytes);let peak=0,energy=0;for(const value of buffer.getChannelData(0)){peak=Math.max(peak,Math.abs(value));energy+=value*value;}return {...result,peak,rms:Math.sqrt(energy/buffer.length)};}finally{await ctx.close();}},path);
   expect(result.status).toBe(200);expect(result.type).toContain('audio/mpeg');expect(result.duration).toBeGreaterThan(0);expect(result.ready).toBeGreaterThanOrEqual(2);
   if(await page.evaluate(()=>Boolean(window.AudioContext||window.webkitAudioContext))){expect(result.peak).toBeGreaterThan(.01);expect(result.rms).toBeGreaterThan(.001);}
@@ -113,7 +122,7 @@ test('authored Wasp sound, volume and both trigger modes survive normal Apply an
   const payload=original.map(c=>({...c,soundTrigger:trigger}));
   const response=await page.request.post(base+'/__dev/levels/LVL-0032/apply-editor',{data:{ambientFlybys:payload}});
   expect(response.ok()).toBe(true);
-  await page.reload();await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
+  await page.reload();await enterMenu(page);await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
   expect(await page.evaluate(()=>window.eval('level').ambientFlybys)).toEqual(payload);
  }
 });

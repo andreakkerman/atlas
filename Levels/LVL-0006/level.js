@@ -191,6 +191,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       "moose": "druk, luiken, machines en veilige volgorde"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "minisub-enter",
@@ -203,21 +210,21 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "divingSuit",
       "speaker": "moose",
-      "text": "Dat duikpak ziet er zwaar uit. Gelukkig hoeft Minnie er niet in."
+      "text": "Dat duikpak ziet er zwaar uit. Ik pas."
     },
     {
       "id": "minisub-craft-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "miniSub",
       "speaker": "minnie",
-      "text": "De minisub wacht echt op ons. Kijk naar die koperen buik!"
+      "text": "Kijk, daar is de minisub. Je ziet alle koperen platen."
     },
     {
       "id": "minisub-panel-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "controlPanel",
       "speaker": "moose",
-      "text": "Veel meters. Eén nette oplossing. Dat scheelt gedoe."
+      "text": "Dat paneel staat vol meters. Even kijken wat ze aangeven."
     },
     {
       "id": "minisub-solved",
@@ -235,13 +242,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
       "id": "minisub-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Het luik blijft dicht. Eerst nog {remainingChallenges}."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan het luik open."
     },
     {
       "id": "minisub-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De druk klopt. Het luik kan veilig open."
+      "text": "De meters staan goed. We kunnen het luik openen."
     },
     {
       "id": "minisub-complete",
@@ -288,8 +295,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "9 × 3 = ?",
               "answer": 27,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 9 en tel nog 9 erbij.",
+              "hintParameters": {"a":9,"b":3},
               "explanation": "9 × 3 = 27."
             },
             {
@@ -307,8 +313,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 64,
                 72
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -325,8 +330,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "8 × 8 = ?",
               "answer": 64,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+              "hintParameters": {"a":8,"b":8},
               "explanation": "8 × 8 = 64."
             },
             {
@@ -338,8 +342,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "Aan 5 duikpakken zitten elk 4 koperen sluitingen. Hoeveel sluitingen zijn dat samen?",
               "answer": 20,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 4.",
-              "hintMoose": "Verdubbel 5 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":5,"b":4},
               "explanation": "5 × 4 = 20."
             }
           ]
@@ -356,8 +359,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "Nemo verdeelt 15 koperen sluitingen eerlijk over 3 duikpakken. Hoeveel sluitingen krijgt ieder pak?",
               "answer": 5,
-              "hintMinnie": "Verdeel 15 eerlijk over 3 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 15.",
+              "hintParameters": {"a":15,"b":3},
               "explanation": "15 : 3 = 5."
             },
             {
@@ -369,8 +371,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "Nemo verdeelt 10 koperen sluitingen eerlijk over 2 duikpakken. Hoeveel sluitingen krijgt ieder pak?",
               "answer": 5,
-              "hintMinnie": "Verdeel 10 eerlijk over 2 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 10.",
+              "hintParameters": {"a":10,"b":2},
               "explanation": "10 : 2 = 5."
             }
           ]
@@ -387,8 +388,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "3 × 7 = ?",
               "answer": 21,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 3 en 2 × 3.",
+              "hintParameters": {"a":3,"b":7},
               "explanation": "3 × 7 = 21."
             },
             {
@@ -406,8 +406,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 63,
                 72
               ],
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 6 × 10 en haal er daarna 6 af.",
+              "hintParameters": {"a":6,"b":9},
               "explanation": "6 × 9 = 54."
             }
           ]
@@ -437,8 +436,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-              "hintMoose": "Omdat 3 × 9 = 27, is 27 : 3 = 9.",
+              "hintParameters": {"a":27,"b":3},
               "explanation": "27 : 3 = 9."
             },
             {
@@ -450,8 +448,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "4 × 5 = ?",
               "answer": 20,
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 4 sprongen van 5.",
+              "hintParameters": {"a":4,"b":5},
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -474,8 +471,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 72,
                 80
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+              "hintParameters": {"a":8,"b":8},
               "explanation": "8 × 8 = 64."
             },
             {
@@ -493,8 +489,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 15,
                 18
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 4 en tel nog 4 erbij.",
+              "hintParameters": {"a":4,"b":3},
               "explanation": "4 × 3 = 12."
             }
           ]
@@ -511,8 +506,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "9 × 7 = ?",
               "answer": 63,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 9 en 2 × 9.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             },
             {
@@ -524,8 +518,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "36 : 9 = ?",
               "answer": 4,
-              "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-              "hintMoose": "Omdat 9 × 4 = 36, is 36 : 9 = 4.",
+              "hintParameters": {"a":36,"b":9},
               "explanation": "36 : 9 = 4."
             }
           ]
@@ -542,8 +535,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "Nemo koopt 2 reserveonderdelen voor de minisub. Elk onderdeel kost 6 munten. Hoeveel munten betaalt hij?",
               "answer": 12,
-              "hintMinnie": "Er zijn 2 gelijke bedragen van 6 munten.",
-              "hintMoose": "Reken 2 × 5 en tel er nog 2 bij op.",
+              "hintParameters": {"a":2,"b":6,"currency":"munten"},
               "explanation": "2 × 6 = 12 munten."
             },
             {
@@ -561,8 +553,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 63,
                 72
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 6 en haal 6 eraf.",
+              "hintParameters": {"a":6,"b":9},
               "explanation": "6 × 9 = 54."
             }
           ]
@@ -586,8 +577,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "48 : 8 = ?",
               "answer": 6,
-              "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-              "hintMoose": "Omdat 8 × 6 = 48, is 48 : 8 = 6.",
+              "hintParameters": {"a":48,"b":8},
               "explanation": "48 : 8 = 6."
             },
             {
@@ -599,8 +589,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "6 × 7 = ?",
               "answer": 42,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 6 en 2 × 6.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             }
           ]
@@ -623,8 +612,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 20,
                 24
               ],
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 4.",
-              "hintMoose": "Verdubbel 4 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":4,"b":4},
               "explanation": "4 × 4 = 16."
             },
             {
@@ -642,8 +630,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-              "hintMoose": "Omdat 9 × 2 = 18, is 18 : 9 = 2.",
+              "hintParameters": {"a":18,"b":9},
               "explanation": "18 : 9 = 2."
             }
           ]
@@ -660,8 +647,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "Het bedieningspaneel heeft 9 rijen met elk 7 schakelaars. Hoeveel schakelaars zijn dat samen?",
               "answer": 63,
-              "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 9 × 5 en 9 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             },
             {
@@ -673,8 +659,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
               "answerMode": "open",
               "prompt": "Het bedieningspaneel heeft 5 rijen met elk 2 schakelaars. Hoeveel schakelaars zijn dat samen?",
               "answer": 10,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 2.",
-              "hintMoose": "Verdubbel 5.",
+              "hintParameters": {"a":5,"b":2},
               "explanation": "5 × 2 = 10."
             }
           ]
@@ -697,8 +682,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 54,
                 63
               ],
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -716,8 +700,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0006"] = {
                 40,
                 44
               ],
-              "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 4.",
-              "hintMoose": "Verdubbel 9 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":9,"b":4},
               "explanation": "9 × 4 = 36."
             }
           ]

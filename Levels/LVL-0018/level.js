@@ -27,8 +27,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               56,
               64
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "hintParameters": {"a":6,"b":8},
             "explanation": "6 × 8 = 48."
           },
           {
@@ -46,8 +45,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               4,
               5
             ],
-            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-            "hintMoose": "Omdat 4 × 3 = 12, is 12 : 4 = 3.",
+            "hintParameters": {"a":12,"b":4},
             "explanation": "12 : 4 = 3."
           }
         ]
@@ -70,8 +68,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               30,
               35
             ],
-            "hintMinnie": "Denk aan de tafel van 5.",
-            "hintMoose": "Tel 5 sprongen van 5.",
+            "hintParameters": {"a":5,"b":5},
             "explanation": "5 × 5 = 25."
           },
           {
@@ -89,8 +86,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               48,
               54
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "hintParameters": {"a":7,"b":6},
             "explanation": "7 × 6 = 42."
           }
         ]
@@ -107,8 +103,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "De timmerman verdeelt 15 houten plankjes eerlijk over 3 deuren. Hoeveel plankjes gebruikt hij per deur?",
             "answer": 5,
-            "hintMinnie": "Verdeel 15 eerlijk over 3 gelijke groepen.",
-            "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 15.",
+            "hintParameters": {"a":15,"b":3},
             "explanation": "15 : 3 = 5."
           },
           {
@@ -126,8 +121,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               60,
               70
             ],
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "5 groepjes van 10 eindigen op nul.",
+            "hintParameters": {"a":5,"b":10},
             "explanation": "5 × 10 = 50."
           }
         ]
@@ -144,8 +138,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "4 × 8 = ?",
             "answer": 32,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "hintParameters": {"a":4,"b":8},
             "explanation": "4 × 8 = 32."
           },
           {
@@ -157,8 +150,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "9 × 4 = ?",
             "answer": 36,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 9 twee keer.",
+            "hintParameters": {"a":9,"b":4},
             "explanation": "9 × 4 = 36."
           }
         ]
@@ -188,8 +180,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               7,
               8
             ],
-            "hintMinnie": "Verdeel 48 eerlijk over 8 gelijke groepen.",
-            "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 48.",
+            "hintParameters": {"a":48,"b":8},
             "explanation": "48 : 8 = 6."
           },
           {
@@ -201,8 +192,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "6 × 7 = ?",
             "answer": 42,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 6 en 2 × 6.",
+            "hintParameters": {"a":6,"b":7},
             "explanation": "6 × 7 = 42."
           }
         ]
@@ -225,8 +215,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 9 = 81, is 81 : 9 = 9.",
+            "hintParameters": {"a":81,"b":9},
             "explanation": "81 : 9 = 9."
           },
           {
@@ -244,8 +233,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               7,
               8
             ],
-            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-            "hintMoose": "Omdat 5 × 6 = 30, is 30 : 5 = 6.",
+            "hintParameters": {"a":30,"b":5},
             "explanation": "30 : 5 = 6."
           }
         ]
@@ -262,8 +250,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "2 × 8 = ?",
             "answer": 16,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+            "hintParameters": {"a":2,"b":8},
             "explanation": "2 × 8 = 16."
           },
           {
@@ -281,8 +268,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               32,
               36
             ],
-            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 4.",
-            "hintMoose": "Verdubbel 7 en verdubbel de uitkomst nog eens.",
+            "hintParameters": {"a":7,"b":4},
             "explanation": "7 × 4 = 28."
           }
         ]
@@ -299,8 +285,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "8 × 4 = ?",
             "answer": 32,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 8 twee keer.",
+            "hintParameters": {"a":8,"b":4},
             "explanation": "8 × 4 = 32."
           },
           {
@@ -312,8 +297,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "4 × 7 = ?",
             "answer": 28,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintParameters": {"a":4,"b":7},
             "explanation": "4 × 7 = 28."
           }
         ]
@@ -337,8 +321,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "6 × 8 = ?",
             "answer": 48,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 6 en verdubbel dat.",
+            "hintParameters": {"a":6,"b":8},
             "explanation": "6 × 8 = 48."
           },
           {
@@ -350,8 +333,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "3 × 4 = ?",
             "answer": 12,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 3 twee keer.",
+            "hintParameters": {"a":3,"b":4},
             "explanation": "3 × 4 = 12."
           }
         ]
@@ -368,8 +350,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "16 : 4 = ?",
             "answer": 4,
-            "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-            "hintMoose": "Omdat 4 × 4 = 16, is 16 : 4 = 4.",
+            "hintParameters": {"a":16,"b":4},
             "explanation": "16 : 4 = 4."
           },
           {
@@ -387,8 +368,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               63,
               70
             ],
-            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
-            "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
+            "hintParameters": {"a":8,"b":7},
             "explanation": "8 × 7 = 56."
           }
         ]
@@ -411,8 +391,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               36,
               45
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+            "hintParameters": {"a":3,"b":9},
             "explanation": "3 × 9 = 27."
           },
           {
@@ -430,8 +409,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
               45,
               54
             ],
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 4 en haal 4 eraf.",
+            "hintParameters": {"a":4,"b":9},
             "explanation": "4 × 9 = 36."
           }
         ]
@@ -448,8 +426,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "4 × 8 = ?",
             "answer": 32,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "hintParameters": {"a":4,"b":8},
             "explanation": "4 × 8 = 32."
           },
           {
@@ -461,8 +438,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
             "answerMode": "open",
             "prompt": "4 × 7 = ?",
             "answer": 28,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 4 en 2 × 4.",
+            "hintParameters": {"a":4,"b":7},
             "explanation": "4 × 7 = 28."
           }
         ]
@@ -475,21 +451,21 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
       id: "staveChurch", name: "Houten staafkerk", shortName: "Kerk", center: { x: 555, y: 330 }, radius: 110,
       approachNode: "church-approach", intro: "De houten torens wijzen naar de avondlucht.",
       prompt: "Tel de daken van de staafkerk.", solved: "Mooi! De kerk wijst naar het fjordlicht.",
-      attention: "Dat houten dak heeft daken op daken. Alsof de kerk een berg nadoet.",
+      attention: "Kijk hoeveel lagen dat houten dak heeft.",
       already: "De kerk staat stevig en de som is klaar. Geen plank meer nodig."
     },
     {
       id: "lighthouse", name: "Fjordvuurtoren", shortName: "Vuurtoren", center: { x: 980, y: 270 }, radius: 104,
       approachNode: "lighthouse-approach", intro: "Het licht draait boven het donkere water.",
       prompt: "Tel de lichtflitsen.", solved: "Goed zo! De vuurtoren verlicht de route.",
-      attention: "Dat licht veegt over het hele fjord. Misschien pakt het onze route mee.",
+      attention: "Die vuurtoren is van ver over het fjord te zien.",
       already: "De vuurtoren schijnt al goed. Meer licht wordt gewoon verblindend."
     },
     {
       id: "vikingShip", name: "Vikingschip", shortName: "Schip", center: { x: 1320, y: 430 }, radius: 112,
       approachNode: "ship-approach", intro: "De drakenkop kijkt uit over het water.",
       prompt: "Tel de schilden van het schip.", solved: "Sterk! Het schip wijst naar Zweden.",
-      attention: "Die drakenkop kijkt alsof hij de hele overtocht al gepland heeft.",
+      attention: "Die drakenkop voorop valt meteen op.",
       already: "Het schip is al klaar. De draak hoeft niet nóg trotser te kijken."
     }
   ];
@@ -588,8 +564,15 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         moose: "de waterkant, veilige havenroute en rode fjordpoort"
       }
     },
+    "companionPolicy": {
+      "disabledEvents": [
+        "CHALLENGE_SUCCESS",
+        "LEVEL_PROGRESS_MILESTONE"
+      ],
+      "attentionOncePerVisit": true
+    },
     companionMoments: [
-      { id: "no-enter", event: "LEVEL_ENTER", speaker: "minnie", text: "Het fjord glanst alsof de zon hier nog even wil blijven." },
+      { id: "no-enter", event: "LEVEL_ENTER", speaker: "minnie", text: "Wat een uitzicht. Het fjord glanst nog in het avondlicht." },
       ...challenges.map((item) => ({
         id: `no-${item.id}-attention`, event: "HOTSPOT_ATTENTION_FIRST",
         challengeId: item.id, speaker: "minnie", text: item.attention
@@ -599,7 +582,7 @@ window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
         challengeId: item.id, speaker: "moose", text: item.already
       })),
       { id: "no-progress", event: "LEVEL_PROGRESS_MILESTONE", speaker: "minnie", text: "Het fjordlicht tekent de route steeds verder over het water." },
-      { id: "no-blocked", event: "EXIT_BLOCKED", speaker: "moose", text: "De fjordpoort wacht nog op {remainingChallenges}. De rode deur blijft nors." },
+      { id: "no-blocked", event: "EXIT_BLOCKED", speaker: "moose", text: "Nog {remainingChallenges} te gaan. Daarna kan de fjordpoort open." },
       { id: "no-unlocked", event: "PATH_UNLOCKED", speaker: "moose", text: "De fjordpoort is open. Zweden ligt verderop." },
       { id: "no-complete", event: "ADVENTURE_COMPLETE", speaker: "minnie", text: "Dag fjordlicht! Het Zweedse dorp wacht." }
     ],

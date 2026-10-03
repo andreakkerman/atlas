@@ -213,8 +213,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 3,
                 "minute": 10
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer op de 2 betekent tien over. De kleine wijzer staat net na de 3.",
               "explanation": "Het is tien over drie."
             },
             {
@@ -237,8 +235,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 6,
                 "minute": 5
               },
-              "hintMinnie": "Elk cijfer is vijf minuten.",
-              "hintMoose": "De grote wijzer staat op de 1: vijf minuten na zes.",
               "explanation": "Het is vijf over zes."
             }
           ]
@@ -266,8 +262,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 8,
                 "minute": 20
               },
-              "hintMinnie": "De grote wijzer staat op de 4.",
-              "hintMoose": "De grote wijzer op de 4 betekent tien minuten voor half. De kleine wijzer staat tussen acht en negen.",
               "explanation": "Het is tien voor half negen."
             },
             {
@@ -290,8 +284,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 1,
                 "minute": 25
               },
-              "hintMinnie": "De grote wijzer staat op de 5.",
-              "hintMoose": "Vijf minuten voor het halve uur zeg je vijf voor half twee.",
               "explanation": "Het is vijf voor half twee."
             }
           ]
@@ -319,8 +311,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 5,
                 "minute": 40
               },
-              "hintMinnie": "De grote wijzer staat op de 8.",
-              "hintMoose": "De grote wijzer op de 8 betekent tien minuten na half. De kleine wijzer staat tussen vijf en zes.",
               "explanation": "Het is tien over half zes."
             },
             {
@@ -343,8 +333,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 9,
                 "minute": 35
               },
-              "hintMinnie": "De grote wijzer is net voorbij de 6.",
-              "hintMoose": "Op de 7 is het vijf minuten na half tien.",
               "explanation": "Het is vijf over half tien."
             }
           ]
@@ -372,8 +360,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 11,
                 "minute": 50
               },
-              "hintMinnie": "De grote wijzer staat op de 10.",
-              "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot twaalf.",
               "explanation": "Het is tien voor twaalf."
             },
             {
@@ -396,8 +382,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 "hour": 2,
                 "minute": 55
               },
-              "hintMinnie": "De grote wijzer staat op de 11.",
-              "hintMoose": "Vanaf de 11 duurt het nog vijf minuten tot drie.",
               "explanation": "Het is vijf voor drie."
             }
           ]
@@ -427,8 +411,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Verdeel 27 eerlijk over 3 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 3 welk getal uitkomt op 27.",
+              "hintParameters": {"a":27,"b":3},
               "explanation": "27 : 3 = 9."
             },
             {
@@ -440,8 +423,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
               "answerMode": "open",
               "prompt": "2 × 3 = ?",
               "answer": 6,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6."
             }
           ]
@@ -464,8 +446,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 6,
                 8
               ],
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Verdubbel 2.",
+              "hintParameters": {"a":2,"b":2},
               "explanation": "2 × 2 = 4."
             },
             {
@@ -483,8 +464,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 48,
                 54
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -501,8 +481,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
               "answerMode": "open",
               "prompt": "15 : 3 = ?",
               "answer": 5,
-              "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-              "hintMoose": "Omdat 3 × 5 = 15, is 15 : 3 = 5.",
+              "hintParameters": {"a":15,"b":3},
               "explanation": "15 : 3 = 5."
             },
             {
@@ -520,8 +499,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
                 21,
                 28
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 2 en 2 × 2.",
+              "hintParameters": {"a":2,"b":7},
               "explanation": "2 × 7 = 14."
             }
           ]
@@ -538,8 +516,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
               "answerMode": "open",
               "prompt": "De dorpsfontein heeft 8 bakken met samen 32 waterlelies. In iedere bak liggen er evenveel. Hoeveel waterlelies liggen in één bak?",
               "answer": 4,
-              "hintMinnie": "Verdeel 32 eerlijk over 8 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 32.",
+              "hintParameters": {"a":32,"b":8},
               "explanation": "32 : 8 = 4."
             },
             {
@@ -551,8 +528,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
               "answerMode": "open",
               "prompt": "70 : 10 = ?",
               "answer": 7,
-              "hintMinnie": "Welke som uit de tafel van 10 helpt?",
-              "hintMoose": "Omdat 10 × 7 = 70, is 70 : 10 = 7.",
+              "hintParameters": {"a":70,"b":10},
               "explanation": "70 : 10 = 7."
             }
           ]
@@ -692,33 +668,40 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
       "moose": "de brede pleinstenen, overzichtelijke route en dorpspoort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "fr-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Dit plein heeft bloemen op bijna elke vrije steen. Knap werk."
+      "text": "Dit plein staat vol bloemen. Zelfs tussen de stenen."
     },
     {
       "id": "fr-marketStall-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "marketStall",
       "speaker": "minnie",
-      "text": "Die markt is bijna een regenboog van groente. Een eetbare regenboog."
+      "text": "Die marktkraam zit vol kleur."
     },
     {
       "id": "fr-villageClock-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "villageClock",
       "speaker": "minnie",
-      "text": "Die klok kan het hele plein zien. Misschien zag hij onze route ook."
+      "text": "Die dorpsklok is vanaf het hele plein te zien."
     },
     {
       "id": "fr-fountain-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "fountain",
       "speaker": "minnie",
-      "text": "Het water springt precies in patronen. Dat doet een fontein niet zomaar."
+      "text": "Het water springt steeds in hetzelfde patroon."
     },
     {
       "id": "fr-marketStall-solved",
@@ -751,7 +734,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0015"] = {
       "id": "fr-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De dorpspoort wacht nog op {remainingChallenges}. Hij blijft koppig Frans dicht."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de dorpspoort open."
     },
     {
       "id": "fr-unlocked",

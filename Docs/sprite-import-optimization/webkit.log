@@ -1,0 +1,23 @@
+
+Running 13 tests using 1 worker
+
+(node:50988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50988) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (6.4s)
+  ok  2 [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (4.8s)
+  ok  3 [ipad-landscape] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (21.4s)
+  ok  4 [ipad-landscape] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (20.9s)
+  ok  5 [ipad-landscape] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (25.3s)
+  ok  6 [ipad-landscape] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (16.4s)
+  ok  7 [ipad-landscape] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (6.9s)
+  ok  8 [ipad-landscape] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (376ms)
+  -   9 [ipad-landscape] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1
+  -  10 [ipad-landscape] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2
+  -  11 [ipad-landscape] › tests\illustrated-compositor.spec.js:74:1 › producer revisions suppress empty and unchanged uploads across recovery
+  -  12 [ipad-landscape] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1
+  -  13 [ipad-landscape] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 2
+
+  5 skipped
+  8 passed (1.7m)

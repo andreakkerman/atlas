@@ -236,6 +236,23 @@
       defaults: { ...preset({}).defaults, intensity: 0.88, amount: 0.46, speed: 0.45, glow: 1.08, opacity: 0.86, sparkAmount: 0, particleCap: 38, particleShape: "sparkle", motionProfile: "orbitFocus", emissive: true, glowProfile: "magicalPulse" },
       controls: ["intensity", "amount", "speed", "size", "glow", "softness", "pulseAmount", "pulseRate", "particleCap"]
     }),
+    "windblown-sand": preset({
+      hiddenFromLibrary: true, // Read compatibility for pre-Particle-Fields drafts only.
+      id: "windblown-sand", name: "Sand", category: "Weather",
+      description: "A low ribbon of fine windblown sand with soft waves and fades (Canvas 2D).",
+      bestFor: "Desert paths, dunes and abandoned streets. Place a wide, shallow region near the ground.",
+      avoidFor: "Heavy sandstorms, smoke or glowing challenge effects.",
+      visualSignature: "One thin, non-glowing sand sweep with gentle curling motion.",
+      renderer: "particleField", geometryTypes: ["rectangle"],
+      defaultGeometry: { type: "rectangle", x: 500, y: 540, width: 1100, height: 85 },
+      variants: [variant("fine-sand", "Fine blowing sand")],
+      colors: { primaryColor: "#D7B780", secondaryColor: "#F1D5A3", glowColor: "#D7B780", tintColor: "#FFFFFF" },
+      hardCap: 480, recommendedBudget: 330,
+      defaults: { ...preset({}).defaults, intensity: 0.85, amount: 1, speed: 0.65, opacity: 0.65,
+        size: 0.5, glow: 0, particleCap: 480, motionProfile: "sandRibbon", emissive: false,
+        turbulence: 0.5, edgeFeatherPx: 0 },
+      controls: ["intensity", "amount", "speed", "opacity", "turbulence"]
+    }),
     "ambient-floating-particles": preset({
       id: "ambient-floating-particles", name: "Ambient floating particles", category: "Atmosphere",
       description: "Layered environmental particles with organic drift and soft fades.",
@@ -1213,7 +1230,26 @@
     ctx.restore();
   }
 
+  // Read compatibility for old level drafts; rendering and controls now resolve
+  // through the same Particle Fields data used by the Sand starting preset.
+  function drawSandRibbon(ctx, resolved, time) {
+    const bounds=geometryBounds(resolved.geometry),api=window.AtlasCinematicSettings;
+    const field=api.preset("particles","Sand",api.instance("particles",{
+      id:resolved.instance.id,seed:resolved.instance.seed,
+      x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2,
+      width:bounds.width,height:bounds.height,shape:"rectangle",boundsRotation:0
+    }));
+    Object.assign(field,{count:particleCount(resolved),color:resolved.primaryColor,
+      speed:resolved.speed*40,opacity:clamp(resolved.opacity*resolved.intensity,0,1),turbulence:resolved.turbulence});
+    if(resolved.amount<=0)return;
+    ctx.save();ctx.globalAlpha=1;drawSandField(ctx,field,time,"high",false);ctx.restore();
+  }
+
   function drawParticles(ctx, resolved, time) {
+    if (resolved.motionProfile === "sandRibbon") {
+      drawSandRibbon(ctx, resolved, time);
+      return;
+    }
     const count = particleCount(resolved);
     const angle = resolved.directionDeg * Math.PI / 180;
     ctx.globalCompositeOperation = resolved.blendMode || resolved.preset.blendMode;
@@ -1243,6 +1279,77 @@
       }
       drawParticleMark(ctx, resolved, x, y, radius, alpha, index, progress, angle);
     }
+  }
+
+  // Sand is authored in the shared Particle Fields contract. Only its drawing
+  // backend differs; it participates in this runtime's canvas and lifecycle.
+  function drawSandField(ctx, field, time, quality, reducedMotion) {
+    const seed = field.seed ?? [...field.id].reduce((n, c) => (Math.imul(n, 31) + c.charCodeAt(0)) | 0, 0);
+    const count = Math.floor(Math.min(480, window.AtlasCinematicSettings.particleCount(field)) * QUALITY[quality].particles * (reducedMotion ? 0.48 : 1));
+    const t = time * (reducedMotion ? 0.18 : 1);
+    const rotation = field.boundsRotation * Math.PI / 180;
+    const direction = field.direction * Math.PI / 180;
+    const vx = Math.cos(direction) * field.speed + field.wind, vy = Math.sin(direction) * field.speed;
+    const localX = Math.cos(rotation) * vx + Math.sin(rotation) * vy;
+    const localY = -Math.sin(rotation) * vx + Math.cos(rotation) * vy;
+    const phase = hash(seed, 991) * Math.PI * 2;
+    const motion = t * Math.hypot(vx, vy) / 40;
+    const gust = 0.78 + 0.14 * Math.sin(motion * 0.47 + phase) + 0.08 * Math.sin(motion * 0.83 + phase);
+    const waviness = 1.5 * field.turbulence / (1 + field.turbulence);
+    const wave = u => (Math.sin(u * 15 - motion * 0.8 + phase) * 0.12 + Math.sin(u * 27 - motion * 0.53 + phase) * 0.055) * waviness;
+    const fract = x => x - Math.floor(x);
+    const smooth = x => { x = clamp(x, 0, 1); return x*x*(3-2*x); };
+    const weight = (x, y) => {
+      if (field.shape === "polygon") {
+        if (!pointInsideGeometry({x,y}, {type:"polygon",points:field.points})) return 0;
+        let distance = 1;
+        field.points.forEach((a,i) => {
+          const b=field.points[(i+1)%field.points.length], dx=b.x-a.x, dy=b.y-a.y;
+          const u=clamp(((x-a.x)*dx+(y-a.y)*dy)/Math.max(0.00001,dx*dx+dy*dy),0,1);
+          distance=Math.min(distance,Math.hypot(x-a.x-dx*u,y-a.y-dy*u));
+        });
+        return smooth(distance/Math.max(0.005,field.softness*0.3));
+      }
+      const distance=field.shape === "rectangle" ? Math.max(Math.abs(x),Math.abs(y))*2 : Math.hypot(x,y)*2;
+      return smooth((1-distance)/Math.max(0.01,field.softness));
+    };
+    ctx.save(); ctx.translate(field.x,field.y); ctx.rotate(rotation);
+    ctx.beginPath();
+    if(field.shape === "ellipse") ctx.ellipse(0,0,field.width/2,field.height/2,0,0,Math.PI*2);
+    else if(field.shape === "polygon") field.points.forEach((p,i)=>{ if(i)ctx.lineTo(p.x*field.width,p.y*field.height);else ctx.moveTo(p.x*field.width,p.y*field.height); });
+    else ctx.rect(-field.width/2,-field.height/2,field.width,field.height);
+    ctx.closePath(); ctx.clip();
+    ctx.globalAlpha=field.opacity;
+    ctx.globalCompositeOperation="source-over";
+    const density=Math.min(1,count/326);
+    // Short tapered segments retain region feathering, without an offscreen blur.
+    for(let band=3;band>=1;band--) for(let j=0;j<64;j++) {
+      const a=j/64,b=(j+1)/64,center=(a+b)/2;
+      ctx.fillStyle=rgba(field.color,gust*density*0.12*weight(center-.5,wave(center)));
+      ctx.beginPath();
+      for(const [u,side] of [[a,-1],[b,-1],[b,1],[a,1]]) {
+        const x=(u-.5)*field.width,y=(wave(u)+side*band*.018*Math.sin(u*Math.PI))*field.height;
+        ctx.lineTo(x,y);
+      }
+      ctx.closePath();ctx.fill();
+    }
+    for(let i=0;i<count;i++) {
+      const variation=1+(hash(seed,i+200)-.5)*field.randomness;
+      const age=fract(t/field.lifetime+hash(seed,i+700))*field.lifetime;
+      const u=fract(hash(seed,i+100)+t*localX*variation/field.width);
+      const gravityLocal=field.gravity*age*age*.5;
+      const y=fract(.5+wave(u)+(hash(seed,i+300)+hash(seed,i+400)-1)*.2*field.randomness+(localY*age+Math.cos(rotation)*gravityLocal)/field.height)-.5;
+      const x=u-.5+Math.sin(rotation)*gravityLocal/field.width;
+      const z=clamp(field.depth+(hash(seed,i+800)-.5)*field.depthSpread,0,1);
+      const size=field.size*(1-field.sizeVariation+field.sizeVariation*(.3+hash(seed,i+600)))*(.6+.6*z);
+      const alpha=gust*fade(u,.16,.2)*fade(age/field.lifetime,.15,.25)*weight(x,y)*(1-field.pulse*(.5+.5*Math.sin(t*1.6+i)));
+      ctx.fillStyle=rgba(field.color,alpha);
+      ctx.save();ctx.translate(x*field.width,y*field.height);ctx.rotate(Math.atan2(localY,localX));
+      if(field.glow>0){ctx.fillStyle=rgba(field.color,alpha*Math.min(1,field.glow)*.12);ctx.fillRect(-size*3,-size*2,size*6,size*4);ctx.fillStyle=rgba(field.color,alpha);}
+      ctx.fillRect(-size*field.streak/2,-size/2,size*field.streak,size);
+      ctx.restore();
+    }
+    ctx.restore();
   }
 
   function drawFog(ctx, resolved, time) {
@@ -1949,6 +2056,13 @@
     return ipad ? "balanced" : "high";
   }
 
+  // Producer-owned metadata: consumers never need a pixel readback to discover
+  // a clear or a new frame. Weak keys follow the DOM canvas lifetime.
+  const canvasFrames = new WeakMap();
+  function publishCanvasFrame(canvas, active) {
+    canvasFrames.set(canvas, { revision: (canvasFrames.get(canvas)?.revision || 0) + 1, active });
+  }
+
   function createRuntime(options) {
     const getLevel = options.getLevel;
     const getScreen = options.getScreen;
@@ -1960,6 +2074,7 @@
     let lastFrame = 0;
     let resolved = [];
     let transient = [];
+    let particleFields = [];
     let visibility = { mode: "all", selectedId: null };
     const performanceRank = { Low: 1, Medium: 2, High: 3 };
 
@@ -1990,6 +2105,7 @@
       const current = getLevel();
       const quality = detectQuality();
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      particleFields = (options.getParticleFields?.() || []).filter(item => item.enabled && item.distribution === "ribbon");
       resolved = (current?.sceneEffects || [])
         .filter((effect) => options.shouldRenderEffect?.(effect) !== false)
         .filter((effect) => effect?.enabled !== false && validateInstance(effect, current).valid)
@@ -2008,7 +2124,7 @@
     }
 
     function canRun() {
-      return Boolean(getLevel()?.id === levelId && ["scene", "challenge", "correct"].includes(getScreen()) && !document.hidden && !paused && (resolved.length || transient.length || options.hasOverlay?.()));
+      return Boolean(getLevel()?.id === levelId && ["scene", "challenge", "correct"].includes(getScreen()) && !document.hidden && !paused && (resolved.length || transient.length || particleFields.length || options.hasOverlay?.()));
     }
 
     function sizeCanvas(canvas) {
@@ -2056,13 +2172,18 @@
           } finally {ctx.restore();}
           continue;
         }
-        resolved.filter((effect) => effect.layerSlot === canvas.dataset.sceneEffectsCanvas).forEach((effect) => drawResolved(ctx, effect, time));
-        transient.filter(effect => effect.layerSlot === canvas.dataset.sceneEffectsCanvas).forEach(effect => {
+        const slotEffects = resolved.filter(effect => effect.layerSlot === canvas.dataset.sceneEffectsCanvas);
+        const slotTransients = transient.filter(effect => effect.layerSlot === canvas.dataset.sceneEffectsCanvas);
+        slotEffects.forEach(effect => drawResolved(ctx, effect, time));
+        const slotFields = canvas.dataset.sceneEffectsCanvas === "worldAtmosphere" ? particleFields : [];
+        slotFields.forEach(field => drawSandField(ctx, field, time, quality, window.matchMedia("(prefers-reduced-motion: reduce)").matches));
+        slotTransients.forEach(effect => {
           // Reuse the preset renderer, but contain gameplay decoration within its cue.
           ctx.save(); ctx.beginPath();
           ctx.arc(effect.geometry.x, effect.geometry.y, effect.geometry.radius, 0, Math.PI * 2); ctx.clip();
           drawResolved(ctx, effect, time, { glowParticlesOnly: true }); ctx.restore();
         });
+        publishCanvasFrame(canvas, slotEffects.length + slotTransients.length + slotFields.length > 0);
       }
       if (canRun()) rafId = requestAnimationFrame(draw);
     }
@@ -2084,7 +2205,10 @@
       options.stopOverlay?.();
       if (rafId) cancelAnimationFrame(rafId);
       rafId = null;
-      canvases().forEach((canvas) => canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height));
+      canvases().forEach((canvas) => {
+        canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+        publishCanvasFrame(canvas, false);
+      });
     }
 
     function pause() {
@@ -2122,6 +2246,7 @@
       stop();
       resolved = [];
       transient = [];
+      particleFields = [];
       levelId = null;
     }
 
@@ -2132,9 +2257,9 @@
         return (performanceRank[current] || 0) > (performanceRank[highest] || 0) ? current : highest;
       }, "Low");
       return {
-        activeEffects: resolved.length,
-        budget: Math.round(score),
-        performance: resolved.length ? label : "None",
+        activeEffects: resolved.length + particleFields.length,
+        budget: Math.round(score + particleFields.reduce((total, item) => total + Math.min(480, window.AtlasCinematicSettings.particleCount(item)), 0)),
+        performance: resolved.length || particleFields.length ? label : "None",
         quality: detectQuality()
       };
     }
@@ -2144,6 +2269,7 @@
       get paused() { return paused; },
       get resolved() { return resolved; },
       get transient() { return transient; },
+      get particleFields() { return particleFields; },
       get rafId() { return rafId; }
     };
   }
@@ -2183,6 +2309,7 @@
   }
 
   window.AtlasSceneEffects = {
+    canvasFrame: canvas => canvasFrames.get(canvas),
     VERSION,
     CATEGORIES,
     LAYER_SLOTS,

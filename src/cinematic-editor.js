@@ -5,6 +5,7 @@
   const presetHelp = {
     Steady:"Constant light for lanterns and quiet sources.", Fire:"Warm, irregular brightness for fire and braziers.", Arcane:"Colored surges for magical runes.", Beacon:"Slow broad pulses for beacons and signals.",
     Sunlight:"Broad warm illumination for outdoor compositions.", Moonlight:"Broad cool illumination; pair with warm local sources for night scenes.",
+    Sand:"Fine Canvas 2D sand in a shallow ribbon. Uses the shared field controls; Count is capped at 480 grains before quality scaling.",
     Pollen:"Large soft motes drift slowly with light wind and almost no gravity.", Dust:"Fine, faint particles move slowly through a volume with little emission.",
     Embers:"Warm emissive particles rise from a small source, curl and fade quickly.", Snow:"Varied flakes fall slowly, with sideways wind and wandering motion.",
     Drizzle:"Fine, short downward streaks with moderate wind and density.", "Heavy Rain":"Dense, fast, long downward streaks with stronger sideways wind.",
@@ -28,7 +29,7 @@
     frontAtmosphere:"Amount of authored air in front of characters. Increase to embed them in mist while keeping their silhouettes readable.",
     atmosphere: "A soft volume of colored air. Depth keeps foreground objects clear while distant air accumulates haze. Use warm brown air in firelit interiors.",
     bloom: "A soft glow around the brightest sources. A higher threshold limits glow to brighter pixels; keep intensity controlled to retain painted detail.",
-    particles: "One particle field for weather, dust or sparks. Position is its center; Width and Height follow the rotated guide axes (at Direction 90, Height spans horizontally). Presets change behavior without changing dimensions.",
+    particles: "One particle field for weather, dust or sparks. Position is its center; Width and Height follow Bounds Rotation. Direction controls particle travel independently. Presets change behavior without changing dimensions.",
     waterSurface: "Accentuates wave and reflection detail already present in the stable painted water with one evolving specular field. Scene depth keeps nearer artwork in front.",
     waterSparkles: "Adds discrete, clustered specular sparkles over authored water. Positions stay locked to world pixels while individual points twinkle; scene depth keeps foreground artwork in front.",
     characters: "Continuously blends scene light, depth tint and atmosphere into Sven, NPCs and animals, on top of their manual appearance.",
@@ -60,7 +61,8 @@
     streak: "Elongates particles in their travel direction. One makes motes; larger values make rain streaks.",
     wind: "Sideways particle drift. Negative moves left; positive moves right.",
     gravity: "Vertical acceleration. Positive falls downward; negative rises like embers.",
-    distribution: "Volume fills the region; source emits from its center, useful for embers and small emitters.",
+    distribution: "Volume fills the region; source emits from its center; ribbon draws fine blowing sand through Canvas 2D with a 480-grain cap before quality scaling.",
+    boundsRotation: "Rotates the ellipse, rectangle or polygon and its editing handles without changing particle travel direction.",
     depthSpread: "Range of particle distances around the field depth. Higher values mix foreground and background particles.",
     pulse: "Smooth particle brightness variation. Zero is steady; higher values give a magical shimmer.",
     grounding: "Gently darkens the lower part of the sprite near contact. Higher values strengthen grounding without drawing a shadow rectangle.",
@@ -177,7 +179,8 @@
       return items.find(i => i.id === selection.get(selectionKey(key))) || items[0];
     }
     function control(section, key, def, value) {
-      const attrs = `data-cinematic-section="${section}" data-cinematic-setting="${key}"`;
+      const canvasDepth = section === "particles" && selected(section)?.distribution === "ribbon" && ["depthInfluence", "depthSoftness"].includes(key);
+      const attrs = `data-cinematic-section="${section}" data-cinematic-setting="${key}" ${canvasDepth ? 'disabled title="Depth masking requires GPU particles; Sand uses Canvas 2D."' : ""}`;
       if (typeof def === "boolean") return `<label class="atlasToggleField"><input type="checkbox" ${attrs} ${value ? "checked" : ""}> ${controlLabel(section,key)}</label>`;
       if (Array.isArray(def)) return `<label class="graphicsSelect">${controlLabel(section,key)}<select ${attrs}>${def.map(v => `<option value="${v}" ${value === v ? "selected" : ""}>${label(v)}</option>`).join("")}</select></label>`;
       if (typeof def === "string") return `<label class="graphicsSelect">${label(key)}<input type="color" ${attrs} value="${value}"></label>`;
@@ -196,7 +199,7 @@
       const item = selected(key, settings);
       return `<label class="graphicsSelect">Selected instance<select data-cinematic-select="${key}">${settings[key].items.filter(i=>inLayer(key,i)).map(i => `<option value="${i.id}" ${i.id === item?.id ? "selected" : ""}>${i.name}</option>`).join("")}</select></label>
         <div class="cinematicActions"><button type="button" data-cinematic-action="add" data-section="${key}" ${settings[key].items.length >= 12 ? "disabled" : ""}>Add</button><button type="button" data-cinematic-action="duplicate" data-section="${key}" ${item && settings[key].items.length < 12 ? "" : "disabled"}>Duplicate</button><button type="button" data-cinematic-action="remove" data-section="${key}" ${item ? "" : "disabled"}>Delete</button></div>
-        ${item && api.presets[key] ? `<label class="graphicsSelect">Starting preset<select data-cinematic-preset="${key}"><option value="">Custom / choose a starting point</option>${Object.keys(api.presets[key]).map(name=>`<option title="${presetHelp[name]}">${name}</option>`).join("")}</select></label><p class="cinematicHint" data-cinematic-preset-help>${presetHelp[view().presets[item.id]] || "Presets change behavior; placement stays put."} All controls remain editable.</p>` : ""}
+        ${item && api.presets[key] ? `<label class="graphicsSelect">Starting preset<select data-cinematic-preset="${key}"><option value="">Custom / choose a starting point</option>${Object.keys(api.presets[key]).map(name=>`<option title="${presetHelp[name]}">${name}</option>`).join("")}</select></label><p class="cinematicHint" data-cinematic-preset-help>${presetHelp[view().presets[item.id]] || "Presets change behavior; placement stays put."} ${item.distribution === "ribbon" ? "Depth masking is GPU-only; the other field controls remain editable." : "All controls remain editable."}</p>` : ""}
         <div data-cinematic-instance="${key}">${item ? fields(key, item) : "<p>No instances. Add one at the current camera position.</p>"}</div>`;
     }
     function render() {
@@ -217,6 +220,7 @@
         const key = input.dataset.cinematicSection; const field = input.dataset.cinematicSetting;
         const value = (api.systems[key].type ? selected(key, settings) : settings[key])?.[field];
         if (value === undefined) return;
+        if (key === "particles" && ["depthInfluence", "depthSoftness"].includes(field)) input.disabled = selected(key, settings)?.distribution === "ribbon";
         if (input.type === "checkbox") input.checked = value; else input.value = value;
         const output = input.parentElement.querySelector("output"); if (output) output.textContent = Number(value).toFixed(api.systems[key].fields[field].step === 1 ? 0 : 2);
       });
@@ -243,16 +247,19 @@
         const marker = `<circle cx="${item.x}" cy="${item.y}" r="${active?10:7}" ${attrs}><title>${item.name}</title></circle>`;
         if(!detailed)return `<g class="cinematicGuide cinematicMarker" data-cinematic-marker="${item.id}">${marker}</g>`;
         const points = item.points?.map(p => `${item.x+p.x*w},${item.y+p.y*h}`).join(" ");
-        const angle=(item.direction || 0)*Math.PI/180;
+        const rotation=key === "particles" ? item.boundsRotation : item.direction;
+        const angle=(rotation || 0)*Math.PI/180;
         const rotated=(x,y)=>({x:item.x+Math.cos(angle)*x-Math.sin(angle)*y,y:item.y+Math.sin(angle)*x+Math.cos(angle)*y});
         const fanWidth=key==="godRays"?Math.tan(item.spread*Math.PI/360)*item.length:item.width;
         const corner=rotated(item.length || w/2,item.length ? fanWidth : h/2);
-        const transform=`rotate(${item.direction || 0} ${item.x} ${item.y})`;
+        const transform=`rotate(${rotation || 0} ${item.x} ${item.y})`;
+        const rotationHandle=rotated(0,-h/2-36);
         return `<g class="cinematicGuide ${active ? "selected" : ""}" data-cinematic-marker="${item.id}" opacity="${item.enabled && settings[key].enabled ? 1 : 0.4}">
           <g class="cinematicInfluence" data-cinematic-detail="${item.id}">${item.length ? `<polygon points="${item.x},${item.y} ${item.x+item.length},${item.y-fanWidth} ${item.x+item.length},${item.y+fanWidth}" transform="${transform}"/>` : points ? `<polygon points="${points}" transform="${transform}"/>` : item.shape === "rectangle" ? `<rect x="${item.x-w/2}" y="${item.y-h/2}" width="${w}" height="${h}" transform="${transform}"/>` : `<ellipse cx="${item.x}" cy="${item.y}" rx="${w/2}" ry="${h/2}" transform="${transform}"/>`}</g>
           ${marker}<text x="${item.x+16}" y="${item.y-16}">${item.name}</text>
           ${active ? `<rect x="${corner.x-9}" y="${corner.y-9}" width="18" height="18" data-cinematic-handle="size" data-section="${key}" data-id="${item.id}"/>` : ""}
           ${active && item.direction !== undefined ? `<line x1="${item.x}" y1="${item.y}" x2="${item.x+Math.cos(item.direction*Math.PI/180)*120}" y2="${item.y+Math.sin(item.direction*Math.PI/180)*120}"/><circle cx="${item.x+Math.cos(item.direction*Math.PI/180)*120}" cy="${item.y+Math.sin(item.direction*Math.PI/180)*120}" r="10" data-cinematic-handle="direction" data-section="${key}" data-id="${item.id}"/>` : ""}
+          ${active && key === "particles" ? `<line x1="${item.x}" y1="${item.y}" x2="${rotationHandle.x}" y2="${rotationHandle.y}"/><circle cx="${rotationHandle.x}" cy="${rotationHandle.y}" r="11" data-cinematic-handle="boundsRotation" data-section="${key}" data-id="${item.id}"><title>Rotate bounds</title></circle>` : ""}
           ${active ? (item.points || []).map((p, i) => {const vertex=rotated(p.x*w,p.y*h);return `<circle cx="${vertex.x}" cy="${vertex.y}" r="9" data-cinematic-handle="vertex" data-index="${i}" data-section="${key}" data-id="${item.id}"/>`;}).join("") : ""}</g>`;
       }).join("")).join("");
       const source=settings.characters,showSource=options.getRenderer()==="cinematic"&&view().layer==="characters"&&view().system==="characters";
@@ -317,10 +324,11 @@
       if(drag.type==="shadow-source"){settings.characters.shadowLightSourceX=start.x+p.x-drag.start.x;settings.characters.shadowLightSourceY=start.y+p.y-drag.start.y;commit(settings);return;}
       const item = settings[drag.key].items.find(i => i.id === drag.id);
       if (!item) return;
-      const angle=(item.direction || 0)*Math.PI/180, dx=p.x-item.x, dy=p.y-item.y;
+      const angle=(drag.key === "particles" ? item.boundsRotation : item.direction || 0)*Math.PI/180, dx=p.x-item.x, dy=p.y-item.y;
       const local={x:Math.cos(angle)*dx+Math.sin(angle)*dy,y:-Math.sin(angle)*dx+Math.cos(angle)*dy};
       if (drag.type === "move") { item.x = start.x+p.x-drag.start.x; item.y = start.y+p.y-drag.start.y; }
       if (drag.type === "size") { if (item.radius) item.radius = Math.max(1, Math.abs(local.x)/item.aspect); else if (item.length) { item.length = Math.max(1, Math.abs(local.x)); if(drag.key==="godRays")item.spread=Math.atan2(Math.abs(local.y),item.length)*360/Math.PI;else item.width = Math.max(1, Math.abs(local.y)); } else { item.width = Math.max(1, Math.abs(local.x)*2); item.height = Math.max(1, Math.abs(local.y)*2); } }
+      if (drag.type === "boundsRotation") item.boundsRotation = ((Math.atan2(p.y-item.y,p.x-item.x)*180/Math.PI+90+540)%360)-180;
       if (drag.type === "direction") item.direction = Math.atan2(p.y-item.y,p.x-item.x)*180/Math.PI;
       if (drag.type === "vertex") item.points[drag.index] = { x: local.x/item.width, y: local.y/item.height };
       commit(settings);

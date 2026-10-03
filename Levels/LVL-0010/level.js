@@ -18,8 +18,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "De schatroute is 8 meter lang en bestaat uit 2 gelijke stukken. Hoe lang is ieder stuk?",
             "answer": 4,
-            "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
-            "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 8.",
+            "hintParameters": {"a":8,"b":2},
             "explanation": "8 : 2 = 4 meter."
           },
           {
@@ -37,8 +36,7 @@ const learningChallengesLVL0010 = [
               32,
               40
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 3 en verdubbel dat.",
+            "hintParameters": {"a":3,"b":8},
             "explanation": "3 × 8 = 24."
           }
         ]
@@ -55,8 +53,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "6 × 2 = ?",
             "answer": 12,
-            "hintMinnie": "Denk aan de tafel van 2.",
-            "hintMoose": "Verdubbel 6.",
+            "hintParameters": {"a":6,"b":2},
             "explanation": "6 × 2 = 12."
           },
           {
@@ -74,8 +71,7 @@ const learningChallengesLVL0010 = [
               35,
               42
             ],
-            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
-            "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+            "hintParameters": {"a":4,"b":7},
             "explanation": "4 × 7 = 28."
           }
         ]
@@ -92,8 +88,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "Op de schatkaart staan 7 routes met elk 9 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
             "answer": 63,
-            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 9.",
-            "hintMoose": "Reken 7 × 10 en haal er daarna 7 af.",
+            "hintParameters": {"a":7,"b":9},
             "explanation": "7 × 9 = 63."
           },
           {
@@ -111,8 +106,7 @@ const learningChallengesLVL0010 = [
               16,
               20
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 3 twee keer.",
+            "hintParameters": {"a":3,"b":4},
             "explanation": "3 × 4 = 12."
           }
         ]
@@ -135,8 +129,7 @@ const learningChallengesLVL0010 = [
               30,
               40
             ],
-            "hintMinnie": "Denk aan de tafel van 10.",
-            "hintMoose": "2 groepjes van 10 eindigen op nul.",
+            "hintParameters": {"a":2,"b":10},
             "explanation": "2 × 10 = 20."
           },
           {
@@ -154,8 +147,7 @@ const learningChallengesLVL0010 = [
               63,
               70
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 8 en 2 × 8.",
+            "hintParameters": {"a":8,"b":7},
             "explanation": "8 × 7 = 56."
           }
         ]
@@ -179,8 +171,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "6 × 4 = ?",
             "answer": 24,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 6 twee keer.",
+            "hintParameters": {"a":6,"b":4},
             "explanation": "6 × 4 = 24."
           },
           {
@@ -198,8 +189,7 @@ const learningChallengesLVL0010 = [
               21,
               24
             ],
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+            "hintParameters": {"a":6,"b":3},
             "explanation": "6 × 3 = 18."
           }
         ]
@@ -216,8 +206,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "Job koopt 2 bouwscheppen voor 6 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 12,
-            "hintMinnie": "Er zijn 2 gelijke bedragen van 6 munten.",
-            "hintMoose": "Reken 2 × 5 en tel er nog 2 bij op.",
+            "hintParameters": {"a":2,"b":6,"currency":"munten"},
             "explanation": "2 × 6 = 12 munten."
           },
           {
@@ -235,8 +224,7 @@ const learningChallengesLVL0010 = [
               40,
               44
             ],
-            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 4.",
-            "hintMoose": "Verdubbel 9 en verdubbel de uitkomst nog eens.",
+            "hintParameters": {"a":9,"b":4},
             "explanation": "9 × 4 = 36."
           }
         ]
@@ -259,8 +247,7 @@ const learningChallengesLVL0010 = [
               42,
               49
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 5 en 2 × 5.",
+            "hintParameters": {"a":5,"b":7},
             "explanation": "5 × 7 = 35."
           },
           {
@@ -272,8 +259,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "Het zandkasteel heeft 7 torens met elk 8 zandblokken. Hoeveel blokken zijn dat samen?",
             "answer": 56,
-            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
-            "hintMoose": "Verdubbel 7 drie keer.",
+            "hintParameters": {"a":7,"b":8},
             "explanation": "7 × 8 = 56."
           }
         ]
@@ -296,8 +282,7 @@ const learningChallengesLVL0010 = [
               9,
               10
             ],
-            "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-            "hintMoose": "Omdat 8 × 8 = 64, is 64 : 8 = 8.",
+            "hintParameters": {"a":64,"b":8},
             "explanation": "64 : 8 = 8."
           },
           {
@@ -315,8 +300,7 @@ const learningChallengesLVL0010 = [
               27,
               36
             ],
-            "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 9.",
-            "hintMoose": "Reken 2 × 10 en haal er daarna 2 af.",
+            "hintParameters": {"a":2,"b":9},
             "explanation": "2 × 9 = 18."
           }
         ]
@@ -346,8 +330,7 @@ const learningChallengesLVL0010 = [
               70,
               77
             ],
-            "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 7.",
-            "hintMoose": "Reken 9 × 5 en 9 × 2 en tel de uitkomsten op.",
+            "hintParameters": {"a":9,"b":7},
             "explanation": "9 × 7 = 63."
           },
           {
@@ -359,8 +342,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "9 × 6 = ?",
             "answer": 54,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+            "hintParameters": {"a":9,"b":6},
             "explanation": "9 × 6 = 54."
           }
         ]
@@ -383,8 +365,7 @@ const learningChallengesLVL0010 = [
               4,
               5
             ],
-            "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-            "hintMoose": "Omdat 7 × 3 = 21, is 21 : 7 = 3.",
+            "hintParameters": {"a":21,"b":7},
             "explanation": "21 : 7 = 3."
           },
           {
@@ -402,8 +383,7 @@ const learningChallengesLVL0010 = [
               27,
               30
             ],
-            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 3.",
-            "hintMoose": "Verdubbel 8 en tel er nog 8 bij op.",
+            "hintParameters": {"a":8,"b":3},
             "explanation": "8 × 3 = 24."
           }
         ]
@@ -426,8 +406,7 @@ const learningChallengesLVL0010 = [
               30,
               36
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+            "hintParameters": {"a":4,"b":6},
             "explanation": "4 × 6 = 24."
           },
           {
@@ -439,8 +418,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "Voor de houten boot maakt Job 7 stapels van 8 bouwplanken. Hoeveel planken zijn dat samen?",
             "answer": 56,
-            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
-            "hintMoose": "Verdubbel 7 drie keer.",
+            "hintParameters": {"a":7,"b":8},
             "explanation": "7 × 8 = 56."
           }
         ]
@@ -457,8 +435,7 @@ const learningChallengesLVL0010 = [
             "answerMode": "open",
             "prompt": "Job verdeelt 25 bouwplanken eerlijk over 5 bouwers. Hoeveel planken krijgt iedere bouwer?",
             "answer": 5,
-            "hintMinnie": "Verdeel 25 eerlijk over 5 gelijke groepen.",
-            "hintMoose": "Zoek in de tafel van 5 welk getal uitkomt op 25.",
+            "hintParameters": {"a":25,"b":5},
             "explanation": "25 : 5 = 5."
           },
           {
@@ -476,8 +453,7 @@ const learningChallengesLVL0010 = [
               24,
               28
             ],
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 5 twee keer.",
+            "hintParameters": {"a":5,"b":4},
             "explanation": "5 × 4 = 20."
           }
         ]
@@ -602,6 +578,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       moose: "waterkanten, glad zand en de deur naar een warmere kamer"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   companionMoments: [
     {
       id: "beach-enter",
@@ -614,7 +597,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       event: "HOTSPOT_ATTENTION_FIRST",
       challengeId: "treasureMap",
       speaker: "minnie",
-      text: "Een schatkaart! Zelfs de vouwen lijken iets te vertellen."
+      text: "Een schatkaart! Die moeten we bekijken."
     },
     {
       id: "beach-castle-attention",
@@ -646,13 +629,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
       id: "beach-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De stenen deur blijft dicht. Eerst nog {remainingChallenges}."
+      text: "Nog {remainingChallenges} te gaan. Daarna kan de stenen deur open."
     },
     {
       id: "beach-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "moose",
-      text: "De stenen deur is klaar. Warm wordt het wel."
+      text: "De stenen deur is open. Op naar de Netherproef."
     },
     {
       id: "beach-complete",

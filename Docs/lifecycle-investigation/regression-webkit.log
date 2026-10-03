@@ -1,0 +1,51 @@
+
+Running 13 tests using 1 worker
+
+(node:49552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49552) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (29.2s)
+(node:46212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46212) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  2 [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (4.7s)
+  ok  3 [ipad-landscape] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (23.2s)
+  ok  4 [ipad-landscape] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (21.5s)
+  ok  5 [ipad-landscape] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (25.9s)
+  ok  6 [ipad-landscape] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (15.5s)
+  ok  7 [ipad-landscape] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (6.9s)
+  ok  8 [ipad-landscape] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (405ms)
+  -   9 [ipad-landscape] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1
+  -  10 [ipad-landscape] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2
+  -  11 [ipad-landscape] › tests\illustrated-compositor.spec.js:74:1 › producer revisions suppress empty and unchanged uploads across recovery
+  -  12 [ipad-landscape] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1
+  -  13 [ipad-landscape] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 2
+
+
+  1) [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+    Call Log:
+    - Test timeout of 30000ms exceeded
+
+      16 |       await page.locator('[data-graphics-action="close"]').click();
+      17 |       if (realGpu) {
+    > 18 |         await expect.poll(() => page.evaluate(() => window.eval('cinematicRenderer').snapshot().ready), { timeout: 30000 }).toBe(true);
+         |                                                                                                                             ^
+      19 |       } else {
+      20 |         // Layout-only WebKit coverage: an opaque presentation canvas at its real CSS layer.
+      21 |         await page.addStyleTag({ content: '.cinematicViewportCanvas { opacity:1; visibility:visible; background:#182d29; }' });
+        at D:\DevProjects\SvenAdventure\tests\cinematic-route-overlay.spec.js:18:125
+
+    Error Context: test-results\cinematic-route-overlay-ci-0526e-d-follows-editor-visibility-ipad-landscape\error-context.md
+
+  1 failed
+    [ipad-landscape] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility 
+  5 skipped
+  7 passed (2.1m)

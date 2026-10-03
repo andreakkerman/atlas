@@ -63,8 +63,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Op de Posbankkaart zijn 35 routepunten verdeeld over 7 wandelroutes. Hoeveel routepunten staan er per route?",
               "answer": 5,
-              "hintMinnie": "Verdeel 35 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 35.",
+              "hintParameters": {"a":35,"b":7},
               "explanation": "35 : 7 = 5."
             },
             {
@@ -82,8 +81,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 49,
                 56
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 6 en 2 × 6.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             }
           ]
@@ -100,8 +98,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Op de Posbankkaart staan 6 wandelroutes met elk 6 routepunten. Hoeveel routepunten zijn dat samen?",
               "answer": 36,
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 6 × 5 en tel er nog 6 bij op.",
+              "hintParameters": {"a":6,"b":6},
               "explanation": "6 × 6 = 36."
             },
             {
@@ -113,8 +110,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Op de Posbankkaart staan 8 wandelroutes met elk 7 routepunten. Hoeveel routepunten zijn dat samen?",
               "answer": 56,
-              "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             }
           ]
@@ -137,8 +133,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 9 = 63, is 63 : 7 = 9.",
+              "hintParameters": {"a":63,"b":7},
               "explanation": "63 : 7 = 9."
             },
             {
@@ -156,8 +151,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-              "hintMoose": "Omdat 6 × 9 = 54, is 54 : 6 = 9.",
+              "hintParameters": {"a":54,"b":6},
               "explanation": "54 : 6 = 9."
             }
           ]
@@ -180,8 +174,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 40,
                 48
               ],
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 4 drie keer.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             },
             {
@@ -199,8 +192,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Welke som uit de tafel van 2 helpt?",
-              "hintMoose": "Omdat 2 × 7 = 14, is 14 : 2 = 7.",
+              "hintParameters": {"a":14,"b":2},
               "explanation": "14 : 2 = 7."
             }
           ]
@@ -230,8 +222,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 56,
                 64
               ],
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 6 drie keer.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48."
             },
             {
@@ -249,8 +240,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 49,
                 56
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 6 en 2 × 6.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             }
           ]
@@ -267,8 +257,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "2 × 10 = ?",
               "answer": 20,
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "2 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":2,"b":10},
               "explanation": "2 × 10 = 20."
             },
             {
@@ -280,8 +269,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Het pad naar de heidekijker is 6 meter lang en bestaat uit 2 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 3,
-              "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
-              "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 6.",
+              "hintParameters": {"a":6,"b":2},
               "explanation": "6 : 2 = 3 meter."
             }
           ]
@@ -298,8 +286,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Atlas koopt 6 wandelkaarten voor 4 euro per stuk. Hoeveel euro betaalt hij?",
               "answer": 24,
-              "hintMinnie": "Er zijn 6 gelijke bedragen van 4 euro.",
-              "hintMoose": "Verdubbel 6 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":6,"b":4,"currency":"euro"},
               "explanation": "6 × 4 = 24 euro."
             },
             {
@@ -317,8 +304,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 60,
                 70
               ],
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "5 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":5,"b":10},
               "explanation": "5 × 10 = 50."
             }
           ]
@@ -335,8 +321,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "32 : 4 = ?",
               "answer": 8,
-              "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-              "hintMoose": "Omdat 4 × 8 = 32, is 32 : 4 = 8.",
+              "hintParameters": {"a":32,"b":4},
               "explanation": "32 : 4 = 8."
             },
             {
@@ -354,8 +339,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 4 = 28, is 28 : 7 = 4.",
+              "hintParameters": {"a":28,"b":7},
               "explanation": "28 : 7 = 4."
             }
           ]
@@ -385,8 +369,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 72,
                 81
               ],
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 7 × 10 en haal er daarna 7 af.",
+              "hintParameters": {"a":7,"b":9},
               "explanation": "7 × 9 = 63."
             },
             {
@@ -404,8 +387,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Verdeel 18 eerlijk over 2 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 18.",
+              "hintParameters": {"a":18,"b":2},
               "explanation": "18 : 2 = 9."
             }
           ]
@@ -422,8 +404,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "8 × 8 = ?",
               "answer": 64,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+              "hintParameters": {"a":8,"b":8},
               "explanation": "8 × 8 = 64."
             },
             {
@@ -435,8 +416,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Bij het hertenbeeld staan 3 informatieborden met elk 10 wandeltekens. Hoeveel wandeltekens zijn dat samen?",
               "answer": 30,
-              "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 10.",
-              "hintMoose": "Vermenigvuldig 3 met 10: zet een nul achter 3.",
+              "hintParameters": {"a":3,"b":10},
               "explanation": "3 × 10 = 30."
             }
           ]
@@ -453,8 +433,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "Het pad naar het hertenbeeld is 24 meter lang en verdeeld in 4 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 6,
-              "hintMinnie": "Verdeel de totale lengte eerlijk over 4 gelijke stukken.",
-              "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 24.",
+              "hintParameters": {"a":24,"b":4},
               "explanation": "24 : 4 = 6 meter."
             },
             {
@@ -472,8 +451,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 21,
                 24
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+              "hintParameters": {"a":6,"b":3},
               "explanation": "6 × 3 = 18."
             }
           ]
@@ -490,8 +468,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
               "answerMode": "open",
               "prompt": "5 × 9 = ?",
               "answer": 45,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -509,8 +486,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
                 16,
                 18
               ],
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 2.",
-              "hintMoose": "Verdubbel 7.",
+              "hintParameters": {"a":7,"b":2},
               "explanation": "7 × 2 = 14."
             }
           ]
@@ -651,6 +627,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
       "moose": "het bekende zandpad, de kaart en het veilige bospad naar huis"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "rh-enter",
@@ -663,21 +646,21 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "mapBoard",
       "speaker": "minnie",
-      "text": "Deze kaart kent elk paadje. Misschien tekent hij onze hele reis erbij."
+      "text": "Op deze kaart staan al die bekende paadjes. We zijn echt weer thuis."
     },
     {
       "id": "rh-telescope-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "telescope",
       "speaker": "minnie",
-      "text": "Door deze kijker zie je vast waar we allemaal zijn geweest. Bijna dan."
+      "text": "Met deze kijker zie je een flink stuk van de heide."
     },
     {
       "id": "rh-deerStatue-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "deerStatue",
       "speaker": "minnie",
-      "text": "Dat hert kijkt alsof het precies wist dat we vandaag terugkwamen."
+      "text": "Dat hertenbeeld staat hier nog. We zijn echt weer terug."
     },
     {
       "id": "rh-mapBoard-solved",
@@ -710,13 +693,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0020"] = {
       "id": "rh-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Het bospad wacht nog op {remainingChallenges}. Thuis heeft geen haast."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we naar huis."
     },
     {
       "id": "rh-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Alles klopt. Het bospad brengt ons naar huis."
+      "text": "Alles klaar. We kunnen naar huis."
     },
     {
       "id": "rh-complete",

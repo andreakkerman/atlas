@@ -3,6 +3,7 @@ const path = require("path");
 const vm = require("vm");
 const { discoverCharacters, discoverPlayableCharacters } = require("./generate-character-manifest");
 const playableCharacters = require("../src/playable-characters");
+const challengeHints = require("../src/challenge-hints");
 const ambientSystem = require("../src/ambient-system");
 
 const rootDir = path.resolve(__dirname, "..");
@@ -680,8 +681,15 @@ function validateReferences(level, objects, nodeIds, label) {
     }
     [
       "id", "domain", "schoolBand", "family", "presentation", "answerMode",
-      "prompt", "hintMinnie", "hintMoose", "explanation"
+      "prompt", "explanation"
     ].forEach((field) => validateRequiredString(variant[field], `${variantLabel}.${field}`));
+    for (const speaker of ["minnie", "moose"]) {
+      try {
+        validateRequiredString(challengeHints.resolve(level.id, variant, speaker), `${variantLabel}.${speaker} hint`);
+      } catch (error) {
+        fail(`${variantLabel}: ${error.message}`);
+      }
+    }
     if (variant.domain !== "math") fail(`${variantLabel}.domain must be "math".`);
     if (variant.schoolBand !== "E5-intended") fail(`${variantLabel}.schoolBand must be "E5-intended".`);
     if (!["story", "bare"].includes(variant.presentation)) {
@@ -862,6 +870,20 @@ function validateReferences(level, objects, nodeIds, label) {
 }
 
 function validateCompanionAuthoring(level, objects, label) {
+  if (level.companionPolicy !== undefined) {
+    const policy = level.companionPolicy;
+    if (!isObject(policy)) {
+      fail(`${label}.companionPolicy must be an object.`);
+    } else {
+      if (policy.disabledEvents !== undefined && (!Array.isArray(policy.disabledEvents) ||
+          policy.disabledEvents.some(event => !allowedCompanionEvents.has(event)))) {
+        fail(`${label}.companionPolicy.disabledEvents must be an array of known companion events.`);
+      }
+      if (policy.attentionOncePerVisit !== undefined && typeof policy.attentionOncePerVisit !== "boolean") {
+        fail(`${label}.companionPolicy.attentionOncePerVisit must be a boolean.`);
+      }
+    }
+  }
   if (!isObject(level.levelSemantics)) {
     fail(`${label}.levelSemantics must be an object.`);
   } else {

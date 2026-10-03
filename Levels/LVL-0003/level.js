@@ -225,12 +225,18 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "moose": "natte stenen, lading, touwen en veilige afvaart"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "harbor-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Ik hoor water, touwen en een schip dat wil vertrekken."
+      "text": "Water, touwen en een schip bij de steiger. We zijn in de haven."
     },
     {
       "id": "harbor-rope",
@@ -244,7 +250,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "harborMap",
       "speaker": "minnie",
-      "text": "De havenkaart staat vol steigers. Welke som maakt de route duidelijk?"
+      "text": "Die havenkaart staat vol steigers en routes."
     },
     {
       "id": "harbor-compass",
@@ -258,7 +264,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "gateShield",
       "speaker": "minnie",
-      "text": "Deze havenproef vraagt om een scherp oog. We kijken samen."
+      "text": "Eivar staat bij de steiger. Laten we naar hem toe gaan."
     },
     {
       "id": "harbor-progress",
@@ -270,7 +276,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "id": "harbor-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De vertrekpoort wacht nog. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de vertrekpoort open."
     },
     {
       "id": "harbor-complete",
@@ -282,7 +288,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
       "id": "harbor-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "minnie",
-      "text": "Je kunt verder! Op naar de vertrekpoort."
+      "text": "De vertrekpoort is open. We kunnen gaan."
     }
   ],
   "areas": [
@@ -323,8 +329,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "2 × 7 = ?",
               "answer": 14,
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 2 en 2 × 2.",
+              "hintParameters": {"a":2,"b":7},
               "explanation": "2 × 7 = 14."
             },
             {
@@ -336,8 +341,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -354,8 +358,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "In de haven koopt de Viking 4 zeekaarten voor 7 munten per stuk. Hoeveel munten betaalt hij?",
               "answer": 28,
-              "hintMinnie": "Er zijn 4 gelijke bedragen van 7 munten.",
-              "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":4,"b":7,"currency":"munten"},
               "explanation": "4 × 7 = 28 munten."
             },
             {
@@ -367,8 +370,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "3 × 5 = ?",
               "answer": 15,
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 3 sprongen van 5.",
+              "hintParameters": {"a":3,"b":5},
               "explanation": "3 × 5 = 15."
             }
           ]
@@ -385,8 +387,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "2 × 3 = ?",
               "answer": 6,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6."
             },
             {
@@ -398,8 +399,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "De havenmeester verdeelt 49 houten routepionnen eerlijk over 7 zeekaarten. Hoeveel pionnen komen op iedere kaart?",
               "answer": 7,
-              "hintMinnie": "Verdeel 49 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 49.",
+              "hintParameters": {"a":49,"b":7},
               "explanation": "49 : 7 = 7."
             }
           ]
@@ -422,8 +422,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 63,
                 70
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 8 en 2 × 8.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             },
             {
@@ -435,8 +434,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "5 × 3 = ?",
               "answer": 15,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":3},
               "explanation": "5 × 3 = 15."
             }
           ]
@@ -471,8 +469,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 8,
                 "minute": 10
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 2. Dat betekent tien minuten na het hele uur. Kijk welk uur net begonnen is.",
               "explanation": "Het is tien over acht."
             },
             {
@@ -495,8 +491,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 4,
                 "minute": 20
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 4. Dat is twintig minuten na vier, oftewel tien minuten voor half vijf.",
               "explanation": "Het is tien voor half vijf."
             }
           ]
@@ -524,8 +518,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 6,
                 "minute": 25
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 5. Dat is vijf minuten voor het halve uur dat eraan komt.",
               "explanation": "Het is vijf voor half zeven."
             },
             {
@@ -548,8 +540,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 10,
                 "minute": 35
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 7. Dat is vijf minuten na het halve uur.",
               "explanation": "Het is vijf over half elf."
             }
           ]
@@ -577,8 +567,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 2,
                 "minute": 40
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 8. Dat is tien minuten na het halve uur.",
               "explanation": "Het is tien over half drie."
             },
             {
@@ -601,8 +589,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 7,
                 "minute": 50
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 10. Vanaf daar zijn het nog tien minuten tot het volgende uur.",
               "explanation": "Het is tien voor acht."
             }
           ]
@@ -630,8 +616,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 11,
                 "minute": 5
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 1. Elk cijfer is vijf minuten, dus er zijn vijf minuten voorbij.",
               "explanation": "Het is vijf over elf."
             },
             {
@@ -654,8 +638,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "hour": 1,
                 "minute": 55
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer staat op de 11. Vanaf daar duurt het nog vijf minuten tot het volgende uur.",
               "explanation": "Het is vijf voor twee."
             }
           ]
@@ -679,8 +661,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "6 × 3 = ?",
               "answer": 18,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+              "hintParameters": {"a":6,"b":3},
               "explanation": "6 × 3 = 18."
             },
             {
@@ -698,8 +679,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 40,
                 48
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -716,8 +696,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "De Viking maakt 3 bundels van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
               "answer": 18,
-              "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 3 × 5 en tel er nog 3 bij op.",
+              "hintParameters": {"a":3,"b":6},
               "explanation": "3 × 6 = 18."
             },
             {
@@ -735,8 +714,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 12,
                 16
               ],
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 2 twee keer.",
+              "hintParameters": {"a":2,"b":4},
               "explanation": "2 × 4 = 8."
             }
           ]
@@ -753,8 +731,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "Een meertouw is 18 meter lang. De Viking snijdt het in 2 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 9,
-              "hintMinnie": "Verdeel de totale lengte eerlijk over 2 gelijke stukken.",
-              "hintMoose": "Zoek in de tafel van 2 welk getal uitkomt op 18.",
+              "hintParameters": {"a":18,"b":2},
               "explanation": "18 : 2 = 9 meter."
             },
             {
@@ -766,8 +743,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "De Viking verdeelt 49 touwlussen eerlijk over 7 boten. Hoeveel touwlussen krijgt iedere boot?",
               "answer": 7,
-              "hintMinnie": "Verdeel 49 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 49.",
+              "hintParameters": {"a":49,"b":7},
               "explanation": "49 : 7 = 7."
             }
           ]
@@ -790,8 +766,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Verdeel 42 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 42.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7."
             },
             {
@@ -809,8 +784,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 54,
                 60
               ],
-              "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 8 × 5 en tel er nog 8 bij op.",
+              "hintParameters": {"a":8,"b":6},
               "explanation": "8 × 6 = 48."
             }
           ]
@@ -854,8 +828,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 45,
                 54
               ],
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 4 × 10 en haal er daarna 4 af.",
+              "hintParameters": {"a":4,"b":9},
               "explanation": "4 × 9 = 36."
             },
             {
@@ -873,8 +846,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-              "hintMoose": "Omdat 8 × 4 = 32, is 32 : 8 = 4.",
+              "hintParameters": {"a":32,"b":8},
               "explanation": "32 : 8 = 4."
             }
           ]
@@ -891,8 +863,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "5 × 8 = ?",
               "answer": 40,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+              "hintParameters": {"a":5,"b":8},
               "explanation": "5 × 8 = 40."
             },
             {
@@ -910,8 +881,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 72,
                 81
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+              "hintParameters": {"a":7,"b":9},
               "explanation": "7 × 9 = 63."
             }
           ]
@@ -934,8 +904,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 64,
                 72
               ],
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 7 drie keer.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             },
             {
@@ -947,8 +916,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "9 × 9 = ?",
               "answer": 81,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 9 en haal 9 eraf.",
+              "hintParameters": {"a":9,"b":9},
               "explanation": "9 × 9 = 81."
             }
           ]
@@ -965,8 +933,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72."
             },
             {
@@ -984,8 +951,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 10,
                 12
               ],
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 2.",
-              "hintMoose": "Verdubbel 4.",
+              "hintParameters": {"a":4,"b":2},
               "explanation": "4 × 2 = 8."
             }
           ]

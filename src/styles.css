@@ -3760,6 +3760,12 @@ button {
   pointer-events: none;
 }
 
+/* The dialog already identifies the open challenge; keep its world circle hidden. */
+#app[data-screen="challenge"] .runeFocusSpark,
+#app[data-screen="correct"] .runeFocusSpark {
+  display: none;
+}
+
 .runeFocusCorrect {
   animation: runeComplete 780ms ease-out both, runeFocusPulse 1.2s ease-in-out infinite alternate;
 }

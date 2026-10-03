@@ -6,7 +6,7 @@ const vm = require("vm");
 const { pathToFileURL } = require("url");
 
 const root = path.join(__dirname, "..");
-const gameUrl = pathToFileURL(path.join(root, "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "index.html")).toString();
 const leonardoIds = ["LVL-0021", "LVL-0022", "LVL-0023", "LVL-0024", "LVL-0025", "LVL-0026"];
 
 function loadScript(relativePath, context) {
@@ -38,6 +38,8 @@ function activeChallengeObjectCount(levels) {
 
 async function startLevel(page, levelId) {
   await page.goto(gameUrl);
+  await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+  await expect(page.locator(".menuScreen")).toBeVisible();
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true });
@@ -202,12 +204,13 @@ test.describe("Leonardo da Vinci adventure", () => {
 
   test("uses opdrachten progress wording and Moose locked-exit feedback", async ({ page }) => {
     await startLevel(page, "LVL-0021");
-    await expect(page.locator(".teamMeta")).toContainText("0/4 opdrachten");
+    // The current source keeps engineeringTable authored but inactive.
+    await expect(page.locator(".teamMeta")).toContainText("0/3 opdrachten");
     await expect(page.locator(".teamMeta")).not.toContainText("runen");
 
     await moveCameraToObject(page, "procenoGate");
     await page.getByRole("button", { name: "Poort naar Proceno", exact: true }).click();
-    await expect(page.getByText("De doorgang blijft nog dicht. Los eerst alle opdrachten in deze werkplaats op.")).toBeVisible({ timeout: 22000 });
+    await expect(page.getByText("Nog 3 opdrachten te gaan. Daarna kan de Romeinse poort open.")).toBeVisible({ timeout: 22000 });
     await expect(page.locator("[data-adventure-team-bar]")).toHaveAttribute("data-active-speaker", "moose");
     await expect(page.locator(".teamSpeaker")).toHaveText("Moose");
     expect(await page.evaluate(() => window.eval("level").id)).toBe("LVL-0021");
@@ -258,7 +261,8 @@ test.describe("Leonardo da Vinci adventure", () => {
         total: window.eval("level.runes.length")
       };
     });
-    expect(after).toEqual({ completed: 4, total: 4 });
+    expect(after).toEqual({ completed: 3, total: 4 });
+    expect(await page.evaluate(() => window.eval("state.completedRunes").has("engineeringTable"))).toBe(false);
     await expect(page.getByRole("button", { name: "Poort naar Proceno" })).toBeEnabled();
   });
 

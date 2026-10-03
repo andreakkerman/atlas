@@ -1,0 +1,4 @@
+LVL-0004 1 actor {"parity":{"mae":0.07683500361766653,"over8":0.002551609476746871,"max":66},"restore":{"mae":0,"over8":0,"max":0}}
+LVL-0001 1 actor {"parity":{"mae":0.07123724195261627,"over8":0.0022683538847580783,"max":73},"restore":{"mae":0,"over8":0,"max":0}}
+LVL-0004 2 actor {"parity":{"mae":0.07219852137502117,"over8":0.0023246393879216122,"max":68},"restore":{"mae":0,"over8":0,"max":0}}
+LVL-0001 2 actor {"parity":{"mae":0.08586416047045059,"over8":0.0028202404593666774,"max":111},"restore":{"mae":0,"over8":0,"max":0}}

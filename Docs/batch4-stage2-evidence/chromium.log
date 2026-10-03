@@ -1,0 +1,35 @@
+
+Running 12 tests using 1 worker
+
+(node:30184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (2.9s)
+  ok  2 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (1.7s)
+  ok  3 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at desktop (5.3s)
+  ok  4 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at desktop-wide (5.3s)
+  ok  5 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at tablet-landscape (5.5s)
+  ok  6 [desktop-chromium] › tests\cinematic-sharpness.spec.js:9:4 › Cinematic preserves sprite resolution and lighting at tablet-portrait (5.7s)
+  ok  7 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (135ms)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.4331947844024692[39m, actorMae: [33m1.2502056115088513[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.3270116535045182[39m, actorMae: [33m1.7330357470884308[39m }
+  ok  8 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1 (5.8s)
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.4502085931125787[39m, actorMae: [33m1.505534657336623[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.3468544581967087[39m, actorMae: [33m2.2368359418053565[39m }
+  ok  9 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2 (10.3s)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.35975329570301007,"fps":57.59262814425661},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5443569998552729,"fps":59.35892362415155},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5446206424182136,"fps":58.34305717551972},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4830436427742449,"fps":57.959814527926085},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4753195494156801,"fps":58.54800936631934}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.35900351804672714,"fps":58.07200929085148},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5203957329139133,"fps":58.593750000682164},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.49883377692103303,"fps":59.15992900878056},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5136341084677448,"fps":57.74783445488268},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5279590116104899,"fps":57.68121515093247}}
+  ok 10 [desktop-chromium] › tests\illustrated-compositor.spec.js:55:1 › producer revisions suppress empty and unchanged uploads across recovery (13.5s)
+Tablet 734, entry 1: preparation started
+Tablet 734, entry 1: ready, 4 frames prepared
+Tablet 734, entry 2: preparation started
+Tablet 734, entry 2: ready, 4 frames prepared
+  ok 11 [desktop-chromium] › tests\three-tablet-acceptance.spec.js:7:31 › Tablet Optimized real GPU acceptance: 1180x734 (1.5m)
+Tablet 689, entry 1: preparation started
+Tablet 689, entry 1: ready, 4 frames prepared
+Tablet 689, entry 2: preparation started
+Tablet 689, entry 2: ready, 4 frames prepared
+  ok 12 [desktop-chromium] › tests\three-tablet-acceptance.spec.js:7:31 › Tablet Optimized real GPU acceptance: 1180x689 (1.5m)
+
+  12 passed (3.9m)

@@ -74,8 +74,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 3,
                 "minute": 0
               },
-              "hintMinnie": "De grote wijzer staat op de 12.",
-              "hintMoose": "Als de grote wijzer op de 12 staat, kijk je welk uur de kleine wijzer aanwijst.",
               "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 3. Het is drie uur."
             },
             {
@@ -98,8 +96,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 12,
                 "minute": 0
               },
-              "hintMinnie": "De grote wijzer staat op de 12.",
-              "hintMoose": "Beide wijzers wijzen naar de 12.",
               "explanation": "De grote en de kleine wijzer staan op de 12. Het is twaalf uur."
             }
           ]
@@ -127,8 +123,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 6,
                 "minute": 0
               },
-              "hintMinnie": "De grote wijzer staat op de 12.",
-              "hintMoose": "Kijk nu naar het cijfer dat de kleine wijzer aanwijst.",
               "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 6. Het is zes uur."
             },
             {
@@ -151,8 +145,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 9,
                 "minute": 0
               },
-              "hintMinnie": "De grote wijzer staat op de 12.",
-              "hintMoose": "De kleine wijzer wijst precies naar de 9.",
               "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 9. Het is negen uur."
             }
           ]
@@ -180,8 +172,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 3,
                 "minute": 20
               },
-              "hintMinnie": "De grote wijzer staat op de 4.",
-              "hintMoose": "Op de 4 zijn twintig minuten voorbij. Dat is tien minuten voor half vier.",
               "explanation": "De grote wijzer staat op de 4 en de kleine wijzer tussen de 3 en de 4. Het is tien voor half vier."
             },
             {
@@ -204,8 +194,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 5,
                 "minute": 40
               },
-              "hintMinnie": "De grote wijzer staat op de 8.",
-              "hintMoose": "Op de 8 zijn veertig minuten voorbij. Dat is tien minuten na half zes.",
               "explanation": "De grote wijzer staat op de 8 en de kleine wijzer tussen de 5 en de 6. Het is tien over half zes."
             }
           ]
@@ -233,8 +221,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 9,
                 "minute": 25
               },
-              "hintMinnie": "De grote wijzer staat op de 5.",
-              "hintMoose": "Op de 5 zijn vijfentwintig minuten voorbij. Dat is vijf minuten voor half tien.",
               "explanation": "De grote wijzer staat op de 5 en de kleine wijzer tussen de 9 en de 10. Het is vijf voor half tien."
             },
             {
@@ -257,8 +243,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "hour": 12,
                 "minute": 50
               },
-              "hintMinnie": "De grote wijzer staat op de 10.",
-              "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot het volgende hele uur.",
               "explanation": "De grote wijzer staat op de 10 en de kleine wijzer bijna op de 1. Het is tien voor één."
             }
           ]
@@ -288,8 +272,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 42,
                 49
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 5 en 2 × 5.",
+              "hintParameters": {"a":5,"b":7},
               "explanation": "5 × 7 = 35."
             },
             {
@@ -307,8 +290,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 64,
                 72
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -331,8 +313,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 72,
                 80
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+              "hintParameters": {"a":8,"b":8},
               "explanation": "8 × 8 = 64."
             },
             {
@@ -344,8 +325,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Rond de Alpenfontein staan 4 bloembakken met samen 20 bloemen. In iedere bak staan er evenveel. Hoeveel bloemen per bak?",
               "answer": 5,
-              "hintMinnie": "Verdeel 20 eerlijk over 4 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 20.",
+              "hintParameters": {"a":20,"b":4},
               "explanation": "20 : 4 = 5."
             }
           ]
@@ -362,8 +342,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "16 : 8 = ?",
               "answer": 2,
-              "hintMinnie": "Welke som uit de tafel van 8 helpt?",
-              "hintMoose": "Omdat 8 × 2 = 16, is 16 : 8 = 2.",
+              "hintParameters": {"a":16,"b":8},
               "explanation": "16 : 8 = 2."
             },
             {
@@ -381,8 +360,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 2 = 14, is 14 : 7 = 2.",
+              "hintParameters": {"a":14,"b":7},
               "explanation": "14 : 7 = 2."
             }
           ]
@@ -399,8 +377,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Rond de Alpenfontein staan 9 bloembakken met elk 5 bloemen. Hoeveel bloemen zijn dat samen?",
               "answer": 45,
-              "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 5.",
-              "hintMoose": "Tel 9 sprongen van 5.",
+              "hintParameters": {"a":9,"b":5},
               "explanation": "9 × 5 = 45."
             },
             {
@@ -412,8 +389,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "2 × 5 = ?",
               "answer": 10,
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 2 sprongen van 5.",
+              "hintParameters": {"a":2,"b":5},
               "explanation": "2 × 5 = 10."
             }
           ]
@@ -443,8 +419,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 90,
                 100
               ],
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "8 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":8,"b":10},
               "explanation": "8 × 10 = 80."
             },
             {
@@ -456,8 +431,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Atlas koopt 8 kabelbaankaartjes voor 9 euro per stuk. Hoeveel euro betaalt hij?",
               "answer": 72,
-              "hintMinnie": "Er zijn 8 gelijke bedragen van 9 euro.",
-              "hintMoose": "Reken 8 × 10 en haal er daarna 8 af.",
+              "hintParameters": {"a":8,"b":9,"currency":"euro"},
               "explanation": "8 × 9 = 72 euro."
             }
           ]
@@ -480,8 +454,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 90,
                 99
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 9 en haal 9 eraf.",
+              "hintParameters": {"a":9,"b":9},
               "explanation": "9 × 9 = 81."
             },
             {
@@ -493,8 +466,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Er rijden 4 kabelbaancabines met elk 3 reizigers. Hoeveel reizigers zijn dat samen?",
               "answer": 12,
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 3.",
-              "hintMoose": "Verdubbel 4 en tel er nog 4 bij op.",
+              "hintParameters": {"a":4,"b":3},
               "explanation": "4 × 3 = 12."
             }
           ]
@@ -517,8 +489,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 28,
                 32
               ],
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 4.",
-              "hintMoose": "Verdubbel 6 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":6,"b":4},
               "explanation": "6 × 4 = 24."
             },
             {
@@ -536,8 +507,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 7,
                 8
               ],
-              "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-              "hintMoose": "Omdat 3 × 6 = 18, is 18 : 3 = 6.",
+              "hintParameters": {"a":18,"b":3},
               "explanation": "18 : 3 = 6."
             }
           ]
@@ -554,8 +524,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32."
             },
             {
@@ -573,8 +542,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 35,
                 42
               ],
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 × 7 = 28."
             }
           ]
@@ -715,26 +683,33 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
       "moose": "stevige bergstenen, veilige route en Alpenpoort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "at-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "De bergen zijn enorm. Zelfs Moose kijkt een beetje omhoog."
+      "text": "Die bergen zijn enorm. Ik moet helemaal omhoog kijken."
     },
     {
       "id": "at-clockHouse-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "clockHouse",
       "speaker": "minnie",
-      "text": "Die klok is bijna zo groot als het huis. Te laat komen lijkt hier lastig."
+      "text": "Die klok is bijna zo groot als het huis."
     },
     {
       "id": "at-alpineFountain-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "alpineFountain",
       "speaker": "minnie",
-      "text": "Dat bergwater ziet er ijskoud uit. Mijn snor voelt het al."
+      "text": "Dat bergwater ziet er ijskoud uit."
     },
     {
       "id": "at-cableCar-attention",
@@ -774,13 +749,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
       "id": "at-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De Alpenpoort wacht nog op {remainingChallenges}. Bergen geven niets cadeau."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de Alpenpoort open."
     },
     {
       "id": "at-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De Alpenpoort is open. Tijd voor het fjord."
+      "text": "De Alpenpoort is open. Op naar Zweden."
     },
     {
       "id": "at-complete",

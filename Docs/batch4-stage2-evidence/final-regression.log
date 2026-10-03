@@ -1,0 +1,21 @@
+
+Running 4 tests using 1 worker
+
+(node:30296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30296) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (290ms)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.43318362351637185[39m, actorMae: [33m1.247805687012094[39m }
+SPRITE_FILTER_PARITY [33m1[39m { domImpact: [33m0.1787487045219004[39m, fullImpact: [33m0.1864158893798069[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.3270128080789421[39m, actorMae: [33m1.7330908556523017[39m }
+  ok 2 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1 (6.6s)
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.45021099847596174[39m, actorMae: [33m1.505929026951961[39m }
+SPRITE_FILTER_PARITY [33m2[39m { domImpact: [33m0.17892598047237224[39m, fullImpact: [33m0.18585934516991218[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.3468528225496082[39m, actorMae: [33m2.236847422756163[39m }
+  ok 3 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2 (11.3s)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.3916830340522154,"fps":58.6969281947757},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5521881016283339,"fps":58.60519632945487},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5945964589212787,"fps":57.50431282411871},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5533014911720168,"fps":56.990881458966605},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4686702677393106,"fps":58.12826971651417}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.36204833432965033,"fps":57.87037037037041},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5433165113707938,"fps":58.263740532816705},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5273574552018422,"fps":59.136605558841005},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5272264859911528,"fps":58.18463925590925},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.47184247346276836,"fps":56.8504832310339}}
+  ok 4 [desktop-chromium] › tests\illustrated-compositor.spec.js:74:1 › producer revisions suppress empty and unchanged uploads across recovery (13.3s)
+
+  4 passed (32.1s)

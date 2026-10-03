@@ -18,8 +18,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "Op de wereldkaart markeert Job 8 routes met elk 6 routeblokjes. Hoeveel routeblokjes gebruikt hij?",
             "answer": 48,
-            "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 6.",
-            "hintMoose": "Reken 8 × 5 en tel er nog 8 bij op.",
+            "hintParameters": {"a":8,"b":6},
             "explanation": "8 × 6 = 48."
           },
           {
@@ -31,8 +30,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "2 × 7 = ?",
             "answer": 14,
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 2 en 2 × 2.",
+            "hintParameters": {"a":2,"b":7},
             "explanation": "2 × 7 = 14."
           }
         ]
@@ -49,8 +47,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "45 : 5 = ?",
             "answer": 9,
-            "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-            "hintMoose": "Omdat 5 × 9 = 45, is 45 : 5 = 9.",
+            "hintParameters": {"a":45,"b":5},
             "explanation": "45 : 5 = 9."
           },
           {
@@ -62,8 +59,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "5 × 8 = ?",
             "answer": 40,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+            "hintParameters": {"a":5,"b":8},
             "explanation": "5 × 8 = 40."
           }
         ]
@@ -86,8 +82,7 @@ const learningChallengesLVL0009 = [
               30,
               33
             ],
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 9 en tel nog 9 erbij.",
+            "hintParameters": {"a":9,"b":3},
             "explanation": "9 × 3 = 27."
           },
           {
@@ -105,8 +100,7 @@ const learningChallengesLVL0009 = [
               9,
               10
             ],
-            "hintMinnie": "Verdeel 72 eerlijk over 9 gelijke groepen.",
-            "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 72.",
+            "hintParameters": {"a":72,"b":9},
             "explanation": "72 : 9 = 8."
           }
         ]
@@ -123,8 +117,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "5 × 5 = ?",
             "answer": 25,
-            "hintMinnie": "Denk aan de tafel van 5.",
-            "hintMoose": "Tel 5 sprongen van 5.",
+            "hintParameters": {"a":5,"b":5},
             "explanation": "5 × 5 = 25."
           },
           {
@@ -136,8 +129,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "2 × 9 = ?",
             "answer": 18,
-            "hintMinnie": "Denk aan de tafel van 9.",
-            "hintMoose": "Reken 10 × 2 en haal 2 eraf.",
+            "hintParameters": {"a":2,"b":9},
             "explanation": "2 × 9 = 18."
           }
         ]
@@ -161,8 +153,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "8 × 6 = ?",
             "answer": 48,
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 8 en tel nog 8 erbij.",
+            "hintParameters": {"a":8,"b":6},
             "explanation": "8 × 6 = 48."
           },
           {
@@ -174,8 +165,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "6 × 3 = ?",
             "answer": 18,
-            "hintMinnie": "Denk aan de tafel van 3.",
-            "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+            "hintParameters": {"a":6,"b":3},
             "explanation": "6 × 3 = 18."
           }
         ]
@@ -192,8 +182,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "4 × 8 = ?",
             "answer": 32,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 4 en verdubbel dat.",
+            "hintParameters": {"a":4,"b":8},
             "explanation": "4 × 8 = 32."
           },
           {
@@ -211,8 +200,7 @@ const learningChallengesLVL0009 = [
               10,
               11
             ],
-            "hintMinnie": "Verdeel 36 eerlijk over 4 gelijke groepen.",
-            "hintMoose": "Zoek in de tafel van 4 welk getal uitkomt op 36.",
+            "hintParameters": {"a":36,"b":4},
             "explanation": "36 : 4 = 9."
           }
         ]
@@ -235,8 +223,7 @@ const learningChallengesLVL0009 = [
               10,
               11
             ],
-            "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-            "hintMoose": "Omdat 3 × 9 = 27, is 27 : 3 = 9.",
+            "hintParameters": {"a":27,"b":3},
             "explanation": "27 : 3 = 9."
           },
           {
@@ -254,8 +241,7 @@ const learningChallengesLVL0009 = [
               64,
               72
             ],
-            "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 8.",
-            "hintMoose": "Verdubbel 7 drie keer.",
+            "hintParameters": {"a":7,"b":8},
             "explanation": "7 × 8 = 56."
           }
         ]
@@ -272,8 +258,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "8 × 8 = ?",
             "answer": 64,
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 8 en verdubbel dat.",
+            "hintParameters": {"a":8,"b":8},
             "explanation": "8 × 8 = 64."
           },
           {
@@ -291,8 +276,7 @@ const learningChallengesLVL0009 = [
               48,
               54
             ],
-            "hintMinnie": "Denk aan de tafel van 6.",
-            "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+            "hintParameters": {"a":7,"b":6},
             "explanation": "7 × 6 = 42."
           }
         ]
@@ -316,8 +300,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "Job koopt 4 kristaldozen voor 10 munten per stuk. Hoeveel munten betaalt hij?",
             "answer": 40,
-            "hintMinnie": "Er zijn 4 gelijke bedragen van 10 munten.",
-            "hintMoose": "Vermenigvuldig 4 met 10: zet een nul achter 4.",
+            "hintParameters": {"a":4,"b":10,"currency":"munten"},
             "explanation": "4 × 10 = 40 munten."
           },
           {
@@ -335,8 +318,7 @@ const learningChallengesLVL0009 = [
               45,
               50
             ],
-            "hintMinnie": "Denk aan de tafel van 5.",
-            "hintMoose": "Tel 8 sprongen van 5.",
+            "hintParameters": {"a":8,"b":5},
             "explanation": "8 × 5 = 40."
           }
         ]
@@ -359,8 +341,7 @@ const learningChallengesLVL0009 = [
               6,
               7
             ],
-            "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-            "hintMoose": "Omdat 9 × 5 = 45, is 45 : 9 = 5.",
+            "hintParameters": {"a":45,"b":9},
             "explanation": "45 : 9 = 5."
           },
           {
@@ -378,8 +359,7 @@ const learningChallengesLVL0009 = [
               48,
               56
             ],
-            "hintMinnie": "Denk aan de tafel van 8.",
-            "hintMoose": "Reken 4 × 5 en verdubbel dat.",
+            "hintParameters": {"a":5,"b":8},
             "explanation": "5 × 8 = 40."
           }
         ]
@@ -396,8 +376,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "2 × 4 = ?",
             "answer": 8,
-            "hintMinnie": "Denk aan de tafel van 4.",
-            "hintMoose": "Verdubbel 2 twee keer.",
+            "hintParameters": {"a":2,"b":4},
             "explanation": "2 × 4 = 8."
           },
           {
@@ -415,8 +394,7 @@ const learningChallengesLVL0009 = [
               25,
               30
             ],
-            "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 5.",
-            "hintMoose": "Tel 4 sprongen van 5.",
+            "hintParameters": {"a":4,"b":5},
             "explanation": "4 × 5 = 20."
           }
         ]
@@ -439,8 +417,7 @@ const learningChallengesLVL0009 = [
               56,
               63
             ],
-            "hintMinnie": "Denk aan de tafel van 7.",
-            "hintMoose": "Reken 5 × 7 en 2 × 7.",
+            "hintParameters": {"a":7,"b":7},
             "explanation": "7 × 7 = 49."
           },
           {
@@ -452,8 +429,7 @@ const learningChallengesLVL0009 = [
             "answerMode": "open",
             "prompt": "In de kristalkast staan 6 bakjes met elk 5 kristalscherven. Hoeveel scherven zijn dat samen?",
             "answer": 30,
-            "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 5.",
-            "hintMoose": "Tel 6 sprongen van 5.",
+            "hintParameters": {"a":6,"b":5},
             "explanation": "6 × 5 = 30."
           }
         ]
@@ -578,19 +554,26 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       moose: "kettingen, deuren en de veilige route door de kamer"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   companionMoments: [
     {
       id: "awakened-enter",
       event: "LEVEL_ENTER",
       speaker: "minnie",
-      text: "Deze kamer leeft echt. De kristallen knipperen naar ons."
+      text: "Overal knipperen kristallen. Wat een verschil."
     },
     {
       id: "awakened-map-attention",
       event: "HOTSPOT_ATTENTION_FIRST",
       challengeId: "worldMap",
       speaker: "minnie",
-      text: "Die wereldkaart heeft blokken én geheimen. Goede combinatie."
+      text: "Die wereldkaart bestaat helemaal uit blokken."
     },
     {
       id: "awakened-book-attention",
@@ -604,7 +587,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       event: "HOTSPOT_ATTENTION_FIRST",
       challengeId: "crystalCase",
       speaker: "minnie",
-      text: "De kristalkast gloeit van binnen. Alsof hij een antwoord bewaart."
+      text: "De kristalkast gloeit van binnen. Die valt meteen op."
     },
     {
       id: "awakened-solved",
@@ -622,13 +605,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0009"] = {
       id: "awakened-blocked",
       event: "EXIT_BLOCKED",
       speaker: "moose",
-      text: "De ijzeren deur blijft dicht. Eerst nog {remainingChallenges}."
+      text: "Nog {remainingChallenges} te gaan. Daarna kan de ijzeren deur open."
     },
     {
       id: "awakened-unlocked",
       event: "PATH_UNLOCKED",
       speaker: "moose",
-      text: "De deur geeft mee. Voorzichtig door."
+      text: "De ijzeren deur gaat open. Voorzichtig verder."
     },
     {
       id: "awakened-complete",

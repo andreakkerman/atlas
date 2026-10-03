@@ -1,0 +1,56 @@
+
+Running 1 test using 1 worker
+
+(node:44752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44752) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+RECOVERY DIAGNOSTIC {
+  plays: [
+    {
+      ok: [33mtrue[39m,
+      error: [90mundefined[39m,
+      ready: [33m4[39m,
+      src: [32m'http://127.0.0.1:2265/assets/ambient/flybys/arc_wasp/arc_wasp.mp3'[39m,
+      paused: [33mtrue[39m
+    },
+    {
+      ok: [33mtrue[39m,
+      error: [90mundefined[39m,
+      ready: [33m4[39m,
+      src: [32m'http://127.0.0.1:2265/assets/ambient/flybys/arc_wasp/arc_wasp.mp3'[39m,
+      paused: [33mtrue[39m
+    }
+  ],
+  loads: [33m2[39m,
+  failures: [33m1[39m,
+  unlocked: [33mtrue[39m,
+  readiness: [ { key: [32m'LVL-0032:arc_wasp2'[39m, ready: [33mtrue[39m, sound: [33mtrue[39m } ],
+  active: [ [32m'arc_wasp2'[39m ]
+}
+  x  1 [desktop-chromium] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (11.9s)
+
+
+  1) [desktop-chromium] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      116 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBe(0);
+      117 |   await page.evaluate(() => window.eval('audioConfig').volumes.master = .5);
+    > 118 |   await expect.poll(() => page.evaluate(() => window.recoveryPlays[0].audio.volume)).toBeGreaterThan(0);
+          |                                                                                      ^
+      119 |   await page.evaluate(() => window.eval('returnToMenu')());
+      120 |   expect(await page.evaluate(() => window.recoveryPlays.every(p => p.audio.paused))).toBe(true);
+      121 |   expect(await page.evaluate(() => window.eval('ambientFlybyRuntime').activeAudio.size)).toBe(0);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:118:86
+
+    Error Context: test-results\asset-recovery-failed-Flyb-a0025-ve-scheduled-playback-works-desktop-chromium\error-context.md
+
+  1 failed
+    [desktop-chromium] › tests\asset-recovery.spec.js:93:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 

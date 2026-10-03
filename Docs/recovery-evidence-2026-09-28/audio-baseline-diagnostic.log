@@ -1,0 +1,41 @@
+
+Running 1 test using 1 worker
+
+(node:44416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:44416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › tests\asset-recovery.spec.js:74:53 › failed Flyby preload recovers at later preparation and native scheduled playback works (5.8s)
+
+
+  1) [desktop-chromium] › tests\asset-recovery.spec.js:74:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoMatchObject[2m([22m[32mexpected[39m[2m)[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [32m-   "warnings": ArrayContaining [[39m
+    [32m-     StringContaining "sound disabled:",[39m
+    [31m+   "warnings": Array [[39m
+    [31m+     "Service Worker registration blocked by Playwright",[39m
+    [2m    ],[22m
+    [2m  }[22m
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      79 |   });
+      80 |   await boot(page); await enter(page);
+    > 81 |   await expect.poll(() => page.evaluate(() => ({ warnings: window.recoveryWarnings, loads: window.recoveryLoads, configs: window.eval('level').ambientFlybys.map(c => c.sound) }))).toMatchObject({ warnings: expect.arrayContaining([expect.stringContaining('sound disabled:')]) });
+         |                                                                                                                                                                                     ^
+      82 |   await schedule(page);
+      83 |   expect(await page.evaluate(() => window.recoveryPlays.length)).toBe(0);
+      84 |   const before = requests, loads = await page.evaluate(() => window.recoveryLoads);
+        at D:\DevProjects\SvenAdventure\tests\asset-recovery.spec.js:81:181
+
+    Error Context: test-results\asset-recovery-failed-Flyb-a0025-ve-scheduled-playback-works-desktop-chromium\error-context.md
+
+  1 failed
+    [desktop-chromium] › tests\asset-recovery.spec.js:74:53 › failed Flyby preload recovers at later preparation and native scheduled playback works 

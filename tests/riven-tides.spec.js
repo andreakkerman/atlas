@@ -1,3 +1,4 @@
+const challengeHints = require('../src/challenge-hints');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.join(__dirname,'..');
@@ -18,7 +19,7 @@ test('Riven Tides has measured assets, exact anchors and complete math banks',()
   expect(c.questions).toHaveLength(4);
   for(const slot of c.questions){expect(slot.variants).toHaveLength(2);for(const v of slot.variants){
    expect(v).toMatchObject({domain:'math',schoolBand:'E5-intended'});expect(v.visual).toBeUndefined();
-   expect(v.hintMinnie).toBeTruthy();expect(v.hintMoose).toBeTruthy();
+   expect(challengeHints.resolve(l.id, v, 'minnie')).toBeTruthy();expect(challengeHints.resolve(l.id, v, 'moose')).toBeTruthy();
    const equation=v.explanation.match(/^(\d+) ([×:]) (\d+) = (\d+)/);expect(equation).toBeTruthy();
    expect(equation[2]==='×'?+equation[1]*+equation[3]:+equation[1]/+equation[3]).toBe(v.answer);
    if(v.choices){expect(new Set(v.choices).size).toBe(4);expect(v.choices).toContain(v.answer);}

@@ -1,3 +1,4 @@
+const challengeHints = require('../src/challenge-hints');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.join(__dirname,'..');
@@ -18,7 +19,7 @@ test('Stella Montis has measured assets, exact anchors and complete math and clo
   expect(c.questions).toHaveLength(4);
   for(const slot of c.questions){expect(slot.variants).toHaveLength(2);for(const v of slot.variants){
    expect(v).toMatchObject({domain:'math',schoolBand:'E5-intended'});if(c.id==='roundContainer'){expect(v.family).toBe('clock_reading');expect(v.visual.type).toBe('clock');expect(v.answer).not.toMatch(/\d/);}else expect(v.visual).toBeUndefined();
-   expect(v.hintMinnie).toBeTruthy();expect(v.hintMoose).toBeTruthy();
+   expect(challengeHints.resolve(l.id, v, 'minnie')).toBeTruthy();expect(challengeHints.resolve(l.id, v, 'moose')).toBeTruthy();
    if(c.id!=='roundContainer'){const equation=v.explanation.match(/^(\d+) ([×:]) (\d+) = (\d+)/);expect(equation).toBeTruthy();
    expect(equation[2]==='×'?+equation[1]*+equation[3]:+equation[1]/+equation[3]).toBe(v.answer);}
    if(v.choices){expect(new Set(v.choices).size).toBe(4);expect(v.choices).toContain(v.answer);}

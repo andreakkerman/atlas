@@ -183,8 +183,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "7 × 9 = ?",
               "answer": 63,
-              "hintMinnie": "Denk aan 7 groepjes van 9.",
-              "hintMoose": "Reken eerst 6 × 9 = 54. Tel er 9 bij.",
+              "hintParameters": {"a":7,"b":9},
               "explanation": "7 × 9 = 63."
             },
             {
@@ -196,8 +195,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "6 × 8 = ?",
               "answer": 48,
-              "hintMinnie": "Denk aan 6 groepjes van 8.",
-              "hintMoose": "Reken eerst 5 × 8 = 40. Tel er 8 bij.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48.",
               "choices": [
                 56,
@@ -220,8 +218,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintMinnie": "Denk aan 4 groepjes van 8.",
-              "hintMoose": "Reken eerst 3 × 8 = 24. Tel er 8 bij.",
+              "hintParameters": {"a":4,"b":8},
               "explanation": "4 × 8 = 32.",
               "choices": [
                 32,
@@ -239,8 +236,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "9 × 3 = ?",
               "answer": 27,
-              "hintMinnie": "Denk aan 9 groepjes van 3.",
-              "hintMoose": "Reken eerst 8 × 3 = 24. Tel er 3 bij.",
+              "hintParameters": {"a":9,"b":3},
               "explanation": "9 × 3 = 27."
             }
           ]
@@ -257,8 +253,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "Op het scherm staan 6 rijen met elk 7 vakjes. Hoeveel vakjes zijn dat samen?",
               "answer": 42,
-              "hintMinnie": "Denk aan 6 groepjes van 7.",
-              "hintMoose": "Reken eerst 5 × 7 = 35. Tel er 7 bij.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             },
             {
@@ -270,8 +265,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Er zijn 8 kabelbundels met elk 6 kabels. Hoeveel kabels zijn dat samen?",
               "answer": 48,
-              "hintMinnie": "Denk aan 8 groepjes van 6.",
-              "hintMoose": "Reken eerst 7 × 6 = 42. Tel er 6 bij.",
+              "hintParameters": {"a":8,"b":6},
               "explanation": "8 × 6 = 48.",
               "choices": [
                 54,
@@ -294,8 +288,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "56 : 7 = ?",
               "answer": 8,
-              "hintMinnie": "Welke vermenigvuldiging met 7 komt uit op 56?",
-              "hintMoose": "7 × 8 = 56, dus 56 : 7 = 8.",
+              "hintParameters": {"a":56,"b":7},
               "explanation": "56 : 7 = 8."
             },
             {
@@ -307,8 +300,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "72 : 8 = ?",
               "answer": 9,
-              "hintMinnie": "Welke vermenigvuldiging met 8 komt uit op 72?",
-              "hintMoose": "8 × 9 = 72, dus 72 : 8 = 9.",
+              "hintParameters": {"a":72,"b":8},
               "explanation": "72 : 8 = 9.",
               "choices": [
                 17,
@@ -349,8 +341,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Kwart over één",
                 "Kwart over twee"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 3.",
-              "hintMoose": "De grote wijzer staat op de 3. Dat betekent kwart over. De kleine wijzer staat net na de 1.",
               "explanation": "De grote wijzer staat op de 3. Dat betekent kwart over. De kleine wijzer staat net na de 1. Het is kwart over één."
             },
             {
@@ -373,8 +363,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Negen uur",
                 "Tien uur"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 6.",
-              "hintMoose": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 9 en 10. Dat heet half tien.",
               "explanation": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 9 en 10. Dat heet half tien. Het is half tien."
             }
           ]
@@ -402,8 +390,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Tien over half zes",
                 "Tien voor half zes"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 4.",
-              "hintMoose": "De grote wijzer staat op de 4: tien minuten voor half. De kleine wijzer staat tussen 5 en 6.",
               "explanation": "De grote wijzer staat op de 4: tien minuten voor half. De kleine wijzer staat tussen 5 en 6. Het is tien voor half zes."
             },
             {
@@ -426,8 +412,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Vijf over twee",
                 "Half drie"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 7.",
-              "hintMoose": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 2 en 3.",
               "explanation": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 2 en 3. Het is vijf over half drie."
             }
           ]
@@ -455,8 +439,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Vijf voor half negen",
                 "Vijf voor negen"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 5.",
-              "hintMoose": "De grote wijzer staat op de 5: vijf minuten voor half. De kleine wijzer staat tussen 8 en 9.",
               "explanation": "De grote wijzer staat op de 5: vijf minuten voor half. De kleine wijzer staat tussen 8 en 9. Het is vijf voor half negen."
             },
             {
@@ -479,8 +461,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Kwart voor elf",
                 "Tien over tien"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 8.",
-              "hintMoose": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 10 en 11.",
               "explanation": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 10 en 11. Het is tien over half elf."
             }
           ]
@@ -508,8 +488,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Zeven uur",
                 "Tien voor zeven"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 10.",
-              "hintMoose": "De grote wijzer staat op de 10. Het duurt nog tien minuten tot zeven uur.",
               "explanation": "De grote wijzer staat op de 10. Het duurt nog tien minuten tot zeven uur. Het is tien voor zeven."
             },
             {
@@ -532,8 +510,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Half twaalf",
                 "Kwart voor elf"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 9.",
-              "hintMoose": "De grote wijzer staat op de 9. Het duurt nog een kwartier tot twaalf uur.",
               "explanation": "De grote wijzer staat op de 9. Het duurt nog een kwartier tot twaalf uur. Het is kwart voor twaalf."
             }
           ]
@@ -557,8 +533,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "8 × 9 = ?",
               "answer": 72,
-              "hintMinnie": "Denk aan 8 groepjes van 9.",
-              "hintMoose": "Reken eerst 7 × 9 = 63. Tel er 9 bij.",
+              "hintParameters": {"a":8,"b":9},
               "explanation": "8 × 9 = 72.",
               "choices": [
                 72,
@@ -576,8 +551,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "7 × 6 = ?",
               "answer": 42,
-              "hintMinnie": "Denk aan 7 groepjes van 6.",
-              "hintMoose": "Reken eerst 6 × 6 = 36. Tel er 6 bij.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -594,8 +568,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "5 × 4 = ?",
               "answer": 20,
-              "hintMinnie": "Denk aan 5 groepjes van 4.",
-              "hintMoose": "Reken eerst 4 × 4 = 16. Tel er 4 bij.",
+              "hintParameters": {"a":5,"b":4},
               "explanation": "5 × 4 = 20."
             },
             {
@@ -607,8 +580,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintMinnie": "Denk aan 9 groepjes van 8.",
-              "hintMoose": "Reken eerst 8 × 8 = 64. Tel er 8 bij.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72.",
               "choices": [
                 80,
@@ -631,8 +603,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "48 : 6 = ?",
               "answer": 8,
-              "hintMinnie": "Welke vermenigvuldiging met 6 komt uit op 48?",
-              "hintMoose": "6 × 8 = 48, dus 48 : 6 = 8.",
+              "hintParameters": {"a":48,"b":6},
               "explanation": "48 : 6 = 8.",
               "choices": [
                 8,
@@ -650,8 +621,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "63 : 9 = ?",
               "answer": 7,
-              "hintMinnie": "Welke vermenigvuldiging met 9 komt uit op 63?",
-              "hintMoose": "9 × 7 = 63, dus 63 : 9 = 7.",
+              "hintParameters": {"a":63,"b":9},
               "explanation": "63 : 9 = 7."
             }
           ]
@@ -668,8 +638,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Valente verdeelt 42 batterijen over 7 gelijke doosjes. Hoeveel batterijen gaan in elk doosje?",
               "answer": 6,
-              "hintMinnie": "Welke vermenigvuldiging met 7 komt uit op 42?",
-              "hintMoose": "7 × 6 = 42, dus 42 : 7 = 6.",
+              "hintParameters": {"a":42,"b":7},
               "explanation": "42 : 7 = 6.",
               "choices": [
                 6,
@@ -682,13 +651,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "id": "crate-4b",
               "domain": "math",
               "schoolBand": "E5-intended",
-              "family": "story_multiplication",
+              "family": "money",
               "presentation": "story",
               "answerMode": "open",
               "prompt": "Een zaklamp kost 4 euro. Valente koopt 5 zaklampen. Hoeveel euro betaalt hij?",
               "answer": 20,
-              "hintMinnie": "Denk aan 4 groepjes van 5.",
-              "hintMoose": "Reken eerst 3 × 5 = 15. Tel er 5 bij.",
+              "hintParameters": {"a":5,"b":4,"currency":"euro"},
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -799,6 +767,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
       "moose": "de hangende container en de trap naar Sector 3"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": ["CHALLENGE_OPEN", "CHALLENGE_SUCCESS", "LEVEL_PROGRESS_MILESTONE"],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "stella-enter",
@@ -831,13 +803,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
       "id": "stella-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Die treden zien er glad uit."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we verder."
     },
     {
       "id": "stella-complete",
       "event": "ADVENTURE_COMPLETE",
       "speaker": "minnie",
       "text": "Ik zou nu best een warm plekje kunnen gebruiken."
+    },
+    {
+      "id": "stella-unlocked",
+      "event": "PATH_UNLOCKED",
+      "speaker": "moose",
+      "text": "Alles klaar. Tijd om Stella Montis achter ons te laten."
     }
   ],
   "ambientFlybys": [

@@ -1,0 +1,2602 @@
+[
+  {
+    "name": "original-off",
+    "features": {
+      "globalLighting": true,
+      "globalGrading": false,
+      "areaDirectionalLights": false,
+      "sceneDepth": false,
+      "characterShadows": true,
+      "particleFields": true
+    },
+    "snapshot": {
+      "status": "ready",
+      "error": null,
+      "mode": "illustrated",
+      "illustratedScene": false,
+      "shadowOverlay": true,
+      "effective": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": -0.02,
+          "contrast": 1.05,
+          "highlights": -0.1,
+          "shadows": 0.03,
+          "saturation": 1.02,
+          "warmth": 0.05,
+          "tint": 0,
+          "blackPoint": 0.01
+        },
+        "localLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 137,
+              "y": 292,
+              "color": "#ffc477",
+              "radius": 72,
+              "intensity": 2.48,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "left-lantern",
+              "layer": "effects",
+              "name": "left-lantern"
+            },
+            {
+              "enabled": true,
+              "x": 1794,
+              "y": 368,
+              "color": "#ffc477",
+              "radius": 145,
+              "intensity": 0.9,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "right-lantern",
+              "layer": "effects",
+              "name": "right-lantern"
+            }
+          ]
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe0a0",
+              "shape": "ellipse",
+              "width": 2100,
+              "height": 1050,
+              "softness": 0.88,
+              "direction": 48,
+              "intensity": 0.62,
+              "falloff": 1.25,
+              "depth": 0.62,
+              "depthInfluence": 0.72,
+              "depthSoftness": 0.18,
+              "id": "tropical-sunlight",
+              "layer": "globalLighting",
+              "name": "tropical-sunlight"
+            }
+          ]
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1080,
+              "y": 320,
+              "color": "#9ec9c2",
+              "shape": "ellipse",
+              "width": 1150,
+              "height": 420,
+              "softness": 0.82,
+              "direction": 0,
+              "density": 0.05,
+              "scale": 1.15,
+              "driftSpeed": 5,
+              "driftDirection": 0,
+              "turbulence": 0.24,
+              "noiseScale": 1.25,
+              "noiseDetail": 4,
+              "depthInfluence": 0.82,
+              "nearClear": 0.3,
+              "farDensity": 0,
+              "depthCurve": 1.44,
+              "floorBias": 1,
+              "depthBias": -0.4,
+              "id": "lagoon-haze",
+              "layer": "environment",
+              "name": "lagoon-haze"
+            }
+          ]
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.24,
+          "threshold": 0.9,
+          "softKnee": 0.24,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.82,
+          "localContribution": 0.45
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 320,
+              "color": "#ffe6a2",
+              "shape": "rectangle",
+              "width": 1900,
+              "height": 470,
+              "softness": 0.6,
+              "direction": -15,
+              "count": 180,
+              "size": 1.8,
+              "sizeVariation": 0.58,
+              "speed": 7,
+              "turbulence": 0.75,
+              "lifetime": 24,
+              "opacity": 0.25,
+              "glow": 0.18,
+              "gravity": -0.08,
+              "randomness": 0.84,
+              "depth": 0.7,
+              "depthInfluence": 0.82,
+              "depthSoftness": 0.14,
+              "layer": "environment",
+              "wind": 3,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.5,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "id": "tropical-pollen",
+              "name": "tropical-pollen"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 460,
+          "shadowLightSourceY": 96,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.68,
+          "colorSpill": 0.62,
+          "intensityResponse": 0.58,
+          "directionalInfluence": 0.72,
+          "atmosphereInfluence": 0.55,
+          "depthTint": 0.14,
+          "grounding": 0.12,
+          "sideLighting": 0.66,
+          "frontAtmosphere": 0.4
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.08,
+          "radius": 2,
+          "colorInfluence": 0.64
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.08,
+          "width": 1.5,
+          "colorResponse": 0.72,
+          "localInfluence": 0.72,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.1,
+          "softness": 0.78,
+          "finalExposure": 0,
+          "finalContrast": 1.02
+        },
+        "godRays": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe3a4",
+              "direction": 57,
+              "spread": 142,
+              "rayCount": 7,
+              "rayWidth": 0.7,
+              "widthVariation": 0.32,
+              "spacingVariation": 0.48,
+              "rayMotion": 0.71,
+              "motionSpeed": 0.94,
+              "fadeVariation": 0.27,
+              "length": 1394,
+              "intensity": 0.34,
+              "softness": 0.72,
+              "feather": 0.39,
+              "decay": 1,
+              "breakup": 0.43,
+              "noiseScale": 1.2,
+              "noiseAmount": 0.94,
+              "noiseSpeed": 0.32,
+              "atmosphereInfluence": 1.15,
+              "depth": 0.88,
+              "depthInfluence": 0.7,
+              "depthSoftness": 0.27,
+              "id": "canopy-sun-rays",
+              "layer": "globalLighting",
+              "name": "canopy-sun-rays"
+            }
+          ]
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.3,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-mtmnzsh6",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6",
+              "points": [
+                {
+                  "x": -0.4263801007243546,
+                  "y": -0.008314694410055381
+                },
+                {
+                  "x": -0.21593646812166298,
+                  "y": -0.03600464606830428
+                },
+                {
+                  "x": 0.24556274026632308,
+                  "y": 0.3405786964838808
+                },
+                {
+                  "x": -0.38530664426361,
+                  "y": 0.16797796964645387
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1523,
+              "y": 382,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.2,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-ee53ec84-77d0-4a9e-92a0-278ac39c2633",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6 copy",
+              "points": [
+                {
+                  "x": -0.09578519439151932,
+                  "y": -0.05138454938480209
+                },
+                {
+                  "x": 0.0768155324459076,
+                  "y": -0.05323060249736954
+                },
+                {
+                  "x": 0.2397247762029474,
+                  "y": 0.36396472548893144
+                },
+                {
+                  "x": -0.0824016895890236,
+                  "y": 0.12306214606216599
+                }
+              ]
+            }
+          ]
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 2.2,
+              "sparkleDensity": 0.45,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.25,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.88,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-mtmo3i3d",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d",
+              "points": [
+                {
+                  "x": -0.42268807900224603,
+                  "y": -0.013852684741705161
+                },
+                {
+                  "x": -0.16101807808330704,
+                  "y": -0.014775711297988891
+                },
+                {
+                  "x": 0.1994128490035837,
+                  "y": 0.322118672376364
+                },
+                {
+                  "x": -0.3276192590594292,
+                  "y": 0.1818229454755783
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1055,
+              "y": 412,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 8,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.8,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.71,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-b1dadde2-2c30-4a76-8640-c763a12606a8",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy",
+              "points": [
+                {
+                  "x": -0.05999951996844834,
+                  "y": -0.16478556261288876
+                },
+                {
+                  "x": 0.03614092283386459,
+                  "y": -0.16675995096857588
+                },
+                {
+                  "x": -0.10856537146856321,
+                  "y": -0.0038778823906411653
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1635,
+              "y": 438,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 4.27,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.42,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-7a22a1d7-5d02-421d-98c8-fc27526168ce",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy copy",
+              "points": [
+                {
+                  "x": -0.24823639851074036,
+                  "y": -0.2303556832341911
+                },
+                {
+                  "x": -0.036628207584355504,
+                  "y": -0.22048401258846018
+                },
+                {
+                  "x": 0.06347682230210092,
+                  "y": 0.1358822403048773
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            }
+          ]
+        },
+        "gameplayCues": {
+          "enabled": false,
+          "intensity": 0.9,
+          "characterInfluence": 0.9
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "pipelines": [
+        "sprite",
+        "shadow",
+        "particle"
+      ],
+      "renderTargets": 1,
+      "buffers": 6,
+      "scheduled": true,
+      "ready": true,
+      "levelId": "LVL-0004",
+      "frame": 67,
+      "averageMs": 0.797238722913024,
+      "fps": 57.585363097946,
+      "sprites": 1,
+      "drawCalls": 3,
+      "shadowDraws": 1,
+      "groundedSprites": 1,
+      "grounding": [
+        {
+          "key": "actor:sven",
+          "left": {
+            "center": 0.3689373764219844,
+            "bottom": 0.9620493358633776,
+            "point": {
+              "x": 0.2035422419974799,
+              "y": 0.7690097477937177
+            }
+          },
+          "right": {
+            "center": 0.6045074508227586,
+            "bottom": 0.937381404174573,
+            "point": {
+              "x": 0.24382372836944993,
+              "y": 0.7607214993909694
+            }
+          },
+          "center": 0.48672241362237145,
+          "split": 0.48672241362237145,
+          "groundline": 0.9497153700189753
+        }
+      ],
+      "shadowStates": [
+        {
+          "key": "actor:sven",
+          "angle": 1.8075344117724341,
+          "localOffset": 2.220446049250313e-16,
+          "length": 0.72,
+          "targetAngle": 1.8075344117724341,
+          "targetLength": 0.72
+        }
+      ],
+      "particles": 180,
+      "waterSurfaces": 0,
+      "waterSparkles": 0,
+      "depthStatus": "ready",
+      "depthPath": "Levels/LVL-0004/assets/depthmap.png",
+      "depthLoads": 1,
+      "depthCached": 1,
+      "textureUploads": [
+        {
+          "type": "ImageBitmap",
+          "width": 2172,
+          "height": 724,
+          "purpose": "level artwork",
+          "path": "Levels/LVL-0004/assets/nautilus-harbor.png",
+          "fallback": false
+        },
+        {
+          "type": "ImageBitmap",
+          "width": 2172,
+          "height": 724,
+          "purpose": "scene depthmap",
+          "path": "Levels/LVL-0004/assets/depthmap.png",
+          "fallback": false
+        },
+        {
+          "type": "ImageBitmap",
+          "width": 432,
+          "height": 528,
+          "purpose": "sprite actor:sven",
+          "path": "assets/characters/sven/idle_blink/frame_008.png",
+          "fallback": false
+        }
+      ],
+      "bindGroups": 14,
+      "resolution": [
+        2360,
+        1468
+      ],
+      "backend": "WebGPU"
+    },
+    "camera": 0,
+    "worldX": 263,
+    "canvases": [
+      {
+        "slot": "backgroundAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldLight",
+        "opacity": "1",
+        "blank": false
+      },
+      {
+        "slot": "foregroundAtmosphere",
+        "opacity": "1",
+        "blank": false
+      }
+    ]
+  },
+  {
+    "name": "globalGrading-off",
+    "features": {
+      "globalLighting": true,
+      "globalGrading": false,
+      "areaDirectionalLights": false,
+      "sceneDepth": false,
+      "characterShadows": true,
+      "particleFields": true
+    },
+    "snapshot": {
+      "status": "ready",
+      "error": null,
+      "mode": "illustrated",
+      "illustratedScene": false,
+      "shadowOverlay": true,
+      "effective": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": -0.02,
+          "contrast": 1.05,
+          "highlights": -0.1,
+          "shadows": 0.03,
+          "saturation": 1.02,
+          "warmth": 0.05,
+          "tint": 0,
+          "blackPoint": 0.01
+        },
+        "localLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 137,
+              "y": 292,
+              "color": "#ffc477",
+              "radius": 72,
+              "intensity": 2.48,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "left-lantern",
+              "layer": "effects",
+              "name": "left-lantern"
+            },
+            {
+              "enabled": true,
+              "x": 1794,
+              "y": 368,
+              "color": "#ffc477",
+              "radius": 145,
+              "intensity": 0.9,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "right-lantern",
+              "layer": "effects",
+              "name": "right-lantern"
+            }
+          ]
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe0a0",
+              "shape": "ellipse",
+              "width": 2100,
+              "height": 1050,
+              "softness": 0.88,
+              "direction": 48,
+              "intensity": 0.62,
+              "falloff": 1.25,
+              "depth": 0.62,
+              "depthInfluence": 0.72,
+              "depthSoftness": 0.18,
+              "id": "tropical-sunlight",
+              "layer": "globalLighting",
+              "name": "tropical-sunlight"
+            }
+          ]
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1080,
+              "y": 320,
+              "color": "#9ec9c2",
+              "shape": "ellipse",
+              "width": 1150,
+              "height": 420,
+              "softness": 0.82,
+              "direction": 0,
+              "density": 0.05,
+              "scale": 1.15,
+              "driftSpeed": 5,
+              "driftDirection": 0,
+              "turbulence": 0.24,
+              "noiseScale": 1.25,
+              "noiseDetail": 4,
+              "depthInfluence": 0.82,
+              "nearClear": 0.3,
+              "farDensity": 0,
+              "depthCurve": 1.44,
+              "floorBias": 1,
+              "depthBias": -0.4,
+              "id": "lagoon-haze",
+              "layer": "environment",
+              "name": "lagoon-haze"
+            }
+          ]
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.24,
+          "threshold": 0.9,
+          "softKnee": 0.24,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.82,
+          "localContribution": 0.45
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 320,
+              "color": "#ffe6a2",
+              "shape": "rectangle",
+              "width": 1900,
+              "height": 470,
+              "softness": 0.6,
+              "direction": -15,
+              "count": 180,
+              "size": 1.8,
+              "sizeVariation": 0.58,
+              "speed": 7,
+              "turbulence": 0.75,
+              "lifetime": 24,
+              "opacity": 0.25,
+              "glow": 0.18,
+              "gravity": -0.08,
+              "randomness": 0.84,
+              "depth": 0.7,
+              "depthInfluence": 0.82,
+              "depthSoftness": 0.14,
+              "layer": "environment",
+              "wind": 3,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.5,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "id": "tropical-pollen",
+              "name": "tropical-pollen"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 460,
+          "shadowLightSourceY": 96,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.68,
+          "colorSpill": 0.62,
+          "intensityResponse": 0.58,
+          "directionalInfluence": 0.72,
+          "atmosphereInfluence": 0.55,
+          "depthTint": 0.14,
+          "grounding": 0.12,
+          "sideLighting": 0.66,
+          "frontAtmosphere": 0.4
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.08,
+          "radius": 2,
+          "colorInfluence": 0.64
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.08,
+          "width": 1.5,
+          "colorResponse": 0.72,
+          "localInfluence": 0.72,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.1,
+          "softness": 0.78,
+          "finalExposure": 0,
+          "finalContrast": 1.02
+        },
+        "godRays": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe3a4",
+              "direction": 57,
+              "spread": 142,
+              "rayCount": 7,
+              "rayWidth": 0.7,
+              "widthVariation": 0.32,
+              "spacingVariation": 0.48,
+              "rayMotion": 0.71,
+              "motionSpeed": 0.94,
+              "fadeVariation": 0.27,
+              "length": 1394,
+              "intensity": 0.34,
+              "softness": 0.72,
+              "feather": 0.39,
+              "decay": 1,
+              "breakup": 0.43,
+              "noiseScale": 1.2,
+              "noiseAmount": 0.94,
+              "noiseSpeed": 0.32,
+              "atmosphereInfluence": 1.15,
+              "depth": 0.88,
+              "depthInfluence": 0.7,
+              "depthSoftness": 0.27,
+              "id": "canopy-sun-rays",
+              "layer": "globalLighting",
+              "name": "canopy-sun-rays"
+            }
+          ]
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.3,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-mtmnzsh6",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6",
+              "points": [
+                {
+                  "x": -0.4263801007243546,
+                  "y": -0.008314694410055381
+                },
+                {
+                  "x": -0.21593646812166298,
+                  "y": -0.03600464606830428
+                },
+                {
+                  "x": 0.24556274026632308,
+                  "y": 0.3405786964838808
+                },
+                {
+                  "x": -0.38530664426361,
+                  "y": 0.16797796964645387
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1523,
+              "y": 382,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.2,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-ee53ec84-77d0-4a9e-92a0-278ac39c2633",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6 copy",
+              "points": [
+                {
+                  "x": -0.09578519439151932,
+                  "y": -0.05138454938480209
+                },
+                {
+                  "x": 0.0768155324459076,
+                  "y": -0.05323060249736954
+                },
+                {
+                  "x": 0.2397247762029474,
+                  "y": 0.36396472548893144
+                },
+                {
+                  "x": -0.0824016895890236,
+                  "y": 0.12306214606216599
+                }
+              ]
+            }
+          ]
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 2.2,
+              "sparkleDensity": 0.45,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.25,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.88,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-mtmo3i3d",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d",
+              "points": [
+                {
+                  "x": -0.42268807900224603,
+                  "y": -0.013852684741705161
+                },
+                {
+                  "x": -0.16101807808330704,
+                  "y": -0.014775711297988891
+                },
+                {
+                  "x": 0.1994128490035837,
+                  "y": 0.322118672376364
+                },
+                {
+                  "x": -0.3276192590594292,
+                  "y": 0.1818229454755783
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1055,
+              "y": 412,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 8,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.8,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.71,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-b1dadde2-2c30-4a76-8640-c763a12606a8",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy",
+              "points": [
+                {
+                  "x": -0.05999951996844834,
+                  "y": -0.16478556261288876
+                },
+                {
+                  "x": 0.03614092283386459,
+                  "y": -0.16675995096857588
+                },
+                {
+                  "x": -0.10856537146856321,
+                  "y": -0.0038778823906411653
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1635,
+              "y": 438,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 4.27,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.42,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-7a22a1d7-5d02-421d-98c8-fc27526168ce",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy copy",
+              "points": [
+                {
+                  "x": -0.24823639851074036,
+                  "y": -0.2303556832341911
+                },
+                {
+                  "x": -0.036628207584355504,
+                  "y": -0.22048401258846018
+                },
+                {
+                  "x": 0.06347682230210092,
+                  "y": 0.1358822403048773
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            }
+          ]
+        },
+        "gameplayCues": {
+          "enabled": false,
+          "intensity": 0.9,
+          "characterInfluence": 0.9
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "pipelines": [
+        "sprite",
+        "shadow",
+        "particle"
+      ],
+      "renderTargets": 1,
+      "buffers": 6,
+      "scheduled": true,
+      "ready": true,
+      "levelId": "LVL-0004",
+      "frame": 73,
+      "averageMs": 0.26871835384153053,
+      "fps": 56.78887505455078,
+      "sprites": 1,
+      "drawCalls": 3,
+      "shadowDraws": 1,
+      "groundedSprites": 1,
+      "grounding": [
+        {
+          "key": "actor:sven",
+          "left": {
+            "center": 0.36906878834573065,
+            "bottom": 0.9620493358633776,
+            "point": {
+              "x": 0.20356471288062988,
+              "y": 0.7690097477937177
+            }
+          },
+          "right": {
+            "center": 0.605292531510629,
+            "bottom": 0.937381404174573,
+            "point": {
+              "x": 0.2439579738465539,
+              "y": 0.7607214993909694
+            }
+          },
+          "center": 0.4871806599281798,
+          "split": 0.4871806599281798,
+          "groundline": 0.9497153700189753
+        }
+      ],
+      "shadowStates": [
+        {
+          "key": "actor:sven",
+          "angle": 1.8073670051660093,
+          "localOffset": 0,
+          "length": 0.72,
+          "targetAngle": 1.8073670051660093,
+          "targetLength": 0.72
+        }
+      ],
+      "particles": 180,
+      "waterSurfaces": 0,
+      "waterSparkles": 0,
+      "depthStatus": "ready",
+      "depthPath": "Levels/LVL-0004/assets/depthmap.png",
+      "depthLoads": 1,
+      "depthCached": 1,
+      "textureUploads": [
+        {
+          "type": "ImageBitmap",
+          "width": 2172,
+          "height": 724,
+          "purpose": "level artwork",
+          "path": "Levels/LVL-0004/assets/nautilus-harbor.png",
+          "fallback": false
+        },
+        {
+          "type": "ImageBitmap",
+          "width": 432,
+          "height": 528,
+          "purpose": "sprite actor:sven",
+          "path": "assets/characters/sven/idle/frame_001.png",
+          "fallback": false
+        }
+      ],
+      "bindGroups": 41,
+      "resolution": [
+        2360,
+        1468
+      ],
+      "backend": "WebGPU"
+    },
+    "camera": 0,
+    "worldX": 263,
+    "canvases": [
+      {
+        "slot": "backgroundAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldLight",
+        "opacity": "1",
+        "blank": false
+      },
+      {
+        "slot": "foregroundAtmosphere",
+        "opacity": "1",
+        "blank": false
+      }
+    ]
+  },
+  {
+    "name": "areaDirectionalLights-off",
+    "features": {
+      "globalLighting": true,
+      "globalGrading": false,
+      "areaDirectionalLights": false,
+      "sceneDepth": false,
+      "characterShadows": true,
+      "particleFields": true
+    },
+    "snapshot": {
+      "status": "ready",
+      "error": null,
+      "mode": "illustrated",
+      "illustratedScene": false,
+      "shadowOverlay": true,
+      "effective": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": -0.02,
+          "contrast": 1.05,
+          "highlights": -0.1,
+          "shadows": 0.03,
+          "saturation": 1.02,
+          "warmth": 0.05,
+          "tint": 0,
+          "blackPoint": 0.01
+        },
+        "localLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 137,
+              "y": 292,
+              "color": "#ffc477",
+              "radius": 72,
+              "intensity": 2.48,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "left-lantern",
+              "layer": "effects",
+              "name": "left-lantern"
+            },
+            {
+              "enabled": true,
+              "x": 1794,
+              "y": 368,
+              "color": "#ffc477",
+              "radius": 145,
+              "intensity": 0.9,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "right-lantern",
+              "layer": "effects",
+              "name": "right-lantern"
+            }
+          ]
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe0a0",
+              "shape": "ellipse",
+              "width": 2100,
+              "height": 1050,
+              "softness": 0.88,
+              "direction": 48,
+              "intensity": 0.62,
+              "falloff": 1.25,
+              "depth": 0.62,
+              "depthInfluence": 0.72,
+              "depthSoftness": 0.18,
+              "id": "tropical-sunlight",
+              "layer": "globalLighting",
+              "name": "tropical-sunlight"
+            }
+          ]
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1080,
+              "y": 320,
+              "color": "#9ec9c2",
+              "shape": "ellipse",
+              "width": 1150,
+              "height": 420,
+              "softness": 0.82,
+              "direction": 0,
+              "density": 0.05,
+              "scale": 1.15,
+              "driftSpeed": 5,
+              "driftDirection": 0,
+              "turbulence": 0.24,
+              "noiseScale": 1.25,
+              "noiseDetail": 4,
+              "depthInfluence": 0.82,
+              "nearClear": 0.3,
+              "farDensity": 0,
+              "depthCurve": 1.44,
+              "floorBias": 1,
+              "depthBias": -0.4,
+              "id": "lagoon-haze",
+              "layer": "environment",
+              "name": "lagoon-haze"
+            }
+          ]
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.24,
+          "threshold": 0.9,
+          "softKnee": 0.24,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.82,
+          "localContribution": 0.45
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 320,
+              "color": "#ffe6a2",
+              "shape": "rectangle",
+              "width": 1900,
+              "height": 470,
+              "softness": 0.6,
+              "direction": -15,
+              "count": 180,
+              "size": 1.8,
+              "sizeVariation": 0.58,
+              "speed": 7,
+              "turbulence": 0.75,
+              "lifetime": 24,
+              "opacity": 0.25,
+              "glow": 0.18,
+              "gravity": -0.08,
+              "randomness": 0.84,
+              "depth": 0.7,
+              "depthInfluence": 0.82,
+              "depthSoftness": 0.14,
+              "layer": "environment",
+              "wind": 3,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.5,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "id": "tropical-pollen",
+              "name": "tropical-pollen"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 460,
+          "shadowLightSourceY": 96,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.68,
+          "colorSpill": 0.62,
+          "intensityResponse": 0.58,
+          "directionalInfluence": 0.72,
+          "atmosphereInfluence": 0.55,
+          "depthTint": 0.14,
+          "grounding": 0.12,
+          "sideLighting": 0.66,
+          "frontAtmosphere": 0.4
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.08,
+          "radius": 2,
+          "colorInfluence": 0.64
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.08,
+          "width": 1.5,
+          "colorResponse": 0.72,
+          "localInfluence": 0.72,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.1,
+          "softness": 0.78,
+          "finalExposure": 0,
+          "finalContrast": 1.02
+        },
+        "godRays": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe3a4",
+              "direction": 57,
+              "spread": 142,
+              "rayCount": 7,
+              "rayWidth": 0.7,
+              "widthVariation": 0.32,
+              "spacingVariation": 0.48,
+              "rayMotion": 0.71,
+              "motionSpeed": 0.94,
+              "fadeVariation": 0.27,
+              "length": 1394,
+              "intensity": 0.34,
+              "softness": 0.72,
+              "feather": 0.39,
+              "decay": 1,
+              "breakup": 0.43,
+              "noiseScale": 1.2,
+              "noiseAmount": 0.94,
+              "noiseSpeed": 0.32,
+              "atmosphereInfluence": 1.15,
+              "depth": 0.88,
+              "depthInfluence": 0.7,
+              "depthSoftness": 0.27,
+              "id": "canopy-sun-rays",
+              "layer": "globalLighting",
+              "name": "canopy-sun-rays"
+            }
+          ]
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.3,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-mtmnzsh6",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6",
+              "points": [
+                {
+                  "x": -0.4263801007243546,
+                  "y": -0.008314694410055381
+                },
+                {
+                  "x": -0.21593646812166298,
+                  "y": -0.03600464606830428
+                },
+                {
+                  "x": 0.24556274026632308,
+                  "y": 0.3405786964838808
+                },
+                {
+                  "x": -0.38530664426361,
+                  "y": 0.16797796964645387
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1523,
+              "y": 382,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.2,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-ee53ec84-77d0-4a9e-92a0-278ac39c2633",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6 copy",
+              "points": [
+                {
+                  "x": -0.09578519439151932,
+                  "y": -0.05138454938480209
+                },
+                {
+                  "x": 0.0768155324459076,
+                  "y": -0.05323060249736954
+                },
+                {
+                  "x": 0.2397247762029474,
+                  "y": 0.36396472548893144
+                },
+                {
+                  "x": -0.0824016895890236,
+                  "y": 0.12306214606216599
+                }
+              ]
+            }
+          ]
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 2.2,
+              "sparkleDensity": 0.45,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.25,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.88,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-mtmo3i3d",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d",
+              "points": [
+                {
+                  "x": -0.42268807900224603,
+                  "y": -0.013852684741705161
+                },
+                {
+                  "x": -0.16101807808330704,
+                  "y": -0.014775711297988891
+                },
+                {
+                  "x": 0.1994128490035837,
+                  "y": 0.322118672376364
+                },
+                {
+                  "x": -0.3276192590594292,
+                  "y": 0.1818229454755783
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1055,
+              "y": 412,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 8,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.8,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.71,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-b1dadde2-2c30-4a76-8640-c763a12606a8",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy",
+              "points": [
+                {
+                  "x": -0.05999951996844834,
+                  "y": -0.16478556261288876
+                },
+                {
+                  "x": 0.03614092283386459,
+                  "y": -0.16675995096857588
+                },
+                {
+                  "x": -0.10856537146856321,
+                  "y": -0.0038778823906411653
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1635,
+              "y": 438,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 4.27,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.42,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-7a22a1d7-5d02-421d-98c8-fc27526168ce",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy copy",
+              "points": [
+                {
+                  "x": -0.24823639851074036,
+                  "y": -0.2303556832341911
+                },
+                {
+                  "x": -0.036628207584355504,
+                  "y": -0.22048401258846018
+                },
+                {
+                  "x": 0.06347682230210092,
+                  "y": 0.1358822403048773
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            }
+          ]
+        },
+        "gameplayCues": {
+          "enabled": false,
+          "intensity": 0.9,
+          "characterInfluence": 0.9
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "pipelines": [
+        "sprite",
+        "shadow",
+        "particle"
+      ],
+      "renderTargets": 1,
+      "buffers": 6,
+      "scheduled": true,
+      "ready": true,
+      "levelId": "LVL-0004",
+      "frame": 73,
+      "averageMs": 0.237375474524267,
+      "fps": 57.08410376057683,
+      "sprites": 1,
+      "drawCalls": 3,
+      "shadowDraws": 1,
+      "groundedSprites": 1,
+      "grounding": [
+        {
+          "key": "actor:sven",
+          "left": {
+            "center": 0.36906878834573065,
+            "bottom": 0.9620493358633776,
+            "point": {
+              "x": 0.20356471288062988,
+              "y": 0.7690097477937177
+            }
+          },
+          "right": {
+            "center": 0.605292531510629,
+            "bottom": 0.937381404174573,
+            "point": {
+              "x": 0.2439579738465539,
+              "y": 0.7607214993909694
+            }
+          },
+          "center": 0.4871806599281798,
+          "split": 0.4871806599281798,
+          "groundline": 0.9497153700189753
+        }
+      ],
+      "shadowStates": [
+        {
+          "key": "actor:sven",
+          "angle": 1.8073670051660093,
+          "localOffset": 0,
+          "length": 0.72,
+          "targetAngle": 1.8073670051660093,
+          "targetLength": 0.72
+        }
+      ],
+      "particles": 180,
+      "waterSurfaces": 0,
+      "waterSparkles": 0,
+      "depthStatus": "ready",
+      "depthPath": "Levels/LVL-0004/assets/depthmap.png",
+      "depthLoads": 1,
+      "depthCached": 1,
+      "textureUploads": [
+        {
+          "type": "ImageBitmap",
+          "width": 2172,
+          "height": 724,
+          "purpose": "level artwork",
+          "path": "Levels/LVL-0004/assets/nautilus-harbor.png",
+          "fallback": false
+        },
+        {
+          "type": "ImageBitmap",
+          "width": 432,
+          "height": 528,
+          "purpose": "sprite actor:sven",
+          "path": "assets/characters/sven/idle/frame_001.png",
+          "fallback": false
+        }
+      ],
+      "bindGroups": 64,
+      "resolution": [
+        2360,
+        1468
+      ],
+      "backend": "WebGPU"
+    },
+    "camera": 0,
+    "worldX": 263,
+    "canvases": [
+      {
+        "slot": "backgroundAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldLight",
+        "opacity": "1",
+        "blank": false
+      },
+      {
+        "slot": "foregroundAtmosphere",
+        "opacity": "1",
+        "blank": false
+      }
+    ]
+  },
+  {
+    "name": "sceneDepth-off",
+    "features": {
+      "globalLighting": true,
+      "globalGrading": false,
+      "areaDirectionalLights": false,
+      "sceneDepth": false,
+      "characterShadows": true,
+      "particleFields": true
+    },
+    "snapshot": {
+      "status": "ready",
+      "error": null,
+      "mode": "illustrated",
+      "illustratedScene": false,
+      "shadowOverlay": true,
+      "effective": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": -0.02,
+          "contrast": 1.05,
+          "highlights": -0.1,
+          "shadows": 0.03,
+          "saturation": 1.02,
+          "warmth": 0.05,
+          "tint": 0,
+          "blackPoint": 0.01
+        },
+        "localLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 137,
+              "y": 292,
+              "color": "#ffc477",
+              "radius": 72,
+              "intensity": 2.48,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "left-lantern",
+              "layer": "effects",
+              "name": "left-lantern"
+            },
+            {
+              "enabled": true,
+              "x": 1794,
+              "y": 368,
+              "color": "#ffc477",
+              "radius": 145,
+              "intensity": 0.9,
+              "falloff": 1.45,
+              "aspect": 1,
+              "softness": 0.72,
+              "behavior": "steady",
+              "flickerAmount": 0.18,
+              "flickerSpeed": 2,
+              "randomness": 0.8,
+              "colorSpill": 0.62,
+              "characterInfluence": 0.9,
+              "atmosphereInfluence": 1,
+              "depth": 0.65,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "depthBias": 0.06,
+              "id": "right-lantern",
+              "layer": "effects",
+              "name": "right-lantern"
+            }
+          ]
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe0a0",
+              "shape": "ellipse",
+              "width": 2100,
+              "height": 1050,
+              "softness": 0.88,
+              "direction": 48,
+              "intensity": 0.62,
+              "falloff": 1.25,
+              "depth": 0.62,
+              "depthInfluence": 0.72,
+              "depthSoftness": 0.18,
+              "id": "tropical-sunlight",
+              "layer": "globalLighting",
+              "name": "tropical-sunlight"
+            }
+          ]
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1080,
+              "y": 320,
+              "color": "#9ec9c2",
+              "shape": "ellipse",
+              "width": 1150,
+              "height": 420,
+              "softness": 0.82,
+              "direction": 0,
+              "density": 0.05,
+              "scale": 1.15,
+              "driftSpeed": 5,
+              "driftDirection": 0,
+              "turbulence": 0.24,
+              "noiseScale": 1.25,
+              "noiseDetail": 4,
+              "depthInfluence": 0.82,
+              "nearClear": 0.3,
+              "farDensity": 0,
+              "depthCurve": 1.44,
+              "floorBias": 1,
+              "depthBias": -0.4,
+              "id": "lagoon-haze",
+              "layer": "environment",
+              "name": "lagoon-haze"
+            }
+          ]
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.24,
+          "threshold": 0.9,
+          "softKnee": 0.24,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.82,
+          "localContribution": 0.45
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 320,
+              "color": "#ffe6a2",
+              "shape": "rectangle",
+              "width": 1900,
+              "height": 470,
+              "softness": 0.6,
+              "direction": -15,
+              "count": 180,
+              "size": 1.8,
+              "sizeVariation": 0.58,
+              "speed": 7,
+              "turbulence": 0.75,
+              "lifetime": 24,
+              "opacity": 0.25,
+              "glow": 0.18,
+              "gravity": -0.08,
+              "randomness": 0.84,
+              "depth": 0.7,
+              "depthInfluence": 0.82,
+              "depthSoftness": 0.14,
+              "layer": "environment",
+              "wind": 3,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.5,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "id": "tropical-pollen",
+              "name": "tropical-pollen"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 460,
+          "shadowLightSourceY": 96,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.68,
+          "colorSpill": 0.62,
+          "intensityResponse": 0.58,
+          "directionalInfluence": 0.72,
+          "atmosphereInfluence": 0.55,
+          "depthTint": 0.14,
+          "grounding": 0.12,
+          "sideLighting": 0.66,
+          "frontAtmosphere": 0.4
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.08,
+          "radius": 2,
+          "colorInfluence": 0.64
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.08,
+          "width": 1.5,
+          "colorResponse": 0.72,
+          "localInfluence": 0.72,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.1,
+          "softness": 0.78,
+          "finalExposure": 0,
+          "finalContrast": 1.02
+        },
+        "godRays": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 498,
+              "y": 115,
+              "color": "#ffe3a4",
+              "direction": 57,
+              "spread": 142,
+              "rayCount": 7,
+              "rayWidth": 0.7,
+              "widthVariation": 0.32,
+              "spacingVariation": 0.48,
+              "rayMotion": 0.71,
+              "motionSpeed": 0.94,
+              "fadeVariation": 0.27,
+              "length": 1394,
+              "intensity": 0.34,
+              "softness": 0.72,
+              "feather": 0.39,
+              "decay": 1,
+              "breakup": 0.43,
+              "noiseScale": 1.2,
+              "noiseAmount": 0.94,
+              "noiseSpeed": 0.32,
+              "atmosphereInfluence": 1.15,
+              "depth": 0.88,
+              "depthInfluence": 0.7,
+              "depthSoftness": 0.27,
+              "id": "canopy-sun-rays",
+              "layer": "globalLighting",
+              "name": "canopy-sun-rays"
+            }
+          ]
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.3,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-mtmnzsh6",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6",
+              "points": [
+                {
+                  "x": -0.4263801007243546,
+                  "y": -0.008314694410055381
+                },
+                {
+                  "x": -0.21593646812166298,
+                  "y": -0.03600464606830428
+                },
+                {
+                  "x": 0.24556274026632308,
+                  "y": 0.3405786964838808
+                },
+                {
+                  "x": -0.38530664426361,
+                  "y": 0.16797796964645387
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1523,
+              "y": 382,
+              "color": "#d9f5ff",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "shimmerStrength": 8,
+              "shimmerCoverage": 1,
+              "sparkleSize": 20,
+              "anisotropy": 6,
+              "shimmerSoftness": 0.08,
+              "evolutionSpeed": 1.45,
+              "highlightContrast": 2.2,
+              "shimmerDirection": 0,
+              "depth": 0.78,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSurface-ee53ec84-77d0-4a9e-92a0-278ac39c2633",
+              "layer": "environment",
+              "name": "waterSurface-mtmnzsh6 copy",
+              "points": [
+                {
+                  "x": -0.09578519439151932,
+                  "y": -0.05138454938480209
+                },
+                {
+                  "x": 0.0768155324459076,
+                  "y": -0.05323060249736954
+                },
+                {
+                  "x": 0.2397247762029474,
+                  "y": 0.36396472548893144
+                },
+                {
+                  "x": -0.0824016895890236,
+                  "y": 0.12306214606216599
+                }
+              ]
+            }
+          ]
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1029,
+              "y": 398,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 800,
+              "height": 400,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 2.2,
+              "sparkleDensity": 0.45,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.25,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.88,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-mtmo3i3d",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d",
+              "points": [
+                {
+                  "x": -0.42268807900224603,
+                  "y": -0.013852684741705161
+                },
+                {
+                  "x": -0.16101807808330704,
+                  "y": -0.014775711297988891
+                },
+                {
+                  "x": 0.1994128490035837,
+                  "y": 0.322118672376364
+                },
+                {
+                  "x": -0.3276192590594292,
+                  "y": 0.1818229454755783
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1055,
+              "y": 412,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 8,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.8,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.71,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-b1dadde2-2c30-4a76-8640-c763a12606a8",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy",
+              "points": [
+                {
+                  "x": -0.05999951996844834,
+                  "y": -0.16478556261288876
+                },
+                {
+                  "x": 0.03614092283386459,
+                  "y": -0.16675995096857588
+                },
+                {
+                  "x": -0.10856537146856321,
+                  "y": -0.0038778823906411653
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            },
+            {
+              "enabled": true,
+              "x": 1635,
+              "y": 438,
+              "color": "#f4fff8",
+              "shape": "polygon",
+              "width": 745,
+              "height": 374,
+              "softness": 0.6,
+              "direction": 0,
+              "sparkleStrength": 4.27,
+              "sparkleDensity": 0.65,
+              "sparkleSize": 0.5,
+              "sizeVariation": 0.72,
+              "twinkleSpeed": 0.7,
+              "twinkleVariation": 0.82,
+              "clusterScale": 140,
+              "clusterAmount": 0.68,
+              "peakIntensity": 1.8,
+              "anisotropy": 1.55,
+              "artworkInfluence": 0.65,
+              "depth": 0.42,
+              "depthOcclusion": 1,
+              "depthSoftness": 0.035,
+              "id": "waterSparkles-7a22a1d7-5d02-421d-98c8-fc27526168ce",
+              "layer": "environment",
+              "name": "waterSparkles-mtmo3i3d copy copy",
+              "points": [
+                {
+                  "x": -0.24823639851074036,
+                  "y": -0.2303556832341911
+                },
+                {
+                  "x": -0.036628207584355504,
+                  "y": -0.22048401258846018
+                },
+                {
+                  "x": 0.06347682230210092,
+                  "y": 0.1358822403048773
+                },
+                {
+                  "x": -0.25128941759967166,
+                  "y": -0.02954411761645965
+                }
+              ]
+            }
+          ]
+        },
+        "gameplayCues": {
+          "enabled": false,
+          "intensity": 0.9,
+          "characterInfluence": 0.9
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "pipelines": [
+        "sprite",
+        "shadow",
+        "particle"
+      ],
+      "renderTargets": 1,
+      "buffers": 6,
+      "scheduled": true,
+      "ready": true,
+      "levelId": "LVL-0004",
+      "frame": 74,
+      "averageMs": 0.2304369757987475,
+      "fps": 57.29747288633774,
+      "sprites": 1,
+      "drawCalls": 3,
+      "shadowDraws": 1,
+      "groundedSprites": 1,
+      "grounding": [
+        {
+          "key": "actor:sven",
+          "left": {
+            "center": 0.36906878834573065,
+            "bottom": 0.9620493358633776,
+            "point": {
+              "x": 0.20356471288062988,
+              "y": 0.7690097477937177
+            }
+          },
+          "right": {
+            "center": 0.605292531510629,
+            "bottom": 0.937381404174573,
+            "point": {
+              "x": 0.2439579738465539,
+              "y": 0.7607214993909694
+            }
+          },
+          "center": 0.4871806599281798,
+          "split": 0.4871806599281798,
+          "groundline": 0.9497153700189753
+        }
+      ],
+      "shadowStates": [
+        {
+          "key": "actor:sven",
+          "angle": 1.8073670051660093,
+          "localOffset": 0,
+          "length": 0.72,
+          "targetAngle": 1.8073670051660093,
+          "targetLength": 0.72
+        }
+      ],
+      "particles": 180,
+      "waterSurfaces": 0,
+      "waterSparkles": 0,
+      "depthStatus": "ready",
+      "depthPath": "Levels/LVL-0004/assets/depthmap.png",
+      "depthLoads": 1,
+      "depthCached": 1,
+      "textureUploads": [
+        {
+          "type": "ImageBitmap",
+          "width": 2172,
+          "height": 724,
+          "purpose": "level artwork",
+          "path": "Levels/LVL-0004/assets/nautilus-harbor.png",
+          "fallback": false
+        },
+        {
+          "type": "ImageBitmap",
+          "width": 432,
+          "height": 528,
+          "purpose": "sprite actor:sven",
+          "path": "assets/characters/sven/idle/frame_001.png",
+          "fallback": false
+        }
+      ],
+      "bindGroups": 88,
+      "resolution": [
+        2360,
+        1468
+      ],
+      "backend": "WebGPU"
+    },
+    "camera": 0,
+    "worldX": 263,
+    "canvases": [
+      {
+        "slot": "backgroundAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldAtmosphere",
+        "opacity": "1",
+        "blank": true
+      },
+      {
+        "slot": "worldLight",
+        "opacity": "1",
+        "blank": false
+      },
+      {
+        "slot": "foregroundAtmosphere",
+        "opacity": "1",
+        "blank": false
+      }
+    ]
+  }
+]

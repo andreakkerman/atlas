@@ -69,8 +69,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Verdeel 24 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 24.",
+              "hintParameters": {"a":24,"b":6},
               "explanation": "24 : 6 = 4."
             },
             {
@@ -82,8 +81,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "5 × 6 = ?",
               "answer": 30,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -106,8 +104,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 56,
                 63
               ],
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 7 × 5 en 7 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":7,"b":7},
               "explanation": "7 × 7 = 49."
             },
             {
@@ -119,8 +116,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 9 en verdubbel dat.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72."
             }
           ]
@@ -143,8 +139,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 18,
                 21
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 5 en tel nog 5 erbij.",
+              "hintParameters": {"a":5,"b":3},
               "explanation": "5 × 3 = 15."
             },
             {
@@ -162,8 +157,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 32,
                 40
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 3 en verdubbel dat.",
+              "hintParameters": {"a":3,"b":8},
               "explanation": "3 × 8 = 24."
             }
           ]
@@ -180,8 +174,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "Het Dalapaard heeft 6 banen met elk 2 verfstrepen. Hoeveel verfstrepen zijn dat samen?",
               "answer": 12,
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 2.",
-              "hintMoose": "Verdubbel 6.",
+              "hintParameters": {"a":6,"b":2},
               "explanation": "6 × 2 = 12."
             },
             {
@@ -199,8 +192,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 4,
                 5
               ],
-              "hintMinnie": "Verdeel 18 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 18.",
+              "hintParameters": {"a":18,"b":6},
               "explanation": "18 : 6 = 3."
             }
           ]
@@ -224,8 +216,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "2 × 4 = ?",
               "answer": 8,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 2 twee keer.",
+              "hintParameters": {"a":2,"b":4},
               "explanation": "2 × 4 = 8."
             },
             {
@@ -243,8 +234,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 9,
                 12
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 2 en tel nog 2 erbij.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6."
             }
           ]
@@ -267,8 +257,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 56,
                 63
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 7 en 2 × 7.",
+              "hintParameters": {"a":7,"b":7},
               "explanation": "7 × 7 = 49."
             },
             {
@@ -286,8 +275,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 63,
                 70
               ],
-              "hintMinnie": "Er zijn 8 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 8 × 5 en 8 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             }
           ]
@@ -304,8 +292,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "Aan de meiboom hangen 9 bloemenkransen met elk 7 bloemen. Hoeveel bloemen zijn dat samen?",
               "answer": 63,
-              "hintMinnie": "Er zijn 9 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 9 × 5 en 9 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             },
             {
@@ -317,8 +304,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "9 × 6 = ?",
               "answer": 54,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 9 en tel nog 9 erbij.",
+              "hintParameters": {"a":9,"b":6},
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -341,8 +327,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 28,
                 35
               ],
-              "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 3 × 5 en 3 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":3,"b":7},
               "explanation": "3 × 7 = 21."
             },
             {
@@ -360,8 +345,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-              "hintMoose": "Omdat 5 × 2 = 10, is 10 : 5 = 2.",
+              "hintParameters": {"a":10,"b":5},
               "explanation": "10 : 5 = 2."
             }
           ]
@@ -396,8 +380,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 9,
                 "minute": 10
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer op de 2 betekent tien over negen.",
               "explanation": "Het is tien over negen."
             },
             {
@@ -420,8 +402,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 5,
                 "minute": 20
               },
-              "hintMinnie": "De grote wijzer staat op de 4.",
-              "hintMoose": "De grote wijzer op de 4 betekent tien minuten voor half. De kleine wijzer staat tussen vijf en zes.",
               "explanation": "Het is tien voor half zes."
             }
           ]
@@ -449,8 +429,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 3,
                 "minute": 25
               },
-              "hintMinnie": "De grote wijzer staat op de 5.",
-              "hintMoose": "Dat is vijf minuten voor half vier.",
               "explanation": "Het is vijf voor half vier."
             },
             {
@@ -473,8 +451,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 7,
                 "minute": 35
               },
-              "hintMinnie": "De grote wijzer staat op de 7.",
-              "hintMoose": "Dat is vijf minuten na half acht.",
               "explanation": "Het is vijf over half acht."
             }
           ]
@@ -502,8 +478,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 10,
                 "minute": 40
               },
-              "hintMinnie": "De grote wijzer staat op de 8.",
-              "hintMoose": "De grote wijzer op de 8 betekent tien minuten na half. De kleine wijzer staat tussen tien en elf.",
               "explanation": "Het is tien over half elf."
             },
             {
@@ -526,8 +500,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 1,
                 "minute": 50
               },
-              "hintMinnie": "De grote wijzer staat op de 10.",
-              "hintMoose": "Vanaf de 10 zijn het nog tien minuten tot twee.",
               "explanation": "Het is tien voor twee."
             }
           ]
@@ -555,8 +527,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 6,
                 "minute": 5
               },
-              "hintMinnie": "De grote wijzer staat op de 1.",
-              "hintMoose": "Op de 1 zijn vijf minuten voorbij.",
               "explanation": "Het is vijf over zes."
             },
             {
@@ -579,8 +549,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "hour": 11,
                 "minute": 55
               },
-              "hintMinnie": "De grote wijzer staat op de 11.",
-              "hintMoose": "Vanaf de 11 duurt het nog vijf minuten tot twaalf.",
               "explanation": "Het is vijf voor twaalf."
             }
           ]
@@ -721,33 +689,40 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
       "moose": "de kade, botenroute en stevige havenpoort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "se-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Dit dorp lijkt een ansichtkaart met extra veel bloemen."
+      "text": "Wat een kleurrijk dorp. Overal bloemen."
     },
     {
       "id": "se-dalaHorse-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "dalaHorse",
       "speaker": "minnie",
-      "text": "Dat rode paard staat zó stil dat het vast iets geheimhoudt."
+      "text": "Dat rode Dalapaard valt meteen op."
     },
     {
       "id": "se-maypole-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "maypole",
       "speaker": "minnie",
-      "text": "Die bloemencirkels hangen precies gelijk. Dat ruikt naar een patroon."
+      "text": "Die bloemencirkels hangen heel netjes en gelijk."
     },
     {
       "id": "se-harborClock-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "harborClock",
       "speaker": "minnie",
-      "text": "Die klok houdt de boten én de tijd in de gaten. Druk beroep."
+      "text": "Die havenklok is vanaf het water goed te zien."
     },
     {
       "id": "se-dalaHorse-solved",
@@ -780,13 +755,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
       "id": "se-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De havenpoort wacht nog op {remainingChallenges}. Thuis loopt niet weg."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de havenpoort open."
     },
     {
       "id": "se-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De havenpoort is open. Nu terug naar Rheden."
+      "text": "De havenpoort is open. Onze reis door Europa zit erop."
     },
     {
       "id": "se-complete",

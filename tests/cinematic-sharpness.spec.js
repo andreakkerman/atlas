@@ -14,7 +14,8 @@ for (const layout of [
   page.on('console', m => { if (m.type()==='error') errors.push(m.text()); });
   await page.route('**/__dev/levels/*/editor-draft', route => route.fulfill({json:{}}));
   try {
-    await page.goto(base);
+    await page.goto(base+'/?dev=editor&level=LVL-0001');
+    await page.waitForFunction(()=>window.eval('typeof selectLevel')==='function');
     for (const [id, character] of [['LVL-0033','sven_arc'],['LVL-0001','sven']]) {
       await page.evaluate(async id => {
         window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});

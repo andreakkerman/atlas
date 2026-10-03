@@ -260,6 +260,7 @@
 
   function createRuntime(options = {}) {
     let settings = loadSettings(options.storage);
+    let sessionBaseline = null;
     let adapter = null;
     let device = null;
     let devicePromise = null;
@@ -822,7 +823,7 @@
       const preset = presetName ? presetTable[presetName] : null;
       const nextSettings = { ...settings, ...(preset || {}), ...patch };
       settings = normalizeSettings(nextSettings);
-      if (save) settings = saveSettings(settings, options.storage);
+      if (save && !sessionBaseline) settings = saveSettings(settings, options.storage);
       report();
       if (isVoxelRenderer(settings.renderer)) sync();
       else stop();
@@ -834,6 +835,16 @@
       stop,
       dispose,
       updateSettings,
+      // Menu-launched play uses the same settings, without writing preferences.
+      // Deep-copy because callers edit nested challengeFx controls in place.
+      beginSession: (patch) => {
+        if (!sessionBaseline) sessionBaseline = structuredClone(settings);
+        settings = normalizeSettings({ ...structuredClone(sessionBaseline), ...patch });
+      },
+      endSession: () => {
+        if (sessionBaseline) settings = sessionBaseline;
+        sessionBaseline = null;
+      },
       getSettings: () => ({ ...settings }),
       snapshot,
       invalidate: schedule,

@@ -194,8 +194,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Kwart over drie",
                 "Kwart over vier"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 3.",
-              "hintMoose": "De grote wijzer staat op de 3. Dat is kwart over. De kleine wijzer staat net na de 3.",
               "explanation": "De grote wijzer staat op de 3. Dat is kwart over. De kleine wijzer staat net na de 3."
             },
             {
@@ -218,8 +216,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Zeven uur",
                 "Acht uur"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 6.",
-              "hintMoose": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 7 en 8. Dat heet half acht.",
               "explanation": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 7 en 8. Dat heet half acht."
             }
           ]
@@ -247,8 +243,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Tien over half drie",
                 "Half drie"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 4.",
-              "hintMoose": "De grote wijzer staat op de 4: tien minuten voor half. De kleine wijzer staat tussen 2 en 3, dus tien voor half drie.",
               "explanation": "De grote wijzer staat op de 4: tien minuten voor half. De kleine wijzer staat tussen 2 en 3, dus tien voor half drie."
             },
             {
@@ -271,8 +265,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Half negen",
                 "Vijf over half negen"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 7.",
-              "hintMoose": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 8 en 9, dus vijf over half negen.",
               "explanation": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 8 en 9, dus vijf over half negen."
             }
           ]
@@ -300,8 +292,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Half vijf",
                 "Vijf voor vijf"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 5.",
-              "hintMoose": "De grote wijzer staat op de 5: vijf minuten voor half. De kleine wijzer staat tussen 4 en 5, dus vijf voor half vijf.",
               "explanation": "De grote wijzer staat op de 5: vijf minuten voor half. De kleine wijzer staat tussen 4 en 5, dus vijf voor half vijf."
             },
             {
@@ -324,8 +314,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Tien over half zeven",
                 "Tien over zes"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 8.",
-              "hintMoose": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 6 en 7, dus tien over half zeven.",
               "explanation": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 6 en 7, dus tien over half zeven."
             }
           ]
@@ -353,8 +341,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Vijf voor elf",
                 "Elf uur"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 10.",
-              "hintMoose": "De grote wijzer staat op de 10. Het duurt nog tien minuten tot elf uur.",
               "explanation": "De grote wijzer staat op de 10. Het duurt nog tien minuten tot elf uur."
             },
             {
@@ -377,8 +363,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 "Vijf over twaalf",
                 "Vijf over één"
               ],
-              "hintMinnie": "Kijk eerst naar de grote wijzer. Die staat op de 1.",
-              "hintMoose": "De grote wijzer staat op de 1: vijf minuten over. De kleine wijzer staat net na de 12.",
               "explanation": "De grote wijzer staat op de 1: vijf minuten over. De kleine wijzer staat net na de 12."
             }
           ]
@@ -402,8 +386,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "8 × 7 = ?",
               "answer": 56,
-              "hintMinnie": "Denk aan 8 groepjes van 7.",
-              "hintMoose": "Reken eerst 7 × 7 = 49. Tel er nog 7 bij.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56."
             },
             {
@@ -421,8 +404,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 54,
                 56
               ],
-              "hintMinnie": "Denk aan 6 groepjes van 8.",
-              "hintMoose": "Reken eerst 5 × 8 = 40. Tel er nog 8 bij.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48."
             }
           ]
@@ -445,8 +427,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 36,
                 45
               ],
-              "hintMinnie": "Denk aan 9 groepjes van 4.",
-              "hintMoose": "Reken eerst 8 × 4 = 32. Tel er nog 4 bij.",
+              "hintParameters": {"a":9,"b":4},
               "explanation": "9 × 4 = 36."
             },
             {
@@ -458,8 +439,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "7 × 6 = ?",
               "answer": 42,
-              "hintMinnie": "Denk aan 7 groepjes van 6.",
-              "hintMoose": "Reken eerst 6 × 6 = 36. Tel er nog 6 bij.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -476,8 +456,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "Er staan 3 dozen met elk 8 dakpannen. Hoeveel dakpannen zijn dat samen?",
               "answer": 24,
-              "hintMinnie": "Denk aan 3 groepjes van 8.",
-              "hintMoose": "Reken eerst 2 × 8 = 16. Tel er nog 8 bij.",
+              "hintParameters": {"a":3,"b":8},
               "explanation": "3 × 8 = 24."
             },
             {
@@ -495,8 +474,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 30,
                 36
               ],
-              "hintMinnie": "Denk aan 5 groepjes van 6.",
-              "hintMoose": "Reken eerst 4 × 6 = 24. Tel er nog 6 bij.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -513,8 +491,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "54 : 9 = ?",
               "answer": 6,
-              "hintMinnie": "Welke keersom met 9 geeft 54?",
-              "hintMoose": "9 × 6 = 54. Er passen dus 6 groepjes van 9 in 54.",
+              "hintParameters": {"a":54,"b":9},
               "explanation": "54 : 9 = 6."
             },
             {
@@ -532,8 +509,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 9,
                 8
               ],
-              "hintMinnie": "Welke keersom met 7 geeft 56?",
-              "hintMoose": "7 × 8 = 56. Er passen dus 8 groepjes van 7 in 56.",
+              "hintParameters": {"a":56,"b":7},
               "explanation": "56 : 7 = 8."
             }
           ]
@@ -557,8 +533,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintMinnie": "Denk aan 9 groepjes van 8.",
-              "hintMoose": "Reken eerst 8 × 8 = 64. Tel er nog 8 bij.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72."
             },
             {
@@ -576,8 +551,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 72,
                 56
               ],
-              "hintMinnie": "Denk aan 7 groepjes van 9.",
-              "hintMoose": "Reken eerst 6 × 9 = 54. Tel er nog 9 bij.",
+              "hintParameters": {"a":7,"b":9},
               "explanation": "7 × 9 = 63."
             }
           ]
@@ -600,8 +574,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 24,
                 32
               ],
-              "hintMinnie": "Denk aan 6 groepjes van 4.",
-              "hintMoose": "Reken eerst 5 × 4 = 20. Tel er nog 4 bij.",
+              "hintParameters": {"a":6,"b":4},
               "explanation": "6 × 4 = 24."
             },
             {
@@ -613,8 +586,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "8 × 5 = ?",
               "answer": 40,
-              "hintMinnie": "Denk aan 8 groepjes van 5.",
-              "hintMoose": "Reken eerst 7 × 5 = 35. Tel er nog 5 bij.",
+              "hintParameters": {"a":8,"b":5},
               "explanation": "8 × 5 = 40."
             }
           ]
@@ -637,8 +609,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 48,
                 49
               ],
-              "hintMinnie": "Denk aan 6 groepjes van 7.",
-              "hintMoose": "Reken eerst 5 × 7 = 35. Tel er nog 7 bij.",
+              "hintParameters": {"a":6,"b":7},
               "explanation": "6 × 7 = 42."
             },
             {
@@ -650,8 +621,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "Er zijn 4 doosjes met elk 5 schroeven. Hoeveel schroeven zijn dat samen?",
               "answer": 20,
-              "hintMinnie": "Denk aan 4 groepjes van 5.",
-              "hintMoose": "Reken eerst 3 × 5 = 15. Tel er nog 5 bij.",
+              "hintParameters": {"a":4,"b":5},
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -674,8 +644,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Welke keersom met 6 geeft 48?",
-              "hintMoose": "6 × 8 = 48. Er passen dus 8 groepjes van 6 in 48.",
+              "hintParameters": {"a":48,"b":6},
               "explanation": "48 : 6 = 8."
             },
             {
@@ -687,8 +656,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "Een pad van 72 meter wordt verdeeld in 8 gelijke stukken. Hoeveel meter is elk stuk?",
               "answer": 9,
-              "hintMinnie": "Welke keersom met 8 geeft 72?",
-              "hintMoose": "8 × 9 = 72. Er passen dus 9 groepjes van 8 in 72.",
+              "hintParameters": {"a":72,"b":8},
               "explanation": "72 : 8 = 9."
             }
           ]
@@ -778,28 +746,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
     "badge": "3 opdrachten",
     "detail": "Kerkklok, schoorsteen en ARC Probe"
   },
-  "sceneEffects": [
-    {
-      "id": "sun-presence-01",
-      "label": "Warm day sun 1",
-      "presetId": "sun-presence",
-      "variantId": "warm-day-sun",
-      "presetVersion": 1,
-      "enabled": true,
-      "seed": 833553467,
-      "qualityTier": "auto",
-      "layerSlot": "worldLight",
-      "groupId": "",
-      "geometry": {
-        "type": "pointRadius",
-        "x": 248,
-        "y": 189,
-        "radius": 94
-      },
-      "overrides": {
-        "rayEndAngle": 90
-      }
-    }
+  sceneEffects: [
+        {
+              id: "sun-presence-01",
+              label: "Warm day sun 1",
+              presetId: "sun-presence",
+              variantId: "warm-day-sun",
+              presetVersion: 1,
+              enabled: true,
+              seed: 833553467,
+              qualityTier: "auto",
+              layerSlot: "worldLight",
+              groupId: "",
+              geometry: {
+                    type: "pointRadius",
+                    x: 248,
+                    y: 189,
+                    radius: 94
+              },
+              overrides: {
+                    rayEndAngle: 90
+              }
+        }
   ],
   "reward": {
     "title": "Buried City voltooid",
@@ -823,6 +791,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
       "moose": "stevige muren en de schaduw bij de metro"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": ["CHALLENGE_OPEN", "CHALLENGE_SUCCESS", "LEVEL_PROGRESS_MILESTONE"],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "buried-enter",
@@ -841,39 +813,27 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
       "id": "buried-chimney",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "moose",
-      "text": "Die schoorsteen staat nog recht. Dat huis is stevig gebouwd.",
+      "text": "Die schoorsteen staat nog overeind. Niet slecht na al dat zand.",
       "challengeId": "chimney"
     },
     {
       "id": "buried-probe",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "speaker": "minnie",
-      "text": "Dat blauwe rondje steekt mooi boven het zand uit.",
+      "text": "Dat blauwe licht hoort niet bij de stad. Daar staat een ARC Probe.",
       "challengeId": "arcProbe"
     },
     {
       "id": "buried-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Het is daar beneden vast koeler. Ik wacht hier bij Valente."
-    },
-    {
-      "id": "buried-open",
-      "event": "CHALLENGE_OPEN",
-      "speaker": "moose",
-      "text": "Hier in de schaduw is het best prettig."
-    },
-    {
-      "id": "buried-success",
-      "event": "CHALLENGE_SUCCESS",
-      "speaker": "minnie",
-      "text": "Misschien heeft iemand hier vroeger elke dag gewoond."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we naar de metro."
     },
     {
       "id": "buried-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Daar is de metrotrap. De leuning staat nog stevig."
+      "text": "Daar is de metrotrap. We kunnen verder."
     },
     {
       "id": "buried-complete",

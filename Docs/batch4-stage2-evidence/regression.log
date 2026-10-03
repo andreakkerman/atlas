@@ -1,0 +1,18 @@
+
+Running 3 tests using 1 worker
+
+(node:50280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50280) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (288ms)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.48222981770833334[39m, actorMae: [33m2.041658147618074[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.3938623046875[39m, actorMae: [33m2.155003083564601[39m }
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.42261328125[39m, actorMae: [33m2.0418739635157546[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.3938333333333333[39m, actorMae: [33m2.154987665741597[39m }
+  ok 2 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:1 › neutral Illustrated ownership preserves frozen production composition (10.5s)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.3754677733092383,"fps":57.15374357215087},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5360223799761041,"fps":58.788947677836546},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.49035588836264804,"fps":59.18327086210302},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.49564400110497525,"fps":57.63688760872923},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4812296396872493,"fps":57.60368663660398}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.3825583636170723,"fps":58.25242718446602},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4505603614306457,"fps":57.44925316167617},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4434488233168893,"fps":57.41626794454859},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4550392313189213,"fps":58.445353595746546},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4639744873283051,"fps":57.099352875296226}}
+  ok 3 [desktop-chromium] › tests\illustrated-compositor.spec.js:55:1 › producer revisions suppress empty and unchanged uploads across recovery (14.0s)
+
+  3 passed (25.5s)

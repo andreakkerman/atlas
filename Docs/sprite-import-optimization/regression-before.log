@@ -1,0 +1,43 @@
+
+Running 1 test using 1 worker
+
+(node:33704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 (2.4s)
+
+
+  1) [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 4[39m
+    [31m+ Received  + 4[39m
+
+    [2m  Object {[22m
+    [32m-   "allocations": 0,[39m
+    [32m-   "destroyed": 0,[39m
+    [32m-   "rasterDraws": 0,[39m
+    [32m-   "uploads": 0,[39m
+    [31m+   "allocations": 3,[39m
+    [31m+   "destroyed": 3,[39m
+    [31m+   "rasterDraws": 10,[39m
+    [31m+   "uploads": 5,[39m
+    [2m  }[22m
+
+      24 |   };
+      25 |   const reset=()=>page.evaluate(()=>{spriteWork={uploads:0,rasterDraws:0,allocations:0,destroyed:0};});
+    > 26 |   const noWork=async()=>expect(await page.evaluate(()=>spriteWork)).toEqual({uploads:0,rasterDraws:0,allocations:0,destroyed:0});
+         |                                                                     ^
+      27 |   const translations=async selector=>{
+      28 |    const initial=await page.locator(selector).boundingBox();expect(initial.width).toBeGreaterThan(0);
+      29 |    await reset();
+        at noWork (D:\DevProjects\SvenAdventure\tests\illustrated-sprite-import.spec.js:26:69)
+        at translations (D:\DevProjects\SvenAdventure\tests\illustrated-sprite-import.spec.js:34:4)
+        at D:\DevProjects\SvenAdventure\tests\illustrated-sprite-import.spec.js:44:4
+
+    Error Context: test-results\illustrated-sprite-import--955bf-tion-and-animation-at-DPR-1-desktop-chromium\error-context.md
+
+  1 failed
+    [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 

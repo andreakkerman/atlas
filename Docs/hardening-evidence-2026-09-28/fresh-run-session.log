@@ -1,0 +1,359 @@
+
+Running 18 tests using 1 worker
+
+(node:39048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39048) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   1 [desktop-chromium] › tests\session-report.spec.js:40:3 › Atlas Session Report v0.1 › starts on adventure selection and ends on return to menu (5.3s)
+(node:42856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   2 [desktop-chromium] › tests\session-report.spec.js:60:3 › Atlas Session Report v0.1 › pauses active time after two minutes without activity (81ms)
+(node:39652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39652) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   3 [desktop-chromium] › tests\session-report.spec.js:83:3 › Atlas Session Report v0.1 › maps tables, division, stories and clocks to the four report categories (81ms)
+(node:35184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   4 [desktop-chromium] › tests\session-report.spec.js:105:3 › Atlas Session Report v0.1 › records attempts, hints, assistance and response time from the learning flow (92ms)
+(node:36176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36176) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   5 [desktop-chromium] › tests\session-report.spec.js:145:3 › Atlas Session Report v0.1 › keeps three unchecked sessions and never overwrites them (81ms)
+(node:42688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   6 [desktop-chromium] › tests\session-report.spec.js:157:3 › Atlas Session Report v0.1 › deletes only the confirmed session (101ms)
+(node:30468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  7 [desktop-chromium] › tests\session-report.spec.js:172:3 › Atlas Session Report v0.1 › does not collect in ordinary Playwright, editor, or debug completion (2.2s)
+  x   8 [desktop-chromium] › tests\session-report.spec.js:198:3 › Atlas Session Report v0.1 › lays out the menu control and progress report within the viewport (67ms)
+(node:16880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16880) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x   9 [desktop-chromium] › tests\session-report.spec.js:220:3 › Atlas Session Report v0.1 › scrolls a long report to the real bottom without making the page itself scrollable (85ms)
+(node:30804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30804) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  10 [ipad-landscape] › tests\session-report.spec.js:40:3 › Atlas Session Report v0.1 › starts on adventure selection and ends on return to menu (10.2s)
+(node:35688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35688) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  11 [ipad-landscape] › tests\session-report.spec.js:60:3 › Atlas Session Report v0.1 › pauses active time after two minutes without activity (268ms)
+(node:43124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43124) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  12 [ipad-landscape] › tests\session-report.spec.js:83:3 › Atlas Session Report v0.1 › maps tables, division, stories and clocks to the four report categories (219ms)
+(node:35040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35040) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  13 [ipad-landscape] › tests\session-report.spec.js:105:3 › Atlas Session Report v0.1 › records attempts, hints, assistance and response time from the learning flow (245ms)
+(node:45024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:45024) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  14 [ipad-landscape] › tests\session-report.spec.js:145:3 › Atlas Session Report v0.1 › keeps three unchecked sessions and never overwrites them (226ms)
+(node:2056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2056) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  15 [ipad-landscape] › tests\session-report.spec.js:157:3 › Atlas Session Report v0.1 › deletes only the confirmed session (233ms)
+(node:34460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34460) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 16 [ipad-landscape] › tests\session-report.spec.js:172:3 › Atlas Session Report v0.1 › does not collect in ordinary Playwright, editor, or debug completion (20.2s)
+  x  17 [ipad-landscape] › tests\session-report.spec.js:198:3 › Atlas Session Report v0.1 › lays out the menu control and progress report within the viewport (277ms)
+(node:21924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  18 [ipad-landscape] › tests\session-report.spec.js:220:3 › Atlas Session Report v0.1 › scrolls a long report to the real bottom without making the page itself scrollable (218ms)
+
+
+  1) [desktop-chromium] › tests\session-report.spec.js:40:3 › Atlas Session Report v0.1 › starts on adventure selection and ends on return to menu 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'De Runenpoort' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'De Runenpoort' })[22m
+
+
+      42 |     await enterMenu(page);
+      43 |     await startHeroAdventure(page);
+    > 44 |     await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
+         |                                                                        ^
+      45 |
+      46 |     const active = await page.evaluate(() => window.AtlasSessionReport.getCurrent());
+      47 |     expect(active.adventureId).toBe("LVL-0001");
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:44:72
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-38491--and-ends-on-return-to-menu-desktop-chromium\error-context.md
+
+  2) [desktop-chromium] › tests\session-report.spec.js:60:3 › Atlas Session Report v0.1 › pauses active time after two minutes without activity 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'setNowForTest')
+        at eval (eval at evaluate (:302:30), <anonymous>:3:14)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:14)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:62:31
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-be8e6-wo-minutes-without-activity-desktop-chromium\error-context.md
+
+  3) [desktop-chromium] › tests\session-report.spec.js:83:3 › Atlas Session Report v0.1 › maps tables, division, stories and clocks to the four report categories 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'classifyQuestion')
+        at eval (eval at evaluate (:302:30), <anonymous>:2:50)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:50)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:85:35
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-42fbd--the-four-report-categories-desktop-chromium\error-context.md
+
+  4) [desktop-chromium] › tests\session-report.spec.js:105:3 › Atlas Session Report v0.1 › records attempts, hints, assistance and response time from the learning flow 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'setNowForTest')
+        at eval (eval at evaluate (:302:30), <anonymous>:3:14)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:14)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:107:33
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-92054-time-from-the-learning-flow-desktop-chromium\error-context.md
+
+  5) [desktop-chromium] › tests\session-report.spec.js:145:3 › Atlas Session Report v0.1 › keeps three unchecked sessions and never overwrites them 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'setNowForTest')
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:148:65
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-1e59b-s-and-never-overwrites-them-desktop-chromium\error-context.md
+
+  6) [desktop-chromium] › tests\session-report.spec.js:157:3 › Atlas Session Report v0.1 › deletes only the confirmed session 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'setNowForTest')
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:159:27
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-55830--only-the-confirmed-session-desktop-chromium\error-context.md
+
+  7) [desktop-chromium] › tests\session-report.spec.js:198:3 › Atlas Session Report v0.1 › lays out the menu control and progress report within the viewport 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'setNowForTest')
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:200:11
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-0a9bc--report-within-the-viewport-desktop-chromium\error-context.md
+
+  8) [desktop-chromium] › tests\session-report.spec.js:220:3 › Atlas Session Report v0.1 › scrolls a long report to the real bottom without making the page itself scrollable 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'setNowForTest')
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:6:12)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:222:51
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-8d91d--the-page-itself-scrollable-desktop-chromium\error-context.md
+
+  9) [ipad-landscape] › tests\session-report.spec.js:40:3 › Atlas Session Report v0.1 › starts on adventure selection and ends on return to menu 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'De Runenpoort' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'De Runenpoort' })[22m
+
+
+      42 |     await enterMenu(page);
+      43 |     await startHeroAdventure(page);
+    > 44 |     await expect(page.getByRole("heading", { name: "De Runenpoort" })).toBeVisible();
+         |                                                                        ^
+      45 |
+      46 |     const active = await page.evaluate(() => window.AtlasSessionReport.getCurrent());
+      47 |     expect(active.adventureId).toBe("LVL-0001");
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:44:72
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-38491--and-ends-on-return-to-menu-ipad-landscape\error-context.md
+
+  10) [ipad-landscape] › tests\session-report.spec.js:60:3 › Atlas Session Report v0.1 › pauses active time after two minutes without activity 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'report.setNowForTest')
+
+      60 |   test("pauses active time after two minutes without activity", async ({ page }) => {
+      61 |     await cleanOpen(page);
+    > 62 |     const timing = await page.evaluate(() => {
+         |                               ^
+      63 |       const report = window.AtlasSessionReport;
+      64 |       report.setNowForTest(0);
+      65 |       report.startOrVisitLevel({
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:62:31
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-be8e6-wo-minutes-without-activity-ipad-landscape\error-context.md
+
+  11) [ipad-landscape] › tests\session-report.spec.js:83:3 › Atlas Session Report v0.1 › maps tables, division, stories and clocks to the four report categories 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'window.AtlasSessionReport.classifyQuestion')
+
+      83 |   test("maps tables, division, stories and clocks to the four report categories", async ({ page }) => {
+      84 |     await cleanOpen(page);
+    > 85 |     const categories = await page.evaluate(() => {
+         |                                   ^
+      86 |       const classify = window.AtlasSessionReport.classifyQuestion;
+      87 |       return [
+      88 |         classify({ family: "bare_multiplication", presentation: "bare", prompt: "7 × 8 = ?" }),
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:85:35
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-42fbd--the-four-report-categories-ipad-landscape\error-context.md
+
+  12) [ipad-landscape] › tests\session-report.spec.js:105:3 › Atlas Session Report v0.1 › records attempts, hints, assistance and response time from the learning flow 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'report.setNowForTest')
+
+      105 |   test("records attempts, hints, assistance and response time from the learning flow", async ({ page }) => {
+      106 |     await cleanOpen(page);
+    > 107 |     const question = await page.evaluate(() => {
+          |                                 ^
+      108 |       const report = window.AtlasSessionReport;
+      109 |       report.setNowForTest(1000);
+      110 |       report.startOrVisitLevel({
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:107:33
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-92054-time-from-the-learning-flow-ipad-landscape\error-context.md
+
+  13) [ipad-landscape] › tests\session-report.spec.js:145:3 › Atlas Session Report v0.1 › keeps three unchecked sessions and never overwrites them 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'report.setNowForTest')
+
+      23 |
+      24 | async function createSyntheticSession(page, start, title = "De Runenpoort") {
+    > 25 |   return page.evaluate(({ start, title }) => {
+         |               ^
+      26 |     const report = window.AtlasSessionReport;
+      27 |     report.setNowForTest(start);
+      28 |     report.startOrVisitLevel({
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:148:65
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-1e59b-s-and-never-overwrites-them-ipad-landscape\error-context.md
+
+  14) [ipad-landscape] › tests\session-report.spec.js:157:3 › Atlas Session Report v0.1 › deletes only the confirmed session 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'report.setNowForTest')
+
+      23 |
+      24 | async function createSyntheticSession(page, start, title = "De Runenpoort") {
+    > 25 |   return page.evaluate(({ start, title }) => {
+         |               ^
+      26 |     const report = window.AtlasSessionReport;
+      27 |     report.setNowForTest(start);
+      28 |     report.startOrVisitLevel({
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:159:27
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-55830--only-the-confirmed-session-ipad-landscape\error-context.md
+
+  15) [ipad-landscape] › tests\session-report.spec.js:198:3 › Atlas Session Report v0.1 › lays out the menu control and progress report within the viewport 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'report.setNowForTest')
+
+      23 |
+      24 | async function createSyntheticSession(page, start, title = "De Runenpoort") {
+    > 25 |   return page.evaluate(({ start, title }) => {
+         |               ^
+      26 |     const report = window.AtlasSessionReport;
+      27 |     report.setNowForTest(start);
+      28 |     report.startOrVisitLevel({
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:200:11
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-0a9bc--report-within-the-viewport-ipad-landscape\error-context.md
+
+  16) [ipad-landscape] › tests\session-report.spec.js:220:3 › Atlas Session Report v0.1 › scrolls a long report to the real bottom without making the page itself scrollable 
+
+    Error: page.evaluate: TypeError: undefined is not an object (evaluating 'report.setNowForTest')
+
+      23 |
+      24 | async function createSyntheticSession(page, start, title = "De Runenpoort") {
+    > 25 |   return page.evaluate(({ start, title }) => {
+         |               ^
+      26 |     const report = window.AtlasSessionReport;
+      27 |     report.setNowForTest(start);
+      28 |     report.startOrVisitLevel({
+        at createSyntheticSession (D:\DevProjects\SvenAdventure\tests\session-report.spec.js:25:15)
+        at D:\DevProjects\SvenAdventure\tests\session-report.spec.js:222:51
+
+    Error Context: test-results-session\session-report-Atlas-Sessi-8d91d--the-page-itself-scrollable-ipad-landscape\error-context.md
+
+  16 failed
+    [desktop-chromium] › tests\session-report.spec.js:40:3 › Atlas Session Report v0.1 › starts on adventure selection and ends on return to menu 
+    [desktop-chromium] › tests\session-report.spec.js:60:3 › Atlas Session Report v0.1 › pauses active time after two minutes without activity 
+    [desktop-chromium] › tests\session-report.spec.js:83:3 › Atlas Session Report v0.1 › maps tables, division, stories and clocks to the four report categories 
+    [desktop-chromium] › tests\session-report.spec.js:105:3 › Atlas Session Report v0.1 › records attempts, hints, assistance and response time from the learning flow 
+    [desktop-chromium] › tests\session-report.spec.js:145:3 › Atlas Session Report v0.1 › keeps three unchecked sessions and never overwrites them 
+    [desktop-chromium] › tests\session-report.spec.js:157:3 › Atlas Session Report v0.1 › deletes only the confirmed session 
+    [desktop-chromium] › tests\session-report.spec.js:198:3 › Atlas Session Report v0.1 › lays out the menu control and progress report within the viewport 
+    [desktop-chromium] › tests\session-report.spec.js:220:3 › Atlas Session Report v0.1 › scrolls a long report to the real bottom without making the page itself scrollable 
+    [ipad-landscape] › tests\session-report.spec.js:40:3 › Atlas Session Report v0.1 › starts on adventure selection and ends on return to menu 
+    [ipad-landscape] › tests\session-report.spec.js:60:3 › Atlas Session Report v0.1 › pauses active time after two minutes without activity 
+    [ipad-landscape] › tests\session-report.spec.js:83:3 › Atlas Session Report v0.1 › maps tables, division, stories and clocks to the four report categories 
+    [ipad-landscape] › tests\session-report.spec.js:105:3 › Atlas Session Report v0.1 › records attempts, hints, assistance and response time from the learning flow 
+    [ipad-landscape] › tests\session-report.spec.js:145:3 › Atlas Session Report v0.1 › keeps three unchecked sessions and never overwrites them 
+    [ipad-landscape] › tests\session-report.spec.js:157:3 › Atlas Session Report v0.1 › deletes only the confirmed session 
+    [ipad-landscape] › tests\session-report.spec.js:198:3 › Atlas Session Report v0.1 › lays out the menu control and progress report within the viewport 
+    [ipad-landscape] › tests\session-report.spec.js:220:3 › Atlas Session Report v0.1 › scrolls a long report to the real bottom without making the page itself scrollable 
+  2 passed (46.3s)

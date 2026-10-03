@@ -1,0 +1,15 @@
+
+Running 2 tests using 1 worker
+
+(node:19968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19968) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\npc-challenges.spec.js:218:3 › NPC challenge presentation › uses the existing approach node and opens a Dutch locked NPC dialog (1.7s)
+(node:5524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [ipad-landscape] › tests\npc-challenges.spec.js:218:3 › NPC challenge presentation › uses the existing approach node and opens a Dutch locked NPC dialog (8.1s)
+
+  2 passed (10.7s)

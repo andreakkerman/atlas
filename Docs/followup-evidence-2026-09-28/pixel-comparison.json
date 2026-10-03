@@ -1,0 +1,10 @@
+{
+  "depth": {
+    "wholeMeanAbs": 10.984020978617282,
+    "regionMeanAbs": 13.312011111111111
+  },
+  "returned-off": {
+    "wholeMeanAbs": 0.0,
+    "regionMeanAbs": 0.0
+  }
+}

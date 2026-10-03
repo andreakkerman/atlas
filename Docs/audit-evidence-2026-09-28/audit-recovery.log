@@ -1,0 +1,17 @@
+
+Running 6 tests using 1 worker
+
+(node:43144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43144) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\asset-cold-start.spec.js:14:3 › cold-cache critical assets › first Runenpoort launch retries one Freya 503 before READY and reuses every prepared frame (3.4s)
+  ok 2 [desktop-chromium] › tests\asset-cold-start.spec.js:98:36 › cold-cache critical assets › HTTP 503 exhaustion never reports READY (7.1s)
+  ok 3 [desktop-chromium] › tests\asset-cold-start.spec.js:98:36 › cold-cache critical assets › HTTP 404 exhaustion never reports READY (6.2s)
+  ok 4 [desktop-chromium] › tests\asset-cold-start.spec.js:115:3 › cold-cache critical assets › prepare awaits image decode and rejects unusable pixels (5.6s)
+OPTIONAL_RECOVERY {"first":["assets/ambient/animals/owl/owl-open.png"],"second":["assets/ambient/animals/owl/owl-open.png"],"requests":3}
+  ok 5 [desktop-chromium] › tests\audit-assets-disposable.spec.js:3:1 › audit optional image remains failed after network recovery and menu round trip (7.7s)
+REAL_CACHE_OWNERSHIP ["svenadventure-static-v231-play-scene-depth-off"]
+  ok 6 [desktop-chromium] › tests\audit-assets-disposable.spec.js:16:2 › worker cache ownership › audit real activation removes unrelated cache (5.9s)
+
+  6 passed (36.3s)

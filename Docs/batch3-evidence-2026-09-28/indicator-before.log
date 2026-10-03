@@ -1,0 +1,40 @@
+
+Running 1 test using 1 worker
+
+(node:47512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › tests\challenge-indicator-open.spec.js:24:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility (15.0s)
+
+
+  1) [desktop-chromium] › tests\challenge-indicator-open.spec.js:24:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).not.[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  locator('.runeFocusSpark')
+    Expected: not visible
+    Received: visible
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "not toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('.runeFocusSpark')[22m
+    [2m    13 × locator resolved to <div aria-hidden="true" class="runeFocusSpark"></div>[22m
+    [2m       - unexpected value "visible"[22m
+
+
+      17 |   await expect(page.getByRole('dialog', { name: 'Auto', exact: true })).toBeVisible();
+      18 |   await expect(page.locator('.runeFocusSpark')).toHaveCount(1);
+    > 19 |   await expect(page.locator('.runeFocusSpark')).not.toBeVisible();
+         |                                                     ^
+      20 |   // The Canvas effect remains intact; only the legacy circle is suppressed.
+      21 |   expect(await markers(page)).toContain('car');
+      22 | }
+        at open (D:\DevProjects\SvenAdventure\tests\challenge-indicator-open.spec.js:19:53)
+        at D:\DevProjects\SvenAdventure\tests\challenge-indicator-open.spec.js:41:5
+
+    Error Context: test-results\challenge-indicator-open-o-93e9d-ion-keep-correct-visibility-desktop-chromium\error-context.md
+
+  1 failed
+    [desktop-chromium] › tests\challenge-indicator-open.spec.js:24:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility 

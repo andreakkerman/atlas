@@ -250,8 +250,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 3,
                 "minute": 0
               },
-              "hintMinnie": "De grote wijzer staat op de 12.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Drie uur."
             },
             {
@@ -274,8 +272,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 6,
                 "minute": 15
               },
-              "hintMinnie": "De grote wijzer staat op de 3.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart over zes."
             }
           ]
@@ -303,8 +299,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 7,
                 "minute": 30
               },
-              "hintMinnie": "De grote wijzer staat op de 6.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Half acht."
             },
             {
@@ -327,8 +321,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 4,
                 "minute": 45
               },
-              "hintMinnie": "De grote wijzer staat op de 9.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart voor vijf."
             }
           ]
@@ -356,8 +348,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 2,
                 "minute": 20
               },
-              "hintMinnie": "De grote wijzer staat op de 4.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor half drie."
             },
             {
@@ -380,8 +370,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 8,
                 "minute": 35
               },
-              "hintMinnie": "De grote wijzer staat op de 7.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over half negen."
             }
           ]
@@ -409,8 +397,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 10,
                 "minute": 50
               },
-              "hintMinnie": "De grote wijzer staat op de 10.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor elf."
             },
             {
@@ -433,8 +419,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "hour": 12,
                 "minute": 5
               },
-              "hintMinnie": "De grote wijzer staat op de 1.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over twaalf."
             }
           ]
@@ -626,8 +610,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 49
               ],
               "prompt": "7 x 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":5},
               "explanation": "7 x 5 = 35."
             },
             {
@@ -639,8 +622,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               "answerMode": "open",
               "answer": 72,
               "prompt": "8 x 9 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken in groepjes en controleer je antwoord.",
+              "hintParameters": {"a":8,"b":9},
               "explanation": "8 x 9 = 72."
             }
           ]
@@ -663,8 +645,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 42
               ],
               "prompt": "Bij het tempelpaneel liggen 4 rijen met 7 kleine kaartjes. Hoeveel kaartjes zijn dat samen?",
-              "hintMinnie": "Zoek groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 x 7 = 28."
             },
             {
@@ -676,8 +657,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               "answerMode": "open",
               "answer": 35,
               "prompt": "Nebu tekent 5 vakken met 7 tekens per vak. Hoeveel tekens tekent hij?",
-              "hintMinnie": "Zoek hoeveel groepjes er zijn.",
-              "hintMoose": "Vermenigvuldig het aantal vakken met het aantal tekens.",
+              "hintParameters": {"a":5,"b":7},
               "explanation": "5 x 7 = 35."
             }
           ]
@@ -694,8 +674,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "48 : 8 = ?",
-              "hintMinnie": "Welke tafel hoort hierbij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":48,"b":8},
               "explanation": "48 : 8 = 6, want 8 x 6 = 48."
             },
             {
@@ -713,8 +692,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 11
               ],
               "prompt": "Sven verdeelt 72 steentjes bij het tempelpaneel in 8 gelijke groepjes. Hoeveel steentjes krijgt elk groepje?",
-              "hintMinnie": "Verdeel het totaal in gelijke groepjes.",
-              "hintMoose": "Gebruik de omgekeerde keersom.",
+              "hintParameters": {"a":72,"b":8},
               "explanation": "72 : 8 = 9, want 8 x 9 = 72."
             }
           ]
@@ -737,8 +715,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "Scarrabee"
               ],
               "prompt": "Welk woord is goed gespeld?",
-              "hintMinnie": "Lees het woord rustig van links naar rechts.",
-              "hintMoose": "Kijk naar de klanken en kies de spelling die klopt.",
               "explanation": "Scarabee is de juiste spelling."
             },
             {
@@ -756,8 +732,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 "Zonne-wijzer"
               ],
               "prompt": "Welk woord is goed gespeld?",
-              "hintMinnie": "Lees het woord rustig van links naar rechts.",
-              "hintMoose": "Kijk naar de klanken en kies de spelling die klopt.",
               "explanation": "Zonnewijzer is de juiste spelling."
             }
           ]
@@ -1061,12 +1035,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "moose": "veilige route terug naar huis"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_OPEN",
+      "CHALLENGE_SUCCESS"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0030-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Abu Simbel voelt als het grote einde van oud Egypte."
+      "text": "Abu Simbel is enorm. Kijk hoe hoog die beelden zijn."
     },
     {
       "id": "LVL-0030-open",
@@ -1084,13 +1065,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "id": "LVL-0030-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De scarabee is klaar. Dat klinkt als thuiswerk voor een kever."
+      "text": "De terugweg is vrij. Tijd om naar Cairo te gaan."
     },
     {
       "id": "LVL-0030-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De scarabee blijft stil. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we terug naar Cairo."
     }
   ],
   "menu": {

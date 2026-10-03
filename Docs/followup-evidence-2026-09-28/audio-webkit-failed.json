@@ -1,0 +1,360 @@
+[
+  {
+    "label": "network-restored",
+    "requests": 4,
+    "audio": {
+      "plays": [],
+      "starts": [
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        }
+      ],
+      "errors": []
+    },
+    "screen": "scene",
+    "active": [
+      "italyCommonSwift",
+      "italyCommonSwift-copy",
+      "italyCommonSwift-copy-copy",
+      "italyCommonSwift-copy-2"
+    ],
+    "visuals": [
+      {
+        "id": "italyCommonSwift",
+        "rect": {
+          "x": 251.9305877685547,
+          "y": 123.51911163330078,
+          "width": 76.89302062988281,
+          "height": 76.89302825927734,
+          "top": 123.51911163330078,
+          "right": 328.8236083984375,
+          "bottom": 200.41213989257812,
+          "left": 251.9305877685547
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy",
+        "rect": {
+          "x": 260.5227966308594,
+          "y": 91.27275848388672,
+          "width": 65.64300537109375,
+          "height": 65.64302825927734,
+          "top": 91.27275848388672,
+          "right": 326.1658020019531,
+          "bottom": 156.91578674316406,
+          "left": 260.5227966308594
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy-copy",
+        "rect": {
+          "x": 278.504150390625,
+          "y": 62.36564254760742,
+          "width": 54.3629150390625,
+          "height": 54.362918853759766,
+          "top": 62.36564254760742,
+          "right": 332.8670654296875,
+          "bottom": 116.72856140136719,
+          "left": 278.504150390625
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy-2",
+        "rect": {
+          "x": 278.4930419921875,
+          "y": 177.80316162109375,
+          "width": 49.48046875,
+          "height": 49.48046875,
+          "top": 177.80316162109375,
+          "right": 327.9735107421875,
+          "bottom": 227.28363037109375,
+          "left": 278.4930419921875
+        }
+      }
+    ],
+    "ready": [
+      {
+        "id": "LVL-0016:italyCommonSwift",
+        "sound": false,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy",
+        "sound": false,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-copy",
+        "sound": false,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-2",
+        "sound": false,
+        "ready": true
+      }
+    ],
+    "media": [],
+    "owners": 0
+  },
+  {
+    "label": "reentry-still-rejected",
+    "requests": 4,
+    "audio": {
+      "plays": [],
+      "starts": [
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-1",
+          "at": 9601,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-2",
+          "at": 13202,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-3",
+          "at": 14344,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-3",
+          "at": 14344,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-3",
+          "at": 14344,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-3",
+          "at": 14344,
+          "sound": false,
+          "visible": true
+        },
+        {
+          "id": "italyCommonSwift",
+          "trigger": "flyby-4",
+          "at": 17970,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy",
+          "trigger": "flyby-4",
+          "at": 17970,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-copy",
+          "trigger": "flyby-4",
+          "at": 17970,
+          "sound": false,
+          "visible": false
+        },
+        {
+          "id": "italyCommonSwift-copy-2",
+          "trigger": "flyby-4",
+          "at": 17970,
+          "sound": false,
+          "visible": false
+        }
+      ],
+      "errors": []
+    },
+    "screen": "scene",
+    "active": [
+      "italyCommonSwift",
+      "italyCommonSwift-copy",
+      "italyCommonSwift-copy-copy",
+      "italyCommonSwift-copy-2"
+    ],
+    "visuals": [
+      {
+        "id": "italyCommonSwift",
+        "rect": {
+          "x": 108.20527648925781,
+          "y": 110.75042724609375,
+          "width": 77.7706298828125,
+          "height": 77.7706298828125,
+          "top": 110.75042724609375,
+          "right": 185.9759063720703,
+          "bottom": 188.52105712890625,
+          "left": 108.20527648925781
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy",
+        "rect": {
+          "x": 120.34169006347656,
+          "y": 79.77393341064453,
+          "width": 66.27938842773438,
+          "height": 66.27938079833984,
+          "top": 79.77393341064453,
+          "right": 186.62107849121094,
+          "bottom": 146.05331420898438,
+          "left": 120.34169006347656
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy-copy",
+        "rect": {
+          "x": 140.0808868408203,
+          "y": 52.377967834472656,
+          "width": 54.788482666015625,
+          "height": 54.788482666015625,
+          "top": 52.377967834472656,
+          "right": 194.86936950683594,
+          "bottom": 107.16645050048828,
+          "left": 140.0808868408203
+        }
+      },
+      {
+        "id": "italyCommonSwift-copy-2",
+        "rect": {
+          "x": 136.6529541015625,
+          "y": 164.97378540039062,
+          "width": 50.140625,
+          "height": 50.140625,
+          "top": 164.97378540039062,
+          "right": 186.7935791015625,
+          "bottom": 215.11441040039062,
+          "left": 136.6529541015625
+        }
+      }
+    ],
+    "ready": [
+      {
+        "id": "LVL-0016:italyCommonSwift",
+        "sound": false,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy",
+        "sound": false,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-copy",
+        "sound": false,
+        "ready": true
+      },
+      {
+        "id": "LVL-0016:italyCommonSwift-copy-2",
+        "sound": false,
+        "ready": true
+      }
+    ],
+    "media": [],
+    "owners": 0
+  }
+]

@@ -318,13 +318,14 @@ fn cross2(a:vec2f,b:vec2f) -> f32 { return a.x*b.y-a.y*b.x; }
   let corners=array<vec2f,6>(vec2f(0,0),vec2f(1,0),vec2f(0,1),vec2f(0,1),vec2f(1,0),vec2f(1,1));
   let uv=corners[i]; var out:Vertex;out.position=vec4f((d.rect.xy+uv*d.rect.zw)*vec2f(2,-2)+vec2f(-1,1),0,1);out.uv=uv;return out;
 }
-fn appearance(input:vec3f) -> vec3f {
-  var c=(input*d.appearance.x-0.5)*d.appearance.y+0.5;
-  c=mix(vec3f(dot(c,vec3f(0.213,0.715,0.072))),c,d.appearance.z);
+fn appearanceValues(input:vec3f, parameters:vec4f, hue:f32) -> vec3f {
+  var c=(input*parameters.x-0.5)*parameters.y+0.5;
+  c=mix(vec3f(dot(c,vec3f(0.213,0.715,0.072))),c,parameters.z);
   let sepia=vec3f(dot(c,vec3f(0.393,0.769,0.189)),dot(c,vec3f(0.349,0.686,0.168)),dot(c,vec3f(0.272,0.534,0.131)));
-  c=mix(c,sepia,d.appearance.w); let co=cos(d.extra.x);let si=sin(d.extra.x);
+  c=mix(c,sepia,parameters.w); let co=cos(hue);let si=sin(hue);
   return clamp(vec3f(dot(c,vec3f(0.213+co*0.787-si*0.213,0.715-co*0.715-si*0.715,0.072-co*0.072+si*0.928)),dot(c,vec3f(0.213-co*0.213+si*0.143,0.715+co*0.285+si*0.140,0.072-co*0.072-si*0.283)),dot(c,vec3f(0.213-co*0.213-si*0.787,0.715-co*0.715+si*0.715,0.072+co*0.928+si*0.072))),vec3f(0),vec3f(1));
 }
+fn appearance(input:vec3f) -> vec3f { return appearanceValues(input,d.appearance,d.extra.x); }
 @fragment fn sprite(in:Vertex) -> @location(0) vec4f {
   // Copy an already-linear scene when no field contribution is selected.
   if(d.flags.w>2.5){return textureSampleLevel(source,linearSampler,in.uv,0);}
@@ -354,8 +355,14 @@ fn appearance(input:vec3f) -> vec3f {
     // it in screen UV. Converting through world coordinates would address a
     // different part of this texture whenever the camera moves.
     let receiverUV=d.rect.xy+in.uv*d.rect.zw;
-    let receiver=textureSampleLevel(auxiliary,linearSampler,receiverUV,0).rgb;
-    // targets[0] is the pre-shadow scene in linear light. Its local luminance is
+    var receiver:vec3f;
+    if(g.v[2].w>0.5){
+      // Same artwork-only receiver as the lightweight shadow canvas, regardless
+      // of which atmosphere layers have already entered the scene composite.
+      let artworkUV=vec2f((g.v[0].z+receiverUV.x*g.v[0].w)/g.v[2].x,receiverUV.y);
+      receiver=toLinear(appearanceValues(textureSampleLevel(auxiliary,linearSampler,artworkUV,0).rgb,g.v[23],g.v[24].x));
+    }else{receiver=textureSampleLevel(auxiliary,linearSampler,receiverUV,0).rgb;}
+    // Cinematic targets[0] is the pre-shadow scene in linear light. Its local luminance is
     // therefore a stable receiver measurement with no shadow feedback.
     let receiverLuminance=luminance(receiver);
     // Strength and Opacity continue to establish the unmodified contribution.
@@ -376,7 +383,7 @@ fn appearance(input:vec3f) -> vec3f {
     let receiverMatching=smoothstep(0.0,1.0,g.v[21].z);
     let localContribution=mix(authoredContribution,matchedContribution,receiverMatching);
     let alpha=silhouette*localContribution;
-    if(g.v[2].z>0.5){
+    if(g.v[2].z>0.5 || g.v[2].w>0.5){
       // Browser overlays blend in sRGB. Encode the same linear receiver result
       // into premultiplied colour so the shared opacity retains its meaning.
       let composite=toSRGB(max(receiver*(1.0-alpha*0.92),vec3f(0)));
@@ -430,10 +437,22 @@ fn appearance(input:vec3f) -> vec3f {
     }
   }
   let alpha=sample.a*d.extra.y;
+  if(g.v[2].w>0.5){
+    // Browser Illustrated layers use encoded-sRGB source-over. Lighting stays
+    // linear, but its result must cross back before alpha composition.
+    c=toSRGB(max(c,vec3f(0)));
+    if(d.flags.z< -0.5 && g.v[22].w>0.5){
+      // The scene-only .forestMist CSS gradients, in their original order:
+      // vertical underneath horizontal, positioned in world-art coordinates.
+      c=mix(c,vec3f(19,12,7)/255.0,clamp((uv.y-0.62)/0.38,0.0,1.0)*0.16);
+      c=mix(c,vec3f(18,28,22)/255.0,max(0.0,1.0-abs(uv.x-0.5)/0.06)*0.18);
+    }
+  }
   return vec4f(c*alpha,alpha);
 }
 @fragment fn field(in:Vertex) -> @location(0) vec4f {
-  let p=world(in.uv);let sourceBase=textureSampleLevel(source,linearSampler,in.uv,0).rgb;
+  let p=world(in.uv);var sourceBase=textureSampleLevel(source,linearSampler,in.uv,0).rgb;
+  if(g.v[2].w>0.5){sourceBase=toLinear(sourceBase);}
   let z=depthAt(p);let light=lights(p,0u,z);var beams=vec3f(0);var beamScatter=vec3f(0);
   var base=sourceBase;var cues=vec3f(0);
   for(var i=0u;i<u32(g.v[1].z);i++){let e=effects[i];if(e.v[0].y==0.0){continue;}
@@ -446,7 +465,9 @@ fn appearance(input:vec3f) -> vec3f {
   // Light multiplies the painted surface; scattering is additive only in the participating medium.
   let lit=base*(vec3f(1)+light)+light*0.012;
   let scattering=haze*0.65+lights(p,2u,z)*0.12+beamScatter*1.4;
-  return vec4f(lit*transmission+scattering*(1.0-transmission)+beams*0.34+cues,1);
+  var result=lit*transmission+scattering*(1.0-transmission)+beams*0.34+cues;
+  if(g.v[2].w>0.5){result=toSRGB(max(result,vec3f(0)));}
+  return vec4f(result,1);
 }
 @fragment fn bloomExtract(in:Vertex) -> @location(0) vec4f {
   var c=textureSampleLevel(source,linearSampler,in.uv,0).rgb;
@@ -462,6 +483,10 @@ fn appearance(input:vec3f) -> vec3f {
 fn shoulder(c:vec3f) -> vec3f { return select(c,vec3f(1)-0.2*exp(-(c-0.8)*5.0),c>vec3f(0.8)); }
 @fragment fn finish(in:Vertex) -> @location(0) vec4f {
   var c=textureSampleLevel(source,linearSampler,in.uv,0).rgb;
+  if(g.v[2].w>0.5){
+    if(g.v[22].z>0.5){let particles=clamp(textureSampleLevel(auxiliary,linearSampler,in.uv,0).rgb,vec3f(0),vec3f(1));c=particles+c*(vec3f(1)-particles);}
+    c=toLinear(c);
+  }
   if(g.v[12].x>0.5){c+=textureSampleLevel(auxiliary,linearSampler,in.uv,0).rgb*g.v[12].y;}
   if(g.v[14].x>0.5){c*=exp2(exposure[0]*g.v[15].x);}
   if(g.v[18].x>0.5 && g.v[18].z>0.0){let distance=(1.0-depthAt(world(in.uv)))*g.v[18].z;c=c*(1.0+distance*0.12)+vec3f(0.014,0.021,0.024)*distance;}
@@ -481,7 +506,7 @@ fn randomIndex(value:u32) -> f32 { var h=value;h=(h^(h>>16u))*0x7feb352du;h=(h^(
   let e=effects[u32(d.flags.x)];let seed=id+u32(e.v[0].w)*65537u;let life=e.v[4].w;
   let age=fract(g.v[1].y/life+randomIndex(seed*3u+2u))*life;let phase=age/life;
   let random=vec2f(randomIndex(seed*3u),randomIndex(seed*3u+1u));
-  let velocity=vec2f(cos(e.v[3].x),sin(e.v[3].x))*e.v[4].y*mix(1.0,0.5+random.x,e.v[5].w)+vec2f(e.v[7].x,0);
+  let velocity=vec2f(cos(e.v[8].x),sin(e.v[8].x))*e.v[4].y*mix(1.0,0.5+random.x,e.v[5].w)+vec2f(e.v[7].x,0);
   let swirl=vec2f(noise(vec2f(random.x*64.0,age*0.2)),noise(vec2f(age*0.2,random.y*64.0+9.0)))-0.5;
   let travel=velocity*age+vec2f(0,0.5*e.v[5].z*age*age)+swirl*e.v[4].z*50.0;
   // Spawn and wrap in the same local rectangle used by region() and editor
@@ -507,7 +532,10 @@ fn randomIndex(value:u32) -> f32 { var h=value;h=(h^(h>>16u))*0x7feb352du;h=(h^(
 @fragment fn particleColor(in:ParticleVertex) -> @location(0) vec4f {
   var e=effects[u32(d.flags.x)];e.v[6].x=in.distance;let visible=visibility(e,depthAt(in.worldPoint));
   let a=exp(-dot(in.uv,in.uv)*4.0)*(1.0-smoothstep(0.7,1.0,length(in.uv)))*in.color.a*visible;
-  return vec4f(in.color.rgb*a,a);
+  var color=in.color.rgb*a;
+  // Match additive accumulation into the browser overlay's unorm8 canvas.
+  if(g.v[2].w>0.5){color=floor(clamp(color,vec3f(0),vec3f(1))*255.0+0.5)/255.0;}
+  return vec4f(color,a);
 }
 `;
   const autoExposure = /* wgsl */ `

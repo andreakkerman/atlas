@@ -1,0 +1,506 @@
+{
+  "levels": {
+    "LVL-0001": "bac190cdc823799bd50be61ceedb72711c61e412c7ab44a2243ce30d2160f053",
+    "LVL-0002": "fbeb716adf53a2946384c08239854713c067aaebae7bcd3294dd9abcb9b217cc",
+    "LVL-0003": "6e0e7dee2dffac7fa0f321343b5245f0f76d30bfddebe32d19e3ac7ef986128d"
+  },
+  "arcHints": {
+    "LVL-0032": [
+      [
+        "car-1a",
+        "Denk aan 7 groepjes van 8.",
+        "Reken eerst 8 × 5 en tel er nog twee groepjes van 8 bij."
+      ],
+      [
+        "car-1b",
+        "Denk aan 6 groepjes van 9.",
+        "Reken eerst 6 × 10 en haal er één groepje van 6 af."
+      ],
+      [
+        "car-2a",
+        "Denk aan 4 groepjes van 6.",
+        "Verdubbel 6 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "car-2b",
+        "Denk aan 8 groepjes van 3.",
+        "Reken eerst 3 × 4 en verdubbel die uitkomst."
+      ],
+      [
+        "car-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 6 groepjes van 7. Reken 6 × 7."
+      ],
+      [
+        "car-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 5 groepjes van 4. Reken 5 × 4."
+      ],
+      [
+        "car-4a",
+        "Welke keersom met 7 helpt je bij 56 : 7?",
+        "Zoek in de tafel van 7 welk getal precies op 56 uitkomt."
+      ],
+      [
+        "car-4b",
+        "Welke keersom met 9 helpt je bij 54 : 9?",
+        "Zoek in de tafel van 9 welk getal precies op 54 uitkomt."
+      ],
+      [
+        "lootCrate-1a",
+        "Denk aan 8 groepjes van 8.",
+        "Reken eerst 8 × 4 en verdubbel die uitkomst."
+      ],
+      [
+        "lootCrate-1b",
+        "Denk aan 9 groepjes van 4.",
+        "Verdubbel 9 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "lootCrate-2a",
+        "Denk aan 7 groepjes van 6.",
+        "Reken eerst 7 × 5 en tel er nog 7 bij."
+      ],
+      [
+        "lootCrate-2b",
+        "Denk aan 3 groepjes van 5.",
+        "Reken 3 × 10 en neem daar de helft van."
+      ],
+      [
+        "lootCrate-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 4 groepjes van 8. Reken 4 × 8."
+      ],
+      [
+        "lootCrate-3b",
+        "Wat wordt verdeeld? En over hoeveel gelijke groepjes?",
+        "Je verdeelt 42 over 6 gelijke groepjes. Reken 42 : 6."
+      ],
+      [
+        "lootCrate-4a",
+        "Welke keersom met 8 helpt je bij 72 : 8?",
+        "Zoek in de tafel van 8 welk getal precies op 72 uitkomt."
+      ],
+      [
+        "lootCrate-4b",
+        "Welke keersom met 4 helpt je bij 24 : 4?",
+        "Zoek in de tafel van 4 welk getal precies op 24 uitkomt."
+      ],
+      [
+        "raiderCache-1a",
+        "Denk aan 9 groepjes van 7.",
+        "Reken eerst 7 × 10 en haal er één groepje van 7 af."
+      ],
+      [
+        "raiderCache-1b",
+        "Denk aan 8 groepjes van 6.",
+        "Reken eerst 8 × 5 en tel er nog 8 bij."
+      ],
+      [
+        "raiderCache-2a",
+        "Denk aan 10 groepjes van 3.",
+        "Bij × 10 komt er een nul achter 3."
+      ],
+      [
+        "raiderCache-2b",
+        "Denk aan 7 groepjes van 4.",
+        "Verdubbel 7 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "raiderCache-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 3 groepjes van 6. Reken 3 × 6."
+      ],
+      [
+        "raiderCache-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 5 groepjes van 9. Reken 5 × 9."
+      ],
+      [
+        "raiderCache-4a",
+        "Wat wordt verdeeld? En over hoeveel gelijke groepjes?",
+        "Je verdeelt 40 over 5 gelijke groepjes. Reken 40 : 5."
+      ],
+      [
+        "raiderCache-4b",
+        "Hoeveel keer betaal je hetzelfde bedrag?",
+        "Je betaalt 6 keer 2 euro. Reken 6 × 2."
+      ]
+    ],
+    "LVL-0033": [
+      [
+        "churchClock-1a",
+        "Kijk eerst naar de grote wijzer.",
+        "De grote wijzer staat op de 3: dat is kwart over. Kijk nu naar de kleine wijzer."
+      ],
+      [
+        "churchClock-1b",
+        "Kijk eerst naar de grote wijzer.",
+        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+      ],
+      [
+        "churchClock-2a",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "churchClock-2b",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "churchClock-3a",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "churchClock-3b",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "churchClock-4a",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "churchClock-4b",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "chimney-1a",
+        "Denk aan 8 groepjes van 7.",
+        "Reken eerst 8 × 5 en tel er nog twee groepjes van 8 bij."
+      ],
+      [
+        "chimney-1b",
+        "Denk aan 6 groepjes van 8.",
+        "Reken eerst 8 × 5 en tel er nog 8 bij."
+      ],
+      [
+        "chimney-2a",
+        "Denk aan 9 groepjes van 4.",
+        "Verdubbel 9 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "chimney-2b",
+        "Denk aan 7 groepjes van 6.",
+        "Reken eerst 7 × 5 en tel er nog 7 bij."
+      ],
+      [
+        "chimney-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 3 groepjes van 8. Reken 3 × 8."
+      ],
+      [
+        "chimney-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 5 groepjes van 6. Reken 5 × 6."
+      ],
+      [
+        "chimney-4a",
+        "Welke keersom met 9 helpt je bij 54 : 9?",
+        "Zoek in de tafel van 9 welk getal precies op 54 uitkomt."
+      ],
+      [
+        "chimney-4b",
+        "Welke keersom met 7 helpt je bij 56 : 7?",
+        "Zoek in de tafel van 7 welk getal precies op 56 uitkomt."
+      ],
+      [
+        "arcProbe-1a",
+        "Denk aan 9 groepjes van 8.",
+        "Reken eerst 8 × 10 en haal er één groepje van 8 af."
+      ],
+      [
+        "arcProbe-1b",
+        "Denk aan 7 groepjes van 9.",
+        "Reken eerst 7 × 10 en haal er één groepje van 7 af."
+      ],
+      [
+        "arcProbe-2a",
+        "Denk aan 6 groepjes van 4.",
+        "Verdubbel 6 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "arcProbe-2b",
+        "Denk aan 8 groepjes van 5.",
+        "Reken 8 × 10 en neem daar de helft van."
+      ],
+      [
+        "arcProbe-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 6 groepjes van 7. Reken 6 × 7."
+      ],
+      [
+        "arcProbe-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 4 groepjes van 5. Reken 4 × 5."
+      ],
+      [
+        "arcProbe-4a",
+        "Wat wordt verdeeld? En over hoeveel gelijke groepjes?",
+        "Je verdeelt 48 over 6 gelijke groepjes. Reken 48 : 6."
+      ],
+      [
+        "arcProbe-4b",
+        "In hoeveel gelijke stukken wordt de totale lengte verdeeld?",
+        "Verdeel 72 door 8. Reken 72 : 8."
+      ]
+    ],
+    "LVL-0034": [
+      [
+        "seaContainer-1a",
+        "Denk aan 7 groepjes van 8.",
+        "Reken eerst 8 × 5 en tel er nog twee groepjes van 8 bij."
+      ],
+      [
+        "seaContainer-1b",
+        "Denk aan 9 groepjes van 6.",
+        "Reken eerst 6 × 10 en haal er één groepje van 6 af."
+      ],
+      [
+        "seaContainer-2a",
+        "Denk aan 4 groepjes van 7.",
+        "Verdubbel 7 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "seaContainer-2b",
+        "Denk aan 8 groepjes van 3.",
+        "Reken eerst 3 × 4 en verdubbel die uitkomst."
+      ],
+      [
+        "seaContainer-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 6 groepjes van 4. Reken 6 × 4."
+      ],
+      [
+        "seaContainer-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 5 groepjes van 8. Reken 5 × 8."
+      ],
+      [
+        "seaContainer-4a",
+        "Welke keersom met 7 helpt je bij 63 : 7?",
+        "Zoek in de tafel van 7 welk getal precies op 63 uitkomt."
+      ],
+      [
+        "seaContainer-4b",
+        "Welke keersom met 6 helpt je bij 48 : 6?",
+        "Zoek in de tafel van 6 welk getal precies op 48 uitkomt."
+      ],
+      [
+        "raiderCache-1a",
+        "Denk aan 6 groepjes van 7.",
+        "Reken eerst 7 × 5 en tel er nog 7 bij."
+      ],
+      [
+        "raiderCache-1b",
+        "Denk aan 8 groepjes van 9.",
+        "Reken eerst 8 × 10 en haal er één groepje van 8 af."
+      ],
+      [
+        "raiderCache-2a",
+        "Denk aan 3 groepjes van 9.",
+        "Reken eerst 3 × 10 en haal er één groepje van 3 af."
+      ],
+      [
+        "raiderCache-2b",
+        "Denk aan 7 groepjes van 4.",
+        "Verdubbel 7 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "raiderCache-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 4 groepjes van 5. Reken 4 × 5."
+      ],
+      [
+        "raiderCache-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 8 groepjes van 6. Reken 8 × 6."
+      ],
+      [
+        "raiderCache-4a",
+        "Welke keersom met 8 helpt je bij 72 : 8?",
+        "Zoek in de tafel van 8 welk getal precies op 72 uitkomt."
+      ],
+      [
+        "raiderCache-4b",
+        "Wat wordt verdeeld? En over hoeveel gelijke groepjes?",
+        "Je verdeelt 42 over 6 gelijke groepjes. Reken 42 : 6."
+      ],
+      [
+        "blueSuitcase-1a",
+        "Denk aan 9 groepjes van 7.",
+        "Reken eerst 7 × 10 en haal er één groepje van 7 af."
+      ],
+      [
+        "blueSuitcase-1b",
+        "Denk aan 6 groepjes van 8.",
+        "Reken eerst 8 × 5 en tel er nog 8 bij."
+      ],
+      [
+        "blueSuitcase-2a",
+        "Denk aan 5 groepjes van 7.",
+        "Reken 7 × 10 en neem daar de helft van."
+      ],
+      [
+        "blueSuitcase-2b",
+        "Denk aan 4 groepjes van 8.",
+        "Verdubbel 8 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "blueSuitcase-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 3 groepjes van 6. Reken 3 × 6."
+      ],
+      [
+        "blueSuitcase-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 7 groepjes van 5. Reken 7 × 5."
+      ],
+      [
+        "blueSuitcase-4a",
+        "Wat wordt verdeeld? En over hoeveel gelijke groepjes?",
+        "Je verdeelt 32 over 4 gelijke groepjes. Reken 32 : 4."
+      ],
+      [
+        "blueSuitcase-4b",
+        "Hoeveel keer betaal je hetzelfde bedrag?",
+        "Je betaalt 5 keer 3 euro. Reken 5 × 3."
+      ]
+    ],
+    "LVL-0035": [
+      [
+        "terminal-1a",
+        "Denk aan 7 groepjes van 9.",
+        "Reken eerst 7 × 10 en haal er één groepje van 7 af."
+      ],
+      [
+        "terminal-1b",
+        "Denk aan 6 groepjes van 8.",
+        "Reken eerst 8 × 5 en tel er nog 8 bij."
+      ],
+      [
+        "terminal-2a",
+        "Denk aan 4 groepjes van 8.",
+        "Verdubbel 8 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "terminal-2b",
+        "Denk aan 9 groepjes van 3.",
+        "Reken eerst 3 × 10 en haal er één groepje van 3 af."
+      ],
+      [
+        "terminal-3a",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 6 groepjes van 7. Reken 6 × 7."
+      ],
+      [
+        "terminal-3b",
+        "Hoeveel groepjes zijn er? En hoeveel zitten er in elk groepje?",
+        "Je hebt 8 groepjes van 6. Reken 8 × 6."
+      ],
+      [
+        "terminal-4a",
+        "Welke keersom met 7 helpt je bij 56 : 7?",
+        "Zoek in de tafel van 7 welk getal precies op 56 uitkomt."
+      ],
+      [
+        "terminal-4b",
+        "Welke keersom met 8 helpt je bij 72 : 8?",
+        "Zoek in de tafel van 8 welk getal precies op 72 uitkomt."
+      ],
+      [
+        "roundContainer-1a",
+        "Kijk eerst naar de grote wijzer.",
+        "De grote wijzer staat op de 3: dat is kwart over. Kijk nu naar de kleine wijzer."
+      ],
+      [
+        "roundContainer-1b",
+        "Kijk eerst naar de grote wijzer.",
+        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+      ],
+      [
+        "roundContainer-2a",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "roundContainer-2b",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "roundContainer-3a",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "roundContainer-3b",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "roundContainer-4a",
+        "Kijk eerst naar de grote wijzer.",
+        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+      ],
+      [
+        "roundContainer-4b",
+        "Kijk eerst naar de grote wijzer.",
+        "De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt."
+      ],
+      [
+        "crate-1a",
+        "Denk aan 8 groepjes van 9.",
+        "Reken eerst 8 × 10 en haal er één groepje van 8 af."
+      ],
+      [
+        "crate-1b",
+        "Denk aan 7 groepjes van 6.",
+        "Reken eerst 7 × 5 en tel er nog 7 bij."
+      ],
+      [
+        "crate-2a",
+        "Denk aan 5 groepjes van 4.",
+        "Verdubbel 5 en verdubbel de uitkomst nog een keer."
+      ],
+      [
+        "crate-2b",
+        "Denk aan 9 groepjes van 8.",
+        "Reken eerst 8 × 10 en haal er één groepje van 8 af."
+      ],
+      [
+        "crate-3a",
+        "Welke keersom met 6 helpt je bij 48 : 6?",
+        "Zoek in de tafel van 6 welk getal precies op 48 uitkomt."
+      ],
+      [
+        "crate-3b",
+        "Welke keersom met 9 helpt je bij 63 : 9?",
+        "Zoek in de tafel van 9 welk getal precies op 63 uitkomt."
+      ],
+      [
+        "crate-4a",
+        "Wat wordt verdeeld? En over hoeveel gelijke groepjes?",
+        "Je verdeelt 42 over 7 gelijke groepjes. Reken 42 : 7."
+      ],
+      [
+        "crate-4b",
+        "Hoeveel keer betaal je hetzelfde bedrag?",
+        "Je betaalt 5 keer 4 euro. Reken 5 × 4."
+      ]
+    ]
+  },
+  "unchangedSources": {
+    "Levels/LVL-0032/level.js": "7f81309b2ac9b3415db2379210899e086742cfbe7030cc600904474e637565c1",
+    "Levels/LVL-0033/level.js": "1dcd179487d3c44a1471d00459afe0d5cddc5cff248cd0f66622928a89f2c412",
+    "Levels/LVL-0034/level.js": "17c37e4fa3e2b4d8ff8378cc6e05e76d379b805918136a121d734c3b979cdd00",
+    "Levels/LVL-0035/level.js": "c9acf2eeaf2964de37c843d065991370ac52bc04b2863528ca2bc9094342586a",
+    "src/app.js": "2c6863dcffe4a71bff3c2c949c8c8543591fe0563ff3bd70a3a42f957a40433c",
+    "Levels/world-config.js": "f5a85924286dc21e2af5c54b0c1f08b92e2f30033c6de1365c45e56a0c4c8f3b",
+    "src/atlas-world.js": "bd94f187bda8a54e1d1fc30e519f7a3e0cf113b455c0a90354dd4709965be171"
+  }
+}

@@ -1,0 +1,127 @@
+
+Running 3 tests using 1 worker
+
+(node:18072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › tests\fresh-level-run.spec.js:44:1 › earned terminal reward can replay twice with fresh usable run state and durable completion (4.1s)
+(node:8436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [desktop-chromium] › tests\fresh-level-run.spec.js:68:1 › partial reload and menu re-entry reset the run without erasing learning history (7.8s)
+(node:42592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:42592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  3 [desktop-chromium] › tests\fresh-level-run.spec.js:82:1 › legacy partial saves are ignored without deleting durable completion fields (6.9s)
+
+
+  1) [desktop-chromium] › tests\fresh-level-run.spec.js:44:1 › earned terminal reward can replay twice with fresh usable run state and durable completion 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 1[39m
+
+    [33m@@ -2,11 +2,11 @@[39m
+    [2m    "active": null,[22m
+    [2m    "answered": 0,[22m
+    [2m    "assisted": false,[22m
+    [2m    "attempts": 0,[22m
+    [2m    "done": Array [],[22m
+    [32m-   "exit": false,[39m
+    [31m+   "exit": true,[39m
+    [2m    "failures": Object {},[22m
+    [2m    "feedback": "",[22m
+    [2m    "firstTryCorrect": 0,[22m
+    [2m    "questions": Array [],[22m
+    [2m    "ready": true,[22m
+
+      20 |       wrong: s.selectedWrong, feedback: s.feedback, exit: !!s.exitTransitionPending,
+      21 |       transition: !!s.sceneTransitionPending, ready: s.criticalAssetsReady };
+    > 22 |   })).toEqual({ done: [], answered: 0, attempts: 0, firstTryCorrect: 0, questions: [], active: null,
+         |       ^
+      23 |     failures: {}, assisted: false, wrong: false, feedback: '', exit: false, transition: false, ready: true });
+      24 |   expect(await page.evaluate(() => window.eval('isLevelExitReady')())).toBe(false);
+      25 | }
+        at fresh (D:\DevProjects\SvenAdventure\tests\fresh-level-run.spec.js:22:7)
+        at D:\DevProjects\SvenAdventure\tests\fresh-level-run.spec.js:57:5
+
+    Error Context: test-results\fresh-level-run-earned-ter-fbaad-tate-and-durable-completion-desktop-chromium\error-context.md
+
+  2) [desktop-chromium] › tests\fresh-level-run.spec.js:68:1 › partial reload and menu re-entry reset the run without erasing learning history 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [33m@@ -1,11 +1,13 @@[39m
+    [2m  Object {[22m
+    [2m    "active": null,[22m
+    [2m    "answered": 0,[22m
+    [2m    "assisted": false,[22m
+    [2m    "attempts": 0,[22m
+    [32m-   "done": Array [],[39m
+    [31m+   "done": Array [[39m
+    [31m+     "car",[39m
+    [31m+   ],[39m
+    [2m    "exit": false,[22m
+    [2m    "failures": Object {},[22m
+    [2m    "feedback": "",[22m
+    [2m    "firstTryCorrect": 0,[22m
+    [2m    "questions": Array [],[22m
+
+      20 |       wrong: s.selectedWrong, feedback: s.feedback, exit: !!s.exitTransitionPending,
+      21 |       transition: !!s.sceneTransitionPending, ready: s.criticalAssetsReady };
+    > 22 |   })).toEqual({ done: [], answered: 0, attempts: 0, firstTryCorrect: 0, questions: [], active: null,
+         |       ^
+      23 |     failures: {}, assisted: false, wrong: false, feedback: '', exit: false, transition: false, ready: true });
+      24 |   expect(await page.evaluate(() => window.eval('isLevelExitReady')())).toBe(false);
+      25 | }
+        at fresh (D:\DevProjects\SvenAdventure\tests\fresh-level-run.spec.js:22:7)
+        at D:\DevProjects\SvenAdventure\tests\fresh-level-run.spec.js:74:52
+
+    Error Context: test-results\fresh-level-run-partial-re-ee1e5-ut-erasing-learning-history-desktop-chromium\error-context.md
+
+  3) [desktop-chromium] › tests\fresh-level-run.spec.js:82:1 › legacy partial saves are ignored without deleting durable completion fields 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 1[39m
+    [31m+ Received  + 3[39m
+
+    [33m@@ -1,11 +1,13 @@[39m
+    [2m  Object {[22m
+    [2m    "active": null,[22m
+    [2m    "answered": 0,[22m
+    [2m    "assisted": false,[22m
+    [2m    "attempts": 0,[22m
+    [32m-   "done": Array [],[39m
+    [31m+   "done": Array [[39m
+    [31m+     "car",[39m
+    [31m+   ],[39m
+    [2m    "exit": false,[22m
+    [2m    "failures": Object {},[22m
+    [2m    "feedback": "",[22m
+    [2m    "firstTryCorrect": 0,[22m
+    [2m    "questions": Array [],[22m
+
+      20 |       wrong: s.selectedWrong, feedback: s.feedback, exit: !!s.exitTransitionPending,
+      21 |       transition: !!s.sceneTransitionPending, ready: s.criticalAssetsReady };
+    > 22 |   })).toEqual({ done: [], answered: 0, attempts: 0, firstTryCorrect: 0, questions: [], active: null,
+         |       ^
+      23 |     failures: {}, assisted: false, wrong: false, feedback: '', exit: false, transition: false, ready: true });
+      24 |   expect(await page.evaluate(() => window.eval('isLevelExitReady')())).toBe(false);
+      25 | }
+        at fresh (D:\DevProjects\SvenAdventure\tests\fresh-level-run.spec.js:22:7)
+        at D:\DevProjects\SvenAdventure\tests\fresh-level-run.spec.js:90:52
+
+    Error Context: test-results\fresh-level-run-legacy-par-ef83a-g-durable-completion-fields-desktop-chromium\error-context.md
+
+  3 failed
+    [desktop-chromium] › tests\fresh-level-run.spec.js:44:1 › earned terminal reward can replay twice with fresh usable run state and durable completion 
+    [desktop-chromium] › tests\fresh-level-run.spec.js:68:1 › partial reload and menu re-entry reset the run without erasing learning history 
+    [desktop-chromium] › tests\fresh-level-run.spec.js:82:1 › legacy partial saves are ignored without deleting durable completion fields 

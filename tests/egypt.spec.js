@@ -6,7 +6,7 @@ const vm = require("vm");
 const { pathToFileURL } = require("url");
 
 const root = path.join(__dirname, "..");
-const gameUrl = pathToFileURL(path.join(root, "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "index.html")).toString();
 const egyptIds = ["LVL-0027", "LVL-0028", "LVL-0029", "LVL-0030", "LVL-0031"];
 
 function loadScript(relativePath, context) {
@@ -28,6 +28,8 @@ function loadEgyptLevels() {
 
 async function startLevel(page, levelId) {
   await page.goto(gameUrl);
+  await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
+  await expect(page.locator(".menuScreen")).toBeVisible();
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true });
@@ -147,8 +149,11 @@ test.describe("Egypt adventure", () => {
       "LVL-0031": null
     };
 
+    // Reuse one application session across level changes instead of replaying
+    // the intro/bootstrap six times; keep all audio and exit assertions.
+    await startLevel(page, egyptIds[0]);
     for (const id of egyptIds) {
-      await startLevel(page, id);
+      if (id !== egyptIds[0]) await page.evaluate(id => window.eval("selectLevel")(id, { startImmediately: true }), id);
       await page.evaluate(() => {
         window.eval("audioState.unlocked = true");
         window.eval("syncAudioForState")();
@@ -165,10 +170,13 @@ test.describe("Egypt adventure", () => {
       });
     }
 
-    await startLevel(page, "LVL-0027");
+    await page.evaluate(() => window.eval("selectLevel")("LVL-0027", { startImmediately: true }));
     await moveCameraToObject(page, "museumSarcophagus");
     await expect(page.getByRole("button", { name: "Gouden sarcofaag", exact: true })).toHaveAttribute("data-exit-ready", "false");
-    await expect(page.getByRole("button", { name: "Anubisbeeld", exact: true })).toHaveAttribute("data-hotspot-cue", "challenge");
+    // Anubis and the relief are inactive in current production content.
+    await expect(page.getByRole("button", { name: "Anubisbeeld", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Modelboot", exact: true })).toHaveAttribute("data-hotspot-cue", "challenge");
+    expect(await page.evaluate(() => window.eval("activeRunes")().map(r => r.id))).toEqual(["tabletCase", "modelBoat"]);
 
     await page.evaluate(() => window.eval("completeCurrentSceneChallenges")());
     await expect(page.getByRole("button", { name: "Gouden sarcofaag", exact: true })).toHaveAttribute("data-exit-ready", "true");

@@ -1,0 +1,67 @@
+
+Running 6 tests using 1 worker
+
+(node:46964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:46964) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay (21ms)
+(node:36352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36352) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 2 [desktop-chromium] › tests\flyby-lifecycle.spec.js:25:1 › delayed group members reserve their IDs through the entire flight (16ms)
+  ok 3 [desktop-chromium] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate (6ms)
+(node:48008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48008) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  4 [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay (25ms)
+(node:48572) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48572) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 5 [ipad-landscape] › tests\flyby-lifecycle.spec.js:25:1 › delayed group members reserve their IDs through the entire flight (13ms)
+  ok 6 [ipad-landscape] › tests\flyby-lifecycle.spec.js:32:1 › single frame loads only A and never mutates frame state; two frames still animate (4ms)
+
+
+  1) [desktop-chromium] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      20 |  h.advance(15000);expect(h.r.active.has('slow')).toBe(false);
+      21 |  h.advance(900);expect(h.r.active.has('slow')).toBe(false);
+    > 22 |  h.advance(100);expect(h.r.active.has('slow')).toBe(true);
+         |                                                ^
+      23 |  h.leave();h.advance(60000);expect(h.r.active.size).toBe(0);expect(h.r.timers.size).toBe(0);
+      24 | });
+      25 | test('delayed group members reserve their IDs through the entire flight',async()=>{
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:22:48
+
+    Error Context: test-results\flyby-lifecycle-preview-ca-2ab8e-ght-precedes-the-next-delay-desktop-chromium\error-context.md
+
+  2) [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32mtrue[39m
+    Received: [31mfalse[39m
+
+      20 |  h.advance(15000);expect(h.r.active.has('slow')).toBe(false);
+      21 |  h.advance(900);expect(h.r.active.has('slow')).toBe(false);
+    > 22 |  h.advance(100);expect(h.r.active.has('slow')).toBe(true);
+         |                                                ^
+      23 |  h.leave();h.advance(60000);expect(h.r.active.size).toBe(0);expect(h.r.timers.size).toBe(0);
+      24 | });
+      25 | test('delayed group members reserve their IDs through the entire flight',async()=>{
+        at D:\DevProjects\SvenAdventure\tests\flyby-lifecycle.spec.js:22:48
+
+    Error Context: test-results\flyby-lifecycle-preview-ca-2ab8e-ght-precedes-the-next-delay-ipad-landscape\error-context.md
+
+  2 failed
+    [desktop-chromium] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+    [ipad-landscape] › tests\flyby-lifecycle.spec.js:15:1 › preview cancels old recurrence; full slow flight precedes the next delay 
+  4 passed (2.5s)

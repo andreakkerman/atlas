@@ -186,6 +186,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       "moose": "lava, veilige steen en snel maar rustig vertrekken"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "nether-enter",
@@ -212,7 +219,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "netherMap",
       "speaker": "minnie",
-      "text": "De lavakaart heeft koele lijnen. Gelukkig maar."
+      "text": "Op die lavakaart zie je precies waar het heet wordt."
     },
     {
       "id": "nether-solved",
@@ -230,13 +237,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
       "id": "nether-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De deur naar boven blijft dicht. Eerst nog {remainingChallenges}."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kunnen we naar boven."
     },
     {
       "id": "nether-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De deur naar boven opent. Mooi moment om te gaan."
+      "text": "De deur naar boven is open. Tijd om hier weg te gaan."
     },
     {
       "id": "nether-complete",
@@ -283,8 +290,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "6 × 4 = ?",
               "answer": 24,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 6 twee keer.",
+              "hintParameters": {"a":6,"b":4},
               "explanation": "6 × 4 = 24."
             },
             {
@@ -302,8 +308,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 21,
                 28
               ],
-              "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 2 × 5 en 2 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":2,"b":7},
               "explanation": "2 × 7 = 14."
             }
           ]
@@ -320,8 +325,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "8 × 4 = ?",
               "answer": 32,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 8 twee keer.",
+              "hintParameters": {"a":8,"b":4},
               "explanation": "8 × 4 = 32."
             },
             {
@@ -339,8 +343,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 4 = 28, is 28 : 7 = 4.",
+              "hintParameters": {"a":28,"b":7},
               "explanation": "28 : 7 = 4."
             }
           ]
@@ -357,8 +360,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "De veilige route vanaf de brouwtafel is 63 meter lang en bestaat uit 9 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 7,
-              "hintMinnie": "Verdeel de totale lengte eerlijk over 9 gelijke stukken.",
-              "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 63.",
+              "hintParameters": {"a":63,"b":9},
               "explanation": "63 : 9 = 7 meter."
             },
             {
@@ -376,8 +378,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 3,
                 4
               ],
-              "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-              "hintMoose": "Omdat 3 × 2 = 6, is 6 : 3 = 2.",
+              "hintParameters": {"a":6,"b":3},
               "explanation": "6 : 3 = 2."
             }
           ]
@@ -394,8 +395,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 25 drankflesjes eerlijk over 5 rekken. Hoeveel flesjes komen in ieder rek?",
               "answer": 5,
-              "hintMinnie": "Verdeel 25 eerlijk over 5 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 5 welk getal uitkomt op 25.",
+              "hintParameters": {"a":25,"b":5},
               "explanation": "25 : 5 = 5."
             },
             {
@@ -407,8 +407,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "12 : 3 = ?",
               "answer": 4,
-              "hintMinnie": "Welke som uit de tafel van 3 helpt?",
-              "hintMoose": "Omdat 3 × 4 = 12, is 12 : 3 = 4.",
+              "hintParameters": {"a":12,"b":3},
               "explanation": "12 : 3 = 4."
             }
           ]
@@ -432,8 +431,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "2 × 8 = ?",
               "answer": 16,
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 2 en verdubbel dat.",
+              "hintParameters": {"a":2,"b":8},
               "explanation": "2 × 8 = 16."
             },
             {
@@ -451,8 +449,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 12,
                 14
               ],
-              "hintMinnie": "Denk aan de tafel van 2.",
-              "hintMoose": "Verdubbel 5.",
+              "hintParameters": {"a":5,"b":2},
               "explanation": "5 × 2 = 10."
             }
           ]
@@ -469,8 +466,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Rond de Netherbol staan 3 ringen met elk 7 gloeiblokken. Hoeveel blokken zijn dat samen?",
               "answer": 21,
-              "hintMinnie": "Er zijn 3 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 3 × 5 en 3 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":3,"b":7},
               "explanation": "3 × 7 = 21."
             },
             {
@@ -488,8 +484,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 7,
                 8
               ],
-              "hintMinnie": "Verdeel 54 eerlijk over 9 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 54.",
+              "hintParameters": {"a":54,"b":9},
               "explanation": "54 : 9 = 6."
             }
           ]
@@ -506,8 +501,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Rond de Netherbol staan 4 ringen met elk 6 gloeiblokken. Hoeveel blokken zijn dat samen?",
               "answer": 24,
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 4 × 5 en tel er nog 4 bij op.",
+              "hintParameters": {"a":4,"b":6},
               "explanation": "4 × 6 = 24."
             },
             {
@@ -525,8 +519,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 64,
                 72
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -549,8 +542,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 30,
                 40
               ],
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "2 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":2,"b":10},
               "explanation": "2 × 10 = 20."
             },
             {
@@ -562,8 +554,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "56 : 7 = ?",
               "answer": 8,
-              "hintMinnie": "Welke som uit de tafel van 7 helpt?",
-              "hintMoose": "Omdat 7 × 8 = 56, is 56 : 7 = 8.",
+              "hintParameters": {"a":56,"b":7},
               "explanation": "56 : 7 = 8."
             }
           ]
@@ -593,8 +584,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 4,
                 5
               ],
-              "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-              "hintMoose": "Omdat 9 × 3 = 27, is 27 : 9 = 3.",
+              "hintParameters": {"a":27,"b":9},
               "explanation": "27 : 9 = 3."
             },
             {
@@ -612,8 +602,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 4,
                 5
               ],
-              "hintMinnie": "Verdeel 24 eerlijk over 8 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 24.",
+              "hintParameters": {"a":24,"b":8},
               "explanation": "24 : 8 = 3."
             }
           ]
@@ -636,8 +625,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 28,
                 35
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 3 en 2 × 3.",
+              "hintParameters": {"a":3,"b":7},
               "explanation": "3 × 7 = 21."
             },
             {
@@ -655,8 +643,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 35,
                 42
               ],
-              "hintMinnie": "Er zijn 4 gelijke groepjes. In elk groepje zitten er 7.",
-              "hintMoose": "Reken 4 × 5 en 4 × 2 en tel de uitkomsten op.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 × 7 = 28."
             }
           ]
@@ -679,8 +666,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 56,
                 64
               ],
-              "hintMinnie": "Er zijn 6 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 6 drie keer.",
+              "hintParameters": {"a":6,"b":8},
               "explanation": "6 × 8 = 48."
             },
             {
@@ -692,8 +678,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 56 routeblokken eerlijk over 8 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
               "answer": 7,
-              "hintMinnie": "Verdeel 56 eerlijk over 8 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 8 welk getal uitkomt op 56.",
+              "hintParameters": {"a":56,"b":8},
               "explanation": "56 : 8 = 7."
             }
           ]
@@ -716,8 +701,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 30,
                 35
               ],
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 5 sprongen van 5.",
+              "hintParameters": {"a":5,"b":5},
               "explanation": "5 × 5 = 25."
             },
             {
@@ -729,8 +713,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 56 routeblokken eerlijk over 7 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
               "answer": 8,
-              "hintMinnie": "Verdeel 56 eerlijk over 7 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 56.",
+              "hintParameters": {"a":56,"b":7},
               "explanation": "56 : 7 = 8."
             }
           ]

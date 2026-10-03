@@ -1,0 +1,17 @@
+
+Running 2 tests using 1 worker
+
+(node:36592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36592) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.43024831047275974[39m, actorMae: [33m1.1962814653022151[39m }
+SPRITE_FILTER_PARITY [33m1[39m { domImpact: [33m0.1787487045219004[39m, fullImpact: [33m0.19543991708940162[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.32567812004495145[39m, actorMae: [33m1.7011003343252875[39m }
+  ok 1 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1 (6.8s)
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.4402813697870965[39m, actorMae: [33m1.3320356213512383[39m }
+SPRITE_FILTER_PARITY [33m2[39m { domImpact: [33m0.17892598047237224[39m, fullImpact: [33m0.18775909561992035[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.340636497636971[39m, actorMae: [33m2.0881392593409016[39m }
+  ok 2 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2 (11.1s)
+
+  2 passed (19.5s)

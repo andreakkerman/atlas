@@ -200,6 +200,7 @@ const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   getLevel: () => level,
   getScreen: () => state.screen,
   getTransientEffects: () => illustratedChallengeGlows(),
+  getParticleFields: () => canvasParticleFields(),
   hasOverlay: () => challengeFx.enabled(),
   drawOverlay: (ctx,time) => challengeFx.draw(ctx,time),
   stopOverlay: () => challengeFx.suspend?.(),
@@ -208,6 +209,8 @@ const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   warn: (message) => console.warn(message)
 });
 let graphicsSettingsOpen = false;
+const PLAY_GRAPHICS_DEFAULTS = Object.freeze({globalLighting:true,globalGrading:false,areaDirectionalLights:false,sceneDepth:false,characterShadows:true,particleFields:true});
+let playGraphicsFeatures = null;
 let voxelTuningOpen = false;
 let voxelRendererStatus = { status: "idle", ready: false, supported: Boolean(window.navigator?.gpu) };
 const voxelRenderer = window.AtlasVoxelRenderer.createRuntime({
@@ -370,6 +373,8 @@ const cinematicEditor = window.AtlasCinematicEditor.createEditor({
     markWorldConfigDirty(`${level.id}: Cinematic Lighting aangepast.`);
     markEditorModified("Cinematic Lighting aangepast. Apply slaat dit level op.");
     cinematicRenderer.sync();
+    if (canvasParticleFields().length && !document.querySelector('[data-scene-effects-canvas="worldAtmosphere"]')) render();
+    else sceneEffectRuntime.sync();
   }
 });
 const performanceHud = {
@@ -568,7 +573,11 @@ function createLevelState(selectedLevel) {
     questionTracked: false,
     assistedCompletionAvailable: false,
     challengeGuideMessage: null,
-    completedRunes: storedCompletedRunes(selectedLevel),
+    completedRunes: new Set(),
+    exitTransitionPending: false,
+    sceneTransitionPending: false,
+    devCompletionActive: false,
+    challengePrerequisiteLocked: false,
     levelExitReadyFromSaved,
     justCompletedRuneId: null,
     totalQuestions: activeRunes(selectedLevel).reduce((sum) => sum + 4, 0),
@@ -597,22 +606,6 @@ function storedLevelIsComplete(selectedLevel) {
     return !hasInactiveLearningChallenges(selectedLevel);
   } catch {
     return false;
-  }
-}
-
-function storedCompletedRunes(selectedLevel) {
-  if (!selectedLevel?.storageKey) return new Set();
-  try {
-    const stored = JSON.parse(localStorage.getItem(selectedLevel.storageKey));
-    // Historical completion is not a resumable run. Legacy partial replay saves
-    // retain completedAt but add updatedAt; the earned reward replaces that record.
-    const runCompleted = stored?.runCompleted ?? Boolean(stored?.completedAt && !stored?.updatedAt);
-    if (runCompleted) return new Set();
-    if (stored?.activeChallengeSignature !== activeChallengeSignature(selectedLevel)) return new Set();
-    const activeIds = new Set(activeRunes(selectedLevel).map((rune) => rune.id));
-    return new Set((stored?.completedRuneIds || []).filter((id) => activeIds.has(id)));
-  } catch {
-    return new Set();
   }
 }
 
@@ -756,6 +749,20 @@ function queueCompanionMoment(moment) {
 }
 
 function emitCompanionEvent(eventName, context = {}) {
+  const policy = level.companionPolicy;
+  // An explicit opt-out also bypasses shared fallback selection.
+  if (policy?.disabledEvents?.includes(eventName)) return;
+  const attentionKind = {
+    HOTSPOT_ATTENTION_FIRST: "challenge-attention",
+    AMBIENT_ATTENTION: "ambient-attention",
+    AMBIENT_ATTENTION_FIRST: "ambient-attention",
+    OBJECT_FIRST_LOOK: "object-attention"
+  }[eventName];
+  if (policy?.attentionOncePerVisit && attentionKind) {
+    const attentionKey = `${attentionKind}:${context.objectId || context.challengeId}`;
+    if (state.seenObjects.has(attentionKey)) return;
+    state.seenObjects.add(attentionKey);
+  }
   const remaining = requiredRuneCount() - completedActiveRuneCount();
   const exitReady = isLevelExitReady();
   if (eventName === "PATH_UNLOCKED" && !exitReady) return;
@@ -1252,11 +1259,16 @@ function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
 }
 
 function illustratedFeatures(id = level?.id) {
-  return window.AtlasCinematicSettings.illustratedFeatures(worldResolver.levelSettings(id).illustratedFeatures);
+  return window.AtlasCinematicSettings.illustratedFeatures(playGraphicsFeatures || worldResolver.levelSettings(id).illustratedFeatures);
 }
 
 function updateIllustratedFeature(id, key, value) {
   if (!Object.hasOwn(window.AtlasCinematicSettings.illustratedDefaults, key)) return;
+  if (playGraphicsFeatures) {
+    playGraphicsFeatures[key] = Boolean(value);
+    render();
+    return;
+  }
   if (!illustratedOriginals.has(id)) illustratedOriginals.set(id, { settings:cloneOptionalConfig(worldResolver.levelSettings(id).illustratedFeatures), worldDirty:worldEditor.dirty });
   worldResolver.updateLevelSettings(id, { illustratedFeatures:{ ...illustratedFeatures(id), [key]:Boolean(value) } });
   markWorldConfigDirty(`${id}: Illustrated Graphics aangepast.`);
@@ -2309,6 +2321,8 @@ async function startLevelFromMenu(levelId) {
     render();
     return false;
   }
+  playGraphicsFeatures = { ...PLAY_GRAPHICS_DEFAULTS };
+  voxelRenderer.beginSession({challengeFx:{...voxelRenderer.getSettings().challengeFx,mode:'canvas',enabled:true}});
   return selectLevel(levelId);
 }
 
@@ -4158,25 +4172,6 @@ function arriveAtInteraction(target, kind, action, interactionToken = state.inte
   finishInteraction(target, kind, action);
 }
 
-function saveChallengeProgress() {
-  if (!level?.storageKey) return;
-  let previous = {};
-  try { previous = JSON.parse(localStorage.getItem(level.storageKey)) || {}; } catch {}
-  localStorage.setItem(level.storageKey, JSON.stringify({
-    ...previous,
-    // Preserve historical completedAt while saving this unfinished (possibly replay) run.
-    runCompleted: false,
-    levelId: level.id,
-    activeChallengeSignature: activeChallengeSignature(level),
-    activeChallengeIds: activeRunes(level).map((rune) => rune.id),
-    completedRuneIds: activeRunes(level).filter((rune) => state.completedRunes.has(rune.id)).map((rune) => rune.id),
-    answered: state.answered,
-    firstTryCorrect: state.firstTryCorrect,
-    attempts: state.attempts,
-    updatedAt: new Date().toISOString()
-  }));
-}
-
 function finishInteraction(target, kind, action) {
   if (state.movementIntent?.type === "interactive") state.movementIntent = null;
   const exitHotspotId = level.exitHotspotId || "templeGate";
@@ -4333,7 +4328,10 @@ function answerQuestion(choice) {
   state.attempts += 1;
 
   const isCorrect = typeof correct === "string"
-    ? submitted.localeCompare(correct, "nl", { sensitivity: "base" }) === 0
+    ? question.family === "spelling"
+      // Preserve case tolerance and canonical Unicode equivalence, not spelling differences.
+      ? submitted.normalize("NFC").toLocaleLowerCase("nl") === correct.normalize("NFC").toLocaleLowerCase("nl")
+      : submitted.localeCompare(correct, "nl", { sensitivity: "base" }) === 0
     : submitted === correct;
   sessionReport?.recordAttempt(isCorrect);
   if (!isCorrect) {
@@ -4349,11 +4347,11 @@ function answerQuestion(choice) {
     });
     if (authored && failureCount === 1) {
       sessionReport?.recordHint("minnie");
-      setGuideMessage({ speaker: "minnie", text: question.hintMinnie }, "minnie");
+      setGuideMessage({ speaker: "minnie", text: window.AtlasChallengeHints.resolve(level.id, question, "minnie") }, "minnie");
       state.feedback = "";
     } else if (authored && failureCount === 2) {
       sessionReport?.recordHint("moose");
-      setGuideMessage({ speaker: "moose", text: question.hintMoose }, "moose");
+      setGuideMessage({ speaker: "moose", text: window.AtlasChallengeHints.resolve(level.id, question, "moose") }, "moose");
       state.feedback = "";
     } else if (authored) {
       state.feedback = question.explanation;
@@ -4419,7 +4417,6 @@ function nextQuestion() {
   }
 
   state.completedRunes.add(rune.id);
-  saveChallengeProgress();
   playSfx("challengeComplete");
   state.justCompletedRuneId = rune.id;
   state.activeRuneId = null;
@@ -4523,39 +4520,10 @@ async function continueToNextLevel() {
 }
 
 function restart() {
-  const startPoint = getPlayerStartPoint(level);
-  state.screen = "intro";
-  state.introIndex = 0;
-  state.worldX = startPoint.x;
-  state.worldY = startPoint.y;
-  state.cameraX = 0;
-  state.svenMood = "idle";
-  state.svenFacing = "right";
-  state.moving = false;
   stopMovement({ invalidateIntent: true });
-  state.activeRuneId = null;
-  state.selectedChallengeId = null;
-  state.activeQuestions = [];
-  state.questionIndex = 0;
-  state.selectedWrong = false;
-  state.questionTracked = false;
-  state.assistedCompletionAvailable = false;
-  state.completedRunes = new Set();
   challengeFx.dispose();
-  state.devCompletionActive = false;
-  state.levelExitReadyFromSaved = storedLevelIsComplete(level);
-  state.seenObjects = new Set();
-  state.challengeFailureCounts = {};
-  state.challengeGuideMessage = null;
-  state.companionQueue = [];
-  state.guidePriority = 0;
-  state.justCompletedRuneId = null;
-  state.answered = 0;
-  state.firstTryCorrect = 0;
-  state.attempts = 0;
-  saveChallengeProgress();
-  setGuideLine("welcome", level.spiritLines.welcome, "minnie");
-  state.feedback = "";
+  // Reuse entry's run-local defaults; the already prepared level assets remain owned.
+  state = { ...createLevelState(level), criticalAssetsReady: state.criticalAssetsReady };
   render();
 }
 
@@ -4867,8 +4835,8 @@ function renderChallengeVariantPreview(variant, index) {
       <p><strong>Antwoord</strong> ${previewText(answerFor(variant))}</p>
       ${variant.choices ? `<p><strong>Keuzes</strong> ${previewText(variant.choices)}</p>` : ""}
       ${visual ? `<p><strong>Visual</strong> ${previewText(visual.type)}${visual.type === "clock" ? ` · uur ${previewText(visual.hour)} · minuut ${previewText(visual.minute)}` : ""}</p>` : ""}
-      <p><strong>Minnie hint</strong> ${previewText(variant.hintMinnie)}</p>
-      <p><strong>Moose hint</strong> ${previewText(variant.hintMoose)}</p>
+      <p><strong>Minnie hint</strong> ${previewText(window.AtlasChallengeHints.resolve(level.id, variant, "minnie"))}</p>
+      <p><strong>Moose hint</strong> ${previewText(window.AtlasChallengeHints.resolve(level.id, variant, "moose"))}</p>
       <p><strong>Uitleg</strong> ${previewText(variant.explanation)}</p>
     </article>
   `;
@@ -6445,8 +6413,16 @@ function illustratedChallengeGlows() {
   }).filter(Boolean);
 }
 
+function canvasParticleFields() {
+  const mode = voxelRenderer.getSettings().renderer;
+  if (!level || !["illustrated", "cinematic"].includes(mode)) return [];
+  const api = window.AtlasCinematicSettings, value = worldResolver.levelSettings(level.id).cinematicLighting;
+  const settings = mode === "illustrated" ? api.forIllustrated(value, illustratedFeatures()) : api.effective(api.normalize(value));
+  return settings.particles.enabled ? settings.particles.items.filter(item => item.enabled && item.distribution === "ribbon") : [];
+}
+
 function renderSceneEffectCanvases() {
-  const authored = (level.sceneEffects || []).some((effect) => effect?.enabled !== false);
+  const authored = (level.sceneEffects || []).some((effect) => effect?.enabled !== false) || canvasParticleFields().length;
   const slots = authored ? window.AtlasSceneEffects.LAYER_SLOTS : voxelRenderer.getSettings().renderer === "illustrated" ? ["worldLight"] : [];
   return slots.map((slot) => `
     <canvas class="sceneEffectsCanvas" data-scene-effects-canvas="${slot}" aria-hidden="true"></canvas>
@@ -7707,6 +7683,12 @@ function restoreEditorUiState(saved) {
 }
 
 function render() {
+  // Also covers cancelled intros and failed loads which return directly to menu.
+  // Ordinary level transitions/retries never pass through this boundary.
+  if (state.screen === 'menu' && playGraphicsFeatures) {
+    playGraphicsFeatures = null;
+    voxelRenderer.endSession();
+  }
   if(voxelRenderer.getSettings().renderer!=='illustrated' || !voxelRenderer.getSettings().challengeFx.enabled || !['scene','challenge','correct'].includes(state.screen)) challengeFx.dispose();
   app.dataset.challengeFxActive=String(challengeFx.enabled());
   // A redundant scene refresh must not detach Safari's active GPU canvas while

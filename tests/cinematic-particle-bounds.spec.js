@@ -44,12 +44,12 @@ async function probe(page,item,time=1.75){
 
 test('GPU Drizzle spawn domain fills the rotated editor rectangle without hidden width clipping',async({page},info)=>{
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=='desktop-chromium','Real WebGPU required');
-  await page.goto(base+'/?dev=editor');
-  await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));
+  await page.goto(base+'/?dev=editor&level=LVL-0034');
+  await page.waitForFunction(()=>window.eval('typeof state')!=='undefined'&&window.eval('state.screen')==='scene');
   const measurements=[];
   for(const [span,scaled] of [[500,false],[2172,false],[2172,true]]){
     // At Drizzle's 90-degree direction, the editor's horizontal span is height.
-    const item=contract.preset('particles','Drizzle',contract.instance('particles',{x:1086,y:362,width:724,height:span,shape:'rectangle',softness:0.1}));
+    const item=contract.preset('particles','Drizzle',contract.instance('particles',{x:1086,y:362,width:724,height:span,shape:'rectangle',boundsRotation:90,softness:0.1}));
     item.scaleCountWithArea=scaled;
     const {values,count,errors}=await probe(page,item);
     expect(errors).toEqual([]);
@@ -66,10 +66,10 @@ test('GPU Drizzle spawn domain fills the rotated editor rectangle without hidden
 for(const viewport of [{width:1280,height:800,dpr:1},{width:1180,height:734,dpr:2},{width:820,height:1180,dpr:2}])test(`GPU rain scroll coverage ${viewport.width}x${viewport.height} DPR ${viewport.dpr}`,async({browser},info)=>{
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=='desktop-chromium','Real WebGPU required');
   const context=await browser.newContext({viewport,deviceScaleFactor:viewport.dpr,serviceWorkers:'block'}),page=await context.newPage(),errors=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text()+' '+m.location().url);});
   try{
     await scene(page);
-    const item=contract.preset('particles','Drizzle',contract.instance('particles',{x:1086,y:362,width:724,height:2172,shape:'rectangle'}));
+    const item=contract.preset('particles','Drizzle',contract.instance('particles',{x:1086,y:362,width:724,height:2172,shape:'rectangle',boundsRotation:90}));
     const config=contract.normalize({particles:{enabled:true,items:[item]}});
     const set=enabled=>page.evaluate(({config,enabled})=>{config.particles.enabled=enabled;window.eval('worldResolver').updateLevelSettings('LVL-0034',{cinematicLighting:config});window.eval('cinematicRenderer').sync();},{config,enabled});
     const measurements=[];
@@ -95,8 +95,8 @@ for(const viewport of [{width:1280,height:800,dpr:1},{width:1180,height:734,dpr:
 test('particle density is bounded, optional for legacy fields and reset by other presets',()=>{
   const legacy=contract.instance('particles',{width:16000,height:16000,count:2400});
   expect(legacy.scaleCountWithArea).toBe(false);expect(contract.particleCount(legacy)).toBe(2400);
-  const rain=contract.preset('particles','Drizzle',contract.instance('particles',{x:1086,y:362,width:724,height:2172,shape:'rectangle'}));
-  expect(rain).toMatchObject({x:1086,y:362,width:724,height:2172,shape:'rectangle',scaleCountWithArea:true});
+  const rain=contract.preset('particles','Drizzle',contract.instance('particles',{x:1086,y:362,width:724,height:2172,shape:'rectangle',boundsRotation:90}));
+  expect(rain).toMatchObject({x:1086,y:362,width:724,height:2172,shape:'rectangle',boundsRotation:90,scaleCountWithArea:true});
   expect(contract.particleCount(rain)).toBe(11794);
   expect(contract.particleCount({...rain,width:800,height:400})).toBe(2400);
   expect(contract.particleCount({...rain,width:400,height:400})).toBe(1200);
@@ -109,12 +109,13 @@ test('particle density is bounded, optional for legacy fields and reset by other
 
 test('GPU other preset and capped rain retain their complete rotated spawn domains',async({page},info)=>{
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=='desktop-chromium','Real WebGPU required');
-  await page.goto(base+'/?dev=editor');
+  await page.goto(base+'/?dev=editor&level=LVL-0034');
+  await page.waitForFunction(()=>window.eval('typeof state')!=='undefined'&&window.eval('state.screen')==='scene');
   for(const [name,width,height] of [['Pollen',1400,450],['Heavy Rain',724,2172]]){
     const item=contract.preset('particles',name,contract.instance('particles',{x:1086,y:362,width,height,shape:'rectangle'}));
     const {values,count,errors}=await probe(page,item);expect(errors).toEqual([]);
     if(name==='Heavy Rain')expect(count).toBe(20000);
-    const bins=Array(10).fill(0),angle=item.direction*Math.PI/180;let maxX=0,maxY=0;
+    const bins=Array(10).fill(0),angle=item.boundsRotation*Math.PI/180;let maxX=0,maxY=0;
     for(let i=0;i<values.length;i+=4){
       const dx=values[i]-item.x,dy=values[i+1]-item.y;
       const x=Math.cos(angle)*dx+Math.sin(angle)*dy,y=-Math.sin(angle)*dx+Math.cos(angle)*dy;
@@ -127,17 +128,38 @@ test('GPU other preset and capped rain retain their complete rotated spawn domai
 });
 
 async function frames(page){const n=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().frame);await expect.poll(()=>page.evaluate(()=>window.eval('cinematicRenderer').snapshot().frame)).toBeGreaterThan(n+3);}
+
+test('GPU particle bounds rotate independently of travel for every region shape',async({page},info)=>{
+  test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=='desktop-chromium','Real WebGPU required');
+  await page.goto(base+'/?dev=editor&level=LVL-0034');
+  await page.waitForFunction(()=>window.AtlasCinematicRenderer);
+  for(const shape of ['ellipse','rectangle','polygon']) {
+    const centers=[];
+    for(const [boundsRotation,direction] of [[0,0],[90,0],[90,90]]) {
+      const item=contract.instance('particles',{x:1086,y:362,width:1000,height:1000,shape,boundsRotation,direction,
+        distribution:'source',speed:40,wind:0,gravity:0,turbulence:0,randomness:0,lifetime:4,count:800});
+      const {values,errors}=await probe(page,item);expect(errors).toEqual([]);
+      let x=0,y=0,n=0;
+      for(let i=0;i<values.length;i+=4)if(values[i+3]>0.005){x+=values[i]-item.x;y+=values[i+1]-item.y;n++;}
+      expect(n).toBeGreaterThan(300);centers.push({x:x/n,y:y/n});
+    }
+    expect(centers[0].x).toBeGreaterThan(50);expect(Math.abs(centers[0].y)).toBeLessThan(4);
+    expect(centers[1].x).toBeGreaterThan(50);expect(Math.abs(centers[1].y)).toBeLessThan(4);
+    expect(Math.abs(centers[2].x)).toBeLessThan(4);expect(centers[2].y).toBeGreaterThan(50);
+  }
+});
 async function ready(page){await expect.poll(()=>page.evaluate(()=>{const s=window.eval('cinematicRenderer').snapshot();return s.error||s.status;}),{timeout:25000}).toBe('ready');}
 async function scene(page){
   await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
-  await page.goto(base+'/?dev=editor');
-  await page.evaluate(async()=>{await window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false});window.eval('voxelRenderer').updateSettings({renderer:'cinematic'});window.eval('render')();});
+  await page.goto(base+'/?dev=editor&level=LVL-0034');
+  await page.waitForFunction(()=>window.eval('typeof state')!=='undefined'&&window.eval('state.screen')==='scene');
+  await page.evaluate(async()=>{window.eval('voxelRenderer').updateSettings({renderer:'cinematic'});window.eval('render')();});
   await ready(page);
 }
 test('Particle Field editor drag, resize, Apply and reload preserve the rendered region',async({page},info)=>{
   test.skip(!process.env.ATLAS_WEBGPU_QA||info.project.name!=='desktop-chromium','Real WebGPU and local Apply server required');
   const config=path.join(__dirname,'../Levels/world-config.js'),original=fs.readFileSync(config);
-  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text()+' '+m.location().url);});
   try{
     await page.setViewportSize({width:2600,height:900});await scene(page);
     const existingParticleCount=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().particles);
@@ -147,6 +169,7 @@ test('Particle Field editor drag, resize, Apply and reload preserve the rendered
     const group=page.locator('[data-cinematic-group="particles"]');if(!await group.evaluate(e=>e.open))await group.locator('summary').click();
     await group.locator('[data-cinematic-action="add"]').click();
     await group.locator('[data-cinematic-preset="particles"]').selectOption('Drizzle');
+    await group.locator('[data-cinematic-setting="boundsRotation"]').fill('90');
     const field=key=>group.locator(`[data-cinematic-setting="${key}"]`);
     await field('shape').selectOption('rectangle');
     for(const [key,value] of Object.entries({x:1026,y:342,width:400,height:600}))await field(key).fill(String(value));
@@ -164,7 +187,7 @@ test('Particle Field editor drag, resize, Apply and reload preserve the rendered
     const bounds=await page.locator(`[data-cinematic-detail="${id}"] rect`).evaluate(e=>({width:+e.getAttribute('width'),height:+e.getAttribute('height'),transform:e.getAttribute('transform')}));
     expect(bounds).toEqual({width:724,height:2172,transform:`rotate(90 ${authored.x} ${authored.y})`});
     await page.locator('[data-debug-action="apply-walkpath"]').click();await expect.poll(()=>page.evaluate(()=>window.eval('walkPathEditor').status)).toBe('Applied');
-    await page.reload();await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));await ready(page);
+    await page.reload();await page.waitForFunction(()=>window.eval('typeof state')!=='undefined'&&window.eval('state.screen')==='scene');await ready(page);
     expect(await item()).toEqual(authored);
     expect(await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().particles)).toBe(existingParticleCount+contract.particleCount(authored));
     for(const renderer of ['illustrated','cinematic']){await page.evaluate(renderer=>{window.eval('voxelRenderer').updateSettings({renderer});window.eval('render')();},renderer);await ready(page);}

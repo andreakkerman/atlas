@@ -75,8 +75,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 7,
                 "minute": 30
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "De grote wijzer op de 6 betekent half. De kleine wijzer staat tussen de 7 en de 8.",
               "explanation": "Het is half acht."
             },
             {
@@ -99,8 +97,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 4,
                 "minute": 30
               },
-              "hintMinnie": "De grote wijzer staat op de 6.",
-              "hintMoose": "De kleine wijzer staat tussen de 4 en de 5. In het Nederlands kijk je vooruit.",
               "explanation": "Het is half vijf."
             }
           ]
@@ -128,8 +124,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 3,
                 "minute": 30
               },
-              "hintMinnie": "Zoek de grote wijzer op de 6.",
-              "hintMoose": "De kleine wijzer staat tussen de 3 en de 4.",
               "explanation": "Het is half vier."
             },
             {
@@ -152,8 +146,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 8,
                 "minute": 30
               },
-              "hintMinnie": "Bij een half uur wijst de grote wijzer omlaag.",
-              "hintMoose": "Kijk naar het uur waar de kleine wijzer naartoe gaat.",
               "explanation": "Het is half negen."
             }
           ]
@@ -181,8 +173,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 10,
                 "minute": 30
               },
-              "hintMinnie": "De grote wijzer staat op de 6.",
-              "hintMoose": "De kleine wijzer staat tussen de 10 en de 11.",
               "explanation": "Het is half elf."
             },
             {
@@ -205,8 +195,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 12,
                 "minute": 30
               },
-              "hintMinnie": "De kleine wijzer staat tussen 12 en 1.",
-              "hintMoose": "Bij half noem je het uur dat eraan komt.",
               "explanation": "Het is half één."
             }
           ]
@@ -234,8 +222,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 1,
                 "minute": 30
               },
-              "hintMinnie": "De grote wijzer staat recht naar beneden.",
-              "hintMoose": "De kleine wijzer staat tussen de 1 en de 2.",
               "explanation": "Het is half twee."
             },
             {
@@ -258,8 +244,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "hour": 6,
                 "minute": 30
               },
-              "hintMinnie": "Kijk naar het volgende hele uur.",
-              "hintMoose": "De kleine wijzer staat tussen de 6 en de 7.",
               "explanation": "Het is half zeven."
             }
           ]
@@ -289,8 +273,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 5,
                 6
               ],
-              "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-              "hintMoose": "Omdat 6 × 4 = 24, is 24 : 6 = 4.",
+              "hintParameters": {"a":24,"b":6},
               "explanation": "24 : 6 = 4."
             },
             {
@@ -302,8 +285,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
               "answerMode": "open",
               "prompt": "Atlas verdeelt 30 sterrenstickers over 6 sterrenkaarten. Op iedere kaart komen er evenveel. Hoeveel stickers per kaart?",
               "answer": 5,
-              "hintMinnie": "Verdeel 30 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 30.",
+              "hintParameters": {"a":30,"b":6},
               "explanation": "30 : 6 = 5."
             }
           ]
@@ -326,8 +308,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 12,
                 15
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+              "hintParameters": {"a":3,"b":3},
               "explanation": "3 × 3 = 9."
             },
             {
@@ -345,8 +326,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 8,
                 9
               ],
-              "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-              "hintMoose": "Omdat 6 × 7 = 42, is 42 : 6 = 7.",
+              "hintParameters": {"a":42,"b":6},
               "explanation": "42 : 6 = 7."
             }
           ]
@@ -369,8 +349,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 9,
                 10
               ],
-              "hintMinnie": "Welke som uit de tafel van 6 helpt?",
-              "hintMoose": "Omdat 6 × 8 = 48, is 48 : 6 = 8.",
+              "hintParameters": {"a":48,"b":6},
               "explanation": "48 : 6 = 8."
             },
             {
@@ -388,8 +367,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 21,
                 24
               ],
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 6 en tel nog 6 erbij.",
+              "hintParameters": {"a":6,"b":3},
               "explanation": "6 × 3 = 18."
             }
           ]
@@ -406,8 +384,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
               "answerMode": "open",
               "prompt": "Op 2 sterrenkaarten staan elk 6 sterren. Hoeveel sterren zijn dat samen?",
               "answer": 12,
-              "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 2 × 5 en tel er nog 2 bij op.",
+              "hintParameters": {"a":2,"b":6},
               "explanation": "2 × 6 = 12."
             },
             {
@@ -419,8 +396,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
               "answerMode": "open",
               "prompt": "Op 5 sterrenkaarten staan elk 8 sterren. Hoeveel sterren zijn dat samen?",
               "answer": 40,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 5 drie keer.",
+              "hintParameters": {"a":5,"b":8},
               "explanation": "5 × 8 = 40."
             }
           ]
@@ -739,40 +715,47 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
       "moose": "de stenen kade, stevige brug en collegepoort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "uk-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "De hele stad lijkt van goud. Zelfs de klok doet plechtig."
+      "text": "Wat een gouden licht. Die oude klokkentoren valt meteen op."
     },
     {
       "id": "uk-clockTower-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "clockTower",
       "speaker": "minnie",
-      "text": "Die klok heeft vast al duizend reizigers gezien. En nu ons."
+      "text": "Die oude klok hangt hier al heel lang."
     },
     {
       "id": "uk-telescope-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "telescope",
       "speaker": "minnie",
-      "text": "Door die koperen kijker kunnen we misschien Frankrijk al zien."
+      "text": "Door die koperen kijker zie je een heel eind."
     },
     {
       "id": "uk-postbox-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "postbox",
       "speaker": "minnie",
-      "text": "Zo rood kun je bijna niet verdwalen. Handig voor een brievenbus."
+      "text": "Die rode brievenbus valt niet te missen."
     },
     {
       "id": "uk-crystal-attention",
       "event": "AMBIENT_ATTENTION_FIRST",
       "objectId": "travelCrystal",
       "speaker": "minnie",
-      "text": "Dat kristal vangt alle kleuren van de stad. Een klein stukje avondlicht in steen."
+      "text": "Dat kristal vangt alle kleuren van de stad."
     },
     {
       "id": "uk-clockTower-solved",
@@ -805,13 +788,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
       "id": "uk-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De collegepoort wacht nog op {remainingChallenges}. Oude poorten haasten zich nooit."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de collegepoort open."
     },
     {
       "id": "uk-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De collegepoort is open. Frankrijk ligt voor ons."
+      "text": "De collegepoort is open. Op naar Italië."
     },
     {
       "id": "uk-complete",

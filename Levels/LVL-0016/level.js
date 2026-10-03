@@ -69,8 +69,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 42,
                 49
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 5 en 2 × 5.",
+              "hintParameters": {"a":5,"b":7},
               "explanation": "5 × 7 = 35."
             },
             {
@@ -88,8 +87,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 9,
                 12
               ],
-              "hintMinnie": "Er zijn 2 gelijke groepjes. In elk groepje zitten er 3.",
-              "hintMoose": "Verdubbel 2 en tel er nog 2 bij op.",
+              "hintParameters": {"a":2,"b":3},
               "explanation": "2 × 3 = 6."
             }
           ]
@@ -106,8 +104,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "In het Colosseum zijn 81 zitplaatsen verdeeld over 9 rijen. Hoeveel zitplaatsen zijn er per rij?",
               "answer": 9,
-              "hintMinnie": "Verdeel 81 eerlijk over 9 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 9 welk getal uitkomt op 81.",
+              "hintParameters": {"a":81,"b":9},
               "explanation": "81 : 9 = 9."
             },
             {
@@ -119,8 +116,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "7 × 6 = ?",
               "answer": 42,
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 7 en tel nog 7 erbij.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -137,8 +133,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "3 × 9 = ?",
               "answer": 27,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 3 en haal 3 eraf.",
+              "hintParameters": {"a":3,"b":9},
               "explanation": "3 × 9 = 27."
             },
             {
@@ -150,8 +145,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "7 × 4 = ?",
               "answer": 28,
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Verdubbel 7 twee keer.",
+              "hintParameters": {"a":7,"b":4},
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -168,8 +162,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "Het Colosseum heeft 5 rijen met elk 9 bogen. Hoeveel bogen zijn dat samen?",
               "answer": 45,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -181,8 +174,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "54 : 9 = ?",
               "answer": 6,
-              "hintMinnie": "Welke som uit de tafel van 9 helpt?",
-              "hintMoose": "Omdat 9 × 6 = 54, is 54 : 9 = 6.",
+              "hintParameters": {"a":54,"b":9},
               "explanation": "54 : 9 = 6."
             }
           ]
@@ -212,8 +204,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 30,
                 36
               ],
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Reken 5 × 4 en tel nog 4 erbij.",
+              "hintParameters": {"a":4,"b":6},
               "explanation": "4 × 6 = 24."
             },
             {
@@ -225,8 +216,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "Atlas koopt 3 ansichtkaarten van de fontein voor 4 euro per stuk. Hoeveel euro betaalt hij?",
               "answer": 12,
-              "hintMinnie": "Er zijn 3 gelijke bedragen van 4 euro.",
-              "hintMoose": "Verdubbel 3 en verdubbel de uitkomst nog eens.",
+              "hintParameters": {"a":3,"b":4,"currency":"euro"},
               "explanation": "3 × 4 = 12 euro."
             }
           ]
@@ -249,8 +239,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 30,
                 35
               ],
-              "hintMinnie": "Denk aan de tafel van 5.",
-              "hintMoose": "Tel 5 sprongen van 5.",
+              "hintParameters": {"a":5,"b":5},
               "explanation": "5 × 5 = 25."
             },
             {
@@ -262,8 +251,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "Rond de Romeinse fontein liggen 7 mozaïekstroken met elk 6 tegels. Hoeveel tegels zijn dat samen?",
               "answer": 42,
-              "hintMinnie": "Er zijn 7 gelijke groepjes. In elk groepje zitten er 6.",
-              "hintMoose": "Reken 7 × 5 en tel er nog 7 bij op.",
+              "hintParameters": {"a":7,"b":6},
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -280,8 +268,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "24 : 4 = ?",
               "answer": 6,
-              "hintMinnie": "Welke som uit de tafel van 4 helpt?",
-              "hintMoose": "Omdat 4 × 6 = 24, is 24 : 4 = 6.",
+              "hintParameters": {"a":24,"b":4},
               "explanation": "24 : 4 = 6."
             },
             {
@@ -293,8 +280,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "De rand van de Romeinse fontein is 14 meter lang en verdeeld in 7 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 2,
-              "hintMinnie": "Verdeel de totale lengte eerlijk over 7 gelijke stukken.",
-              "hintMoose": "Zoek in de tafel van 7 welk getal uitkomt op 14.",
+              "hintParameters": {"a":14,"b":7},
               "explanation": "14 : 7 = 2 meter."
             }
           ]
@@ -311,8 +297,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "5 × 9 = ?",
               "answer": 45,
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 5 en haal 5 eraf.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -324,8 +309,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "Rond de Romeinse fontein liggen 5 mozaïekstroken met elk 8 tegels. Hoeveel tegels zijn dat samen?",
               "answer": 40,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 8.",
-              "hintMoose": "Verdubbel 5 drie keer.",
+              "hintParameters": {"a":5,"b":8},
               "explanation": "5 × 8 = 40."
             }
           ]
@@ -355,8 +339,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 72,
                 81
               ],
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Reken 10 × 7 en haal 7 eraf.",
+              "hintParameters": {"a":7,"b":9},
               "explanation": "7 × 9 = 63."
             },
             {
@@ -374,8 +357,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 64,
                 72
               ],
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Reken 4 × 7 en verdubbel dat.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -392,8 +374,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "3 × 3 = ?",
               "answer": 9,
-              "hintMinnie": "Denk aan de tafel van 3.",
-              "hintMoose": "Reken eerst 2 × 3 en tel nog 3 erbij.",
+              "hintParameters": {"a":3,"b":3},
               "explanation": "3 × 3 = 9."
             },
             {
@@ -411,8 +392,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 7,
                 8
               ],
-              "hintMinnie": "Welke som uit de tafel van 5 helpt?",
-              "hintMoose": "Omdat 5 × 6 = 30, is 30 : 5 = 6.",
+              "hintParameters": {"a":30,"b":5},
               "explanation": "30 : 5 = 6."
             }
           ]
@@ -435,8 +415,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 70,
                 77
               ],
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken 5 × 9 en 2 × 9.",
+              "hintParameters": {"a":9,"b":7},
               "explanation": "9 × 7 = 63."
             },
             {
@@ -454,8 +433,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 10,
                 11
               ],
-              "hintMinnie": "Verdeel 54 eerlijk over 6 gelijke groepen.",
-              "hintMoose": "Zoek in de tafel van 6 welk getal uitkomt op 54.",
+              "hintParameters": {"a":54,"b":6},
               "explanation": "54 : 6 = 9."
             }
           ]
@@ -472,8 +450,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
               "answerMode": "open",
               "prompt": "De ijsverkoper zet 5 dienbladen klaar met elk 9 ijsbekers. Hoeveel bekers zijn dat samen?",
               "answer": 45,
-              "hintMinnie": "Er zijn 5 gelijke groepjes. In elk groepje zitten er 9.",
-              "hintMoose": "Reken 5 × 10 en haal er daarna 5 af.",
+              "hintParameters": {"a":5,"b":9},
               "explanation": "5 × 9 = 45."
             },
             {
@@ -491,8 +468,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
                 80,
                 90
               ],
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "7 groepjes van 10 eindigen op nul.",
+              "hintParameters": {"a":7,"b":10},
               "explanation": "7 × 10 = 70."
             }
           ]
@@ -808,6 +784,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
       "moose": "stevige stenen, de wijngaardroute en rechterpoort"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "it-enter",
@@ -820,28 +803,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "colosseum",
       "speaker": "minnie",
-      "text": "Zoveel bogen boven elkaar. Oude Romeinen hielden duidelijk van tellen."
+      "text": "Kijk hoeveel bogen er boven elkaar staan."
     },
     {
       "id": "it-romanFountain-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "romanFountain",
       "speaker": "minnie",
-      "text": "De fontein kabbelt alsof hij een oud verhaal in stukjes vertelt."
+      "text": "Die Romeinse fontein zit vol kleine details."
     },
     {
       "id": "it-gelatoCart-attention",
       "event": "HOTSPOT_ATTENTION_FIRST",
       "challengeId": "gelatoCart",
       "speaker": "minnie",
-      "text": "Ik zie ijs in vijf kleuren. Onderzoek is nu dringend nodig."
+      "text": "Kijk hoeveel kleuren ijs!"
     },
     {
       "id": "it-press-attention",
       "event": "AMBIENT_ATTENTION_FIRST",
       "objectId": "grapePress",
       "speaker": "moose",
-      "text": "Een druivenpers. Veel draaien voor een klein glas sap. Degelijk werk."
+      "text": "Een druivenpers. Daar moet je flink voor draaien."
     },
     {
       "id": "it-colosseum-solved",
@@ -874,13 +857,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0016"] = {
       "id": "it-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De Romeinse poort wacht nog op {remainingChallenges}. Oude bouw, strenge regels."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de Romeinse poort open."
     },
     {
       "id": "it-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De Romeinse poort is open. De Alpen wachten."
+      "text": "De Romeinse poort is open. Op naar de Alpen."
     },
     {
       "id": "it-complete",

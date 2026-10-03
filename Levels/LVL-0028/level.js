@@ -303,8 +303,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 60
               ],
               "prompt": "10 x 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 10.",
-              "hintMoose": "Bij keer 10 komt er een nul achter het getal.",
+              "hintParameters": {"a":10,"b":5},
               "explanation": "10 x 5 = 50."
             },
             {
@@ -316,8 +315,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               "answerMode": "open",
               "answer": 56,
               "prompt": "7 x 8 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Reken in groepjes en controleer je antwoord.",
+              "hintParameters": {"a":7,"b":8},
               "explanation": "7 x 8 = 56."
             }
           ]
@@ -340,8 +338,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 42
               ],
               "prompt": "Bij de bouwtafel liggen 5 rijen met 6 kleine kaartjes. Hoeveel kaartjes zijn dat samen?",
-              "hintMinnie": "Zoek groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van.",
+              "hintParameters": {"a":5,"b":6},
               "explanation": "5 x 6 = 30."
             },
             {
@@ -353,8 +350,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               "answerMode": "open",
               "answer": 24,
               "prompt": "Nebu tekent 4 vakken met 6 tekens per vak. Hoeveel tekens tekent hij?",
-              "hintMinnie": "Zoek hoeveel groepjes er zijn.",
-              "hintMoose": "Vermenigvuldig het aantal vakken met het aantal tekens.",
+              "hintParameters": {"a":4,"b":6},
               "explanation": "4 x 6 = 24."
             }
           ]
@@ -371,8 +367,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "42 : 7 = ?",
-              "hintMinnie": "Welke tafel hoort hierbij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":42,"b":7},
               "explanation": "42 : 7 = 6, want 7 x 6 = 42."
             },
             {
@@ -390,8 +385,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 10
               ],
               "prompt": "Sven verdeelt 56 steentjes bij de bouwtafel in 7 gelijke groepjes. Hoeveel steentjes krijgt elk groepje?",
-              "hintMinnie": "Verdeel het totaal in gelijke groepjes.",
-              "hintMoose": "Gebruik de omgekeerde keersom.",
+              "hintParameters": {"a":56,"b":7},
               "explanation": "56 : 7 = 8, want 7 x 8 = 56."
             }
           ]
@@ -414,8 +408,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 "Pirramide"
               ],
               "prompt": "Welk woord is goed gespeld?",
-              "hintMinnie": "Lees het woord rustig van links naar rechts.",
-              "hintMoose": "Kijk naar de klanken en kies de spelling die klopt.",
               "explanation": "Piramide is de juiste spelling."
             },
             {
@@ -433,8 +425,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 "Bouw-plan"
               ],
               "prompt": "Welk woord is goed gespeld?",
-              "hintMinnie": "Lees het woord rustig van links naar rechts.",
-              "hintMoose": "Kijk naar de klanken en kies de spelling die klopt.",
               "explanation": "Bouwplan is de juiste spelling."
             }
           ]
@@ -464,8 +454,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 49
               ],
               "prompt": "7 x 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":5},
               "explanation": "7 x 5 = 35."
             },
             {
@@ -477,8 +466,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               "answerMode": "open",
               "answer": 20,
               "prompt": "4 x 5 = ?",
-              "hintMinnie": "Denk aan de tafel van 4.",
-              "hintMoose": "Vier groepjes van vijf is hetzelfde als 5 + 5 + 5 + 5.",
+              "hintParameters": {"a":4,"b":5},
               "explanation": "4 x 5 = 20."
             }
           ]
@@ -501,8 +489,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 42
               ],
               "prompt": "Bij de steenslede liggen 4 rijen met 7 kleine kaartjes. Hoeveel kaartjes zijn dat samen?",
-              "hintMinnie": "Zoek groepjes van hetzelfde aantal.",
-              "hintMoose": "Maak er eerst een keersom van.",
+              "hintParameters": {"a":4,"b":7},
               "explanation": "4 x 7 = 28."
             },
             {
@@ -514,8 +501,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               "answerMode": "open",
               "answer": 35,
               "prompt": "Nebu tekent 5 vakken met 7 tekens per vak. Hoeveel tekens tekent hij?",
-              "hintMinnie": "Zoek hoeveel groepjes er zijn.",
-              "hintMoose": "Vermenigvuldig het aantal vakken met het aantal tekens.",
+              "hintParameters": {"a":5,"b":7},
               "explanation": "5 x 7 = 35."
             }
           ]
@@ -532,8 +518,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "48 : 8 = ?",
-              "hintMinnie": "Welke tafel hoort hierbij?",
-              "hintMoose": "Zoek welk getal keer de deler het totaal maakt.",
+              "hintParameters": {"a":48,"b":8},
               "explanation": "48 : 8 = 6, want 8 x 6 = 48."
             },
             {
@@ -551,8 +536,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 11
               ],
               "prompt": "Sven verdeelt 72 steentjes bij de steenslede in 8 gelijke groepjes. Hoeveel steentjes krijgt elk groepje?",
-              "hintMinnie": "Verdeel het totaal in gelijke groepjes.",
-              "hintMoose": "Gebruik de omgekeerde keersom.",
+              "hintParameters": {"a":72,"b":8},
               "explanation": "72 : 8 = 9, want 8 x 9 = 72."
             }
           ]
@@ -575,8 +559,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 "Sleedeh"
               ],
               "prompt": "Welk woord is goed gespeld?",
-              "hintMinnie": "Lees het woord rustig van links naar rechts.",
-              "hintMoose": "Kijk naar de klanken en kies de spelling die klopt.",
               "explanation": "Slede is de juiste spelling."
             },
             {
@@ -594,8 +576,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
                 "Steenblokk"
               ],
               "prompt": "Welk woord is goed gespeld?",
-              "hintMinnie": "Lees het woord rustig van links naar rechts.",
-              "hintMoose": "Kijk naar de klanken en kies de spelling die klopt.",
               "explanation": "Steenblok is de juiste spelling."
             }
           ]
@@ -1061,6 +1041,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
       "moose": "veilig werken tussen stenen, touw en kraan"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "CHALLENGE_OPEN",
+      "CHALLENGE_SUCCESS"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0028-enter",
@@ -1084,13 +1071,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
       "id": "LVL-0028-unlocked",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "De werkroute is vrij. Loop waar geen blok schuift."
+      "text": "De werkroute is vrij. We kunnen verder."
     },
     {
       "id": "LVL-0028-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "Die route blijft nog dicht. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna is de werkroute vrij."
     }
   ],
   "menu": {

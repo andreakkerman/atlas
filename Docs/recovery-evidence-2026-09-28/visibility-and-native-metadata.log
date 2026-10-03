@@ -1,0 +1,40 @@
+
+Running 4 tests using 1 worker
+
+(node:43892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43892) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\asset-recovery.spec.js:64:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (8.9s)
+  ok 2 [desktop-chromium] › tests\flyby-audio.spec.js:76:1 › Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available (5.8s)
+(node:33284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33284) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 3 [ipad-landscape] › tests\asset-recovery.spec.js:64:1 › optional image exhaustion permits entry and a later shared recovery becomes visible and cached (12.3s)
+  x  4 [ipad-landscape] › tests\flyby-audio.spec.js:76:1 › Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available (6.7s)
+
+
+  1) [ipad-landscape] › tests\flyby-audio.spec.js:76:1 › Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+      79 |  for(const path of [sound,'assets/ambient/flybys/common-swift/common-swift-call.mp3']){
+      80 |   const result=await page.evaluate(async path=>{const response=await fetch(path),bytes=await response.arrayBuffer(),media=await window.eval('assetCache').sound(path),result={status:response.status,type:response.headers.get('content-type'),duration:media.duration,ready:media.readyState};const Context=window.AudioContext||window.webkitAudioContext;if(!Context)return result;const ctx=new Context();try{const buffer=await ctx.decodeAudioData(bytes);let peak=0,energy=0;for(const value of buffer.getChannelData(0)){peak=Math.max(peak,Math.abs(value));energy+=value*value;}return {...result,peak,rms:Math.sqrt(energy/buffer.length)};}finally{await ctx.close();}},path);
+    > 81 |   expect(result.status).toBe(200);expect(result.type).toContain('audio/mpeg');expect(result.duration).toBeGreaterThan(0);expect(result.ready).toBeGreaterThanOrEqual(2);
+         |                                                                                                       ^
+      82 |   if(await page.evaluate(()=>Boolean(window.AudioContext||window.webkitAudioContext))){expect(result.peak).toBeGreaterThan(.01);expect(result.rms).toBeGreaterThan(.001);}
+      83 |  }
+      84 | });
+        at D:\DevProjects\SvenAdventure\tests\flyby-audio.spec.js:81:103
+
+    Error Context: test-results\flyby-audio-Wasp-and-contr-aa391-here-Web-Audio-is-available-ipad-landscape\error-context.md
+
+    Error Context: test-results\flyby-audio-Wasp-and-contr-aa391-here-Web-Audio-is-available-ipad-landscape\error-context.md
+
+  1 failed
+    [ipad-landscape] › tests\flyby-audio.spec.js:76:1 › Wasp and control sound return audio MIME and native decode; non-silent PCM where Web Audio is available 
+  3 passed (34.7s)

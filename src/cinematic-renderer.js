@@ -93,7 +93,7 @@
     return {angle:target.baseAngle+localOffset,localOffset,length:current.length+(target.length-current.length)*response,targetAngle:target.angle,targetLength:target.length};
   }
   function packEffects(settings) {
-    settings = contract.effective(settings);
+    settings = contract.gpuOnly(contract.effective(settings));
     const records = [];
     for (const [key, def] of Object.entries(contract.systems)) {
       if (!def.type) continue;
@@ -106,7 +106,7 @@
         if (key === "localLights") { v.set([item.flickerAmount, item.flickerSpeed, item.randomness, ["steady", "fire", "slowPulse", "arcane"].indexOf(item.behavior)], 16); v.set([item.colorSpill, item.characterInfluence, item.atmosphereInfluence, 0], 20); }
         if (key === "shafts") v.set([item.noiseAmount, item.noiseScale, item.noiseSpeed, 0], 16);
         if (key === "atmosphere") { v.set([item.driftSpeed, radians(item.driftDirection), item.turbulence, item.noiseScale], 16); v[20] = item.noiseDetail; }
-        if (key === "particles") { v.set([contract.particleCount(item), item.speed, item.turbulence, item.lifetime], 16); v.set([item.opacity, item.glow, item.gravity, item.randomness], 20); }
+        if (key === "particles") { v[12] = radians(item.boundsRotation ?? item.direction ?? 0); v[32] = radians(item.direction || 0); v.set([contract.particleCount(item), item.speed, item.turbulence, item.lifetime], 16); v.set([item.opacity, item.glow, item.gravity, item.randomness], 20); }
         v.set([item.depth ?? 0.65, item.depthInfluence ?? 0, item.depthSoftness ?? 0.12, item.depthBias ?? item.depthSpread ?? 0], 24);
         if(key === "atmosphere") v.set([item.nearClear, item.farDensity, item.depthCurve, item.floorBias],28);
         if(key === "particles") v.set([item.wind, item.streak, item.pulse, item.distribution === "source" ? 1 : 0],28);
@@ -123,7 +123,7 @@
   }
   function requiresGPU(mode, value, features) {
     if(mode === "cinematic")return true;
-    const s=contract.forIllustrated(value, features);
+    const s=contract.gpuOnly(contract.forIllustrated(value, features));
     return mode === "illustrated" && (s.grading.enabled || s.areaLights.enabled && s.areaLights.items.some(item=>item.enabled) ||
       s.depth.enabled && s.depth.perspective > 0 || s.characters.groundingShadow || s.particles.enabled && s.particles.items.some(item=>item.enabled));
   }
@@ -210,7 +210,7 @@
         const create = (fragment, vertex = "fullscreen", format = "rgba16float", blend) => device.createRenderPipelineAsync({ label: `Cinematic ${fragment}`, layout, vertex: { module, entryPoint: vertex }, fragment: { module, entryPoint: fragment, targets: [{ format, ...(blend ? { blend } : {}) }] }, primitive: { topology: "triangle-list" } });
         const alpha = { color: { srcFactor: "one", dstFactor: "one-minus-src-alpha" }, alpha: { srcFactor: "one", dstFactor: "one-minus-src-alpha" } };
         const add = { color: { srcFactor: "one", dstFactor: "one" }, alpha: { srcFactor: "zero", dstFactor: "one" } };
-        const selected = mode === "illustrated" ? contract.forIllustrated(options.getSettings(options.getLevel()?.id), options.getFeatures?.(options.getLevel()?.id)) : null;
+        const selected = mode === "illustrated" ? contract.gpuOnly(contract.forIllustrated(options.getSettings(options.getLevel()?.id), options.getFeatures?.(options.getLevel()?.id))) : null;
         const names = shadowOverlay ? ["sprite", "shadow", ...(selected.particles.enabled ? ["particle"] : [])] : ["sprite", ...(!selected || selected.areaLights.enabled ? ["field"] : []), ...(!selected ? ["extract", "blur"] : []), "finish", ...(!selected || selected.particles.enabled ? ["particle"] : [])];
         const factories = {sprite:()=>create("sprite","quad","rgba16float",alpha),shadow:()=>create("sprite","quad",navigator.gpu.getPreferredCanvasFormat(),alpha),field:()=>create("field"),extract:()=>create("bloomExtract"),blur:()=>create("blur"),finish:()=>create("finish","fullscreen",navigator.gpu.getPreferredCanvasFormat()),particle:()=>create("particleColor","particle",shadowOverlay ? navigator.gpu.getPreferredCanvasFormat() : "rgba16float",add)};
         const result = await Promise.all(names.map(name=>factories[name]()));
@@ -355,7 +355,7 @@
       if (key === settingsKey) return;
       // Keep the authored record indices in both modes: the particle shader
       // derives its deterministic seeds from them. Only dispatch is mode-specific.
-      settingsKey = key; settings = contract.normalize(value); effective=mode === "illustrated" ? contract.forIllustrated(value,features) : contract.effective(settings);packed = packEffects(effective);
+      settingsKey = key; settings = contract.normalize(value); effective=contract.gpuOnly(mode === "illustrated" ? contract.forIllustrated(value,features) : contract.effective(settings));packed = packEffects(effective);
       if(mode === "cinematic" && effective.gameplayCues.enabled) for(const cue of cues.slice(0,48)) {
         const interaction=cue.interaction==="pressed"?2:cue.interaction==="hover"?1:0,boost=interaction===2?1.55:interaction===1?1.28:1;
         const item=contract.instance("localLights",{id:cue.id,x:cue.x,y:cue.y,radius:Math.max(70,cue.radius*2.5)*(interaction?1.08:1),color:cue.color,intensity:cue.intensity*effective.gameplayCues.intensity*0.2*boost,falloff:1,depthInfluence:0.35,characterInfluence:effective.gameplayCues.characterInfluence,behavior:cue.state==="available"||cue.state==="open"?"slowPulse":"steady",flickerAmount:0.12});
@@ -372,7 +372,7 @@
       put(1, [level.world.height, timestamp / 1000, packed.length, dt]);
       const s = effective;
       const graded = s.grading.enabled && (s.grading.exposure !== 0 || s.grading.highlights !== 0 || s.grading.shadows !== 0 || s.grading.warmth !== 0 || s.grading.tint !== 0);
-      put(2, [level.world.width, packed.some(e => e.data[1] && (e.data[0] < 4 || e.data[0] === 6 || e.data[0] === 7 || e.data[0] === 8)) || s.bloom.enabled || graded ? 1 : 0, +shadowOverlay, 0]);
+      put(2, [level.world.width, packed.some(e => e.data[1] && (e.data[0] < 4 || e.data[0] === 6 || e.data[0] === 7 || e.data[0] === 8)) || s.bloom.enabled || graded ? 1 : 0, +shadowOverlay, +illustratedScene]);
       put(3, [+s.grading.enabled, s.grading.exposure, s.grading.contrast, s.grading.saturation]);
       put(4, [s.grading.highlights, s.grading.shadows, 0, s.grading.warmth]); put(5, [s.grading.tint, s.grading.blackPoint, 0, 0]);
       put(7, [+s.characters.enabled, s.characters.ambientInfluence, s.characters.localInfluence, s.characters.colorSpill]); put(8, [s.characters.intensityResponse, s.characters.directionalInfluence, s.characters.atmosphereInfluence, s.characters.depthTint]);
@@ -385,7 +385,9 @@
       put(19,[s.characters.sideLighting,s.characters.frontAtmosphere,0,0]);
       put(20,[s.characters.shadowStrength,s.characters.shadowSoftness,s.characters.shadowWidth,s.characters.shadowLength]);
       put(21,[["tapered","oval","capsule","wideSoft","silhouette"].indexOf(s.characters.shadowShape),radians(s.characters.shadowDirection),s.characters.shadowDarkBackgroundSuppression,s.characters.shadowOpacity/100]);
-      put(22,[s.characters.shadowGroundlineOffset,s.characters.shadowScale,0,0]);
+      const mist = illustratedScene ? document.querySelector('.forestMist') : null;
+      put(22,[s.characters.shadowGroundlineOffset,s.characters.shadowScale,+packed.some(e=>e.key==='particles'&&e.data[1]),+(mist && getComputedStyle(mist).visibility !== 'hidden')]);
+      if(illustratedScene){const appearance=global.AtlasCharacterAppearance.filterParameters(options.getBackgroundAppearance?.());put(23,appearance.slice(0,4));put(24,[radians(appearance[4]),0,0,0]);}
       if (!data.every(Number.isFinite)) throw new Error("Invalid cinematic uniforms");
       // Secondary render-loop diagnostic only; the shared HUD samples gameplay RAF.
       device.queue.writeBuffer(uniform, 0, data); lastTime = timestamp; fps = fps ? fps * 0.95 + 0.05 / Math.max(dt, 0.001) : 1 / dt;
@@ -427,6 +429,42 @@
       if(shadowCanvas){shadowCanvas.width=width;shadowCanvas.height=height;}
       targets = [texture(width, height, "rgba16float"), ...(!shadowOverlay ? [texture(width, height, "rgba16float")] : []), ...(mode === "cinematic" ? Array.from({ length: 3 }, () => texture(Math.max(2, width >> 2), Math.max(2, height >> 2), "rgba16float")) : [])];
       if(pipeline.adapt){computeGroup=device.createBindGroup({layout:pipeline.adapt.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:uniform}},{binding:1,resource:targets[1].view},{binding:2,resource:{buffer:exposureBuffer}}]});bindGroups++;}
+    }
+    function illustratedSprite(image, source, bounds, rect, stage, key, mirror) {
+      const owner = image.closest('[data-actor-shell], [data-npc-challenge]') || bounds;
+      const imageStyle = getComputedStyle(image), imageFilter = imageStyle.filter, ownerStyle = getComputedStyle(owner);
+      const ratio = canvas.width / stage.width;
+      const ownerScale = Math.abs(new DOMMatrix(ownerStyle.transform).a) || 1;
+      const filter = ownerStyle.filter.replace(/(-?[\d.]+)px/g, (_, n) => `${Number(n)*ratio*ownerScale}px`);
+      const lengths = [...filter.matchAll(/(-?[\d.]+)px/g)].map(match=>Math.abs(Number(match[1])));
+      const padding = Math.ceil(Math.max(0,...lengths)*4)+2;
+      const cacheKey=`illustrated display:${key}`;
+      let resource=uploaded.get(cacheKey);
+      // Rasterize in sprite-local pixels. Screen translation (including its
+      // fractional phase) belongs only to the draw rectangle, not the image.
+      // Translated DOMRects can vary by ~1/32768 px despite identical layout.
+      // Retain the raster extent within 1/1024 device pixel of its last size;
+      // this does not round or constrain the screen-position uniforms.
+      const stableSize=(value,previous)=>previous !== undefined && Math.abs(value-previous)<1/1024 ? previous : value;
+      const pixelWidth=stableSize(rect.width*ratio,resource?.displayWidth),pixelHeight=stableSize(rect.height*ratio,resource?.displayHeight);
+      const width=Math.ceil(pixelWidth)+padding*2,height=Math.ceil(pixelHeight)+padding*2;
+      const x=padding,y=padding;
+      const left=(rect.left-stage.left)*ratio-padding,top=(rect.top-stage.top)*ratio-padding;
+      const revision=JSON.stringify([source.currentSrc||source.src,width,height,x,y,pixelWidth,pixelHeight,ratio,imageFilter,filter,mirror]);
+      if(!resource || resource.displayRevision!==revision){
+        // Import only this known scene sprite and its existing CSS filters,
+        // never arbitrary DOM/UI. The original image still owns grounding.
+        const pixels=document.createElement('canvas');pixels.width=width;pixels.height=height;
+        const ctx=pixels.getContext('2d');ctx.filter=imageFilter;
+        ctx.translate(x+(mirror?pixelWidth:0),y);ctx.scale(mirror?-1:1,1);
+        ctx.drawImage(source,0,0,pixelWidth,pixelHeight);
+        const filtered=document.createElement('canvas');filtered.width=pixels.width;filtered.height=pixels.height;
+        const output=filtered.getContext('2d');output.filter=filter;output.drawImage(pixels,0,0);
+        resource=uploadDynamicCanvas(filtered,resource,{purpose:`Illustrated sprite ${key}`,path:source.currentSrc||source.src});
+        resource.displayRevision=revision;resource.displayWidth=pixelWidth;resource.displayHeight=pixelHeight;uploaded.set(cacheKey,resource);
+      }
+      resource.used=frame;
+      return {resource,rect:[left/canvas.width,top/canvas.height,resource.width/canvas.width,resource.height/canvas.height],flags:[0,0,0,0],opacity:Number(ownerStyle.opacity)};
     }
     function sprites(stage) {
       const entries = [];
@@ -475,7 +513,8 @@
           flybyUV=[m.d*rect.width/det/image.width,-m.b*rect.width/det/image.height,-m.c*rect.height/det/image.width,m.a*rect.height/det/image.height];
         }
         const grounding=!animal&&character&&effective.characters.groundingShadow?displayedGrounding(analyzeSpriteGrounding(source),mirror):null;
-        entries.push({ key, resource, grounding, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
+        const display=illustratedScene && !animal && uploaded.get(cacheKey)===resource && source.complete && source.naturalWidth ? illustratedSprite(image,source,bounds,rect,stage,fallbackKey,mirror) : null;
+        entries.push({ key, resource, grounding, display, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
       };
       document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => { const img = el.querySelector('[data-flyby-canvas]') || el.querySelector(el.dataset.frame === "b" ? ".ambientFlybyFrameB" : ".ambientFlybyFrameA"); add(img, img, `flyby:${el.dataset.ambientFlyby}`,true); });
       document.querySelectorAll(".ambientAnimal[data-ready='true']").forEach(el => add(el.querySelector(el.dataset.frame === "closed" ? ".ambientAnimalClosed" : ".ambientAnimalOpen"), el, `animal:${el.dataset.ambientAnimal}`, true, el.dataset.mirrorX === "true"));
@@ -485,6 +524,7 @@
       return entries;
     }
     function drawShadows(pass, shadowEntries) {
+        const receiver = illustratedScene ? background : targets[0];
         lastGroundedSprites=0;lastGrounding=[];const contactDebug=[];
          for (const entry of shadowEntries) {
           const [x,y,w,h]=entry.rect;
@@ -499,8 +539,8 @@
           const target=shadowTarget(effective,point),state=smoothShadow(shadowStates.get(entry.key),target,frameDt,effective.characters.shadowDirectionSmoothing);shadowStates.set(entry.key,state);
           if(effective.characters.shadowShape==="silhouette"){
              const screenWidth=canvas.width,screenHeight=canvas.height,heightPixels=h*screenHeight,left=[leftPoint.x*screenWidth,leftPoint.y*screenHeight],right=[rightPoint.x*screenWidth,rightPoint.y*screenHeight],base=[right[0]-left[0],right[1]-left[1]],baseLength=Math.max(.001,Math.hypot(...base)),baseDirection=[base[0]/baseLength,base[1]/baseLength],baseNormal=[-baseDirection[1],baseDirection[0]],rawAxis=[Math.cos(state.angle),Math.sin(state.angle)],tangent=rawAxis[0]*baseDirection[0]+rawAxis[1]*baseDirection[1];let normal=rawAxis[0]*baseNormal[0]+rawAxis[1]*baseNormal[1];if(Math.abs(normal)<.08)normal=(normal<0?-1:1)*.08;const axisLength=Math.hypot(tangent,normal),axis=[(baseDirection[0]*tangent+baseNormal[0]*normal)/axisLength,(baseDirection[1]*tangent+baseNormal[1]*normal)/axisLength],castLength=.46*state.length*effective.characters.shadowScale*heightPixels,cast=[axis[0]*castLength,axis[1]*castLength],span=Math.max(.04,grounding.right.center-grounding.left.center),fullWidth=[base[0]/span,base[1]/span],q0=-grounding.left.center/span,q1=(1-grounding.left.center)/span,widthFactor=Math.max(.25,effective.characters.shadowWidth),topU0=grounding.center+(0-grounding.center)*widthFactor,topU1=grounding.center+(1-grounding.center)*widthFactor,tq0=(topU0-grounding.left.center)/span,tq1=(topU1-grounding.left.center)/span,at=q=>[left[0]+base[0]*q,left[1]+base[1]*q],bottom0=at(q0),bottom1=at(q1),top0=at(tq0),top1=at(tq1);top0[0]+=cast[0]*leftBottom;top0[1]+=cast[1]*leftBottom;top1[0]+=cast[0]*rightBottom;top1[1]+=cast[1]*rightBottom;const blurPixels=effective.characters.shadowSoftness*1.4,blurU=blurPixels/Math.max(heightPixels*(w/h),1),blurV=blurPixels/Math.max(heightPixels,1),blurWidth=Math.max(1,widthFactor),kernelPadX=Math.abs(fullWidth[0])*blurU*blurWidth+Math.abs(cast[0])*blurV,kernelPadY=Math.abs(fullWidth[1])*blurU*blurWidth+Math.abs(cast[1])*blurV,paddingX=kernelPadX*2+4,paddingY=kernelPadY*2+4,points=[bottom0,bottom1,top0,top1],minX=Math.min(...points.map(p=>p[0]))-paddingX,maxX=Math.max(...points.map(p=>p[0]))+paddingX,minY=Math.min(...points.map(p=>p[1]))-paddingY,maxY=Math.max(...points.map(p=>p[1]))+paddingY;
-            bind(pass,entry.resource,targets[0],{rect:[minX/screenWidth,minY/screenHeight,(maxX-minX)/screenWidth,(maxY-minY)/screenHeight],uv:[grounding.left.center,grounding.right.center,leftBottom,rightBottom],flags:[heightPixels,entry.flags[1],grounding.center,1],shadow:[state.angle,state.length,w/h,effective.characters.shadowScale],extra:[leftPoint.x,leftPoint.y,rightPoint.x,rightPoint.y]});
-          }else{const extent=h*2.4;bind(pass,entry.resource,targets[0],{rect:[centerX-extent*.5,footY-extent*.5,extent,extent],flags:[groundline,entry.flags[1],grounding.center,1],shadow:[state.angle,state.length,w/h,effective.characters.shadowScale],extra:[leftBottom,rightBottom,grounding.split,0]});}
+            bind(pass,entry.resource,receiver,{rect:[minX/screenWidth,minY/screenHeight,(maxX-minX)/screenWidth,(maxY-minY)/screenHeight],uv:[grounding.left.center,grounding.right.center,leftBottom,rightBottom],flags:[heightPixels,entry.flags[1],grounding.center,1],shadow:[state.angle,state.length,w/h,effective.characters.shadowScale],extra:[leftPoint.x,leftPoint.y,rightPoint.x,rightPoint.y]});
+          }else{const extent=h*2.4;bind(pass,entry.resource,receiver,{rect:[centerX-extent*.5,footY-extent*.5,extent,extent],flags:[groundline,entry.flags[1],grounding.center,1],shadow:[state.angle,state.length,w/h,effective.characters.shadowScale],extra:[leftBottom,rightBottom,grounding.split,0]});}
            pass.draw(6);
          }
 
@@ -534,16 +574,22 @@
         }
         const worldUV = [options.getCameraX()/options.getLevel().world.width, 0, (options.getViewportWorldWidth() || options.getLevel().world.width)/options.getLevel().world.width, 1];
         let pass = begin(targets[0].view); pass.setPipeline(pipeline.sprite);
-        bind(pass, background, background, { uv: worldUV, appearance: options.getBackgroundAppearance?.() }); pass.draw(6);
+        bind(pass, background, background, { uv: worldUV, appearance: options.getBackgroundAppearance?.(), flags: [0,0,illustratedScene ? -1 : 0,0] }); pass.draw(6);
         const drawLegacy = slot => {
           const retained = mode === "illustrated" || (options.getLevel().sceneEffects || []).some(effect => effect.enabled !== false && !contract.replacedPresets.has(effect.presetId) && (effect.layerSlot || global.AtlasSceneEffects.presetById(effect.presetId)?.layerSlot || "worldAtmosphere") === slot);
           if (!retained) return;
           const el = document.querySelector(`[data-scene-effects-canvas="${slot}"]`);
           if (!el?.width || !el.height) return;
+          const canvasFrame = mode === "illustrated" ? global.AtlasSceneEffects.canvasFrame(el) : null;
+          if (canvasFrame && !canvasFrame.active) return;
           if (!el.getContext("2d")) return;
           let resource = effectTextures.get(slot);
           if (resource && (resource.width !== el.width || resource.height !== el.height)) { resource.texture.destroy(); resource = null; }
-          resource = uploadDynamicCanvas(el, resource, {purpose:`legacy scene effects ${slot}`,path:`canvas:${slot}`}); effectTextures.set(slot, resource);
+          if (!resource || !canvasFrame || resource.canvasSource !== el || resource.canvasRevision !== canvasFrame.revision) {
+            resource = uploadDynamicCanvas(el, resource, {purpose:`legacy scene effects ${slot}`,path:`canvas:${slot}`});
+            resource.canvasSource = el; resource.canvasRevision = canvasFrame?.revision;
+            effectTextures.set(slot, resource);
+          }
           bind(pass, resource, background, { uv: worldUV }); pass.draw(6);
         };
         drawLegacy("backgroundAtmosphere");
@@ -556,9 +602,12 @@
         // double-light sprites and defeat the character influence control.
         const entries = sprites(canvas.getBoundingClientRect()); lastSprites = entries.length;
         const shadowEntries=entries.filter(item => item.shadow);lastShadowDraws=shadowEntries.length;
-        pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.sprite);
-        const contactDebug=mode === "cinematic" ? drawShadows(pass,shadowEntries) : [];
-         pass.end();
+        const contactDebug=[];
+        if (mode === "cinematic") {
+          pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.sprite);
+          contactDebug.push(...drawShadows(pass,shadowEntries));
+          pass.end();
+        }
          // Visible characters are deliberately isolated from the larger shadow
          // quads. A two-device-pixel transparent gutter keeps linear filtering
          // and raster coverage away from the exact frame edge without changing
@@ -568,30 +617,35 @@
          const advanceIllustratedLayers = next => {
            if(mode !== "illustrated")return;
            if(illustratedLayer<1 && next>=1)drawLegacy("worldAtmosphere");
-           if(illustratedLayer<2 && next>=2){drawLegacy("worldLight");contactDebug.push(...drawShadows(pass,shadowEntries));}
+           if(illustratedLayer<2 && next>=2)drawLegacy("worldLight");
+           // DOM order: world light (35), NPCs (38), shadow canvas (39), Sven (40).
+           if(illustratedLayer<3 && next>=3)contactDebug.push(...drawShadows(pass,shadowEntries));
            illustratedLayer=next;
          };
          for (const entry of entries) {
-           advanceIllustratedLayers(entry.key.startsWith("flyby:") ? 0 : entry.key.startsWith("animal:") ? 1 : 2);
-           let visible=entry;
-           if(entry.key==="actor:sven"||entry.key.startsWith("npc:")){
+           advanceIllustratedLayers(entry.key.startsWith("flyby:") ? 0 : entry.key.startsWith("animal:") ? 1 : entry.key==="actor:sven" ? 3 : 2);
+           let visible=entry.display || entry;
+           if(!entry.display && (entry.key==="actor:sven"||entry.key.startsWith("npc:"))){
              const padX=2/canvas.width,padY=2/canvas.height,[x,y,w,h]=entry.rect,uvPadX=padX/Math.max(w,1/canvas.width),uvPadY=padY/Math.max(h,1/canvas.height);
              visible={...entry,rect:[x-padX,y-padY,w+padX*2,h+padY*2],uv:[-uvPadX,-uvPadY,1+uvPadX*2,1+uvPadY*2]};
            }
-           bind(pass, entry.resource, background, visible); pass.draw(6);
+           bind(pass, visible.resource, background, visible); pass.draw(6);
          }
-         advanceIllustratedLayers(2);
+         advanceIllustratedLayers(3);
          if(effective.characters.showShadowContactDebug)for(const debug of contactDebug){bind(pass,background,background,{flags:[0,0,0,2],shadow:[debug.left.x,debug.left.y,debug.right.x,debug.right.y]});pass.draw(6);}
          drawLegacy("foregroundAtmosphere"); pass.end();
         const particleFields = packed.map((e, i) => ({ ...e, index: i })).filter(e => e.key === "particles" && e.data[1]);
-        if (particleFields.length) { pass = begin(targets[1].view, "load"); pass.setPipeline(pipeline.particle); for (const e of particleFields) { bind(pass, background, background, { flags: [e.index, 0, 0, 0] }); pass.draw(6, e.data[16]); } pass.end(); }
+        // The pre-shadow receiver has no remaining readers. Reuse it for the
+        // Illustrated particle group, then screen-composite once in finish,
+        // matching the browser overlay (not screen blending each particle).
+        if (particleFields.length) { pass = begin(targets[illustratedScene ? 0 : 1].view, illustratedScene ? "clear" : "load"); pass.setPipeline(pipeline.particle); for (const e of particleFields) { bind(pass, background, background, { flags: [e.index, 0, 0, 0] }); pass.draw(6, e.data[16]); } pass.end(); }
         if (effective.bloom.enabled) {
           full("extract", targets[2].view, targets[1], background);
           full("blur", targets[3].view, targets[2], background, { flags: [0, 0, 1/targets[2].width, 0] });
           full("blur", targets[4].view, targets[3], background, { flags: [0, 0, 0, 1/targets[3].height] });
         }
         if(pipeline.adapt){const compute = encoder.beginComputePass(); compute.setPipeline(pipeline.adapt); compute.setBindGroup(0,computeGroup); compute.dispatchWorkgroups(1); compute.end();}
-        full("finish", context.getCurrentTexture().createView(), targets[1], targets[4] || background);
+        full("finish", context.getCurrentTexture().createView(), targets[1], illustratedScene && particleFields.length ? targets[0] : targets[4] || background);
         device.queue.submit([encoder.finish()]); frame++; lastDraws = drawCursor;
         averageMs = averageMs ? averageMs*0.95+(performance.now()-start)*0.05 : performance.now()-start;
         if (!presented && !pendingPresentation && pendingUploads.size===0) {
@@ -606,7 +660,7 @@
       if(document.hidden || global.AtlasWebGPUCapabilities.snapshot().suspended)return;
       const nextMode=options.getRenderer();
       if(nextMode!==mode){dispose();mode=nextMode;}
-      const selected=contract.forIllustrated(options.getSettings(options.getLevel()?.id),options.getFeatures?.(options.getLevel()?.id));
+      const selected=contract.gpuOnly(contract.forIllustrated(options.getSettings(options.getLevel()?.id),options.getFeatures?.(options.getLevel()?.id)));
       const scene=Boolean(selected.grading.enabled || selected.areaLights.enabled && selected.areaLights.items.some(item=>item.enabled) || selected.depth.enabled && selected.depth.perspective>0);
       const overlay=!scene && selected.characters.groundingShadow;
       const nextRecipe=JSON.stringify([scene,overlay,selected.areaLights.enabled,selected.particles.enabled,selected.depth.enabled]);

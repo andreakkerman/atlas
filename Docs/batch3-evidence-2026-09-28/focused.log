@@ -1,0 +1,128 @@
+
+Running 8 tests using 1 worker
+
+(node:31248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31248) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\challenge-fx.spec.js:105:1 › normal challenge hit target still works without legacy visuals and stays complete (11.5s)
+  ok 2 [desktop-chromium] › tests\challenge-indicator-open.spec.js:24:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility (12.8s)
+  x  3 [desktop-chromium] › tests\npc-challenges.spec.js:239:3 › NPC challenge presentation › keeps locked NPCs clickable through real approach navigation and opens questions after unlock (30.0s)
+(node:8680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 4 [desktop-chromium] › tests\service-worker-ownership.spec.js:6:1 › activation deletes only obsolete Atlas caches and preserves current and unrelated caches (5ms)
+(node:43824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 5 [ipad-landscape] › tests\challenge-fx.spec.js:105:1 › normal challenge hit target still works without legacy visuals and stays complete (18.4s)
+  ok 6 [ipad-landscape] › tests\challenge-indicator-open.spec.js:24:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility (27.7s)
+  x  7 [ipad-landscape] › tests\npc-challenges.spec.js:239:3 › NPC challenge presentation › keeps locked NPCs clickable through real approach navigation and opens questions after unlock (30.1s)
+(node:33768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 8 [ipad-landscape] › tests\service-worker-ownership.spec.js:6:1 › activation deletes only obsolete Atlas caches and preserves current and unrelated caches (5ms)
+
+
+  1) [desktop-chromium] › tests\npc-challenges.spec.js:239:3 › NPC challenge presentation › keeps locked NPCs clickable through real approach navigation and opens questions after unlock 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'Praat met Freya' })[22m
+    [2m    - locator resolved to <button type="button" data-rune="wind" data-object="wind" data-npc-facing="native" data-npc-challenge="wind" data-character-id="freya" data-npc-animation="idle" data-npc-facing-scale="1" data-world-center-y="485" data-world-center-x="1750" data-challenge-active="true" data-hotspot-cue="challenge" aria-label="Praat met Freya" data-approach-node="wind-rune-approach" class="runeHotspot npcChallengeHotspot   ">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <section aria-busy="true" aria-live="polite" class="menuScreen loadingScreen">…</section> from <div class="gpuPreparationCover" data-gpu-preparation="true">…</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <section aria-busy="true" aria-live="polite" class="menuScreen loadingScreen">…</section> from <div class="gpuPreparationCover" data-gpu-preparation="true">…</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    3 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <section aria-busy="true" aria-live="polite" class="menuScreen loadingScreen">…</section> from <div class="gpuPreparationCover" data-gpu-preparation="true">…</div> subtree intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m    33 × waiting for element to be visible, enabled and stable[22m
+    [2m       - element is visible, enabled and stable[22m
+    [2m       - scrolling into view if needed[22m
+    [2m       - done scrolling[22m
+    [2m       - <button type="button" data-radius="104" data-exit-ready="false" data-hotspot-cue="none" aria-label="Runenpoort" data-object="templeGate" data-exit-hotspot="true" data-hotspot="templeGate" data-world-center-y="354" data-world-center-x="1849" data-legacy-rune-cue="true" class="worldHotspot hotspot-gate " data-approach-node="gate-step-upper"></button> intercepts pointer events[22m
+    [2m     - retrying click action[22m
+    [2m       - waiting 500ms[22m
+    [2m  - element was detached from the DOM, retrying[22m
+
+
+      240 |     await start(page, "LVL-0001");
+      241 |     const freya = page.getByRole("button", { name: "Praat met Freya" });
+    > 242 |     await freya.click();
+          |                 ^
+      243 |     await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", /walk/, { timeout: 1500 });
+      244 |     await expect(page.locator("[data-npc-locked='true']")).toBeVisible({ timeout: 12000 });
+      245 |     await expect(page.getByRole("img", { name: "Freya" })).toBeVisible();
+        at D:\DevProjects\SvenAdventure\tests\npc-challenges.spec.js:242:17
+
+    Error Context: test-results\npc-challenges-NPC-challen-b30d9-pens-questions-after-unlock-desktop-chromium\error-context.md
+
+  2) [ipad-landscape] › tests\npc-challenges.spec.js:239:3 › NPC challenge presentation › keeps locked NPCs clickable through real approach navigation and opens questions after unlock 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('button', { name: 'Praat met Freya' })[22m
+    [2m    - locator resolved to <button type="button" data-rune="wind" data-object="wind" data-npc-facing="native" data-npc-challenge="wind" data-character-id="freya" data-npc-animation="idle" data-npc-facing-scale="1" data-world-center-y="485" data-world-center-x="1750" data-challenge-active="true" data-hotspot-cue="challenge" aria-label="Praat met Freya" data-approach-node="wind-rune-approach" class="runeHotspot npcChallengeHotspot   ">…</button>[22m
+    [2m  - attempting click action[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <button type="button" data-radius="104" data-exit-ready="false" data-hotspot-cue="none" aria-label="Runenpoort" data-object="templeGate" data-exit-hotspot="true" data-hotspot="templeGate" data-world-center-y="354" data-world-center-x="1849" data-legacy-rune-cue="true" class="worldHotspot hotspot-gate " data-approach-node="gate-step-upper"></button> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m    - waiting 20ms[22m
+    [2m    2 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <button type="button" data-radius="104" data-exit-ready="false" data-hotspot-cue="none" aria-label="Runenpoort" data-object="templeGate" data-exit-hotspot="true" data-hotspot="templeGate" data-world-center-y="354" data-world-center-x="1849" data-legacy-rune-cue="true" class="worldHotspot hotspot-gate " data-approach-node="gate-step-upper"></button> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 100ms[22m
+    [2m    9 × waiting for element to be visible, enabled and stable[22m
+    [2m      - element is visible, enabled and stable[22m
+    [2m      - scrolling into view if needed[22m
+    [2m      - done scrolling[22m
+    [2m      - <button type="button" data-radius="104" data-exit-ready="false" data-hotspot-cue="none" aria-label="Runenpoort" data-object="templeGate" data-exit-hotspot="true" data-hotspot="templeGate" data-world-center-y="354" data-world-center-x="1849" data-legacy-rune-cue="true" class="worldHotspot hotspot-gate " data-approach-node="gate-step-upper"></button> intercepts pointer events[22m
+    [2m    - retrying click action[22m
+    [2m      - waiting 500ms[22m
+    [2m  - element was detached from the DOM, retrying[22m
+
+
+      240 |     await start(page, "LVL-0001");
+      241 |     const freya = page.getByRole("button", { name: "Praat met Freya" });
+    > 242 |     await freya.click();
+          |                 ^
+      243 |     await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", /walk/, { timeout: 1500 });
+      244 |     await expect(page.locator("[data-npc-locked='true']")).toBeVisible({ timeout: 12000 });
+      245 |     await expect(page.getByRole("img", { name: "Freya" })).toBeVisible();
+        at D:\DevProjects\SvenAdventure\tests\npc-challenges.spec.js:242:17
+
+    Error Context: test-results\npc-challenges-NPC-challen-b30d9-pens-questions-after-unlock-ipad-landscape\error-context.md
+
+  2 failed
+    [desktop-chromium] › tests\npc-challenges.spec.js:239:3 › NPC challenge presentation › keeps locked NPCs clickable through real approach navigation and opens questions after unlock 
+    [ipad-landscape] › tests\npc-challenges.spec.js:239:3 › NPC challenge presentation › keeps locked NPCs clickable through real approach navigation and opens questions after unlock 
+  6 passed (2.2m)

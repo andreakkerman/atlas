@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+(node:47644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:47644) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 (15.8s)
+  ok 2 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 2 (15.4s)
+
+  2 passed (31.9s)

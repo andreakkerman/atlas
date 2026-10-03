@@ -1,0 +1,30 @@
+
+Running 13 tests using 1 worker
+
+(node:49936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:49936) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (3.0s)
+  ok  2 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (1.7s)
+  ok  3 [desktop-chromium] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (8.3s)
+  ok  4 [desktop-chromium] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (7.4s)
+  ok  5 [desktop-chromium] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (7.3s)
+  ok  6 [desktop-chromium] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (6.9s)
+  ok  7 [desktop-chromium] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (5.8s)
+  ok  8 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (112ms)
+NEUTRAL_PARITY LVL-0004 [33m1[39m { mae: [33m0.4302714019612371[39m, actorMae: [33m1.1962140516927557[39m }
+SPRITE_FILTER_PARITY [33m1[39m { domImpact: [33m0.1787487045219004[39m, fullImpact: [33m0.19543991708940162[39m }
+NEUTRAL_PARITY LVL-0001 [33m1[39m { mae: [33m0.3256681137332779[39m, actorMae: [33m1.7009258238730298[39m }
+  ok  9 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 1 (6.5s)
+NEUTRAL_PARITY LVL-0004 [33m2[39m { mae: [33m0.44027954171092537[39m, actorMae: [33m1.3320305653305289[39m }
+SPRITE_FILTER_PARITY [33m2[39m { domImpact: [33m0.17892598047237224[39m, fullImpact: [33m0.18775909561992035[39m }
+NEUTRAL_PARITY LVL-0001 [33m2[39m { mae: [33m0.3406361127788297[39m, actorMae: [33m2.0881300745802562[39m }
+  ok 10 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:24 › neutral Illustrated ownership preserves frozen production composition at DPR 2 (11.3s)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.35555537588565306,"fps":58.985450254912365},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5162701812835742,"fps":57.79233288383742},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5328319908730382,"fps":57.681215148949434},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5067130987274643,"fps":57.67012687493987},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5276418793674201,"fps":58.21851348728894}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.3302787125854454,"fps":57.6479631033228},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5203555466076863,"fps":58.80047040376314},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5177693213436034,"fps":57.94861889058266},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.5846288323924284,"fps":57.93742757821561},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":9,"buffers":11},"cpuMs":0.4971454131963406,"fps":57.681215148949434}}
+  ok 11 [desktop-chromium] › tests\illustrated-compositor.spec.js:74:1 › producer revisions suppress empty and unchanged uploads across recovery (13.6s)
+  ok 12 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 (15.5s)
+  ok 13 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 2 (15.6s)
+
+  13 passed (1.7m)

@@ -1,0 +1,276 @@
+
+Running 35 tests using 1 worker
+
+(node:35540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35540) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\asset-readiness.spec.js:18:3 › Atlas critical image readiness › collects and deduplicates active-level critical imagery (449ms)
+  ok  2 [desktop-chromium] › tests\asset-readiness.spec.js:44:3 › Atlas critical image readiness › deduplicates decode work, holds ready images, releases level scope and fails critical images (5.6s)
+  ok  3 [desktop-chromium] › tests\asset-readiness.spec.js:97:3 › Atlas critical image readiness › superseded asynchronous preparation cannot become current and is releasable (5.5s)
+  ok  4 [desktop-chromium] › tests\asset-readiness.spec.js:119:3 › Atlas critical image readiness › real level reaches scene only after Sven and level imagery are decoded (6.4s)
+  ok  5 [desktop-chromium] › tests\asset-readiness.spec.js:165:3 › Atlas critical image readiness › rapid first-use transitions never expose a blank or unrenderable Sven frame (8.5s)
+  ok  6 [desktop-chromium] › tests\asset-readiness.spec.js:201:3 › Atlas critical image readiness › first Sven, animal and flyby playback discovers no new critical image request after READY (7.7s)
+  ok  7 [desktop-chromium] › tests\asset-readiness.spec.js:247:3 › Atlas critical image readiness › level-scoped images are replaced while the shared Sven cache remains (7.6s)
+  ok  8 [desktop-chromium] › tests\asset-readiness.spec.js:269:3 › Atlas critical image readiness › a runtime background override is decoded before its first visible scene (6.3s)
+  ok  9 [desktop-chromium] › tests\asset-readiness.spec.js:296:3 › Atlas critical image readiness › slow image delivery remains behind the preparing screen (8.3s)
+  ok 10 [desktop-chromium] › tests\asset-readiness.spec.js:327:3 › Atlas critical image readiness › leaving during a slow prepare cannot reveal the stale level (6.4s)
+  ok 11 [desktop-chromium] › tests\atlas-intro-pwa.spec.js:6:1 › delayed boot registers PWA, upgrades cache, and reloads intro offline (3.4s)
+  x  12 [desktop-chromium] › tests\challenge-active.spec.js:95:3 › learning challenge active state › inactive challenges do not render, cue, or block exit-ready (67ms)
+(node:16444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16444) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  13 [desktop-chromium] › tests\challenge-active.spec.js:112:3 › learning challenge active state › old completion state for inactive challenges neither blocks nor completes active progression (77ms)
+(node:41184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  14 [desktop-chromium] › tests\challenge-active.spec.js:133:3 › learning challenge active state › legacy saved level completion does not unlock a changed inactive challenge set (76ms)
+(node:30184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:30184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  15 [desktop-chromium] › tests\challenge-active.spec.js:155:3 › learning challenge active state › saved completion with matching active set does not bypass active challenge completion (87ms)
+(node:38000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38000) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  16 [desktop-chromium] › tests\challenge-active.spec.js:187:3 › learning challenge active state › saved completion on an unchanged level does not bypass challenge completion (70ms)
+(node:12960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12960) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  17 [desktop-chromium] › tests\challenge-active.spec.js:205:3 › learning challenge active state › levels without active fields still treat challenges as active (76ms)
+(node:4080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:4080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  18 [desktop-chromium] › tests\challenge-active.spec.js:215:3 › learning challenge active state › adventure menu counts active opdracht objects (74ms)
+(node:35208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:35208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 19 [desktop-chromium] › tests\challenge-active.spec.js:228:3 › learning challenge active state › menu opdracht total refreshes after an editor active toggle (1.1s)
+  x  20 [desktop-chromium] › tests\challenge-active.spec.js:251:3 › learning challenge active state › editor shows selected challenge content preview and toggle (187ms)
+(node:37016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  21 [desktop-chromium] › tests\challenge-active.spec.js:280:3 › learning challenge active state › editor preview shows clock visual hour and minute data (140ms)
+(node:41996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:41996) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 22 [desktop-chromium] › tests\gameplay-cadence.spec.js:5:3 › foreground cadence and pacing at 30 Hz (3ms)
+  ok 23 [desktop-chromium] › tests\gameplay-cadence.spec.js:5:3 › foreground cadence and pacing at 60 Hz (1ms)
+  ok 24 [desktop-chromium] › tests\gameplay-cadence.spec.js:5:3 › foreground cadence and pacing at 90 Hz (1ms)
+  ok 25 [desktop-chromium] › tests\gameplay-cadence.spec.js:5:3 › foreground cadence and pacing at 120 Hz (1ms)
+  ok 26 [desktop-chromium] › tests\gameplay-cadence.spec.js:15:1 › a long hitch reduces throughput and records missed opportunities (1ms)
+  ok 27 [desktop-chromium] › tests\gameplay-cadence.spec.js:29:1 › shared HUD: modes, stalls, visibility, level entry, debug and off use fresh samples (2.0s)
+  -  28 [desktop-chromium] › tests\gameplay-cadence.spec.js:78:1 › real RAF stays primary when Illustrated effects and Cinematic submissions run slower
+  x  29 [desktop-chromium] › tests\level-state-isolation.spec.js:26:1 › Ctrl+Shift+L completion stays isolated from later level logic and indicators (105ms)
+(node:24744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24744) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  30 [desktop-chromium] › tests\level-state-isolation.spec.js:58:1 › level and completion state switch atomically while the next level prepares (145ms)
+(node:32780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:32780) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 31 [desktop-chromium] › tests\menu-settings.spec.js:10:5 › fps stays shared from menu (1.4s)
+  ok 32 [desktop-chromium] › tests\menu-settings.spec.js:10:5 › fps stays shared from graphics (1.9s)
+  ok 33 [desktop-chromium] › tests\menu-settings.spec.js:10:5 › debug stays shared from menu (1.4s)
+  ok 34 [desktop-chromium] › tests\menu-settings.spec.js:10:5 › debug stays shared from graphics (1.8s)
+  ok 35 [desktop-chromium] › tests\menu-settings.spec.js:41:1 › level loading title fits its panel (6.1s)
+
+
+  1) [desktop-chromium] › tests\challenge-active.spec.js:95:3 › learning challenge active state › inactive challenges do not render, cue, or block exit-ready 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at startLevel (D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:56:14)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:96:5
+
+    Error Context: test-results\challenge-active-learning--c5e2e-der-cue-or-block-exit-ready-desktop-chromium\error-context.md
+
+  2) [desktop-chromium] › tests\challenge-active.spec.js:112:3 › learning challenge active state › old completion state for inactive challenges neither blocks nor completes active progression 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at startLevel (D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:56:14)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:113:5
+
+    Error Context: test-results\challenge-active-learning--8238e-ompletes-active-progression-desktop-chromium\error-context.md
+
+  3) [desktop-chromium] › tests\challenge-active.spec.js:133:3 › learning challenge active state › legacy saved level completion does not unlock a changed inactive challenge set 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'levels')
+        at eval (eval at evaluate (:302:30), <anonymous>:3:48)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:48)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:135:30
+
+    Error Context: test-results\challenge-active-learning--9c603-nged-inactive-challenge-set-desktop-chromium\error-context.md
+
+  4) [desktop-chromium] › tests\challenge-active.spec.js:155:3 › learning challenge active state › saved completion with matching active set does not bypass active challenge completion 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'levels')
+        at eval (eval at evaluate (:302:30), <anonymous>:3:48)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:48)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:157:30
+
+    Error Context: test-results\challenge-active-learning--3fc64-active-challenge-completion-desktop-chromium\error-context.md
+
+  5) [desktop-chromium] › tests\challenge-active.spec.js:187:3 › learning challenge active state › saved completion on an unchanged level does not bypass challenge completion 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:6:20)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:6:20)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:189:30
+
+    Error Context: test-results\challenge-active-learning--1e3dd-bypass-challenge-completion-desktop-chromium\error-context.md
+
+  6) [desktop-chromium] › tests\challenge-active.spec.js:205:3 › learning challenge active state › levels without active fields still treat challenges as active 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:3:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at startLevel (D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:56:14)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:206:5
+
+    Error Context: test-results\challenge-active-learning--9ee40--treat-challenges-as-active-desktop-chromium\error-context.md
+
+  7) [desktop-chromium] › tests\challenge-active.spec.js:215:3 › learning challenge active state › adventure menu counts active opdracht objects 
+
+    Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'levels')
+        at eval (eval at evaluate (:302:30), <anonymous>:2:48)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:48)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:218:16
+
+    Error Context: test-results\challenge-active-learning--82624-nts-active-opdracht-objects-desktop-chromium\error-context.md
+
+  8) [desktop-chromium] › tests\challenge-active.spec.js:251:3 › learning challenge active state › editor shows selected challenge content preview and toggle 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at openEditorLevel (D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:65:14)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:254:7
+
+    Error Context: test-results\challenge-active-learning--20905--content-preview-and-toggle-desktop-chromium\error-context.md
+
+  9) [desktop-chromium] › tests\challenge-active.spec.js:280:3 › learning challenge active state › editor preview shows clock visual hour and minute data 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at openEditorLevel (D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:65:14)
+        at D:\DevProjects\SvenAdventure\tests\challenge-active.spec.js:281:5
+
+    Error Context: test-results\challenge-active-learning--7e480-visual-hour-and-minute-data-desktop-chromium\error-context.md
+
+  10) [desktop-chromium] › tests\level-state-isolation.spec.js:26:1 › Ctrl+Shift+L completion stays isolated from later level logic and indicators 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at loadLevel (D:\DevProjects\SvenAdventure\tests\level-state-isolation.spec.js:10:14)
+        at D:\DevProjects\SvenAdventure\tests\level-state-isolation.spec.js:29:9
+
+    Error Context: test-results\level-state-isolation-Ctrl-725f1--level-logic-and-indicators-desktop-chromium\error-context.md
+
+  11) [desktop-chromium] › tests\level-state-isolation.spec.js:58:1 › level and completion state switch atomically while the next level prepares 
+
+    Error: page.evaluate: ReferenceError: selectLevel is not defined
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (<anonymous>)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at eval (eval at <anonymous> (eval at evaluate (:302:30)), <anonymous>:1:1)
+        at eval (eval at evaluate (:302:30), <anonymous>:2:18)
+        at UtilityScript.evaluate (<anonymous>:304:16)
+        at UtilityScript.<anonymous> (<anonymous>:1:44)
+        at loadLevel (D:\DevProjects\SvenAdventure\tests\level-state-isolation.spec.js:10:14)
+        at D:\DevProjects\SvenAdventure\tests\level-state-isolation.spec.js:61:9
+
+    Error Context: test-results\level-state-isolation-leve-16489-ile-the-next-level-prepares-desktop-chromium\error-context.md
+
+  11 failed
+    [desktop-chromium] › tests\challenge-active.spec.js:95:3 › learning challenge active state › inactive challenges do not render, cue, or block exit-ready 
+    [desktop-chromium] › tests\challenge-active.spec.js:112:3 › learning challenge active state › old completion state for inactive challenges neither blocks nor completes active progression 
+    [desktop-chromium] › tests\challenge-active.spec.js:133:3 › learning challenge active state › legacy saved level completion does not unlock a changed inactive challenge set 
+    [desktop-chromium] › tests\challenge-active.spec.js:155:3 › learning challenge active state › saved completion with matching active set does not bypass active challenge completion 
+    [desktop-chromium] › tests\challenge-active.spec.js:187:3 › learning challenge active state › saved completion on an unchanged level does not bypass challenge completion 
+    [desktop-chromium] › tests\challenge-active.spec.js:205:3 › learning challenge active state › levels without active fields still treat challenges as active 
+    [desktop-chromium] › tests\challenge-active.spec.js:215:3 › learning challenge active state › adventure menu counts active opdracht objects 
+    [desktop-chromium] › tests\challenge-active.spec.js:251:3 › learning challenge active state › editor shows selected challenge content preview and toggle 
+    [desktop-chromium] › tests\challenge-active.spec.js:280:3 › learning challenge active state › editor preview shows clock visual hour and minute data 
+    [desktop-chromium] › tests\level-state-isolation.spec.js:26:1 › Ctrl+Shift+L completion stays isolated from later level logic and indicators 
+    [desktop-chromium] › tests\level-state-isolation.spec.js:58:1 › level and completion state switch atomically while the next level prepares 
+  1 skipped
+  23 passed (1.5m)

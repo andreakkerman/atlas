@@ -1,0 +1,7 @@
+[
+  "Docs/EDITOR_AND_EFFECTS.md",
+  "src/ambient-system.js",
+  "tests/ambient-flybys.spec.js",
+  "tests/flyby-audio.spec.js",
+  "tests/flyby-lifecycle.spec.js"
+]

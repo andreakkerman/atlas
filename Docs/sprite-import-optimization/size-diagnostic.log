@@ -1,0 +1,44 @@
+
+Running 1 test using 1 worker
+
+(node:3136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+REVISION ["http://127.0.0.1:4173/assets/characters/sven/idle/frame_001.png",318,363,58,58,201.77500915527344,246.61874389648438,1,"brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)","drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",false] ["http://127.0.0.1:4173/assets/characters/sven/idle_blink/frame_002.png",318,363,58,58,201.77500915527344,246.61874389648438,1,"brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)","drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",false]
+REVISION ["http://127.0.0.1:4173/assets/characters/sven/idle_blink/frame_002.png",318,363,58,58,201.77500915527344,246.61874389648438,1,"brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)","drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",false] ["http://127.0.0.1:4173/assets/characters/sven/idle_blink/frame_002.png",318,363,58,58,201.7749786376953,246.61874389648438,1,"brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)","drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",false]
+REVISION ["http://127.0.0.1:4173/assets/characters/sven/idle_blink/frame_002.png",318,363,58,58,201.7749786376953,246.61874389648438,1,"brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)","drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",false] ["http://127.0.0.1:4173/assets/characters/sven/idle_blink/frame_002.png",318,363,58,58,201.77500915527344,246.61874389648438,1,"brightness(1) contrast(1) saturate(1) sepia(0) hue-rotate(0deg)","drop-shadow(rgba(0, 0, 0, 0.35) 0px 14px 9px)",false]
+  x  1 [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 (2.5s)
+
+
+  1) [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 2[39m
+
+    [2m  Object {[22m
+    [2m    "allocations": 0,[22m
+    [2m    "destroyed": 0,[22m
+    [32m-   "rasterDraws": 0,[39m
+    [32m-   "uploads": 0,[39m
+    [31m+   "rasterDraws": 4,[39m
+    [31m+   "uploads": 2,[39m
+    [2m  }[22m
+
+      26 |   };
+      27 |   const reset=()=>page.evaluate(()=>{spriteWork={uploads:0,rasterDraws:0,allocations:0,destroyed:0};});
+    > 28 |   const noWork=async()=>expect(await page.evaluate(()=>spriteWork)).toEqual({uploads:0,rasterDraws:0,allocations:0,destroyed:0});
+         |                                                                     ^
+      29 |   const translations=async selector=>{
+      30 |    const initial=await page.locator(selector).boundingBox();expect(initial.width).toBeGreaterThan(0);
+      31 |    await reset();
+        at noWork (D:\DevProjects\SvenAdventure\tests\illustrated-sprite-import.spec.js:28:69)
+        at translations (D:\DevProjects\SvenAdventure\tests\illustrated-sprite-import.spec.js:36:4)
+        at D:\DevProjects\SvenAdventure\tests\illustrated-sprite-import.spec.js:46:4
+
+    Error Context: test-results\illustrated-sprite-import--955bf-tion-and-animation-at-DPR-1-desktop-chromium\error-context.md
+
+  1 failed
+    [desktop-chromium] › tests\illustrated-sprite-import.spec.js:5:24 › Illustrated sprite pixels survive translation and animation at DPR 1 

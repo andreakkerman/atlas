@@ -230,8 +230,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "multipleChoice",
               "answer": 36,
               "prompt": "6 × 6 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":6},
               "explanation": "6 × 6 = 36.",
               "choices": [
                 30,
@@ -249,8 +248,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "open",
               "answer": 49,
               "prompt": "7 × 7 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":7},
               "explanation": "7 × 7 = 49."
             }
           ]
@@ -267,8 +265,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "multipleChoice",
               "answer": 56,
               "prompt": "8 × 7 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":7},
               "explanation": "8 × 7 = 56.",
               "choices": [
                 48,
@@ -286,8 +283,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "open",
               "answer": 72,
               "prompt": "9 × 8 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":8},
               "explanation": "9 × 8 = 72."
             }
           ]
@@ -304,8 +300,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "multipleChoice",
               "answer": 60,
               "prompt": "6 × 10 = ?",
-              "hintMinnie": "Denk aan de tafel van 6.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":6,"b":10},
               "explanation": "6 × 10 = 60.",
               "choices": [
                 54,
@@ -323,8 +318,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "open",
               "answer": 70,
               "prompt": "7 × 10 = ?",
-              "hintMinnie": "Denk aan de tafel van 7.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":7,"b":10},
               "explanation": "7 × 10 = 70."
             }
           ]
@@ -341,8 +335,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "multipleChoice",
               "answer": 104,
               "prompt": "8 × 13 = ?",
-              "hintMinnie": "Denk aan de tafel van 8.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":8,"b":13},
               "explanation": "8 × 13 = 104.",
               "choices": [
                 96,
@@ -360,8 +353,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
               "answerMode": "open",
               "answer": 108,
               "prompt": "9 × 12 = ?",
-              "hintMinnie": "Denk aan de tafel van 9.",
-              "hintMoose": "Splits de keersom in twee makkelijke stukken.",
+              "hintParameters": {"a":9,"b":12},
               "explanation": "9 × 12 = 108."
             }
           ]
@@ -396,8 +388,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 4,
                 "minute": 0
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vier uur."
             },
             {
@@ -420,8 +410,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 6,
                 "minute": 15
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart over zes."
             }
           ]
@@ -449,8 +437,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 8,
                 "minute": 30
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Half negen."
             },
             {
@@ -473,8 +459,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 10,
                 "minute": 45
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart voor elf."
             }
           ]
@@ -502,8 +486,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 12,
                 "minute": 10
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien over twaalf."
             },
             {
@@ -526,8 +508,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 2,
                 "minute": 25
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf voor half drie."
             }
           ]
@@ -555,8 +535,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 5,
                 "minute": 40
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien over half zes."
             },
             {
@@ -579,8 +557,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 7,
                 "minute": 55
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf voor acht."
             }
           ]
@@ -771,8 +747,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 9,
                 "minute": 0
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Negen uur."
             },
             {
@@ -795,8 +769,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 11,
                 "minute": 15
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart over elf."
             }
           ]
@@ -824,8 +796,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 1,
                 "minute": 30
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Half twee."
             },
             {
@@ -848,8 +818,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 3,
                 "minute": 45
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Kwart voor vier."
             }
           ]
@@ -877,8 +845,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 5,
                 "minute": 5
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over vijf."
             },
             {
@@ -901,8 +867,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 7,
                 "minute": 20
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor half acht."
             }
           ]
@@ -930,8 +894,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 10,
                 "minute": 35
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Vijf over half elf."
             },
             {
@@ -954,8 +916,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
                 "hour": 12,
                 "minute": 50
               },
-              "hintMinnie": "Kijk eerst naar de grote wijzer.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
               "explanation": "De wijzers tonen Tien voor een."
             }
           ]
@@ -1343,12 +1303,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
       "moose": "rustige rekenstrategie en controle"
     }
   },
+  "companionPolicy": {
+    "disabledEvents": [
+      "HOTSPOT_ATTENTION_FIRST",
+      "CHALLENGE_SUCCESS"
+    ],
+    "attentionOncePerVisit": true
+  },
   "companionMoments": [
     {
       "id": "LVL-0026-enter",
       "event": "LEVEL_ENTER",
       "speaker": "minnie",
-      "text": "Vinci is stil, maar overal liggen ideeën te wachten."
+      "text": "Vinci is stil. Overal liggen schetsen en modellen."
     },
     {
       "id": "LVL-0026-attention",
@@ -1366,13 +1333,13 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0026"] = {
       "id": "LVL-0026-exit",
       "event": "PATH_UNLOCKED",
       "speaker": "moose",
-      "text": "Laatste sluiting open. Netjes gedaan."
+      "text": "Alles klaar. We kunnen verder."
     },
     {
       "id": "LVL-0026-exit-blocked",
       "event": "EXIT_BLOCKED",
       "speaker": "moose",
-      "text": "De werkplaatsdeur wacht nog. Eerst nog {remainingChallenges} afronden."
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de werkplaatsdeur open."
     }
   ],
   "menu": {

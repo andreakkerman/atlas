@@ -1,0 +1,13 @@
+
+Running 2 tests using 1 worker
+
+(node:20524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20524) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (284ms)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":18,"buffers":6},"cpuMs":1.0311013375280533,"fps":57.449253161020394},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4976372474291966,"fps":58.01585766843125},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.46441253108244007,"fps":57.79233288383737},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.5209575218729943,"fps":57.67012687427914},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4693092569405529,"fps":57.937427578215505}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.3330377472439728,"fps":58.58230814294079},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4338411341457301,"fps":58.525165821983684},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4279186475684167,"fps":57.770075102423746},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4835412770211316,"fps":57.36137667434769},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4863045407050755,"fps":58.22981366324897}}
+  ok 2 [desktop-chromium] › tests\illustrated-compositor.spec.js:47:1 › producer revisions suppress empty and unchanged uploads across recovery (13.9s)
+
+  2 passed (14.9s)

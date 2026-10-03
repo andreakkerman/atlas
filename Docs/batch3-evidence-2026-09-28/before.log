@@ -1,0 +1,68 @@
+
+Running 2 tests using 1 worker
+
+(node:48624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:48624) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [desktop-chromium] › tests\challenge-indicator-open.spec.js:22:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility (6.4s)
+(node:15924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15924) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [desktop-chromium] › tests\service-worker-ownership.spec.js:6:1 › activation deletes only obsolete Atlas caches and preserves current and unrelated caches (6ms)
+
+
+  1) [desktop-chromium] › tests\challenge-indicator-open.spec.js:22:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-action="close-challenge"]')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('[data-action="close-challenge"]')[22m
+
+
+      15 |   });
+      16 |   await press(page.locator('[data-rune="car"]'), info);
+    > 17 |   await expect(page.locator('[data-action="close-challenge"]')).toBeVisible();
+         |                                                                 ^
+      18 |   expect(await markers(page)).not.toContain('car');
+      19 |   await expect.poll(() => page.evaluate(() => window.indicatorPaint?.includes('car'))).toBe(false);
+      20 | }
+        at open (D:\DevProjects\SvenAdventure\tests\challenge-indicator-open.spec.js:17:65)
+        at D:\DevProjects\SvenAdventure\tests\challenge-indicator-open.spec.js:39:5
+
+    Error Context: test-results\challenge-indicator-open-o-93e9d-ion-keep-correct-visibility-desktop-chromium\error-context.md
+
+  2) [desktop-chromium] › tests\service-worker-ownership.spec.js:6:1 › activation deletes only obsolete Atlas caches and preserves current and unrelated caches 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoEqual[2m([22m[32mexpected[39m[2m) // deep equality[22m
+
+    [32m- Expected  - 2[39m
+    [31m+ Received  + 0[39m
+
+    [2m  Array [[22m
+    [32m-   "other-app-sentinel",[39m
+    [2m    "svenadventure-static-v231-play-scene-depth-off",[22m
+    [32m-   "svenadventure-staticity-sentinel",[39m
+    [2m  ][22m
+
+      17 |   handlers.get('activate')({ waitUntil: promise => { activation = promise; } });
+      18 |   await activation;
+    > 19 |   expect([...entries.keys()].sort()).toEqual([current, 'other-app-sentinel', 'svenadventure-staticity-sentinel'].sort());
+         |                                      ^
+      20 |   expect(entries.get(current)).toBe(retained);
+      21 |   expect(entries.get('other-app-sentinel')).toBe(unrelated);
+      22 |   expect(claimed).toBe(true);
+        at D:\DevProjects\SvenAdventure\tests\service-worker-ownership.spec.js:19:38
+
+    Error Context: test-results\service-worker-ownership-a-49943-urrent-and-unrelated-caches-desktop-chromium\error-context.md
+
+  2 failed
+    [desktop-chromium] › tests\challenge-indicator-open.spec.js:22:1 › open indicator hides, closes restore it, completion and retry/transition keep correct visibility 
+    [desktop-chromium] › tests\service-worker-ownership.spec.js:6:1 › activation deletes only obsolete Atlas caches and preserves current and unrelated caches 

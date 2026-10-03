@@ -1,3 +1,4 @@
+const challengeHints = require('../src/challenge-hints');
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const vm = require('vm');
@@ -45,7 +46,7 @@ test('registers stable worlds, measured assets, three anchors and complete autho
       expect(slot.variants).toHaveLength(2);
       for (const variant of slot.variants) {
         expect(variant).toMatchObject({domain:'math',schoolBand:'E5-intended'});
-        expect(variant.hintMinnie).toBeTruthy(); expect(variant.hintMoose).toBeTruthy();
+        expect(challengeHints.resolve(level.id, variant, 'minnie')).toBeTruthy(); expect(challengeHints.resolve(level.id, variant, 'moose')).toBeTruthy();
         const equation = variant.explanation.match(/^(\d+) ([×:]) (\d+) = (\d+)/);
         expect(equation).toBeTruthy();
         expect(equation[2] === '×' ? +equation[1] * +equation[3] : +equation[1] / +equation[3]).toBe(variant.answer);

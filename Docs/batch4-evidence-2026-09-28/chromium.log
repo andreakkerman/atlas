@@ -1,0 +1,62 @@
+
+Running 10 tests using 1 worker
+
+(node:6384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6384) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  1 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › cinematic route overlay paints above presentation and follows editor visibility (2.4s)
+  ok  2 [desktop-chromium] › tests\cinematic-route-overlay.spec.js:6:3 › illustrated route overlay paints above presentation and follows editor visibility (1.7s)
+  ok  3 [desktop-chromium] › tests\graphics-play-session.spec.js:24:1 › main-menu launch defaults and session overrides across next level/retry (8.3s)
+  ok  4 [desktop-chromium] › tests\graphics-play-session.spec.js:46:1 › nested FX tuning is temporary without authoring particles (7.3s)
+  ok  5 [desktop-chromium] › tests\graphics-play-session.spec.js:63:1 › returning to menu discards play overrides before another adventure loads (7.4s)
+  ok  6 [desktop-chromium] › tests\graphics-play-session.spec.js:78:1 › cancelling an adventure intro restores the non-session settings (7.0s)
+  ok  7 [desktop-chromium] › tests\graphics-play-session.spec.js:88:1 › graphics session storage isolation survives renderer disposal and nested edits (5.8s)
+  ok  8 [desktop-chromium] › tests\illustrated-compositor.spec.js:3:1 › transient producer publishes empty, active, cleared and restarted frames (110ms)
+NEUTRAL_PARITY LVL-0004 [33m11.3406943359375[39m
+NEUTRAL_PARITY LVL-0001 [33m10.495106770833333[39m
+  x   9 [desktop-chromium] › tests\illustrated-compositor.spec.js:25:1 › neutral Illustrated ownership preserves frozen production composition (5.7s)
+(node:43392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:43392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+COMPOSITOR_METRICS [33m1[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.39659888246064967,"fps":58.21851348796239},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.5056858991517197,"fps":57.034220532319395},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.507871625997406,"fps":57.55947812739833},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.527714604534928,"fps":57.515337423970124},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4777204164485478,"fps":58.07200929152145}}
+COMPOSITOR_METRICS [33m2[39m {"baseline":{"passes":3,"draws":3,"uploads":0,"targets":1,"live":{"textures":5,"buffers":6},"cpuMs":0.361325332766056,"fps":58.28638041780117},"grading":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4244498000123639,"fps":58.74290189935375},"area":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.4117435972050361,"fps":58.99705014749262},"combined":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.45390759751457255,"fps":57.460256657781095},"depth":{"passes":5,"draws":8,"uploads":2,"targets":2,"live":{"textures":8,"buffers":11},"cpuMs":0.47659524218865346,"fps":57.614749376499695}}
+  ok 10 [desktop-chromium] › tests\illustrated-compositor.spec.js:47:1 › producer revisions suppress empty and unchanged uploads across recovery (12.5s)
+
+
+  1) [desktop-chromium] › tests\illustrated-compositor.spec.js:25:1 › neutral Illustrated ownership preserves frozen production composition 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: < [32m1[39m
+    Received:   [31m11.3406943359375[39m
+
+      42 |   const mae=await difference(page,before,after);console.log('NEUTRAL_PARITY',id,mae);
+      43 |   await toggle(false);const restored=await page.screenshot();expect(await difference(page,before,restored)).toBeLessThan(.1);
+    > 44 |   expect.soft(mae).toBeLessThan(1);
+         |                    ^
+      45 |  }
+      46 | });
+      47 | test('producer revisions suppress empty and unchanged uploads across recovery',async({page},info)=>{
+        at D:\DevProjects\SvenAdventure\tests\illustrated-compositor.spec.js:44:20
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeLessThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: < [32m1[39m
+    Received:   [31m10.495106770833333[39m
+
+      42 |   const mae=await difference(page,before,after);console.log('NEUTRAL_PARITY',id,mae);
+      43 |   await toggle(false);const restored=await page.screenshot();expect(await difference(page,before,restored)).toBeLessThan(.1);
+    > 44 |   expect.soft(mae).toBeLessThan(1);
+         |                    ^
+      45 |  }
+      46 | });
+      47 | test('producer revisions suppress empty and unchanged uploads across recovery',async({page},info)=>{
+        at D:\DevProjects\SvenAdventure\tests\illustrated-compositor.spec.js:44:20
+
+    Error Context: test-results\illustrated-compositor-neu-c4d08-ozen-production-composition-desktop-chromium\error-context.md
+
+  1 failed
+    [desktop-chromium] › tests\illustrated-compositor.spec.js:25:1 › neutral Illustrated ownership preserves frozen production composition 
+  9 passed (59.6s)

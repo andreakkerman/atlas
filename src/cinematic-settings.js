@@ -40,6 +40,8 @@
   Object.assign(systems.particles.fields, { layer: ["environment", "effects"], wind: n(0, -250, 250), streak: n(1, 1, 35), pulse: n(0, 0, 1), depthSpread: n(0.3, 0, 1), distribution: ["volume", "source"] });
   systems.particles.fields.speed = n(12, 0, 900);
   systems.particles.fields.scaleCountWithArea = false;
+  systems.particles.fields.boundsRotation = n(0, -180, 180, 1);
+  systems.particles.fields.distribution = ["volume", "source", "ribbon"];
   systems.shafts.fields.layer = ["globalLighting", "effects"];
   Object.assign(systems.characters.fields, { directionalInfluence: n(0.7, 0, 2), atmosphereInfluence: n(0.65, 0, 2), depthTint: n(0.18, 0, 1), grounding: n(0.12, 0, 0.5), sideLighting:n(0.7,0,1), frontAtmosphere:n(0.45,0,1) });
   const presets = {
@@ -51,6 +53,7 @@
     },
     areaLights: { Sunlight: { color: "#ffdb88", intensity: 0.7, width: 1800, height: 950, direction: 35 }, Moonlight: { color: "#7cafff", intensity: 0.65, width: 2100, height: 1100, direction: 25 } },
     particles: {
+      Sand: { color: "#d7b780", count: 480, size: 0.65, sizeVariation: 0.6, speed: 26, direction: 0, gravity: 0, turbulence: 0.5, wind: 0, lifetime: 24, streak: 1.8, glow: 0, opacity: 0.65, distribution: "ribbon", depth: 0.65, depthSpread: 0.3, depthInfluence: 0 },
       Pollen: { color: "#ffe6a2", count: 450, size: 2.25, speed: 8, direction: -15, gravity: -0.08, turbulence: 0.8, wind: 3, lifetime: 24, streak: 1, glow: 0.25, opacity: 0.5, depth: 0.7, depthSpread: 0.5 },
       Dust: { color: "#d5bd8c", count: 800, size: 0.8, speed: 4, direction: 0, gravity: 0, turbulence: 0.45, wind: 1, lifetime: 30, streak: 1, glow: 0, opacity: 0.25, depth: 0.65, depthSpread: 0.35 },
       Embers: { layer: "effects", color: "#ff8331", count: 140, size: 1.05, sizeVariation:0.95, speed: 40, direction: -90, gravity: -1.5, turbulence: 1.2, wind: 3, lifetime: 5, streak: 1.8, glow: 1.6, opacity: 0.65, distribution: "source", depth: 0.85, depthSpread: 0.15 },
@@ -78,6 +81,10 @@
   function instance(key, value = {}, index = 0) {
     const result = { ...fields(systems[key].fields, value), id: String(value.id || `${key}-${index + 1}`).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 80) || `${key}-${index + 1}` };
     result.layer ||= systems[key].layer;
+    // Older fields used Direction for both travel and region rotation. Preserve
+    // their authored bounds once; subsequent edits and presets are independent.
+    if (key === "particles" && value.boundsRotation == null) result.boundsRotation = result.direction;
+    if (key === "particles" && Number.isFinite(value.seed)) result.seed = Math.trunc(value.seed);
     result.name = String(value.name || result.id).replace(/[<>"&]/g, "").slice(0, 100);
     if (result.shape === "polygon") {
       const points = Array.isArray(value.points) ? value.points : [{ x: -0.5, y: -0.4 }, { x: 0.5, y: -0.3 }, { x: 0.4, y: 0.5 }, { x: -0.4, y: 0.5 }];
@@ -124,7 +131,7 @@
     // does not leave gravity, streaks or pulsing from the previous preset behind.
     const defaults = instance(key);
     const behavior = Object.fromEntries(Object.keys(presets[key]?.[name] || {}).map(field => [field, defaults[field]]));
-    if (key === "particles") for (const field of ["layer", "pulse", "distribution", "sizeVariation", "randomness", "scaleCountWithArea"]) behavior[field] = defaults[field];
+    if (key === "particles") for (const field of ["layer", "pulse", "distribution", "sizeVariation", "randomness", "scaleCountWithArea", "depthInfluence"]) behavior[field] = defaults[field];
     return instance(key, { ...item, ...behavior, ...presets[key]?.[name] });
   }
   function particleCount(item) {
@@ -132,6 +139,12 @@
     // The established per-field cap reduces density, never spatial coverage.
     const scale = item.scaleCountWithArea ? item.width * item.height / (800 * 400) : 1;
     return Math.max(1, Math.min(systems.particles.fields.count.max, Math.round(item.count * scale)));
+  }
+  function gpuOnly(value) {
+    const result = clone(value);
+    result.particles.items.forEach(item => { item.enabled &&= item.distribution !== "ribbon"; });
+    result.particles.enabled &&= result.particles.items.some(item => item.enabled);
+    return result;
   }
   const illustratedDefaults = Object.freeze({ globalLighting:false, globalGrading:true, areaDirectionalLights:true, sceneDepth:true, characterShadows:false, particleFields:true });
   function illustratedFeatures(value) {
@@ -155,7 +168,7 @@
       (result.particles.enabled && result.particles.items.some(item => item.enabled && item.depthInfluence > 0));
     return result;
   }
-  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount, illustratedDefaults, illustratedFeatures, forIllustrated };
+  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount, gpuOnly, illustratedDefaults, illustratedFeatures, forIllustrated };
   global.AtlasCinematicSettings = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

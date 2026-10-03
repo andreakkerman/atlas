@@ -1,0 +1,13 @@
+
+Running 2 tests using 1 worker
+
+(node:10392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10392) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+REPLAY_EVIDENCE {"screen":"scene","pending":true,"runes":[{"id":"terminal","disabled":true},{"id":"roundContainer","disabled":true},{"id":"crate","disabled":true}],"done":[]}
+  ok 1 [desktop-chromium] › tests\audit-disposable.spec.js:20:1 › audit: earned final reward then replay retains transition lock (4.0s)
+RESUME_EVIDENCE {"before":{"runCompleted":false,"levelId":"LVL-0035","activeChallengeSignature":"terminal|roundContainer|crate","activeChallengeIds":["terminal","roundContainer","crate"],"completedRuneIds":["terminal"],"answered":4,"firstTryCorrect":4,"attempts":4,"updatedAt":"2026-09-28T15:59:22.764Z"},"resumed":{"done":["terminal"],"answered":0,"correct":0},"after":{"levelId":"LVL-0035","completedAt":"2026-09-28T15:59:30.436Z","runCompleted":true,"activeChallengeSignature":"terminal|roundContainer|crate","activeChallengeIds":["terminal","roundContainer","crate"],"completedRuneIds":["terminal","roundContainer","crate"],"answered":8,"firstTryCorrect":8,"attempts":8},"reward":"\n      \n      \n        LVL-0035\n        Stella Montis voltooid\n        Samen met Valente heeft Sven alle drie de plekken in Stella Montis onderzocht.\n        ARC Atlas voltooid\n        \n          8 vragen beantwoord\n          67% in één keer goed\n          8 pogingen\n        \n        Menu\n        Speel nog een keer\n      \n    "}
+  ok 2 [desktop-chromium] › tests\audit-disposable.spec.js:31:1 › audit: resume retains solved rune but drops earned counters (14.6s)
+
+  2 passed (19.1s)
