@@ -1,581 +1,189 @@
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 
-const learningChallengesLVL0010 = [
-  {
-    "id": "treasureMap",
-    "anchorId": "treasureMap",
-    "challengeCharacterId": "dutchtuber-job",
-    "questions": [
-      {
-        "id": "treasureMap-slot-1",
-        "variants": [
-          {
-            "id": "treasureMap-1a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "route",
-            "presentation": "story",
-            "answerMode": "open",
-            "prompt": "De schatroute is 8 meter lang en bestaat uit 2 gelijke stukken. Hoe lang is ieder stuk?",
-            "answer": 4,
-            "hintParameters": {"a":8,"b":2},
-            "explanation": "8 : 2 = 4 meter."
-          },
-          {
-            "id": "treasureMap-1b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "3 × 8 = ?",
-            "answer": 24,
-            "choices": [
-              16,
-              24,
-              32,
-              40
-            ],
-            "hintParameters": {"a":3,"b":8},
-            "explanation": "3 × 8 = 24."
-          }
-        ]
-      },
-      {
-        "id": "treasureMap-slot-2",
-        "variants": [
-          {
-            "id": "treasureMap-2a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "open",
-            "prompt": "6 × 2 = ?",
-            "answer": 12,
-            "hintParameters": {"a":6,"b":2},
-            "explanation": "6 × 2 = 12."
-          },
-          {
-            "id": "treasureMap-2b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "multipleChoice",
-            "prompt": "Op de schatkaart staan 4 routes met elk 7 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
-            "answer": 28,
-            "choices": [
-              21,
-              28,
-              35,
-              42
-            ],
-            "hintParameters": {"a":4,"b":7},
-            "explanation": "4 × 7 = 28."
-          }
-        ]
-      },
-      {
-        "id": "treasureMap-slot-3",
-        "variants": [
-          {
-            "id": "treasureMap-3a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "open",
-            "prompt": "Op de schatkaart staan 7 routes met elk 9 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
-            "answer": 63,
-            "hintParameters": {"a":7,"b":9},
-            "explanation": "7 × 9 = 63."
-          },
-          {
-            "id": "treasureMap-3b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "3 × 4 = ?",
-            "answer": 12,
-            "choices": [
-              8,
-              12,
-              16,
-              20
-            ],
-            "hintParameters": {"a":3,"b":4},
-            "explanation": "3 × 4 = 12."
-          }
-        ]
-      },
-      {
-        "id": "treasureMap-slot-4",
-        "variants": [
-          {
-            "id": "treasureMap-4a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "2 × 10 = ?",
-            "answer": 20,
-            "choices": [
-              10,
-              20,
-              30,
-              40
-            ],
-            "hintParameters": {"a":2,"b":10},
-            "explanation": "2 × 10 = 20."
-          },
-          {
-            "id": "treasureMap-4b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "8 × 7 = ?",
-            "answer": 56,
-            "choices": [
-              49,
-              56,
-              63,
-              70
-            ],
-            "hintParameters": {"a":8,"b":7},
-            "explanation": "8 × 7 = 56."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "sandCastle",
-    "anchorId": "sandCastle",
-    "challengeCharacterId": "dutchtuber-job",
-    "questions": [
-      {
-        "id": "sandCastle-slot-1",
-        "variants": [
-          {
-            "id": "sandCastle-1a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "open",
-            "prompt": "6 × 4 = ?",
-            "answer": 24,
-            "hintParameters": {"a":6,"b":4},
-            "explanation": "6 × 4 = 24."
-          },
-          {
-            "id": "sandCastle-1b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "6 × 3 = ?",
-            "answer": 18,
-            "choices": [
-              15,
-              18,
-              21,
-              24
-            ],
-            "hintParameters": {"a":6,"b":3},
-            "explanation": "6 × 3 = 18."
-          }
-        ]
-      },
-      {
-        "id": "sandCastle-slot-2",
-        "variants": [
-          {
-            "id": "sandCastle-2a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "money",
-            "presentation": "story",
-            "answerMode": "open",
-            "prompt": "Job koopt 2 bouwscheppen voor 6 munten per stuk. Hoeveel munten betaalt hij?",
-            "answer": 12,
-            "hintParameters": {"a":2,"b":6,"currency":"munten"},
-            "explanation": "2 × 6 = 12 munten."
-          },
-          {
-            "id": "sandCastle-2b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "multipleChoice",
-            "prompt": "Het zandkasteel heeft 9 torens met elk 4 zandblokken. Hoeveel blokken zijn dat samen?",
-            "answer": 36,
-            "choices": [
-              32,
-              36,
-              40,
-              44
-            ],
-            "hintParameters": {"a":9,"b":4},
-            "explanation": "9 × 4 = 36."
-          }
-        ]
-      },
-      {
-        "id": "sandCastle-slot-3",
-        "variants": [
-          {
-            "id": "sandCastle-3a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "5 × 7 = ?",
-            "answer": 35,
-            "choices": [
-              28,
-              35,
-              42,
-              49
-            ],
-            "hintParameters": {"a":5,"b":7},
-            "explanation": "5 × 7 = 35."
-          },
-          {
-            "id": "sandCastle-3b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "open",
-            "prompt": "Het zandkasteel heeft 7 torens met elk 8 zandblokken. Hoeveel blokken zijn dat samen?",
-            "answer": 56,
-            "hintParameters": {"a":7,"b":8},
-            "explanation": "7 × 8 = 56."
-          }
-        ]
-      },
-      {
-        "id": "sandCastle-slot-4",
-        "variants": [
-          {
-            "id": "sandCastle-4a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_division",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "64 : 8 = ?",
-            "answer": 8,
-            "choices": [
-              7,
-              8,
-              9,
-              10
-            ],
-            "hintParameters": {"a":64,"b":8},
-            "explanation": "64 : 8 = 8."
-          },
-          {
-            "id": "sandCastle-4b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "multipleChoice",
-            "prompt": "Het zandkasteel heeft 2 torens met elk 9 zandblokken. Hoeveel blokken zijn dat samen?",
-            "answer": 18,
-            "choices": [
-              9,
-              18,
-              27,
-              36
-            ],
-            "hintParameters": {"a":2,"b":9},
-            "explanation": "2 × 9 = 18."
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "woodenBoat",
-    "anchorId": "woodenBoat",
-    "challengeCharacterId": "dutchtuber-job",
-    "questions": [
-      {
-        "id": "woodenBoat-slot-1",
-        "variants": [
-          {
-            "id": "woodenBoat-1a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "multipleChoice",
-            "prompt": "Voor de houten boot maakt Job 9 stapels van 7 bouwplanken. Hoeveel planken zijn dat samen?",
-            "answer": 63,
-            "choices": [
-              56,
-              63,
-              70,
-              77
-            ],
-            "hintParameters": {"a":9,"b":7},
-            "explanation": "9 × 7 = 63."
-          },
-          {
-            "id": "woodenBoat-1b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "open",
-            "prompt": "9 × 6 = ?",
-            "answer": 54,
-            "hintParameters": {"a":9,"b":6},
-            "explanation": "9 × 6 = 54."
-          }
-        ]
-      },
-      {
-        "id": "woodenBoat-slot-2",
-        "variants": [
-          {
-            "id": "woodenBoat-2a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_division",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "21 : 7 = ?",
-            "answer": 3,
-            "choices": [
-              2,
-              3,
-              4,
-              5
-            ],
-            "hintParameters": {"a":21,"b":7},
-            "explanation": "21 : 7 = 3."
-          },
-          {
-            "id": "woodenBoat-2b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "multipleChoice",
-            "prompt": "Voor de houten boot maakt Job 8 stapels van 3 bouwplanken. Hoeveel planken zijn dat samen?",
-            "answer": 24,
-            "choices": [
-              21,
-              24,
-              27,
-              30
-            ],
-            "hintParameters": {"a":8,"b":3},
-            "explanation": "8 × 3 = 24."
-          }
-        ]
-      },
-      {
-        "id": "woodenBoat-slot-3",
-        "variants": [
-          {
-            "id": "woodenBoat-3a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "4 × 6 = ?",
-            "answer": 24,
-            "choices": [
-              18,
-              24,
-              30,
-              36
-            ],
-            "hintParameters": {"a":4,"b":6},
-            "explanation": "4 × 6 = 24."
-          },
-          {
-            "id": "woodenBoat-3b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_multiplication",
-            "presentation": "story",
-            "answerMode": "open",
-            "prompt": "Voor de houten boot maakt Job 7 stapels van 8 bouwplanken. Hoeveel planken zijn dat samen?",
-            "answer": 56,
-            "hintParameters": {"a":7,"b":8},
-            "explanation": "7 × 8 = 56."
-          }
-        ]
-      },
-      {
-        "id": "woodenBoat-slot-4",
-        "variants": [
-          {
-            "id": "woodenBoat-4a",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "story_division",
-            "presentation": "story",
-            "answerMode": "open",
-            "prompt": "Job verdeelt 25 bouwplanken eerlijk over 5 bouwers. Hoeveel planken krijgt iedere bouwer?",
-            "answer": 5,
-            "hintParameters": {"a":25,"b":5},
-            "explanation": "25 : 5 = 5."
-          },
-          {
-            "id": "woodenBoat-4b",
-            "domain": "math",
-            "schoolBand": "E5-intended",
-            "family": "bare_multiplication",
-            "presentation": "bare",
-            "answerMode": "multipleChoice",
-            "prompt": "5 × 4 = ?",
-            "answer": 20,
-            "choices": [
-              16,
-              20,
-              24,
-              28
-            ],
-            "hintParameters": {"a":5,"b":4},
-            "explanation": "5 × 4 = 20."
-          }
-        ]
-      }
-    ]
-  }
-];
-
 window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
-  id: "LVL-0010",
-  title: "De Strandkamer",
-  subtitle: "Een kamer vol zand, water en geheime blokken.",
-  description: "Sven bereikt een strandkamer waar zandkastelen, schatten en een houten boot de weg bewaken.",
-  storageKey: "atlas-blokkenpoort-strandkamer-v1",
-  progressKey: "svenadventure-table-progress-v1",
-  exitHotspotId: "stoneDoor",
-  exitActionLabel: "Naar de Nether",
-  challengeLabel: "Strandproef",
-  challengeCompleteLabel: "Opdracht afronden",
-  choiceHint: "Kies het juiste antwoord.",
-  progressLabelPlural: "strandtekens",
-  menu: {
-    illustration: "Levels/LVL-0010/assets/blokkenpoort-beach-room.png",
-    badge: "Verbonden gebied",
-    detail: "Strand, schatten en een houten boot"
+  "id": "LVL-0010",
+  "title": "De Strandkamer",
+  "subtitle": "Een kamer vol zand, water en geheime blokken.",
+  "description": "Sven bereikt een strandkamer waar zandkastelen, schatten en een houten boot de weg bewaken.",
+  "storageKey": "atlas-blokkenpoort-strandkamer-v1",
+  "progressKey": "svenadventure-table-progress-v1",
+  "exitHotspotId": "stoneDoor",
+  "exitActionLabel": "Naar de Nether",
+  "challengeLabel": "Strandproef",
+  "challengeCompleteLabel": "Opdracht afronden",
+  "choiceHint": "Kies het juiste antwoord.",
+  "progressLabelPlural": "strandtekens",
+  "menu": {
+    "illustration": "Levels/LVL-0010/assets/blokkenpoort-beach-room.png",
+    "badge": "Verbonden gebied",
+    "detail": "Strand, schatten en een houten boot"
   },
-  companion: {
-    name: "Dutchtuber Job",
-    portrait: "Levels/LVL-0010/assets/dutchtuber-job.png"
+  "companion": {
+    "name": "Dutchtuber Job",
+    "portrait": "Levels/LVL-0010/assets/dutchtuber-job.png"
   },
-  challengeCharacter: {
-    id: "dutchtuber-job",
-    name: "Dutchtuber Job",
-    portrait: "Levels/LVL-0010/assets/dutchtuber-job.png",
-    role: "blokwachter"
+  "challengeCharacter": {
+    "id": "dutchtuber-job",
+    "name": "Dutchtuber Job",
+    "portrait": "Levels/LVL-0010/assets/dutchtuber-job.png",
+    "role": "blokwachter"
   },
-  guides: {
-    minnie: { name: "Minnie", portrait: "assets/guides/minnie.png" },
-    moose: { name: "Moose", portrait: "assets/guides/moose.png" }
+  "guides": {
+    "minnie": {
+      "name": "Minnie",
+      "portrait": "assets/guides/minnie.png"
+    },
+    "moose": {
+      "name": "Moose",
+      "portrait": "assets/guides/moose.png"
+    }
   },
-  world: {
-    width: 2172,
-    height: 724,
-    aspectRatio: 3,
-    viewportWidth: 1000,
-    background: "Levels/LVL-0010/assets/blokkenpoort-beach-room.png"
+  "world": {
+    "width": 2172,
+    "height": 724,
+    "aspectRatio": 3,
+    "viewportWidth": 1000,
+    "background": "Levels/LVL-0010/assets/blokkenpoort-beach-room.png"
   },
-  challengeArt: "Levels/LVL-0010/assets/dutchtuber-job.png",
-  player: {
-    startNode: "left-door-start",
-    start: { x: 243, y: 456 }
+  "challengeArt": "Levels/LVL-0010/assets/dutchtuber-job.png",
+  "player": {
+    "startNode": "left-door-start",
+    "start": {
+      "x": 218,
+      "y": 479
+    }
   },
-  interactiveObjects: [
+  "interactiveObjects": [
     {
-      id: "treasureMap",
-      type: "rune",
-      center: { x: 636, y: 260 },
-      radius: 92,
-      approachNode: "map-approach",
-      label: "Schatkaart"
+      "id": "treasureMap",
+      "type": "rune",
+      "center": {
+        "x": 636,
+        "y": 260
+      },
+      "radius": 92,
+      "approachNode": "map-approach",
+      "label": "Schatkaart"
     },
     {
-      id: "sandCastle",
-      type: "rune",
-      center: { x: 1135, y: 343 },
-      radius: 100,
-      approachNode: "castle-approach",
-      label: "Zandkasteel"
+      "id": "sandCastle",
+      "type": "rune",
+      "center": {
+        "x": 1135,
+        "y": 343
+      },
+      "radius": 100,
+      "approachNode": "castle-approach",
+      "label": "Zandkasteel"
     },
     {
-      id: "woodenBoat",
-      type: "rune",
-      center: { x: 1562, y: 287 },
-      radius: 118,
-      approachNode: "boat-approach",
-      label: "Houten boot"
+      "id": "woodenBoat",
+      "type": "rune",
+      "center": {
+        "x": 1562,
+        "y": 287
+      },
+      "radius": 118,
+      "approachNode": "boat-approach",
+      "label": "Houten boot"
     },
     {
-      id: "stoneDoor",
-      type: "gate",
-      center: { x: 2041, y: 369 },
-      radius: 108,
-      approachNode: "right-door-approach",
-      label: "Stenen deur"
+      "id": "stoneDoor",
+      "type": "gate",
+      "center": {
+        "x": 2041,
+        "y": 369
+      },
+      "radius": 108,
+      "approachNode": "right-door-approach",
+      "label": "Stenen deur"
     }
   ],
-  walkPath: [
-    { id: "left-door-start", x: 243, y: 456 },
-    { id: "map-approach", x: 634, y: 426, role: "approach" },
-    { id: "castle-approach", x: 1125, y: 452, role: "approach" },
-    { id: "beach-center", x: 1360, y: 454 },
-    { id: "boat-approach", x: 1559, y: 445, role: "approach" },
-    { id: "right-door-approach", x: 1965, y: 475, role: "approach" }
+  "walkPath": [
+    {
+      "id": "left-door-start",
+      "x": 218,
+      "y": 479
+    },
+    {
+      "id": "map-approach",
+      "x": 551,
+      "y": 456,
+      "role": "approach"
+    },
+    {
+      "id": "castle-approach",
+      "x": 1062,
+      "y": 469,
+      "role": "approach"
+    },
+    {
+      "id": "beach-center",
+      "x": 1360,
+      "y": 454
+    },
+    {
+      "id": "boat-approach",
+      "x": 1552,
+      "y": 458,
+      "role": "approach"
+    },
+    {
+      "id": "right-door-approach",
+      "x": 1967,
+      "y": 489,
+      "role": "approach"
+    }
   ],
-  intro: [
+  "intro": [
     "Achter de deur ligt een strand in een kamer.",
     "Water klotst tegen de blokkenrand.",
     "Dutchtuber Job wijst naar de strandtekens."
   ],
-  spiritName: "Dutchtuber Job",
-  spiritLines: {
-    welcome: "Welkom in de Strandkamer.",
-    chooseRune: "Onderzoek de strandtekens.",
-    moving: "Zand schuift onder Svens schoenen.",
-    allRunes: "De stenen deur gaat open.",
-    reward: "De weg naar de Nether verschijnt."
+  "spiritName": "Dutchtuber Job",
+  "spiritLines": {
+    "welcome": "Welkom in de Strandkamer.",
+    "chooseRune": "Onderzoek de strandtekens.",
+    "moving": "Zand schuift onder Svens schoenen.",
+    "allRunes": "De stenen deur gaat open.",
+    "reward": "De weg naar de Nether verschijnt."
   },
-  guideLines: {
-    welcome: { speaker: "minnie", text: "Een strand binnen een kamer. Dat is handig." },
-    start: { speaker: "minnie", text: "Ik zie schatten, zand en water." },
-    moving: { speaker: "moose", text: "Niet te dicht bij het water." },
-    beach: { speaker: "moose", text: "Zand lijkt zacht. De deur niet." },
-    object: { speaker: "minnie", text: "Dat strandding wil vast iets vertellen." },
-    allRunes: { speaker: "moose", text: "De stenen deur is klaar. Warm wordt het wel." },
-    reward: { speaker: "moose", text: "Doorlopen. Ik ruik rook." }
+  "guideLines": {
+    "welcome": {
+      "speaker": "minnie",
+      "text": "Een strand binnen een kamer. Dat is handig."
+    },
+    "start": {
+      "speaker": "minnie",
+      "text": "Ik zie schatten, zand en water."
+    },
+    "moving": {
+      "speaker": "moose",
+      "text": "Niet te dicht bij het water."
+    },
+    "beach": {
+      "speaker": "moose",
+      "text": "Zand lijkt zacht. De deur niet."
+    },
+    "object": {
+      "speaker": "minnie",
+      "text": "Dat strandding wil vast iets vertellen."
+    },
+    "allRunes": {
+      "speaker": "moose",
+      "text": "De stenen deur is klaar. Warm wordt het wel."
+    },
+    "reward": {
+      "speaker": "moose",
+      "text": "Doorlopen. Ik ruik rook."
+    }
   },
-  levelSemantics: {
-    setting: "een blokkenstrand met water, schatten en een houten boot",
-    mood: "licht, vreemd en avontuurlijk",
-    companionFocus: {
-      minnie: "schelpen, schatten, zandkastelen en blauwe glans",
-      moose: "waterkanten, glad zand en de deur naar een warmere kamer"
+  "levelSemantics": {
+    "setting": "een blokkenstrand met water, schatten en een houten boot",
+    "mood": "licht, vreemd en avontuurlijk",
+    "companionFocus": {
+      "minnie": "schelpen, schatten, zandkastelen en blauwe glans",
+      "moose": "waterkanten, glad zand en de deur naar een warmere kamer"
     }
   },
   "companionPolicy": {
@@ -585,121 +193,660 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0010"] = {
     ],
     "attentionOncePerVisit": true
   },
-  companionMoments: [
+  "companionMoments": [
     {
-      id: "beach-enter",
-      event: "LEVEL_ENTER",
-      speaker: "minnie",
-      text: "Een strand in een blokkenkamer. Iemand kon niet kiezen."
+      "id": "beach-enter",
+      "event": "LEVEL_ENTER",
+      "speaker": "minnie",
+      "text": "Een strand in een blokkenkamer. Iemand kon niet kiezen."
     },
     {
-      id: "beach-map-attention",
-      event: "HOTSPOT_ATTENTION_FIRST",
-      challengeId: "treasureMap",
-      speaker: "minnie",
-      text: "Een schatkaart! Die moeten we bekijken."
+      "id": "beach-map-attention",
+      "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "treasureMap",
+      "speaker": "minnie",
+      "text": "Een schatkaart! Die moeten we bekijken."
     },
     {
-      id: "beach-castle-attention",
-      event: "HOTSPOT_ATTENTION_FIRST",
-      challengeId: "sandCastle",
-      speaker: "moose",
-      text: "Net zandkasteel. Verdacht net, eerlijk gezegd."
+      "id": "beach-castle-attention",
+      "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "sandCastle",
+      "speaker": "moose",
+      "text": "Net zandkasteel. Verdacht net, eerlijk gezegd."
     },
     {
-      id: "beach-boat-attention",
-      event: "HOTSPOT_ATTENTION_FIRST",
-      challengeId: "woodenBoat",
-      speaker: "minnie",
-      text: "Dat houten bootje wijst precies naar de stenen deur."
+      "id": "beach-boat-attention",
+      "event": "HOTSPOT_ATTENTION_FIRST",
+      "challengeId": "woodenBoat",
+      "speaker": "minnie",
+      "text": "Dat houten bootje wijst precies naar de stenen deur."
     },
     {
-      id: "beach-solved",
-      event: "CHALLENGE_SUCCESS",
-      speaker: "moose",
-      text: "Klaar. Geen zand tussen de tandwielen."
+      "id": "beach-solved",
+      "event": "CHALLENGE_SUCCESS",
+      "speaker": "moose",
+      "text": "Klaar. Geen zand tussen de tandwielen."
     },
     {
-      id: "beach-progress",
-      event: "LEVEL_PROGRESS_MILESTONE",
-      speaker: "minnie",
-      text: "Weer een stap verder. Het strand heeft nog meer te ontdekken."
+      "id": "beach-progress",
+      "event": "LEVEL_PROGRESS_MILESTONE",
+      "speaker": "minnie",
+      "text": "Weer een stap verder. Het strand heeft nog meer te ontdekken."
     },
     {
-      id: "beach-blocked",
-      event: "EXIT_BLOCKED",
-      speaker: "moose",
-      text: "Nog {remainingChallenges} te gaan. Daarna kan de stenen deur open."
+      "id": "beach-blocked",
+      "event": "EXIT_BLOCKED",
+      "speaker": "moose",
+      "text": "Nog {remainingChallenges} te gaan. Daarna kan de stenen deur open."
     },
     {
-      id: "beach-unlocked",
-      event: "PATH_UNLOCKED",
-      speaker: "moose",
-      text: "De stenen deur is open. Op naar de Netherproef."
+      "id": "beach-unlocked",
+      "event": "PATH_UNLOCKED",
+      "speaker": "moose",
+      "text": "De stenen deur is open. Op naar de Netherproef."
     },
     {
-      id: "beach-complete",
-      event: "ADVENTURE_COMPLETE",
-      speaker: "moose",
-      text: "Doorlopen. Het zand was leuker dan de rook."
+      "id": "beach-complete",
+      "event": "ADVENTURE_COMPLETE",
+      "speaker": "moose",
+      "text": "Doorlopen. Het zand was leuker dan de rook."
     }
   ],
-  areas: [
-    { id: "beach", name: "Strandkamer", start: 0, end: 2172, guideLine: "beach" }
-  ],
-  hotspots: [
+  "areas": [
     {
-      id: "stoneDoor",
-      objectId: "stoneDoor",
-      type: "gate",
-      name: "Stenen deur",
-      defaultAction: "activate",
-      look: "Een grijze deur met rode lampen. Hij wacht op drie strandtekens.",
-      activate: "De stenen deur kraakt open."
+      "id": "beach",
+      "name": "Strandkamer",
+      "start": 0,
+      "end": 2172,
+      "guideLine": "beach"
     }
   ],
-  learningChallenges: learningChallengesLVL0010,
-  runes: [
+  "hotspots": [
     {
-      id: "treasureMap",
-      objectId: "treasureMap",
-      name: "Schatkaart",
-      shortName: "Kaart",
-      defaultAction: "activate",
-      intro: "De kaart toont een route over het zand.",
-      prompt: "Tel de strandstappen.",
-      solved: "Mooi! De kaart wijst naar de boot.",
-      challengeId: "treasureMap"
-    },
-    {
-      id: "sandCastle",
-      objectId: "sandCastle",
-      name: "Zandkasteel",
-      shortName: "Kasteel",
-      defaultAction: "activate",
-      intro: "Het zandkasteel heeft kleine torens.",
-      prompt: "Tel de zandtorens.",
-      solved: "Goed zo! Het kasteel blijft stevig staan.",
-      challengeId: "sandCastle"
-    },
-    {
-      id: "woodenBoat",
-      objectId: "woodenBoat",
-      name: "Houten boot",
-      shortName: "Boot",
-      defaultAction: "activate",
-      intro: "De boot kraakt alsof hij wil vertrekken.",
-      prompt: "Tel de houten planken.",
-      solved: "Sterk! De boot wijst naar de deur.",
-      challengeId: "woodenBoat"
+      "id": "stoneDoor",
+      "objectId": "stoneDoor",
+      "type": "gate",
+      "name": "Stenen deur",
+      "defaultAction": "activate",
+      "look": "Een grijze deur met rode lampen. Hij wacht op drie strandtekens.",
+      "activate": "De stenen deur kraakt open."
     }
   ],
-  reward: {
-    title: "De stranddeur opent!",
-    badge: "Strandbouwer",
-    line: "Sven maakte de strandtekens wakker. Achter de deur gloeit rood licht.",
-    art: "Levels/LVL-0010/assets/blokkenpoort-beach-room.png",
-    nextLevelId: "LVL-0011",
-    nextLabel: "Naar de Nether"
+  "learningChallenges": [
+    {
+      "id": "treasureMap",
+      "anchorId": "treasureMap",
+      "challengeCharacterId": "dutchtuber-job",
+      "questions": [
+        {
+          "id": "treasureMap-slot-1",
+          "variants": [
+            {
+              "id": "treasureMap-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "route",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "De schatroute is 8 meter lang en bestaat uit 2 gelijke stukken. Hoe lang is ieder stuk?",
+              "answer": 4,
+              "hintParameters": {
+                "a": 8,
+                "b": 2
+              },
+              "explanation": "8 : 2 = 4 meter."
+            },
+            {
+              "id": "treasureMap-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "3 × 8 = ?",
+              "answer": 24,
+              "choices": [
+                16,
+                24,
+                32,
+                40
+              ],
+              "hintParameters": {
+                "a": 3,
+                "b": 8
+              },
+              "explanation": "3 × 8 = 24."
+            }
+          ]
+        },
+        {
+          "id": "treasureMap-slot-2",
+          "variants": [
+            {
+              "id": "treasureMap-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "6 × 2 = ?",
+              "answer": 12,
+              "hintParameters": {
+                "a": 6,
+                "b": 2
+              },
+              "explanation": "6 × 2 = 12."
+            },
+            {
+              "id": "treasureMap-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Op de schatkaart staan 4 routes met elk 7 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+              "answer": 28,
+              "choices": [
+                21,
+                28,
+                35,
+                42
+              ],
+              "hintParameters": {
+                "a": 4,
+                "b": 7
+              },
+              "explanation": "4 × 7 = 28."
+            }
+          ]
+        },
+        {
+          "id": "treasureMap-slot-3",
+          "variants": [
+            {
+              "id": "treasureMap-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Op de schatkaart staan 7 routes met elk 9 routeblokjes. Hoeveel routeblokjes zijn dat samen?",
+              "answer": 63,
+              "hintParameters": {
+                "a": 7,
+                "b": 9
+              },
+              "explanation": "7 × 9 = 63."
+            },
+            {
+              "id": "treasureMap-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "3 × 4 = ?",
+              "answer": 12,
+              "choices": [
+                8,
+                12,
+                16,
+                20
+              ],
+              "hintParameters": {
+                "a": 3,
+                "b": 4
+              },
+              "explanation": "3 × 4 = 12."
+            }
+          ]
+        },
+        {
+          "id": "treasureMap-slot-4",
+          "variants": [
+            {
+              "id": "treasureMap-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "2 × 10 = ?",
+              "answer": 20,
+              "choices": [
+                10,
+                20,
+                30,
+                40
+              ],
+              "hintParameters": {
+                "a": 2,
+                "b": 10
+              },
+              "explanation": "2 × 10 = 20."
+            },
+            {
+              "id": "treasureMap-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "8 × 7 = ?",
+              "answer": 56,
+              "choices": [
+                49,
+                56,
+                63,
+                70
+              ],
+              "hintParameters": {
+                "a": 8,
+                "b": 7
+              },
+              "explanation": "8 × 7 = 56."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sandCastle",
+      "anchorId": "sandCastle",
+      "challengeCharacterId": "dutchtuber-job",
+      "questions": [
+        {
+          "id": "sandCastle-slot-1",
+          "variants": [
+            {
+              "id": "sandCastle-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "6 × 4 = ?",
+              "answer": 24,
+              "hintParameters": {
+                "a": 6,
+                "b": 4
+              },
+              "explanation": "6 × 4 = 24."
+            },
+            {
+              "id": "sandCastle-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "6 × 3 = ?",
+              "answer": 18,
+              "choices": [
+                15,
+                18,
+                21,
+                24
+              ],
+              "hintParameters": {
+                "a": 6,
+                "b": 3
+              },
+              "explanation": "6 × 3 = 18."
+            }
+          ]
+        },
+        {
+          "id": "sandCastle-slot-2",
+          "variants": [
+            {
+              "id": "sandCastle-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "money",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Job koopt 2 bouwscheppen voor 6 munten per stuk. Hoeveel munten betaalt hij?",
+              "answer": 12,
+              "hintParameters": {
+                "a": 2,
+                "b": 6,
+                "currency": "munten"
+              },
+              "explanation": "2 × 6 = 12 munten."
+            },
+            {
+              "id": "sandCastle-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Het zandkasteel heeft 9 torens met elk 4 zandblokken. Hoeveel blokken zijn dat samen?",
+              "answer": 36,
+              "choices": [
+                32,
+                36,
+                40,
+                44
+              ],
+              "hintParameters": {
+                "a": 9,
+                "b": 4
+              },
+              "explanation": "9 × 4 = 36."
+            }
+          ]
+        },
+        {
+          "id": "sandCastle-slot-3",
+          "variants": [
+            {
+              "id": "sandCastle-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "5 × 7 = ?",
+              "answer": 35,
+              "choices": [
+                28,
+                35,
+                42,
+                49
+              ],
+              "hintParameters": {
+                "a": 5,
+                "b": 7
+              },
+              "explanation": "5 × 7 = 35."
+            },
+            {
+              "id": "sandCastle-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Het zandkasteel heeft 7 torens met elk 8 zandblokken. Hoeveel blokken zijn dat samen?",
+              "answer": 56,
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
+              "explanation": "7 × 8 = 56."
+            }
+          ]
+        },
+        {
+          "id": "sandCastle-slot-4",
+          "variants": [
+            {
+              "id": "sandCastle-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_division",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "64 : 8 = ?",
+              "answer": 8,
+              "choices": [
+                7,
+                8,
+                9,
+                10
+              ],
+              "hintParameters": {
+                "a": 64,
+                "b": 8
+              },
+              "explanation": "64 : 8 = 8."
+            },
+            {
+              "id": "sandCastle-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Het zandkasteel heeft 2 torens met elk 9 zandblokken. Hoeveel blokken zijn dat samen?",
+              "answer": 18,
+              "choices": [
+                9,
+                18,
+                27,
+                36
+              ],
+              "hintParameters": {
+                "a": 2,
+                "b": 9
+              },
+              "explanation": "2 × 9 = 18."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "woodenBoat",
+      "anchorId": "woodenBoat",
+      "challengeCharacterId": "dutchtuber-job",
+      "questions": [
+        {
+          "id": "woodenBoat-slot-1",
+          "variants": [
+            {
+              "id": "woodenBoat-1a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Voor de houten boot maakt Job 9 stapels van 7 bouwplanken. Hoeveel planken zijn dat samen?",
+              "answer": 63,
+              "choices": [
+                56,
+                63,
+                70,
+                77
+              ],
+              "hintParameters": {
+                "a": 9,
+                "b": 7
+              },
+              "explanation": "9 × 7 = 63."
+            },
+            {
+              "id": "woodenBoat-1b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "open",
+              "prompt": "9 × 6 = ?",
+              "answer": 54,
+              "hintParameters": {
+                "a": 9,
+                "b": 6
+              },
+              "explanation": "9 × 6 = 54."
+            }
+          ]
+        },
+        {
+          "id": "woodenBoat-slot-2",
+          "variants": [
+            {
+              "id": "woodenBoat-2a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_division",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "21 : 7 = ?",
+              "answer": 3,
+              "choices": [
+                2,
+                3,
+                4,
+                5
+              ],
+              "hintParameters": {
+                "a": 21,
+                "b": 7
+              },
+              "explanation": "21 : 7 = 3."
+            },
+            {
+              "id": "woodenBoat-2b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "multipleChoice",
+              "prompt": "Voor de houten boot maakt Job 8 stapels van 3 bouwplanken. Hoeveel planken zijn dat samen?",
+              "answer": 24,
+              "choices": [
+                21,
+                24,
+                27,
+                30
+              ],
+              "hintParameters": {
+                "a": 8,
+                "b": 3
+              },
+              "explanation": "8 × 3 = 24."
+            }
+          ]
+        },
+        {
+          "id": "woodenBoat-slot-3",
+          "variants": [
+            {
+              "id": "woodenBoat-3a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "4 × 6 = ?",
+              "answer": 24,
+              "choices": [
+                18,
+                24,
+                30,
+                36
+              ],
+              "hintParameters": {
+                "a": 4,
+                "b": 6
+              },
+              "explanation": "4 × 6 = 24."
+            },
+            {
+              "id": "woodenBoat-3b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_multiplication",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Voor de houten boot maakt Job 7 stapels van 8 bouwplanken. Hoeveel planken zijn dat samen?",
+              "answer": 56,
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
+              "explanation": "7 × 8 = 56."
+            }
+          ]
+        },
+        {
+          "id": "woodenBoat-slot-4",
+          "variants": [
+            {
+              "id": "woodenBoat-4a",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "story_division",
+              "presentation": "story",
+              "answerMode": "open",
+              "prompt": "Job verdeelt 25 bouwplanken eerlijk over 5 bouwers. Hoeveel planken krijgt iedere bouwer?",
+              "answer": 5,
+              "hintParameters": {
+                "a": 25,
+                "b": 5
+              },
+              "explanation": "25 : 5 = 5."
+            },
+            {
+              "id": "woodenBoat-4b",
+              "domain": "math",
+              "schoolBand": "E5-intended",
+              "family": "bare_multiplication",
+              "presentation": "bare",
+              "answerMode": "multipleChoice",
+              "prompt": "5 × 4 = ?",
+              "answer": 20,
+              "choices": [
+                16,
+                20,
+                24,
+                28
+              ],
+              "hintParameters": {
+                "a": 5,
+                "b": 4
+              },
+              "explanation": "5 × 4 = 20."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "runes": [
+    {
+      "id": "treasureMap",
+      "objectId": "treasureMap",
+      "name": "Schatkaart",
+      "shortName": "Kaart",
+      "defaultAction": "activate",
+      "intro": "De kaart toont een route over het zand.",
+      "prompt": "Tel de strandstappen.",
+      "solved": "Mooi! De kaart wijst naar de boot.",
+      "challengeId": "treasureMap"
+    },
+    {
+      "id": "sandCastle",
+      "objectId": "sandCastle",
+      "name": "Zandkasteel",
+      "shortName": "Kasteel",
+      "defaultAction": "activate",
+      "intro": "Het zandkasteel heeft kleine torens.",
+      "prompt": "Tel de zandtorens.",
+      "solved": "Goed zo! Het kasteel blijft stevig staan.",
+      "challengeId": "sandCastle"
+    },
+    {
+      "id": "woodenBoat",
+      "objectId": "woodenBoat",
+      "name": "Houten boot",
+      "shortName": "Boot",
+      "defaultAction": "activate",
+      "intro": "De boot kraakt alsof hij wil vertrekken.",
+      "prompt": "Tel de houten planken.",
+      "solved": "Sterk! De boot wijst naar de deur.",
+      "challengeId": "woodenBoat"
+    }
+  ],
+  "reward": {
+    "title": "De stranddeur opent!",
+    "badge": "Strandbouwer",
+    "line": "Sven maakte de strandtekens wakker. Achter de deur gloeit rood licht.",
+    "art": "Levels/LVL-0010/assets/blokkenpoort-beach-room.png",
+    "nextLevelId": "LVL-0011",
+    "nextLabel": "Naar de Nether"
   }
 };

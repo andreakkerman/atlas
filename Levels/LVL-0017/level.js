@@ -92,11 +92,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "Eén uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 12,
                 "minute": 0
               },
-              "explanation": "De grote en de kleine wijzer staan op de 12. Het is twaalf uur."
+              "explanation": "De digitale klok geeft 12:00 aan. Het is twaalf uur."
             }
           ]
         },
@@ -141,11 +141,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "Tien uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 9,
                 "minute": 0
               },
-              "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 9. Het is negen uur."
+              "explanation": "De digitale klok geeft 09:00 aan. Het is negen uur."
             }
           ]
         },
@@ -190,11 +190,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "Tien voor zes"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 5,
                 "minute": 40
               },
-              "explanation": "De grote wijzer staat op de 8 en de kleine wijzer tussen de 5 en de 6. Het is tien over half zes."
+              "explanation": "De digitale klok geeft 05:40 aan. Het is tien over half zes."
             }
           ]
         },
@@ -239,11 +239,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 "Eén uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 12,
                 "minute": 50
               },
-              "explanation": "De grote wijzer staat op de 10 en de kleine wijzer bijna op de 1. Het is tien voor één."
+              "explanation": "De digitale klok geeft 12:50 aan. Het is tien voor één."
             }
           ]
         }
@@ -272,7 +272,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 42,
                 49
               ],
-              "hintParameters": {"a":5,"b":7},
+              "hintParameters": {
+                "a": 5,
+                "b": 7
+              },
               "explanation": "5 × 7 = 35."
             },
             {
@@ -290,7 +293,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 64,
                 72
               ],
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -313,7 +319,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 72,
                 80
               ],
-              "hintParameters": {"a":8,"b":8},
+              "hintParameters": {
+                "a": 8,
+                "b": 8
+              },
               "explanation": "8 × 8 = 64."
             },
             {
@@ -325,7 +334,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Rond de Alpenfontein staan 4 bloembakken met samen 20 bloemen. In iedere bak staan er evenveel. Hoeveel bloemen per bak?",
               "answer": 5,
-              "hintParameters": {"a":20,"b":4},
+              "hintParameters": {
+                "a": 20,
+                "b": 4
+              },
               "explanation": "20 : 4 = 5."
             }
           ]
@@ -342,7 +354,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "16 : 8 = ?",
               "answer": 2,
-              "hintParameters": {"a":16,"b":8},
+              "hintParameters": {
+                "a": 16,
+                "b": 8
+              },
               "explanation": "16 : 8 = 2."
             },
             {
@@ -360,7 +375,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 3,
                 4
               ],
-              "hintParameters": {"a":14,"b":7},
+              "hintParameters": {
+                "a": 14,
+                "b": 7
+              },
               "explanation": "14 : 7 = 2."
             }
           ]
@@ -377,7 +395,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Rond de Alpenfontein staan 9 bloembakken met elk 5 bloemen. Hoeveel bloemen zijn dat samen?",
               "answer": 45,
-              "hintParameters": {"a":9,"b":5},
+              "hintParameters": {
+                "a": 9,
+                "b": 5
+              },
               "explanation": "9 × 5 = 45."
             },
             {
@@ -389,7 +410,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "2 × 5 = ?",
               "answer": 10,
-              "hintParameters": {"a":2,"b":5},
+              "hintParameters": {
+                "a": 2,
+                "b": 5
+              },
               "explanation": "2 × 5 = 10."
             }
           ]
@@ -419,7 +443,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 90,
                 100
               ],
-              "hintParameters": {"a":8,"b":10},
+              "hintParameters": {
+                "a": 8,
+                "b": 10
+              },
               "explanation": "8 × 10 = 80."
             },
             {
@@ -431,7 +458,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Atlas koopt 8 kabelbaankaartjes voor 9 euro per stuk. Hoeveel euro betaalt hij?",
               "answer": 72,
-              "hintParameters": {"a":8,"b":9,"currency":"euro"},
+              "hintParameters": {
+                "a": 8,
+                "b": 9,
+                "currency": "euro"
+              },
               "explanation": "8 × 9 = 72 euro."
             }
           ]
@@ -454,7 +485,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 90,
                 99
               ],
-              "hintParameters": {"a":9,"b":9},
+              "hintParameters": {
+                "a": 9,
+                "b": 9
+              },
               "explanation": "9 × 9 = 81."
             },
             {
@@ -466,7 +500,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "Er rijden 4 kabelbaancabines met elk 3 reizigers. Hoeveel reizigers zijn dat samen?",
               "answer": 12,
-              "hintParameters": {"a":4,"b":3},
+              "hintParameters": {
+                "a": 4,
+                "b": 3
+              },
               "explanation": "4 × 3 = 12."
             }
           ]
@@ -489,7 +526,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 28,
                 32
               ],
-              "hintParameters": {"a":6,"b":4},
+              "hintParameters": {
+                "a": 6,
+                "b": 4
+              },
               "explanation": "6 × 4 = 24."
             },
             {
@@ -507,7 +547,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 7,
                 8
               ],
-              "hintParameters": {"a":18,"b":3},
+              "hintParameters": {
+                "a": 18,
+                "b": 3
+              },
               "explanation": "18 : 3 = 6."
             }
           ]
@@ -524,7 +567,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
               "answerMode": "open",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintParameters": {"a":4,"b":8},
+              "hintParameters": {
+                "a": 4,
+                "b": 8
+              },
               "explanation": "4 × 8 = 32."
             },
             {
@@ -542,7 +588,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
                 35,
                 42
               ],
-              "hintParameters": {"a":4,"b":7},
+              "hintParameters": {
+                "a": 4,
+                "b": 7
+              },
               "explanation": "4 × 7 = 28."
             }
           ]
@@ -554,8 +603,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
   "player": {
     "startNode": "left-start",
     "start": {
-      "x": 198,
-      "y": 633
+      "x": 188,
+      "y": 644
     }
   },
   "interactiveObjects": [
@@ -607,8 +656,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0017"] = {
   "walkPath": [
     {
       "id": "left-start",
-      "x": 198,
-      "y": 633
+      "x": 188,
+      "y": 644
     },
     {
       "id": "clock-approach",

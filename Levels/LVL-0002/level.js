@@ -141,8 +141,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
     },
     {
       "id": "fire-approach",
-      "x": 1169,
-      "y": 511,
+      "x": 979,
+      "y": 528,
       "role": "approach"
     },
     {
@@ -152,14 +152,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
     },
     {
       "id": "ship-model-approach",
-      "x": 1373,
-      "y": 522,
+      "x": 1371,
+      "y": 531,
       "role": "approach"
     },
     {
       "id": "right-door-approach",
-      "x": 1864,
-      "y": 608,
+      "x": 1888,
+      "y": 618,
       "role": "approach"
     }
   ],
@@ -339,7 +339,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 7,
                 8
               ],
-              "hintParameters": {"a":18,"b":3},
+              "hintParameters": {
+                "a": 18,
+                "b": 3
+              },
               "explanation": "18 : 3 = 6."
             },
             {
@@ -351,7 +354,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "Aan de schildenmuur hangen 7 rijen met elk 3 schilden. Hoeveel schilden hangen er?",
               "answer": 21,
-              "hintParameters": {"a":7,"b":3},
+              "hintParameters": {
+                "a": 7,
+                "b": 3
+              },
               "explanation": "7 × 3 = 21."
             }
           ]
@@ -374,7 +380,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 24,
                 30
               ],
-              "hintParameters": {"a":3,"b":6},
+              "hintParameters": {
+                "a": 3,
+                "b": 6
+              },
               "explanation": "3 × 6 = 18."
             },
             {
@@ -386,7 +395,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "7 × 9 = ?",
               "answer": 63,
-              "hintParameters": {"a":7,"b":9},
+              "hintParameters": {
+                "a": 7,
+                "b": 9
+              },
               "explanation": "7 × 9 = 63."
             }
           ]
@@ -403,7 +415,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "De Viking verdeelt 30 schilden eerlijk over 6 wachters. Hoeveel schilden krijgt iedere wachter?",
               "answer": 5,
-              "hintParameters": {"a":30,"b":6},
+              "hintParameters": {
+                "a": 30,
+                "b": 6
+              },
               "explanation": "30 : 6 = 5."
             },
             {
@@ -421,7 +436,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 7,
                 8
               ],
-              "hintParameters": {"a":36,"b":6},
+              "hintParameters": {
+                "a": 36,
+                "b": 6
+              },
               "explanation": "36 : 6 = 6."
             }
           ]
@@ -438,7 +456,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "6 : 2 = ?",
               "answer": 3,
-              "hintParameters": {"a":6,"b":2},
+              "hintParameters": {
+                "a": 6,
+                "b": 2
+              },
               "explanation": "6 : 2 = 3."
             },
             {
@@ -456,7 +477,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 24,
                 32
               ],
-              "hintParameters": {"a":2,"b":8},
+              "hintParameters": {
+                "a": 2,
+                "b": 8
+              },
               "explanation": "2 × 8 = 16."
             }
           ]
@@ -486,7 +510,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 32,
                 40
               ],
-              "hintParameters": {"a":3,"b":8},
+              "hintParameters": {
+                "a": 3,
+                "b": 8
+              },
               "explanation": "3 × 8 = 24."
             },
             {
@@ -504,7 +531,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 9,
                 10
               ],
-              "hintParameters": {"a":32,"b":4},
+              "hintParameters": {
+                "a": 32,
+                "b": 4
+              },
               "explanation": "32 : 4 = 8."
             }
           ]
@@ -521,7 +551,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "Op de kaarttafel liggen 9 rijen met elk 4 houten pionnen. Hoeveel pionnen liggen er?",
               "answer": 36,
-              "hintParameters": {"a":9,"b":4},
+              "hintParameters": {
+                "a": 9,
+                "b": 4
+              },
               "explanation": "9 × 4 = 36."
             },
             {
@@ -539,7 +572,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 56,
                 64
               ],
-              "hintParameters": {"a":6,"b":8},
+              "hintParameters": {
+                "a": 6,
+                "b": 8
+              },
               "explanation": "6 × 8 = 48."
             }
           ]
@@ -562,7 +598,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 64,
                 72
               ],
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             },
             {
@@ -580,7 +619,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 56,
                 63
               ],
-              "hintParameters": {"a":7,"b":7},
+              "hintParameters": {
+                "a": 7,
+                "b": 7
+              },
               "explanation": "7 × 7 = 49."
             }
           ]
@@ -603,7 +645,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 15,
                 18
               ],
-              "hintParameters": {"a":4,"b":3},
+              "hintParameters": {
+                "a": 4,
+                "b": 3
+              },
               "explanation": "4 × 3 = 12."
             },
             {
@@ -615,7 +660,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "27 : 9 = ?",
               "answer": 3,
-              "hintParameters": {"a":27,"b":9},
+              "hintParameters": {
+                "a": 27,
+                "b": 9
+              },
               "explanation": "27 : 9 = 3."
             }
           ]
@@ -639,7 +687,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "9 × 6 = ?",
               "answer": 54,
-              "hintParameters": {"a":9,"b":6},
+              "hintParameters": {
+                "a": 9,
+                "b": 6
+              },
               "explanation": "9 × 6 = 54."
             },
             {
@@ -651,7 +702,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "Naast de vuurschaal liggen 6 stapels van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
               "answer": 60,
-              "hintParameters": {"a":6,"b":10},
+              "hintParameters": {
+                "a": 6,
+                "b": 10
+              },
               "explanation": "6 × 10 = 60."
             }
           ]
@@ -668,7 +722,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "Naast de vuurschaal liggen 7 stapels van 10 houtblokken. Hoeveel houtblokken zijn dat samen?",
               "answer": 70,
-              "hintParameters": {"a":7,"b":10},
+              "hintParameters": {
+                "a": 7,
+                "b": 10
+              },
               "explanation": "7 × 10 = 70."
             },
             {
@@ -680,7 +737,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "15 : 5 = ?",
               "answer": 3,
-              "hintParameters": {"a":15,"b":5},
+              "hintParameters": {
+                "a": 15,
+                "b": 5
+              },
               "explanation": "15 : 5 = 3."
             }
           ]
@@ -697,7 +757,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "9 × 2 = ?",
               "answer": 18,
-              "hintParameters": {"a":9,"b":2},
+              "hintParameters": {
+                "a": 9,
+                "b": 2
+              },
               "explanation": "9 × 2 = 18."
             },
             {
@@ -715,7 +778,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 90,
                 99
               ],
-              "hintParameters": {"a":9,"b":9},
+              "hintParameters": {
+                "a": 9,
+                "b": 9
+              },
               "explanation": "9 × 9 = 81."
             }
           ]
@@ -732,7 +798,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "42 : 6 = ?",
               "answer": 7,
-              "hintParameters": {"a":42,"b":6},
+              "hintParameters": {
+                "a": 42,
+                "b": 6
+              },
               "explanation": "42 : 6 = 7."
             },
             {
@@ -750,7 +819,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 70,
                 77
               ],
-              "hintParameters": {"a":9,"b":7},
+              "hintParameters": {
+                "a": 9,
+                "b": 7
+              },
               "explanation": "9 × 7 = 63."
             }
           ]
@@ -774,7 +846,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "7 × 4 = ?",
               "answer": 28,
-              "hintParameters": {"a":7,"b":4},
+              "hintParameters": {
+                "a": 7,
+                "b": 4
+              },
               "explanation": "7 × 4 = 28."
             },
             {
@@ -792,7 +867,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 24,
                 27
               ],
-              "hintParameters": {"a":7,"b":3},
+              "hintParameters": {
+                "a": 7,
+                "b": 3
+              },
               "explanation": "7 × 3 = 21."
             }
           ]
@@ -809,7 +887,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "9 × 4 = ?",
               "answer": 36,
-              "hintParameters": {"a":9,"b":4},
+              "hintParameters": {
+                "a": 9,
+                "b": 4
+              },
               "explanation": "9 × 4 = 36."
             },
             {
@@ -821,7 +902,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "De Viking verdeelt 35 planken eerlijk over 7 scheepsbouwers. Hoeveel planken krijgt iedere scheepsbouwer?",
               "answer": 5,
-              "hintParameters": {"a":35,"b":7},
+              "hintParameters": {
+                "a": 35,
+                "b": 7
+              },
               "explanation": "35 : 7 = 5."
             }
           ]
@@ -844,7 +928,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 36,
                 42
               ],
-              "hintParameters": {"a":5,"b":6},
+              "hintParameters": {
+                "a": 5,
+                "b": 6
+              },
               "explanation": "5 × 6 = 30."
             },
             {
@@ -856,7 +943,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
               "answerMode": "open",
               "prompt": "Een touw van 9 meter wordt in 3 gelijke stukken geknipt. Hoe lang is ieder stuk?",
               "answer": 3,
-              "hintParameters": {"a":9,"b":3},
+              "hintParameters": {
+                "a": 9,
+                "b": 3
+              },
               "explanation": "9 : 3 = 3 meter."
             }
           ]
@@ -879,7 +969,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 24,
                 28
               ],
-              "hintParameters": {"a":5,"b":4},
+              "hintParameters": {
+                "a": 5,
+                "b": 4
+              },
               "explanation": "5 × 4 = 20."
             },
             {
@@ -897,7 +990,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0002"] = {
                 70,
                 77
               ],
-              "hintParameters": {"a":9,"b":7},
+              "hintParameters": {
+                "a": 9,
+                "b": 7
+              },
               "explanation": "9 × 7 = 63."
             }
           ]

@@ -381,7 +381,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "Negen uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 8,
                 "minute": 45
               },
@@ -430,7 +430,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "Kwart voor twee"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 1,
                 "minute": 15
               },
@@ -479,7 +479,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "Twaalf uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 11,
                 "minute": 45
               },
@@ -528,7 +528,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0013"] = {
                 "Kwart voor zes"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 5,
                 "minute": 15
               },

@@ -8,6 +8,7 @@ const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "i
 const editorUrl = `${gameUrl}${gameUrl.includes("?") ? "&" : "?"}dev=editor`;
 
 test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('atlas.learning.m6Percentage', '0'));
   // Keep NPC fixtures independent of local authoring drafts, including reloads.
   await page.route("**/__dev/levels/*/editor-draft", (route) => route.fulfill({ json: {} }));
 });
@@ -17,11 +18,12 @@ test.afterEach(async ({ page }) => {
 });
 
 async function start(page, levelId = "LVL-0001", editor = false) {
-  await page.goto(editor ? editorUrl : gameUrl);
+  await page.goto(editor ? `${editorUrl}&level=${levelId}` : gameUrl);
   if (!editor) {
     await page.getByRole("button", { name: "Start avontuur", exact: true }).click();
     await expect(page.locator(".menuScreen")).toBeVisible();
   }
+  await page.waitForFunction(() => window.eval("typeof selectLevel") === "function");
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true, allowDisabledForEditor: true });
@@ -154,6 +156,7 @@ test.describe("NPC challenge presentation", () => {
     if (process.env.ATLAS_EDITOR_URL) {
       await expect.poll(() => draft.learningChallenges?.find((item) => item.id === fixture.runeId)?.npc).toMatchObject(appearance);
       await page.reload();
+      await page.waitForFunction(() => window.eval("typeof selectLevel") === "function");
       await page.evaluate(async (id) => window.eval("selectLevel")(id, { startImmediately: true }), fixture.levelId);
       expect(await page.evaluate((id) => window.eval("learningChallengeById")(id).npc, fixture.runeId)).toMatchObject(appearance);
       expect(await npc.evaluate((element) => element.style.getPropertyValue("--npc-appearance"))).toBe(expected);
@@ -259,7 +262,8 @@ test.describe("NPC challenge presentation", () => {
       window.eval("render")();
     });
     await page.getByRole("button", { name: "Praat met Freya" }).click();
-    await expect(page.getByRole("heading", { name: "Freya", exact: true })).toBeVisible({ timeout: 2000 });
+    await expect(page.locator('.compactChallengeHeader .eyebrow')).toHaveText('Freya', { timeout: 2000 });
+    await expect(page.locator('.compactChallengeHeader .eyebrow')).toBeVisible();
     await expect(page.locator("[data-npc-locked='true']")).toHaveCount(0);
     await expect(page.locator(".sum")).toBeVisible();
     await expect(page.locator("[data-open-answer-form], [data-choice]").first()).toBeVisible();
@@ -599,7 +603,7 @@ test.describe("NPC challenge presentation", () => {
     await expect(page.locator("[data-npc-challenge='gateShield'] > span:not([data-npc-facing-layer])")).toHaveCount(0);
     await expect(page.locator("[data-npc-challenge='gateShield']")).not.toContainText("Eivar");
     await page.evaluate(() => window.eval("openRuneChallenge")("gateShield"));
-    await expect(page.getByRole("heading", { name: "Eivar", exact: true })).toBeVisible();
+    await expect(page.locator('.compactChallengeHeader .eyebrow')).toHaveText('Eivar');
   });
 
   test("orders Freya before the exit and routes to her without visiting the exit stop", async ({ page }) => {

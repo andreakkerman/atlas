@@ -1,0 +1,2217 @@
+{
+  "RP-M6-BR-001": {
+    "type": "fractionStrip",
+    "stages": {
+      "question": {
+        "totalLabel": "12 schilden samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "rode rand"
+          }
+        ]
+      },
+      "minnie": {
+        "totalLabel": "12 schilden samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "rode rand"
+          }
+        ],
+        "focus": [
+          0
+        ],
+        "notes": [
+          "twee gelijke delen"
+        ]
+      },
+      "moose": {
+        "totalLabel": "12 schilden samen",
+        "segments": [
+          {
+            "selected": true,
+            "symbols": 5
+          },
+          {
+            "selected": false,
+            "symbols": 5
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "rode rand"
+          }
+        ],
+        "symbol": "shield",
+        "outsideSymbols": 2
+      },
+      "explanation": {
+        "totalLabel": "12 schilden samen",
+        "segments": [
+          {
+            "selected": true,
+            "symbols": 6,
+            "label": "6 schilden"
+          },
+          {
+            "selected": false,
+            "symbols": 6,
+            "label": "6 schilden"
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "rode rand"
+          }
+        ],
+        "symbol": "shield"
+      }
+    }
+  },
+  "RP-M6-BR-002": {
+    "type": "fractionStrip",
+    "stages": {
+      "question": {
+        "totalLabel": "20 stenen samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "voor het muurtje"
+          }
+        ]
+      },
+      "minnie": {
+        "totalLabel": "20 stenen samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "voor het muurtje"
+          }
+        ],
+        "focus": [
+          0
+        ]
+      },
+      "moose": {
+        "totalLabel": "20 stenen samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "voor het muurtje"
+          }
+        ],
+        "notes": [
+          "20 : 4 = ?"
+        ]
+      },
+      "explanation": {
+        "totalLabel": "20 stenen samen",
+        "segments": [
+          {
+            "selected": true,
+            "symbols": 5
+          },
+          {
+            "selected": false,
+            "symbols": 5
+          },
+          {
+            "selected": false,
+            "symbols": 5
+          },
+          {
+            "selected": false,
+            "symbols": 5
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 1,
+            "label": "5 stenen voor het muurtje"
+          }
+        ],
+        "symbol": "stone"
+      }
+    }
+  },
+  "RP-M6-BR-003": {
+    "type": "fractionStrip",
+    "stages": {
+      "question": {
+        "totalLabel": "20 schilden samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "blauwe rand"
+          }
+        ]
+      },
+      "minnie": {
+        "totalLabel": "20 schilden samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "blauwe rand"
+          }
+        ],
+        "focus": [
+          0
+        ]
+      },
+      "moose": {
+        "totalLabel": "20 schilden samen",
+        "segments": [
+          {
+            "selected": true,
+            "label": "5 schilden"
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "blauwe rand"
+          }
+        ]
+      },
+      "explanation": {
+        "totalLabel": "20 schilden samen",
+        "segments": [
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": false,
+            "label": "5"
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "15 schilden"
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-BR-004": {
+    "type": "fractionStrip",
+    "stages": {
+      "question": {
+        "totalLabel": "18 meter",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "gebruikt"
+          }
+        ],
+        "texture": "rope"
+      },
+      "minnie": {
+        "totalLabel": "18 meter",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "gebruikt"
+          }
+        ],
+        "texture": "rope",
+        "focus": [
+          0,
+          1,
+          2
+        ]
+      },
+      "moose": {
+        "totalLabel": "18 meter",
+        "segments": [
+          {
+            "selected": true,
+            "label": "6 meter"
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "gebruikt"
+          }
+        ],
+        "texture": "rope"
+      },
+      "explanation": {
+        "totalLabel": "18 meter",
+        "segments": [
+          {
+            "selected": true,
+            "label": "6 meter"
+          },
+          {
+            "selected": true,
+            "label": "6 meter"
+          },
+          {
+            "selected": false,
+            "label": "6 meter"
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "12 meter"
+          }
+        ],
+        "texture": "rope"
+      }
+    }
+  },
+  "RP-M6-BR-005": {
+    "type": "fractionStrip",
+    "stages": {
+      "question": {
+        "totalLabel": "35 kratten samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "aan boord"
+          },
+          {
+            "from": 2,
+            "count": 3,
+            "label": "nog op de kade"
+          }
+        ]
+      },
+      "minnie": {
+        "totalLabel": "35 kratten samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "aan boord"
+          },
+          {
+            "from": 2,
+            "count": 3,
+            "label": "nog op de kade"
+          }
+        ],
+        "focus": [
+          0,
+          1
+        ]
+      },
+      "moose": {
+        "totalLabel": "35 kratten samen",
+        "segments": [
+          {
+            "selected": true,
+            "label": "7"
+          },
+          {
+            "selected": true,
+            "label": "7"
+          },
+          {
+            "selected": false,
+            "label": "7"
+          },
+          {
+            "selected": false,
+            "label": "7"
+          },
+          {
+            "selected": false,
+            "label": "7"
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "14"
+          },
+          {
+            "from": 2,
+            "count": 3,
+            "label": "nog op de kade"
+          }
+        ]
+      },
+      "explanation": {
+        "totalLabel": "35 kratten samen",
+        "segments": [
+          {
+            "selected": true,
+            "label": "7"
+          },
+          {
+            "selected": true,
+            "label": "7"
+          },
+          {
+            "selected": false,
+            "label": "7"
+          },
+          {
+            "selected": false,
+            "label": "7"
+          },
+          {
+            "selected": false,
+            "label": "7"
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 2,
+            "label": "14"
+          },
+          {
+            "from": 2,
+            "count": 3,
+            "label": "21 kratten op de kade"
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-BR-006": {
+    "type": "fractionStrip",
+    "stages": {
+      "question": {
+        "totalLabel": "40 houtblokken samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "gebruikt"
+          },
+          {
+            "from": 3,
+            "count": 5,
+            "label": "over"
+          }
+        ]
+      },
+      "minnie": {
+        "totalLabel": "40 houtblokken samen",
+        "segments": [
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "gebruikt"
+          },
+          {
+            "from": 3,
+            "count": 5,
+            "label": "over"
+          }
+        ],
+        "focus": [
+          0,
+          1,
+          2
+        ]
+      },
+      "moose": {
+        "totalLabel": "40 houtblokken samen",
+        "segments": [
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": true
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          },
+          {
+            "selected": false
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "15"
+          },
+          {
+            "from": 3,
+            "count": 5,
+            "label": "over"
+          }
+        ]
+      },
+      "explanation": {
+        "totalLabel": "40 houtblokken samen",
+        "segments": [
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": true,
+            "label": "5"
+          },
+          {
+            "selected": false,
+            "label": "5"
+          },
+          {
+            "selected": false,
+            "label": "5"
+          },
+          {
+            "selected": false,
+            "label": "5"
+          },
+          {
+            "selected": false,
+            "label": "5"
+          },
+          {
+            "selected": false,
+            "label": "5"
+          }
+        ],
+        "groups": [
+          {
+            "from": 0,
+            "count": 3,
+            "label": "15"
+          },
+          {
+            "from": 3,
+            "count": 5,
+            "label": "25 houtblokken over"
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-OP-001": {
+    "type": "calculationSteps",
+    "stages": {
+      "question": {
+        "groups": []
+      },
+      "minnie": {
+        "groups": [
+          {
+            "lines": [
+              "130 = 100 + 30"
+            ]
+          },
+          {
+            "label": "",
+            "nodes": [
+              "+100",
+              "+30"
+            ],
+            "jumps": [
+              ""
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "groups": [
+          {
+            "lines": [
+              "130 = 100 + 30"
+            ]
+          },
+          {
+            "lines": [
+              "240 + 100 = 340"
+            ]
+          },
+          {
+            "label": "+30",
+            "nodes": [
+              "340",
+              "?",
+              "?",
+              "?"
+            ],
+            "jumps": [
+              "+10",
+              "+10",
+              "+10"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "groups": [
+          {
+            "lines": [
+              "130 = 100 + 30"
+            ]
+          },
+          {
+            "lines": [
+              "240 + 100 = 340"
+            ]
+          },
+          {
+            "label": "+30",
+            "nodes": [
+              "340",
+              "350",
+              "360",
+              "370"
+            ],
+            "jumps": [
+              "+10",
+              "+10",
+              "+10"
+            ]
+          },
+          {
+            "lines": [
+              "240 + 130 = 370"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-OP-002": {
+    "type": "calculationSteps",
+    "stages": {
+      "question": {
+        "groups": []
+      },
+      "minnie": {
+        "groups": [
+          {
+            "label": "nieuwe planken",
+            "lines": [
+              "250 = 200 + 50"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "groups": [
+          {
+            "lines": [
+              "250 = 200 + 50"
+            ]
+          },
+          {
+            "lines": [
+              "320 + 200 = 520"
+            ]
+          },
+          {
+            "lines": [
+              "520 + 50 = ?"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "groups": [
+          {
+            "lines": [
+              "250 = 200 + 50"
+            ]
+          },
+          {
+            "lines": [
+              "320 + 200 = 520"
+            ]
+          },
+          {
+            "lines": [
+              "520 + 50 = 570"
+            ]
+          },
+          {
+            "lines": [
+              "570 planken samen"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-OP-003": {
+    "type": "calculationSteps",
+    "stages": {
+      "question": {
+        "groups": []
+      },
+      "minnie": {
+        "groups": [
+          {
+            "lines": [
+              "247 = 200 + 40 + 7"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "groups": [
+          {
+            "lines": [
+              "247 = 200 + 40 + 7"
+            ]
+          },
+          {
+            "lines": [
+              "368 + 200 = 568"
+            ]
+          },
+          {
+            "label": "+40",
+            "nodes": [
+              "568",
+              "578",
+              "588",
+              "598",
+              "608"
+            ],
+            "jumps": [
+              "+10",
+              "+10",
+              "+10",
+              "+10"
+            ]
+          },
+          {
+            "lines": [
+              "608 + 7 = ?"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "groups": [
+          {
+            "lines": [
+              "247 = 200 + 40 + 7"
+            ]
+          },
+          {
+            "lines": [
+              "368 + 200 = 568"
+            ]
+          },
+          {
+            "label": "+40",
+            "nodes": [
+              "568",
+              "578",
+              "588",
+              "598",
+              "608"
+            ],
+            "jumps": [
+              "+10",
+              "+10",
+              "+10",
+              "+10"
+            ]
+          },
+          {
+            "label": "+7",
+            "lines": [
+              "608 + 2 = 610",
+              "610 + 5 = 615"
+            ]
+          },
+          {
+            "lines": [
+              "368 + 247 = 615"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-OP-004": {
+    "type": "calculationSteps",
+    "stages": {
+      "question": {
+        "groups": []
+      },
+      "minnie": {
+        "groups": [
+          {
+            "lines": [
+              "168 = 100 + 60 + 8"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "groups": [
+          {
+            "lines": [
+              "168 = 100 + 60 + 8"
+            ]
+          },
+          {
+            "lines": [
+              "475 + 100 = 575"
+            ]
+          },
+          {
+            "lines": [
+              "575 + 60 = 635"
+            ]
+          },
+          {
+            "label": "+8 = +5 +3",
+            "lines": [
+              "635 + 5 = 640",
+              "640 + 3 = ?"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "groups": [
+          {
+            "lines": [
+              "168 = 100 + 60 + 8"
+            ]
+          },
+          {
+            "lines": [
+              "475 + 100 = 575"
+            ]
+          },
+          {
+            "label": "+60",
+            "nodes": [
+              "575",
+              "585",
+              "595",
+              "605",
+              "615",
+              "625",
+              "635"
+            ],
+            "jumps": [
+              "+10",
+              "+10",
+              "+10",
+              "+10",
+              "+10",
+              "+10"
+            ]
+          },
+          {
+            "label": "+8",
+            "lines": [
+              "635 + 5 = 640",
+              "640 + 3 = 643"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-OP-005": {
+    "type": "calculationSteps",
+    "stages": {
+      "question": {
+        "groups": []
+      },
+      "minnie": {
+        "groups": [
+          {
+            "label": "+600",
+            "lines": [
+              "638 = 600 + 30 + 8"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "groups": [
+          {
+            "lines": [
+              "638 = 600 + 30 + 8"
+            ]
+          },
+          {
+            "label": "+600",
+            "lines": [
+              "600 = 500 + 100",
+              "1.475 + 500 = 1.975",
+              "1.975 + 100 = 2.075"
+            ]
+          },
+          {
+            "lines": [
+              "2.075 + 30 = ?"
+            ]
+          },
+          {
+            "lines": [
+              "Daarna nog +8"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "groups": [
+          {
+            "lines": [
+              "638 = 600 + 30 + 8"
+            ]
+          },
+          {
+            "label": "+600",
+            "lines": [
+              "600 = 500 + 100",
+              "1.475 + 500 = 1.975",
+              "1.975 + 100 = 2.075"
+            ]
+          },
+          {
+            "lines": [
+              "2.075 + 30 = 2.105"
+            ]
+          },
+          {
+            "lines": [
+              "2.105 + 8 = 2.113"
+            ]
+          },
+          {
+            "lines": [
+              "1.475 + 638 = 2.113"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-OP-006": {
+    "type": "calculationSteps",
+    "stages": {
+      "question": {
+        "groups": []
+      },
+      "minnie": {
+        "groups": [
+          {
+            "lines": [
+              "756 = 700 + 50 + 6"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "groups": [
+          {
+            "lines": [
+              "756 = 700 + 50 + 6"
+            ]
+          },
+          {
+            "lines": [
+              "2.687 + 700 = 3.387"
+            ]
+          },
+          {
+            "lines": [
+              "3.387 + 50 = 3.437"
+            ]
+          },
+          {
+            "label": "+6",
+            "lines": [
+              "3.437 + 3 = 3.440",
+              "3.440 + 3 = ?"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "groups": [
+          {
+            "lines": [
+              "756 = 700 + 50 + 6"
+            ]
+          },
+          {
+            "lines": [
+              "2.687 + 700 = 3.387"
+            ]
+          },
+          {
+            "lines": [
+              "3.387 + 50 = 3.437"
+            ]
+          },
+          {
+            "label": "+6",
+            "lines": [
+              "3.437 + 3 = 3.440",
+              "3.440 + 3 = 3.443"
+            ]
+          },
+          {
+            "lines": [
+              "3.443 stenen"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-GE-001": {
+    "type": "moneyReceipt",
+    "stages": {
+      "question": {
+        "items": [
+          {
+            "label": "Vikingkaartje",
+            "amount": "€1,50"
+          }
+        ],
+        "paid": "€2,00"
+      },
+      "minnie": {
+        "items": [
+          {
+            "label": "Vikingkaartje",
+            "amount": "€1,50"
+          }
+        ],
+        "paid": "€2,00",
+        "groups": [
+          {
+            "label": "prijs → betaald",
+            "nodes": [
+              "€1,50",
+              "€2,00"
+            ],
+            "jumps": [
+              "+ ?"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "items": [
+          {
+            "label": "Vikingkaartje",
+            "amount": "€1,50"
+          }
+        ],
+        "paid": "€2,00",
+        "groups": [
+          {
+            "label": "prijs → betaald",
+            "nodes": [
+              "€1,50",
+              "€2,00"
+            ],
+            "jumps": [
+              "+ ?"
+            ]
+          },
+          {
+            "lines": [
+              "1 euro = 100 cent"
+            ]
+          },
+          {
+            "lines": [
+              "100 − 50 = ? cent"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "items": [
+          {
+            "label": "Vikingkaartje",
+            "amount": "€1,50"
+          }
+        ],
+        "paid": "€2,00",
+        "groups": [
+          {
+            "label": "prijs → betaald",
+            "nodes": [
+              "€1,50",
+              "€2,00"
+            ],
+            "jumps": [
+              "+ 50 cent"
+            ]
+          },
+          {
+            "lines": [
+              "50 cent = €0,50"
+            ]
+          },
+          {
+            "lines": [
+              "€1,50 + €0,50 = €2,00"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-GE-002": {
+    "type": "moneyReceipt",
+    "stages": {
+      "question": {
+        "items": [
+          {
+            "label": "Runenstickers",
+            "amount": "€3,20"
+          }
+        ],
+        "paid": "€4,00"
+      },
+      "minnie": {
+        "items": [
+          {
+            "label": "Runenstickers",
+            "amount": "€3,20"
+          }
+        ],
+        "paid": "€4,00",
+        "groups": [
+          {
+            "label": "prijs → betaald",
+            "nodes": [
+              "€3,20",
+              "€4,00"
+            ],
+            "jumps": [
+              "+ ?"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "items": [
+          {
+            "label": "Runenstickers",
+            "amount": "€3,20"
+          }
+        ],
+        "paid": "€4,00",
+        "groups": [
+          {
+            "label": "prijs → betaald",
+            "nodes": [
+              "€3,20",
+              "€4,00"
+            ],
+            "jumps": [
+              "+ ?"
+            ]
+          },
+          {
+            "lines": [
+              "1 euro = 100 cent"
+            ]
+          },
+          {
+            "lines": [
+              "100 − 20 = ? cent"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "items": [
+          {
+            "label": "Runenstickers",
+            "amount": "€3,20"
+          }
+        ],
+        "paid": "€4,00",
+        "groups": [
+          {
+            "label": "prijs → betaald",
+            "nodes": [
+              "€3,20",
+              "€4,00"
+            ],
+            "jumps": [
+              "+ 80 cent"
+            ]
+          },
+          {
+            "lines": [
+              "80 cent = €0,80"
+            ]
+          },
+          {
+            "lines": [
+              "€3,20 + €0,80 = €4,00"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-GE-003": {
+    "type": "moneyReceipt",
+    "stages": {
+      "question": {
+        "items": [
+          {
+            "label": "Vikingschip",
+            "amount": "€6,75"
+          }
+        ],
+        "paid": "€10,00"
+      },
+      "minnie": {
+        "items": [
+          {
+            "label": "Vikingschip",
+            "amount": "€6,75"
+          }
+        ],
+        "paid": "€10,00",
+        "groups": [
+          {
+            "label": "",
+            "nodes": [
+              "€6,75",
+              "€7,00",
+              "€10,00"
+            ],
+            "jumps": [
+              "+ ?",
+              "+ ?"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "items": [
+          {
+            "label": "Vikingschip",
+            "amount": "€6,75"
+          }
+        ],
+        "paid": "€10,00",
+        "groups": [
+          {
+            "label": "",
+            "nodes": [
+              "€6,75",
+              "€7,00",
+              "€10,00"
+            ],
+            "jumps": [
+              "+ €0,25",
+              "+ ? euro"
+            ]
+          },
+          {
+            "lines": [
+              "Wisselgeld = beide sprongen samen"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "items": [
+          {
+            "label": "Vikingschip",
+            "amount": "€6,75"
+          }
+        ],
+        "paid": "€10,00",
+        "groups": [
+          {
+            "label": "",
+            "nodes": [
+              "€6,75",
+              "€7,00",
+              "€10,00"
+            ],
+            "jumps": [
+              "+ €0,25",
+              "+ €3"
+            ]
+          },
+          {
+            "lines": [
+              "€0,25 + €3 = €3,25"
+            ]
+          },
+          {
+            "lines": [
+              "€6,75 + €3,25 = €10,00"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-GE-004": {
+    "type": "moneyReceipt",
+    "stages": {
+      "question": {
+        "items": [
+          {
+            "label": "Boottocht",
+            "amount": "€12,40"
+          }
+        ],
+        "paid": "€20,00"
+      },
+      "minnie": {
+        "items": [
+          {
+            "label": "Boottocht",
+            "amount": "€12,40"
+          }
+        ],
+        "paid": "€20,00",
+        "groups": [
+          {
+            "label": "",
+            "nodes": [
+              "€12,40",
+              "€13,00",
+              "€20,00"
+            ],
+            "jumps": [
+              "+ ?",
+              "+ ?"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "items": [
+          {
+            "label": "Boottocht",
+            "amount": "€12,40"
+          }
+        ],
+        "paid": "€20,00",
+        "groups": [
+          {
+            "label": "",
+            "nodes": [
+              "€12,40",
+              "€13,00",
+              "€20,00"
+            ],
+            "jumps": [
+              "+ €0,60",
+              "+ ? euro"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "items": [
+          {
+            "label": "Boottocht",
+            "amount": "€12,40"
+          }
+        ],
+        "paid": "€20,00",
+        "groups": [
+          {
+            "label": "",
+            "nodes": [
+              "€12,40",
+              "€13,00",
+              "€20,00"
+            ],
+            "jumps": [
+              "+ €0,60",
+              "+ €7"
+            ]
+          },
+          {
+            "lines": [
+              "€0,60 + €7 = €7,60"
+            ]
+          },
+          {
+            "lines": [
+              "€12,40 + €7,60 = €20,00"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-GE-005": {
+    "type": "moneyReceipt",
+    "stages": {
+      "question": {
+        "items": [
+          {
+            "label": "Boekje",
+            "amount": "€4,75"
+          },
+          {
+            "label": "Runenstickers",
+            "amount": "€3,50"
+          }
+        ],
+        "paid": "€10,00"
+      },
+      "minnie": {
+        "items": [
+          {
+            "label": "Boekje",
+            "amount": "€4,75"
+          },
+          {
+            "label": "Runenstickers",
+            "amount": "€3,50"
+          }
+        ],
+        "paid": "€10,00",
+        "groups": [
+          {
+            "lines": [
+              "1. Samen: €4,75 + €3,50 = ?"
+            ]
+          },
+          {
+            "lines": [
+              "2. Vul het totaal aan tot €10"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "items": [
+          {
+            "label": "Boekje",
+            "amount": "€4,75"
+          },
+          {
+            "label": "Runenstickers",
+            "amount": "€3,50"
+          }
+        ],
+        "paid": "€10,00",
+        "groups": [
+          {
+            "label": "Samen",
+            "lines": [
+              "€4,75 + €3,50 = €8,25"
+            ]
+          },
+          {
+            "label": "Wisselgeld",
+            "nodes": [
+              "€8,25",
+              "€9,00",
+              "€10,00"
+            ],
+            "jumps": [
+              "+ €0,75",
+              "+ ?"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "items": [
+          {
+            "label": "Boekje",
+            "amount": "€4,75"
+          },
+          {
+            "label": "Runenstickers",
+            "amount": "€3,50"
+          }
+        ],
+        "paid": "€10,00",
+        "groups": [
+          {
+            "label": "Samen",
+            "lines": [
+              "€4,75 + €3 = €7,75"
+            ]
+          },
+          {
+            "label": "+€0,50",
+            "nodes": [
+              "€7,75",
+              "€8,00",
+              "€8,25"
+            ],
+            "jumps": [
+              "+€0,25",
+              "+€0,25"
+            ]
+          },
+          {
+            "label": "Wisselgeld",
+            "nodes": [
+              "€8,25",
+              "€9,00",
+              "€10,00"
+            ],
+            "jumps": [
+              "+€0,75",
+              "+€1"
+            ]
+          },
+          {
+            "lines": [
+              "€1,75"
+            ]
+          },
+          {
+            "lines": [
+              "€8,25 + €1,75 = €10,00"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-GE-006": {
+    "type": "moneyReceipt",
+    "stages": {
+      "question": {
+        "items": [
+          {
+            "label": "Bouwpakket",
+            "amount": "€6,80"
+          },
+          {
+            "label": "Verf",
+            "amount": "€7,65"
+          }
+        ],
+        "paid": "€20,00"
+      },
+      "minnie": {
+        "items": [
+          {
+            "label": "Bouwpakket",
+            "amount": "€6,80"
+          },
+          {
+            "label": "Verf",
+            "amount": "€7,65"
+          }
+        ],
+        "paid": "€20,00",
+        "groups": [
+          {
+            "lines": [
+              "1. Samen: €6,80 + €7,65 = ?"
+            ]
+          },
+          {
+            "lines": [
+              "2. Vul het totaal aan tot €20"
+            ]
+          }
+        ]
+      },
+      "moose": {
+        "items": [
+          {
+            "label": "Bouwpakket",
+            "amount": "€6,80"
+          },
+          {
+            "label": "Verf",
+            "amount": "€7,65"
+          }
+        ],
+        "paid": "€20,00",
+        "groups": [
+          {
+            "label": "Samen",
+            "lines": [
+              "€6,80 + €7,65 = €14,45"
+            ]
+          },
+          {
+            "label": "Wisselgeld",
+            "nodes": [
+              "€14,45",
+              "€15,00",
+              "€20,00"
+            ],
+            "jumps": [
+              "+€0,55",
+              "+? euro"
+            ]
+          }
+        ]
+      },
+      "explanation": {
+        "items": [
+          {
+            "label": "Bouwpakket",
+            "amount": "€6,80"
+          },
+          {
+            "label": "Verf",
+            "amount": "€7,65"
+          }
+        ],
+        "paid": "€20,00",
+        "groups": [
+          {
+            "label": "Samen",
+            "lines": [
+              "€6,80 + €7 = €13,80"
+            ]
+          },
+          {
+            "label": "+€0,65",
+            "nodes": [
+              "€13,80",
+              "€14,00",
+              "€14,45"
+            ],
+            "jumps": [
+              "+€0,20",
+              "+€0,45"
+            ]
+          },
+          {
+            "label": "Wisselgeld",
+            "nodes": [
+              "€14,45",
+              "€15,00",
+              "€20,00"
+            ],
+            "jumps": [
+              "+€0,55",
+              "+€5"
+            ]
+          },
+          {
+            "lines": [
+              "€5,55"
+            ]
+          },
+          {
+            "lines": [
+              "€14,45 + €5,55 = €20,00"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "RP-M6-TI-001": {
+    "type": "timeLine",
+    "stages": {
+      "question": {
+        "nodes": [
+          "09:20",
+          "09:50"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "minnie": {
+        "nodes": [
+          "09:20",
+          "09:30",
+          "09:40",
+          "09:50"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "moose": {
+        "nodes": [
+          "09:20",
+          "09:40",
+          "09:50"
+        ],
+        "jumps": [
+          "20 minuten",
+          ""
+        ],
+        "notes": [],
+        "direction": "forward"
+      },
+      "explanation": {
+        "nodes": [
+          "09:20",
+          "09:30",
+          "09:40",
+          "09:50"
+        ],
+        "jumps": [
+          "10 minuten",
+          "10 minuten",
+          "10 minuten"
+        ],
+        "notes": [
+          "30 minuten"
+        ],
+        "direction": "forward"
+      }
+    }
+  },
+  "RP-M6-TI-002": {
+    "type": "timeLine",
+    "stages": {
+      "question": {
+        "nodes": [
+          "10:10",
+          "10:35"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "minnie": {
+        "nodes": [
+          "10:10",
+          "10:30",
+          "10:35"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "moose": {
+        "nodes": [
+          "10:10",
+          "10:30",
+          "10:35"
+        ],
+        "jumps": [
+          "20 minuten",
+          ""
+        ],
+        "notes": [],
+        "direction": "forward"
+      },
+      "explanation": {
+        "nodes": [
+          "10:10",
+          "10:30",
+          "10:35"
+        ],
+        "jumps": [
+          "20 minuten",
+          "5 minuten"
+        ],
+        "notes": [
+          "20 + 5 = 25 minuten"
+        ],
+        "direction": "forward"
+      }
+    }
+  },
+  "RP-M6-TI-003": {
+    "type": "timeLine",
+    "stages": {
+      "question": {
+        "nodes": [
+          "14:35",
+          "15:10"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "minnie": {
+        "nodes": [
+          "14:35",
+          "15:00",
+          "15:10"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "moose": {
+        "nodes": [
+          "14:35",
+          "15:00",
+          "15:10"
+        ],
+        "jumps": [
+          "25 minuten",
+          ""
+        ],
+        "notes": [],
+        "direction": "forward"
+      },
+      "explanation": {
+        "nodes": [
+          "14:35",
+          "15:00",
+          "15:10"
+        ],
+        "jumps": [
+          "25 minuten",
+          "10 minuten"
+        ],
+        "notes": [
+          "25 + 10 = 35 minuten"
+        ],
+        "direction": "forward"
+      }
+    }
+  },
+  "RP-M6-TI-004": {
+    "type": "timeLine",
+    "stages": {
+      "question": {
+        "nodes": [
+          "11:45",
+          "12:25"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "minnie": {
+        "nodes": [
+          "11:45",
+          "12:00",
+          "12:25"
+        ],
+        "jumps": [],
+        "notes": [],
+        "direction": "forward"
+      },
+      "moose": {
+        "nodes": [
+          "11:45",
+          "12:00",
+          "12:25"
+        ],
+        "jumps": [
+          "15 minuten",
+          "25 minuten"
+        ],
+        "notes": [
+          "15 + 25 = ?"
+        ],
+        "direction": "forward"
+      },
+      "explanation": {
+        "nodes": [
+          "11:45",
+          "12:00",
+          "12:25"
+        ],
+        "jumps": [
+          "15 minuten",
+          "25 minuten"
+        ],
+        "notes": [
+          "15 + 25 = 40 minuten"
+        ],
+        "direction": "forward"
+      }
+    }
+  },
+  "RP-M6-TI-005": {
+    "type": "timeLine",
+    "stages": {
+      "question": {
+        "nodes": [
+          "13:50",
+          "?"
+        ],
+        "jumps": [],
+        "notes": [
+          "duur: 1 uur 25 minuten"
+        ],
+        "direction": "forward"
+      },
+      "minnie": {
+        "nodes": [
+          "13:50",
+          "14:00",
+          "?"
+        ],
+        "jumps": [
+          "10 minuten",
+          ""
+        ],
+        "notes": [
+          "duur: 1 uur 25 minuten",
+          "resterend: 1 uur 15 minuten"
+        ],
+        "direction": "forward"
+      },
+      "moose": {
+        "nodes": [
+          "13:50",
+          "14:00",
+          "15:00",
+          "?"
+        ],
+        "jumps": [
+          "10 minuten",
+          "1 uur",
+          "15 minuten"
+        ],
+        "notes": [
+          "duur: 1 uur 25 minuten"
+        ],
+        "direction": "forward"
+      },
+      "explanation": {
+        "nodes": [
+          "13:50",
+          "14:00",
+          "15:00",
+          "15:15"
+        ],
+        "jumps": [
+          "10 minuten",
+          "1 uur",
+          "15 minuten"
+        ],
+        "notes": [
+          "duur: 1 uur 25 minuten"
+        ],
+        "direction": "forward"
+      }
+    }
+  },
+  "RP-M6-TI-006": {
+    "type": "timeLine",
+    "stages": {
+      "question": {
+        "nodes": [
+          "?",
+          "16:20"
+        ],
+        "jumps": [],
+        "notes": [
+          "duur: 1 uur 35 minuten"
+        ],
+        "direction": "backward"
+      },
+      "minnie": {
+        "nodes": [
+          "?",
+          "16:00",
+          "16:20"
+        ],
+        "jumps": [
+          "",
+          "20 minuten"
+        ],
+        "notes": [
+          "duur: 1 uur 35 minuten",
+          "nog terug: 1 uur 15 minuten"
+        ],
+        "direction": "backward"
+      },
+      "moose": {
+        "nodes": [
+          "?",
+          "15:00",
+          "16:00",
+          "16:20"
+        ],
+        "jumps": [
+          "15 minuten",
+          "1 uur",
+          "20 minuten"
+        ],
+        "notes": [
+          "duur: 1 uur 35 minuten"
+        ],
+        "direction": "backward"
+      },
+      "explanation": {
+        "nodes": [
+          "14:45",
+          "15:00",
+          "16:00",
+          "16:20"
+        ],
+        "jumps": [
+          "15 minuten",
+          "1 uur",
+          "20 minuten"
+        ],
+        "notes": [
+          "duur: 1 uur 35 minuten"
+        ],
+        "direction": "backward"
+      }
+    }
+  }
+}

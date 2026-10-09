@@ -1572,8 +1572,8 @@ window.SVEN_WORLD_CONFIG = {
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
-          "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetX": -1,
+          "shadowOffsetY": -8,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -1641,7 +1641,8 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0
         }
-      }
+      },
+      "mainCharacter": "sven"
     },
     "LVL-0003": {
       "spriteScale": 1.4,
@@ -2243,6 +2244,15 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0
         }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 1
+        },
+        "sven": {
+          "spriteScale": 1.3
+        }
       }
     },
     "LVL-0004": {
@@ -2451,7 +2461,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -8,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -2777,6 +2787,12 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
+      },
+      "mainCharacter": "sven_arc",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 1.05
+        }
       }
     },
     "LVL-0005": {
@@ -3011,6 +3027,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.5
+        },
+        "sven_arc": {
+          "spriteScale": 1.1
         }
       }
     },
@@ -3297,6 +3322,12 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.3
+        }
       }
     },
     "LVL-0007": {
@@ -3430,58 +3461,6 @@ window.SVEN_WORLD_CONFIG = {
               "boundsRotation": -15,
               "id": "island-pollen",
               "name": "island-pollen"
-            },
-            {
-              "enabled": true,
-              "x": 935,
-              "y": 344,
-              "color": "#ffe3bc",
-              "shape": "polygon",
-              "width": 198,
-              "height": 111,
-              "softness": 0.6,
-              "direction": 89,
-              "count": 600,
-              "size": 0.84,
-              "sizeVariation": 0.6,
-              "speed": 127.33,
-              "turbulence": 1.24,
-              "lifetime": 12,
-              "opacity": 0.3,
-              "glow": 0.23,
-              "gravity": 0.29,
-              "randomness": 0.8,
-              "depth": 0.65,
-              "depthInfluence": 1,
-              "depthSoftness": 0.12,
-              "layer": "effects",
-              "wind": 0,
-              "streak": 1,
-              "pulse": 0,
-              "depthSpread": 0.3,
-              "distribution": "volume",
-              "scaleCountWithArea": false,
-              "boundsRotation": 89,
-              "id": "particles-mtmr2l65",
-              "name": "particles-mtmr2l65",
-              "points": [
-                {
-                  "x": -0.6931414634702926,
-                  "y": -0.16528673364575738
-                },
-                {
-                  "x": 0.8318216656387254,
-                  "y": -0.31302151320096394
-                },
-                {
-                  "x": 0.856060965900424,
-                  "y": 0.5910512133095809
-                },
-                {
-                  "x": -0.6833189133589753,
-                  "y": -0.06083067197681389
-                }
-              ]
             }
           ]
         },
@@ -3500,7 +3479,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -10,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -3721,6 +3700,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.4
+        },
+        "sven_arc": {
+          "spriteScale": 1.05
         }
       }
     },
@@ -4051,6 +4039,12 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.9
+        }
       }
     },
     "LVL-0013": {
@@ -4202,7 +4196,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -12,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -4306,7 +4300,10 @@ window.SVEN_WORLD_CONFIG = {
       "mainCharacter": "sven",
       "mainCharacterSettings": {
         "sven_arc": {
-          "spriteScale": 1.4
+          "spriteScale": 1.25
+        },
+        "sven": {
+          "spriteScale": 1.5
         }
       }
     },
@@ -4527,6 +4524,12 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 1.05
+        }
       }
     },
     "LVL-0017": {
@@ -4678,7 +4681,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -5,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -4745,6 +4748,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.3
         }
       }
     },
@@ -5116,7 +5125,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -7,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -5215,6 +5224,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 1.1
+        },
+        "sven": {
+          "spriteScale": 1.45
         }
       }
     },
@@ -5411,9 +5429,9 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLightSourceY": 202,
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
-          "shadowStrength": 5,
+          "shadowStrength": 3.31,
           "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowSoftness": 1.12,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
@@ -5485,6 +5503,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.4
+        },
+        "sven_arc": {
+          "spriteScale": 1.05
         }
       }
     },
@@ -5755,14 +5782,14 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLightSourceY": 202,
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
-          "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowStrength": 4.02,
+          "shadowOpacity": 85,
+          "shadowSoftness": 2.94,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -4,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -5829,6 +5856,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 1.05
+        },
+        "sven": {
+          "spriteScale": 1.35
         }
       }
     },
@@ -5981,7 +6017,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -5,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -6049,7 +6085,8 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
-      }
+      },
+      "mainCharacter": "sven"
     },
     "LVL-0027": {
       "spriteScale": 1.25,
@@ -6269,14 +6306,14 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLightSourceY": 202,
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
-          "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowStrength": 4.15,
+          "shadowOpacity": 86,
+          "shadowSoftness": 3.33,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -6,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -6344,7 +6381,8 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
-      }
+      },
+      "mainCharacter": "sven"
     },
     "LVL-0031": {
       "spriteScale": 1.15,
@@ -6639,6 +6677,12 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.95
+        }
       }
     },
     "LVL-0009": {
@@ -6865,7 +6909,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -3,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -6932,6 +6976,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.95
         }
       }
     },
@@ -7077,13 +7127,13 @@ window.SVEN_WORLD_CONFIG = {
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
           "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowOpacity": 84,
+          "shadowSoftness": 2.83,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -4,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -7150,6 +7200,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.9
         }
       }
     },
@@ -7469,6 +7525,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.85
         }
       }
     },
@@ -7930,7 +7992,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -6,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -7997,6 +8059,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.95
         }
       }
     },
@@ -8857,12 +8925,12 @@ window.SVEN_WORLD_CONFIG = {
           "shadowGroundlineOffset": 0,
           "shadowStrength": 5,
           "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowSoftness": 3.33,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -6,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -8929,6 +8997,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.6
+        },
+        "sven_arc": {
+          "spriteScale": 1.2
         }
       }
     },
@@ -9443,14 +9520,14 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLightSourceY": 202,
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
-          "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowStrength": 3.01,
+          "shadowOpacity": 83,
+          "shadowSoftness": 2.92,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -8,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -9517,6 +9594,15 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.4
+        },
+        "sven_arc": {
+          "spriteScale": 1.1
         }
       }
     },
@@ -9662,14 +9748,14 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLightSourceY": 202,
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
-          "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowStrength": 3.72,
+          "shadowOpacity": 79,
+          "shadowSoftness": 2.82,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -8,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -9769,7 +9855,8 @@ window.SVEN_WORLD_CONFIG = {
           "filterRadius": 1.5,
           "perspective": 0.035
         }
-      }
+      },
+      "mainCharacter": "sven"
     },
     "LVL-0030": {
       "spriteScale": 1.1,
@@ -9914,13 +10001,13 @@ window.SVEN_WORLD_CONFIG = {
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
           "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowOpacity": 87,
+          "shadowSoftness": 3.61,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -6,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -10019,6 +10106,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0.035
+        }
+      },
+      "mainCharacter": "sven",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.9
         }
       }
     },
@@ -10195,7 +10288,10 @@ window.SVEN_WORLD_CONFIG = {
       "mainCharacter": "sven_arc",
       "mainCharacterSettings": {
         "sven_arc": {
-          "spriteScale": 1.15
+          "spriteScale": 1.05
+        },
+        "sven": {
+          "spriteScale": 1.2
         }
       }
     },
@@ -10503,14 +10599,14 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLightSourceY": 443,
           "shadowShape": "silhouette",
           "shadowGroundlineOffset": 0,
-          "shadowStrength": 5,
-          "shadowOpacity": 100,
-          "shadowSoftness": 0.72,
+          "shadowStrength": 4.31,
+          "shadowOpacity": 72,
+          "shadowSoftness": 3.23,
           "shadowWidth": 1,
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -5,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -10689,7 +10785,7 @@ window.SVEN_WORLD_CONFIG = {
           "shadowLength": 1,
           "shadowScale": 1.2,
           "shadowOffsetX": 0,
-          "shadowOffsetY": 0,
+          "shadowOffsetY": -9,
           "shadowDirection": -10,
           "shadowGlobalLightInfluence": 1,
           "shadowLocalLightInfluence": 2,
@@ -10756,6 +10852,12 @@ window.SVEN_WORLD_CONFIG = {
           "enabled": true,
           "filterRadius": 1.5,
           "perspective": 0
+        }
+      },
+      "mainCharacter": "sven_arc",
+      "mainCharacterSettings": {
+        "sven": {
+          "spriteScale": 1.1
         }
       }
     }

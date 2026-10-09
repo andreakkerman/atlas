@@ -2,14 +2,14 @@
   "levelHashes": {
     "LVL-0021": "9673fdd4af9c147a510b9f44261c649eda6b6c7151545914f99e9534e693c8cb",
     "LVL-0022": "5d1eedddaeca8a8d63d5336a8dc13b35500b6c07a775686cc626434e4494df8c",
-    "LVL-0023": "03e7c4e95dc72aded40fbfe339302ce412c527b7a91dc8467249e2067d924981",
-    "LVL-0024": "cd521be614ce45bde6da29297f7cdebb1c10bae757165334e9a81da68b44b1d0",
-    "LVL-0025": "3f34a1a9bd8b5fc96272d0c721e4a5307ed2d331071e68780ae84442e6893346",
-    "LVL-0026": "1b99cd527a5a2e156e9392eefe4350deeb27887dd52076dfaa41798cd86b2b48",
+    "LVL-0023": "32f1863ebc91a138a13637c4c6355a36b34e93ab54852da37a0fda3fd4e5f248",
+    "LVL-0024": "aaeb6c14d81c1e2eaabf91973bb2f0726a303bbb80ca934acde5b900a38f35ef",
+    "LVL-0025": "f0852bd7973fd4f82a10a3a93c4421216fbe02b6f91bf63d62747f3f6f0ca539",
+    "LVL-0026": "d602e3efdac3cf3b071d53097c5e9b2ddebf86fa9bfc3ed8ccb697529f4684a5",
     "LVL-0027": "67197b35a9af2067712d34d82aac4457aa547dea7c91c365787958ee598fbc00",
-    "LVL-0028": "2eda1db838e14e6f6cd8ce8fcd8d879c22542c4f91e1e4ddc3d37d3e043969bc",
+    "LVL-0028": "9c62d9a6763aeedc7725d2567c514715c6791c4c9106af89b738d032c18de78e",
     "LVL-0029": "622313290d52b5ecd677b4049b1b1de6fe3bea01583df719a61307cf2f680d75",
-    "LVL-0030": "4878b57c92a6654d72d64d9fe65487e1eed6e63328bdd901d77d615d6767231c",
+    "LVL-0030": "e8beb06d0bb244fc855c3e93ab713cd3378978e520074e1c4d1a1ebffa2a5c1e",
     "LVL-0031": "c92aab416ba742c36883e8bd9a551326de9c04fbb7140b48f13d07924d7b0c0b"
   },
   "inactiveHashes": {
@@ -20,7 +20,7 @@
     "LVL-0025": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "LVL-0026": "8c754fe06f38aedc01587de35c829dd59672d2c21e50b806ec88e1b999ec4e09",
     "LVL-0027": "b7ec85b7f61dad32ced36d115efc4d76053397bcd426cabefd43233791219daa",
-    "LVL-0028": "d158d1257f955868cf4feec8c3ce42fefa5a41d4d32dbea4e222de0dd78245da",
+    "LVL-0028": "caec581530a2f5e922a267a6c583991e7d256a14dd1715fd1b82bab888e6f158",
     "LVL-0029": "0fc356e930e2c5b0ea8b0ccae799069628d010e65ddf6307e660d978a0534831",
     "LVL-0030": "7f8acdf72a4923656c0c8f826cb325fa8ff107ea528dd73a530e66df7ee9cd90",
     "LVL-0031": "7385f31cdd81caf3876b4ec4d34c46867f7fd787313a72533f96b3199ac281d7"
@@ -28,7 +28,7 @@
   "unchangedSources": {
     "Levels/LVL-0001/level.js": "745a7c6a4fb797894b7a5a368892a6248222732a8c181ea7d9f072f7932095fb",
     "Levels/LVL-0002/level.js": "de7a454baf64a6373a3b129be507f2f99867181a1a689ee3905328f23baed73f",
-    "Levels/LVL-0003/level.js": "f32ce26b5d31c4145fd4f310b83ecc3be673d022f4dad82b9b0905c5de0438dd",
+    "Levels/LVL-0003/level.js": "02810162fd58a0209158bfb6b10cadbc81840cb9048c52630cc3c9519902557f",
     "Levels/LVL-0004/level.js": "0978f859f814ff650a69cb17e4297c8da35c952927b345ffa3e888a4903c0a07",
     "Levels/LVL-0005/level.js": "98b9324bffea7fd3feb731dc509e09884cd46d5be04c4ca348374fbdeb36f24f",
     "Levels/LVL-0006/level.js": "ce2691e796878c73bc9049c48f6f14d35ff422e1442129acc88262adead06bd0",
@@ -38,19 +38,19 @@
     "Levels/LVL-0010/level.js": "9e6e712a71709a888ea70c82505fdedf5a910276df8dabd6e4d9ddac6bab8b12",
     "Levels/LVL-0011/level.js": "887a8bba5e87e4aed5d6872659ced516a37b57664d85a29544735c51f1aa6e81",
     "Levels/LVL-0012/level.js": "586436f59307703bbe9d4df364a519b47a2f85eb6ef0bf560e09d61b4c91f102",
-    "Levels/LVL-0013/level.js": "17c1612f1a831db6260f0a9b283d2ac8b50b3587c9decd37261aa9ae027fa700",
-    "Levels/LVL-0014/level.js": "3c7ebca2992349bd64fce2489e9cf5e01a824c7b92ed5a11c1865d7897a9d174",
-    "Levels/LVL-0015/level.js": "9c381efaa2162c470daca0ff9c7bdb8b00f4a902ae3dc459a3b39af18e4cff40",
+    "Levels/LVL-0013/level.js": "2dd7786db7c10633c5305391e5d9f47b33b6f3307051579b277ed5d5c12fc961",
+    "Levels/LVL-0014/level.js": "7481d86c72625823cb8700070f08a9d13981fdc8c49cf27050485315905e7575",
+    "Levels/LVL-0015/level.js": "15132e5713571d8720a91c9e5303328e77f4bebb3b62893d156c505d88dc99cd",
     "Levels/LVL-0016/level.js": "e9041500d7a68e11e10ea6885eff4ed3a8d098f25ef3c72257a0bb436afc1eed",
-    "Levels/LVL-0017/level.js": "b695b379dbb0e532e9df62653c6ae40355e9b9ccbdfe114971db3d514749ff5a",
+    "Levels/LVL-0017/level.js": "dedd189a0bc4a3ee6d246270002a6ea0479590113faf3a404eeb29605e8934ec",
     "Levels/LVL-0018/level.js": "80cc15d8a43380d0b396babbf34112763cb20c3bf8ec19cbd554267915b8d4f0",
-    "Levels/LVL-0019/level.js": "bcc1fbf3e6e53c353c847afabe9ba53112d12f3f4033a5498d16382b96afba4c",
+    "Levels/LVL-0019/level.js": "9fe7eaaa9bc09818ed60cbf984349be9cf10ad4b350c603381f5b59ce7ef46ab",
     "Levels/LVL-0020/level.js": "0fdf41bccd50890a09feec51b7408e7c3396bb8da26d56701068ab1b18059c72",
     "Levels/LVL-0032/level.js": "7f81309b2ac9b3415db2379210899e086742cfbe7030cc600904474e637565c1",
-    "Levels/LVL-0033/level.js": "1dcd179487d3c44a1471d00459afe0d5cddc5cff248cd0f66622928a89f2c412",
+    "Levels/LVL-0033/level.js": "e67b09c50a491ffb8e2ae94e005572127761688c7a438c81a106fd027a25549d",
     "Levels/LVL-0034/level.js": "17c37e4fa3e2b4d8ff8378cc6e05e76d379b805918136a121d734c3b979cdd00",
-    "Levels/LVL-0035/level.js": "c9acf2eeaf2964de37c843d065991370ac52bc04b2863528ca2bc9094342586a",
-    "src/app.js": "2c6863dcffe4a71bff3c2c949c8c8543591fe0563ff3bd70a3a42f957a40433c",
+    "Levels/LVL-0035/level.js": "366be3753d910b5f80038dd5b46d27542267fcd6f5074b73c99dc2032ef259c7",
+    "src/app.js": "0229cb46510901c94fd0b2f1d143b9be3f61ec498a369aee96f51eca9d738bc7",
     "Levels/world-config.js": "f5a85924286dc21e2af5c54b0c1f08b92e2f30033c6de1365c45e56a0c4c8f3b",
     "Levels/manifest.js": "fb692dab473125da5f07169df0ec2303de3928cc67ffee317f5e3021192aaaee",
     "src/atlas-world.js": "bd94f187bda8a54e1d1fc30e519f7a3e0cf113b455c0a90354dd4709965be171"
@@ -388,8 +388,8 @@
       ],
       [
         "shipCompass-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 4: dat is tien voor half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 04:20 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "shipCompass-2a",
@@ -398,8 +398,8 @@
       ],
       [
         "shipCompass-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 7: dat is vijf over half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 10:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "shipCompass-3a",
@@ -408,8 +408,8 @@
       ],
       [
         "shipCompass-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 10: dat is tien voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 07:50 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "shipCompass-4a",
@@ -418,8 +418,8 @@
       ],
       [
         "shipCompass-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 11: dat is vijf voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 01:55 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "mooringRope-1a",
@@ -1688,8 +1688,8 @@
       ],
       [
         "nl-clock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 08:45 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "nl-clock-2a",
@@ -1698,8 +1698,8 @@
       ],
       [
         "nl-clock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 3: dat is kwart over. Kijk nu naar de kleine wijzer."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 01:15 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "nl-clock-3a",
@@ -1708,8 +1708,8 @@
       ],
       [
         "nl-clock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 11:45 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "nl-clock-4a",
@@ -1718,8 +1718,8 @@
       ],
       [
         "nl-clock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 3: dat is kwart over. Kijk nu naar de kleine wijzer."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 05:15 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ]
     ],
     "LVL-0014": [
@@ -1730,8 +1730,8 @@
       ],
       [
         "uk-clock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 04:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "uk-clock-2a",
@@ -1740,8 +1740,8 @@
       ],
       [
         "uk-clock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 08:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "uk-clock-3a",
@@ -1750,8 +1750,8 @@
       ],
       [
         "uk-clock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 12:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "uk-clock-4a",
@@ -1760,8 +1760,8 @@
       ],
       [
         "uk-clock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 06:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "telescope-1a",
@@ -1812,8 +1812,8 @@
       ],
       [
         "fr-clock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Op de 1 is dat vijf over."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 06:05 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "fr-clock-2a",
@@ -1822,8 +1822,8 @@
       ],
       [
         "fr-clock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 5: dat is vijf voor half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 01:25 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "fr-clock-3a",
@@ -1832,8 +1832,8 @@
       ],
       [
         "fr-clock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 7: dat is vijf over half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 09:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "fr-clock-4a",
@@ -1842,8 +1842,8 @@
       ],
       [
         "fr-clock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 11: dat is vijf voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 02:55 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "fountain-1a",
@@ -2016,8 +2016,8 @@
       ],
       [
         "at-clock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 12: het is precies een heel uur. Kijk nu naar de kleine wijzer."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 12:00 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "at-clock-2a",
@@ -2026,8 +2026,8 @@
       ],
       [
         "at-clock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 12: het is precies een heel uur. Kijk nu naar de kleine wijzer."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 09:00 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "at-clock-3a",
@@ -2036,8 +2036,8 @@
       ],
       [
         "at-clock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 8: dat is tien over half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 05:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "at-clock-4a",
@@ -2046,8 +2046,8 @@
       ],
       [
         "at-clock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 10: dat is tien voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 12:50 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "alpine-fountain-1a",
@@ -2340,8 +2340,8 @@
       ],
       [
         "se-clock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 4: dat is tien voor half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 05:20 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "se-clock-2a",
@@ -2350,8 +2350,8 @@
       ],
       [
         "se-clock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 7: dat is vijf over half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 07:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "se-clock-3a",
@@ -2360,8 +2360,8 @@
       ],
       [
         "se-clock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 10: dat is tien voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 01:50 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "se-clock-4a",
@@ -2370,8 +2370,8 @@
       ],
       [
         "se-clock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 11: dat is vijf voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 11:55 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ]
     ],
     "LVL-0020": [
@@ -2626,8 +2626,8 @@
       ],
       [
         "churchClock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 07:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-2a",
@@ -2636,8 +2636,8 @@
       ],
       [
         "churchClock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 08:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-3a",
@@ -2646,8 +2646,8 @@
       ],
       [
         "churchClock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 06:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-4a",
@@ -2656,8 +2656,8 @@
       ],
       [
         "churchClock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 12:05 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "chimney-1a",
@@ -2910,8 +2910,8 @@
       ],
       [
         "roundContainer-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 09:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-2a",
@@ -2920,8 +2920,8 @@
       ],
       [
         "roundContainer-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 02:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-3a",
@@ -2930,8 +2930,8 @@
       ],
       [
         "roundContainer-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 10:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-4a",
@@ -2940,8 +2940,8 @@
       ],
       [
         "roundContainer-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 11:45 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "crate-1a",
@@ -5468,7 +5468,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 4,
         "minute": 15
       },
@@ -5526,7 +5526,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 8,
         "minute": 45
       },
@@ -5584,7 +5584,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 20
       },
@@ -5642,7 +5642,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 5,
         "minute": 50
       },
@@ -6119,7 +6119,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 7,
         "minute": 25
       },
@@ -6177,7 +6177,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 11,
         "minute": 55
       },
@@ -6235,7 +6235,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 5,
         "minute": 15
       },
@@ -6293,7 +6293,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 9,
         "minute": 45
       },
@@ -7154,7 +7154,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 1,
         "minute": 20
       },
@@ -7212,7 +7212,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 6,
         "minute": 50
       },
@@ -7270,7 +7270,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 10,
         "minute": 25
       },
@@ -7328,7 +7328,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 2,
         "minute": 55
       },
@@ -7786,7 +7786,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 6,
         "minute": 15
       },
@@ -7844,7 +7844,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 10,
         "minute": 45
       },
@@ -7902,7 +7902,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 2,
         "minute": 25
       },
@@ -7960,7 +7960,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 7,
         "minute": 55
       },
@@ -8218,7 +8218,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 11,
         "minute": 15
       },
@@ -8276,7 +8276,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 3,
         "minute": 45
       },
@@ -8334,7 +8334,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 7,
         "minute": 20
       },
@@ -8392,7 +8392,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 50
       },
@@ -9250,7 +9250,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 6,
         "minute": 15
       },
@@ -9308,7 +9308,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 4,
         "minute": 45
       },
@@ -9366,7 +9366,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 8,
         "minute": 35
       },
@@ -9424,7 +9424,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 5
       },
@@ -11082,7 +11082,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 6,
         "minute": 15
       },
@@ -11140,7 +11140,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 4,
         "minute": 45
       },
@@ -11198,7 +11198,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 8,
         "minute": 35
       },
@@ -11256,7 +11256,7 @@
       ],
       "prompt": "Welke tijd staat op de klok?",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 5
       },

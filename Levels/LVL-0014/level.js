@@ -93,7 +93,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "Vijf uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 4,
                 "minute": 30
               },
@@ -142,7 +142,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "Negen uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 8,
                 "minute": 30
               },
@@ -191,7 +191,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "Eén uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 12,
                 "minute": 30
               },
@@ -240,7 +240,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 "Zeven uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 6,
                 "minute": 30
               },
@@ -273,7 +273,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 5,
                 6
               ],
-              "hintParameters": {"a":24,"b":6},
+              "hintParameters": {
+                "a": 24,
+                "b": 6
+              },
               "explanation": "24 : 6 = 4."
             },
             {
@@ -285,7 +288,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
               "answerMode": "open",
               "prompt": "Atlas verdeelt 30 sterrenstickers over 6 sterrenkaarten. Op iedere kaart komen er evenveel. Hoeveel stickers per kaart?",
               "answer": 5,
-              "hintParameters": {"a":30,"b":6},
+              "hintParameters": {
+                "a": 30,
+                "b": 6
+              },
               "explanation": "30 : 6 = 5."
             }
           ]
@@ -308,7 +314,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 12,
                 15
               ],
-              "hintParameters": {"a":3,"b":3},
+              "hintParameters": {
+                "a": 3,
+                "b": 3
+              },
               "explanation": "3 × 3 = 9."
             },
             {
@@ -326,7 +335,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 8,
                 9
               ],
-              "hintParameters": {"a":42,"b":6},
+              "hintParameters": {
+                "a": 42,
+                "b": 6
+              },
               "explanation": "42 : 6 = 7."
             }
           ]
@@ -349,7 +361,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 9,
                 10
               ],
-              "hintParameters": {"a":48,"b":6},
+              "hintParameters": {
+                "a": 48,
+                "b": 6
+              },
               "explanation": "48 : 6 = 8."
             },
             {
@@ -367,7 +382,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
                 21,
                 24
               ],
-              "hintParameters": {"a":6,"b":3},
+              "hintParameters": {
+                "a": 6,
+                "b": 3
+              },
               "explanation": "6 × 3 = 18."
             }
           ]
@@ -384,7 +402,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
               "answerMode": "open",
               "prompt": "Op 2 sterrenkaarten staan elk 6 sterren. Hoeveel sterren zijn dat samen?",
               "answer": 12,
-              "hintParameters": {"a":2,"b":6},
+              "hintParameters": {
+                "a": 2,
+                "b": 6
+              },
               "explanation": "2 × 6 = 12."
             },
             {
@@ -396,7 +417,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
               "answerMode": "open",
               "prompt": "Op 5 sterrenkaarten staan elk 8 sterren. Hoeveel sterren zijn dat samen?",
               "answer": 40,
-              "hintParameters": {"a":5,"b":8},
+              "hintParameters": {
+                "a": 5,
+                "b": 8
+              },
               "explanation": "5 × 8 = 40."
             }
           ]
@@ -569,8 +593,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
   "player": {
     "startNode": "left-start",
     "start": {
-      "x": 221,
-      "y": 637
+      "x": 201,
+      "y": 654
     }
   },
   "interactiveObjects": [
@@ -633,19 +657,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
   "walkPath": [
     {
       "id": "left-start",
-      "x": 221,
-      "y": 637
+      "x": 201,
+      "y": 654
     },
     {
       "id": "clock-approach",
-      "x": 522,
-      "y": 627,
+      "x": 519,
+      "y": 635,
       "role": "approach"
     },
     {
       "id": "telescope-approach",
       "x": 731,
-      "y": 629,
+      "y": 634,
       "role": "approach"
     },
     {
@@ -655,8 +679,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0014"] = {
     },
     {
       "id": "crystal-approach",
-      "x": 1305,
-      "y": 628,
+      "x": 1302,
+      "y": 637,
       "role": "approach"
     },
     {

@@ -544,11 +544,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 1,
                 "minute": 20
               },
-              "explanation": "De wijzers tonen Tien voor half twee."
+              "explanation": "De digitale klok toont Tien voor half twee."
             }
           ]
         },
@@ -593,11 +593,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 6,
                 "minute": 50
               },
-              "explanation": "De wijzers tonen Tien voor zeven."
+              "explanation": "De digitale klok toont Tien voor zeven."
             }
           ]
         },
@@ -642,11 +642,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 10,
                 "minute": 25
               },
-              "explanation": "De wijzers tonen Vijf voor half elf."
+              "explanation": "De digitale klok toont Vijf voor half elf."
             }
           ]
         },
@@ -691,11 +691,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0025"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 2,
                 "minute": 55
               },
-              "explanation": "De wijzers tonen Vijf voor drie."
+              "explanation": "De digitale klok toont Vijf voor drie."
             }
           ]
         }

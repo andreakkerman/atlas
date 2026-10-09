@@ -7,7 +7,7 @@ const source = fs.readFileSync('src/app.js', 'utf8');
 const start = source.indexOf('  const isCorrect =', source.indexOf('function answerQuestion('));
 const end = source.indexOf('  sessionReport?.recordAttempt', start);
 const expression = source.slice(start, end) + '\nisCorrect;';
-const grade = (family, correct, submitted) => vm.runInNewContext(expression, { question: { family }, correct, submitted });
+const grade = (family, correct, submitted) => vm.runInNewContext(expression, { question: { family }, correct, submitted, parsed: null });
 
 test('spelling preserves orthographic distinctions, Unicode equivalence and case tolerance', () => {
   for (const word of ['Hiëroglief', 'Museum', 'Reliëf']) {

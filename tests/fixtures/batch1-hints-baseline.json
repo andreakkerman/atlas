@@ -9,13 +9,13 @@
     "LVL-0010": "53d7d0743c090dd65595df7536897f796a1d019be1edb929cdef5a73306f38ce",
     "LVL-0011": "c7c334f17b8332b1aac8c481083c3cff33d6b6c9e71eda7281c1b7c5501f565a",
     "LVL-0012": "81fccf0ab95db9eca2b8e69c141aeea8fff88a5f1d9997faa0587f46e1268f18",
-    "LVL-0013": "89f9681de285a041402ece919fd6b3ce4b542a00f00fbd2fb7e650e9cf6f4d2f",
-    "LVL-0014": "3284e05ccbe82cafc1e017a6ecd8107314cf8551e95de0c27c18721ed24b18ec",
-    "LVL-0015": "9a13c276f4c0cc9c5b1a685ebc6ad5fbde62f6633031d93714b930d11bb49e9f",
+    "LVL-0013": "274e5de20ffa73cc22e80b690d6f08db333f5fd69f2b54022f6901dd4ebf2ac8",
+    "LVL-0014": "76563bb64a6a7a4f2ede4510ec789937102ed2e50518cc727df5f2924f0739c6",
+    "LVL-0015": "d667910e5fc6979c801ab129b782408275505f5492ac7271f71643b03e15ec67",
     "LVL-0016": "12fdd8e331aa982b963074f6fc29fdede7529be41341921a77cb233f98dcc1e6",
-    "LVL-0017": "a692cd1e01743eb70944d8071cb7d41a4821b3aec95c0e0dc403182e7bcd8a53",
+    "LVL-0017": "2a3cbf5760dd69f3aadbacf35f4345aeda1fe0dd56c56b8e3fb8db3362ed3b8d",
     "LVL-0018": "35170f6ecbdcf8b922ecd0e159f120a93e6259916fdc748d1f00d1e051519090",
-    "LVL-0019": "7937fcf1f85757ee5755d2742c03b0a3c2d18c1e8e6632c3a285b2b63a2d8eae",
+    "LVL-0019": "8f3c91ddc955fd635e71243e03f15d59d64830c24b7a35b9caa202c49c435de8",
     "LVL-0020": "bf11e246b7a967c9dd7456c9ed03c1e06c7aa1eca201d3932e9479942412104a"
   },
   "inactiveHashes": {
@@ -40,12 +40,12 @@
   "unchangedSources": {
     "Levels/LVL-0001/level.js": "745a7c6a4fb797894b7a5a368892a6248222732a8c181ea7d9f072f7932095fb",
     "Levels/LVL-0002/level.js": "de7a454baf64a6373a3b129be507f2f99867181a1a689ee3905328f23baed73f",
-    "Levels/LVL-0003/level.js": "f32ce26b5d31c4145fd4f310b83ecc3be673d022f4dad82b9b0905c5de0438dd",
+    "Levels/LVL-0003/level.js": "02810162fd58a0209158bfb6b10cadbc81840cb9048c52630cc3c9519902557f",
     "Levels/LVL-0032/level.js": "7f81309b2ac9b3415db2379210899e086742cfbe7030cc600904474e637565c1",
-    "Levels/LVL-0033/level.js": "1dcd179487d3c44a1471d00459afe0d5cddc5cff248cd0f66622928a89f2c412",
+    "Levels/LVL-0033/level.js": "e67b09c50a491ffb8e2ae94e005572127761688c7a438c81a106fd027a25549d",
     "Levels/LVL-0034/level.js": "17c37e4fa3e2b4d8ff8378cc6e05e76d379b805918136a121d734c3b979cdd00",
-    "Levels/LVL-0035/level.js": "c9acf2eeaf2964de37c843d065991370ac52bc04b2863528ca2bc9094342586a",
-    "src/app.js": "2c6863dcffe4a71bff3c2c949c8c8543591fe0563ff3bd70a3a42f957a40433c",
+    "Levels/LVL-0035/level.js": "366be3753d910b5f80038dd5b46d27542267fcd6f5074b73c99dc2032ef259c7",
+    "src/app.js": "0229cb46510901c94fd0b2f1d143b9be3f61ec498a369aee96f51eca9d738bc7",
     "Levels/world-config.js": "f5a85924286dc21e2af5c54b0c1f08b92e2f30033c6de1365c45e56a0c4c8f3b",
     "Levels/manifest.js": "fb692dab473125da5f07169df0ec2303de3928cc67ffee317f5e3021192aaaee",
     "src/atlas-world.js": "bd94f187bda8a54e1d1fc30e519f7a3e0cf113b455c0a90354dd4709965be171"
@@ -383,8 +383,8 @@
       ],
       [
         "shipCompass-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 4: dat is tien voor half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 04:20 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "shipCompass-2a",
@@ -393,8 +393,8 @@
       ],
       [
         "shipCompass-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 7: dat is vijf over half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 10:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "shipCompass-3a",
@@ -403,8 +403,8 @@
       ],
       [
         "shipCompass-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 10: dat is tien voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 07:50 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "shipCompass-4a",
@@ -413,8 +413,8 @@
       ],
       [
         "shipCompass-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 11: dat is vijf voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 01:55 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "mooringRope-1a",
@@ -627,8 +627,8 @@
       ],
       [
         "churchClock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 07:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-2a",
@@ -637,8 +637,8 @@
       ],
       [
         "churchClock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 08:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-3a",
@@ -647,8 +647,8 @@
       ],
       [
         "churchClock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 06:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-4a",
@@ -657,8 +657,8 @@
       ],
       [
         "churchClock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 12:05 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "chimney-1a",
@@ -911,8 +911,8 @@
       ],
       [
         "roundContainer-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 09:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-2a",
@@ -921,8 +921,8 @@
       ],
       [
         "roundContainer-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 02:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-3a",
@@ -931,8 +931,8 @@
       ],
       [
         "roundContainer-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 10:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-4a",
@@ -941,8 +941,8 @@
       ],
       [
         "roundContainer-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 11:45 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "crate-1a",
@@ -4819,7 +4819,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 8,
         "minute": 45
       },
@@ -4853,7 +4853,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 1,
         "minute": 15
       },
@@ -4887,7 +4887,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 11,
         "minute": 45
       },
@@ -4921,7 +4921,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 5,
         "minute": 15
       },
@@ -4955,7 +4955,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 4,
         "minute": 30
       },
@@ -4989,7 +4989,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 8,
         "minute": 30
       },
@@ -5023,7 +5023,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 30
       },
@@ -5057,7 +5057,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 6,
         "minute": 30
       },
@@ -5483,7 +5483,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 6,
         "minute": 5
       },
@@ -5517,7 +5517,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 1,
         "minute": 25
       },
@@ -5551,7 +5551,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 9,
         "minute": 35
       },
@@ -5585,7 +5585,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 2,
         "minute": 55
       },
@@ -6144,7 +6144,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 0
       },
@@ -6178,7 +6178,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 9,
         "minute": 0
       },
@@ -6212,7 +6212,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 5,
         "minute": 40
       },
@@ -6246,7 +6246,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 12,
         "minute": 50
       },
@@ -7194,7 +7194,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 5,
         "minute": 20
       },
@@ -7228,7 +7228,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 7,
         "minute": 35
       },
@@ -7262,7 +7262,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 1,
         "minute": 50
       },
@@ -7296,7 +7296,7 @@
       "presentation": "bare",
       "answerMode": "multipleChoice",
       "visual": {
-        "type": "clock",
+        "type": "digitalClock",
         "hour": 11,
         "minute": 55
       },

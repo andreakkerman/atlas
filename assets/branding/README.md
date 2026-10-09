@@ -1,5 +1,18 @@
 # Atlas application icons
 
+## Challenge watermark
+
+`atlas-emblem-transparent.png` is the user-supplied `AtlasLogoTransparant.png`, copied
+byte-for-byte on 4 October 2026 (SHA-256
+`4c3f33c02f5e7280f2e89ce4ac65e7cc3ad65b03fdb974ba5b58ae94039f558a`). It is used
+only as a decorative, non-interactive M6 question-panel watermark at 4.5% opacity.
+The CSS applies a muted tint; the original PNG is unchanged. It is precached with
+the app shell. Notebook rings are a code-native SVG data image in `src/styles.css`;
+the separate paper material is documented in [the notebook asset notes](../ui/notebook/README.md).
+Both are independent of this logo and the application-icon family.
+
+## Application icon family
+
 `app-icon-source.png` is the user-supplied **AtlasTeal.png** (1265×1265), stored
 as opaque RGB without changing its artwork. It is the icon-family master.
 The supplied transparent emblem was a geometry reference; no extraction,

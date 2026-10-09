@@ -1,8 +1,10 @@
+const {withoutPilot,withoutPilotSource}=require('./helpers/pilot-e5-baseline.cjs');
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const vm = require('vm');
 const crypto = require('crypto');
 const hints = require('../src/challenge-hints');
+const {digitalMinnie,currentE5HintPairs,currentE5Explanation}=require('./helpers/time-approval.cjs');
 const baseline = require('./fixtures/batch2-hints-baseline.json');
 const base = (process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173').split('?')[0];
 const ids = Array.from({ length: 11 }, (_, i) => `LVL-${String(i + 21).padStart(4, '0')}`);
@@ -10,7 +12,7 @@ const hash = s => crypto.createHash('sha256').update(s).digest('hex');
 function load(id) {
   const c = vm.createContext({ window: {} });
   vm.runInContext(fs.readFileSync(`Levels/${id}/level.js`, 'utf8'), c);
-  return JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id]));
+  return withoutPilot(JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id])));
 }
 function variants(l) { return l.learningChallenges.filter(ch => ch.active !== false).flatMap(ch => ch.questions.flatMap(s => s.variants)); }
 
@@ -31,7 +33,7 @@ test('all 240 active variants preserve non-hint data and resolve reviewed semant
       if (typeof q.answer === 'string') expect((first + second).toLowerCase()).not.toContain(q.answer.toLowerCase());
       if (q.visual) {
         expect(q.visual).toEqual(r.visual);
-        expect(first).toBe('Kijk eerst naar de grote wijzer.');
+        expect(first).toBe(q.visual.type==='digitalClock'?digitalMinnie(q):'Kijk eerst naar de grote wijzer.');
         expect(second).toBe(hints.resolve('LVL-0032', q, 'moose'));
       } else if (q.family === 'spelling') {
         expect(q.choices).toEqual(r.choices); expect(q.answer).toBe(r.answer);
@@ -63,8 +65,8 @@ test('all 240 active variants preserve non-hint data and resolve reviewed semant
 });
 
 test('prior worlds, generated hint pairs, routing and shared gameplay remain identical', () => {
-  for (const [file, digest] of Object.entries(baseline.unchangedSources)) expect(hash(fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n')), file).toBe(digest);
-  for (const [id, pairs] of Object.entries(baseline.previousHints)) expect(variants(load(id)).map(q => [q.id, hints.resolve(id, q, 'minnie'), hints.resolve(id, q, 'moose')])).toEqual(pairs);
+  for (const [file, digest] of Object.entries(baseline.unchangedSources)) expect(hash(withoutPilotSource(fs.readFileSync(file, 'utf8'))), file).toBe(digest);
+  for (const [id, pairs] of Object.entries(baseline.previousHints)) expect(variants(load(id)).map(q => [q.id, hints.resolve(id, q, 'minnie'), hints.resolve(id, q, 'moose')])).toEqual(currentE5HintPairs(id,pairs));
   for (let n = 1; n <= 35; n++) for (const q of variants(load(`LVL-${String(n).padStart(4, '0')}`))) {
     expect(q.hintMinnie).toBeUndefined(); expect(q.hintMoose).toBeUndefined();
   }
@@ -99,6 +101,7 @@ test('actual Leonardo larger facts use commutative 11/12 decompositions and simp
 });
 
 async function enter(page, id) {
+  await page.addInitScript(() => localStorage.setItem('atlas.learning.m6Percentage', '0'));
   await page.route('**/__dev/levels/*/editor-draft', r => r.fulfill({ json: {} }));
   await page.goto(base + '/?atlasSessionTest=1');
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
@@ -160,7 +163,7 @@ for (const id of ids) test(`${id}: all variants follow Minnie → Moose → assi
     expect(stages[0]).toMatchObject({ message: { speaker: 'minnie', text: hints.resolve(id, q, 'minnie') }, feedback: '', assisted: false });
     expect(stages[1]).toMatchObject({ message: { speaker: 'moose', text: hints.resolve(id, q, 'moose') }, feedback: '', assisted: false });
     expect(stages[0].visible).toBe(stages[0].message.text); expect(stages[1].visible).toBe(stages[1].message.text);
-    expect(stages[2]).toMatchObject({ feedback: q.explanation, assisted: true });
+    expect(stages[2]).toMatchObject({ feedback: currentE5Explanation(id,q), assisted: true });
     if (q.visual) for (const s of stages) expect(s.clock).toEqual([String(q.visual.hour), String(q.visual.minute)]);
   }
   expect(errors).toEqual([]);

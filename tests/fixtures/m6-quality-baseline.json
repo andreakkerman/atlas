@@ -1,0 +1,2543 @@
+{
+  "RP-M6-BR-001": {
+    "hash": "dcf20059b17903105ce3c4dac2ac81a1e5978a569cf1cd8c7330c2edf4c5c3cf",
+    "core": {
+      "values": {
+        "total": 12,
+        "fraction": {
+          "numerator": 1,
+          "denominator": 2
+        },
+        "remainder": false
+      },
+      "question": {
+        "answer": 6,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "6"
+          ],
+          "unit": "schilden"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Breuken · Eén gelijk deel berekenen",
+    "visualType": "fractionStrip",
+    "stepCount": 5,
+    "learnerHash": "586e1a5c3cd76f099ed152a368ec45527e255ff14ea2237736c4d1577e629a96"
+  },
+  "RP-M6-BR-002": {
+    "hash": "d035d5780f310f3bda560604bf4f0688a7f81ccc50162f49fe9b37311afd112f",
+    "core": {
+      "values": {
+        "total": 20,
+        "fraction": {
+          "numerator": 1,
+          "denominator": 4
+        },
+        "remainder": false
+      },
+      "question": {
+        "answer": 5,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "5"
+          ],
+          "unit": "stenen"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Breuken · Eén gelijk deel berekenen",
+    "visualType": "fractionStrip",
+    "stepCount": 4,
+    "learnerHash": "b8016e6d5aaf0902f859046139fdea174f219a5e2192ba1e1c5474302f9c1f68"
+  },
+  "RP-M6-BR-003": {
+    "hash": "23d02c359de7c88660688299b76e05321e16b65ef4b1adc7c6821157427d5dbd",
+    "core": {
+      "values": {
+        "total": 20,
+        "fraction": {
+          "numerator": 3,
+          "denominator": 4
+        },
+        "remainder": false
+      },
+      "question": {
+        "answer": 15,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "15"
+          ],
+          "unit": "schilden"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Breuken · Meerdere gelijke delen berekenen",
+    "visualType": "fractionStrip",
+    "stepCount": 4,
+    "learnerHash": "e72e2d183c13a8a72988bc2c5fdfb3e4a3d412906161396403f71b698c6bd5df"
+  },
+  "RP-M6-BR-004": {
+    "hash": "a291edf7bf6649c55450d6a38239c80f0268e80cb3db58bc41d5063723fc9c9a",
+    "core": {
+      "values": {
+        "total": 18,
+        "fraction": {
+          "numerator": 2,
+          "denominator": 3
+        },
+        "remainder": false
+      },
+      "question": {
+        "answer": 12,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "12"
+          ],
+          "unit": "meter"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Breuken · Meerdere gelijke delen berekenen",
+    "visualType": "fractionStrip",
+    "stepCount": 4,
+    "learnerHash": "191b1674a83eab70b5208681832c6c95d13b14a5065953dff309bd7b66cb4977"
+  },
+  "RP-M6-BR-005": {
+    "hash": "f8c51bf6dca744fe271eeac676c48c133d65ddae2c8ba62223019a0de88cda76",
+    "core": {
+      "values": {
+        "total": 35,
+        "fraction": {
+          "numerator": 2,
+          "denominator": 5
+        },
+        "remainder": true
+      },
+      "question": {
+        "answer": 21,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "21"
+          ],
+          "unit": "kratten"
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Breuken · Resterende hoeveelheid berekenen",
+    "visualType": "fractionStrip",
+    "stepCount": 5,
+    "learnerHash": "07b37f494701ce0ee443c50977ff0d8beeaba37d109b177baeaed94b6ee08d3d"
+  },
+  "RP-M6-BR-006": {
+    "hash": "a894c5f34d517b180a802685c577e3c4a502c06c19c756a3ec0f6dd821b40bb7",
+    "core": {
+      "values": {
+        "total": 40,
+        "fraction": {
+          "numerator": 3,
+          "denominator": 8
+        },
+        "remainder": true
+      },
+      "question": {
+        "answer": 25,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "25"
+          ],
+          "unit": "houtblokken"
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Breuken · Resterende hoeveelheid berekenen",
+    "visualType": "fractionStrip",
+    "stepCount": 5,
+    "learnerHash": "3a730ee9ff72c2cb5d1e5ef9cc9b96babfd3acfa3b04f47975697ec797c27ff5"
+  },
+  "RP-M6-OP-001": {
+    "hash": "e0a6758a4b08e0b61f11f1d0c2fcc6c55106a631bbf9062ecc37759852f24d2f",
+    "core": {
+      "values": {
+        "operation": "addition",
+        "operands": [
+          240,
+          130
+        ]
+      },
+      "question": {
+        "answer": 370,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "370"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Optellen · Honderdtallen en tientallen",
+    "visualType": "calculationSteps",
+    "stepCount": 4,
+    "learnerHash": "bfc35519ac7aeeef054accb189d2433cb9399ad2c57f388e80bfa76ca66d1045"
+  },
+  "RP-M6-OP-002": {
+    "hash": "f26ff17b5849322812ca01c52abaa0c1ef313add161513ae44584305d53fc7a2",
+    "core": {
+      "values": {
+        "operation": "addition",
+        "operands": [
+          320,
+          250
+        ]
+      },
+      "question": {
+        "answer": 570,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "570"
+          ],
+          "unit": "planken"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Optellen · Honderdtallen en tientallen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "a30612973d1de15d28158f623d8061cb4a37afb26b8b0c3766f379b3d9753018"
+  },
+  "RP-M6-OP-003": {
+    "hash": "8a9a6d0b62590dc6cb1346daf3d7bb9d7236a8a6e321064b39a42bbf98e98399",
+    "core": {
+      "values": {
+        "operation": "addition",
+        "operands": [
+          368,
+          247
+        ]
+      },
+      "question": {
+        "answer": 615,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "615"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Optellen · Over een tiental of honderdtal",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "8c2f48b6cffee9dfc5e1efeb522a00b9e7d30da2501a2e76840bc829af6291a3"
+  },
+  "RP-M6-OP-004": {
+    "hash": "6dd5b17ff33185ab680a18c9fee6b9262c8e3f3ebe0a85bb22ff3e942114e2f3",
+    "core": {
+      "values": {
+        "operation": "addition",
+        "operands": [
+          475,
+          168
+        ]
+      },
+      "question": {
+        "answer": 643,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "643"
+          ],
+          "unit": "spijkers"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Optellen · Over een tiental of honderdtal",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "257c18c1c8fa260123bf2cc405159f1cbd3b06dc1f88a18119ef6e39d9173957"
+  },
+  "RP-M6-OP-005": {
+    "hash": "ec6909a1fa4c1dccd8279541f9c7d752aa1b3ce705698b4a8da24a32e81cd2e8",
+    "core": {
+      "values": {
+        "operation": "addition",
+        "operands": [
+          1475,
+          638
+        ]
+      },
+      "question": {
+        "answer": 2113,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "2113",
+            "2.113",
+            "2 113"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Optellen · Duizendtallen en overschrijdingen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "b0622e351ccfd7fe8fa14de07191b4dd69014aa56bb450f67d82e8287d1d5623"
+  },
+  "RP-M6-OP-006": {
+    "hash": "e5db9314427dcced4b84712259dc0b2f1e1072f7d04bd8c29eda5b682e70d922",
+    "core": {
+      "values": {
+        "operation": "addition",
+        "operands": [
+          2687,
+          756
+        ]
+      },
+      "question": {
+        "answer": 3443,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "3443",
+            "3.443",
+            "3 443"
+          ],
+          "unit": "stenen"
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Optellen · Duizendtallen en overschrijdingen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "e1adc8122ff7bdecf7f42618a309a6d8150fb88102232ab6b6374dadae2b3cd5"
+  },
+  "RP-M6-GE-001": {
+    "hash": "a3369254850c2c2d81a2a1715d37ed81bc54dda4dade49db02ff59045f585e57",
+    "core": {
+      "values": {
+        "pricesCents": [
+          150
+        ],
+        "paidCents": 200
+      },
+      "question": {
+        "answer": 50,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "0,50",
+            "0,5",
+            "0.50",
+            "0.5"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Geld · Aanvullen tot de volgende euro",
+    "visualType": "moneyReceipt",
+    "stepCount": 5,
+    "learnerHash": "8d14bc9ba36d8bf543d47abca587d37ed5db3e584e11c255fac886c6a942cb5d"
+  },
+  "RP-M6-GE-002": {
+    "hash": "43ca91fe48e596753bccf2dde6f6406aeec3a61f1381394c9a59c7d2da7e9fe1",
+    "core": {
+      "values": {
+        "pricesCents": [
+          320
+        ],
+        "paidCents": 400
+      },
+      "question": {
+        "answer": 80,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "0,80",
+            "0,8",
+            "0.80",
+            "0.8"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Geld · Aanvullen tot de volgende euro",
+    "visualType": "moneyReceipt",
+    "stepCount": 4,
+    "learnerHash": "061e01bb412bd42b0b8039e21aca82d267cdd381d0c1ce2cbc1dc8c769abc13b"
+  },
+  "RP-M6-GE-003": {
+    "hash": "9263db82e55ced3e3d68fed85e2550ea5246b4b728362578f0d9c6479c41d1c5",
+    "core": {
+      "values": {
+        "pricesCents": [
+          675
+        ],
+        "paidCents": 1000
+      },
+      "question": {
+        "answer": 325,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "3,25",
+            "3.25"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Geld · Wisselgeld met euro’s en centen",
+    "visualType": "moneyReceipt",
+    "stepCount": 5,
+    "learnerHash": "391f06f0bb43bc5610fa73fc17a030d8fd909e31c2a99407faa8777543cf5c44"
+  },
+  "RP-M6-GE-004": {
+    "hash": "e5156b33a72d1aa4f181cbd0e750ac68f8014390f868ac4d68be22733ef9af67",
+    "core": {
+      "values": {
+        "pricesCents": [
+          1240
+        ],
+        "paidCents": 2000
+      },
+      "question": {
+        "answer": 760,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "7,60",
+            "7,6",
+            "7.60",
+            "7.6"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Geld · Wisselgeld met euro’s en centen",
+    "visualType": "moneyReceipt",
+    "stepCount": 5,
+    "learnerHash": "ef0a32c1d498f8f52f04c5863eaa4771e69ce7fcddc431447976e19d3f656bb9"
+  },
+  "RP-M6-GE-005": {
+    "hash": "1bc5b06858be3234fc311d477370644149bc8d0797f2feb3a454accfb02ebf3f",
+    "core": {
+      "values": {
+        "pricesCents": [
+          475,
+          350
+        ],
+        "paidCents": 1000
+      },
+      "question": {
+        "answer": 175,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "1,75",
+            "1.75"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Geld · Twee aankopen en wisselgeld",
+    "visualType": "moneyReceipt",
+    "stepCount": 6,
+    "learnerHash": "dde2e0d658784e7f240eba735ef77aad337839c3336c5e8b6523917974205765"
+  },
+  "RP-M6-GE-006": {
+    "hash": "f0c0afdc0e9c636c9762769785a9a28d083db11cf25cf00d57bcfed2ad155e62",
+    "core": {
+      "values": {
+        "pricesCents": [
+          680,
+          765
+        ],
+        "paidCents": 2000
+      },
+      "question": {
+        "answer": 555,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "5,55",
+            "5.55"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Geld · Twee aankopen en wisselgeld",
+    "visualType": "moneyReceipt",
+    "stepCount": 6,
+    "learnerHash": "008e4d2e8234c40c512932d622149caa4a37ad3e4da8b358c0ad15b5824660c5"
+  },
+  "RP-M6-TI-001": {
+    "hash": "179c69ddc4b851f9383321c5113db8c73d366a8e1b7e3e117630aea1c2f79abc",
+    "core": {
+      "values": {
+        "start": "09:20",
+        "end": "09:50"
+      },
+      "question": {
+        "answer": 30,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "30"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Tijd · Tijdsduur binnen één uur",
+    "visualType": "timeLine",
+    "stepCount": 6,
+    "learnerHash": "364af8a46f7336c557c5141168eb28836cc0a417ab2b2135c521dfc34911c01a"
+  },
+  "RP-M6-TI-002": {
+    "hash": "b833ece3b1b8f3cfc7f2a36f1298b9c009606e7de832b15be0826c8ae9b96848",
+    "core": {
+      "values": {
+        "start": "10:10",
+        "end": "10:35"
+      },
+      "question": {
+        "answer": 25,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "25"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": "0.1",
+    "reportLabel": "Tijd · Tijdsduur binnen één uur",
+    "visualType": "timeLine",
+    "stepCount": 5,
+    "learnerHash": "584c02a8b718aed526de9b49808c868f1a07a383552b0ca79524dbd92ce16015"
+  },
+  "RP-M6-TI-003": {
+    "hash": "f1281edae611282b8ca5c0ea5890d44d3c0b5815768014af735b2b59eeeef428",
+    "core": {
+      "values": {
+        "start": "14:35",
+        "end": "15:10"
+      },
+      "question": {
+        "answer": 35,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "35"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Tijd · Tijdsduur over het hele uur",
+    "visualType": "timeLine",
+    "stepCount": 5,
+    "learnerHash": "9bd689cc96a921ada7597b825495b343aa3a607b0c38520a04c6dd0e53f7c45d"
+  },
+  "RP-M6-TI-004": {
+    "hash": "377be3be53487de0e4b6bfd2fcf91c94408ba8be0c96ee930515977476ceb601",
+    "core": {
+      "values": {
+        "start": "11:45",
+        "end": "12:25"
+      },
+      "question": {
+        "answer": 40,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "40"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": "0.1",
+    "reportLabel": "Tijd · Tijdsduur over het hele uur",
+    "visualType": "timeLine",
+    "stepCount": 5,
+    "learnerHash": "039214409d3c13feac3a07c922f8c84823791a5fcb6fd024b8f9cf72a9642837"
+  },
+  "RP-M6-TI-005": {
+    "hash": "c9a8d7a815fa7cbf699e89a33605ac4605ddacf73880d4ae3b4977609715cf0d",
+    "core": {
+      "values": {
+        "start": "13:50",
+        "durationMinutes": 85
+      },
+      "question": {
+        "answer": "15:15",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "14:25",
+          "15:05",
+          "15:15",
+          "15:25"
+        ]
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Tijd · Eindtijd berekenen",
+    "visualType": "timeLine",
+    "stepCount": 6,
+    "learnerHash": "ee3b8039cbd736e0588441b0c4dc25bce7f8159b0983578f81c39b1086aad3d8"
+  },
+  "RP-M6-TI-006": {
+    "hash": "a3d84dec895875422c5c248422866e66e90558dea6e8b46bbad36643ca715392",
+    "core": {
+      "values": {
+        "end": "16:20",
+        "durationMinutes": 95
+      },
+      "question": {
+        "answer": "14:45",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "14:45",
+          "14:55",
+          "15:05",
+          "15:45"
+        ]
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": "0.1",
+    "reportLabel": "Tijd · Begintijd berekenen",
+    "visualType": "timeLine",
+    "stepCount": 6,
+    "learnerHash": "52ec6d9f40fe06b66b3792a749ac3977d62e10589be6e28e459ac72952edad5f"
+  },
+  "M6-NS-001": {
+    "hash": "ed18070d6ab3f16544d4da57ee4fd16613ec2b6e06b968d5d8f1c0011d0aa35a",
+    "core": {
+      "values": {
+        "authored": "Welk getal wordt bedoeld met **zesduizend tweehonderd zevenenveertig**?"
+      },
+      "question": {
+        "answer": "6.247",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "6.247",
+          "6.274",
+          "6.427",
+          "6.240"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Getalwoorden",
+    "visualType": "none",
+    "stepCount": 6,
+    "learnerHash": "8ec46c7e281f483782ddb73c695e9a5c3568561fb2cec65a4e61cbcd141c8cb2"
+  },
+  "M6-NS-002": {
+    "hash": "2e98e5eb28eddb79e519cb43afe6e44a61d66cccb04aa3b6ec0ca5c1193f8a4f",
+    "core": {
+      "values": {
+        "authored": "Je mag de cijfers **3, 8, 5 en 7** elk één keer gebruiken. Welk is het grootste getal dat je kunt maken?"
+      },
+      "question": {
+        "answer": "8.753",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "8.753",
+          "8.735",
+          "7.853",
+          "8.573"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Cijfers ordenen",
+    "visualType": "none",
+    "stepCount": 5,
+    "learnerHash": "4c0770a0f1bf85d11da83bd0b7bb0c335643f86a18b51127a03af83d596fc69a"
+  },
+  "M6-NS-003": {
+    "hash": "2f5b3451511b4bde42ad0a6ddee4eac58be0ebb78850504d889fff76c7e7f28a",
+    "core": {
+      "values": {
+        "authored": "Kijk naar het getal **5.684**. Welke waarde heeft de **6**?"
+      },
+      "question": {
+        "answer": "600",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "6",
+          "60",
+          "600",
+          "6.000"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Plaatswaarde",
+    "visualType": "none",
+    "stepCount": 5,
+    "learnerHash": "415467d84d2e63bddbb84e78294c2f91c842db66fe5afcce0ff9a22f097e7bdd"
+  },
+  "M6-NS-004": {
+    "hash": "7686e659c8c21830f04d39c648071624dcea62cabd658943a073cb2dbecb08a8",
+    "core": {
+      "values": {
+        "authored": "Welk getal ontbreekt?\n\n**7.420 → 7.430 → ? → 7.450 → 7.460**"
+      },
+      "question": {
+        "answer": 7440,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "7440",
+            "7.440",
+            "7 440"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Getallenreeksen",
+    "visualType": "numberLine",
+    "stepCount": 6,
+    "learnerHash": "89be67861b11d31c3a39f3ea23d5236de7210655a8eaa033eb514ed8c4590389"
+  },
+  "M6-NS-005": {
+    "hash": "1a8837cf9b251a122d268f36fe18b712a313cafe6333174fb09f28cd93cfa18d",
+    "core": {
+      "values": {
+        "authored": "Rond **6.451** af op het dichtstbijzijnde honderdtal."
+      },
+      "question": {
+        "answer": "6.500",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "6.400",
+          "6.450",
+          "6.500",
+          "6.600"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Afronden",
+    "visualType": "numberLine",
+    "stepCount": 5,
+    "learnerHash": "fe8e20cdd864eedbc9a4c7504add856cf8206d5558d886015bdb787cb204cd34"
+  },
+  "M6-NS-006": {
+    "hash": "bf9f4b93149b6b13a90bb576334d1798c7b32b27a191d43270098179f9d1ee39",
+    "core": {
+      "values": {
+        "authored": "Rond **8.620** af op het dichtstbijzijnde duizendtal."
+      },
+      "question": {
+        "answer": 9000,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "9000",
+            "9.000",
+            "9 000"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Afronden",
+    "visualType": "numberLine",
+    "stepCount": 5,
+    "learnerHash": "af52851348bb9dace257a8e6a7bdbc6b96a94d9b480b2a788bba574b7c801a48"
+  },
+  "M6-NS-007": {
+    "hash": "5bac90bc8a14d329cba77884bfd5bb4f36754bef7d23069a9216e18bb05d655d",
+    "core": {
+      "values": {
+        "authored": "Welk getal ligt het dichtst bij **10.000**?"
+      },
+      "question": {
+        "answer": "10.140",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "9.760",
+          "10.140",
+          "9.590",
+          "10.420"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Afstand tot doelgetal",
+    "visualType": "numberLine",
+    "stepCount": 7,
+    "learnerHash": "312c08bd82effb510af4008dbe39eaac358f32e1c61d497a3e379711e178b6d2"
+  },
+  "M6-NS-008": {
+    "hash": "185ce46c7d8009265de49b977a2f5a2c4c725a2dfc8550222393d9725283781e",
+    "core": {
+      "values": {
+        "authored": "Welk getal bestaat uit:\n\n**5 duizendtallen, 2 honderdtallen, 7 tientallen en 4 eenheden?**"
+      },
+      "question": {
+        "answer": 5274,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "5274",
+            "5.274",
+            "5 274"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Getalbegrip · Plaatswaarde",
+    "visualType": "calculationSteps",
+    "stepCount": 7,
+    "learnerHash": "fd5036aeec0c694da9fa0d7737feb3b3a6e535a5ca92b965353abb0ff815c31e"
+  },
+  "M6-AS-001": {
+    "hash": "5e6474d77e7163588f012fce16ee6d879e801a27c82d4e0944b47a12bd87368b",
+    "core": {
+      "values": {
+        "authored": "**430 + 260 = 690**"
+      },
+      "question": {
+        "answer": 690,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "690"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 2,
+    "reportLabel": "Optellen · Honderdtallen en tientallen",
+    "visualType": "calculationSteps",
+    "stepCount": 6,
+    "learnerHash": "2e15007e40f44627294350d4a637e59f4b4633fefce2e83c71a0a1a95d1d2bba"
+  },
+  "M6-AS-002": {
+    "hash": "edf258eb3766b905dcf6b30f699b620056dfb2ff9f1763d22b0db6013bf1c458",
+    "core": {
+      "values": {
+        "authored": "**1.642 − 1.633 = 9**"
+      },
+      "question": {
+        "answer": 9,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "9"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Aftrekken · Verschil bepalen",
+    "visualType": "numberLine",
+    "stepCount": 6,
+    "learnerHash": "054366ad4aa6974382017eab64f24dd6f121779a805026e4bd7dd7d4e1a310e8"
+  },
+  "M6-AS-003": {
+    "hash": "7f9ad236a23a759f12d01bc8cf0bcb4694f0966fc18650b7e74237ea25907a59",
+    "core": {
+      "values": {
+        "authored": "**3.760 + ? = 4.000**"
+      },
+      "question": {
+        "answer": 240,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "240"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Optellen · Aanvullen tot rond getal",
+    "visualType": "numberLine",
+    "stepCount": 6,
+    "learnerHash": "997a53566d1bc3529fa6ed8bcba6d6fd304c196762b6dc11e62dea85ed9f4d34"
+  },
+  "M6-AS-004": {
+    "hash": "0c237a89519b3e119e775cf9942f27d5c0546214db64910accdfe9bb589534b1",
+    "core": {
+      "values": {
+        "authored": "**728 + 742 = 1.470**"
+      },
+      "question": {
+        "answer": 1470,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "1470",
+            "1.470",
+            "1 470"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Optellen · Hoeveelheden samenvoegen",
+    "visualType": "calculationSteps",
+    "stepCount": 8,
+    "learnerHash": "6df817d826e249efb29d90f919f3c19a5914a06751ffd9b3c447f209aba0fd3b"
+  },
+  "M6-AS-005": {
+    "hash": "d9bf127196a3dc899fdceaa290e15cfb5e08721da9c8285fb144ad652311434b",
+    "core": {
+      "values": {
+        "authored": "**468 + 257 = 725**"
+      },
+      "question": {
+        "answer": 725,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "725"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Optellen · Over honderdtallen heen",
+    "visualType": "calculationSteps",
+    "stepCount": 8,
+    "learnerHash": "32ec3585e7475dd6336c4ebef42d3e2eb1379a14612f1a13098ab4faaa10b336"
+  },
+  "M6-AS-006": {
+    "hash": "951d5aa8655a6865fe250f681a036ae5c5a29eea444103a1dae6b11ea7ce4e2f",
+    "core": {
+      "values": {
+        "authored": "**624 − 178 = 446**"
+      },
+      "question": {
+        "answer": 446,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "446"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Aftrekken · Over honderdtallen heen",
+    "visualType": "calculationSteps",
+    "stepCount": 8,
+    "learnerHash": "537be65c756d8e830fac118a38bcb4a87d18468322665ba81e8780e30e99130d"
+  },
+  "M6-AS-007": {
+    "hash": "4142a866ccf0b288ea8fdba32d2010e86d6d55b2dfe9fcd5e1a706fbb936058b",
+    "core": {
+      "values": {
+        "authored": "**1.836 + 475 = 2.311**"
+      },
+      "question": {
+        "answer": 2311,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "2311",
+            "2.311",
+            "2 311"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 2,
+    "reportLabel": "Optellen · Duizendtallen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "24ebb8b7f43018cd11d490a4a2fd1c21ea55dc2c961a40cfb2c7a04d21c43520"
+  },
+  "M6-AS-008": {
+    "hash": "8352a490397fa05b0d51dbb582dedb66b8c1a73521904d29ff00056e3a1eab30",
+    "core": {
+      "values": {
+        "authored": "**3.203 − 1.487 = 1.716**"
+      },
+      "question": {
+        "answer": 1716,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "1716",
+            "1.716",
+            "1 716"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Aftrekken · Duizendtallen",
+    "visualType": "calculationSteps",
+    "stepCount": 9,
+    "learnerHash": "f0ed6c60c2ba43470e3f7028dad2b3b8e7bbbaec25f998accd456406f4c96332"
+  },
+  "M6-MD-001": {
+    "hash": "858c285592eef7fac283417c116ca19527320a9a442bef57c9a9feb1e3ac35b8",
+    "core": {
+      "values": {
+        "authored": "**6 × 24 = 144**"
+      },
+      "question": {
+        "answer": 144,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "144"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Vermenigvuldigen · Tientallen en eenheden splitsen",
+    "visualType": "calculationSteps",
+    "stepCount": 6,
+    "learnerHash": "6b18056ea6f37b993229284fec5ce79c265659a804360c2588e3c4fd471b48cc"
+  },
+  "M6-MD-002": {
+    "hash": "710cdb42cc903ff75088f45638045eb1d20f1b684926cdd71ec362c8ed6aaef8",
+    "core": {
+      "values": {
+        "authored": "**160 ÷ 16 = 10 groepen**"
+      },
+      "question": {
+        "answer": 10,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "10"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Delen · Groepjes maken",
+    "visualType": "calculationSteps",
+    "stepCount": 6,
+    "learnerHash": "dd861523824a749601cd81f87acfdf5c914a9f86075d5a2c1b6a67f72fbf4b8d"
+  },
+  "M6-MD-003": {
+    "hash": "7234ad60c5fbf6258052886e053e841f52c91edc25fd959d63a9bb8348953e75",
+    "core": {
+      "values": {
+        "authored": "**20 × 18 = 360**"
+      },
+      "question": {
+        "answer": 360,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "360"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Vermenigvuldigen · Veel gelijke groepen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "35b323129ef2d61b77530af94f77430bab367775450f4990dd45a85e2cf68aad"
+  },
+  "M6-MD-004": {
+    "hash": "cb626d18ac9527201768594767c889b2b197798394cb78e906c82dfb878e8919",
+    "core": {
+      "values": {
+        "authored": "**84 ÷ 7 = 12**"
+      },
+      "question": {
+        "answer": 12,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "12"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Delen · Gelijk verdelen",
+    "visualType": "calculationSteps",
+    "stepCount": 9,
+    "learnerHash": "449fb4a9182f1bf19611b51423deae512e0ddc5966213121543da34923a8281e"
+  },
+  "M6-MD-005": {
+    "hash": "8e34375474e3430899392fa55a40009b3df600327832006e7d9f40a3d688cebc",
+    "core": {
+      "values": {
+        "authored": "**7 × 40 = 280**"
+      },
+      "question": {
+        "answer": 280,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "280"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Vermenigvuldigen · Tientallen",
+    "visualType": "calculationSteps",
+    "stepCount": 7,
+    "learnerHash": "62984a85831786e48429045b9a530cfcfd4ac248f7e60b0c9f69dbbf13b57caf"
+  },
+  "M6-MD-006": {
+    "hash": "72a9675e027787cb28f2061eb16b6dffc2549d7738c1e88bb6db854afddc570d",
+    "core": {
+      "values": {
+        "authored": "**168 ÷ 7 = 24**"
+      },
+      "question": {
+        "answer": 24,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "24"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Delen · Grotere deelsom",
+    "visualType": "calculationSteps",
+    "stepCount": 6,
+    "learnerHash": "b47a568e357c19e3c8840cd7fc6f613e2dfac64a4ce3b224f892ff8b09ac54cd"
+  },
+  "M6-MD-007": {
+    "hash": "ae6336fd7e286aac07c2c6635a0e9628e16db979efec2ba7a6ca648548f37602",
+    "core": {
+      "values": {
+        "authored": "**8 × 38 = 304**"
+      },
+      "question": {
+        "answer": 304,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "304"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Vermenigvuldigen · Grotere keersom",
+    "visualType": "calculationSteps",
+    "stepCount": 6,
+    "learnerHash": "1441f8d1eae6cc77c1aaef8e34fd70c5c1fa7495d4d6d40fe7a7f2d7fdc4da01"
+  },
+  "M6-MD-008": {
+    "hash": "eb937f4028ec8d44650784b8f9291ffc56d9a493359609a5d312ae9c11d64035",
+    "core": {
+      "values": {
+        "authored": "**400 ÷ 40 = 10**"
+      },
+      "question": {
+        "answer": 10,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "10"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 2,
+    "reportLabel": "Delen · Aantal groepen bepalen",
+    "visualType": "calculationSteps",
+    "stepCount": 8,
+    "learnerHash": "bf61f95bb5677c2411f75adcf8be34dde1f2b06de2659b4ac8b373dce1f1597b"
+  },
+  "M6-MD-009": {
+    "hash": "6ff8b06ed13faa11178c6b48bcc22f1fbc9b3783f3e4b653f0b04eb1c0839f59",
+    "core": {
+      "values": {
+        "authored": "**29 items, maximaal 6 per doos → 5 dozen nodig**"
+      },
+      "question": {
+        "answer": 5,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "5"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 2,
+    "reportLabel": "Delen · Rest betekenis geven",
+    "visualType": "calculationSteps",
+    "stepCount": 9,
+    "learnerHash": "6fd40bfdc277d36aaef9019244fb2a71c7deee7ceb740163d992be06dacf7bfa"
+  },
+  "M6-MD-010": {
+    "hash": "339b7eed250cdba5a4eab24dff348dc3cc8a856acd37e11bcdf34aedb20d47bc",
+    "core": {
+      "values": {
+        "authored": "**7 groepen × 6 rijen × 8 items = 336**"
+      },
+      "question": {
+        "answer": 336,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "336"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 2,
+    "reportLabel": "Vermenigvuldigen · Meerstaps context",
+    "visualType": "calculationSteps",
+    "stepCount": 11,
+    "learnerHash": "1d3a76d49e7410eeaf21c752c7a78fc02f38b3a16e93cad67105acea83259fed"
+  },
+  "M6-FR-001": {
+    "hash": "8f235c86b00f8d6bde5934d727b1c5e7eca2988e4cf723bb514e3e274dc64242",
+    "core": {
+      "values": {
+        "authored": "**3 van 8 gelijke delen gekleurd → 3/8**"
+      },
+      "question": {
+        "answer": "3/8",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "3/8",
+          "5/8",
+          "3/5",
+          "8/3"
+        ],
+        "choiceParts": {
+          "3/8": [
+            {
+              "numerator": 3,
+              "denominator": 8
+            }
+          ],
+          "5/8": [
+            {
+              "numerator": 5,
+              "denominator": 8
+            }
+          ],
+          "3/5": [
+            {
+              "numerator": 3,
+              "denominator": 5
+            }
+          ],
+          "8/3": [
+            {
+              "numerator": 8,
+              "denominator": 3
+            }
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Breuken · Breuk herkennen",
+    "visualType": "fractionStrip",
+    "stepCount": 4,
+    "learnerHash": "7385d1011416b08c2f242789f57e32550262062d03aa401d03b65b6187257f40"
+  },
+  "M6-FR-002": {
+    "hash": "3f019f61cbdb976706af8ad529b1ebf31f6541fc15f83278410e991215fef8f1",
+    "core": {
+      "values": {
+        "authored": "**1/2 van 18 = 9**"
+      },
+      "question": {
+        "answer": 9,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "9"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Breuken · Helft van een hoeveelheid",
+    "visualType": "fractionStrip",
+    "stepCount": 4,
+    "learnerHash": "e84bf57b7d7620969fa3c26e82f314c71a6221d8d3ff9ae98d5d0d8d21c2f1b2"
+  },
+  "M6-FR-003": {
+    "hash": "3aedb6a2b81298d8c2d11649224ec366b8d89ece25539c9a7bb42b78e71b970b",
+    "core": {
+      "values": {
+        "authored": "**1/4 van 28 = 7**"
+      },
+      "question": {
+        "answer": 7,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "7"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Breuken · Kwart van een hoeveelheid",
+    "visualType": "fractionStrip",
+    "stepCount": 4,
+    "learnerHash": "3cd66ec15da763b7bab3d3c382ff5370942488934ad685866134b48d1378c669"
+  },
+  "M6-FR-004": {
+    "hash": "956a1630573d76d1db347056d83f70b47e9ba4a67b865d6a43fc316a3b570e84",
+    "core": {
+      "values": {
+        "authored": "**2 eenheden → 12 items; 4 eenheden → 24 items**"
+      },
+      "question": {
+        "answer": 24,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "24"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 2,
+    "reportLabel": "Verhoudingen · Opschalen",
+    "visualType": "calculationSteps",
+    "stepCount": 4,
+    "learnerHash": "8130b6d43be2e43671b26937e711ad9532aaab2bac68e6ce68b140a2a5fb5d3f"
+  },
+  "M6-FR-005": {
+    "hash": "cd6503bbfffe272c8eb173924bab76b2870a593126231171c67226086a6a89c3",
+    "core": {
+      "values": {
+        "authored": "**3 gelijke groepen → 18 items; 1 groep → 6 items**"
+      },
+      "question": {
+        "answer": 6,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "6"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 2,
+    "reportLabel": "Verhoudingen · Eén groep bepalen",
+    "visualType": "calculationSteps",
+    "stepCount": 4,
+    "learnerHash": "42e22c3d6f34f9c865612da12930afb8e54de15c3dff312ddb2fd75a95d704f7"
+  },
+  "M6-FR-006": {
+    "hash": "15c7d69bc63eb1f54f2eab2f46c308e4e765807217b95db58690c3c5c795c363",
+    "core": {
+      "values": {
+        "authored": "**2/3 van 60 = 40**"
+      },
+      "question": {
+        "answer": 40,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "40"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Breuken · Meerdere delen van een hoeveelheid",
+    "visualType": "fractionStrip",
+    "stepCount": 5,
+    "learnerHash": "c9186f652d889d807900a89de96857506f60616b9d2baab66b020ce01a3bf77d"
+  },
+  "M6-FR-007": {
+    "hash": "ce0a19f05c947712636c770233a4e951bd56b35e7f037a71a70d23671aeb9f35",
+    "core": {
+      "values": {
+        "authored": "**12 is 1/3 van het geheel → geheel = 36**"
+      },
+      "question": {
+        "answer": 36,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "36"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Breuken · Geheel terugvinden",
+    "visualType": "fractionStrip",
+    "stepCount": 5,
+    "learnerHash": "77448169c73bc70df6c9c73fc1f023268ec16be7e7a2b7647f251b69c4c67c11"
+  },
+  "M6-FR-008": {
+    "hash": "482b57694f2a863c14ac0af7fa097710f6ce44af7693a8b7d46fc59d5ecf96dc",
+    "core": {
+      "values": {
+        "authored": "**3 eenheden → 450 gram; 1 → 150 gram; 7 → 1.050 gram**"
+      },
+      "question": {
+        "answer": 1050,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "1050",
+            "1.050",
+            "1 050"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 2,
+    "reportLabel": "Verhoudingen · Via één eenheid opschalen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "7d51309fe3e1fadfce90cc0a5f879aea74593dc49be1ec2d1a28ba8515c636e9"
+  },
+  "M6-FR-009": {
+    "hash": "3b46c5de9185df9e998e6da77385e9cd7ea7d3653de198480ac201683b95df14",
+    "core": {
+      "values": {
+        "authored": "**14 is 2/5 van het geheel → 1/5 = 7 → geheel = 35**"
+      },
+      "question": {
+        "answer": 35,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "35"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Breuken · Geheel vanuit meerdere breukdelen",
+    "visualType": "fractionStrip",
+    "stepCount": 6,
+    "learnerHash": "c81176482f6415597238ba3bf1916003a7d2b719982049714c7e91f97f95376c"
+  },
+  "M6-FR-010": {
+    "hash": "de4042518179f54625ce6e154a7d0f2bf5e015e2d6ae9e9c1c1a9f77b13c9867",
+    "core": {
+      "values": {
+        "authored": "**4 eenheden → 28 items; 1 → 7 items; 9 → 63 items**"
+      },
+      "question": {
+        "answer": 63,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "63"
+          ]
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 2,
+    "reportLabel": "Verhoudingen · Meerstaps opschalen",
+    "visualType": "calculationSteps",
+    "stepCount": 5,
+    "learnerHash": "99c4f0ace8b35066edcede2da16a5a87b0d7ca2f15afacfbd91e81f81ac33ceb"
+  },
+  "M6-MO-001": {
+    "hash": "d03a06a910a56654ec8e1c40731ceeedff0c0672ce034b3266ede097bbd53241",
+    "core": {
+      "values": {
+        "authored": "**€20 + €5 + €2 + €0,50 = €27,50**"
+      },
+      "question": {
+        "answer": 2750,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "27,50"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Geld · Bedrag tellen",
+    "visualType": "currency",
+    "stepCount": 6,
+    "learnerHash": "c5dadcabbd40d06476d08f5635df86e6cb2e4eeb9990cbfdddd4932fea61ed79"
+  },
+  "M6-MO-002": {
+    "hash": "304058f3866e8977c3057c734a2631030eb0d744c6544b073338403b18121d4c",
+    "core": {
+      "values": {
+        "authored": "**€10 + €2 + €1 + €0,50 + €0,10 + €0,05 = €13,65**"
+      },
+      "question": {
+        "answer": 1365,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "13,65"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Geld · Euro’s en centen tellen",
+    "visualType": "currency",
+    "stepCount": 6,
+    "learnerHash": "fa624db436ce5a97308a12c9e81eeb149e4fe9a82a704c623da4c7d3d63af624"
+  },
+  "M6-MO-003": {
+    "hash": "b7be04cae70c2df7f2a9286c3a62cdbf6e2937d190b9c42239ce9da654688e5a",
+    "core": {
+      "values": {
+        "authored": "**Prijs €3,20; betaald €4,00 → wisselgeld €0,80**"
+      },
+      "question": {
+        "answer": 80,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "0,80"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Geld · Wisselgeld",
+    "visualType": "moneyReceipt",
+    "stepCount": 6,
+    "learnerHash": "9ad12101a085a2f33a353251a1c35f68e6d99683694c0d499c5cfbe389226b92"
+  },
+  "M6-MO-004": {
+    "hash": "859001e9fab10f9a5f4cc2158f2fc4ef787a691c0cd0620314f18fd334b80439",
+    "core": {
+      "values": {
+        "authored": "**Stel exact €8,50 samen**"
+      },
+      "question": {
+        "answer": 850,
+        "answerSpec": {
+          "type": "currency",
+          "mode": "compose",
+          "denominations": [
+            500,
+            200,
+            100,
+            50
+          ],
+          "targetCents": 850
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 2,
+    "reportLabel": "Geld · Bedrag samenstellen",
+    "visualType": "currency",
+    "stepCount": 8,
+    "learnerHash": "f9509c3dbd8a8923a57bea77157c9fbf1c07cac4deb79e40acebec06230134ea"
+  },
+  "M6-MO-005": {
+    "hash": "c8a46a4d2731e9fff34f44be3192a246406f4b8974bd3b2d8610a0f0e180441a",
+    "core": {
+      "values": {
+        "authored": "**Stel exact €24,50 samen**"
+      },
+      "question": {
+        "answer": 2450,
+        "answerSpec": {
+          "type": "currency",
+          "mode": "compose",
+          "denominations": [
+            2000,
+            1000,
+            500,
+            200,
+            100,
+            50
+          ],
+          "targetCents": 2450
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 2,
+    "reportLabel": "Geld · Bedrag samenstellen",
+    "visualType": "currency",
+    "stepCount": 7,
+    "learnerHash": "c827a5db707fb2057a6f824afdad1229bda76611b481be9c6a06813974fcc6c6"
+  },
+  "M6-MO-006": {
+    "hash": "76f2cd13ff4aeee1966b536a624b51a525dd1da1d06b63a1ad9d52113f46151a",
+    "core": {
+      "values": {
+        "authored": "**Prijs €12,40; betaald €20,00 → wisselgeld €7,60**"
+      },
+      "question": {
+        "answer": 760,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "7,60"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Geld · Wisselgeld berekenen",
+    "visualType": "moneyReceipt",
+    "stepCount": 6,
+    "learnerHash": "2587d569ff455fa9b3cd05750cba47b29dd0f03aa5fdfd5d0b9f58dac198d647"
+  },
+  "M6-MO-007": {
+    "hash": "26d7f9c57f0266e697c6539a139e7c093ebc6cce67b1c8f129700e243cdd40e3",
+    "core": {
+      "values": {
+        "authored": "**€7,35 + €4,80 = €12,15; betaald €20,00 → wisselgeld €7,85**"
+      },
+      "question": {
+        "answer": 785,
+        "answerSpec": {
+          "type": "euro",
+          "allowedForms": [
+            "7,85"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Geld · Meerstaps betalen",
+    "visualType": "moneyReceipt",
+    "stepCount": 8,
+    "learnerHash": "d2441c10c51ea1e68806533de2c6e6d8d1fcb1e37b06b9548eef61858b87c3a2"
+  },
+  "M6-MO-008": {
+    "hash": "16ead9d40830cff8ec490e8c0f1d7fc3559499d18d399a43039c4e8a72e86fe1",
+    "core": {
+      "values": {
+        "authored": "**Prijs €36,75; betaald €50,00 → wisselgeld €13,25**"
+      },
+      "question": {
+        "answer": 1325,
+        "answerSpec": {
+          "type": "currency",
+          "mode": "change",
+          "denominations": [
+            1000,
+            500,
+            200,
+            100,
+            50,
+            10,
+            5
+          ],
+          "priceCents": 3675,
+          "paidCents": 5000
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Geld · Wisselgeld samenstellen",
+    "visualType": "currency",
+    "stepCount": 9,
+    "learnerHash": "3a3833b461834d1d52589982ade058c66aa1b3ad684aa8f0ba444876d860629d"
+  },
+  "M6-TI-001": {
+    "hash": "65fd95097ce49d030407b2b9edc27d3b51fcb22f7732927ec7f5ca21ccc45068",
+    "core": {
+      "values": {
+        "authored": "**Analoge klok 08:15 → kwart over acht**"
+      },
+      "question": {
+        "answer": "kwart over acht",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "kwart over acht",
+          "kwart voor acht",
+          "half negen",
+          "vijf over acht"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Analoge klok lezen",
+    "visualType": "analogueClock",
+    "stepCount": 6,
+    "learnerHash": "8ab4324330855a881c60dc2b9ebcd299964eb4d62e5b0052bf3bc6596083dd17"
+  },
+  "M6-TI-002": {
+    "hash": "4eaf5e8c93f622e760c014984b54bbed2bde837351e3bfda9df6c4d7816494d5",
+    "core": {
+      "values": {
+        "authored": "**Analoge klok 16:30 → half vijf**"
+      },
+      "question": {
+        "answer": "half vijf",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "half vier",
+          "half vijf",
+          "vier uur",
+          "vijf uur"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Analoge klok lezen",
+    "visualType": "analogueClock",
+    "stepCount": 5,
+    "learnerHash": "9cf556e716ee6059690e8c6b66caccc1f092d7e0aa15acdeac2411f56ab6f965"
+  },
+  "M6-TI-003": {
+    "hash": "d58a82a28a6b60548f92a3010fa8c72c8ec155952c3a1b898021ddf8b38e21f6",
+    "core": {
+      "values": {
+        "authored": "**Analoge klok 10:25 → vijf voor half elf**"
+      },
+      "question": {
+        "answer": "vijf voor half elf",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "vijf over half elf",
+          "vijf voor half elf",
+          "vijf voor tien",
+          "half elf"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Analoge klok lezen",
+    "visualType": "analogueClock",
+    "stepCount": 5,
+    "learnerHash": "ba3c5a1be57e26507f34a58af4a5e161c21bec5d324ec21adb16f52356e932a9"
+  },
+  "M6-TI-004": {
+    "hash": "2934bbb943c95a6afc8546ea7382e6d09a653c82ab4ffe0f6361a6c3ae7caa66",
+    "core": {
+      "values": {
+        "authored": "**Analoge klok 13:40 → tien over half twee**"
+      },
+      "question": {
+        "answer": "tien over half twee",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "tien voor half twee",
+          "tien over half twee",
+          "twintig voor één",
+          "tien over één"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Analoge klok lezen",
+    "visualType": "analogueClock",
+    "stepCount": 5,
+    "learnerHash": "6228d2efb2c54d9eb52597cefcf6b73b892434f14bd3253942a3419fa5670a6f"
+  },
+  "M6-TI-005": {
+    "hash": "44e4a87b44390951a7afa7bc5f6c87cc3f03afa4d55afbe7f9c3b59e88979762",
+    "core": {
+      "values": {
+        "authored": "**14:15 → kwart over twee**"
+      },
+      "question": {
+        "answer": "kwart over twee",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "kwart over twee",
+          "kwart voor twee",
+          "half drie",
+          "kwart over drie"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Digitale klok lezen",
+    "visualType": "digitalClock",
+    "stepCount": 5,
+    "learnerHash": "aa505835a274db05ed76e8769354f17f2dbec7b6aad577b44c9c09def2379bca"
+  },
+  "M6-TI-006": {
+    "hash": "85a02d8fa1e5e43ac398b957c3e8847e3ae8fc186c3af42efa0058630cf659fe",
+    "core": {
+      "values": {
+        "authored": "**09:30 → half tien**"
+      },
+      "question": {
+        "answer": "half tien",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "half negen",
+          "half tien",
+          "negen uur",
+          "tien voor half tien"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Digitale klok lezen",
+    "visualType": "digitalClock",
+    "stepCount": 5,
+    "learnerHash": "b99bc903d424d1c48ac929209b01739555b4b1aa0ea6b2c498c7935aac76f3ce"
+  },
+  "M6-TI-007": {
+    "hash": "50269e3139ad450451bfa88f0a43b9cbe933941a7dc9dc38bc193fec2d704a3b",
+    "core": {
+      "values": {
+        "authored": "**22:25 → vijf voor half elf**"
+      },
+      "question": {
+        "answer": "vijf voor half elf",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "vijf over half elf",
+          "vijf voor half elf",
+          "vijf voor tien",
+          "vijf over tien"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Digitale klok lezen",
+    "visualType": "digitalClock",
+    "stepCount": 4,
+    "learnerHash": "9b876c6fb66d0954127041359bf77bf34e988742e88c5abf6111da1eac53d39a"
+  },
+  "M6-TI-008": {
+    "hash": "0af83a6b735464142fb789fc4d716735008b9416b0e82cc7148de3fd2f05b9e8",
+    "core": {
+      "values": {
+        "authored": "**17:40 → tien over half zes**"
+      },
+      "question": {
+        "answer": "tien over half zes",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "tien voor half zes",
+          "tien over half zes",
+          "twintig voor vijf",
+          "tien over vijf"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Digitale klok lezen",
+    "visualType": "digitalClock",
+    "stepCount": 4,
+    "learnerHash": "53a6801c8cd90d09d0cb5251c025b1da27b8ed52f3a09160f61d3e4c79136c1b"
+  },
+  "M6-TI-009": {
+    "hash": "2ab51d51aca4b5877e214519d21efa68b3eab3627878e61e1f6c5dab2bf93c39",
+    "core": {
+      "values": {
+        "authored": "**10:10 → 10:35 = 25 minuten**"
+      },
+      "question": {
+        "answer": 25,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "25"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Tijdsduur",
+    "visualType": "timeLine",
+    "stepCount": 5,
+    "learnerHash": "35d7af1be9472edc5e2ec0cd20e6f3318c76932322fa0c50777957f24aa25895"
+  },
+  "M6-TI-010": {
+    "hash": "6112c2105b2ccee983bb4e3fd091c5b94dc0aa854ce83229f625798e761cc701",
+    "core": {
+      "values": {
+        "authored": "**09:20 → 09:50 = 30 minuten**"
+      },
+      "question": {
+        "answer": 30,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "30"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Tijdsduur",
+    "visualType": "timeLine",
+    "stepCount": 4,
+    "learnerHash": "e6b7798d7594c68ed3499bd629a6014041586d6cfb45ce7b9f674369ac33a98f"
+  },
+  "M6-TI-011": {
+    "hash": "0ffd75aff9c9cb66487c87a4269bb314093c11cb27afa3b9f2c88ec37b66ec34",
+    "core": {
+      "values": {
+        "authored": "**14:31 → 15:20 = 49 minuten**"
+      },
+      "question": {
+        "answer": 49,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "49"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Tijdsduur over het uur",
+    "visualType": "timeLine",
+    "stepCount": 8,
+    "learnerHash": "061438afc84e3cb784448e8ce7a7440dc4cb8fea296226f479dc220fd09edfc3"
+  },
+  "M6-TI-012": {
+    "hash": "2293062193d145504460def119f38ad3c10574057a05a4142afd49a979610454",
+    "core": {
+      "values": {
+        "authored": "**15:42 → 16:39 = 57 minuten**"
+      },
+      "question": {
+        "answer": 57,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "57"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Tijdsduur over het uur",
+    "visualType": "timeLine",
+    "stepCount": 5,
+    "learnerHash": "c785c575fbda06b0fe5e8809904cc5e7e23f7c45bda91ff097a3e6405de2aac2"
+  },
+  "M6-TI-013": {
+    "hash": "015ad5335123c01ec9b75f672902633c968bb644b6f84f0e14c18498608f7d8a",
+    "core": {
+      "values": {
+        "authored": "**Start 13:20 + 30 minuten = 13:50**"
+      },
+      "question": {
+        "answer": "13:50",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "13:40",
+          "13:50",
+          "14:00",
+          "14:20"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Eindtijd bepalen",
+    "visualType": "timeLine",
+    "stepCount": 6,
+    "learnerHash": "b9b751394aedfeb6f81bb46c50c04845b8ef90f72943a2fa1bd270e1cb009bc5"
+  },
+  "M6-TI-014": {
+    "hash": "f0c9ed3d43bb353809308bf3c1c01978e4f723557142783a435e81da501316f9",
+    "core": {
+      "values": {
+        "authored": "**Start 13:50 + 1 uur 25 minuten = 15:15**"
+      },
+      "question": {
+        "answer": "15:15",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "14:15",
+          "14:55",
+          "15:05",
+          "15:15"
+        ]
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Eindtijd bepalen",
+    "visualType": "timeLine",
+    "stepCount": 7,
+    "learnerHash": "b79392ac3933ecb5ed9d74b600d00047ed6e12d387a62b0fdd77180cc11ab282"
+  },
+  "M6-TI-015": {
+    "hash": "07ce2000aee81e87ab36a99fa3382b77ccb8cc816b412a59d75591187afe9f8f",
+    "core": {
+      "values": {
+        "authored": "**Einde 15:10; duur 35 minuten → start 14:35**"
+      },
+      "question": {
+        "answer": "14:35",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "14:25",
+          "14:35",
+          "14:45",
+          "15:35"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Begintijd bepalen",
+    "visualType": "timeLine",
+    "stepCount": 6,
+    "learnerHash": "09612630d1738bdedd78a01ca023352e864a83aa32f7a7fd951b465f930352e4"
+  },
+  "M6-TI-016": {
+    "hash": "98e0b02c7a3ff4416c23b03e752eb7f5b68d1974129141b227f91cd9f8550831",
+    "core": {
+      "values": {
+        "authored": "**Einde 16:20; duur 1 uur 35 minuten → start 14:45**"
+      },
+      "question": {
+        "answer": "14:45",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "14:35",
+          "14:45",
+          "15:05",
+          "15:45"
+        ]
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Begintijd bepalen",
+    "visualType": "timeLine",
+    "stepCount": 7,
+    "learnerHash": "cb6c84d3bdf2eacb8e54ce46a9a11ecb9d1fb29ce779ebda726ea7f10b1b7c19"
+  },
+  "M6-TI-017": {
+    "hash": "46f379e19dcc986babc7dd003f981fe532623fdd02df44315e4eeb84a989f174",
+    "core": {
+      "values": {
+        "authored": "**13:42 → 14:05 = 23 minuten**"
+      },
+      "question": {
+        "answer": 23,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "23"
+          ],
+          "unit": "minuten"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Wachten tot een tijdstip",
+    "visualType": "timeLine",
+    "stepCount": 5,
+    "learnerHash": "5d4f981c810d8c5cbc3ae7b287207f50cfee8998b46f6d95a79a3329c0ec14bf"
+  },
+  "M6-TI-018": {
+    "hash": "ee98dbce8ca82f9dacddd8647df4768d250cfab2f31ba458ba5a746234364963",
+    "core": {
+      "values": {
+        "authored": "**Start 10:35 + 45 min + 20 min pauze + 55 min = 12:35**"
+      },
+      "question": {
+        "answer": "12:35",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "12:15",
+          "12:25",
+          "12:35",
+          "12:45"
+        ]
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Tijd · Meerstaps planning",
+    "visualType": "timeLine",
+    "stepCount": 9,
+    "learnerHash": "dc97a89cc442b2572fcdcf5eff49d301af1e5cfcd0ff99d12ee4c98845daa03a"
+  },
+  "M6-ME-001": {
+    "hash": "dc52a71a3cc037853e2f6f00d32bb6bb786182414b755a52b993a362a47a4976",
+    "core": {
+      "values": {
+        "authored": "**300 cm = 3 m**"
+      },
+      "question": {
+        "answer": 3,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "3"
+          ],
+          "unit": "m"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Meten · Centimeter naar meter",
+    "visualType": "measurement",
+    "stepCount": 4,
+    "learnerHash": "93e267b41be92f4aac0fa5ff5f5c741957edf70fc0b1576932db9388e55615ee"
+  },
+  "M6-ME-002": {
+    "hash": "73c829c651c46291ee1d97e20f89cabfaeb046daa0acb5ff92dbf373055e3fc6",
+    "core": {
+      "values": {
+        "authored": "**18 m = 180 dm**"
+      },
+      "question": {
+        "answer": 180,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "180"
+          ],
+          "unit": "dm"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Meten · Meter naar decimeter",
+    "visualType": "measurement",
+    "stepCount": 4,
+    "learnerHash": "90956c003e07f13e435a882ab19c46e6ca456dcac5138d572bf7d0cb27243730"
+  },
+  "M6-ME-003": {
+    "hash": "58294f82a03e03dc7e035ddd3f7061837ec47844b7b97a94399d0004c31a6a7a",
+    "core": {
+      "values": {
+        "authored": "**1 m = 1.000 mm**"
+      },
+      "question": {
+        "answer": "1.000 mm",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "10 mm",
+          "100 mm",
+          "1.000 mm",
+          "10.000 mm"
+        ]
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Meten · Meter naar millimeter",
+    "visualType": "measurement",
+    "stepCount": 5,
+    "learnerHash": "e0d21b80d2c2c40ded2e4409a8ba0cc1d9b888c9c3a11a8272323a34ca3db018"
+  },
+  "M6-ME-004": {
+    "hash": "2c81374a72207d89f366c60fa12a312969a9e0474cb7c74b46a85c0532ac0935",
+    "core": {
+      "values": {
+        "authored": "**500 g + 500 g = 1 kg**"
+      },
+      "question": {
+        "answer": 1,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "1"
+          ],
+          "unit": "kg"
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 2,
+    "reportLabel": "Meten · Gram en kilogram",
+    "visualType": "measurement",
+    "stepCount": 4,
+    "learnerHash": "a764307a75a1aae56bd24b4d3a18a715895171979d3a3475a8eeb5800e02ae14"
+  },
+  "M6-ME-005": {
+    "hash": "24a9fcb38b095f1e06dd4b3b5dff999ea433429ae19c8110bc26414138daf875",
+    "core": {
+      "values": {
+        "authored": "**2 m 35 cm = 235 cm**"
+      },
+      "question": {
+        "answer": 235,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "235"
+          ],
+          "unit": "cm"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Meten · Meter en centimeter combineren",
+    "visualType": "measurement",
+    "stepCount": 6,
+    "learnerHash": "e8921c7294b2de577cea245a166cce4f3ae171b4725fc16c53d052be1ac78d9f"
+  },
+  "M6-ME-006": {
+    "hash": "cc85db3887dc8f167933baa7fc3283aae1b32a8d9894e2bd00cc260b0bd1fffe",
+    "core": {
+      "values": {
+        "authored": "**6 × 250 g = 1.500 g**"
+      },
+      "question": {
+        "answer": 1500,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "1500",
+            "1.500",
+            "1 500"
+          ],
+          "grouping": true,
+          "unit": "g"
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 2,
+    "reportLabel": "Meten · Gewichten samenrekenen",
+    "visualType": "measurement",
+    "stepCount": 6,
+    "learnerHash": "33f451fbaa30fa1bf916e75ebac9d10a94a4bafc56bfeb9a6a139a2b80cacc07"
+  },
+  "M6-ME-007": {
+    "hash": "f033ed17a239807c17a785b6c23cbb2b5cae0e7973523613abc089e77fe35723",
+    "core": {
+      "values": {
+        "authored": "**2 m 35 cm + 1 m 80 cm = 415 cm**"
+      },
+      "question": {
+        "answer": 415,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "415"
+          ],
+          "unit": "cm"
+        }
+      }
+    },
+    "difficulty": 3,
+    "contentVersion": 1,
+    "reportLabel": "Meten · Meerstaps lengte",
+    "visualType": "measurement",
+    "stepCount": 6,
+    "learnerHash": "2744735e64fbd7f44778941dabb680b4bdbb01c7ad3108336303ae03e92e298f"
+  },
+  "M6-DP-001": {
+    "hash": "89f1f4e390db62159592d818f9c32fc6eb1e1d681946a699947aaacf122ed53e",
+    "core": {
+      "values": {
+        "authored": "**2.360, 2.370, 2.380, ?, 2.400 → 2.390**"
+      },
+      "question": {
+        "answer": 2390,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "2390",
+            "2.390",
+            "2 390"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Patronen · Reeks met vaste stap",
+    "visualType": "numberLine",
+    "stepCount": 3,
+    "learnerHash": "3a64bf03f4d62ebb692b84f2779c5b30adf21c2acb32770079911df14e602c87"
+  },
+  "M6-DP-002": {
+    "hash": "3849cdfa26499253fbc432afdac66e7cb25ee3fd7349736804ad8c3df39dc674",
+    "core": {
+      "values": {
+        "authored": "**1.125, 1.150, 1.175, ?, 1.225 → 1.200**"
+      },
+      "question": {
+        "answer": 1200,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "1200"
+          ],
+          "grouping": true
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Patronen · Reeks met grotere stap",
+    "visualType": "numberLine",
+    "stepCount": 7,
+    "learnerHash": "1d7c212a79f2e227d5c7f427dda14268dbca2441059d0749c5eeeb836319108c"
+  },
+  "M6-DP-003": {
+    "hash": "43c8a7235fc219da172a9e2ac025c137599c3e5c1f019c4cd2ccbcc3de7024ef",
+    "core": {
+      "values": {
+        "authored": "Authored table:\n- Maandag: 18\n- Dinsdag: 24\n- Woensdag: 21\n- Donderdag: 27\n\nVraag naar woensdag → 21."
+      },
+      "question": {
+        "answer": 21,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "21"
+          ]
+        }
+      }
+    },
+    "difficulty": 1,
+    "contentVersion": 1,
+    "reportLabel": "Data · Tabel aflezen",
+    "visualType": "compactDataTable",
+    "stepCount": 3,
+    "learnerHash": "b12973643a54be740fa7fc4d7c623f561ca9ed92cf0bb7e6ae91a32c0ab2bf85"
+  },
+  "M6-DP-004": {
+    "hash": "0a842fb547c4f7c64f730c0fbec941996b482ba4d50859d2bc59a7b0c1b870a1",
+    "core": {
+      "values": {
+        "authored": "Authored table:\n- Route A: 138\n- Route B: 156\n- Route C: 149\n- Route D: 132\n\nVerschil B en D: **156 − 132 = 24**"
+      },
+      "question": {
+        "answer": 24,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "24"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Data · Waarden vergelijken",
+    "visualType": "compactDataTable",
+    "stepCount": 5,
+    "learnerHash": "dfed3b54c58c364c357552588273b16b172264b45716a17dc33543707bb3cc74"
+  },
+  "M6-DP-005": {
+    "hash": "6710b21bcd9821998cf8d174bc5abfbc82ef384b4158893bd7790fcf5aaa60c9",
+    "core": {
+      "values": {
+        "authored": "Authored ratio table:\n- 1 doos → 6 items\n- 2 dozen → 12\n- 3 dozen → 18\n- 5 dozen → ?\n\n**5 × 6 = 30**"
+      },
+      "question": {
+        "answer": 30,
+        "answerSpec": {
+          "type": "wholeNumber",
+          "allowedForms": [
+            "30"
+          ]
+        }
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Data · Verhoudingstabel",
+    "visualType": "compactDataTable",
+    "stepCount": 5,
+    "learnerHash": "8cea8505ea5a0f8d2c4541c5404babd482d6eaada73e35da11cf85a0d20fa48e"
+  },
+  "M6-DP-006": {
+    "hash": "e545082d78d65841e077ff859221d3a80c216370bd458968fdebbef8a18cc005",
+    "core": {
+      "values": {
+        "authored": "**20 → 25 (+5) → 35 (+10) → 50 (+15) → ? (+20) = 70**"
+      },
+      "question": {
+        "answer": "70",
+        "answerSpec": {
+          "type": "choice"
+        },
+        "choices": [
+          "60",
+          "65",
+          "70",
+          "75"
+        ]
+      }
+    },
+    "difficulty": 2,
+    "contentVersion": 1,
+    "reportLabel": "Patronen · Veranderende stap",
+    "visualType": "calculationSteps",
+    "stepCount": 10,
+    "learnerHash": "e7264d223c476998751dbd07d52c07e49fd478c589907452a2cb18c3da9446f8"
+  }
+}

@@ -107,8 +107,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
     },
     {
       "id": "chart-approach",
-      "x": 787,
-      "y": 574,
+      "x": 564,
+      "y": 602,
       "role": "approach"
     },
     {
@@ -118,14 +118,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
     },
     {
       "id": "porthole-approach",
-      "x": 1082,
-      "y": 591,
+      "x": 1025,
+      "y": 588,
       "role": "approach"
     },
     {
       "id": "desk-approach",
-      "x": 1513,
-      "y": 596,
+      "x": 1461,
+      "y": 593,
       "role": "approach"
     },
     {
@@ -290,7 +290,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Op de kapiteinskaart staan 8 routes met elk 10 koerspunten. Hoeveel koerspunten staan er in totaal?",
               "answer": 80,
-              "hintParameters": {"a":8,"b":10},
+              "hintParameters": {
+                "a": 8,
+                "b": 10
+              },
               "explanation": "8 × 10 = 80."
             },
             {
@@ -302,7 +305,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "3 × 4 = ?",
               "answer": 12,
-              "hintParameters": {"a":3,"b":4},
+              "hintParameters": {
+                "a": 3,
+                "b": 4
+              },
               "explanation": "3 × 4 = 12."
             }
           ]
@@ -325,7 +331,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 7,
                 8
               ],
-              "hintParameters": {"a":36,"b":6},
+              "hintParameters": {
+                "a": 36,
+                "b": 6
+              },
               "explanation": "36 : 6 = 6."
             },
             {
@@ -337,7 +346,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Op de kapiteinskaart staan 4 routes met elk 3 koerspunten. Hoeveel koerspunten staan er in totaal?",
               "answer": 12,
-              "hintParameters": {"a":4,"b":3},
+              "hintParameters": {
+                "a": 4,
+                "b": 3
+              },
               "explanation": "4 × 3 = 12."
             }
           ]
@@ -360,7 +372,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 10,
                 11
               ],
-              "hintParameters": {"a":63,"b":7},
+              "hintParameters": {
+                "a": 63,
+                "b": 7
+              },
               "explanation": "63 : 7 = 9."
             },
             {
@@ -378,7 +393,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 32,
                 36
               ],
-              "hintParameters": {"a":7,"b":4},
+              "hintParameters": {
+                "a": 7,
+                "b": 4
+              },
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -395,7 +413,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "5 × 9 = ?",
               "answer": 45,
-              "hintParameters": {"a":5,"b":9},
+              "hintParameters": {
+                "a": 5,
+                "b": 9
+              },
               "explanation": "5 × 9 = 45."
             },
             {
@@ -407,7 +428,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "3 × 6 = ?",
               "answer": 18,
-              "hintParameters": {"a":3,"b":6},
+              "hintParameters": {
+                "a": 3,
+                "b": 6
+              },
               "explanation": "3 × 6 = 18."
             }
           ]
@@ -431,7 +455,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Door het grote raam zwemmen 4 scholen met elk 6 vissen. Hoeveel vissen zijn dat samen?",
               "answer": 24,
-              "hintParameters": {"a":4,"b":6},
+              "hintParameters": {
+                "a": 4,
+                "b": 6
+              },
               "explanation": "4 × 6 = 24."
             },
             {
@@ -443,7 +470,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Door het grote raam zwemmen 42 vissen in 7 even grote scholen. Hoeveel vissen zitten in iedere school?",
               "answer": 6,
-              "hintParameters": {"a":42,"b":7},
+              "hintParameters": {
+                "a": 42,
+                "b": 7
+              },
               "explanation": "42 : 7 = 6."
             }
           ]
@@ -466,7 +496,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 20,
                 24
               ],
-              "hintParameters": {"a":4,"b":4},
+              "hintParameters": {
+                "a": 4,
+                "b": 4
+              },
               "explanation": "4 × 4 = 16."
             },
             {
@@ -484,7 +517,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 80,
                 88
               ],
-              "hintParameters": {"a":9,"b":8},
+              "hintParameters": {
+                "a": 9,
+                "b": 8
+              },
               "explanation": "9 × 8 = 72."
             }
           ]
@@ -501,7 +537,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "5 × 3 = ?",
               "answer": 15,
-              "hintParameters": {"a":5,"b":3},
+              "hintParameters": {
+                "a": 5,
+                "b": 3
+              },
               "explanation": "5 × 3 = 15."
             },
             {
@@ -513,7 +552,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "Door het grote raam zwemmen 36 vissen in 9 even grote scholen. Hoeveel vissen zitten in iedere school?",
               "answer": 4,
-              "hintParameters": {"a":36,"b":9},
+              "hintParameters": {
+                "a": 36,
+                "b": 9
+              },
               "explanation": "36 : 9 = 4."
             }
           ]
@@ -536,7 +578,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 10,
                 11
               ],
-              "hintParameters": {"a":45,"b":5},
+              "hintParameters": {
+                "a": 45,
+                "b": 5
+              },
               "explanation": "45 : 5 = 9."
             },
             {
@@ -548,7 +593,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "9 × 4 = ?",
               "answer": 36,
-              "hintParameters": {"a":9,"b":4},
+              "hintParameters": {
+                "a": 9,
+                "b": 4
+              },
               "explanation": "9 × 4 = 36."
             }
           ]
@@ -578,7 +626,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 3,
                 4
               ],
-              "hintParameters": {"a":8,"b":4},
+              "hintParameters": {
+                "a": 8,
+                "b": 4
+              },
               "explanation": "8 : 4 = 2."
             },
             {
@@ -596,7 +647,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 25,
                 30
               ],
-              "hintParameters": {"a":4,"b":5},
+              "hintParameters": {
+                "a": 4,
+                "b": 5
+              },
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -619,7 +673,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 7,
                 8
               ],
-              "hintParameters": {"a":36,"b":6},
+              "hintParameters": {
+                "a": 36,
+                "b": 6
+              },
               "explanation": "36 : 6 = 6."
             },
             {
@@ -637,7 +694,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 8,
                 9
               ],
-              "hintParameters": {"a":42,"b":6},
+              "hintParameters": {
+                "a": 42,
+                "b": 6
+              },
               "explanation": "42 : 6 = 7."
             }
           ]
@@ -660,7 +720,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
                 24,
                 32
               ],
-              "hintParameters": {"a":2,"b":8},
+              "hintParameters": {
+                "a": 2,
+                "b": 8
+              },
               "explanation": "2 × 8 = 16."
             },
             {
@@ -672,7 +735,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "7 × 4 = ?",
               "answer": 28,
-              "hintParameters": {"a":7,"b":4},
+              "hintParameters": {
+                "a": 7,
+                "b": 4
+              },
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -689,7 +755,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "5 × 9 = ?",
               "answer": 45,
-              "hintParameters": {"a":5,"b":9},
+              "hintParameters": {
+                "a": 5,
+                "b": 9
+              },
               "explanation": "5 × 9 = 45."
             },
             {
@@ -701,7 +770,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0005"] = {
               "answerMode": "open",
               "prompt": "In het logboek staan 4 pagina's met elk 7 aantekeningen. Hoeveel aantekeningen zijn dat samen?",
               "answer": 28,
-              "hintParameters": {"a":4,"b":7},
+              "hintParameters": {
+                "a": 4,
+                "b": 7
+              },
               "explanation": "4 × 7 = 28."
             }
           ]

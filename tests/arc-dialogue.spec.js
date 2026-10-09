@@ -3,6 +3,7 @@ const fs = require('fs');
 const vm = require('vm');
 const crypto = require('crypto');
 const hints = require('../src/challenge-hints');
+const {beforeE5RepresentationChange,digitalMinnie,currentE5Explanation}=require('./helpers/time-approval.cjs');
 const base = (process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173').split('?')[0];
 const ids = ['LVL-0032', 'LVL-0033', 'LVL-0034', 'LVL-0035'];
 const unlock = [
@@ -67,7 +68,9 @@ test('all 96 ARC variants retain the pre-migration question bank and resolve bot
       disabledEvents: ['CHALLENGE_OPEN', 'CHALLENGE_SUCCESS', 'LEVEL_PROGRESS_MILESTONE'],
       attentionOncePerVisit: true
     });
-    const bank = l.learningChallenges.map(ch => ({ id: ch.id, questions: ch.questions.map(s => ({
+    // Preserve the original content fingerprint while the dedicated time test
+    // verifies the exact, separately authorized analogue/digital conversion.
+    const bank = beforeE5RepresentationChange(l).learningChallenges.map(ch => ({ id: ch.id, questions: ch.questions.map(s => ({
       id: s.id, variants: s.variants.map(({ hintParameters, ...v }) => v)
     })) }));
     expect(crypto.createHash('sha256').update(JSON.stringify(bank)).digest('hex')).toBe(hashes[i]);
@@ -82,8 +85,8 @@ test('all 96 ARC variants retain the pre-migration question bank and resolve bot
       expect(m + mo).not.toMatch(/=|antwoord is|dus is/);
       if (typeof v.answer === 'string') expect((m + mo).toLowerCase()).not.toContain(v.answer.toLowerCase());
       if (v.family === 'clock_reading') {
-        expect(m).toBe('Kijk eerst naar de grote wijzer.');
-        expect(v.visual.type).toBe('clock'); expect(v.visual.minute % 5).toBe(0);
+        expect(m).toBe(v.visual.type==='digitalClock'?digitalMinnie(v):'Kijk eerst naar de grote wijzer.');
+        expect(['clock','digitalClock']).toContain(v.visual.type); expect(v.visual.minute % 5).toBe(0);
       } else {
         const { a, b, strategy = v.family } = v.hintParameters;
         expect(['bare_division', 'story_division', 'route'].includes(strategy) ? a / b : a * b).toBe(v.answer);
@@ -214,7 +217,7 @@ for (const id of ids) test(`${id}: all variants follow Minnie → Moose → assi
     expect(stages[0]).toMatchObject({ message: { speaker: 'minnie', text: hints.resolve(id, q, 'minnie') }, feedback: '', assisted: false });
     expect(stages[1]).toMatchObject({ message: { speaker: 'moose', text: hints.resolve(id, q, 'moose') }, feedback: '', assisted: false });
     expect(stages[0].visible).toBe(stages[0].message.text); expect(stages[1].visible).toBe(stages[1].message.text);
-    expect(stages[2]).toMatchObject({ feedback: q.explanation, assisted: true });
+    expect(stages[2]).toMatchObject({ feedback: currentE5Explanation(id,q), assisted: true });
     if (q.visual) for (const s of stages) expect(s.clock).toEqual([String(q.visual.hour), String(q.visual.minute)]);
   }
   expect(errors).toEqual([]);

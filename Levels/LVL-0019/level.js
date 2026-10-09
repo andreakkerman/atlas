@@ -69,7 +69,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 5,
                 6
               ],
-              "hintParameters": {"a":24,"b":6},
+              "hintParameters": {
+                "a": 24,
+                "b": 6
+              },
               "explanation": "24 : 6 = 4."
             },
             {
@@ -81,7 +84,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "5 × 6 = ?",
               "answer": 30,
-              "hintParameters": {"a":5,"b":6},
+              "hintParameters": {
+                "a": 5,
+                "b": 6
+              },
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -104,7 +110,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 56,
                 63
               ],
-              "hintParameters": {"a":7,"b":7},
+              "hintParameters": {
+                "a": 7,
+                "b": 7
+              },
               "explanation": "7 × 7 = 49."
             },
             {
@@ -116,7 +125,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintParameters": {"a":9,"b":8},
+              "hintParameters": {
+                "a": 9,
+                "b": 8
+              },
               "explanation": "9 × 8 = 72."
             }
           ]
@@ -139,7 +151,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 18,
                 21
               ],
-              "hintParameters": {"a":5,"b":3},
+              "hintParameters": {
+                "a": 5,
+                "b": 3
+              },
               "explanation": "5 × 3 = 15."
             },
             {
@@ -157,7 +172,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 32,
                 40
               ],
-              "hintParameters": {"a":3,"b":8},
+              "hintParameters": {
+                "a": 3,
+                "b": 8
+              },
               "explanation": "3 × 8 = 24."
             }
           ]
@@ -174,7 +192,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "Het Dalapaard heeft 6 banen met elk 2 verfstrepen. Hoeveel verfstrepen zijn dat samen?",
               "answer": 12,
-              "hintParameters": {"a":6,"b":2},
+              "hintParameters": {
+                "a": 6,
+                "b": 2
+              },
               "explanation": "6 × 2 = 12."
             },
             {
@@ -192,7 +213,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 4,
                 5
               ],
-              "hintParameters": {"a":18,"b":6},
+              "hintParameters": {
+                "a": 18,
+                "b": 6
+              },
               "explanation": "18 : 6 = 3."
             }
           ]
@@ -216,7 +240,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "2 × 4 = ?",
               "answer": 8,
-              "hintParameters": {"a":2,"b":4},
+              "hintParameters": {
+                "a": 2,
+                "b": 4
+              },
               "explanation": "2 × 4 = 8."
             },
             {
@@ -234,7 +261,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 9,
                 12
               ],
-              "hintParameters": {"a":2,"b":3},
+              "hintParameters": {
+                "a": 2,
+                "b": 3
+              },
               "explanation": "2 × 3 = 6."
             }
           ]
@@ -257,7 +287,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 56,
                 63
               ],
-              "hintParameters": {"a":7,"b":7},
+              "hintParameters": {
+                "a": 7,
+                "b": 7
+              },
               "explanation": "7 × 7 = 49."
             },
             {
@@ -275,7 +308,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 63,
                 70
               ],
-              "hintParameters": {"a":8,"b":7},
+              "hintParameters": {
+                "a": 8,
+                "b": 7
+              },
               "explanation": "8 × 7 = 56."
             }
           ]
@@ -292,7 +328,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "Aan de meiboom hangen 9 bloemenkransen met elk 7 bloemen. Hoeveel bloemen zijn dat samen?",
               "answer": 63,
-              "hintParameters": {"a":9,"b":7},
+              "hintParameters": {
+                "a": 9,
+                "b": 7
+              },
               "explanation": "9 × 7 = 63."
             },
             {
@@ -304,7 +343,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
               "answerMode": "open",
               "prompt": "9 × 6 = ?",
               "answer": 54,
-              "hintParameters": {"a":9,"b":6},
+              "hintParameters": {
+                "a": 9,
+                "b": 6
+              },
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -327,7 +369,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 28,
                 35
               ],
-              "hintParameters": {"a":3,"b":7},
+              "hintParameters": {
+                "a": 3,
+                "b": 7
+              },
               "explanation": "3 × 7 = 21."
             },
             {
@@ -345,7 +390,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 3,
                 4
               ],
-              "hintParameters": {"a":10,"b":5},
+              "hintParameters": {
+                "a": 10,
+                "b": 5
+              },
               "explanation": "10 : 5 = 2."
             }
           ]
@@ -398,7 +446,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "Half zes"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 5,
                 "minute": 20
               },
@@ -447,7 +495,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "Vijf voor acht"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 7,
                 "minute": 35
               },
@@ -496,7 +544,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "Twee uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 1,
                 "minute": 50
               },
@@ -545,7 +593,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
                 "Twaalf uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 11,
                 "minute": 55
               },
@@ -560,8 +608,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
   "player": {
     "startNode": "left-start",
     "start": {
-      "x": 189,
-      "y": 625
+      "x": 183,
+      "y": 639
     }
   },
   "interactiveObjects": [
@@ -613,8 +661,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0019"] = {
   "walkPath": [
     {
       "id": "left-start",
-      "x": 189,
-      "y": 625
+      "x": 183,
+      "y": 639
     },
     {
       "id": "village-path",

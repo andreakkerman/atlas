@@ -3,6 +3,10 @@ const levelCatalog = window.SVEN_LEVEL_MANIFEST?.levels || [];
 const worldResolver = window.AtlasWorld.createWorldResolver(levelCatalog, window.SVEN_WORLD_CONFIG);
 const visibleLevelCatalog = () => worldResolver.rootEntries().filter((item) => worldResolver.enabledEntries(item.id).length);
 const sessionReport = window.AtlasSessionReport;
+const learningLevels = window.AtlasLearningLevels;
+const challengeSupport = window.AtlasChallengeSupport;
+let m6Percentage = learningLevels.readPreference();
+let learningPlanner = null;
 window.SVEN_LEVEL_DEFINITIONS = window.SVEN_LEVEL_DEFINITIONS || {};
 let level = null;
 let walkNodesById = new Map();
@@ -209,7 +213,7 @@ const sceneEffectRuntime = window.AtlasSceneEffects.createRuntime({
   warn: (message) => console.warn(message)
 });
 let graphicsSettingsOpen = false;
-const PLAY_GRAPHICS_DEFAULTS = Object.freeze({globalLighting:true,globalGrading:false,areaDirectionalLights:false,sceneDepth:false,characterShadows:true,particleFields:true});
+const PLAY_GRAPHICS_DEFAULTS = Object.freeze({globalLighting:false,globalGrading:false,areaDirectionalLights:false,sceneDepth:false,characterShadows:false,particleFields:true});
 let playGraphicsFeatures = null;
 let voxelTuningOpen = false;
 let voxelRendererStatus = { status: "idle", ready: false, supported: Boolean(window.navigator?.gpu) };
@@ -611,7 +615,7 @@ function storedLevelIsComplete(selectedLevel) {
 
 function activeOpenAnswerInput() {
   const active = document.activeElement;
-  return active instanceof HTMLInputElement && active.matches("[data-open-answer]") ? active : null;
+  return active?.matches?.("input[data-open-answer], input[data-currency-count], textarea[data-scratchpad-notes]") ? active : null;
 }
 
 function updateKeyboardViewportState() {
@@ -620,12 +624,15 @@ function updateKeyboardViewportState() {
   const visualHeight = viewport?.height || layoutHeight;
   const visualOffsetTop = viewport?.offsetTop || 0;
   const openAnswer = activeOpenAnswerInput();
-  const keyboardOpen = Boolean(openAnswer && viewport && layoutHeight - visualHeight > KEYBOARD_VIEWPORT_DELTA);
+  // Keep challenge controls still through input blur → button click while the keyboard recedes.
+  const notebookKeyboard = app.querySelector('.challengeWorkspaceLayer') && document.body.classList.contains('keyboard-open');
+  const keyboardOpen = Boolean((openAnswer || notebookKeyboard) && viewport && layoutHeight - visualHeight > KEYBOARD_VIEWPORT_DELTA);
 
   document.documentElement.style.setProperty("--visual-viewport-height", `${Math.round(visualHeight || layoutHeight)}px`);
   document.documentElement.style.setProperty("--visual-viewport-offset-top", `${Math.round(visualOffsetTop)}px`);
   document.body.classList.toggle("keyboard-open", keyboardOpen);
   app.classList.toggle("keyboard-open", keyboardOpen);
+  alignNotebookRules();
 
   if (keyboardOpen) {
     window.requestAnimationFrame(() => {
@@ -2202,6 +2209,7 @@ async function selectLevel(id, options = {}) {
     sessionReport?.startOrVisitLevel({
       adventureId: adventure.id,
       adventureTitle: adventure.title,
+      m6Percentage,
       levelId: entry.id,
       levelTitle: nextLevel.title
     });
@@ -2331,6 +2339,7 @@ function resolvedNextLevelId(levelId = level?.id) {
 }
 
 function returnToMenu() {
+  learningPlanner = null;
   levelLoadSequence += 1;
   window.AtlasWebGPUCapabilities.cancelPending();
   assetReadiness.beginStatus(levelLoadSequence);
@@ -3914,9 +3923,17 @@ function selectChallengeQuestions(rune) {
 function currentChallengeQuestions() {
   const questions = state.activeQuestions?.length ? state.activeQuestions : runeById(state.activeRuneId).questions;
   const current = questions?.[state.questionIndex];
-  if (current?.variants) {
-    const selected = current.variants[Math.floor(Math.random() * current.variants.length)];
-    questions[state.questionIndex] = { ...selected, atlasSlotId: current.id };
+  if (current && !current.atlasLearningSelection) {
+    learningPlanner ||= learningLevels.createPlanner(m6Percentage);
+    const selection = learningLevels.selectPosition(current.variants || [current], learningPlanner, window.AtlasM6Content.bank, {
+      history: m6RecentHistory, used: questions.slice(0, state.questionIndex).filter(q => q.centralQuestionId),
+      slotKey: `${level.id}:${state.activeRuneId}:${current.id}`
+    });
+    const selected = selection.variant;
+    questions[state.questionIndex] = { ...selected, atlasSlotId: current.id,
+      learningLevel: selection.delivered,
+      atlasLearningSelection: { m6Percentage, requested: selection.requested, delivered: selection.delivered, fallback: selection.fallback,
+        requestedDifficulty: selection.requestedDifficulty, deliveredDifficulty: selection.deliveredDifficulty, difficultyFallback: selection.difficultyFallback } };
     // The selected question owns its order for retries, hints and redraws.
     // Never shuffle the shared authored choices or shuffle during rendering.
     if (selected.answerMode === "multipleChoice") {
@@ -3926,17 +3943,21 @@ function currentChallengeQuestions() {
   return questions;
 }
 
+const m6RecentHistory = window.AtlasM6Bank.createHistory();
+
 function trackCurrentSessionQuestion() {
   if (!level || state.screen !== "challenge") return;
   const rune = runeById(state.activeRuneId);
   const question = currentChallengeQuestions()?.[state.questionIndex];
   if (!rune || !question?.id) return;
+  sessionReport?.activity();
   sessionReport?.beginQuestion(question, {
     levelId: level.id,
     levelTitle: level.title,
     challengeId: rune.id,
     challengeTitle: rune.name,
     slotId: question.atlasSlotId || question.id,
+    supportStage: question.authoredSupport ? state.questionSupportStage : null,
     variantId: question.id
   });
 }
@@ -4030,39 +4051,7 @@ function makeChoices(question) {
 }
 
 function renderClockVisual(visual) {
-  if (visual?.type !== "clock") return "";
-  const hour = Number(visual.hour);
-  const minute = Number(visual.minute);
-  const minuteAngle = minute * 6;
-  const hourAngle = ((hour % 12) + minute / 60) * 30;
-  const numerals = Array.from({ length: 12 }, (_, index) => {
-    const value = index + 1;
-    const angle = (value * 30 * Math.PI) / 180;
-    const x = 120 + Math.sin(angle) * 88;
-    const y = 120 - Math.cos(angle) * 88;
-    return `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}">${value}</text>`;
-  }).join("");
-
-  return `
-    <div
-      class="authoredClock"
-      data-clock-visual
-      data-clock-hour="${hour}"
-      data-clock-minute="${minute}"
-      data-hour-angle="${hourAngle}"
-      data-minute-angle="${minuteAngle}"
-      role="img"
-      aria-label="Analoge klok"
-    >
-      <svg viewBox="0 0 240 240" aria-hidden="true">
-        <circle class="clockFace" cx="120" cy="120" r="112"></circle>
-        <g class="clockNumerals">${numerals}</g>
-        <line class="clockHand clockHourHand" x1="120" y1="120" x2="120" y2="64" transform="rotate(${hourAngle} 120 120)"></line>
-        <line class="clockHand clockMinuteHand" x1="120" y1="120" x2="120" y2="34" transform="rotate(${minuteAngle} 120 120)"></line>
-        <circle class="clockPin" cx="120" cy="120" r="7"></circle>
-      </svg>
-    </div>
-  `;
+  return window.AtlasChallengeCapabilities.renderClockVisual(visual);
 }
 
 function saveCompletion() {
@@ -4279,6 +4268,20 @@ function openRuneChallenge(id) {
   state.screen = "challenge";
   state.activeRuneId = id;
   state.challengePrerequisiteLocked = isChallengePrerequisiteLocked(rune);
+  const suspended = !state.challengePrerequisiteLocked && state.suspendedLearningChallenges?.[id];
+  if (suspended) {
+    Object.assign(state, suspended);
+    state.activeRuneId = id;
+    trackCurrentSessionQuestion();
+    render();
+    return;
+  }
+  state.questionSupportStage = "question";
+  state.moneyAnswerDraft = { euros: "", cents: "" };
+  state.currencyAnswerDraft = {};
+  state.answerDraft = "";
+  state.scratchpad = { text: "", open: false, confirmClear: false };
+  state.assistedCompletionAvailable = false;
   state.activeQuestions = state.challengePrerequisiteLocked ? [] : selectChallengeQuestions(rune);
   state.questionIndex = 0;
   state.selectedWrong = false;
@@ -4301,7 +4304,15 @@ function openRuneChallenge(id) {
 
 function closeChallenge() {
   if (!['challenge', 'correct'].includes(state.screen)) return;
+  if (state.activeQuestions.length) {
+    state.suspendedLearningChallenges ||= {};
+    state.suspendedLearningChallenges[state.activeRuneId] = Object.fromEntries([
+      'activeQuestions', 'questionIndex', 'selectedWrong', 'questionTracked', 'questionSupportStage',
+      'assistedCompletionAvailable', 'feedback', 'guideMessage', 'challengeGuideMessage', 'moneyAnswerDraft', 'currencyAnswerDraft', 'answerDraft', 'scratchpad', 'screen'
+    ].map(key => [key, state[key]]));
+  }
   state.screen = "scene";
+  if (state.challengeGuideMessage) setGuideMessage(state.challengeGuideMessage, state.challengeGuideMessage.speaker);
   state.activeRuneId = null;
   state.activeQuestions = [];
   state.questionIndex = 0;
@@ -4316,24 +4327,34 @@ function closeChallenge() {
 }
 
 function answerQuestion(choice) {
+  trackCurrentSessionQuestion();
   const question = currentChallengeQuestions()[state.questionIndex];
   const correct = answerFor(question);
   const authored = Boolean(question.answerMode);
-  const submitted = typeof correct === "number" ? Number(choice) : String(choice).trim();
-  if (submitted === "" || (typeof correct === "number" && !Number.isFinite(submitted))) {
+  const parsed = challengeSupport.parseAnswer(question, choice);
+  if (parsed?.rawFields) state.moneyAnswerDraft = { ...parsed.rawFields };
+  if (parsed?.rawCounts) state.currencyAnswerDraft = { ...parsed.rawCounts };
+  if (parsed && !parsed.valid) {
+    sessionReport?.recordAttempt(false, parsed);
+    state.feedback = window.AtlasChallengeCapabilities.usesCurrency(question) ? "Kies munten of biljetten voor je antwoord." : challengeSupport.usesStructuredMoney(question) ? "Vul een bedrag in met alleen cijfers." : question.answerSpec.type === "euro" ? "Vul een geldig bedrag in euro’s in, bijvoorbeeld 2,50." : "Vul een geldig getal in.";
+    render();
+    return;
+  }
+  const submitted = parsed ? parsed.interpreted : typeof correct === "number" ? Number(choice) : String(choice).trim();
+  if ((!parsed && String(choice).trim() === "") || submitted === "" || (typeof correct === "number" && !Number.isFinite(submitted))) {
     state.feedback = "Vul eerst een antwoord in.";
     render();
     return;
   }
   state.attempts += 1;
 
-  const isCorrect = typeof correct === "string"
+  const isCorrect = parsed ? parsed.correct : typeof correct === "string"
     ? question.family === "spelling"
       // Preserve case tolerance and canonical Unicode equivalence, not spelling differences.
       ? submitted.normalize("NFC").toLocaleLowerCase("nl") === correct.normalize("NFC").toLocaleLowerCase("nl")
       : submitted.localeCompare(correct, "nl", { sensitivity: "base" }) === 0
     : submitted === correct;
-  sessionReport?.recordAttempt(isCorrect);
+  sessionReport?.recordAttempt(isCorrect, parsed || { raw: String(choice), interpreted: submitted, valid: true });
   if (!isCorrect) {
     playSfx("incorrect");
     updateTableProgress(question, "mistake");
@@ -4345,25 +4366,37 @@ function answerQuestion(choice) {
       objectId: runeById(state.activeRuneId).objectId,
       challengeId: state.activeRuneId
     });
-    if (authored && failureCount === 1) {
-      sessionReport?.recordHint("minnie");
-      setGuideMessage({ speaker: "minnie", text: window.AtlasChallengeHints.resolve(level.id, question, "minnie") }, "minnie");
+    if (question.authoredSupport) {
+      showAuthoredHelp(question);
+    } else if (authored && failureCount === 1) {
+      state.questionSupportStage = "minnie";
+      sessionReport?.recordHint("minnie", window.AtlasChallengeHints.resolve(level.id, question, "minnie"));
+      if (learningLevels.resolveLevel(question) !== "M6") setGuideMessage({ speaker: "minnie", text: window.AtlasChallengeHints.resolve(level.id, question, "minnie") }, "minnie");
       state.feedback = "";
     } else if (authored && failureCount === 2) {
-      sessionReport?.recordHint("moose");
-      setGuideMessage({ speaker: "moose", text: window.AtlasChallengeHints.resolve(level.id, question, "moose") }, "moose");
+      state.questionSupportStage = "moose";
+      sessionReport?.recordHint("moose", window.AtlasChallengeHints.resolve(level.id, question, "moose"));
+      if (learningLevels.resolveLevel(question) !== "M6") setGuideMessage({ speaker: "moose", text: window.AtlasChallengeHints.resolve(level.id, question, "moose") }, "moose");
       state.feedback = "";
     } else if (authored) {
-      state.feedback = question.explanation;
+      state.feedback = window.AtlasChallengeHints.resolveExplanation(level.id, question);
+      if (state.questionSupportStage !== "explanation") sessionReport?.recordExplanation([state.feedback]);
+      state.questionSupportStage = "explanation";
       state.assistedCompletionAvailable = true;
+      setGuideMessage({ speaker: "moose", text: "" }, "moose");
     } else {
       state.feedback = getLearningHint(question);
+    }
+    // An unlocked stage takes the notebook back to help; the student's notes stay intact.
+    if (learningLevels.resolveLevel(question) === "M6" && failureCount <= 3 && state.scratchpad) {
+      state.scratchpad.open = false;
+      state.scratchpad.confirmClear = false;
     }
     render();
     return;
   }
 
-  if (!state.selectedWrong) {
+  if (!state.selectedWrong && (!question.authoredSupport || state.questionSupportStage === "question")) {
     state.firstTryCorrect += 1;
     updateTableProgress(question, "firstTryCorrect");
   } else {
@@ -4374,9 +4407,27 @@ function answerQuestion(choice) {
   playSfx("correct");
   state.svenMood = "celebrating";
   state.assistedCompletionAvailable = false;
-  state.feedback = authored ? `Ja! Het antwoord is ${correct}.` : `Ja! ${question.a} x ${question.b} = ${correct}.`;
+  state.feedback = authored ? `Ja! Het antwoord is ${question.answerDisplay || correct}.` : `Ja! ${question.a} x ${question.b} = ${correct}.`;
   state.screen = "correct";
   render();
+}
+
+function showAuthoredHelp(question) {
+  // Authored support advances only through valid incorrect answers, never a help action.
+  const failures = state.challengeFailureCounts[state.activeRuneId] || 0;
+  if (!failures) return;
+  const stage = failures === 1 ? "minnie" : failures === 2 ? "moose" : "explanation";
+  if (challengeSupport.STAGES.indexOf(stage) <= challengeSupport.STAGES.indexOf(state.questionSupportStage)) return;
+  state.questionSupportStage = stage;
+  state.feedback = "";
+  state.assistedCompletionAvailable = false;
+  if (stage === "explanation") sessionReport?.recordExplanation(question.authoredSupport.explanationSteps, "automatic");
+  else {
+    const text = window.AtlasChallengeHints.resolve(level.id, question, stage);
+    sessionReport?.recordHint(stage, text);
+    // M6 reads this same stage in the integrated help section; no hidden companion copy.
+    if (learningLevels.resolveLevel(question) !== "M6") setGuideMessage({ speaker: stage, text }, stage);
+  }
 }
 
 function completeQuestionWithHelp() {
@@ -4386,7 +4437,7 @@ function completeQuestionWithHelp() {
   state.answered += 1;
   state.assistedCompletionAvailable = false;
   state.svenMood = "celebrating";
-  state.feedback = `${question.explanation} Het antwoord is ${answerFor(question)}.`;
+  state.feedback = `${window.AtlasChallengeHints.resolveExplanation(level.id, question)} Het antwoord is ${answerFor(question)}.`;
   state.screen = "correct";
   playSfx("correct");
   render();
@@ -4397,6 +4448,11 @@ function nextQuestion() {
   const questions = currentChallengeQuestions();
 
   if (state.questionIndex < questions.length - 1) {
+    state.questionSupportStage = "question";
+    state.moneyAnswerDraft = { euros: "", cents: "" };
+    state.currencyAnswerDraft = {};
+    state.answerDraft = "";
+    state.scratchpad = { text: "", open: false, confirmClear: false };
     state.questionIndex += 1;
     state.selectedWrong = false;
     state.questionTracked = false;
@@ -4417,6 +4473,7 @@ function nextQuestion() {
   }
 
   state.completedRunes.add(rune.id);
+  if (state.suspendedLearningChallenges) delete state.suspendedLearningChallenges[rune.id];
   playSfx("challengeComplete");
   state.justCompletedRuneId = rune.id;
   state.activeRuneId = null;
@@ -4520,6 +4577,7 @@ async function continueToNextLevel() {
 }
 
 function restart() {
+  learningPlanner = null;
   stopMovement({ invalidateIntent: true });
   challengeFx.dispose();
   // Reuse entry's run-local defaults; the already prepared level assets remain owned.
@@ -4829,15 +4887,16 @@ function renderChallengeVariantPreview(variant, index) {
     <article class="challengeVariantPreview" data-challenge-variant="${variant.id || index}">
       <header>
         <strong>Variant ${index + 1}${variant.id ? ` · ${previewText(variant.id)}` : ""}</strong>
-        <span>${previewText(variant.family || variant.domain || "type onbekend")} · ${previewText(variant.answerMode || "open")}</span>
+        <span>${previewText(learningLevels.resolveLevel(variant))} · ${previewText(variant.family || variant.domain || "type onbekend")} · ${previewText(variant.answerMode || "open")}</span>
       </header>
       <p><strong>Vraag</strong> ${previewText(variant.prompt)}</p>
-      <p><strong>Antwoord</strong> ${previewText(answerFor(variant))}</p>
+      <p><strong>Antwoord</strong> ${previewText(variant.answerDisplay ?? answerFor(variant))}</p>
+      ${variant.difficulty ? `<p><strong>Moeilijkheid</strong> ${previewText(learningLevels.DIFFICULTY_LABELS[variant.difficulty])}</p>` : ""}
       ${variant.choices ? `<p><strong>Keuzes</strong> ${previewText(variant.choices)}</p>` : ""}
       ${visual ? `<p><strong>Visual</strong> ${previewText(visual.type)}${visual.type === "clock" ? ` · uur ${previewText(visual.hour)} · minuut ${previewText(visual.minute)}` : ""}</p>` : ""}
       <p><strong>Minnie hint</strong> ${previewText(window.AtlasChallengeHints.resolve(level.id, variant, "minnie"))}</p>
       <p><strong>Moose hint</strong> ${previewText(window.AtlasChallengeHints.resolve(level.id, variant, "moose"))}</p>
-      <p><strong>Uitleg</strong> ${previewText(variant.explanation)}</p>
+      <p><strong>Uitleg</strong> ${previewText(window.AtlasChallengeHints.resolveExplanation(level.id, variant))}</p>
     </article>
   `;
 }
@@ -6864,13 +6923,13 @@ function renderGuidePortrait([id, guide], activeSpeaker) {
   `;
 }
 
-function renderAdventureTeamBar() {
+function renderAdventureTeamBar(instructional = false) {
   const done = completedActiveRuneCount();
   const total = requiredRuneCount();
   const guideMessage = state.guideMessage || normalizeGuideMessage(state.message, "minnie");
   const activeGuide = (level.guides || {})[guideMessage.speaker] || { name: "Minnie" };
   return `
-    <section class="adventureTeamBar" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" aria-live="polite">
+    <section class="adventureTeamBar${instructional ? " instructionalTeamBar" : ""}" data-adventure-team-bar data-active-speaker="${guideMessage.speaker}" aria-live="polite">
       <div class="teamPortraits" aria-label="Avonturenteam">
         ${guideEntries(guideMessage.speaker).map((entry) => renderGuidePortrait(entry, guideMessage.speaker)).join("")}
       </div>
@@ -6891,7 +6950,7 @@ function renderScene(options = {}) {
     <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""} ${rendererModeClass} ${voxelReadyClass}" data-active-renderer="${renderer}">
       ${renderReturnToMenuButton()}
       ${renderWorldStage()}
-      ${options.hideTeamBar ? "" : renderAdventureTeamBar()}
+      ${options.hideTeamBar ? "" : renderAdventureTeamBar(options.instructionalChallenge)}
       ${renderGraphicsSettings()}
       ${renderVoxelTuningPanel()}
     </main>
@@ -7063,6 +7122,12 @@ function renderMenu() {
             </svg>
           </summary>
           <div class="menuSettingsPanel">
+            <div class="learningPreference">
+              <label for="learning-mix">Niveau</label>
+              <div class="learningMixRange"><span>E5<small>Eind groep 5</small></span><input id="learning-mix" type="range" min="0" max="100" step="10" value="${m6Percentage}" data-learning-mix aria-describedby="learning-mix-label learning-mix-explanation" aria-valuetext="${100 - m6Percentage}% E5 · ${m6Percentage}% M6" /><span>M6<small>Midden groep 6</small></span></div>
+              <output id="learning-mix-label" for="learning-mix" data-learning-mix-label>${100 - m6Percentage}% E5 · ${m6Percentage}% M6</output>
+              <div id="learning-mix-explanation" data-learning-mix-explanation>${renderLearningMixExplanation()}</div>
+            </div>
             <div class="displayToggles">${renderDisplayToggles()}</div>
             ${localAtlasResetAvailable() ? `
               <aside class="localAtlasReset" data-local-atlas-reset aria-label="Lokale Atlas-data">
@@ -7191,10 +7256,15 @@ function formatSessionDuration(milliseconds) {
   return minutes ? `${minutes} min ${seconds.toString().padStart(2, "0")} sec` : `${seconds} sec`;
 }
 
+function renderLearningMixExplanation() {
+  return `<p>Ongeveer ${10 - m6Percentage / 10} van de 10 vragen uit E5 en ${m6Percentage / 10} uit M6. Als passende leerstof ontbreekt, gebruikt Atlas het beschikbare niveau. Voortgang toont wat werkelijk is aangeboden.</p>${m6Percentage > 0 ? `<p><strong>Binnen M6: ${Object.entries(learningLevels.difficultyPolicy(m6Percentage)).map(([difficulty, percentage]) => `${percentage}% ${learningLevels.DIFFICULTY_LABELS[difficulty].toLowerCase()}`).join(" · ")}</strong></p><p>De schuif bepaalt hoe vaak M6 voorkomt en welke moeilijkheden aan bod komen. Bij 10–30% M6 zijn alle M6-vragen Instap. Daarna komen geleidelijk Normaal en vanaf 70% ook Uitdagend erbij. De verdeling kan per sessie verschillen.</p>` : ""}`;
+}
+
 function sessionSummary(session) {
   const completedQuestions = session.questions.filter((question) => question.completedAt);
   const direct = completedQuestions.filter((question) => question.outcome === "direct").length;
   return {
+    questions: session.questions,
     completedQuestions,
     direct,
     firstTryPercentage: completedQuestions.length ? Math.round((direct / completedQuestions.length) * 100) : 0,
@@ -7206,28 +7276,34 @@ function sessionSummary(session) {
 function renderOutcomeSplit(summary) {
   return [
     ["direct", "Direct goed"],
-    ["afterMinnie", "Na Minnie"],
-    ["afterMoose", "Na Moose"],
-    ["assisted", "Samen afgerond"]
+    ["afterMinnie", "Goed na Minnie"],
+    ["afterMoose", "Goed na Moose"],
+    ["afterExplanation", "Met volledige uitleg afgerond"],
+    ["incomplete", "Niet afgerond"],
+    ...(summary.questions.some(q => q.outcome === "assisted") ? [["assisted", "Samen afgerond · hulpresultaat"]] : []),
+    ...(summary.questions.some(q => q.outcome === "afterRetry") ? [["afterRetry", "Goed na opnieuw proberen"]] : [])
   ].map(([outcome, label]) => `
     <div class="sessionOutcome">
-      <strong>${summary.completedQuestions.filter((question) => question.outcome === outcome).length}</strong>
+      <strong>${summary.questions.filter((question) => outcome === "incomplete" ? !question.completedAt : question.outcome === outcome).length}</strong>
       <span>${label}</span>
     </div>
   `).join("");
 }
 
 function renderCategoryDetails(session) {
-  return ["Tafels", "Delen", "Verhaalsommen", "Klokkijken"].map((category) => {
-    const questions = session.questions.filter((question) => question.completedAt && question.category === category);
+  return [...new Set(["Tafels", "Delen", "Verhaalsommen", "Klokkijken", ...session.questions.map(q => q.category)])].map((category) => {
+    const questions = session.questions.filter((question) => question.category === category);
     const details = new Map();
-    questions.forEach((question) => details.set(question.detail, (details.get(question.detail) || 0) + 1));
+    questions.forEach((question) => {
+      const detail = question.reportLabel ? `${question.reportLabel} — ${question.deliveredLearningLevel ?? "niet geregistreerd"} · ${learningLevels.DIFFICULTY_LABELS[question.deliveredDifficulty] ?? "moeilijkheid niet geregistreerd"} · ${sessionOutcomeLabel(question)}` : question.detail;
+      details.set(detail, (details.get(detail) || 0) + 1);
+    });
     return `
       <details class="sessionCategory">
-        <summary><span>${category}</span><strong>${questions.length}</strong></summary>
+        <summary><span>${challengeSupport.escape(category)}</span><strong>${questions.length}</strong></summary>
         ${
           questions.length
-            ? `<ul>${[...details.entries()].map(([detail, count]) => `<li><span>${detail}</span><strong>${count}</strong></li>`).join("")}</ul>`
+            ? `<ul>${[...details.entries()].map(([detail, count]) => `<li><span>${challengeSupport.escape(detail)}</span><strong>${count}</strong></li>`).join("")}</ul>`
             : `<p>Nog geen afgeronde vragen.</p>`
         }
       </details>
@@ -7237,20 +7313,55 @@ function renderCategoryDetails(session) {
 
 function renderHelpNeeded(session) {
   const questions = session.questions.filter((question) =>
-    question.completedAt &&
-    (!question.firstTryCorrect || question.minnieHint || question.mooseHint || question.assisted)
+    question.minnieHint || question.mooseHint || question.assisted || question.explanationShown
   );
   if (!questions.length) return `<p class="sessionEmptyNote">Deze keer was nergens extra hulp nodig.</p>`;
   return `
     <ul class="sessionHelpList">
       ${questions.map((question) => `
         <li>
-          <div><strong>${question.challengeTitle}</strong><span>${question.prompt}</span></div>
-          <span>${question.outcome === "assisted" ? "Samen afgerond" : question.mooseHint ? "Na Moose" : "Na Minnie"}</span>
+          <div><strong>${challengeSupport.escape(question.challengeTitle)}</strong><span>${challengeSupport.escape(question.prompt)}</span></div>
+          <span>${sessionOutcomeLabel(question)}</span>
         </li>
       `).join("")}
     </ul>
   `;
+}
+
+function sessionOutcomeLabel(question) {
+  if (!question.completedAt) return "Niet afgerond";
+  return ({ direct: "Direct goed", afterMinnie: "Goed na Minnie", afterMoose: "Goed na Moose", afterExplanation: "Met volledige uitleg afgerond", assisted: "Samen afgerond · hulpresultaat", afterRetry: "Goed na opnieuw proberen" })[question.outcome] || "Uitkomst niet geregistreerd";
+}
+
+function renderSessionLearning(session) {
+  const esc = challengeSupport.escape;
+  const count = (field, value) => session.questions.filter(q => q[field] === value).length;
+  const unknown = field => session.questions.filter(q => q[field] == null).length;
+  const mix = Number.isInteger(session.m6Percentage) ? `${100-session.m6Percentage}% E5 · ${session.m6Percentage}% M6` : "niet geregistreerd";
+  return `<section class="sessionSection sessionLearningSummary"><h3>Leerstof en moeilijkheid</h3>
+    <p>Ingestelde mix: <strong>${mix}</strong></p>
+    <p>Gevraagd: ${count('requestedLearningLevel','E5')} E5 · ${count('requestedLearningLevel','M6')} M6${unknown('requestedLearningLevel') ? ` · ${unknown('requestedLearningLevel')} niet geregistreerd` : ''}</p>
+    <p>Werkelijk aangeboden: ${count('deliveredLearningLevel','E5')} E5 · ${count('deliveredLearningLevel','M6')} M6${unknown('deliveredLearningLevel') ? ` · ${unknown('deliveredLearningLevel')} niet geregistreerd` : ''}</p>
+    <p>M6 aangeboden: ${[1,2,3].map(d=>`${session.questions.filter(q=>q.deliveredLearningLevel==='M6'&&q.deliveredDifficulty===d).length} ${learningLevels.DIFFICULTY_LABELS[d]}`).join(' · ')}</p>
+    <p class="sessionEmptyNote">Aantallen beschrijven deze sessie. Uitleg gezien betekent niet automatisch begrepen.</p></section>
+    <section class="sessionSection"><h3>Vragen bekijken</h3>${session.questions.map(q => {
+      const value = v => esc(v ?? 'niet geregistreerd');
+      const difficulty = d => learningLevels.DIFFICULTY_LABELS[d] || 'niet geregistreerd';
+      const time = at => at == null ? 'niet geregistreerd' : new Intl.DateTimeFormat('nl-NL',{hour:'2-digit',minute:'2-digit',second:'2-digit'}).format(new Date(at));
+      return `<details class="sessionQuestionDetail"><summary><span>${value(q.reportLabel || q.detail)} · ${sessionOutcomeLabel(q)}</span></summary>
+      <p class="sessionPromptSnapshot">${value(q.prompt)}</p>
+      <dl><dt>Vraag / contentversie</dt><dd>${value(q.variantId)} / ${value(q.contentVersion)}</dd>
+      ${q.centralQuestionId ? `<dt>Centrale vraag / tekstvariant</dt><dd>${value(q.centralQuestionId)} / ${value(q.surfaceId)}</dd><dt>Domein</dt><dd>${value(q.educationalDomain || q.domain)}</dd>` : ''}
+      <dt>Leerdoel</dt><dd>${value(q.learningObjective)}</dd><dt>Rapportagelabel</dt><dd>${value(q.reportLabel)}</dd>
+      <dt>Gevraagd → aangeboden niveau</dt><dd>${value(q.requestedLearningLevel)} → ${value(q.deliveredLearningLevel)}</dd>
+      <dt>Gevraagd → aangeboden moeilijkheid</dt><dd>${difficulty(q.requestedDifficulty)} → ${difficulty(q.deliveredDifficulty)}</dd>
+      <dt>Juiste antwoord</dt><dd>${value(q.correctAnswerDisplay)}</dd><dt>Eerste antwoordtijd</dt><dd>${q.responseMs == null ? 'niet geregistreerd' : formatSessionDuration(q.responseMs)}</dd>
+      <dt>Volledige uitleg gezien</dt><dd>${q.explanationShown === undefined ? 'niet geregistreerd' : q.explanationShown ? 'Ja' : 'Nee'}</dd>
+      <dt>Uitkomst</dt><dd>${sessionOutcomeLabel(q)}</dd></dl>
+      <h4>Antwoordgeschiedenis</h4>${Array.isArray(q.answerHistory) ? q.answerHistory.length ? `<ol>${q.answerHistory.map(a=>`<li>${time(a.at)} · Invoer: ${a.rawFields ? `euro <q>${value(a.rawFields.euros)}</q> · cent <q>${value(a.rawFields.cents)}</q>` : `<q>${value(a.raw)}</q>`}${a.normalizedDisplay ? ` · Bedrag: ${value(a.normalizedDisplay)}` : ''}${a.interpreted != null ? ` · Gelezen als: ${value(a.interpreted)}${a.unit ? ` ${value(a.unit)}` : ''}` : ''} · ${!a.valid ? 'Ongeldige invoervorm (geen rekenpoging)' : a.correct ? 'Goed' : 'Onjuist'}</li>`).join('')}</ol>` : '<p>Nog geen antwoord ingevoerd.</p>' : '<p>Niet geregistreerd.</p>'}
+      <h4>Werkelijk getoonde hulp</h4>${Array.isArray(q.helpHistory) ? q.helpHistory.length ? `<ol>${q.helpHistory.map(h=>`<li><strong>${h.stage === 'explanation' ? 'Volledige uitleg' : h.stage === 'minnie' ? 'Minnie' : 'Moose'}</strong> · ${time(h.at)}${h.source === 'direct' ? ' · Leg uit' : ''}${(h.steps || [h.text]).map(text=>`<p>${text == null ? 'Tekst niet geregistreerd.' : challengeSupport.richText(text)}</p>`).join('')}</li>`).join('')}</ol>` : '<p>Geen hulp getoond.</p>' : `<p>Minnie: ${q.minnieHint ? 'ja' : 'nee'} · Moose: ${q.mooseHint ? 'ja' : 'nee'}. Tijdstippen en teksten niet geregistreerd.</p>`}
+      </details>`;
+    }).join('')}</section>`;
 }
 
 function renderSessionCard(session, index) {
@@ -7276,7 +7387,7 @@ function renderSessionCard(session, index) {
         <div><strong>${formatSessionDuration(session.elapsedMs)}</strong><span>Verstreken tijd</span></div>
         <div><strong>${summary.completedLevels}/${session.levels.length}</strong><span>Plekken afgerond</span></div>
         <div><strong>${summary.completedQuestions.length}</strong><span>Vragen · ${summary.attempts} pogingen</span></div>
-        <div><strong>${summary.firstTryPercentage}%</strong><span>Direct goed</span></div>
+        <div><strong>${summary.direct}</strong><span>Direct goed</span></div>
       </section>
       <section class="sessionSection">
         <h3>Uitkomst</h3>
@@ -7286,6 +7397,7 @@ function renderSessionCard(session, index) {
         <h3>Leergebieden</h3>
         <div class="sessionCategoryGrid">${renderCategoryDetails(session)}</div>
       </section>
+      ${renderSessionLearning(session)}
       <section class="sessionSection">
         <h3>Hier was wat hulp nodig</h3>
         ${renderHelpNeeded(session)}
@@ -7434,18 +7546,7 @@ function renderIntro() {
   `;
 }
 
-// One identity treatment for every NPC encounter state; Standard cards stay separate.
-function renderNpcEncounterHeader(character, titleId, progress = "") {
-  return `<header class="npcEncounterHeader" data-challenge-character="${character.id}">
-    <div class="npcPortraitFrame"><img class="challengeCharacterPortrait" src="${readyAssetSrc(character.portrait)}" alt="${character.name}" /></div>
-    <div class="npcEncounterIdentity">
-      ${progress ? `<p class="npcQuestionProgress">${progress}</p>` : ""}
-      <h2 id="${titleId}">${character.name}</h2>
-    </div>
-  </header>`;
-}
-
-function renderChallenge() {
+function renderChallenge(completed = false) {
   const rune = runeById(state.activeRuneId);
   const linkedChallenge = learningChallengeForRune(rune);
   const npc = challengePresentationType(linkedChallenge) === "npc";
@@ -7457,17 +7558,12 @@ function renderChallenge() {
     const name = character.name;
     return `
       ${renderScene({ hideTeamBar: true })}
-      <section class="modalLayer runeLayer ${panelClass} authoredChallengeLayer ${npc ? "npcChallengeLayer" : ""}" style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px" role="dialog" aria-modal="true" aria-labelledby="challenge-title">
+      <section class="modalLayer runeLayer ${panelClass} authoredChallengeLayer compactCompletionLayer" style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px" role="dialog" aria-modal="true" aria-labelledby="challenge-title">
         <div class="runeFocusSpark" aria-hidden="true"></div>
-        <div class="challengeBox runeChallengeBox npcLockedChallengeBox ${npc ? "npcEncounterCard" : ""}" data-challenge-locked="true" ${npc ? 'data-npc-locked="true"' : ""}>
-          ${npc ? renderNpcEncounterHeader(character, "challenge-title") : `<div class="challengeHeader" data-challenge-character="${character?.id || "npc"}">
-            <img class="challengeCharacterPortrait" src="${readyAssetSrc(character?.portrait || "")}" alt="${name}" />
-            <div class="challengeCharacterSpeech"><p class="eyebrow">${name}</p><h2 id="challenge-title">${rune.name}</h2></div>
-          </div>`}
-          ${npc ? '<div class="npcEncounterBody">' : ""}
+        <div class="challengeBox runeChallengeBox npcLockedChallengeBox compactCompletion" data-challenge-locked="true" ${npc ? 'data-npc-locked="true"' : ""}>
+          ${renderCompactChallengeHeader(character, rune.name, "challenge-title")}
           <p class="npcPrerequisiteMessage">Rond eerst de andere opdrachten hier af. ${npc ? `Kom daarna terug bij ${name}.` : "Daarna kun je met deze opdracht beginnen."}</p>
           <button class="secondaryButton" type="button" data-action="close-challenge">Sluiten</button>
-          ${npc ? "</div>" : ""}
         </div>
       </section>
     `;
@@ -7478,61 +7574,241 @@ function renderChallenge() {
   const authored = Boolean(question.answerMode);
   const number = state.questionIndex + 1;
   const total = questions.length;
-  const object = interactiveObjectForTarget(rune);
-  const anchor = objectScreenAnchor(object);
-  const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
-  const challengeCharacter = getChallengeCharacter();
+  const m6 = learningLevels.resolveLevel(question) === "M6";
+  const promptTag = m6 ? "div" : "p";
+  const stage = state.questionSupportStage || "question";
+  const character = getChallengeCharacter();
+  const scratchOpen = m6 && state.scratchpad?.open;
+  const notebookOpen = !completed && m6 && (scratchOpen || stage !== "question");
+  const titleId = completed ? "correct-title" : "challenge-title";
+  const header = `<header class="workspaceHeader">
+    ${renderCompactChallengeHeader(character, rune.name, titleId, `Vraag ${number} van ${total}`)}
+    <div class="workspaceActions">
+      <button class="secondaryButton workspaceClose" type="button" data-action="close-challenge" aria-label="Sluit opdracht">×</button>
+    </div>
+  </header>`;
+  const answerZone = `<div class="workspaceAnswerZone">
+    ${m6 && state.feedback ? `<p class="feedback challengeFeedback inputFeedback" aria-live="polite">${state.feedback}</p>` : ""}
+    ${renderChallengeAnswer(question, choices)}
+    ${state.assistedCompletionAvailable ? '<button class="secondaryButton assistedCompletionButton" type="button" data-action="assisted-complete">Samen afronden</button>' : ""}
+  </div>`;
   return `
-    ${renderScene({ hideTeamBar: npc || !authored })}
-    <section
-      class="modalLayer runeLayer ${panelClass} ${authored ? "authoredChallengeLayer" : ""} ${npc ? "npcChallengeLayer" : ""}"
-      style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="challenge-title"
-    >
-      <div class="runeFocusSpark" aria-hidden="true"></div>
-      <div class="challengeBox runeChallengeBox ${question.visual?.type === "clock" ? "clockChallengeBox" : ""} ${npc ? "npcEncounterCard" : ""}" ${npc ? `data-npc-answer-state="${state.selectedWrong ? "retry" : "unanswered"}"` : ""}>
-        ${npc ? renderNpcEncounterHeader(challengeCharacter, "challenge-title", `Vraag ${number} van ${total}`) : `<div class="challengeHeader" data-challenge-character="${challengeCharacter.id}">
-          <img class="challengeCharacterPortrait" src="${readyAssetSrc(challengeCharacter.portrait)}" alt="${challengeCharacter.name}" />
-          <div class="challengeCharacterSpeech">
-            <p class="eyebrow">${
-              authored
-                ? challengeCharacter.name
-                : `${challengeCharacter.name} - Vraag ${number}/${total}`
-            }</p>
-            <h2 id="challenge-title">${rune.name}</h2>
+    ${renderScene({ hideTeamBar: m6 || completed, instructionalChallenge: true })}
+    <section class="modalLayer runeLayer authoredChallengeLayer challengeWorkspaceLayer ${m6 ? "m6WorkspaceLayer" : "e5WorkspaceLayer"}" role="dialog" aria-modal="true" aria-labelledby="${titleId}">
+      <div class="challengeBox challengeWorkspace ${m6 ? "instructionalChallengeBox" : ""} ${notebookOpen ? "notebookOpen" : ""} ${completed ? "challengeCompletion" : ""}" data-learning-mode="${m6 ? 'M6' : 'E5'}" ${npc ? `data-npc-answer-state="${completed ? "correct" : state.selectedWrong ? "retry" : "unanswered"}"` : ""}>
+        ${m6 ? "" : header}
+        <div class="workspaceColumns">
+          <div class="workspaceMain">
+            ${m6 ? header : ""}
+            ${completed ? "" : `
+            <div class="workspaceQuestionBody">
+            <${promptTag} class="sum workspacePrompt ${authored && question.presentation === "story" ? "storyPrompt" : ""}">${authored ? question.centralQuestionId ? challengeSupport.richText(question.promptParts || question.prompt) : question.prompt : `Hoeveel is ${question.a} x ${question.b}?`}</${promptTag}>
+            <div class="workspaceContent" tabindex="0" role="region" aria-label="Opgave en hulp">
+              ${renderClockVisual(window.AtlasChallengeHints.resolveClockVisual(level.id, question, stage))}
+              ${m6 && stage !== "question" ? "" : challengeSupport.renderVisual(question.visual, stage)}
+              ${window.AtlasChallengeCapabilities.usesCurrency(question) ? window.AtlasChallengeCapabilities.renderCurrencyControls(question.answerSpec, state.currencyAnswerDraft) : ''}
+              ${!m6 && state.feedback ? `<p class="feedback challengeFeedback" aria-live="polite">${state.feedback}</p>` : ""}
+            </div>
+            </div>
+            ${m6 ? "" : answerZone}`}
           </div>
-        </div>`}
-        ${npc ? '<div class="npcEncounterBody">' : ""}
-        <p class="sum ${authored && question.presentation === "story" ? "storyPrompt" : ""}">
-          ${authored ? question.prompt : `Hoeveel is ${question.a} x ${question.b}?`}
-        </p>
-        ${renderClockVisual(question.visual)}
-        ${
-          question.answerMode === "open"
-            ? `<form class="openAnswerForm" data-open-answer-form>
-                <label for="open-answer">Jouw antwoord</label>
-                <div class="openAnswerControls">
-                  <input id="open-answer" name="answer" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-open-answer />
-                  <button class="primaryButton" type="submit">Controleer</button>
-                </div>
-              </form>`
-            : `<div class="choices">
-                ${choices.map((choice) => `<button class="answerStone" type="button" data-choice="${choice}">${choice}</button>`).join("")}
-              </div>`
-        }
-        ${npc && state.selectedWrong && !state.feedback && state.guideMessage?.text ? `<aside class="npcRetryHint" aria-live="polite"><strong>${level.guides?.[state.guideMessage.speaker]?.name || "Tip"}</strong><p>${state.guideMessage.text}</p></aside>` : ""}
-        ${(authored || npc) && state.feedback ? `<p class="feedback challengeFeedback" aria-live="polite">${state.feedback}</p>` : ""}
-        ${
-          state.assistedCompletionAvailable
-            ? `<button class="secondaryButton assistedCompletionButton" type="button" data-action="assisted-complete">Samen afronden</button>`
-            : ""
-        }
-        ${npc ? "</div>" : ""}
+          ${completed ? renderChallengeResult(question, number === total) : `
+            ${notebookOpen ? renderChallengeNotebook(question, stage, scratchOpen) : ""}
+            ${m6 ? `<footer class="workspaceFooter">${answerZone}${renderNotebookToolbar(stage, scratchOpen)}</footer>` : ""}
+          `}
+        </div>
       </div>
     </section>
   `;
+}
+
+// Compact, shared treatment. Asset identity and world/NPC definitions are never mutated.
+const challengePortraitPresentation = {
+  freya: { fit: "contain", position: "center bottom" },
+  eivar: { fit: "contain", position: "center bottom" },
+  minnie: { fit: "contain", position: "center" },
+  moose: { fit: "contain", position: "center" }
+};
+function renderChallengePortrait(character) {
+  const crop = challengePortraitPresentation[character.id] || { fit: "cover", position: "center 25%" };
+  return `<span class="challengePortraitFrame" style="--portrait-fit:${crop.fit};--portrait-position:${crop.position}"><img class="challengeCharacterPortrait" src="${readyAssetSrc(character.portrait)}" alt="${challengeSupport.escape(character.name)}" /></span>`;
+}
+function renderCompactChallengeHeader(character, title, titleId, progress = "") {
+  return `<div class="compactChallengeHeader" data-challenge-character="${character.id}">
+    ${renderChallengePortrait(character)}<div><p class="eyebrow">${challengeSupport.escape(character.name)}</p><h2 id="${titleId}">${challengeSupport.escape(title)}</h2>${progress ? `<p class="workspaceQuestionProgress">${progress}</p>` : ""}</div>
+  </div>`;
+}
+function renderIntegratedHelp(question, stage) {
+  const speaker = stage === "minnie" ? "minnie" : "moose";
+  const character = { ...guideEntries().find(([id]) => id === speaker)[1], id: speaker };
+  const explanation = stage === "explanation";
+  return `<section class="integratedChallengeHelp" data-help-speaker="${speaker}" data-help-stage="${stage}" aria-label="${explanation ? 'Moose legt het uit' : character.name}" aria-live="polite">
+    <header class="integratedHelpHeader">${renderChallengePortrait(character)}<div><h3>${explanation ? 'Moose legt het uit' : character.name}</h3></div></header>
+    <div class="notebookSheet">${renderNotebookMaterial()}
+    <div class="notebookPaper" tabindex="0" role="region" aria-label="${explanation ? 'Volledige uitleg' : 'Tip'}">
+      ${explanation ? question.authoredSupport ? challengeSupport.renderExplanation(question, "Moose legt het uit") : `<p>${challengeSupport.richText(question.explanation)}</p>` : `<p class="integratedHintText">${challengeSupport.richText(question[speaker === 'minnie' ? 'hintMinnieParts' : 'hintMooseParts'] || window.AtlasChallengeHints.resolve(level.id, question, speaker))}</p>${challengeSupport.renderVisual(question.visual, stage)}`}
+    </div>
+    </div>${renderNotebookBindings()}
+  </section>`;
+}
+function renderChallengeNotebook(question, stage, editing) {
+  // Render only the selected face. Editing can never expose an unreached help stage.
+  return `<aside class="challengeNotebook" id="challenge-scratchpad" data-notebook-mode="${editing ? 'notes' : 'help'}" aria-label="Kladblok en hulp">
+    ${editing ? renderScratchpad() : renderIntegratedHelp(question, stage)}
+  </aside>`;
+}
+function renderNotebookToolbar(stage, editing) {
+  return `<div class="notebookToolbar">
+      ${editing ? `<button class="secondaryButton scratchpadToggle" type="button" data-action="scratchpad-close">${stage === 'question' ? 'Sluit kladblok' : stage === 'explanation' ? 'Terug naar uitleg' : 'Terug naar tip'}</button>` : '<button class="secondaryButton scratchpadToggle" type="button" data-action="scratchpad-toggle"><span aria-hidden="true">✎</span> Kladblok</button>'}
+    </div>
+  `;
+}
+function renderNotebookMaterial() {
+  return '<span class="notebookMaterialWindow" aria-hidden="true"><span class="notebookMaterial"></span></span>';
+}
+function renderNotebookBindings() {
+  return '<span class="notebookBindingWindow" aria-hidden="true"><span class="notebookBindings" aria-hidden="true"></span></span>';
+}
+function syncNotebookSurface(paper) {
+  // Native help/textarea scrolling remains the only scroll owner. These are just
+  // clipped decorations: no second editor, scroll position or learning state.
+  const face = paper.closest('.integratedChallengeHelp, .challengeScratchpad');
+  const height = paper.scrollHeight, viewport = paper.clientHeight;
+  const scroll = Math.max(0, Math.min(paper.scrollTop, height - viewport));
+  const values = {
+    '--notebook-paper-top': `${paper.parentElement.offsetTop + 1}px`,
+    '--notebook-viewport': `${viewport}px`,
+    '--notebook-length': `${height}px`,
+    '--notebook-scroll': `${-scroll}px`,
+    '--notebook-scrollbar': `${paper.offsetWidth - paper.clientWidth - 2}px`,
+    '--notebook-paper-cap': `${paper.clientWidth * 110 / 1536}px`,
+    '--notebook-binding-length': `${Math.floor(Math.max(0, height - 26) / 40) * 40}px`
+  };
+  for (const [key, value] of Object.entries(values)) {
+    if (face.style.getPropertyValue(key) !== value) face.style.setProperty(key, value);
+  }
+  face.classList.toggle('notebookLongPaper', height > viewport + 1);
+}
+app.addEventListener('scroll', event => {
+  if (event.target.matches?.('.challengeNotebook .notebookPaper')) syncNotebookSurface(event.target);
+}, { capture: true, passive: true });
+function alignNotebookRules() {
+  const paper = app.querySelector('.challengeNotebook .notebookPaper');
+  if (!paper) return;
+  const blocks = [...paper.querySelectorAll('.explanationStepText')];
+  const line = parseFloat(getComputedStyle(paper).lineHeight);
+  const origin = parseFloat(getComputedStyle(paper).paddingTop);
+  const scroll = paper.scrollTop;
+  blocks.forEach(block => block.style.paddingTop = '0px');
+  // Visuals have intrinsic heights. Snap the following text to the next paper rule,
+  // without modifying authored content, wrapping or visual geometry.
+  for (const block of blocks) {
+    const offset = block.offsetTop - origin;
+    block.style.paddingTop = `${(line - offset % line) % line}px`;
+    block.style.setProperty('--step-rule-offset', block.style.paddingTop);
+  }
+  paper.scrollTop = scroll;
+  syncNotebookSurface(paper);
+}
+function renderChallengeAnswer(question, choices) {
+  if (window.AtlasChallengeCapabilities.usesCurrency(question)) return '<form id="challenge-currency-answer" class="openAnswerForm currencyAnswerForm" data-open-answer-form novalidate><div class="openAnswerControls"><button class="primaryButton" type="submit">Controleer</button></div></form>';
+  if (question.answerMode !== "open") return `<div class="choices">${choices.map(choice => `<button class="answerStone" type="button" data-choice="${challengeSupport.escape(choice)}">${question.choiceParts?.[choice] ? challengeSupport.richText(question.choiceParts[choice]) : challengeSupport.escape(choice)}</button>`).join("")}</div>`;
+  const structured = challengeSupport.usesStructuredMoney(question);
+  const draft = challengeSupport.escape(state.answerDraft || "");
+  return `<form class="openAnswerForm" data-open-answer-form ${structured ? 'novalidate' : ''}>
+    <label id="open-answer-label" for="open-answer">${question.answerSpec?.type === "euro" ? "Bedrag in euro’s" : "Jouw antwoord"}</label>
+    <div class="openAnswerControls">
+      ${structured ? renderStructuredMoneyInput() : `<div class="learningAnswerField">${question.answerSpec?.type === "euro" ? '<span class="answerPrefix">€</span>' : ''}<input id="open-answer" name="answer" type="text" inputmode="${question.answerSpec?.type === "euro" ? "decimal" : "numeric"}" ${!question.answerSpec ? 'pattern="[0-9]*"' : ''} autocomplete="off" data-open-answer value="${draft}" />${question.answerSpec?.unit ? `<span class="answerUnit">${challengeSupport.escape(question.answerSpec.unit)}</span>` : ''}</div>`}
+      <button class="primaryButton" type="submit">Controleer</button>
+    </div>
+    ${question.answerSpec?.type === "euro" && !structured ? '<p class="answerNote">Vul het bedrag in euro’s in.</p>' : ''}
+  </form>`;
+}
+function renderScratchpad() {
+  const notes = state.scratchpad;
+  // HTML discards the first newline after <textarea>; the explicit newline below
+  // protects meaningful leading blank notebook rules through every rerender.
+  return `<section class="challengeScratchpad" aria-label="Kladblok">
+    <header><span class="notebookPencil" aria-hidden="true">✎</span><h3>Kladblok</h3>
+      <div class="notebookClear">${notes.confirmClear ? '<div class="notebookClearConfirm" role="group" aria-label="Je kladwerk wissen?"><span>Je kladwerk wissen?</span><button class="secondaryButton" type="button" data-action="scratchpad-confirm">Wis</button><button class="secondaryButton" type="button" data-action="scratchpad-cancel">Annuleren</button></div>' : '<button class="secondaryButton notebookClearIcon" type="button" data-action="scratchpad-clear" aria-label="Wis kladwerk" title="Wis kladwerk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 13 8-8a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-6 6H9l-5-5a1 1 0 0 1 0-1Z"/><path d="m8 9 9 9M14 19h7"/></svg></button>'}</div>
+    </header>
+    <div class="notebookSheet">${renderNotebookMaterial()}
+    <textarea class="notebookPaper" data-scratchpad-notes aria-label="Eigen kladwerk" spellcheck="false" autocomplete="off">
+${challengeSupport.escape(notes.text)}</textarea>
+    </div>${renderNotebookBindings()}
+  </section>`;
+}
+function placeScratchpadCaretOnRule(field, row) {
+  // Keep native textarea editing, selection, paste, wrapping and keyboard support.
+  // A tap below the last written line inserts only the blank lines needed to reach
+  // that rule. Existing lines retain the browser's normal caret placement.
+  const style = getComputedStyle(field), mirror = document.createElement('div');
+  for (const key of ['font', 'letterSpacing', 'wordSpacing', 'tabSize', 'textIndent', 'textTransform']) mirror.style[key] = style[key];
+  Object.assign(mirror.style, { position: 'fixed', visibility: 'hidden', pointerEvents: 'none',
+    left: '0', top: '0', padding: '0', border: '0', whiteSpace: 'pre-wrap', overflowWrap: 'break-word',
+    width: `${field.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)}px` });
+  mirror.textContent = field.value;
+  const end = document.createElement('span');
+  end.textContent = '\u200b'; mirror.append(end); document.body.append(mirror);
+  const lastRow = Math.round((end.getBoundingClientRect().top - mirror.getBoundingClientRect().top) / parseFloat(style.lineHeight));
+  mirror.remove();
+  if (row <= lastRow) return;
+  const cursor = field.value.length;
+  field.setRangeText('\n'.repeat(row - lastRow), cursor, cursor, 'end');
+  state.scratchpad.text = field.value;
+  syncNotebookSurface(field);
+}
+
+// Measure the tapped rule before focus can resize the visual viewport on iPad.
+// Ignore drags/scroll gestures; they must never insert blank lines.
+let scratchpadPress = null;
+app.addEventListener('pointerdown', event => {
+  scratchpadPress = null;
+  if (!event.isPrimary || event.button !== 0 || !event.target.matches('[data-scratchpad-notes]')) return;
+  const field = event.target, style = getComputedStyle(field), rect = field.getBoundingClientRect();
+  const row = Math.max(0, Math.floor((event.clientY - rect.top - parseFloat(style.borderTopWidth) - parseFloat(style.paddingTop) + field.scrollTop) / parseFloat(style.lineHeight)));
+  scratchpadPress = { field, row, x: event.clientX, y: event.clientY, scroll: field.scrollTop };
+});
+app.addEventListener('pointercancel', () => { scratchpadPress = null; });
+app.addEventListener('pointerup', event => {
+  const press = scratchpadPress;
+  if (press && (Math.hypot(event.clientX - press.x, event.clientY - press.y) > 8 || press.field.scrollTop !== press.scroll)) scratchpadPress = null;
+});
+app.addEventListener('click', event => {
+  const press = scratchpadPress; scratchpadPress = null;
+  if (press?.field === event.target) placeScratchpadCaretOnRule(press.field, press.row);
+});
+// Font loading can change wrapped visual heights after the first render.
+document.fonts?.addEventListener('loadingdone', alignNotebookRules);
+
+function handleScratchpadAction(action) {
+  const question = currentChallengeQuestions()[state.questionIndex];
+  if (state.screen !== "challenge" || learningLevels.resolveLevel(question) !== "M6") return;
+  const notes = state.scratchpad ||= { text: "", open: false, confirmClear: false };
+  if (action === "scratchpad-toggle") notes.open = !notes.open;
+  if (action === "scratchpad-close") notes.open = false;
+  if (action === "scratchpad-clear") notes.confirmClear = Boolean(notes.text);
+  if (action === "scratchpad-cancel") notes.confirmClear = false;
+  if (action === "scratchpad-confirm") { notes.text = ""; notes.confirmClear = false; }
+  render();
+  if (["scratchpad-toggle", "scratchpad-close"].includes(action) && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    app.querySelector('.notebookSheet')?.animate([
+      { transform: 'perspective(900px) rotateY(12deg)', opacity: .35, transformOrigin: 'left center' },
+      { transform: 'perspective(900px) rotateY(0deg)', opacity: 1, transformOrigin: 'left center' }
+    ], { id: 'notebook-page-turn', duration: 320, easing: 'cubic-bezier(.2,.75,.25,1)' });
+  }
+  const focus = !notes.open ? '.notebookPaper, [data-action="scratchpad-toggle"]' : notes.confirmClear ? '[data-action="scratchpad-cancel"]' : '[data-scratchpad-notes]';
+  app.querySelector(focus)?.focus({ preventScroll: true });
+}
+
+function renderStructuredMoneyInput() {
+  const draft = state.moneyAnswerDraft || { euros: "", cents: "" };
+  return `<div class="structuredMoneyInput" data-money-input role="group" aria-labelledby="open-answer-label">
+    <span class="answerPrefix" aria-hidden="true">€</span>
+    <label class="moneyPart"><span>euro</span><input id="open-answer" name="euros" aria-label="Euro" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" data-open-answer data-money-part="euros" value="${challengeSupport.escape(draft.euros)}" /></label>
+    <span class="moneySeparator" aria-hidden="true">,</span>
+    <label class="moneyPart"><span>cent</span><input name="cents" aria-label="Cent" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" data-open-answer data-money-part="cents" value="${challengeSupport.escape(draft.cents)}" /></label>
+  </div>`;
 }
 
 function getChallengeCharacter() {
@@ -7551,33 +7827,16 @@ function getChallengeCharacter() {
 }
 
 function renderCorrect() {
-  const rune = runeById(state.activeRuneId);
-  const npc = challengePresentationType(learningChallengeForRune(rune)) === "npc";
-  const lastQuestion = state.questionIndex === currentChallengeQuestions().length - 1;
-  const object = interactiveObjectForTarget(rune);
-  const anchor = objectScreenAnchor(object);
-  const panelClass = anchor.x < 52 ? "runePanelRight" : "runePanelLeft";
-
-  return `
-    ${renderScene({ hideTeamBar: true })}
-    <section
-      class="modalLayer runeLayer ${panelClass} ${npc ? "npcChallengeLayer" : ""}"
-      style="--rune-screen-x:${anchor.x}%; --rune-screen-y:${anchor.y}%; --rune-radius:${object.radius}px"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="correct-title"
-    >
-      <div class="runeFocusSpark runeFocusCorrect" aria-hidden="true"></div>
-      <div class="challengeBox runeChallengeBox successBox ${npc ? "npcEncounterCard" : ""}" ${npc ? 'data-npc-answer-state="correct"' : ""}>
-        ${npc ? `${renderNpcEncounterHeader(getChallengeCharacter(), "correct-title", `Vraag ${state.questionIndex + 1} van ${currentChallengeQuestions().length}`)}<div class="npcEncounterBody"><h3 class="npcCorrectTitle"><span aria-hidden="true">✓</span> Goed zo!</h3>` : `<div class="runeBurst" aria-hidden="true"></div><h2 id="correct-title">Goed zo!</h2>`}
-        <p class="feedback">${state.feedback}</p>
-        <button class="primaryButton" type="button" data-action="next-question">
-          ${lastQuestion ? level.challengeCompleteLabel || "Opdracht afronden" : "Volgende vraag"}
-        </button>
-        ${npc ? "</div>" : ""}
-      </div>
-    </section>
-  `;
+  return renderChallenge(true);
+}
+function renderChallengeResult(question, lastQuestion) {
+  const helped = state.questionSupportStage === 'explanation';
+  const answer = question.answerDisplay || answerFor(question);
+  return `<section class="workspaceResult" aria-live="polite">
+    <div><h3>${helped ? 'Samen opgelost' : '<span aria-hidden="true">✓</span> Goed zo!'}</h3>
+    <p class="feedback">${helped ? `Het antwoord is ${challengeSupport.escape(answer)}.` : challengeSupport.escape(state.feedback)}</p></div>
+    <button class="primaryButton" type="button" data-action="next-question">${lastQuestion ? level.challengeCompleteLabel || 'Opdracht afronden' : 'Volgende vraag'}</button>
+  </section>`;
 }
 
 function renderReward() {
@@ -7801,6 +8060,7 @@ function render() {
   syncFpsDisplay();
   syncMenuAutoRotation();
   restoreEditorUiState(editorUiState);
+  alignNotebookRules();
 }
 
 app.addEventListener("toggle", (event) => {
@@ -8305,6 +8565,7 @@ app.addEventListener("click", (event) => {
     if (action === "menu") returnToMenu();
     if (action === "next-question") nextQuestion();
     if (action === "close-challenge") closeChallenge();
+    if (action.startsWith("scratchpad-")) handleScratchpadAction(action);
     if (action === "assisted-complete") completeQuestionWithHelp();
     if (action === "reward") showReward();
     if (action === "next-level") continueToNextLevel();
@@ -8336,6 +8597,14 @@ app.addEventListener("click", (event) => {
     return;
   }
 
+  const currencyStep = event.target.closest('[data-currency-step]');
+  if (currencyStep) {
+    const denomination = currencyStep.dataset.denomination;
+    const input = app.querySelector(`[data-currency-count="${denomination}"]`);
+    input.value = String(Math.min(99, Math.max(0, (Number(input.value) || 0) + Number(currencyStep.dataset.currencyStep))));
+    state.currencyAnswerDraft = readCurrencyAnswer();
+    return;
+  }
   const choiceTarget = event.target.closest("[data-choice]");
   if (choiceTarget) {
     answerQuestion(choiceTarget.dataset.choice);
@@ -8349,6 +8618,35 @@ app.addEventListener("click", (event) => {
 });
 
 app.addEventListener("input", (event) => {
+  if (event.target.matches('[data-currency-count]')) {
+    state.currencyAnswerDraft = readCurrencyAnswer();
+    return;
+  }
+  if (event.target.matches('[data-scratchpad-notes]')) {
+    state.scratchpad.text = event.target.value;
+    syncNotebookSurface(event.target);
+    return;
+  }
+  if (event.target.matches('[data-money-part]')) {
+    state.moneyAnswerDraft = readMoneyAnswer(event.target.closest('[data-open-answer-form]'));
+    return;
+  }
+  if (event.target.matches('[data-open-answer]')) {
+    state.answerDraft = event.target.value;
+    return;
+  }
+  const learningInput = event.target.closest('[data-learning-mix]');
+  if (learningInput) {
+    const next = learningLevels.savePreference(Number(learningInput.value));
+    if (next !== m6Percentage) learningPlanner = null;
+    m6Percentage = next;
+    learningInput.value = String(next);
+    const label = `${100 - next}% E5 · ${next}% M6`;
+    learningInput.setAttribute('aria-valuetext', label);
+    app.querySelector('[data-learning-mix-label]').textContent = label;
+    app.querySelector('[data-learning-mix-explanation]').innerHTML = renderLearningMixExplanation();
+    return;
+  }
   const fxInput=event.target.closest('[data-challenge-fx]');
   if(fxInput){
     if(fxInput.type==='number'&&(fxInput.value===''||!Number.isFinite(Number(fxInput.value))))return;
@@ -8931,11 +9229,25 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+function readMoneyAnswer(form) {
+  return Object.fromEntries(['euros', 'cents'].map(part => [part, form.querySelector(`[data-money-part="${part}"]`)?.value ?? ""]));
+}
+
+function readCurrencyAnswer() {
+  return Object.fromEntries([...app.querySelectorAll('[data-currency-count]')].map(field => [field.dataset.currencyCount, field.value]));
+}
+app.addEventListener("beforeinput", (event) => {
+  if (event.target.matches('[data-money-part], [data-currency-count]') && event.data && /\D/.test(event.data)) event.preventDefault();
+});
+app.addEventListener("paste", (event) => {
+  if (event.target.matches('[data-money-part], [data-currency-count]') && /\D/.test(event.clipboardData?.getData('text') || '')) event.preventDefault();
+});
+
 app.addEventListener("submit", (event) => {
   const form = event.target.closest("[data-open-answer-form]");
   if (!form) return;
   event.preventDefault();
-  answerQuestion(form.querySelector("[data-open-answer]")?.value ?? "");
+  answerQuestion(window.AtlasChallengeCapabilities.usesCurrency(currentChallengeQuestions()[state.questionIndex]) ? readCurrencyAnswer() : form.querySelector('[data-money-input]') ? readMoneyAnswer(form) : form.querySelector("[data-open-answer]")?.value ?? "");
 });
 
 preloadMenuAssets();

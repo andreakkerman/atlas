@@ -4046,7 +4046,8 @@ body.keyboard-open .openAnswerControls input {
   font-size: clamp(1.45rem, 6vw, 2.5rem);
 }
 
-.runeChallengeBox .answerStone {
+.runeChallengeBox .answerStone,
+.challengeWorkspace .answerStone {
   color: #eafffb;
   background:
     radial-gradient(circle at 50% 22%, rgba(46, 230, 220, 0.34), transparent 50%),
@@ -4054,6 +4055,10 @@ body.keyboard-open .openAnswerControls input {
   border: 2px solid rgba(156, 242, 233, 0.72);
   box-shadow: 0 7px 0 #061a18, 0 14px 28px rgba(0, 0, 0, 0.32);
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.challengeWorkspace .answerStone:active {
+  box-shadow: 0 3px 0 #061a18, 0 10px 22px rgba(0, 0, 0, 0.32);
 }
 
 .successBox {
@@ -4829,6 +4834,366 @@ body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px;
 .segmentedControl button small { display:block; font-size: .7em; }
 
 .menuSettings { position: relative; }
+.learningPreference { padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 219, 132, .25); }
+.learningPreference > label { font-weight: 700; }
+.learningMixRange { display: flex; align-items: center; gap: 8px; }
+.learningMixRange input { flex: 1; min-width: 0; width: 100%; height: 44px; margin: 0; accent-color: #ffd984; cursor: pointer; }
+.learningMixRange input:focus-visible { outline: 2px solid #ffd984; outline-offset: 2px; }
+.learningPreference output { display: block; font-size: .9rem; }
+.learningMixRange > span { flex: 0 0 76px; font-weight: 700; }
+.learningMixRange > span:last-child { text-align: right; }
+.learningMixRange small { display: block; font-size: .7rem; font-weight: 400; }
+[data-learning-mix-explanation] { font-size: .78rem; line-height: 1.5; color: #d8e5dd; }
+[data-learning-mix-explanation] p { margin: 8px 0 0; }
+
+/* Authored instructional visuals share the normal challenge and NPC surfaces. */
+.instructionalChallengeBox { container-type: inline-size; overflow-y: auto; overscroll-behavior: contain; }
+.authoredChallengeLayer.instructionalChallengeLayer { top: 8px; bottom: calc(clamp(140px, 19dvh, 168px) + env(safe-area-inset-bottom)); padding: 12px; place-items: center; }
+.authoredChallengeLayer.instructionalChallengeLayer .instructionalChallengeBox { max-height: 100%; width: min(700px, 100%); background: radial-gradient(ellipse at top left, #234d43, transparent 55%), #102622fa; }
+.authoredChallengeLayer.instructionalChallengeLayer .npcEncounterCard { width: min(900px, 100%); }
+body.keyboard-open .authoredChallengeLayer.instructionalChallengeLayer { top: var(--visual-viewport-offset-top); bottom: auto; height: calc(var(--visual-viewport-height) - clamp(140px, 19dvh, 168px) - env(safe-area-inset-bottom)); }
+body.keyboard-open .authoredChallengeLayer.instructionalChallengeLayer .instructionalChallengeBox { min-height: 0; max-height: 100%; }
+body.keyboard-open .instructionalTeamBar { position: fixed; top: calc(var(--visual-viewport-offset-top) + var(--visual-viewport-height) - 12px - env(safe-area-inset-bottom)); bottom: auto; transform: translate(-50%, -100%); }
+.authoredChallengeLayer.instructionalExplanationLayer { bottom: calc(8px + env(safe-area-inset-bottom)); }
+body.keyboard-open .authoredChallengeLayer.instructionalExplanationLayer { height: calc(var(--visual-viewport-height) - 8px - env(safe-area-inset-bottom)); }
+.explanationChallengeContext { color: #e9d29e; font-weight: 700; }
+.instructionalChallengeBox::before { display: none; }
+.instructionalChallengeBox .storyPrompt { font-size: clamp(1.1rem, 2.5vw, 1.45rem); line-height: 1.5; }
+.learningVisual { margin: 18px 0; padding: clamp(12px, 3cqi, 22px); border: 1px solid #799d925c; border-radius: 16px; background: linear-gradient(145deg, #e7edda0e, #051a1d66); box-shadow: inset 0 1px #e7f3dc14; font-variant-numeric: tabular-nums; text-align: left; }
+.learningVisual p { margin: 8px 0; line-height: 1.5; }
+.learningStepGroup { padding: 12px 14px; margin: 10px 0; border-left: 3px solid #9dc9b6; border-radius: 0 10px 10px 0; background: #c2e6d20b; }
+.learningStepGroup:first-child { margin-top: 0; }
+.learningStepGroup:last-child { margin-bottom: 0; }
+.learningStepLabel { color: #edce8e; font-size: .86rem; font-weight: 750; margin-bottom: 8px; }
+.learningSequence { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.learningNode { display: inline-grid; place-items: center; min-width: 42px; min-height: 40px; padding: 6px 8px; border: 1px solid #a7daca4d; border-radius: 9px; background: #163d38; color: #fff3cf; font-weight: 750; }
+.learningUnknown { border-style: dashed; background: #ffffff05; }
+.learningJump { display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 2px; color: #dfc48c; font-size: .76rem; min-width: 20px; }
+.learningJump > span:first-child { font-size: 1.5rem; line-height: 1; }
+.learningSequenceVertical { flex-direction: column; align-items: stretch; }
+.learningSequenceVertical .learningJump { flex-direction: row; gap: 8px; }
+.learningSequenceVertical .learningJump > span:first-child { transform: rotate(90deg); }
+.learningTimeline { flex-wrap: nowrap; gap: 4px; justify-content: space-between; }
+.learningTimeline .learningNode { min-width: 0; padding: 6px; font-size: .95rem; }
+.learningTimeline .learningJump { flex: 1; font-size: .7rem; text-align: center; }
+.learningVisualNote { text-align: center; font-weight: 650; color: #f2d69d; }
+.fractionStrip, .fractionGroups { display: grid; grid-template-columns: repeat(var(--parts), minmax(0,1fr)); }
+.fractionStrip { overflow: hidden; border: 2px solid #e5cca1a3; border-radius: 12px; background: #081e20; }
+.fractionPart { min-height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 10px 3px; border-right: 1px solid #e5cca180; font-size: clamp(.7rem, 2.4cqi, .95rem); text-align: center; overflow-wrap: anywhere; }
+.fractionPart:last-child { border: 0; }
+.fractionSelected { background: linear-gradient(145deg,#4b8e83,#28584f); box-shadow: inset 0 3px #b1d9c9; }
+.fractionFocus { outline: 2px solid #ffdf9a; outline-offset: -4px; }
+.fractionRope .fractionPart { background-image: repeating-linear-gradient(40deg,transparent 0 9px,#ebd49716 9px 13px); }
+.fractionGroups { margin-top: 7px; gap: 5px; color: #eed6a8; text-align: center; font-size: .82rem; }
+.fractionGroups span { border-top: 1px solid #ccb37e; padding: 7px 2px 0; overflow-wrap: anywhere; }
+.fractionTotal { text-align: center; color: #e4ebe1; }
+.fractionSymbols { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; max-width: 125px; }
+.fractionSymbols svg, .fractionOutside svg { width: 20px; height: 24px; fill: #efdbac; stroke: #324b46; stroke-width: 1.3; }
+.symbolDetail { fill: none; }
+.fractionOutside { display: flex; justify-content: center; gap: 8px; padding-top: 8px; }
+.learningReceipt { padding: 4px 0 8px; border-bottom: 2px dashed #c8b88966; }
+.learningReceipt > div { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; padding: 10px 4px; }
+.learningReceipt strong { white-space: nowrap; color: #f3dab0; }
+.learningReceipt .receiptPaid { margin-top: 4px; border-top: 1px solid #c8b88944; }
+.authoredExplanation { margin: 20px 0; text-align: left; line-height: 1.6; }
+.authoredExplanation h3 { color: #efd399; font-size: 1rem; }
+.authoredExplanation ol { padding-left: 1.6em; }
+.authoredExplanation li { padding: 6px 0 6px 8px; }
+.authoredExplanation li::marker { color: #e1c289; font-weight: 750; }
+.learningAnswerField { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.learningAnswerField input { width: 100%; min-width: 0; }
+.structuredMoneyInput { display: grid; grid-template-columns: auto minmax(44px, 1fr) auto 4.5em; align-items: center; gap: 8px; min-width: 0; padding: 6px 10px; border: 1px solid #8ac9c2; border-radius: 12px; background: #061c1c; }
+.structuredMoneyInput input { width: 100%; min-width: 0; min-height: 48px; padding: 8px; text-align: center; font-variant-numeric: tabular-nums; }
+.structuredMoneyInput input::placeholder { font-size: .8rem; font-weight: 400; }
+.moneySeparator { font-size: 1.5rem; color: #fff3cf; }
+.answerPrefix { color: #efd399; font-size: 1.4rem; }
+.answerUnit { font-size: .9rem; }
+.answerNote { font-size: .8rem; color: #d0dbcf; text-align: left; margin: 6px 0; }
+.sessionQuestionDetail { padding: 14px 0; border-top: 1px solid #d7c29c40; overflow-wrap: anywhere; }
+/* One bounded question workspace; delivered learning level chooses only the help surface. */
+.authoredChallengeLayer.challengeWorkspaceLayer { inset: 8px 0; padding: 8px 16px; display: grid; place-items: center; pointer-events: none; }
+.authoredChallengeLayer.e5WorkspaceLayer { bottom: calc(clamp(140px, 19dvh, 168px) + env(safe-area-inset-bottom)); }
+.challengeWorkspaceLayer .challengeWorkspace { width: min(850px, 100%); height: min(960px, 100%); max-height: 100%; min-height: 0; padding: 18px; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 14px; overflow: hidden; text-align: left; pointer-events: auto; border: 1px solid #b8a16b; background: radial-gradient(ellipse at top left, #274d40, transparent 65%), #102622fa; box-shadow: 0 20px 65px #0008, inset 0 1px #e9d8a425; }
+.challengeWorkspaceLayer .challengeWorkspace.scratchpadOpen { width: min(1160px, 100%); }
+.challengeWorkspace { color: #f8efd3; }
+.e5WorkspaceLayer .challengeWorkspace { height: auto; }
+.e5WorkspaceLayer .workspaceContent { max-height: 30vh; }
+.challengeWorkspace::before, .compactCompletion::before { display: none; }
+.workspaceHeader { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+.compactChallengeHeader { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.compactChallengeHeader > div { min-width: 0; }
+.compactChallengeHeader .eyebrow { font-size: .78rem; margin: 0 0 3px; color: #d9c28e; }
+.compactChallengeHeader h2 { margin: 0; font-size: clamp(1.15rem, 2.5vw, 1.65rem); line-height: 1.15; overflow-wrap: anywhere; }
+.workspaceQuestionProgress { font-size: .72rem; color: #afc5b8; margin: 5px 0 0; }
+.challengePortraitFrame { position: relative; flex: 0 0 76px; width: 76px; height: 76px; display: block; overflow: hidden; border: 1px solid #be9e60; border-radius: 12px 4px; background: radial-gradient(ellipse, #325747, #102b25 80%); box-shadow: inset 0 0 12px #020e0ca0, 0 2px 5px #0003; }
+.challengePortraitFrame::after { content: ""; position: absolute; inset: 3px; pointer-events: none; border: 1px solid #d2b27755; border-radius: 8px 2px; box-shadow: inset 0 0 7px 1px #07161055; background: linear-gradient(#d4b16b, #d4b16b) left top / 7px 1px no-repeat, linear-gradient(#d4b16b, #d4b16b) right bottom / 7px 1px no-repeat; }
+.challengePortraitFrame .challengeCharacterPortrait { width: 100%; height: 100%; min-height: 0; max-height: none; margin: 0; border: 0; border-radius: 0; object-fit: var(--portrait-fit, cover); object-position: var(--portrait-position, center); filter: none; background: transparent; }
+.workspaceActions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.workspaceActions .secondaryButton { margin: 0; min-height: 44px; padding: 8px 12px; font-size: .85rem; }
+.workspaceActions .workspaceClose { width: 44px; padding: 4px; font-size: 1.5rem; }
+.scratchpadToggle { border-color: #c5a26380; color: #efd6a2; }
+.scratchpadToggle [aria-hidden] { font-size: 1.2rem; margin-right: 4px; }
+.workspaceColumns { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; min-height: 0; }
+.scratchpadOpen .workspaceColumns { grid-template-columns: minmax(0, 1fr) 300px; }
+.workspaceMain { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-width: 0; min-height: 0; }
+.workspaceQuestionBody { display: contents; }
+.challengeWorkspace .workspacePrompt { margin: 0 0 12px; max-height: 23vh; overflow: auto; font-size: clamp(1.4rem, 3.5vw, 2.5rem); line-height: 1.3; text-align: left; }
+.challengeWorkspace .workspacePrompt.storyPrompt { font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.5; }
+.workspaceContent { overflow: auto; overscroll-behavior: contain; min-height: 0; padding: 0 8px 0 0; scrollbar-gutter: stable; overflow-wrap: anywhere; }
+.workspaceContent:focus-visible { outline: 1px solid #dcc082; outline-offset: -1px; }
+.challengeWorkspace .challengeFeedback { color: #f8efd3; }
+.workspaceContent .learningVisual { margin: 10px 0; padding: 14px; }
+.integratedChallengeHelp { border-top: 1px solid #adc5ae40; padding: 14px 0 6px; }
+.integratedHelpHeader { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+.integratedHelpHeader .challengePortraitFrame { flex-basis: 56px; width: 56px; height: 56px; }
+.integratedHelpHeader h3 { margin: 0; color: #efd399; font-size: 1.12rem; }
+.helpTipLabel { color: #b3c8b8; font-size: .75rem; }
+.integratedHintText { font-size: 1.1rem; line-height: 1.6; margin: 0 0 12px; }
+.integratedChallengeHelp .authoredExplanation { margin: 0; font-size: 1.05rem; }
+.integratedChallengeHelp .authoredExplanation ol { margin: 0; }
+.integratedChallengeHelp .authoredExplanation li { padding-bottom: 18px; }
+.explanationStepText { line-height: 1.6; }
+.authoredExplanation .learningVisual { background: #081e202e; box-shadow: none; border-color: #87a89836; }
+.authoredExplanation .learningStepGroup { padding: 8px 10px; }
+.authoredExplanation .learningSequenceVertical { flex-direction: row; align-items: center; }
+.authoredExplanation .learningSequenceVertical .learningJump { flex-direction: column-reverse; }
+.authoredExplanation .learningSequenceVertical .learningJump > span:first-child { transform: none; }
+.workspaceAnswerZone { border-top: 1px solid #b9a37155; padding-top: 12px; margin-top: 12px; min-width: 0; }
+.workspaceAnswerZone .openAnswerForm { margin: 0; }
+.workspaceAnswerZone .openAnswerForm > label { display: block; margin-bottom: 6px; font-size: .9rem; }
+.workspaceAnswerZone .openAnswerControls { display: flex; gap: 12px; align-items: end; position: static; padding: 0; background: transparent; }
+.workspaceAnswerZone .learningAnswerField { flex: 1; }
+.workspaceAnswerZone input { min-height: 48px; height: 52px; padding: 8px 12px; font-size: 1.2rem; }
+.workspaceAnswerZone .primaryButton { margin: 0; min-height: 52px; padding: 10px 22px; font-size: 1rem; }
+/* Checking an answer is a flat teal/gold action in both learning levels. */
+.challengeWorkspace .openAnswerControls > .primaryButton { color: #f4e2b2; border: 1px solid #baa16a; background: linear-gradient(155deg, #356b5e, #214b43); box-shadow: inset 0 1px #d1dfbb24; font-weight: 700; transition: background-color 150ms, border-color 150ms; }
+.challengeWorkspace .openAnswerControls > .primaryButton:hover { background: linear-gradient(155deg, #407969, #28594e); border-color: #e1c78e; }
+.challengeWorkspace .openAnswerControls > .primaryButton:active { transform: none; background: #1a423a; box-shadow: inset 0 1px #061b1840; }
+.challengeWorkspace .openAnswerControls > .primaryButton:focus-visible { outline: 2px solid #9de5d7; outline-offset: 3px; }
+.workspaceAnswerZone .choices { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.workspaceAnswerZone .answerStone { min-width: 0; min-height: 52px; padding: 10px 6px; font-size: 1.3rem; }
+.workspaceAnswerZone .assistedCompletionButton { margin: 8px 0 0; min-height: 44px; }
+.workspaceAnswerZone .inputFeedback { margin: 8px 0 0; font-size: .9rem; line-height: 1.3; }
+.workspaceAnswerZone .structuredMoneyInput { grid-template-columns: auto minmax(64px, 1.3fr) auto minmax(60px, 1fr); width: min(280px, 100%); flex: 0 1 280px; padding: 6px 10px; gap: 8px; }
+.structuredMoneyInput .moneyPart { margin: 0; min-width: 0; display: grid; gap: 3px; }
+.structuredMoneyInput .moneyPart > span { color: #b6cabd; font-size: .7rem; font-weight: 400; text-align: center; }
+.structuredMoneyInput .moneySeparator, .structuredMoneyInput .answerPrefix { align-self: end; line-height: 48px; }
+.workspaceAnswerZone .structuredMoneyInput input { padding: 6px; height: 48px; }
+.challengeScratchpad { display: grid; grid-template-rows: auto minmax(60px, 1fr) auto; min-width: 0; min-height: 0; overflow: hidden; }
+.challengeScratchpad header { display: flex; justify-content: space-between; align-items: center; padding: 4px 12px; }
+.challengeScratchpad h3 { margin: 0; color: #e8cb91; font-size: .95rem; }
+.challengeScratchpad .secondaryButton { margin: 0; min-height: 44px; padding: 7px 10px; font-size: .8rem; }
+.challengeScratchpad header button { font-size: 1.3rem; }
+.challengeScratchpad textarea { box-sizing: border-box; width: 100%; height: 100%; min-height: 60px; resize: none; border: 0; border-radius: 0; color: #283531; padding: 8px 12px 8px 38px; font: 17px/28px system-ui, sans-serif; background-color: #f5efdb; background-image: linear-gradient(90deg, transparent 26px, #c9838070 26px, #c9838070 27px, transparent 27px), repeating-linear-gradient(transparent 0px, transparent 27px, #9dbbc57a 27px, #9dbbc57a 28px); background-position: 0 0, 0 8px; background-attachment: local; }
+.scratchpadFooter { padding: 4px 8px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; font-size: .8rem; }
+.compactCompletionLayer .compactCompletion { width: min(650px, 95vw); max-height: 90vh; overflow: auto; text-align: left; padding: 24px; }
+body.keyboard-open .authoredChallengeLayer.challengeWorkspaceLayer { top: calc(var(--visual-viewport-offset-top) + 4px); bottom: auto; height: calc(var(--visual-viewport-height) - 8px); padding: 4px 12px; }
+body.keyboard-open .authoredChallengeLayer.e5WorkspaceLayer { height: calc(var(--visual-viewport-height) - clamp(140px, 19dvh, 168px) - 8px); }
+body.keyboard-open .challengeWorkspace { padding: 10px; gap: 8px; }
+body.keyboard-open .workspaceHeader .challengePortraitFrame { width: 48px; height: 48px; flex-basis: 48px; }
+body.keyboard-open .workspaceQuestionProgress { display: none; }
+body.keyboard-open .challengeWorkspace .workspacePrompt { max-height: 18vh; margin-bottom: 6px; }
+body.keyboard-open .e5WorkspaceLayer .workspaceAnswerZone { margin-top: 6px; padding-top: 6px; }
+body.keyboard-open .e5WorkspaceLayer .challengeFeedback { margin: 0; min-height: 0; }
+@media (min-width: 700px) {
+  body.keyboard-open .e5WorkspaceLayer .workspaceAnswerZone:has(.openAnswerForm):has(.assistedCompletionButton) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px; }
+  body.keyboard-open .e5WorkspaceLayer .workspaceAnswerZone:has(.openAnswerForm) .assistedCompletionButton { width: auto; margin: 0; min-height: 52px; padding: 10px 16px; }
+}
+@media (max-width: 1000px) {
+  .scratchpadOpen .workspaceColumns { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) 220px; gap: 12px; }
+  body.keyboard-open .scratchpadOpen .workspaceColumns { grid-template-rows: minmax(0, 1fr) 150px; gap: 6px; }
+  body.keyboard-open .challengeScratchpad header { display: none; }
+  body.keyboard-open .scratchpadFooter { padding: 0 6px; }
+}
+@media (max-width: 600px) {
+  .authoredChallengeLayer.challengeWorkspaceLayer { padding: 4px 8px; }
+  .challengeWorkspaceLayer .challengeWorkspace { padding: 12px; gap: 10px; }
+  .workspaceHeader .challengePortraitFrame { width: 52px; height: 52px; flex-basis: 52px; }
+  .compactChallengeHeader { gap: 8px; }
+  .workspaceActions { gap: 4px; }
+  .workspaceActions .secondaryButton { padding: 6px; }
+  .workspaceQuestionProgress { display: none; }
+  .workspaceAnswerZone .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .workspaceAnswerZone .openAnswerControls { gap: 8px; }
+  .workspaceAnswerZone .primaryButton { padding: 10px; }
+  .scratchpadOpen .workspaceColumns { grid-template-rows: minmax(0, 1fr) 190px; }
+}
+/* M6 A/B layout: compact question, then a facing notebook; no fixed empty canvas. */
+@font-face {
+  font-family: "Atlas Notebook";
+  src: url("../assets/fonts/patrick-hand/PatrickHand-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+.m6WorkspaceLayer { --workspace-title: 24px; --workspace-body: 20px; --workspace-label: 14px; --workspace-action: 14px; --workspace-control-height: 44px; --workspace-action-width: 112px; }
+.m6WorkspaceLayer .compactChallengeHeader h2 { font-size: var(--workspace-title); }
+.m6WorkspaceLayer .compactChallengeHeader .eyebrow,
+.m6WorkspaceLayer .workspaceQuestionProgress,
+.m6WorkspaceLayer .helpTipLabel { font-size: var(--workspace-label); line-height: 1.4; }
+.m6WorkspaceLayer .structuredMoneyInput .moneyPart > span { font-size: var(--workspace-label); }
+.m6WorkspaceLayer .compactChallengeHeader .eyebrow, .m6WorkspaceLayer .workspaceQuestionProgress { margin: 0; }
+.m6WorkspaceLayer .workspaceActions .secondaryButton { font-size: var(--workspace-action); }
+.m6WorkspaceLayer .workspaceActions .workspaceClose { font-size: var(--workspace-title); }
+.m6WorkspaceLayer .workspaceAnswerZone input { font-size: var(--workspace-body); }
+.m6WorkspaceLayer .workspaceAnswerZone .primaryButton,
+.m6WorkspaceLayer .workspaceAnswerZone .answerUnit,
+.m6WorkspaceLayer .workspaceAnswerZone .openAnswerForm > label,
+.m6WorkspaceLayer .workspaceAnswerZone .inputFeedback { font-size: var(--workspace-action); }
+.m6WorkspaceLayer .challengeWorkspace { width: min(800px, 100%); height: auto; grid-template-rows: minmax(0, 1fr); padding: 18px; border-color: #a997686e; background: radial-gradient(ellipse at top left, #294f43, transparent 70%), linear-gradient(130deg, #152f29, #102622); box-shadow: 0 18px 50px #0007, inset 0 1px #e9d8a436, inset 0 -1px #69bfb51c; }
+.m6WorkspaceLayer .challengeWorkspace.notebookOpen { width: min(1240px, 100%); height: min(540px, 100%); }
+.m6WorkspaceLayer .workspaceColumns { --column-gap: 24px; column-gap: var(--column-gap); row-gap: 12px; grid-template-rows: minmax(0, 1fr) auto; }
+.m6WorkspaceLayer .notebookOpen .workspaceColumns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.m6WorkspaceLayer .workspaceMain { position: relative; isolation: isolate; grid-template-rows: auto minmax(0, 1fr); gap: 8px; }
+.m6WorkspaceLayer .workspaceMain::before { content: ""; position: absolute; z-index: -1; right: 14px; bottom: 12px; width: min(48%, 210px); height: min(60%, 210px); background: url("../assets/branding/atlas-emblem-transparent.png") center / contain no-repeat; opacity: .045; filter: grayscale(1) sepia(.35); pointer-events: none; }
+.m6WorkspaceLayer .workspaceQuestionBody { display: block; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; max-height: 44dvh; padding: 0 4px 2px 0; }
+.m6WorkspaceLayer .workspaceContent:empty { display: none; }
+.m6WorkspaceLayer .workspaceContent { overflow: visible; padding: 0; }
+.m6WorkspaceLayer .workspacePrompt { max-height: none; margin: 0; overflow: visible; font-size: var(--workspace-title); }
+.m6WorkspaceLayer .workspacePrompt.storyPrompt { font-size: var(--workspace-body); line-height: 1.5; }
+.m6WorkspaceLayer .workspaceAnswerZone { margin: 0; padding: 0; border: 0; }
+.m6WorkspaceLayer .workspaceAnswerZone .openAnswerControls { position: static; padding: 0; background: transparent; }
+.m6WorkspaceLayer .workspaceAnswerZone .openAnswerForm > label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.m6WorkspaceLayer .workspaceAnswerZone input { height: var(--workspace-control-height); min-height: var(--workspace-control-height); padding: 6px 8px; border-width: 1px; border-radius: 8px; font-size: 18px; }
+.m6WorkspaceLayer .learningAnswerField input { min-width: 44px; }
+.m6WorkspaceLayer .workspaceAnswerZone .openAnswerControls { gap: 8px; }
+.m6WorkspaceLayer .learningAnswerField { min-width: 0; gap: 6px; }
+.m6WorkspaceLayer .workspaceAnswerZone .inputFeedback { margin: 0 0 8px; }
+.workspaceFooter { grid-column: 1; grid-row: 2; display: grid; grid-template-columns: minmax(0, 1fr) var(--workspace-action-width); column-gap: 12px; align-items: end; padding: 12px 0 0; border-top: 1px solid #b9a37155; min-width: 0; }
+.m6WorkspaceLayer .workspaceFooter .primaryButton,
+.m6WorkspaceLayer .workspaceFooter .secondaryButton { width: var(--workspace-action-width); flex: 0 0 var(--workspace-action-width); height: var(--workspace-control-height); min-height: var(--workspace-control-height); border-radius: 8px; padding: 6px 8px; font-size: var(--workspace-action); line-height: 1.15; }
+.m6WorkspaceLayer .scratchpadToggle { color: #ebd7a9; border: 1px solid #a9976880; background: linear-gradient(155deg, #233d34, #142e28); box-shadow: inset 0 1px #d1dfbb16; font-weight: 700; }
+.m6WorkspaceLayer .scratchpadToggle:hover { border-color: #d2b87e; background: #284b3e; }
+.m6WorkspaceLayer .scratchpadToggle:active { transform: none; background: #142e28; box-shadow: inset 0 1px #061b1840; }
+.m6WorkspaceLayer .scratchpadToggle:focus-visible { outline: 2px solid #9de5d7; outline-offset: 3px; }
+.m6WorkspaceLayer .structuredMoneyInput { grid-template-columns: auto minmax(44px, 1.2fr) auto minmax(44px, 1fr); width: min(168px, 100%); flex: 0 1 168px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; gap: 4px; }
+.m6WorkspaceLayer .structuredMoneyInput input { height: var(--workspace-control-height); }
+.m6WorkspaceLayer .structuredMoneyInput ~ .primaryButton { margin-left: auto; }
+.m6WorkspaceLayer .structuredMoneyInput .moneySeparator,
+.m6WorkspaceLayer .structuredMoneyInput .answerPrefix { line-height: var(--workspace-control-height); font-size: 18px; }
+.m6WorkspaceLayer .workspaceAnswerZone .choices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.m6WorkspaceLayer .workspaceAnswerZone .answerStone { min-height: 48px; padding: 6px; font-size: var(--workspace-body); }
+.m6WorkspaceLayer .workspaceContent .learningVisual { padding: 10px; margin: 8px 0; }
+.m6WorkspaceLayer .challengePortraitFrame { flex: 0 0 68px; width: 68px; height: 68px; }
+.challengeNotebook { --paper: #f3e8c9; --ink: #243e38; --rule: 28px; --paper-margin: 25px; --notebook-header: 68px; --notebook-gap: 16px; grid-column: 2; grid-row: 1 / 3; display: grid; grid-template-rows: minmax(0, 1fr); min-width: 0; min-height: 0; border-left: 1px solid #c4a36775; padding-left: var(--column-gap); }
+.challengeNotebook .integratedChallengeHelp { border: 0; padding: 0; min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 16px; }
+.challengeNotebook .integratedHelpHeader, .challengeNotebook .challengeScratchpad header { height: 68px; padding: 0; margin: 0; gap: 14px; justify-content: flex-start; }
+.challengeNotebook .integratedHelpHeader h3, .challengeNotebook .challengeScratchpad h3 { font-size: var(--workspace-title); line-height: 1.2; }
+/* One native scroll owner, with a clipped material surface following its offset.
+   Nine-slicing extends long sheets without stretching their grain or corners. */
+.notebookSheet { position: relative; display: grid; grid-template-rows: minmax(0, 1fr); min-width: 0; min-height: 60px; border-radius: 6px 10px 8px 6px; background: var(--paper); }
+.notebookMaterialWindow { position: absolute; inset: 1px calc(1px + var(--notebook-scrollbar, 0px)) 1px 1px; overflow: hidden; border-radius: inherit; pointer-events: none; background: var(--paper); }
+.notebookMaterial { display: block; box-sizing: border-box; height: var(--notebook-length, 100%); background: url("../assets/ui/notebook/paper-aged.png") 0 0 / 100% 100% no-repeat; transform: translateY(var(--notebook-scroll, 0px)); }
+.notebookLongPaper .notebookMaterial { background: none; border: var(--notebook-paper-cap) solid transparent; border-image: url("../assets/ui/notebook/paper-aged.png") 110 fill / var(--notebook-paper-cap) / 0 stretch round; }
+.challengeNotebook .notebookPaper { display: block; min-width: 0; min-height: 60px; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; border: 1px solid #9e8052; border-radius: 6px 10px 8px 6px; padding: 14px 18px 20px 38px; color: var(--ink); font: 22px/var(--rule) "Atlas Notebook", system-ui, sans-serif; background-color: transparent; background-image: linear-gradient(90deg, transparent var(--paper-margin), #a5816448 var(--paper-margin), #a5816448 calc(var(--paper-margin) + 1px), transparent calc(var(--paper-margin) + 1px)), repeating-linear-gradient(transparent 0 27px, #8d9f8550 27px 28px); background-position: 0 0, 0 10px; background-size: auto, auto; background-repeat: no-repeat, repeat; background-attachment: local, local; box-shadow: inset 3px 0 8px #61432325, 2px 2px #b89f6e, 4px 4px #796645, 0 6px 10px #061a1840; }
+.notebookBindingWindow { position: absolute; z-index: 2; left: -18px; top: var(--notebook-paper-top); height: var(--notebook-viewport); width: 40px; overflow: hidden; pointer-events: none; }
+.challengeNotebook .integratedChallengeHelp, .challengeNotebook .challengeScratchpad { position: relative; }
+.notebookBindings { position: absolute; left: 0; top: 14px; width: 40px; height: var(--notebook-binding-length); transform: translateY(var(--notebook-scroll, 0px)); background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgdmlld0JveD0iMCAwIDQwIDQwIj4KPGRlZnM+CiA8bGluZWFyR3JhZGllbnQgaWQ9IndpcmUiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCIgeTE9IjUiIHgyPSIwIiB5Mj0iMTYiPgogIDxzdG9wIHN0b3AtY29sb3I9IiM5YTZjMzAiLz48c3RvcCBvZmZzZXQ9Ii4xOSIgc3RvcC1jb2xvcj0iI2Y1ZDk5MiIvPjxzdG9wIG9mZnNldD0iLjM5IiBzdG9wLWNvbG9yPSIjYzM5NDQ5Ii8+PHN0b3Agb2Zmc2V0PSIuNTYiIHN0b3AtY29sb3I9IiM3MDUwMjMiLz48c3RvcCBvZmZzZXQ9Ii43NyIgc3RvcC1jb2xvcj0iI2RhYjQ2YiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzc3NTEyNCIvPgogPC9saW5lYXJHcmFkaWVudD4KIDxyYWRpYWxHcmFkaWVudCBpZD0iaG9sZSI+PHN0b3Agb2Zmc2V0PSIuNCIgc3RvcC1jb2xvcj0iIzIyMWIxNCIvPjxzdG9wIG9mZnNldD0iLjciIHN0b3AtY29sb3I9IiM2MjRhMzEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM4YzZlNDY0MCIvPjwvcmFkaWFsR3JhZGllbnQ+CiA8ZmlsdGVyIGlkPSJzaGFkb3ciIHg9Ii0xNSUiIHk9Ii01MCUiIHdpZHRoPSIxNDAlIiBoZWlnaHQ9IjIyMCUiPjxmZUdhdXNzaWFuQmx1ciBzdGREZXZpYXRpb249Ii41NSIvPjwvZmlsdGVyPgogPGNsaXBQYXRoIGlkPSJiZWhpbmRQYXBlciI+PHBhdGggZD0iTTAgMEgxOFY0MEgwWiIvPjwvY2xpcFBhdGg+CjwvZGVmcz4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDApIiBjbGlwLXBhdGg9InVybCgjYmVoaW5kUGFwZXIpIj4KIDxwYXRoIGQ9Ik00LjUgNy41QzEgOS4yIDIgMTIuOCA2IDEzLjZDMTQgMTUuNSAyOCAxNC41IDM0IDExLjYiIHN0cm9rZT0iIzM5MjMwZiIgc3Ryb2tlLXdpZHRoPSIzLjEiIG9wYWNpdHk9Ii4zNiIgZmlsdGVyPSJ1cmwoI3NoYWRvdykiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC40IDEpIi8+CiA8cGF0aCBkPSJNNC41IDcuNUMxIDkuMiAyIDEyLjggNiAxMy42QzE0IDE1LjUgMjggMTQuNSAzNCAxMS42IiBzdHJva2U9IiM1MzM3MTkiIHN0cm9rZS13aWR0aD0iMi43Ii8+CiA8cGF0aCBkPSJNNC41IDcuNUMxIDkuMiAyIDEyLjggNiAxMy42QzE0IDE1LjUgMjggMTQuNSAzNCAxMS42IiBzdHJva2U9InVybCgjd2lyZSkiIHN0cm9rZS13aWR0aD0iMS44NSIvPgogPHBhdGggZD0iTTYgMTIuOUMxMyAxNC41IDI0IDEzLjkgMzAuNSAxMi4zIiBzdHJva2U9IiNkYmI0NmUiIHN0cm9rZS13aWR0aD0iLjU1IiBvcGFjaXR5PSIuOCIvPgo8L2c+CjxnIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAzLjgpIiBjbGlwLXBhdGg9InVybCgjYmVoaW5kUGFwZXIpIj4KIDxwYXRoIGQ9Ik00LjUgNy41QzEgOS4yIDIgMTIuOCA2IDEzLjZDMTQgMTUuNSAyOCAxNC41IDM0IDExLjYiIHN0cm9rZT0iIzM5MjMwZiIgc3Ryb2tlLXdpZHRoPSIzLjEiIG9wYWNpdHk9Ii4zNiIgZmlsdGVyPSJ1cmwoI3NoYWRvdykiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC40IDEpIi8+CiA8cGF0aCBkPSJNNC41IDcuNUMxIDkuMiAyIDEyLjggNiAxMy42QzE0IDE1LjUgMjggMTQuNSAzNCAxMS42IiBzdHJva2U9IiM1MzM3MTkiIHN0cm9rZS13aWR0aD0iMi43Ii8+CiA8cGF0aCBkPSJNNC41IDcuNUMxIDkuMiAyIDEyLjggNiAxMy42QzE0IDE1LjUgMjggMTQuNSAzNCAxMS42IiBzdHJva2U9InVybCgjd2lyZSkiIHN0cm9rZS13aWR0aD0iMS44NSIvPgogPHBhdGggZD0iTTYgMTIuOUMxMyAxNC41IDI0IDEzLjkgMzAuNSAxMi4zIiBzdHJva2U9IiNkYmI0NmUiIHN0cm9rZS13aWR0aD0iLjU1IiBvcGFjaXR5PSIuOCIvPgo8L2c+CjxyZWN0IHg9IjMwLjUiIHk9IjQuOSIgd2lkdGg9IjciIGhlaWdodD0iMTAuOCIgcng9IjEuNCIgZmlsbD0idXJsKCNob2xlKSIvPgo8cmVjdCB4PSIzMS42IiB5PSI2LjEiIHdpZHRoPSI0LjgiIGhlaWdodD0iOC40IiByeD0iLjY1IiBmaWxsPSIjMjExYTE0Ii8+CjxnIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAwKSI+CiA8cGF0aCBkPSJNMzQgOC40QzI2IDQuNSAxMSA0LjUgNC41IDcuNSIgc3Ryb2tlPSIjMzkyMzBmIiBzdHJva2Utd2lkdGg9IjMuMSIgb3BhY2l0eT0iLjM2IiBmaWx0ZXI9InVybCgjc2hhZG93KSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLjQgMSkiLz4KIDxwYXRoIGQ9Ik0zNCA4LjRDMjYgNC41IDExIDQuNSA0LjUgNy41IiBzdHJva2U9IiM1MzM3MTkiIHN0cm9rZS13aWR0aD0iMi43Ii8+CiA8cGF0aCBkPSJNMzQgOC40QzI2IDQuNSAxMSA0LjUgNC41IDcuNSIgc3Ryb2tlPSJ1cmwoI3dpcmUpIiBzdHJva2Utd2lkdGg9IjEuODUiLz4KIDxwYXRoIGQ9Ik02IDcuMUMxMyA1LjUgMjUgNS40IDMxIDcuMiIgc3Ryb2tlPSIjZmZlZGJkIiBzdHJva2Utd2lkdGg9Ii41NSIgb3BhY2l0eT0iLjk1Ii8+CjwvZz4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIDMuOCkiPgogPHBhdGggZD0iTTM0IDguNEMyNiA0LjUgMTEgNC41IDQuNSA3LjUiIHN0cm9rZT0iIzM5MjMwZiIgc3Ryb2tlLXdpZHRoPSIzLjEiIG9wYWNpdHk9Ii4zNiIgZmlsdGVyPSJ1cmwoI3NoYWRvdykiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC40IDEpIi8+CiA8cGF0aCBkPSJNMzQgOC40QzI2IDQuNSAxMSA0LjUgNC41IDcuNSIgc3Ryb2tlPSIjNTMzNzE5IiBzdHJva2Utd2lkdGg9IjIuNyIvPgogPHBhdGggZD0iTTM0IDguNEMyNiA0LjUgMTEgNC41IDQuNSA3LjUiIHN0cm9rZT0idXJsKCN3aXJlKSIgc3Ryb2tlLXdpZHRoPSIxLjg1Ii8+CiA8cGF0aCBkPSJNNiA3LjFDMTMgNS41IDI1IDUuNCAzMSA3LjIiIHN0cm9rZT0iI2ZmZWRiZCIgc3Ryb2tlLXdpZHRoPSIuNTUiIG9wYWNpdHk9Ii45NSIvPgo8L2c+Cjwvc3ZnPg==") left top / 40px 40px repeat-y; pointer-events: none; }
+.challengeNotebook .notebookPaper { position: relative; color-scheme: light; scrollbar-color: #879e90 var(--paper); }
+.challengeNotebook .notebookPaper:focus-visible { outline: 2px solid #8fd9cc; outline-offset: -3px; }
+.challengeNotebook .integratedHintText, .challengeNotebook .explanationStepText { font: inherit; line-height: var(--rule); }
+.challengeNotebook .integratedHintText { margin: 0 0 28px; }
+.challengeNotebook .authoredExplanation { font: inherit; color: inherit; }
+.challengeNotebook .authoredExplanation ol { padding-left: 32px; list-style: none; }
+.challengeNotebook .authoredExplanation li { padding: 0 0 28px; }
+.challengeNotebook .explanationStepText { position: relative; }
+.challengeNotebook .explanationStepText::before { content: counter(list-item) / ""; position: absolute; left: -32px; top: calc(var(--step-rule-offset, 0px) + 3px); width: 22px; height: 22px; border: 1px solid #8ba68c; border-radius: 50%; background: linear-gradient(145deg, #d7e3c5, #b6cdb1); box-shadow: inset 0 1px #ffffff80; color: #284d40; font: 18px/22px "Atlas Notebook", sans-serif; text-align: center; pointer-events: none; }
+.challengeNotebook .learningVisual { padding: 12px; margin: 14px 0; background: #e2e9ddeb; border-color: #638b7950; color: var(--ink); box-shadow: none; border-radius: 8px; }
+.challengeNotebook .learningVisual p { line-height: var(--rule); }
+.challengeNotebook .learningStepLabel, .challengeNotebook .learningTimeline .learningNode,
+.challengeNotebook .learningJump, .challengeNotebook .learningTimeline .learningJump { font-size: inherit; }
+.challengeNotebook .learningStepGroup { background: #f6efd990; border-color: #6c9882; padding: 6px 10px; }
+.challengeNotebook .learningStepLabel, .challengeNotebook .learningJump, .challengeNotebook .learningVisualNote, .challengeNotebook .learningReceipt strong, .challengeNotebook .fractionGroups, .challengeNotebook .fractionTotal { color: #335b4d; }
+.challengeNotebook .learningNode { background: #fffaf0; color: #244e44; border-color: #568b7970; }
+.challengeNotebook .learningUnknown { background: #e1e7d8; border-color: #537866; }
+/* Keep the receipt card; elsewhere paper supplies the outer surface. Calculation
+   groups retain their guiding rule, while arrows/nodes retain their meaning. */
+.challengeNotebook .learningVisual:not([data-learning-visual="moneyReceipt"]) { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.challengeNotebook [data-learning-visual="calculationSteps"] .learningStepGroup { background: transparent; border-radius: 0; }
+.challengeNotebook [data-learning-visual="calculationSteps"] .learningNode:not(.learningUnknown) { background: transparent; border-color: transparent; }
+.challengeNotebook .fractionStrip { color: #effbf5; }
+.challengeNotebook .learningSequence { gap: 6px; }
+.challengeNotebook .challengeScratchpad { gap: 16px; grid-template-rows: auto minmax(60px, 1fr); overflow: visible; }
+.challengeNotebook .challengeScratchpad textarea { height: 100%; resize: none; }
+.notebookPencil { width: 68px; height: 68px; display: grid; place-items: center; flex-shrink: 0; border: 1px solid #a48d5c75; border-radius: 12px 4px; color: #efd399; font-size: 2.3rem; background: #234438; }
+.notebookToolbar { display: flex; align-items: end; min-width: 0; }
+.notebookToolbar .secondaryButton { display: inline-flex; align-items: center; justify-content: center; gap: 6px; margin: 0; font-size: var(--workspace-action); line-height: 1.15; }
+.notebookToolbar .scratchpadToggle [aria-hidden] { font-size: inherit; margin: 0; }
+.challengeNotebook .challengeScratchpad header { position: relative; }
+.notebookClear { margin-left: auto; align-self: start; }
+.challengeScratchpad .notebookClearIcon { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; margin: 0; color: #dec998; border-color: #a9976880; }
+.notebookClearConfirm { position: absolute; z-index: 2; top: 0; right: 0; display: grid; grid-template-columns: auto auto; gap: 8px; padding: 12px; border: 1px solid #be9e60; border-radius: 8px; background: #122e27; box-shadow: 0 3px 14px #0006; }
+.notebookClearConfirm > span { grid-column: 1 / -1; font-size: var(--workspace-action); color: #f8efd3; }
+body.keyboard-open .m6WorkspaceLayer .challengeWorkspace { padding: 12px; }
+body.keyboard-open .m6WorkspaceLayer .workspaceMain { gap: 10px; }
+body.keyboard-open .m6WorkspaceLayer .workspaceQuestionBody { max-height: none; }
+body.keyboard-open .m6WorkspaceLayer .workspacePrompt { margin: 0; max-height: none; font-size: var(--workspace-title); }
+body.keyboard-open .m6WorkspaceLayer .workspacePrompt.storyPrompt { font-size: var(--workspace-body); }
+body.keyboard-open .m6WorkspaceLayer .challengePortraitFrame, body.keyboard-open .notebookPencil { flex-basis: 52px; width: 52px; height: 52px; }
+body.keyboard-open .challengeNotebook .integratedHelpHeader, body.keyboard-open .challengeNotebook .challengeScratchpad header { height: 52px; display: flex; }
+body.keyboard-open .m6WorkspaceLayer .workspaceFooter { padding-top: 8px; }
+body.keyboard-open .m6WorkspaceLayer .workspaceAnswerZone .answerStone { min-height: 48px; padding: 6px; font-size: var(--workspace-body); }
+body.keyboard-open .challengeNotebook .integratedChallengeHelp, body.keyboard-open .challengeNotebook .challengeScratchpad { gap: 10px; }
+body.keyboard-open .challengeNotebook { --notebook-header: 52px; --notebook-gap: 10px; }
+@media (max-width: 900px) {
+  .m6WorkspaceLayer .workspaceColumns { --column-gap: 14px; }
+  .m6WorkspaceLayer .workspaceAnswerZone .openAnswerControls { gap: 8px; }
+  /* A long authored unit must not squeeze the touch target between two actions. */
+  .m6WorkspaceLayer .learningAnswerField:has(.answerUnit) { display: grid; grid-template-columns: minmax(0, 1fr); gap: 3px; }
+  .m6WorkspaceLayer .learningAnswerField .answerUnit { grid-row: 1; color: #b6cabd; font-size: var(--workspace-label); line-height: 20px; }
+  .m6WorkspaceLayer .workspaceFooter { column-gap: 8px; }
+  .challengeNotebook { --paper-margin: 19px; }
+  .challengeNotebook .notebookPaper { padding-left: 30px; padding-right: 10px; }
+}
+@media (max-width: 700px) {
+  .m6WorkspaceLayer .challengeWorkspace.notebookOpen { height: min(820px, 100%); }
+  .m6WorkspaceLayer .notebookOpen .workspaceColumns { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(120px, 1fr) minmax(120px, 1fr) auto; }
+  .m6WorkspaceLayer .notebookOpen .workspaceColumns { grid-template-rows: minmax(100px, 1fr) auto minmax(120px, 1fr); }
+  .challengeNotebook { grid-column: 1; grid-row: 3; border-left: 0; border-top: 1px solid #c4a36775; padding: 10px 0 0; }
+  .m6WorkspaceLayer .challengePortraitFrame { flex-basis: 52px; width: 52px; height: 52px; }
+  .challengeNotebook .integratedHelpHeader { height: 52px; }
+}
+/* Completion returns to a compact card, independent of the previously open notebook. */
+.authoredChallengeLayer.challengeWorkspaceLayer:has(.challengeWorkspace.challengeCompletion) { top: calc(var(--visual-viewport-offset-top) + 8px); bottom: auto; height: calc(var(--visual-viewport-height) - 16px); padding: 8px 12px; }
+.authoredChallengeLayer.challengeWorkspaceLayer .challengeWorkspace.challengeCompletion { width: min(650px, 100%); height: auto; max-height: 100%; padding: 18px; gap: 18px; }
+.challengeWorkspace.challengeCompletion .workspaceColumns { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 18px; }
+.challengeCompletion .workspaceMain { grid-template-rows: auto; }
+.challengeCompletion .workspaceMain::before, .e5WorkspaceLayer .challengeCompletion .workspaceMain { display: none; }
+.e5WorkspaceLayer .challengeCompletion .workspaceColumns { grid-template-rows: minmax(0, 1fr); }
+.challengeWorkspace.challengeCompletion .workspaceHeader .challengePortraitFrame { width: 52px; height: 52px; flex-basis: 52px; }
+.challengeWorkspace.challengeCompletion .workspaceQuestionProgress { display: block; }
+.challengeCompletion .workspaceResult { grid-column: 1 / -1; min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; padding-bottom: 7px; }
+.workspaceResult > div { overflow: auto; overscroll-behavior: contain; align-content: center; }
+.workspaceResult h3 { color: #efd399; font-size: 24px; margin: 0 0 8px; }
+.workspaceResult .feedback { margin: 0; min-height: 0; color: #f8efd3; font-size: 20px; line-height: 1.5; }
+.workspaceResult .primaryButton { justify-self: start; margin: 0; min-height: 52px; padding: 10px 22px; font-size: 16px; }
+@media (prefers-reduced-motion: no-preference) {
+  .workspaceResult { animation: workspace-result-in 180ms ease-out; }
+  @keyframes workspace-result-in { from { opacity: 0; } to { opacity: 1; } }
+}
+.sessionQuestionDetail summary { cursor: pointer; min-height: 44px; display: list-item; color: #e9d29e; }
+.sessionQuestionDetail dl { display: grid; grid-template-columns: minmax(140px,.7fr) minmax(0,1fr); gap: 8px 18px; }
+.sessionQuestionDetail dt { color: #cbdace; }
+.sessionQuestionDetail dd { margin: 0; }
+.sessionQuestionDetail li { margin-bottom: 10px; line-height: 1.55; }
+.sessionPromptSnapshot { font-weight: 650; line-height: 1.6; }
+.sessionLearningSummary p { line-height: 1.6; }
+@container (max-width: 500px) {
+  .learningStepGroup .learningSequence { flex-direction: column; align-items: stretch; }
+  .learningStepGroup .learningJump { flex-direction: row; gap: 8px; }
+  .learningStepGroup .learningJump > span:first-child { transform: rotate(90deg); }
+}
+@container (max-width: 340px) {
+  .learningTimeline { flex-direction: column; }
+  .learningTimeline .learningJump { flex-direction: row; }
+  .learningTimeline .learningJump > span:first-child { transform: rotate(90deg); }
+  .learningBackward { flex-direction: column-reverse; }
+  .learningBackward .learningJump > span:first-child { transform: rotate(-90deg); }
+}
+@media (max-width: 600px) {
+  .sessionQuestionDetail dl { grid-template-columns: 1fr; }
+  .sessionQuestionDetail dd { margin-bottom: 8px; }
+}
 .menuSettingsButton {
   display: grid;
   place-items: center;
@@ -4843,7 +5208,9 @@ body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px;
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  width: min(240px, calc(100vw - 24px));
+  width: min(390px, calc(100vw - 24px));
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
   padding: 12px;
   border: 1px solid rgba(255, 219, 132, .46);
   border-radius: 12px;
@@ -4887,3 +5254,56 @@ body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px;
 .illustratedFeatureControls label:has(input:disabled), .atlasEmissiveGlowControls:disabled { opacity: .5; }
 .challengeFxControls select{max-width:65%;min-height:40px;color:inherit;background:#162c28;border:1px solid #547168;border-radius:5px;padding:6px}.challengeFxControls input[type=range]{max-width:52%}.challengeFxControls [data-challenge-fx-status]{font-size:12px;color:#92d9cc}
 .challengeFxControls label:has(output){gap:6px}.challengeFxControls label:has(output) input{min-width:60px;width:90px;flex-shrink:0}.challengeFxControls output{min-width:3.5ch;text-align:right;font-variant-numeric:tabular-nums;color:#fff0bc}
+/* Additive authored capabilities. Notebook geometry and material rules stay shared. */
+.authoredFraction { display:inline-grid; grid-template-rows:1fr 1fr; vertical-align:middle; text-align:center; line-height:1.1; margin:0 .18em; font-variant-numeric:tabular-nums; }
+.authoredFraction > span { padding:0 .22em; }
+.authoredFraction > span:first-child { border-bottom:1.5px solid currentColor; padding-bottom:.1em; }
+.authoredFraction > span:last-child { padding-top:.1em; }
+.currencyCollection { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+.currencyGroup { display:flex; flex-wrap:wrap; gap:6px; align-items:center; max-width:100%; }
+.currencyAsset { object-fit:contain; width:68px; height:54px; filter:drop-shadow(0 2px 2px #0003); }
+.currencyNote { width:110px; }
+.currencyComposer { display:grid; grid-template-columns:repeat(auto-fit,minmax(142px,1fr)); gap:10px; padding:6px 0; }
+.currencyCounter { display:grid; justify-items:center; gap:4px; padding:6px; border:1px solid #88b7ad66; border-radius:9px; background:#15372f; }
+.currencyCounter > div { display:grid; grid-template-columns:44px minmax(36px,48px) 44px; align-items:center; }
+.currencyCounter button, .currencyCounter input { box-sizing:border-box; min-width:0; width:100%; height:44px; border:1px solid #82bdb2; border-radius:6px; background:#102c27; color:#f8f1d8; text-align:center; font:inherit; }
+.currencyCounter button { cursor:pointer; font-size:22px; touch-action:manipulation; }
+.currencyCounter button:focus-visible, .currencyCounter input:focus-visible { outline:2px solid #e0c88b; outline-offset:2px; }
+.currencyAnswerForm .openAnswerControls { display:flex; justify-content:flex-end; }
+.authoredDigitalClock { box-sizing:border-box; width:256px; max-width:100%; margin:8px auto; padding:13px 16px; border:1px solid #505354; border-radius:16px; background:linear-gradient(160deg,#35393a,#191d1f 55%,#101416); box-shadow:inset 0 2px 1px #ffffff26,inset 0 -3px 2px #0009,0 5px 10px #0003; }
+.digitalClockDisplay { padding:7px 10px; border:2px solid #080a0b; border-radius:7px; background:linear-gradient(165deg,#161012,#060809 70%); box-shadow:inset 0 2px 5px #000,0 1px 0 #ffffff17; }
+.digitalClockDisplay svg { display:block; width:100%; height:auto; aspect-ratio:3; overflow:visible; }
+.digitalSegmentOff { fill:#291719; }
+.digitalSegmentOn,.digitalClockColon { fill:#ff574c; filter:drop-shadow(0 0 .65px #ff392c99); }
+.digitalClockFocus .digitalSegmentOn { fill:#ffb5a5; stroke:#ffd7cb; stroke-width:.6px; }
+.authoredDigitalClock.digitalClockCompact { width:192px; padding:10px 12px; border-radius:13px; }
+.authoredNumberLine { padding:38px 28px 14px; min-width:0; }
+.numberLineTrack { height:24px; border-top:2px solid currentColor; position:relative; }
+.numberLineMarker { position:absolute; left:var(--marker-position); top:-7px; width:0; height:12px; border-left:2px solid currentColor; }
+.numberLineMarker > span { position:absolute; bottom:16px; transform:translateX(-50%); font-variant-numeric:tabular-nums; white-space:nowrap; font-size:18px; }
+.authoredMeasurement { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px; padding:10px; font-variant-numeric:tabular-nums; }
+
+/* Approved central expansion: declarative stages inside the existing workspace. */
+.compactDataTable { width:100%; max-width:100%; table-layout:fixed; border-collapse:collapse; margin:12px 0; font:inherit; font-size:inherit; text-align:left; }
+.compactDataTable th, .compactDataTable td { padding:4px 10px; border-bottom:1px solid #779b8977; overflow-wrap:anywhere; }
+.compactDataTable thead th { color:inherit; border-bottom:2px solid #799a89; }
+.compactDataTable tbody th { font-weight:normal; }
+.compactDataTable td { text-align:right; font-variant-numeric:tabular-nums; }
+.authoredFocus, .compactDataTable .authoredFocus { background:#87b59b42; box-shadow:inset 0 0 0 1px #7d9981; border-radius:4px; }
+.currencyAuthoredRow { display:flex; flex-wrap:wrap; width:100%; gap:10px; padding:5px; border:1px solid #86a89655; border-radius:8px; }
+.measurementPieces, .authoredQuantities { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
+.measurementPieces > span, .authoredQuantities > div { border:1px solid #7d9981; border-radius:5px; padding:5px 10px; }
+.authoredQuantities > div { display:grid; max-width:100px; text-align:center; }
+.authoredQuantities > div > span:last-child { overflow-wrap:anywhere; font-size:14px; }
+.fractionPart.fractionJoined { border-right-color:transparent; }
+.digitalTimeNode { font-family:ui-monospace,monospace; font-variant-numeric:tabular-nums; }
+.learningVisual .authoredClock { max-width:200px; margin:8px auto; }
+.learningVisual .clockHandFocus { stroke:#cc9c3f; filter:drop-shadow(0 0 2px #cfa849); }
+.learningVisual .clockNumeralFocus { fill:#ab671b; font-weight:bold; text-decoration:underline; }
+.clockReference { stroke:#a66e28; stroke-width:5; stroke-linecap:round; }
+.stagedNumberLine { position:relative; padding:70px 28px 56px; }
+.stagedNumberLine .numberLineMarker > span { bottom:auto; top:18px; margin-top:calc(var(--marker-lane) * 24px); font-size:clamp(13px,1.6vw,18px); }
+.numberLineFocus { color:#af7629; font-weight:bold; }
+.numberLineJumps { position:absolute; top:4px; left:28px; width:calc(100% - 56px); height:64px; overflow:visible; }
+.numberLineJumps path { fill:none; stroke:currentColor; stroke-width:2; vector-effect:non-scaling-stroke; }
+.numberLineJumps text { fill:currentColor; text-anchor:middle; font:36px sans-serif; }

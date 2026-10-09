@@ -1,8 +1,10 @@
+const {withoutPilot,withoutPilotSource}=require('./helpers/pilot-e5-baseline.cjs');
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const vm = require('vm');
 const crypto = require('crypto');
 const hints = require('../src/challenge-hints');
+const {digitalMinnie,digitalMoose,currentE5HintPairs,currentE5Explanation}=require('./helpers/time-approval.cjs');
 const baseline = require('./fixtures/batch1-hints-baseline.json');
 const base = (process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173').split('?')[0];
 const ids = Array.from({ length: 17 }, (_, i) => `LVL-${String(i + 4).padStart(4, '0')}`);
@@ -10,7 +12,7 @@ const hash = s => crypto.createHash('sha256').update(s).digest('hex');
 function load(id) {
   const c = vm.createContext({ window: {} });
   vm.runInContext(fs.readFileSync(`Levels/${id}/level.js`, 'utf8'), c);
-  return JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id]));
+  return withoutPilot(JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id])));
 }
 function variants(l) { return l.learningChallenges.filter(ch => ch.active !== false).flatMap(ch => ch.questions.flatMap(s => s.variants)); }
 
@@ -30,7 +32,7 @@ test('all 392 active variants use structured strategies and preserve every non-h
       expect(q.hintParameters).toEqual(reviewed.parameters);
       if (reviewed.story) expect(q.prompt).toBe(reviewed.story);
       if (q.visual) {
-        expect(first).toBe('Kijk eerst naar de grote wijzer.');
+        expect(first).toBe(q.visual.type==='digitalClock'?digitalMinnie(q):'Kijk eerst naar de grote wijzer.');
         expect((first + second).toLowerCase()).not.toContain(q.answer.toLowerCase());
         continue;
       }
@@ -74,20 +76,22 @@ test('inactive banks, previous migrations, other worlds and routing remain uncha
   expect(baseline.inventory.filter(r=>r.active && !r.levelEnabled)).toHaveLength(88);
   expect(baseline.inventory.filter(r=>!r.active)).toHaveLength(16);
   for(const id of ids) expect(hash(JSON.stringify(load(id).learningChallenges.filter(ch=>ch.active===false)))).toBe(baseline.inactiveHashes[id]);
-  for(const [file,digest] of Object.entries(baseline.unchangedSources)) expect(hash(fs.readFileSync(file,'utf8').replaceAll('\r\n','\n')),file).toBe(digest);
-  for(const [id,pairs] of Object.entries(baseline.previousHints)) expect(variants(load(id)).map(q=>[q.id,hints.resolve(id,q,'minnie'),hints.resolve(id,q,'moose')])).toEqual(pairs);
+  for(const [file,digest] of Object.entries(baseline.unchangedSources)) expect(hash(withoutPilotSource(fs.readFileSync(file,'utf8'))),file).toBe(digest);
+  for(const [id,pairs] of Object.entries(baseline.previousHints)) expect(variants(load(id)).map(q=>[q.id,hints.resolve(id,q,'minnie'),hints.resolve(id,q,'moose')])).toEqual(currentE5HintPairs(id,pairs));
 });
 
 test('quarter and half-hour aliases preserve Dutch clock semantics', () => {
   const expected = {0:'De grote wijzer staat op de 12: het is precies een heel uur. Kijk nu naar de kleine wijzer.',15:'De grote wijzer staat op de 3: dat is kwart over. Kijk nu naar de kleine wijzer.',30:'De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is.',45:'De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt.'};
   for(const id of ids) for(const q of variants(load(id)).filter(q=>q.visual)) {
     expect(q.visual).toEqual(baseline.inventory.find(r=>r.level===id&&r.variant===q.id).visual);
-    if(expected[q.visual.minute]) expect(hints.resolve(id,q,'moose')).toBe(expected[q.visual.minute]);
+    if(q.visual.type==='digitalClock')expect(hints.resolve(id,q,'moose')).toBe(digitalMoose(q));
+    else if(expected[q.visual.minute]) expect(hints.resolve(id,q,'moose')).toBe(expected[q.visual.minute]);
     else expect(hints.resolve(id,q,'moose')).toBe(hints.resolve('LVL-0003',{...q,family:'clock_reading_five_minutes'},'moose'));
   }
   expect(hints.resolve('LVL-0014',{family:'clock_reading_half_hour',visual:{type:'clock',hour:6,minute:30}},'moose')).toBe(expected[30]);
 });
 async function enter(page, id) {
+  await page.addInitScript(() => localStorage.setItem('atlas.learning.m6Percentage', '0'));
   await page.route('**/__dev/levels/*/editor-draft', r => r.fulfill({ json: {} }));
   await page.goto(base + '/?atlasSessionTest=1');
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
@@ -139,7 +143,7 @@ for (const id of ids) test(`${id}: all variants follow Minnie → Moose → assi
     expect(stages[0]).toMatchObject({ message: { speaker: 'minnie', text: hints.resolve(id, q, 'minnie') }, feedback: '', assisted: false });
     expect(stages[1]).toMatchObject({ message: { speaker: 'moose', text: hints.resolve(id, q, 'moose') }, feedback: '', assisted: false });
     expect(stages[0].visible).toBe(stages[0].message.text); expect(stages[1].visible).toBe(stages[1].message.text);
-    expect(stages[2]).toMatchObject({ feedback: q.explanation, assisted: true });
+    expect(stages[2]).toMatchObject({ feedback: currentE5Explanation(id,q), assisted: true });
     if (q.visual) for (const s of stages) expect(s.clock).toEqual([String(q.visual.hour), String(q.visual.minute)]);
   }
   expect(errors).toEqual([]);

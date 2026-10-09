@@ -352,7 +352,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Hoe laat is het op deze klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 9,
                 "minute": 30
               },
@@ -363,7 +363,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Negen uur",
                 "Tien uur"
               ],
-              "explanation": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 9 en 10. Dat heet half tien. Het is half tien."
+              "explanation": "De digitale klok geeft 09:30 aan. Het is half tien."
             }
           ]
         },
@@ -401,7 +401,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Hoe laat is het op deze klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 2,
                 "minute": 35
               },
@@ -412,7 +412,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Vijf over twee",
                 "Half drie"
               ],
-              "explanation": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 2 en 3. Het is vijf over half drie."
+              "explanation": "De digitale klok geeft 02:35 aan. Het is vijf over half drie."
             }
           ]
         },
@@ -450,7 +450,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Hoe laat is het op deze klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 10,
                 "minute": 40
               },
@@ -461,7 +461,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Kwart voor elf",
                 "Tien over tien"
               ],
-              "explanation": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 10 en 11. Het is tien over half elf."
+              "explanation": "De digitale klok geeft 10:40 aan. Het is tien over half elf."
             }
           ]
         },
@@ -499,7 +499,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Hoe laat is het op deze klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 11,
                 "minute": 45
               },
@@ -510,7 +510,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
                 "Half twaalf",
                 "Kwart voor elf"
               ],
-              "explanation": "De grote wijzer staat op de 9. Het duurt nog een kwartier tot twaalf uur. Het is kwart voor twaalf."
+              "explanation": "De digitale klok geeft 11:45 aan. Het is kwart voor twaalf."
             }
           ]
         }

@@ -6,9 +6,15 @@ const { pathToFileURL } = require("url");
 const vm = require("vm");
 
 const root = path.join(__dirname, "..");
-const gameUrl = pathToFileURL(path.join(root, "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "index.html")).toString();
 const editorUrl = `${gameUrl}?dev=editor`;
-const editorRuntimeUrl = process.env.ATLAS_EDITOR_URL || editorUrl;
+const editorRuntimeUrl = editorUrl;
+
+async function openBootstrapped(page, url) {
+  await page.goto(url);
+  await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
+  await page.waitForFunction(() => window.eval('typeof selectLevel') === 'function');
+}
 
 function loadManifest() {
   const context = { window: {} };
@@ -52,7 +58,7 @@ function activeChallengeObjectCount(rootId) {
 }
 
 async function startLevel(page, levelId) {
-  await page.goto(gameUrl);
+  await openBootstrapped(page, gameUrl);
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true });
@@ -61,7 +67,7 @@ async function startLevel(page, levelId) {
 }
 
 async function openEditorLevel(page, levelId) {
-  await page.goto(editorRuntimeUrl);
+  await openBootstrapped(page, editorRuntimeUrl);
   await page.evaluate(async (id) => {
     await window.eval("selectLevel")(id, { startImmediately: true });
     window.eval("render")();
@@ -131,7 +137,7 @@ test.describe("learning challenge active state", () => {
   });
 
   test("legacy saved level completion does not unlock a changed inactive challenge set", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openBootstrapped(page, gameUrl);
     const state = await page.evaluate(async () => {
       localStorage.clear();
       const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === "LVL-0021");
@@ -153,7 +159,7 @@ test.describe("learning challenge active state", () => {
   });
 
   test("saved completion with matching active set does not bypass active challenge completion", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openBootstrapped(page, gameUrl);
     const state = await page.evaluate(async () => {
       localStorage.clear();
       const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === "LVL-0021");
@@ -185,7 +191,7 @@ test.describe("learning challenge active state", () => {
   });
 
   test("saved completion on an unchanged level does not bypass challenge completion", async ({ page }) => {
-    await page.goto(gameUrl);
+    await openBootstrapped(page, gameUrl);
     const state = await page.evaluate(async () => {
       localStorage.clear();
       localStorage.setItem("svenadventure-runenpoort-v1", JSON.stringify({ completedAt: new Date().toISOString() }));
@@ -214,20 +220,23 @@ test.describe("learning challenge active state", () => {
 
   test("adventure menu counts active opdracht objects", async ({ page }) => {
     const expected = activeChallengeObjectCount("LVL-0001") - 1;
-    await page.goto(gameUrl);
+    await openBootstrapped(page, gameUrl);
+    await expect.poll(() => page.evaluate(() => window.eval("menuAdventureStats.loaded"))).toBe(true);
     await page.evaluate(async () => {
       const entry = window.SVEN_LEVEL_MANIFEST.levels.find((item) => item.id === "LVL-0001");
       await window.eval("loadLevelDefinition")(entry);
       window.SVEN_LEVEL_DEFINITIONS["LVL-0001"].learningChallenges[0].active = false;
+      window.eval("invalidateMenuAdventureStats")();
     });
 
-    await page.getByRole("button", { name: "Start avontuur" }).click();
+    await page.evaluate(() => window.eval("refreshMenuAdventureStats")());
     await expect(page.locator('[data-menu-tile="LVL-0001"] .levelBadge')).toHaveText(`3 plaatsen · ${expected} opdrachten`);
   });
 
   test("menu opdracht total refreshes after an editor active toggle", async ({ page }) => {
-    await page.goto(editorUrl);
-    await page.getByRole("button", { name: "Start avontuur" }).click();
+    // This checks in-memory menu invalidation; the Apply test below covers disk persistence.
+    await page.route("**/__dev/levels/*/editor-draft", (route) => route.fulfill({ json: {} }));
+    await openBootstrapped(page, editorUrl);
     await expect(page.getByRole("heading", { name: "Kies een avontuur" })).toBeVisible();
     await expect.poll(() => page.evaluate(() => window.eval("menuAdventureStats.loaded"))).toBe(true);
     const before = await page.evaluate(() => ({ ...window.eval('menuAdventureStats.byRoot["LVL-0021"]') }));
@@ -258,7 +267,9 @@ test.describe("learning challenge active state", () => {
       const activeToggle = preview.locator('[data-challenge-active="zon"]');
       await expect(preview).toBeVisible();
       await expect(preview).toContainText("zon");
-      await expect(preview).toContainText("4 vragen · 8 varianten");
+      await expect(preview).toContainText("4 vragen · 10 varianten");
+      await expect(preview).toContainText("RP-M6-OP-001");
+      await expect(preview).toContainText("RP-M6-GE-001");
       await expect(preview).toContainText("4 × 8 = ?");
       await expect(preview).toContainText("Antwoord 32");
       await expect(preview).toContainText("Keuzes 24, 32, 40, 48");

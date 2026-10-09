@@ -119,19 +119,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
     },
     {
       "id": "nether-center",
-      "x": 1279,
-      "y": 566
+      "x": 1249,
+      "y": 569
     },
     {
       "id": "map-approach",
-      "x": 1445,
-      "y": 556,
+      "x": 1417,
+      "y": 583,
       "role": "approach"
     },
     {
       "id": "right-door-approach",
-      "x": 1928,
-      "y": 559,
+      "x": 1881,
+      "y": 586,
       "role": "approach"
     }
   ],
@@ -290,7 +290,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "6 × 4 = ?",
               "answer": 24,
-              "hintParameters": {"a":6,"b":4},
+              "hintParameters": {
+                "a": 6,
+                "b": 4
+              },
               "explanation": "6 × 4 = 24."
             },
             {
@@ -308,7 +311,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 21,
                 28
               ],
-              "hintParameters": {"a":2,"b":7},
+              "hintParameters": {
+                "a": 2,
+                "b": 7
+              },
               "explanation": "2 × 7 = 14."
             }
           ]
@@ -325,7 +331,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "8 × 4 = ?",
               "answer": 32,
-              "hintParameters": {"a":8,"b":4},
+              "hintParameters": {
+                "a": 8,
+                "b": 4
+              },
               "explanation": "8 × 4 = 32."
             },
             {
@@ -343,7 +352,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 5,
                 6
               ],
-              "hintParameters": {"a":28,"b":7},
+              "hintParameters": {
+                "a": 28,
+                "b": 7
+              },
               "explanation": "28 : 7 = 4."
             }
           ]
@@ -360,7 +372,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "De veilige route vanaf de brouwtafel is 63 meter lang en bestaat uit 9 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 7,
-              "hintParameters": {"a":63,"b":9},
+              "hintParameters": {
+                "a": 63,
+                "b": 9
+              },
               "explanation": "63 : 9 = 7 meter."
             },
             {
@@ -378,7 +393,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 3,
                 4
               ],
-              "hintParameters": {"a":6,"b":3},
+              "hintParameters": {
+                "a": 6,
+                "b": 3
+              },
               "explanation": "6 : 3 = 2."
             }
           ]
@@ -395,7 +413,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 25 drankflesjes eerlijk over 5 rekken. Hoeveel flesjes komen in ieder rek?",
               "answer": 5,
-              "hintParameters": {"a":25,"b":5},
+              "hintParameters": {
+                "a": 25,
+                "b": 5
+              },
               "explanation": "25 : 5 = 5."
             },
             {
@@ -407,7 +428,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "12 : 3 = ?",
               "answer": 4,
-              "hintParameters": {"a":12,"b":3},
+              "hintParameters": {
+                "a": 12,
+                "b": 3
+              },
               "explanation": "12 : 3 = 4."
             }
           ]
@@ -431,7 +455,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "2 × 8 = ?",
               "answer": 16,
-              "hintParameters": {"a":2,"b":8},
+              "hintParameters": {
+                "a": 2,
+                "b": 8
+              },
               "explanation": "2 × 8 = 16."
             },
             {
@@ -449,7 +476,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 12,
                 14
               ],
-              "hintParameters": {"a":5,"b":2},
+              "hintParameters": {
+                "a": 5,
+                "b": 2
+              },
               "explanation": "5 × 2 = 10."
             }
           ]
@@ -466,7 +496,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Rond de Netherbol staan 3 ringen met elk 7 gloeiblokken. Hoeveel blokken zijn dat samen?",
               "answer": 21,
-              "hintParameters": {"a":3,"b":7},
+              "hintParameters": {
+                "a": 3,
+                "b": 7
+              },
               "explanation": "3 × 7 = 21."
             },
             {
@@ -484,7 +517,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 7,
                 8
               ],
-              "hintParameters": {"a":54,"b":9},
+              "hintParameters": {
+                "a": 54,
+                "b": 9
+              },
               "explanation": "54 : 9 = 6."
             }
           ]
@@ -501,7 +537,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Rond de Netherbol staan 4 ringen met elk 6 gloeiblokken. Hoeveel blokken zijn dat samen?",
               "answer": 24,
-              "hintParameters": {"a":4,"b":6},
+              "hintParameters": {
+                "a": 4,
+                "b": 6
+              },
               "explanation": "4 × 6 = 24."
             },
             {
@@ -519,7 +558,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 64,
                 72
               ],
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -542,7 +584,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 30,
                 40
               ],
-              "hintParameters": {"a":2,"b":10},
+              "hintParameters": {
+                "a": 2,
+                "b": 10
+              },
               "explanation": "2 × 10 = 20."
             },
             {
@@ -554,7 +599,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "56 : 7 = ?",
               "answer": 8,
-              "hintParameters": {"a":56,"b":7},
+              "hintParameters": {
+                "a": 56,
+                "b": 7
+              },
               "explanation": "56 : 7 = 8."
             }
           ]
@@ -584,7 +632,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 4,
                 5
               ],
-              "hintParameters": {"a":27,"b":9},
+              "hintParameters": {
+                "a": 27,
+                "b": 9
+              },
               "explanation": "27 : 9 = 3."
             },
             {
@@ -602,7 +653,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 4,
                 5
               ],
-              "hintParameters": {"a":24,"b":8},
+              "hintParameters": {
+                "a": 24,
+                "b": 8
+              },
               "explanation": "24 : 8 = 3."
             }
           ]
@@ -625,7 +679,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 28,
                 35
               ],
-              "hintParameters": {"a":3,"b":7},
+              "hintParameters": {
+                "a": 3,
+                "b": 7
+              },
               "explanation": "3 × 7 = 21."
             },
             {
@@ -643,7 +700,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 35,
                 42
               ],
-              "hintParameters": {"a":4,"b":7},
+              "hintParameters": {
+                "a": 4,
+                "b": 7
+              },
               "explanation": "4 × 7 = 28."
             }
           ]
@@ -666,7 +726,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 56,
                 64
               ],
-              "hintParameters": {"a":6,"b":8},
+              "hintParameters": {
+                "a": 6,
+                "b": 8
+              },
               "explanation": "6 × 8 = 48."
             },
             {
@@ -678,7 +741,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 56 routeblokken eerlijk over 8 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
               "answer": 7,
-              "hintParameters": {"a":56,"b":8},
+              "hintParameters": {
+                "a": 56,
+                "b": 8
+              },
               "explanation": "56 : 8 = 7."
             }
           ]
@@ -701,7 +767,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
                 30,
                 35
               ],
-              "hintParameters": {"a":5,"b":5},
+              "hintParameters": {
+                "a": 5,
+                "b": 5
+              },
               "explanation": "5 × 5 = 25."
             },
             {
@@ -713,7 +782,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0011"] = {
               "answerMode": "open",
               "prompt": "Job verdeelt 56 routeblokken eerlijk over 7 routes op de lavakaart. Hoeveel blokken krijgt iedere route?",
               "answer": 8,
-              "hintParameters": {"a":56,"b":7},
+              "hintParameters": {
+                "a": 56,
+                "b": 7
+              },
               "explanation": "56 : 7 = 8."
             }
           ]

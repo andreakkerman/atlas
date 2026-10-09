@@ -1,6 +1,6 @@
 const {test,expect}=require('@playwright/test');
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
-const defaults={globalLighting:true,globalGrading:false,areaDirectionalLights:false,sceneDepth:false,characterShadows:true,particleFields:true};
+const defaults={globalLighting:false,globalGrading:false,areaDirectionalLights:false,sceneDepth:false,characterShadows:false,particleFields:true};
 const changed=Object.fromEntries(Object.entries(defaults).map(([key,value])=>[key,!value]));
 const read=page=>page.evaluate(()=>({flags:window.eval('illustratedFeatures')(),settings:window.eval('voxelRenderer').getSettings(),saved:localStorage.getItem('atlas.graphics.v1'),authored:window.eval('worldResolver').getConfig(),dirty:window.eval('worldEditor').dirty}));
 async function menu(page){
@@ -24,12 +24,15 @@ async function controls(page){await page.locator('[data-graphics-action="toggle"
 test('main-menu launch defaults and session overrides across next level/retry',async({page},info)=>{
  await menu(page);const original=await read(page);await launch(page);
  expect((await read(page)).flags).toEqual(defaults);expect((await read(page)).settings.challengeFx.mode).toBe('canvas');
+ expect((await read(page)).settings.renderer).toBe('illustrated');
  await controls(page);
+ await expect(page.locator('[data-renderer-choice="illustrated"]')).toHaveAttribute('aria-pressed','true');
  for(const [key,value]of Object.entries(defaults))await expect(page.locator(`[data-illustrated-feature="${key}"]`)).toBeChecked({checked:value});
+ for(const key of ['globalGrading','areaDirectionalLights','sceneDepth'])await expect(page.locator(`[data-illustrated-feature="${key}"]`)).toBeDisabled();
  await page.locator('[data-challenge-fx-controls] summary').click();await expect(page.locator('[data-challenge-fx="mode"]')).toHaveValue('canvas');
  await page.screenshot({path:info.outputPath('fresh-adventure-defaults.png')});
  await page.locator('[data-challenge-fx="mode"]').selectOption('legacy');
- for(const key of ['globalGrading','areaDirectionalLights','sceneDepth','characterShadows','particleFields','globalLighting']){
+ for(const key of ['globalLighting','globalGrading','areaDirectionalLights','sceneDepth','characterShadows','particleFields']){
   const input=page.locator(`[data-illustrated-feature="${key}"]`);await input.focus();await input.press('Space');await expect(input).toBeChecked({checked:changed[key]});
  }
  await page.locator('[data-graphics-action="close"]').click();
@@ -65,10 +68,10 @@ test('returning to menu discards play overrides before another adventure loads',
  // Control wiring is exercised above; isolate the menu boundary using its existing handlers.
  await page.evaluate(()=>{
   window.eval('updateIllustratedFeature')('LVL-0001','sceneDepth',true);
-  window.eval('updateIllustratedFeature')('LVL-0001','globalLighting',false);
+  window.eval('updateIllustratedFeature')('LVL-0001','globalLighting',true);
   const runtime=window.eval('voxelRenderer');runtime.updateSettings({challengeFx:{...runtime.getSettings().challengeFx,mode:'legacy'}});
  });
- expect((await read(page)).flags.globalLighting).toBe(false);
+ expect((await read(page)).flags.globalLighting).toBe(true);
  expect((await read(page)).flags.sceneDepth).toBe(true);
  expect((await read(page)).settings.challengeFx.mode).toBe('legacy');
  await page.locator('[data-action="menu"]').first().click();await chooseAdventure(page);

@@ -1,6 +1,20 @@
 const CACHE_PREFIX = "svenadventure-static-";
-const CACHE_NAME = "svenadventure-static-v239-spelling-grading";
+const CACHE_NAME = "svenadventure-static-v268-e5-digital-support";
 const CORE_ASSETS = [
+  "src/content/m6/expansion/number-sense.js",
+  "src/content/m6/expansion/addition-subtraction.js",
+  "src/content/m6/expansion/multiplication-division.js",
+  "src/content/m6/expansion/fractions-ratios.js",
+  "src/content/m6/expansion/money.js",
+  "src/content/m6/expansion/time.js",
+  "src/content/m6/expansion/measurement.js",
+  "src/content/m6/expansion/data-patterns.js",
+  "src/challenge-capabilities.js", "src/m6-bank.js",
+  "src/content/m6/index.js", "src/content/m6/fractions-ratios.js", "src/content/m6/addition-subtraction.js", "src/content/m6/money.js", "src/content/m6/time.js",
+  "assets/ui/currency/5.png", "assets/ui/currency/10.png", "assets/ui/currency/20.png", "assets/ui/currency/50.png", "assets/ui/currency/100.png", "assets/ui/currency/200.png", "assets/ui/currency/500.png", "assets/ui/currency/1000.png", "assets/ui/currency/2000.png", "assets/ui/currency/5000.png",
+  "assets/ui/notebook/paper-aged.png",
+  "assets/branding/atlas-emblem-transparent.png",
+  "assets/fonts/patrick-hand/PatrickHand-Regular.ttf",
   "src/challenge-stardust/runtime.js", "src/challenge-stardust/webgpu.js", "src/challenge-stardust/gpu-particles.js", "src/challenge-stardust/gpu-shaders.js",
   "src/challenge-fx-settings.js", "src/challenge-fx-visuals.js", "src/challenge-fx.js",
   "assets/audio/sfx/magical-knowledge-transfer.mp3",
@@ -37,6 +51,9 @@ const CORE_ASSETS = [
   "src/styles.css",
   "src/session-report.js",
   "src/challenge-hints.js",
+  "src/learning-levels.js",
+  "src/challenge-explanation-layouts.js",
+  "src/challenge-support.js",
   "src/ambient-system.js",
   "src/asset-readiness.js",
   "src/scene-effects.js",

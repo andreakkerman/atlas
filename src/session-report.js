@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "atlas-session-report-v1";
   const CURRENT_KEY = "atlas-session-current-v1";
-  const VERSION = 1;
+  const VERSION = 2;
   const ACTIVE_IDLE_MS = 2 * 60 * 1000;
   const SESSION_IDLE_MS = 10 * 60 * 1000;
   const MAX_SESSIONS = 3;
@@ -66,16 +66,19 @@
   function recover() {
     if (disabled) return;
     current = readJson(CURRENT_KEY, null);
-    if (!current || current.version !== VERSION) {
+    if (!current || ![1, VERSION].includes(current.version)) {
       current = null;
       localStorage.removeItem(CURRENT_KEY);
       return;
     }
+    // Archive interrupted v1 sessions as recorded; never backfill unobserved metadata.
+    if (current.version === 1) { end("schema-upgrade"); return; }
     const recoveredLevel = current.levels?.[current.levels.length - 1];
     if (recoveredLevel) {
       resumeLevelInfo = {
         adventureId: current.adventureId,
         adventureTitle: current.adventureTitle,
+        m6Percentage: current.m6Percentage ?? null,
         levelId: recoveredLevel.id,
         levelTitle: recoveredLevel.title
       };
@@ -97,6 +100,7 @@
       status: "active",
       adventureId: levelInfo.adventureId,
       adventureTitle: levelInfo.adventureTitle,
+      m6Percentage: Number.isInteger(levelInfo.m6Percentage) ? levelInfo.m6Percentage : null,
       startedAt,
       lastActivityAt: startedAt,
       activeCheckpointAt: startedAt,
@@ -143,6 +147,7 @@
   }
 
   function classifyQuestion(question) {
+    if (question.reportLabel) return { category: question.reportLabel.split(' · ')[0], detail: question.reportLabel };
     const family = String(question.family || "");
     const prompt = String(question.prompt || "");
     if (question.visual?.type === "clock") {
@@ -169,6 +174,7 @@
     if (disabled || !current || !question || !context) return;
     const key = questionKey(context);
     let entry = current.questions.find((item) => item.key === key);
+    const newlyShown = !entry;
     if (!entry) {
       const classification = classifyQuestion(question);
       entry = {
@@ -183,6 +189,20 @@
         family: question.family || null,
         presentation: question.presentation || null,
         answerMode: question.answerMode || null,
+        contentVersion: question.contentVersion ?? null,
+        ...(question.centralQuestionId ? {centralQuestionId:question.centralQuestionId, surfaceId:question.surfaceId,
+          domain:question.domain, educationalDomain:question.educationalDomain,
+          ...(question.promptParts ? {promptParts:JSON.parse(JSON.stringify(question.promptParts))} : {})} : {}),
+        learningObjective: question.learningObjective ?? null,
+        reportLabel: question.reportLabel ?? null,
+        requestedLearningLevel: question.atlasLearningSelection?.requested ?? null,
+        deliveredLearningLevel: question.atlasLearningSelection?.delivered ?? question.learningLevel ?? null,
+        requestedDifficulty: question.atlasLearningSelection?.requestedDifficulty ?? null,
+        deliveredDifficulty: question.atlasLearningSelection?.deliveredDifficulty ?? question.difficulty ?? null,
+        correctAnswerDisplay: question.answerDisplay ?? question.answer ?? null,
+        answerHistory: [],
+        helpHistory: [],
+        explanationShown: false,
         category: classification.category,
         detail: classification.detail,
         shownAt: now(),
@@ -193,11 +213,15 @@
         assisted: false,
         completedAt: null,
         responseMs: null,
-        outcome: null
+        outcome: "incomplete"
       };
       current.questions.push(entry);
     }
     current.currentQuestionKey = key;
+    // A question may remain on screen across the ten-minute session boundary.
+    // Record support still visible on that screen before any new-session answer.
+    if (newlyShown && context.supportStage === 'explanation') recordExplanation(question.authoredSupport.explanationSteps, 'continued-question');
+    else if (newlyShown && ['minnie','moose'].includes(context.supportStage)) recordHint(context.supportStage, question[context.supportStage === 'minnie' ? 'hintMinnie' : 'hintMoose']);
     activity();
   }
 
@@ -205,30 +229,47 @@
     return current?.questions.find((entry) => entry.key === current.currentQuestionKey) || null;
   }
 
-  function recordAttempt(correct) {
+  function recordAttempt(correct, answer = {}) {
     if (disabled || !current) return;
     const question = activeQuestion();
     if (!question || question.completedAt) return;
+    question.answerHistory ||= [];
+    question.answerHistory.push({ at: now(), raw: answer.raw ?? null, interpreted: answer.interpreted ?? null, unit: answer.unit ?? null, valid: answer.valid !== false, correct: answer.valid === false ? null : correct,
+      ...(answer.rawFields ? {rawFields: {...answer.rawFields}, normalizedDisplay: answer.normalizedDisplay ?? null} : {}),
+      ...(answer.rawCounts ? {rawCounts:{...answer.rawCounts}, targetCents:answer.targetCents} : {}) });
+    if (answer.valid === false) { activity(); return; }
     question.attempts += 1;
     if (question.responseMs === null) question.responseMs = Math.max(0, now() - question.shownAt);
     if (correct) {
-      question.firstTryCorrect = question.attempts === 1;
+      question.firstTryCorrect = question.attempts === 1 && !question.minnieHint && !question.mooseHint && !question.explanationShown;
       question.completedAt = now();
-      question.outcome = question.mooseHint
+      question.outcome = question.explanationShown ? "afterExplanation" : question.mooseHint
         ? "afterMoose"
         : question.minnieHint
           ? "afterMinnie"
-          : "direct";
+          : question.firstTryCorrect ? "direct" : "afterRetry";
     }
     activity();
   }
 
-  function recordHint(guide) {
+  function recordHint(guide, text = null) {
     if (disabled || !current) return;
     const question = activeQuestion();
     if (!question || question.completedAt) return;
     if (guide === "minnie") question.minnieHint = true;
     if (guide === "moose") question.mooseHint = true;
+    question.helpHistory ||= [];
+    question.helpHistory.push({ stage: guide, at: now(), text });
+    activity();
+  }
+
+  function recordExplanation(steps, source = "automatic") {
+    if (disabled || !current) return;
+    const question = activeQuestion();
+    if (!question || question.completedAt) return;
+    question.explanationShown = true;
+    question.helpHistory ||= [];
+    question.helpHistory.push({ stage: "explanation", at: now(), source, steps: Array.isArray(steps) ? [...steps] : [String(steps)] });
     activity();
   }
 
@@ -324,6 +365,7 @@
     beginQuestion,
     recordAttempt,
     recordHint,
+    recordExplanation,
     recordAssisted,
     activity,
     end,

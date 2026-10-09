@@ -152,8 +152,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
     },
     {
       "id": "telescope-approach",
-      "x": 816,
-      "y": 577,
+      "x": 752,
+      "y": 580,
       "role": "approach"
     },
     {
@@ -334,7 +334,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "63 : 9 = ?",
               "answer": 7,
-              "hintParameters": {"a":63,"b":9},
+              "hintParameters": {
+                "a": 63,
+                "b": 9
+              },
               "explanation": "63 : 9 = 7."
             },
             {
@@ -352,7 +355,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 8,
                 9
               ],
-              "hintParameters": {"a":56,"b":8},
+              "hintParameters": {
+                "a": 56,
+                "b": 8
+              },
               "explanation": "56 : 8 = 7."
             }
           ]
@@ -369,7 +375,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "7 × 7 = ?",
               "answer": 49,
-              "hintParameters": {"a":7,"b":7},
+              "hintParameters": {
+                "a": 7,
+                "b": 7
+              },
               "explanation": "7 × 7 = 49."
             },
             {
@@ -387,7 +396,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 48,
                 54
               ],
-              "hintParameters": {"a":7,"b":6},
+              "hintParameters": {
+                "a": 7,
+                "b": 6
+              },
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -410,7 +422,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 10,
                 11
               ],
-              "hintParameters": {"a":63,"b":7},
+              "hintParameters": {
+                "a": 63,
+                "b": 7
+              },
               "explanation": "63 : 7 = 9."
             },
             {
@@ -428,7 +443,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 60,
                 70
               ],
-              "hintParameters": {"a":5,"b":10},
+              "hintParameters": {
+                "a": 5,
+                "b": 10
+              },
               "explanation": "5 × 10 = 50."
             }
           ]
@@ -445,7 +463,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "Op de havenkaart staan 9 routes met elk 5 meetpunten. Hoeveel meetpunten staan er in totaal?",
               "answer": 45,
-              "hintParameters": {"a":9,"b":5},
+              "hintParameters": {
+                "a": 9,
+                "b": 5
+              },
               "explanation": "9 × 5 = 45."
             },
             {
@@ -457,7 +478,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "2 × 5 = ?",
               "answer": 10,
-              "hintParameters": {"a":2,"b":5},
+              "hintParameters": {
+                "a": 2,
+                "b": 5
+              },
               "explanation": "2 × 5 = 10."
             }
           ]
@@ -487,7 +511,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 30,
                 36
               ],
-              "hintParameters": {"a":4,"b":6},
+              "hintParameters": {
+                "a": 4,
+                "b": 6
+              },
               "explanation": "4 × 6 = 24."
             },
             {
@@ -499,7 +526,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "3 × 4 = ?",
               "answer": 12,
-              "hintParameters": {"a":3,"b":4},
+              "hintParameters": {
+                "a": 3,
+                "b": 4
+              },
               "explanation": "3 × 4 = 12."
             }
           ]
@@ -516,7 +546,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "49 : 7 = ?",
               "answer": 7,
-              "hintParameters": {"a":49,"b":7},
+              "hintParameters": {
+                "a": 49,
+                "b": 7
+              },
               "explanation": "49 : 7 = 7."
             },
             {
@@ -534,7 +567,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 80,
                 88
               ],
-              "hintParameters": {"a":9,"b":8},
+              "hintParameters": {
+                "a": 9,
+                "b": 8
+              },
               "explanation": "9 × 8 = 72."
             }
           ]
@@ -557,7 +593,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 24,
                 32
               ],
-              "hintParameters": {"a":2,"b":8},
+              "hintParameters": {
+                "a": 2,
+                "b": 8
+              },
               "explanation": "2 × 8 = 16."
             },
             {
@@ -569,7 +608,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "Nemo bekijkt 5 sterrenbeelden met elk 10 heldere sterren. Hoeveel sterren ziet hij?",
               "answer": 50,
-              "hintParameters": {"a":5,"b":10},
+              "hintParameters": {
+                "a": 5,
+                "b": 10
+              },
               "explanation": "5 × 10 = 50."
             }
           ]
@@ -592,7 +634,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 50,
                 55
               ],
-              "hintParameters": {"a":9,"b":5},
+              "hintParameters": {
+                "a": 9,
+                "b": 5
+              },
               "explanation": "9 × 5 = 45."
             },
             {
@@ -610,7 +655,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 24,
                 30
               ],
-              "hintParameters": {"a":3,"b":6},
+              "hintParameters": {
+                "a": 3,
+                "b": 6
+              },
               "explanation": "3 × 6 = 18."
             }
           ]
@@ -634,7 +682,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "Nemo koopt 8 reservelampen voor 10 munten per stuk. Hoeveel munten betaalt hij?",
               "answer": 80,
-              "hintParameters": {"a":8,"b":10,"currency":"munten"},
+              "hintParameters": {
+                "a": 8,
+                "b": 10,
+                "currency": "munten"
+              },
               "explanation": "8 × 10 = 80 munten."
             },
             {
@@ -646,7 +698,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "7 × 8 = ?",
               "answer": 56,
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             }
           ]
@@ -663,7 +718,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "64 : 8 = ?",
               "answer": 8,
-              "hintParameters": {"a":64,"b":8},
+              "hintParameters": {
+                "a": 64,
+                "b": 8
+              },
               "explanation": "64 : 8 = 8."
             },
             {
@@ -681,7 +739,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 15,
                 18
               ],
-              "hintParameters": {"a":4,"b":3},
+              "hintParameters": {
+                "a": 4,
+                "b": 3
+              },
               "explanation": "4 × 3 = 12."
             }
           ]
@@ -698,7 +759,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "Een kabel naar de Nautiluslamp is 16 meter lang. Hij wordt in 8 gelijke stukken verdeeld. Hoe lang is ieder stuk?",
               "answer": 2,
-              "hintParameters": {"a":16,"b":8},
+              "hintParameters": {
+                "a": 16,
+                "b": 8
+              },
               "explanation": "16 : 8 = 2 meter."
             },
             {
@@ -710,7 +774,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "De Nautiluslamp heeft 9 ringen met elk 6 lichtpunten. Hoeveel lichtpunten zijn dat samen?",
               "answer": 54,
-              "hintParameters": {"a":9,"b":6},
+              "hintParameters": {
+                "a": 9,
+                "b": 6
+              },
               "explanation": "9 × 6 = 54."
             }
           ]
@@ -727,7 +794,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
               "answerMode": "open",
               "prompt": "3 × 7 = ?",
               "answer": 21,
-              "hintParameters": {"a":3,"b":7},
+              "hintParameters": {
+                "a": 3,
+                "b": 7
+              },
               "explanation": "3 × 7 = 21."
             },
             {
@@ -745,7 +815,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0004"] = {
                 6,
                 7
               ],
-              "hintParameters": {"a":40,"b":8},
+              "hintParameters": {
+                "a": 40,
+                "b": 8
+              },
               "explanation": "40 : 8 = 5."
             }
           ]

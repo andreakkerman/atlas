@@ -1,0 +1,3732 @@
+{
+  "levels": {
+    "LVL-0001": "b975393a049bd6b6374b00f9ca18e83a1716bff7800ec8e9cc783448621da2b9",
+    "LVL-0002": "3c2f7c5ef794e1fbe327996b45d183354545aa134feb1caa794cc341d01540f0",
+    "LVL-0003": "f3fe899c254743f4abb60eb0eae3d1e446b7907ec0ff241fb03d9cc033ac2d70",
+    "LVL-0004": "84afcbbcb8a9dcdd084d3fd2a17fcdaf3ef4cc3798d252688f958e3bf62a4d1b",
+    "LVL-0005": "23a14a836231d22825ee51c91b2e5fafcb43245fe6996e7788a1ccf2ae90d42a",
+    "LVL-0006": "25622cf63cf751afcfef102812b640b026eeb348db58ec7eb17ae40e88903237",
+    "LVL-0007": "2d9ca2bbccf33140ffe10c10269c662a8f64c9a5870d0c226e73aa5e772ee3ff",
+    "LVL-0032": "7ef3eadc95443490ba02db5d9ca67815d5ae4b3d96907ad627789a07e819fe21",
+    "LVL-0033": "be028f1eaf953187ca521935d39877eb5a4c6ee91266c0b36d6566b7ad17424a",
+    "LVL-0034": "e34d60d722ac588e44e41a9f77ea9ccaaab4190ae50c7faa88343ec0bbf83132",
+    "LVL-0035": "9384749869c79b7e6fe11b75ce8adada0275130d612f9084a2f6ba3c4e8ff0ba",
+    "LVL-0009": "2028ecc4dc20f4330a971a2ad3f4214ebdfa3fd3bf776280280de02924cf08ac",
+    "LVL-0010": "39152c4c9b962178667163f7f47ec0ab1d5d9b21e39efc076862e41325fb5af9",
+    "LVL-0011": "ba8fbbbaa171081a34f8da1dea072d7feadf03da7423a314d4b997e78eec229c",
+    "LVL-0012": "a44959bd03fd2a740b3941ee6bed38b48a2e17dd657d22ff5d1c029ac236079f",
+    "LVL-0013": "9d4c811d707ff6e929264bcc4b479a383454a1a081dc0ad60c9995e837530778",
+    "LVL-0014": "3d913557dfbee07c0779bbfca26c4f956aaf2964bf97e83928f9a8ca8beb1a6d",
+    "LVL-0015": "905e60889df2732a8506db6c50b84aab64042374392533fdc4cecd0f6755a90a",
+    "LVL-0016": "56a6fb797f92d9b7b4f84eda8939beacd7bfc921e8869777bb41e6178169a320",
+    "LVL-0017": "1aace6fd5a27474e5e045ded7b654c4875262438dec80aadf0d06d500277f268",
+    "LVL-0018": "d02ac4c3d1740197e54ffb858221c607ff07e2a65eb36f228add3b73f174bc3f",
+    "LVL-0019": "a9fb927c34e2cd08144f6e47aac12734d8ed7ec2c345f483efdb7af524376cbf",
+    "LVL-0020": "e21027e11008cd5448b293b29a01544a1605d9fbc912b2b323dd5f7a2cb7f032",
+    "LVL-0021": "bb7c3a325feb57fbbc4b7b3f036fd4944a7abc00aed2928d3a3cf8c848d9c8d3",
+    "LVL-0022": "ac86addb8d7c12bc7de0289225bf1184ac3ccae6fdb3787144e2f177b57b6ded",
+    "LVL-0023": "5a2d779599dcf50bf4e91cc7c36f23aac2c8aea666463f6e88dbf3d20e00551f",
+    "LVL-0024": "afd2a19cbf170a1c1a765a22d4979e72c35dcc07d9b0934c90803b5d2432ee1c",
+    "LVL-0025": "d5039a3b3e90ec6067599ec41671128d82d1c40e5d0d919715a2e30266688137",
+    "LVL-0026": "653880187d4e8069c4db7d5a09d5d9e452a31f4313914594cdd9993e7b456a63",
+    "LVL-0027": "686c10d9f5ac1322c8a002d1f4a8907d63af22b291a1122409e9a9cbdc08e7bc",
+    "LVL-0028": "cfeb560ca05947b22277d28247f192516df2e7b454b1b5e44adadbc22cce931d",
+    "LVL-0029": "d09bb85a574c08edcd9a1f4dd293d9a7a9660b57d4b73633ba4f2e2eda4a2c51",
+    "LVL-0030": "867f6937ab341b04fefc58946686751db7d405229ba8dd90255facbd064a550b",
+    "LVL-0031": "35f9a15bfd9454c53cbe506dae7f05fec517da430e60a04c8e90ba1a3bd5f49b",
+    "LVL-0008": "cd3b3387631fdc328110be8501929277a3df6e273384fb90799fd5d0a04ab9db"
+  },
+  "clockVariants": {
+    "LVL-0003:shipCompass-1a": {
+      "slot": "shipCompass-slot-1",
+      "index": 0,
+      "question": {
+        "id": "shipCompass-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over acht",
+        "choices": [
+          "Vijf over acht",
+          "Tien over acht",
+          "Tien voor acht",
+          "Kwart over acht"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 10
+        },
+        "explanation": "Het is tien over acht."
+      }
+    },
+    "LVL-0003:shipCompass-1b": {
+      "slot": "shipCompass-slot-1",
+      "index": 1,
+      "question": {
+        "id": "shipCompass-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor half vijf",
+        "choices": [
+          "Kwart over vier",
+          "Tien voor half vijf",
+          "Tien over half vier",
+          "Half vijf"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 20
+        },
+        "explanation": "Het is tien voor half vijf."
+      }
+    },
+    "LVL-0003:shipCompass-2a": {
+      "slot": "shipCompass-slot-2",
+      "index": 0,
+      "question": {
+        "id": "shipCompass-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor half zeven",
+        "choices": [
+          "Vijf over zes",
+          "Vijf voor half zeven",
+          "Half zeven",
+          "Vijf over half zeven"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 25
+        },
+        "explanation": "Het is vijf voor half zeven."
+      }
+    },
+    "LVL-0003:shipCompass-2b": {
+      "slot": "shipCompass-slot-2",
+      "index": 1,
+      "question": {
+        "id": "shipCompass-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf over half elf",
+        "choices": [
+          "Half elf",
+          "Vijf voor half elf",
+          "Vijf over half elf",
+          "Vijf voor elf"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 35
+        },
+        "explanation": "Het is vijf over half elf."
+      }
+    },
+    "LVL-0003:shipCompass-3a": {
+      "slot": "shipCompass-slot-3",
+      "index": 0,
+      "question": {
+        "id": "shipCompass-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over half drie",
+        "choices": [
+          "Tien voor half drie",
+          "Half drie",
+          "Tien over half drie",
+          "Tien voor drie"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 40
+        },
+        "explanation": "Het is tien over half drie."
+      }
+    },
+    "LVL-0003:shipCompass-3b": {
+      "slot": "shipCompass-slot-3",
+      "index": 1,
+      "question": {
+        "id": "shipCompass-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor acht",
+        "choices": [
+          "Tien over zeven",
+          "Vijf voor acht",
+          "Tien voor acht",
+          "Acht uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 50
+        },
+        "explanation": "Het is tien voor acht."
+      }
+    },
+    "LVL-0003:shipCompass-4a": {
+      "slot": "shipCompass-slot-4",
+      "index": 0,
+      "question": {
+        "id": "shipCompass-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf over elf",
+        "choices": [
+          "Vijf voor elf",
+          "Vijf over elf",
+          "Tien over elf",
+          "Elf uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 5
+        },
+        "explanation": "Het is vijf over elf."
+      }
+    },
+    "LVL-0003:shipCompass-4b": {
+      "slot": "shipCompass-slot-4",
+      "index": 1,
+      "question": {
+        "id": "shipCompass-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor twee",
+        "choices": [
+          "Vijf over één",
+          "Tien voor twee",
+          "Vijf voor twee",
+          "Twee uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 55
+        },
+        "explanation": "Het is vijf voor twee."
+      }
+    },
+    "LVL-0033:churchClock-1a": {
+      "slot": "churchClock-slot-1",
+      "index": 0,
+      "question": {
+        "id": "churchClock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 15
+        },
+        "answer": "Kwart over drie",
+        "choices": [
+          "Kwart voor drie",
+          "Half vier",
+          "Kwart over drie",
+          "Kwart over vier"
+        ],
+        "explanation": "De grote wijzer staat op de 3. Dat is kwart over. De kleine wijzer staat net na de 3."
+      }
+    },
+    "LVL-0033:churchClock-1b": {
+      "slot": "churchClock-slot-1",
+      "index": 1,
+      "question": {
+        "id": "churchClock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 30
+        },
+        "answer": "Half acht",
+        "choices": [
+          "Half zeven",
+          "Half acht",
+          "Zeven uur",
+          "Acht uur"
+        ],
+        "explanation": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 7 en 8. Dat heet half acht."
+      }
+    },
+    "LVL-0033:churchClock-2a": {
+      "slot": "churchClock-slot-2",
+      "index": 0,
+      "question": {
+        "id": "churchClock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 20
+        },
+        "answer": "Tien voor half drie",
+        "choices": [
+          "Tien over twee",
+          "Tien voor half drie",
+          "Tien over half drie",
+          "Half drie"
+        ],
+        "explanation": "De grote wijzer staat op de 4: tien minuten voor half. De kleine wijzer staat tussen 2 en 3, dus tien voor half drie."
+      }
+    },
+    "LVL-0033:churchClock-2b": {
+      "slot": "churchClock-slot-2",
+      "index": 1,
+      "question": {
+        "id": "churchClock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 35
+        },
+        "answer": "Vijf over half negen",
+        "choices": [
+          "Vijf over acht",
+          "Vijf voor half negen",
+          "Half negen",
+          "Vijf over half negen"
+        ],
+        "explanation": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 8 en 9, dus vijf over half negen."
+      }
+    },
+    "LVL-0033:churchClock-3a": {
+      "slot": "churchClock-slot-3",
+      "index": 0,
+      "question": {
+        "id": "churchClock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 25
+        },
+        "answer": "Vijf voor half vijf",
+        "choices": [
+          "Vijf voor half vijf",
+          "Vijf over half vijf",
+          "Half vijf",
+          "Vijf voor vijf"
+        ],
+        "explanation": "De grote wijzer staat op de 5: vijf minuten voor half. De kleine wijzer staat tussen 4 en 5, dus vijf voor half vijf."
+      }
+    },
+    "LVL-0033:churchClock-3b": {
+      "slot": "churchClock-slot-3",
+      "index": 1,
+      "question": {
+        "id": "churchClock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 40
+        },
+        "answer": "Tien over half zeven",
+        "choices": [
+          "Tien voor half zeven",
+          "Kwart voor zeven",
+          "Tien over half zeven",
+          "Tien over zes"
+        ],
+        "explanation": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 6 en 7, dus tien over half zeven."
+      }
+    },
+    "LVL-0033:churchClock-4a": {
+      "slot": "churchClock-slot-4",
+      "index": 0,
+      "question": {
+        "id": "churchClock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 50
+        },
+        "answer": "Tien voor elf",
+        "choices": [
+          "Tien over tien",
+          "Tien voor elf",
+          "Vijf voor elf",
+          "Elf uur"
+        ],
+        "explanation": "De grote wijzer staat op de 10. Het duurt nog tien minuten tot elf uur."
+      }
+    },
+    "LVL-0033:churchClock-4b": {
+      "slot": "churchClock-slot-4",
+      "index": 1,
+      "question": {
+        "id": "churchClock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 5
+        },
+        "answer": "Vijf over twaalf",
+        "choices": [
+          "Vijf voor twaalf",
+          "Tien over twaalf",
+          "Vijf over twaalf",
+          "Vijf over één"
+        ],
+        "explanation": "De grote wijzer staat op de 1: vijf minuten over. De kleine wijzer staat net na de 12."
+      }
+    },
+    "LVL-0035:roundContainer-1a": {
+      "slot": "roundContainer-slot-1",
+      "index": 0,
+      "question": {
+        "id": "roundContainer-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 15
+        },
+        "answer": "Kwart over één",
+        "choices": [
+          "Kwart voor één",
+          "Half twee",
+          "Kwart over één",
+          "Kwart over twee"
+        ],
+        "explanation": "De grote wijzer staat op de 3. Dat betekent kwart over. De kleine wijzer staat net na de 1. Het is kwart over één."
+      }
+    },
+    "LVL-0035:roundContainer-1b": {
+      "slot": "roundContainer-slot-1",
+      "index": 1,
+      "question": {
+        "id": "roundContainer-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 30
+        },
+        "answer": "Half tien",
+        "choices": [
+          "Half negen",
+          "Half tien",
+          "Negen uur",
+          "Tien uur"
+        ],
+        "explanation": "De grote wijzer staat op de 6. De kleine wijzer staat tussen 9 en 10. Dat heet half tien. Het is half tien."
+      }
+    },
+    "LVL-0035:roundContainer-2a": {
+      "slot": "roundContainer-slot-2",
+      "index": 0,
+      "question": {
+        "id": "roundContainer-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 20
+        },
+        "answer": "Tien voor half zes",
+        "choices": [
+          "Tien over vijf",
+          "Half zes",
+          "Tien over half zes",
+          "Tien voor half zes"
+        ],
+        "explanation": "De grote wijzer staat op de 4: tien minuten voor half. De kleine wijzer staat tussen 5 en 6. Het is tien voor half zes."
+      }
+    },
+    "LVL-0035:roundContainer-2b": {
+      "slot": "roundContainer-slot-2",
+      "index": 1,
+      "question": {
+        "id": "roundContainer-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 35
+        },
+        "answer": "Vijf over half drie",
+        "choices": [
+          "Vijf over half drie",
+          "Vijf voor half drie",
+          "Vijf over twee",
+          "Half drie"
+        ],
+        "explanation": "De grote wijzer staat op de 7: vijf minuten na half. De kleine wijzer staat tussen 2 en 3. Het is vijf over half drie."
+      }
+    },
+    "LVL-0035:roundContainer-3a": {
+      "slot": "roundContainer-slot-3",
+      "index": 0,
+      "question": {
+        "id": "roundContainer-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 25
+        },
+        "answer": "Vijf voor half negen",
+        "choices": [
+          "Half negen",
+          "Vijf over half negen",
+          "Vijf voor half negen",
+          "Vijf voor negen"
+        ],
+        "explanation": "De grote wijzer staat op de 5: vijf minuten voor half. De kleine wijzer staat tussen 8 en 9. Het is vijf voor half negen."
+      }
+    },
+    "LVL-0035:roundContainer-3b": {
+      "slot": "roundContainer-slot-3",
+      "index": 1,
+      "question": {
+        "id": "roundContainer-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 40
+        },
+        "answer": "Tien over half elf",
+        "choices": [
+          "Tien voor half elf",
+          "Tien over half elf",
+          "Kwart voor elf",
+          "Tien over tien"
+        ],
+        "explanation": "De grote wijzer staat op de 8: tien minuten na half. De kleine wijzer staat tussen 10 en 11. Het is tien over half elf."
+      }
+    },
+    "LVL-0035:roundContainer-4a": {
+      "slot": "roundContainer-slot-4",
+      "index": 0,
+      "question": {
+        "id": "roundContainer-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 50
+        },
+        "answer": "Tien voor zeven",
+        "choices": [
+          "Tien over zes",
+          "Vijf voor zeven",
+          "Zeven uur",
+          "Tien voor zeven"
+        ],
+        "explanation": "De grote wijzer staat op de 10. Het duurt nog tien minuten tot zeven uur. Het is tien voor zeven."
+      }
+    },
+    "LVL-0035:roundContainer-4b": {
+      "slot": "roundContainer-slot-4",
+      "index": 1,
+      "question": {
+        "id": "roundContainer-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het op deze klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 45
+        },
+        "answer": "Kwart voor twaalf",
+        "choices": [
+          "Kwart voor twaalf",
+          "Kwart over elf",
+          "Half twaalf",
+          "Kwart voor elf"
+        ],
+        "explanation": "De grote wijzer staat op de 9. Het duurt nog een kwartier tot twaalf uur. Het is kwart voor twaalf."
+      }
+    },
+    "LVL-0013:nl-clock-1a": {
+      "slot": "canal-clock-slot-1",
+      "index": 0,
+      "question": {
+        "id": "nl-clock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart over vier",
+        "choices": [
+          "Kwart voor vier",
+          "Kwart over vier",
+          "Half vijf",
+          "Vier uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 15
+        },
+        "explanation": "De grote wijzer staat op de 3 en de kleine wijzer net na de 4. Het is kwart over vier."
+      }
+    },
+    "LVL-0013:nl-clock-1b": {
+      "slot": "canal-clock-slot-1",
+      "index": 1,
+      "question": {
+        "id": "nl-clock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart voor negen",
+        "choices": [
+          "Kwart over acht",
+          "Half negen",
+          "Kwart voor negen",
+          "Negen uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 45
+        },
+        "explanation": "Het is kwart voor negen."
+      }
+    },
+    "LVL-0013:nl-clock-2a": {
+      "slot": "canal-clock-slot-2",
+      "index": 0,
+      "question": {
+        "id": "nl-clock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart voor tien",
+        "choices": [
+          "Kwart over negen",
+          "Half tien",
+          "Kwart voor tien",
+          "Tien uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 45
+        },
+        "explanation": "Het is kwart voor tien."
+      }
+    },
+    "LVL-0013:nl-clock-2b": {
+      "slot": "canal-clock-slot-2",
+      "index": 1,
+      "question": {
+        "id": "nl-clock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart over één",
+        "choices": [
+          "Eén uur",
+          "Kwart over één",
+          "Half twee",
+          "Kwart voor twee"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 15
+        },
+        "explanation": "Het is kwart over één."
+      }
+    },
+    "LVL-0013:nl-clock-3a": {
+      "slot": "canal-clock-slot-3",
+      "index": 0,
+      "question": {
+        "id": "nl-clock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart over twee",
+        "choices": [
+          "Twee uur",
+          "Kwart over twee",
+          "Half drie",
+          "Kwart voor drie"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 15
+        },
+        "explanation": "Het is kwart over twee."
+      }
+    },
+    "LVL-0013:nl-clock-3b": {
+      "slot": "canal-clock-slot-3",
+      "index": 1,
+      "question": {
+        "id": "nl-clock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart voor twaalf",
+        "choices": [
+          "Kwart over elf",
+          "Half twaalf",
+          "Kwart voor twaalf",
+          "Twaalf uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 45
+        },
+        "explanation": "Het is kwart voor twaalf."
+      }
+    },
+    "LVL-0013:nl-clock-4a": {
+      "slot": "canal-clock-slot-4",
+      "index": 0,
+      "question": {
+        "id": "nl-clock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart voor zeven",
+        "choices": [
+          "Kwart over zes",
+          "Half zeven",
+          "Kwart voor zeven",
+          "Zeven uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 45
+        },
+        "explanation": "Het is kwart voor zeven."
+      }
+    },
+    "LVL-0013:nl-clock-4b": {
+      "slot": "canal-clock-slot-4",
+      "index": 1,
+      "question": {
+        "id": "nl-clock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_quarter",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Kwart over vijf",
+        "choices": [
+          "Vijf uur",
+          "Kwart over vijf",
+          "Half zes",
+          "Kwart voor zes"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 15
+        },
+        "explanation": "Het is kwart over vijf."
+      }
+    },
+    "LVL-0014:uk-clock-1a": {
+      "slot": "clock-tower-slot-1",
+      "index": 0,
+      "question": {
+        "id": "uk-clock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half acht",
+        "choices": [
+          "Half zeven",
+          "Zeven uur",
+          "Half acht",
+          "Acht uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 30
+        },
+        "explanation": "Het is half acht."
+      }
+    },
+    "LVL-0014:uk-clock-1b": {
+      "slot": "clock-tower-slot-1",
+      "index": 1,
+      "question": {
+        "id": "uk-clock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half vijf",
+        "choices": [
+          "Vier uur",
+          "Half vier",
+          "Half vijf",
+          "Vijf uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 30
+        },
+        "explanation": "Het is half vijf."
+      }
+    },
+    "LVL-0014:uk-clock-2a": {
+      "slot": "clock-tower-slot-2",
+      "index": 0,
+      "question": {
+        "id": "uk-clock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half vier",
+        "choices": [
+          "Drie uur",
+          "Half drie",
+          "Half vier",
+          "Vier uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 30
+        },
+        "explanation": "Het is half vier."
+      }
+    },
+    "LVL-0014:uk-clock-2b": {
+      "slot": "clock-tower-slot-2",
+      "index": 1,
+      "question": {
+        "id": "uk-clock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half negen",
+        "choices": [
+          "Acht uur",
+          "Half acht",
+          "Half negen",
+          "Negen uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 30
+        },
+        "explanation": "Het is half negen."
+      }
+    },
+    "LVL-0014:uk-clock-3a": {
+      "slot": "clock-tower-slot-3",
+      "index": 0,
+      "question": {
+        "id": "uk-clock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half elf",
+        "choices": [
+          "Tien uur",
+          "Half tien",
+          "Half elf",
+          "Elf uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 30
+        },
+        "explanation": "Het is half elf."
+      }
+    },
+    "LVL-0014:uk-clock-3b": {
+      "slot": "clock-tower-slot-3",
+      "index": 1,
+      "question": {
+        "id": "uk-clock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half één",
+        "choices": [
+          "Twaalf uur",
+          "Half twaalf",
+          "Half één",
+          "Eén uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 30
+        },
+        "explanation": "Het is half één."
+      }
+    },
+    "LVL-0014:uk-clock-4a": {
+      "slot": "clock-tower-slot-4",
+      "index": 0,
+      "question": {
+        "id": "uk-clock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half twee",
+        "choices": [
+          "Eén uur",
+          "Half één",
+          "Half twee",
+          "Twee uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 30
+        },
+        "explanation": "Het is half twee."
+      }
+    },
+    "LVL-0014:uk-clock-4b": {
+      "slot": "clock-tower-slot-4",
+      "index": 1,
+      "question": {
+        "id": "uk-clock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_half_hour",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Half zeven",
+        "choices": [
+          "Zes uur",
+          "Half zes",
+          "Half zeven",
+          "Zeven uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 30
+        },
+        "explanation": "Het is half zeven."
+      }
+    },
+    "LVL-0015:fr-clock-1a": {
+      "slot": "village-clock-slot-1",
+      "index": 0,
+      "question": {
+        "id": "fr-clock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over drie",
+        "choices": [
+          "Vijf over drie",
+          "Tien over drie",
+          "Tien voor drie",
+          "Kwart over drie"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 10
+        },
+        "explanation": "Het is tien over drie."
+      }
+    },
+    "LVL-0015:fr-clock-1b": {
+      "slot": "village-clock-slot-1",
+      "index": 1,
+      "question": {
+        "id": "fr-clock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf over zes",
+        "choices": [
+          "Vijf voor zes",
+          "Vijf over zes",
+          "Tien over zes",
+          "Zes uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 5
+        },
+        "explanation": "Het is vijf over zes."
+      }
+    },
+    "LVL-0015:fr-clock-2a": {
+      "slot": "village-clock-slot-2",
+      "index": 0,
+      "question": {
+        "id": "fr-clock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor half negen",
+        "choices": [
+          "Tien over half acht",
+          "Kwart over acht",
+          "Tien voor half negen",
+          "Half negen"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 20
+        },
+        "explanation": "Het is tien voor half negen."
+      }
+    },
+    "LVL-0015:fr-clock-2b": {
+      "slot": "village-clock-slot-2",
+      "index": 1,
+      "question": {
+        "id": "fr-clock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor half twee",
+        "choices": [
+          "Vijf over één",
+          "Vijf voor half twee",
+          "Vijf over half twee",
+          "Half twee"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 25
+        },
+        "explanation": "Het is vijf voor half twee."
+      }
+    },
+    "LVL-0015:fr-clock-3a": {
+      "slot": "village-clock-slot-3",
+      "index": 0,
+      "question": {
+        "id": "fr-clock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over half zes",
+        "choices": [
+          "Tien voor half zes",
+          "Half zes",
+          "Tien over half zes",
+          "Tien voor zes"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 40
+        },
+        "explanation": "Het is tien over half zes."
+      }
+    },
+    "LVL-0015:fr-clock-3b": {
+      "slot": "village-clock-slot-3",
+      "index": 1,
+      "question": {
+        "id": "fr-clock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf over half tien",
+        "choices": [
+          "Vijf voor half tien",
+          "Half tien",
+          "Vijf over half tien",
+          "Vijf voor tien"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 35
+        },
+        "explanation": "Het is vijf over half tien."
+      }
+    },
+    "LVL-0015:fr-clock-4a": {
+      "slot": "village-clock-slot-4",
+      "index": 0,
+      "question": {
+        "id": "fr-clock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor twaalf",
+        "choices": [
+          "Tien over elf",
+          "Vijf voor twaalf",
+          "Tien voor twaalf",
+          "Twaalf uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 50
+        },
+        "explanation": "Het is tien voor twaalf."
+      }
+    },
+    "LVL-0015:fr-clock-4b": {
+      "slot": "village-clock-slot-4",
+      "index": 1,
+      "question": {
+        "id": "fr-clock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor drie",
+        "choices": [
+          "Vijf over twee",
+          "Tien voor drie",
+          "Vijf voor drie",
+          "Drie uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 55
+        },
+        "explanation": "Het is vijf voor drie."
+      }
+    },
+    "LVL-0017:at-clock-1a": {
+      "slot": "clock-house-slot-1",
+      "index": 0,
+      "question": {
+        "id": "at-clock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Drie uur",
+        "choices": [
+          "Half drie",
+          "Drie uur",
+          "Half vier",
+          "Vier uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 0
+        },
+        "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 3. Het is drie uur."
+      }
+    },
+    "LVL-0017:at-clock-1b": {
+      "slot": "clock-house-slot-1",
+      "index": 1,
+      "question": {
+        "id": "at-clock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Twaalf uur",
+        "choices": [
+          "Half twaalf",
+          "Twaalf uur",
+          "Half één",
+          "Eén uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 0
+        },
+        "explanation": "De grote en de kleine wijzer staan op de 12. Het is twaalf uur."
+      }
+    },
+    "LVL-0017:at-clock-2a": {
+      "slot": "clock-house-slot-2",
+      "index": 0,
+      "question": {
+        "id": "at-clock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Zes uur",
+        "choices": [
+          "Half zes",
+          "Zes uur",
+          "Half zeven",
+          "Zeven uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 0
+        },
+        "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 6. Het is zes uur."
+      }
+    },
+    "LVL-0017:at-clock-2b": {
+      "slot": "clock-house-slot-2",
+      "index": 1,
+      "question": {
+        "id": "at-clock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Negen uur",
+        "choices": [
+          "Half negen",
+          "Negen uur",
+          "Half tien",
+          "Tien uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 0
+        },
+        "explanation": "De grote wijzer staat op de 12 en de kleine wijzer op de 9. Het is negen uur."
+      }
+    },
+    "LVL-0017:at-clock-3a": {
+      "slot": "clock-house-slot-3",
+      "index": 0,
+      "question": {
+        "id": "at-clock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor half vier",
+        "choices": [
+          "Kwart over drie",
+          "Tien voor half vier",
+          "Tien over half drie",
+          "Half vier"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 20
+        },
+        "explanation": "De grote wijzer staat op de 4 en de kleine wijzer tussen de 3 en de 4. Het is tien voor half vier."
+      }
+    },
+    "LVL-0017:at-clock-3b": {
+      "slot": "clock-house-slot-3",
+      "index": 1,
+      "question": {
+        "id": "at-clock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over half zes",
+        "choices": [
+          "Tien voor half zes",
+          "Half zes",
+          "Tien over half zes",
+          "Tien voor zes"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 40
+        },
+        "explanation": "De grote wijzer staat op de 8 en de kleine wijzer tussen de 5 en de 6. Het is tien over half zes."
+      }
+    },
+    "LVL-0017:at-clock-4a": {
+      "slot": "clock-house-slot-4",
+      "index": 0,
+      "question": {
+        "id": "at-clock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor half tien",
+        "choices": [
+          "Vijf over negen",
+          "Vijf voor half tien",
+          "Half tien",
+          "Vijf over half tien"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 25
+        },
+        "explanation": "De grote wijzer staat op de 5 en de kleine wijzer tussen de 9 en de 10. Het is vijf voor half tien."
+      }
+    },
+    "LVL-0017:at-clock-4b": {
+      "slot": "clock-house-slot-4",
+      "index": 1,
+      "question": {
+        "id": "at-clock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor één",
+        "choices": [
+          "Tien over twaalf",
+          "Vijf voor één",
+          "Tien voor één",
+          "Eén uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 50
+        },
+        "explanation": "De grote wijzer staat op de 10 en de kleine wijzer bijna op de 1. Het is tien voor één."
+      }
+    },
+    "LVL-0019:se-clock-1a": {
+      "slot": "harbor-clock-slot-1",
+      "index": 0,
+      "question": {
+        "id": "se-clock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over negen",
+        "choices": [
+          "Vijf over negen",
+          "Tien over negen",
+          "Tien voor negen",
+          "Kwart over negen"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 10
+        },
+        "explanation": "Het is tien over negen."
+      }
+    },
+    "LVL-0019:se-clock-1b": {
+      "slot": "harbor-clock-slot-1",
+      "index": 1,
+      "question": {
+        "id": "se-clock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor half zes",
+        "choices": [
+          "Kwart over vijf",
+          "Tien voor half zes",
+          "Tien over half vijf",
+          "Half zes"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 20
+        },
+        "explanation": "Het is tien voor half zes."
+      }
+    },
+    "LVL-0019:se-clock-2a": {
+      "slot": "harbor-clock-slot-2",
+      "index": 0,
+      "question": {
+        "id": "se-clock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor half vier",
+        "choices": [
+          "Vijf over drie",
+          "Vijf voor half vier",
+          "Half vier",
+          "Vijf over half vier"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 25
+        },
+        "explanation": "Het is vijf voor half vier."
+      }
+    },
+    "LVL-0019:se-clock-2b": {
+      "slot": "harbor-clock-slot-2",
+      "index": 1,
+      "question": {
+        "id": "se-clock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf over half acht",
+        "choices": [
+          "Half acht",
+          "Vijf voor half acht",
+          "Vijf over half acht",
+          "Vijf voor acht"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 35
+        },
+        "explanation": "Het is vijf over half acht."
+      }
+    },
+    "LVL-0019:se-clock-3a": {
+      "slot": "harbor-clock-slot-3",
+      "index": 0,
+      "question": {
+        "id": "se-clock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien over half elf",
+        "choices": [
+          "Tien voor half elf",
+          "Half elf",
+          "Tien over half elf",
+          "Tien voor elf"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 40
+        },
+        "explanation": "Het is tien over half elf."
+      }
+    },
+    "LVL-0019:se-clock-3b": {
+      "slot": "harbor-clock-slot-3",
+      "index": 1,
+      "question": {
+        "id": "se-clock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Tien voor twee",
+        "choices": [
+          "Tien over één",
+          "Vijf voor twee",
+          "Tien voor twee",
+          "Twee uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 50
+        },
+        "explanation": "Het is tien voor twee."
+      }
+    },
+    "LVL-0019:se-clock-4a": {
+      "slot": "harbor-clock-slot-4",
+      "index": 0,
+      "question": {
+        "id": "se-clock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf over zes",
+        "choices": [
+          "Vijf voor zes",
+          "Vijf over zes",
+          "Tien over zes",
+          "Zes uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 5
+        },
+        "explanation": "Het is vijf over zes."
+      }
+    },
+    "LVL-0019:se-clock-4b": {
+      "slot": "harbor-clock-slot-4",
+      "index": 1,
+      "question": {
+        "id": "se-clock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading_five_minutes",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "prompt": "Hoe laat is het?",
+        "answer": "Vijf voor twaalf",
+        "choices": [
+          "Vijf over elf",
+          "Tien voor twaalf",
+          "Vijf voor twaalf",
+          "Twaalf uur"
+        ],
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 55
+        },
+        "explanation": "Het is vijf voor twaalf."
+      }
+    },
+    "LVL-0023:water-clock-1a": {
+      "slot": "water-clock-slot-1",
+      "index": 0,
+      "question": {
+        "id": "water-clock-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Twee uur",
+        "choices": [
+          "Twee uur",
+          "Drie uur",
+          "Kwart over twee",
+          "Half drie"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 0
+        },
+        "explanation": "De wijzers tonen Twee uur."
+      }
+    },
+    "LVL-0023:water-clock-1b": {
+      "slot": "water-clock-slot-1",
+      "index": 1,
+      "question": {
+        "id": "water-clock-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart over vier",
+        "choices": [
+          "Kwart over vier",
+          "Kwart over vijf",
+          "Half vijf",
+          "Kwart voor vijf"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 15
+        },
+        "explanation": "De wijzers tonen Kwart over vier."
+      }
+    },
+    "LVL-0023:water-clock-2a": {
+      "slot": "water-clock-slot-2",
+      "index": 0,
+      "question": {
+        "id": "water-clock-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Half zeven",
+        "choices": [
+          "Half zeven",
+          "Half acht",
+          "Kwart voor zeven",
+          "Zes uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 30
+        },
+        "explanation": "De wijzers tonen Half zeven."
+      }
+    },
+    "LVL-0023:water-clock-2b": {
+      "slot": "water-clock-slot-2",
+      "index": 1,
+      "question": {
+        "id": "water-clock-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart voor negen",
+        "choices": [
+          "Kwart voor negen",
+          "Kwart voor tien",
+          "Acht uur",
+          "Kwart over acht"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 45
+        },
+        "explanation": "De wijzers tonen Kwart voor negen."
+      }
+    },
+    "LVL-0023:water-clock-3a": {
+      "slot": "water-clock-slot-3",
+      "index": 0,
+      "question": {
+        "id": "water-clock-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over tien",
+        "choices": [
+          "Vijf over tien",
+          "Vijf over elf",
+          "Tien voor half elf",
+          "Vijf over half elf"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 5
+        },
+        "explanation": "De wijzers tonen Vijf over tien."
+      }
+    },
+    "LVL-0023:water-clock-3b": {
+      "slot": "water-clock-slot-3",
+      "index": 1,
+      "question": {
+        "id": "water-clock-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor half een",
+        "choices": [
+          "Tien voor half een",
+          "Tien voor half twee",
+          "Vijf over half een",
+          "Tien voor een"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 20
+        },
+        "explanation": "De wijzers tonen Tien voor half een."
+      }
+    },
+    "LVL-0023:water-clock-4a": {
+      "slot": "water-clock-slot-4",
+      "index": 0,
+      "question": {
+        "id": "water-clock-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over half vier",
+        "choices": [
+          "Vijf over half vier",
+          "Vijf over half vijf",
+          "Tien voor vier",
+          "Vijf over drie"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 35
+        },
+        "explanation": "De wijzers tonen Vijf over half vier."
+      }
+    },
+    "LVL-0023:water-clock-4b": {
+      "slot": "water-clock-slot-4",
+      "index": 1,
+      "question": {
+        "id": "water-clock-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor zes",
+        "choices": [
+          "Tien voor zes",
+          "Tien voor zeven",
+          "Vijf over vijf",
+          "Tien voor half zes"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 50
+        },
+        "explanation": "De wijzers tonen Tien voor zes."
+      }
+    },
+    "LVL-0024:flight-controls-1a": {
+      "slot": "flight-controls-slot-1",
+      "index": 0,
+      "question": {
+        "id": "flight-controls-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien over een",
+        "choices": [
+          "Tien over een",
+          "Tien over twee",
+          "Vijf voor half twee",
+          "Tien over half twee"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 10
+        },
+        "explanation": "De wijzers tonen Tien over een."
+      }
+    },
+    "LVL-0024:flight-controls-1b": {
+      "slot": "flight-controls-slot-1",
+      "index": 1,
+      "question": {
+        "id": "flight-controls-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf voor half acht",
+        "choices": [
+          "Vijf voor half acht",
+          "Vijf voor half negen",
+          "Tien over half acht",
+          "Vijf voor acht"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 25
+        },
+        "explanation": "De wijzers tonen Vijf voor half acht."
+      }
+    },
+    "LVL-0024:flight-controls-2a": {
+      "slot": "flight-controls-slot-2",
+      "index": 0,
+      "question": {
+        "id": "flight-controls-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien over half tien",
+        "choices": [
+          "Tien over half tien",
+          "Tien over half elf",
+          "Vijf voor tien",
+          "Tien over negen"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 40
+        },
+        "explanation": "De wijzers tonen Tien over half tien."
+      }
+    },
+    "LVL-0024:flight-controls-2b": {
+      "slot": "flight-controls-slot-2",
+      "index": 1,
+      "question": {
+        "id": "flight-controls-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf voor twaalf",
+        "choices": [
+          "Vijf voor twaalf",
+          "Vijf voor een",
+          "Tien over elf",
+          "Vijf voor half twaalf"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 55
+        },
+        "explanation": "De wijzers tonen Vijf voor twaalf."
+      }
+    },
+    "LVL-0024:flight-controls-3a": {
+      "slot": "flight-controls-slot-3",
+      "index": 0,
+      "question": {
+        "id": "flight-controls-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Drie uur",
+        "choices": [
+          "Drie uur",
+          "Vier uur",
+          "Kwart over drie",
+          "Half vier"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 0
+        },
+        "explanation": "De wijzers tonen Drie uur."
+      }
+    },
+    "LVL-0024:flight-controls-3b": {
+      "slot": "flight-controls-slot-3",
+      "index": 1,
+      "question": {
+        "id": "flight-controls-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart over vijf",
+        "choices": [
+          "Kwart over vijf",
+          "Kwart over zes",
+          "Half zes",
+          "Kwart voor zes"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 15
+        },
+        "explanation": "De wijzers tonen Kwart over vijf."
+      }
+    },
+    "LVL-0024:flight-controls-4a": {
+      "slot": "flight-controls-slot-4",
+      "index": 0,
+      "question": {
+        "id": "flight-controls-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Half acht",
+        "choices": [
+          "Half acht",
+          "Half negen",
+          "Kwart voor acht",
+          "Zeven uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 30
+        },
+        "explanation": "De wijzers tonen Half acht."
+      }
+    },
+    "LVL-0024:flight-controls-4b": {
+      "slot": "flight-controls-slot-4",
+      "index": 1,
+      "question": {
+        "id": "flight-controls-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart voor tien",
+        "choices": [
+          "Kwart voor tien",
+          "Kwart voor elf",
+          "Negen uur",
+          "Kwart over negen"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 45
+        },
+        "explanation": "De wijzers tonen Kwart voor tien."
+      }
+    },
+    "LVL-0025:pulley-panel-1a": {
+      "slot": "pulley-panel-slot-1",
+      "index": 0,
+      "question": {
+        "id": "pulley-panel-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over elf",
+        "choices": [
+          "Vijf over elf",
+          "Vijf over twaalf",
+          "Tien voor half twaalf",
+          "Vijf over half twaalf"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 5
+        },
+        "explanation": "De wijzers tonen Vijf over elf."
+      }
+    },
+    "LVL-0025:pulley-panel-1b": {
+      "slot": "pulley-panel-slot-1",
+      "index": 1,
+      "question": {
+        "id": "pulley-panel-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor half twee",
+        "choices": [
+          "Tien voor half twee",
+          "Tien voor half drie",
+          "Vijf over half twee",
+          "Tien voor twee"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 20
+        },
+        "explanation": "De wijzers tonen Tien voor half twee."
+      }
+    },
+    "LVL-0025:pulley-panel-2a": {
+      "slot": "pulley-panel-slot-2",
+      "index": 0,
+      "question": {
+        "id": "pulley-panel-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over half vijf",
+        "choices": [
+          "Vijf over half vijf",
+          "Vijf over half zes",
+          "Tien voor vijf",
+          "Vijf over vier"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 35
+        },
+        "explanation": "De wijzers tonen Vijf over half vijf."
+      }
+    },
+    "LVL-0025:pulley-panel-2b": {
+      "slot": "pulley-panel-slot-2",
+      "index": 1,
+      "question": {
+        "id": "pulley-panel-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor zeven",
+        "choices": [
+          "Tien voor zeven",
+          "Tien voor acht",
+          "Vijf over zes",
+          "Tien voor half zeven"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 50
+        },
+        "explanation": "De wijzers tonen Tien voor zeven."
+      }
+    },
+    "LVL-0025:pulley-panel-3a": {
+      "slot": "pulley-panel-slot-3",
+      "index": 0,
+      "question": {
+        "id": "pulley-panel-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien over acht",
+        "choices": [
+          "Tien over acht",
+          "Tien over negen",
+          "Vijf voor half negen",
+          "Tien over half negen"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 10
+        },
+        "explanation": "De wijzers tonen Tien over acht."
+      }
+    },
+    "LVL-0025:pulley-panel-3b": {
+      "slot": "pulley-panel-slot-3",
+      "index": 1,
+      "question": {
+        "id": "pulley-panel-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf voor half elf",
+        "choices": [
+          "Vijf voor half elf",
+          "Vijf voor half twaalf",
+          "Tien over half elf",
+          "Vijf voor elf"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 25
+        },
+        "explanation": "De wijzers tonen Vijf voor half elf."
+      }
+    },
+    "LVL-0025:pulley-panel-4a": {
+      "slot": "pulley-panel-slot-4",
+      "index": 0,
+      "question": {
+        "id": "pulley-panel-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien over half een",
+        "choices": [
+          "Tien over half een",
+          "Tien over half twee",
+          "Vijf voor een",
+          "Tien over twaalf"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 40
+        },
+        "explanation": "De wijzers tonen Tien over half een."
+      }
+    },
+    "LVL-0025:pulley-panel-4b": {
+      "slot": "pulley-panel-slot-4",
+      "index": 1,
+      "question": {
+        "id": "pulley-panel-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf voor drie",
+        "choices": [
+          "Vijf voor drie",
+          "Vijf voor vier",
+          "Tien over twee",
+          "Vijf voor half drie"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 55
+        },
+        "explanation": "De wijzers tonen Vijf voor drie."
+      }
+    },
+    "LVL-0026:central-codex-1a": {
+      "slot": "central-codex-slot-1",
+      "index": 0,
+      "question": {
+        "id": "central-codex-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vier uur",
+        "choices": [
+          "Vier uur",
+          "Vijf uur",
+          "Kwart over vier",
+          "Half vijf"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 0
+        },
+        "explanation": "De wijzers tonen Vier uur."
+      }
+    },
+    "LVL-0026:central-codex-1b": {
+      "slot": "central-codex-slot-1",
+      "index": 1,
+      "question": {
+        "id": "central-codex-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart over zes",
+        "choices": [
+          "Kwart over zes",
+          "Kwart over zeven",
+          "Half zeven",
+          "Kwart voor zeven"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 15
+        },
+        "explanation": "De wijzers tonen Kwart over zes."
+      }
+    },
+    "LVL-0026:central-codex-2a": {
+      "slot": "central-codex-slot-2",
+      "index": 0,
+      "question": {
+        "id": "central-codex-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Half negen",
+        "choices": [
+          "Half negen",
+          "Half tien",
+          "Kwart voor negen",
+          "Acht uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 30
+        },
+        "explanation": "De wijzers tonen Half negen."
+      }
+    },
+    "LVL-0026:central-codex-2b": {
+      "slot": "central-codex-slot-2",
+      "index": 1,
+      "question": {
+        "id": "central-codex-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart voor elf",
+        "choices": [
+          "Kwart voor elf",
+          "Kwart voor twaalf",
+          "Tien uur",
+          "Kwart over tien"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 45
+        },
+        "explanation": "De wijzers tonen Kwart voor elf."
+      }
+    },
+    "LVL-0026:central-codex-3a": {
+      "slot": "central-codex-slot-3",
+      "index": 0,
+      "question": {
+        "id": "central-codex-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien over twaalf",
+        "choices": [
+          "Tien over twaalf",
+          "Tien over een",
+          "Vijf voor half een",
+          "Tien over half een"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 10
+        },
+        "explanation": "De wijzers tonen Tien over twaalf."
+      }
+    },
+    "LVL-0026:central-codex-3b": {
+      "slot": "central-codex-slot-3",
+      "index": 1,
+      "question": {
+        "id": "central-codex-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf voor half drie",
+        "choices": [
+          "Vijf voor half drie",
+          "Vijf voor half vier",
+          "Tien over half drie",
+          "Vijf voor drie"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 25
+        },
+        "explanation": "De wijzers tonen Vijf voor half drie."
+      }
+    },
+    "LVL-0026:central-codex-4a": {
+      "slot": "central-codex-slot-4",
+      "index": 0,
+      "question": {
+        "id": "central-codex-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien over half zes",
+        "choices": [
+          "Tien over half zes",
+          "Tien over half zeven",
+          "Vijf voor zes",
+          "Tien over vijf"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 40
+        },
+        "explanation": "De wijzers tonen Tien over half zes."
+      }
+    },
+    "LVL-0026:central-codex-4b": {
+      "slot": "central-codex-slot-4",
+      "index": 1,
+      "question": {
+        "id": "central-codex-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf voor acht",
+        "choices": [
+          "Vijf voor acht",
+          "Vijf voor negen",
+          "Tien over zeven",
+          "Vijf voor half acht"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 55
+        },
+        "explanation": "De wijzers tonen Vijf voor acht."
+      }
+    },
+    "LVL-0026:design-board-1a": {
+      "slot": "design-board-slot-1",
+      "index": 0,
+      "question": {
+        "id": "design-board-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Negen uur",
+        "choices": [
+          "Negen uur",
+          "Tien uur",
+          "Kwart over negen",
+          "Half tien"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 9,
+          "minute": 0
+        },
+        "explanation": "De wijzers tonen Negen uur."
+      }
+    },
+    "LVL-0026:design-board-1b": {
+      "slot": "design-board-slot-1",
+      "index": 1,
+      "question": {
+        "id": "design-board-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart over elf",
+        "choices": [
+          "Kwart over elf",
+          "Kwart over twaalf",
+          "Half twaalf",
+          "Kwart voor twaalf"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 11,
+          "minute": 15
+        },
+        "explanation": "De wijzers tonen Kwart over elf."
+      }
+    },
+    "LVL-0026:design-board-2a": {
+      "slot": "design-board-slot-2",
+      "index": 0,
+      "question": {
+        "id": "design-board-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Half twee",
+        "choices": [
+          "Half twee",
+          "Half drie",
+          "Kwart voor twee",
+          "Een uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 1,
+          "minute": 30
+        },
+        "explanation": "De wijzers tonen Half twee."
+      }
+    },
+    "LVL-0026:design-board-2b": {
+      "slot": "design-board-slot-2",
+      "index": 1,
+      "question": {
+        "id": "design-board-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart voor vier",
+        "choices": [
+          "Kwart voor vier",
+          "Kwart voor vijf",
+          "Drie uur",
+          "Kwart over drie"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 45
+        },
+        "explanation": "De wijzers tonen Kwart voor vier."
+      }
+    },
+    "LVL-0026:design-board-3a": {
+      "slot": "design-board-slot-3",
+      "index": 0,
+      "question": {
+        "id": "design-board-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over vijf",
+        "choices": [
+          "Vijf over vijf",
+          "Vijf over zes",
+          "Tien voor half zes",
+          "Vijf over half zes"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 5,
+          "minute": 5
+        },
+        "explanation": "De wijzers tonen Vijf over vijf."
+      }
+    },
+    "LVL-0026:design-board-3b": {
+      "slot": "design-board-slot-3",
+      "index": 1,
+      "question": {
+        "id": "design-board-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor half acht",
+        "choices": [
+          "Tien voor half acht",
+          "Tien voor half negen",
+          "Vijf over half acht",
+          "Tien voor acht"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 20
+        },
+        "explanation": "De wijzers tonen Tien voor half acht."
+      }
+    },
+    "LVL-0026:design-board-4a": {
+      "slot": "design-board-slot-4",
+      "index": 0,
+      "question": {
+        "id": "design-board-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over half elf",
+        "choices": [
+          "Vijf over half elf",
+          "Vijf over half twaalf",
+          "Tien voor elf",
+          "Vijf over tien"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 35
+        },
+        "explanation": "De wijzers tonen Vijf over half elf."
+      }
+    },
+    "LVL-0026:design-board-4b": {
+      "slot": "design-board-slot-4",
+      "index": 1,
+      "question": {
+        "id": "design-board-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "story",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor een",
+        "choices": [
+          "Tien voor een",
+          "Tien voor twee",
+          "Vijf over twaalf",
+          "Tien voor half een"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 50
+        },
+        "explanation": "De wijzers tonen Tien voor een."
+      }
+    },
+    "LVL-0028:tripod-instrument-1a": {
+      "slot": "tripod-instrument-slot-1",
+      "index": 0,
+      "question": {
+        "id": "tripod-instrument-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Drie uur",
+        "choices": [
+          "Half drie",
+          "Drie uur",
+          "Half vier",
+          "Vier uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 0
+        },
+        "hintMinnie": "De grote wijzer staat op de 12.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Drie uur."
+      }
+    },
+    "LVL-0028:tripod-instrument-1b": {
+      "slot": "tripod-instrument-slot-1",
+      "index": 1,
+      "question": {
+        "id": "tripod-instrument-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart over zes",
+        "choices": [
+          "Kwart over zes",
+          "Kwart over zeven",
+          "Half zeven",
+          "Kwart voor zeven"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 15
+        },
+        "hintMinnie": "De grote wijzer staat op de 3.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Kwart over zes."
+      }
+    },
+    "LVL-0028:tripod-instrument-2a": {
+      "slot": "tripod-instrument-slot-2",
+      "index": 0,
+      "question": {
+        "id": "tripod-instrument-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Half acht",
+        "choices": [
+          "Zeven uur",
+          "Half zeven",
+          "Half acht",
+          "Acht uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 30
+        },
+        "hintMinnie": "De grote wijzer staat op de 6.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Half acht."
+      }
+    },
+    "LVL-0028:tripod-instrument-2b": {
+      "slot": "tripod-instrument-slot-2",
+      "index": 1,
+      "question": {
+        "id": "tripod-instrument-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart voor vijf",
+        "choices": [
+          "Kwart voor vier",
+          "Kwart over vier",
+          "Half vijf",
+          "Kwart voor vijf"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 45
+        },
+        "hintMinnie": "De grote wijzer staat op de 9.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Kwart voor vijf."
+      }
+    },
+    "LVL-0028:tripod-instrument-3a": {
+      "slot": "tripod-instrument-slot-3",
+      "index": 0,
+      "question": {
+        "id": "tripod-instrument-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor half drie",
+        "choices": [
+          "Tien over twee",
+          "Tien voor half drie",
+          "Half drie",
+          "Tien over half drie"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 20
+        },
+        "hintMinnie": "De grote wijzer staat op de 4.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Tien voor half drie."
+      }
+    },
+    "LVL-0028:tripod-instrument-3b": {
+      "slot": "tripod-instrument-slot-3",
+      "index": 1,
+      "question": {
+        "id": "tripod-instrument-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over half negen",
+        "choices": [
+          "Vijf over acht",
+          "Vijf voor half negen",
+          "Vijf over half negen",
+          "Tien over half negen"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 35
+        },
+        "hintMinnie": "De grote wijzer staat op de 7.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Vijf over half negen."
+      }
+    },
+    "LVL-0028:tripod-instrument-4a": {
+      "slot": "tripod-instrument-slot-4",
+      "index": 0,
+      "question": {
+        "id": "tripod-instrument-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor elf",
+        "choices": [
+          "Tien voor elf",
+          "Tien over tien",
+          "Vijf voor elf",
+          "Elf uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 50
+        },
+        "hintMinnie": "De grote wijzer staat op de 10.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Tien voor elf."
+      }
+    },
+    "LVL-0028:tripod-instrument-4b": {
+      "slot": "tripod-instrument-slot-4",
+      "index": 1,
+      "question": {
+        "id": "tripod-instrument-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over twaalf",
+        "choices": [
+          "Vijf voor twaalf",
+          "Vijf over twaalf",
+          "Tien over twaalf",
+          "Twaalf uur"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 5
+        },
+        "hintMinnie": "De grote wijzer staat op de 1.",
+        "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
+        "explanation": "De wijzers tonen Vijf over twaalf."
+      }
+    },
+    "LVL-0030:sundial-1a": {
+      "slot": "sundial-slot-1",
+      "index": 0,
+      "question": {
+        "id": "sundial-1a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Drie uur",
+        "choices": [
+          "Half drie",
+          "Drie uur",
+          "Half vier",
+          "Vier uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 3,
+          "minute": 0
+        },
+        "explanation": "De wijzers tonen Drie uur."
+      }
+    },
+    "LVL-0030:sundial-1b": {
+      "slot": "sundial-slot-1",
+      "index": 1,
+      "question": {
+        "id": "sundial-1b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart over zes",
+        "choices": [
+          "Kwart over zes",
+          "Kwart over zeven",
+          "Half zeven",
+          "Kwart voor zeven"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 6,
+          "minute": 15
+        },
+        "explanation": "De wijzers tonen Kwart over zes."
+      }
+    },
+    "LVL-0030:sundial-2a": {
+      "slot": "sundial-slot-2",
+      "index": 0,
+      "question": {
+        "id": "sundial-2a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Half acht",
+        "choices": [
+          "Zeven uur",
+          "Half zeven",
+          "Half acht",
+          "Acht uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 7,
+          "minute": 30
+        },
+        "explanation": "De wijzers tonen Half acht."
+      }
+    },
+    "LVL-0030:sundial-2b": {
+      "slot": "sundial-slot-2",
+      "index": 1,
+      "question": {
+        "id": "sundial-2b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Kwart voor vijf",
+        "choices": [
+          "Kwart voor vier",
+          "Kwart over vier",
+          "Half vijf",
+          "Kwart voor vijf"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 4,
+          "minute": 45
+        },
+        "explanation": "De wijzers tonen Kwart voor vijf."
+      }
+    },
+    "LVL-0030:sundial-3a": {
+      "slot": "sundial-slot-3",
+      "index": 0,
+      "question": {
+        "id": "sundial-3a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor half drie",
+        "choices": [
+          "Tien over twee",
+          "Tien voor half drie",
+          "Half drie",
+          "Tien over half drie"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 2,
+          "minute": 20
+        },
+        "explanation": "De wijzers tonen Tien voor half drie."
+      }
+    },
+    "LVL-0030:sundial-3b": {
+      "slot": "sundial-slot-3",
+      "index": 1,
+      "question": {
+        "id": "sundial-3b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over half negen",
+        "choices": [
+          "Vijf over acht",
+          "Vijf voor half negen",
+          "Vijf over half negen",
+          "Tien over half negen"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 8,
+          "minute": 35
+        },
+        "explanation": "De wijzers tonen Vijf over half negen."
+      }
+    },
+    "LVL-0030:sundial-4a": {
+      "slot": "sundial-slot-4",
+      "index": 0,
+      "question": {
+        "id": "sundial-4a",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Tien voor elf",
+        "choices": [
+          "Tien voor elf",
+          "Tien over tien",
+          "Vijf voor elf",
+          "Elf uur"
+        ],
+        "prompt": "Hoe laat is het?",
+        "visual": {
+          "type": "clock",
+          "hour": 10,
+          "minute": 50
+        },
+        "explanation": "De wijzers tonen Tien voor elf."
+      }
+    },
+    "LVL-0030:sundial-4b": {
+      "slot": "sundial-slot-4",
+      "index": 1,
+      "question": {
+        "id": "sundial-4b",
+        "domain": "math",
+        "schoolBand": "E5-intended",
+        "family": "clock_reading",
+        "presentation": "bare",
+        "answerMode": "multipleChoice",
+        "answer": "Vijf over twaalf",
+        "choices": [
+          "Vijf voor twaalf",
+          "Vijf over twaalf",
+          "Tien over twaalf",
+          "Twaalf uur"
+        ],
+        "prompt": "Welke tijd staat op de klok?",
+        "visual": {
+          "type": "clock",
+          "hour": 12,
+          "minute": 5
+        },
+        "explanation": "De wijzers tonen Vijf over twaalf."
+      }
+    }
+  },
+  "records": {
+    "RP-M6-BR-001": {
+      "hash": "2737599f16ef9533e80de8130e905d1cfdba7eca6aca687fa8cea92e41e34fd5",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-BR-002": {
+      "hash": "86a606e9211856dd57910b4e1137e15ec1d7ae6ffed1d1032f23e179adb86d5c",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-BR-003": {
+      "hash": "e8f72dbe919c5db31c582265db61d5ebb0ed1333baa66806744639ffd6ac521c",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-BR-004": {
+      "hash": "c0ccbf6a0020cb48d56db992f2ad1d67e4e89bfd94f96d9dd95a1134c6135168",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-BR-005": {
+      "hash": "b8984fd12118bd871cb01288b052928339574192b43939e1e9e39693acaba09f",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-BR-006": {
+      "hash": "e41fa387872099714329e01fa46322f016c003ff30c94534e03a9ced8703e30c",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-OP-001": {
+      "hash": "ec3306164b3ed412904a0bf82367943d81dd88d0e0b5dceb88d13bcf11f6c9fd",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-OP-002": {
+      "hash": "4d9e2aa6bca8b5a80c57cedd697441a620354d91a8395cd380230ae983079f63",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-OP-003": {
+      "hash": "76a80345dd4e84a6cff3bcf29865c07ce6b7f77033149908cc293c7a2d088935",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-OP-004": {
+      "hash": "8b37a66a718664c1cd68e9932c0ff77416ce330e75cf1fb4eb506f00d92ec41c",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-OP-005": {
+      "hash": "34e3914981682ec52cb29670d28217a07a0145e088348de2343bf843e0a1b911",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-OP-006": {
+      "hash": "31ff1b0f09dd84899e74c214073712d3a45c44866145062634eba423e2dcfa96",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-GE-001": {
+      "hash": "b8f0269eda483719d2c1d846de784481992c0b05fed235a737a40aef111f5d8b",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-GE-002": {
+      "hash": "40074233e7b2fa014517eb2979be2d77d245ef597e7c5633cf33b3433ff978d8",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-GE-003": {
+      "hash": "dc92652cfb41ad7666cbc03ce9b2d8e62a429bc80725d53772f0a444a9264c04",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-GE-004": {
+      "hash": "899eb45ae8ec58ffea5ad99769798713535beb696f58b782e887892e313d3af0",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-GE-005": {
+      "hash": "66676c3a05ecc742d8b74434818ad8fc9edafeebf5e80c6b17e69fdd1c5847d8",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-GE-006": {
+      "hash": "b67176706684ccc57ddfddeb049679ce49647bc86705d739149a892ec4ab35ea",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-TI-001": {
+      "hash": "e1a7d71e1affa5d15062182013c565b10d37b13d98ba6f17f45ca4888880a3b2",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-TI-002": {
+      "hash": "6a12af6594d5ae72450c24d58d860325f7b2e59b545b6d74b332af7959a54fdb",
+      "version": "0.2",
+      "difficulty": 1
+    },
+    "RP-M6-TI-003": {
+      "hash": "b76af762e588ed4aca7ae943d8a40fffa00ff168dafbcb9f16e15eb425d87558",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-TI-004": {
+      "hash": "e8003bb9839e416b64a127d137e504a671de7ef43a473f2feb384d7399efdc65",
+      "version": "0.2",
+      "difficulty": 2
+    },
+    "RP-M6-TI-005": {
+      "hash": "844d30aff2efce3646fc88f6160cd39a66b626eab4bc33ec316f09ddb11d52fb",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "RP-M6-TI-006": {
+      "hash": "2fddd928e3d88073640572b40b5c030202f133a0b48e42be2f110629cbad2ea3",
+      "version": "0.2",
+      "difficulty": 3
+    },
+    "M6-NS-001": {
+      "hash": "ed18070d6ab3f16544d4da57ee4fd16613ec2b6e06b968d5d8f1c0011d0aa35a",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-NS-002": {
+      "hash": "2e98e5eb28eddb79e519cb43afe6e44a61d66cccb04aa3b6ec0ca5c1193f8a4f",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-NS-003": {
+      "hash": "2f5b3451511b4bde42ad0a6ddee4eac58be0ebb78850504d889fff76c7e7f28a",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-NS-004": {
+      "hash": "7686e659c8c21830f04d39c648071624dcea62cabd658943a073cb2dbecb08a8",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-NS-005": {
+      "hash": "1a8837cf9b251a122d268f36fe18b712a313cafe6333174fb09f28cd93cfa18d",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-NS-006": {
+      "hash": "bf9f4b93149b6b13a90bb576334d1798c7b32b27a191d43270098179f9d1ee39",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-NS-007": {
+      "hash": "5bac90bc8a14d329cba77884bfd5bb4f36754bef7d23069a9216e18bb05d655d",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-NS-008": {
+      "hash": "e63cb522e8ecf9dbab92d7c37dd2c74825a98c15592aff90dd77fa81bf4bd4ad",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-AS-001": {
+      "hash": "5e6474d77e7163588f012fce16ee6d879e801a27c82d4e0944b47a12bd87368b",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-AS-002": {
+      "hash": "edf258eb3766b905dcf6b30f699b620056dfb2ff9f1763d22b0db6013bf1c458",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-AS-003": {
+      "hash": "7f9ad236a23a759f12d01bc8cf0bcb4694f0966fc18650b7e74237ea25907a59",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-AS-004": {
+      "hash": "680423611a8b4a30b79395e8bca8f63337d26855d807b29b104d72c7f35266a6",
+      "version": 2,
+      "difficulty": 2
+    },
+    "M6-AS-005": {
+      "hash": "d9bf127196a3dc899fdceaa290e15cfb5e08721da9c8285fb144ad652311434b",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-AS-006": {
+      "hash": "951d5aa8655a6865fe250f681a036ae5c5a29eea444103a1dae6b11ea7ce4e2f",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-AS-007": {
+      "hash": "0db586a279aa3fb58d9c9a7e085c8601ff6132198c056d8ad9c2fe27a84ec192",
+      "version": 3,
+      "difficulty": 3
+    },
+    "M6-AS-008": {
+      "hash": "8352a490397fa05b0d51dbb582dedb66b8c1a73521904d29ff00056e3a1eab30",
+      "version": 1,
+      "difficulty": 3
+    },
+    "M6-MD-001": {
+      "hash": "858c285592eef7fac283417c116ca19527320a9a442bef57c9a9feb1e3ac35b8",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MD-002": {
+      "hash": "710cdb42cc903ff75088f45638045eb1d20f1b684926cdd71ec362c8ed6aaef8",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MD-003": {
+      "hash": "7234ad60c5fbf6258052886e053e841f52c91edc25fd959d63a9bb8348953e75",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MD-004": {
+      "hash": "cb626d18ac9527201768594767c889b2b197798394cb78e906c82dfb878e8919",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MD-005": {
+      "hash": "8e34375474e3430899392fa55a40009b3df600327832006e7d9f40a3d688cebc",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MD-006": {
+      "hash": "72a9675e027787cb28f2061eb16b6dffc2549d7738c1e88bb6db854afddc570d",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-MD-007": {
+      "hash": "ae6336fd7e286aac07c2c6635a0e9628e16db979efec2ba7a6ca648548f37602",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-MD-008": {
+      "hash": "eb937f4028ec8d44650784b8f9291ffc56d9a493359609a5d312ae9c11d64035",
+      "version": 2,
+      "difficulty": 2
+    },
+    "M6-MD-009": {
+      "hash": "6ff8b06ed13faa11178c6b48bcc22f1fbc9b3783f3e4b653f0b04eb1c0839f59",
+      "version": 2,
+      "difficulty": 3
+    },
+    "M6-MD-010": {
+      "hash": "339b7eed250cdba5a4eab24dff348dc3cc8a856acd37e11bcdf34aedb20d47bc",
+      "version": 2,
+      "difficulty": 3
+    },
+    "M6-FR-001": {
+      "hash": "8f235c86b00f8d6bde5934d727b1c5e7eca2988e4cf723bb514e3e274dc64242",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-FR-002": {
+      "hash": "3f019f61cbdb976706af8ad529b1ebf31f6541fc15f83278410e991215fef8f1",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-FR-003": {
+      "hash": "3aedb6a2b81298d8c2d11649224ec366b8d89ece25539c9a7bb42b78e71b970b",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-FR-004": {
+      "hash": "956a1630573d76d1db347056d83f70b47e9ba4a67b865d6a43fc316a3b570e84",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-FR-005": {
+      "hash": "cd6503bbfffe272c8eb173924bab76b2870a593126231171c67226086a6a89c3",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-FR-006": {
+      "hash": "15c7d69bc63eb1f54f2eab2f46c308e4e765807217b95db58690c3c5c795c363",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-FR-007": {
+      "hash": "ce0a19f05c947712636c770233a4e951bd56b35e7f037a71a70d23671aeb9f35",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-FR-008": {
+      "hash": "afc5d8a77a5595bc78f8f66ddb3610c99f77cc215bca6c8e33f8f5db9eaf2468",
+      "version": 3,
+      "difficulty": 3
+    },
+    "M6-FR-009": {
+      "hash": "3b46c5de9185df9e998e6da77385e9cd7ea7d3653de198480ac201683b95df14",
+      "version": 1,
+      "difficulty": 3
+    },
+    "M6-FR-010": {
+      "hash": "03e5acc91fff72909475ef4c5ae357738d91bbc0340bc529438ff3d5c4d7985d",
+      "version": 3,
+      "difficulty": 2
+    },
+    "M6-MO-001": {
+      "hash": "d03a06a910a56654ec8e1c40731ceeedff0c0672ce034b3266ede097bbd53241",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MO-002": {
+      "hash": "304058f3866e8977c3057c734a2631030eb0d744c6544b073338403b18121d4c",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-MO-003": {
+      "hash": "d7215c0d01f6e179d4e75cd9eace86c5d1a8cc47a23d1e3d1a7c8287bbce0203",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-MO-004": {
+      "hash": "859001e9fab10f9a5f4cc2158f2fc4ef787a691c0cd0620314f18fd334b80439",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-MO-005": {
+      "hash": "c8a46a4d2731e9fff34f44be3192a246406f4b8974bd3b2d8610a0f0e180441a",
+      "version": 2,
+      "difficulty": 2
+    },
+    "M6-MO-006": {
+      "hash": "954097e8ab0b43572dc45a2c58765757c1f7ee9409178b0129eaafec1c824528",
+      "version": 2,
+      "difficulty": 2
+    },
+    "M6-MO-007": {
+      "hash": "19bfcdc726a071f4830960ae3be1b120aecfdb55fe2f06dade82afab5afa35e7",
+      "version": 2,
+      "difficulty": 3
+    },
+    "M6-MO-008": {
+      "hash": "16ead9d40830cff8ec490e8c0f1d7fc3559499d18d399a43039c4e8a72e86fe1",
+      "version": 1,
+      "difficulty": 3
+    },
+    "M6-TI-001": {
+      "hash": "65fd95097ce49d030407b2b9edc27d3b51fcb22f7732927ec7f5ca21ccc45068",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-TI-002": {
+      "hash": "4eaf5e8c93f622e760c014984b54bbed2bde837351e3bfda9df6c4d7816494d5",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-TI-003": {
+      "hash": "d58a82a28a6b60548f92a3010fa8c72c8ec155952c3a1b898021ddf8b38e21f6",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-TI-004": {
+      "hash": "2934bbb943c95a6afc8546ea7382e6d09a653c82ab4ffe0f6361a6c3ae7caa66",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-TI-005": {
+      "hash": "44e4a87b44390951a7afa7bc5f6c87cc3f03afa4d55afbe7f9c3b59e88979762",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-TI-006": {
+      "hash": "85a02d8fa1e5e43ac398b957c3e8847e3ae8fc186c3af42efa0058630cf659fe",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-TI-007": {
+      "hash": "50269e3139ad450451bfa88f0a43b9cbe933941a7dc9dc38bc193fec2d704a3b",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-TI-008": {
+      "hash": "0af83a6b735464142fb789fc4d716735008b9416b0e82cc7148de3fd2f05b9e8",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-TI-009": {
+      "hash": "f3e6a1154a245b96df36016202977e0fb8ca2ea9318f0b5ebb90e0baec3c05f9",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-TI-010": {
+      "hash": "9347c919ace70490113961591f72a049eba36dba392f491ff41727ead234970c",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-TI-011": {
+      "hash": "0ffd75aff9c9cb66487c87a4269bb314093c11cb27afa3b9f2c88ec37b66ec34",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-TI-012": {
+      "hash": "2293062193d145504460def119f38ad3c10574057a05a4142afd49a979610454",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-TI-013": {
+      "hash": "015ad5335123c01ec9b75f672902633c968bb644b6f84f0e14c18498608f7d8a",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-TI-014": {
+      "hash": "5d0cb7f1b1702da6acbc8533c9ec7851d0a45ee1ddd03e31f531460cdc2dd535",
+      "version": 2,
+      "difficulty": 3
+    },
+    "M6-TI-015": {
+      "hash": "07ce2000aee81e87ab36a99fa3382b77ccb8cc816b412a59d75591187afe9f8f",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-TI-016": {
+      "hash": "3b2ca91b2dacc16676fd502b5383f097c6954a9b76b502f7877ac8fab4f19a2a",
+      "version": 2,
+      "difficulty": 3
+    },
+    "M6-TI-017": {
+      "hash": "f674e5ca927e1a4a01f91a226fc05011a458ebfdcfce8e021c20b1ebdbdaa006",
+      "version": 2,
+      "difficulty": 2
+    },
+    "M6-TI-018": {
+      "hash": "ee98dbce8ca82f9dacddd8647df4768d250cfab2f31ba458ba5a746234364963",
+      "version": 1,
+      "difficulty": 3
+    },
+    "M6-ME-001": {
+      "hash": "dc52a71a3cc037853e2f6f00d32bb6bb786182414b755a52b993a362a47a4976",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-ME-002": {
+      "hash": "73c829c651c46291ee1d97e20f89cabfaeb046daa0acb5ff92dbf373055e3fc6",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-ME-003": {
+      "hash": "58294f82a03e03dc7e035ddd3f7061837ec47844b7b97a94399d0004c31a6a7a",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-ME-004": {
+      "hash": "2c81374a72207d89f366c60fa12a312969a9e0474cb7c74b46a85c0532ac0935",
+      "version": 2,
+      "difficulty": 1
+    },
+    "M6-ME-005": {
+      "hash": "24a9fcb38b095f1e06dd4b3b5dff999ea433429ae19c8110bc26414138daf875",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-ME-006": {
+      "hash": "cc85db3887dc8f167933baa7fc3283aae1b32a8d9894e2bd00cc260b0bd1fffe",
+      "version": 2,
+      "difficulty": 2
+    },
+    "M6-ME-007": {
+      "hash": "f033ed17a239807c17a785b6c23cbb2b5cae0e7973523613abc089e77fe35723",
+      "version": 1,
+      "difficulty": 3
+    },
+    "M6-DP-001": {
+      "hash": "89f1f4e390db62159592d818f9c32fc6eb1e1d681946a699947aaacf122ed53e",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-DP-002": {
+      "hash": "3849cdfa26499253fbc432afdac66e7cb25ee3fd7349736804ad8c3df39dc674",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-DP-003": {
+      "hash": "43c8a7235fc219da172a9e2ac025c137599c3e5c1f019c4cd2ccbcc3de7024ef",
+      "version": 1,
+      "difficulty": 1
+    },
+    "M6-DP-004": {
+      "hash": "0a842fb547c4f7c64f730c0fbec941996b482ba4d50859d2bc59a7b0c1b870a1",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-DP-005": {
+      "hash": "6710b21bcd9821998cf8d174bc5abfbc82ef384b4158893bd7790fcf5aaa60c9",
+      "version": 1,
+      "difficulty": 2
+    },
+    "M6-DP-006": {
+      "hash": "e545082d78d65841e077ff859221d3a80c216370bd458968fdebbef8a18cc005",
+      "version": 1,
+      "difficulty": 2
+    }
+  },
+  "plannerHash": "de5ee0cf7d50754fbbc13d2a99765003902c18769a60528a35c55c105089aeb1",
+  "policy": {
+    "0": {
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "10": {
+      "1": 100,
+      "2": 0,
+      "3": 0
+    },
+    "20": {
+      "1": 100,
+      "2": 0,
+      "3": 0
+    },
+    "30": {
+      "1": 100,
+      "2": 0,
+      "3": 0
+    },
+    "40": {
+      "1": 85,
+      "2": 15,
+      "3": 0
+    },
+    "50": {
+      "1": 75,
+      "2": 25,
+      "3": 0
+    },
+    "60": {
+      "1": 65,
+      "2": 35,
+      "3": 0
+    },
+    "70": {
+      "1": 65,
+      "2": 30,
+      "3": 5
+    },
+    "80": {
+      "1": 60,
+      "2": 30,
+      "3": 10
+    },
+    "90": {
+      "1": 55,
+      "2": 35,
+      "3": 10
+    },
+    "100": {
+      "1": 50,
+      "2": 35,
+      "3": 15
+    }
+  }
+}

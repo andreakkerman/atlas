@@ -74,7 +74,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 24,
               "prompt": "3 × 8 = ?",
-              "hintParameters": {"a":3,"b":8},
+              "hintParameters": {
+                "a": 3,
+                "b": 8
+              },
               "explanation": "3 × 8 = 24."
             },
             {
@@ -86,7 +89,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 3,
               "prompt": "24 : 8 = ?",
-              "hintParameters": {"a":24,"b":8},
+              "hintParameters": {
+                "a": 24,
+                "b": 8
+              },
               "explanation": "24 : 8 = 3, want 8 × 3 = 24.",
               "choices": [
                 2,
@@ -109,7 +115,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 18,
               "prompt": "Bij de meetstrepen liggen 3 rijen met 6 delen. Hoeveel delen zijn dat samen?",
-              "hintParameters": {"a":3,"b":6},
+              "hintParameters": {
+                "a": 3,
+                "b": 6
+              },
               "explanation": "3 × 6 = 18.",
               "choices": [
                 15,
@@ -127,7 +136,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 32,
               "prompt": "Leonardo tekent 4 vakken met 8 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintParameters": {"a":4,"b":8},
+              "hintParameters": {
+                "a": 4,
+                "b": 8
+              },
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -144,7 +156,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 4,
               "prompt": "36 : 9 = ?",
-              "hintParameters": {"a":36,"b":9},
+              "hintParameters": {
+                "a": 36,
+                "b": 9
+              },
               "explanation": "36 : 9 = 4, want 9 × 4 = 36."
             },
             {
@@ -156,7 +171,12 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 69,
               "prompt": "Bij de meetstrepen staan 85 waterstrepen en Sven wist 16 proefstrepen weg. Hoeveel strepen blijven staan?",
-              "hintParameters": {"a":85,"b":16,"strategy":"subtraction","unit":"strepen"},
+              "hintParameters": {
+                "a": 85,
+                "b": 16,
+                "strategy": "subtraction",
+                "unit": "strepen"
+              },
               "explanation": "85 - 16 = 69."
             }
           ]
@@ -173,7 +193,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 2,
               "prompt": "Bij de meetstrepen verdeelt Sven 12 onderdelen over 6 gelijke bakken. Hoeveel onderdelen komen in elke bak?",
-              "hintParameters": {"a":12,"b":6},
+              "hintParameters": {
+                "a": 12,
+                "b": 6
+              },
               "explanation": "12 : 6 = 2, want 6 × 2 = 12.",
               "choices": [
                 1,
@@ -191,7 +214,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 4,
               "prompt": "Leonardo verdeelt 28 stukjes bij de meetstrepen in 7 gelijke groepen. Hoeveel stukjes krijgt elke groep?",
-              "hintParameters": {"a":28,"b":7},
+              "hintParameters": {
+                "a": 28,
+                "b": 7
+              },
               "explanation": "28 : 7 = 4, want 7 × 4 = 28."
             }
           ]
@@ -371,7 +397,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 7,
               "prompt": "42 : 6 = ?",
-              "hintParameters": {"a":42,"b":6},
+              "hintParameters": {
+                "a": 42,
+                "b": 6
+              },
               "explanation": "42 : 6 = 7, want 6 × 7 = 42.",
               "choices": [
                 6,
@@ -389,7 +418,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 36,
               "prompt": "Sven legt bij de boten 6 stapels met 6 kleine onderdelen. Hoeveel onderdelen liggen er samen?",
-              "hintParameters": {"a":6,"b":6},
+              "hintParameters": {
+                "a": 6,
+                "b": 6
+              },
               "explanation": "6 × 6 = 36.",
               "choices": [
                 30,
@@ -412,7 +444,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 56,
               "prompt": "Op de boten staan 7 groepjes van 8. Hoeveel zijn dat samen?",
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             },
             {
@@ -424,7 +459,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 16,
               "prompt": "8 × 2 = ?",
-              "hintParameters": {"a":8,"b":2},
+              "hintParameters": {
+                "a": 8,
+                "b": 2
+              },
               "explanation": "8 × 2 = 16.",
               "choices": [
                 8,
@@ -447,7 +485,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 27,
               "prompt": "9 × 3 = ?",
-              "hintParameters": {"a":9,"b":3},
+              "hintParameters": {
+                "a": 9,
+                "b": 3
+              },
               "explanation": "9 × 3 = 27."
             },
             {
@@ -459,7 +500,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 9,
               "prompt": "63 : 7 = ?",
-              "hintParameters": {"a":63,"b":7},
+              "hintParameters": {
+                "a": 63,
+                "b": 7
+              },
               "explanation": "63 : 7 = 9, want 7 × 9 = 63.",
               "choices": [
                 8,
@@ -482,7 +526,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "multipleChoice",
               "answer": 80,
               "prompt": "Bij de boten liggen 8 rijen met 10 delen. Hoeveel delen zijn dat samen?",
-              "hintParameters": {"a":8,"b":10},
+              "hintParameters": {
+                "a": 8,
+                "b": 10
+              },
               "explanation": "8 × 10 = 80.",
               "choices": [
                 72,
@@ -500,7 +547,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               "answerMode": "open",
               "answer": 27,
               "prompt": "Leonardo tekent 9 vakken met 3 lijnen per vak. Hoeveel lijnen tekent hij?",
-              "hintParameters": {"a":9,"b":3},
+              "hintParameters": {
+                "a": 9,
+                "b": 3
+              },
               "explanation": "9 × 3 = 27."
             }
           ]
@@ -715,11 +765,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 4,
                 "minute": 15
               },
-              "explanation": "De wijzers tonen Kwart over vier."
+              "explanation": "De digitale klok toont Kwart over vier."
             }
           ]
         },
@@ -764,11 +814,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 8,
                 "minute": 45
               },
-              "explanation": "De wijzers tonen Kwart voor negen."
+              "explanation": "De digitale klok toont Kwart voor negen."
             }
           ]
         },
@@ -813,11 +863,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 12,
                 "minute": 20
               },
-              "explanation": "De wijzers tonen Tien voor half een."
+              "explanation": "De digitale klok toont Tien voor half een."
             }
           ]
         },
@@ -862,11 +912,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 5,
                 "minute": 50
               },
-              "explanation": "De wijzers tonen Tien voor zes."
+              "explanation": "De digitale klok toont Tien voor zes."
             }
           ]
         }
@@ -882,8 +932,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "y": 370,
       "radius": 60,
       "approach": {
-        "x": 443,
-        "y": 525
+        "x": 354,
+        "y": 542
       }
     },
     {
@@ -894,8 +944,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "y": 425,
       "radius": 50,
       "approach": {
-        "x": 647,
-        "y": 524
+        "x": 583,
+        "y": 543
       }
     },
     {
@@ -906,8 +956,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "y": 393,
       "radius": 78,
       "approach": {
-        "x": 1084,
-        "y": 531
+        "x": 953,
+        "y": 541
       }
     },
     {
@@ -918,8 +968,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "y": 426,
       "radius": 82,
       "approach": {
-        "x": 1373,
-        "y": 543
+        "x": 1357,
+        "y": 561
       }
     },
     {
@@ -930,8 +980,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "y": 386,
       "radius": 58,
       "approach": {
-        "x": 1653,
-        "y": 553
+        "x": 1639,
+        "y": 566
       }
     },
     {
@@ -942,8 +992,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
       "y": 391,
       "radius": 73,
       "approach": {
-        "x": 2003,
-        "y": 541
+        "x": 2055,
+        "y": 556
       },
       "targetLevel": "LVL-0024",
       "lockedUntilComplete": true
@@ -1114,38 +1164,38 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0023"] = {
     },
     {
       "id": "waterLevelPost-approach",
-      "x": 443,
-      "y": 525,
+      "x": 354,
+      "y": 542,
       "role": "approach"
     },
     {
       "id": "valveWheel-approach",
-      "x": 647,
-      "y": 524,
-      "role": "approach"
-    },
-    {
-      "id": "lockChambers-approach",
-      "x": 1084,
-      "y": 531,
-      "role": "approach"
-    },
-    {
-      "id": "paddleWheel-approach",
-      "x": 1373,
+      "x": 583,
       "y": 543,
       "role": "approach"
     },
     {
+      "id": "lockChambers-approach",
+      "x": 953,
+      "y": 541,
+      "role": "approach"
+    },
+    {
+      "id": "paddleWheel-approach",
+      "x": 1357,
+      "y": 561,
+      "role": "approach"
+    },
+    {
       "id": "waterClock-approach",
-      "x": 1653,
-      "y": 553,
+      "x": 1639,
+      "y": 566,
       "role": "approach"
     },
     {
       "id": "marcheGate-approach",
-      "x": 2003,
-      "y": 541,
+      "x": 2055,
+      "y": 556,
       "role": "approach"
     }
   ],

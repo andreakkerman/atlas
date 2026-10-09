@@ -245,7 +245,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
                 49
               ],
               "prompt": "7 x 5 = ?",
-              "hintParameters": {"a":7,"b":5},
+              "hintParameters": {
+                "a": 7,
+                "b": 5
+              },
               "explanation": "7 x 5 = 35."
             },
             {
@@ -257,7 +260,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
               "answerMode": "open",
               "answer": 12,
               "prompt": "3 x 4 = ?",
-              "hintParameters": {"a":3,"b":4},
+              "hintParameters": {
+                "a": 3,
+                "b": 4
+              },
               "explanation": "3 x 4 = 12."
             }
           ]
@@ -280,7 +286,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
                 42
               ],
               "prompt": "Bij de tabletvitrine liggen 4 rijen met 7 kleine kaartjes. Hoeveel kaartjes zijn dat samen?",
-              "hintParameters": {"a":4,"b":7},
+              "hintParameters": {
+                "a": 4,
+                "b": 7
+              },
               "explanation": "4 x 7 = 28."
             },
             {
@@ -292,7 +301,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
               "answerMode": "open",
               "answer": 35,
               "prompt": "Nebu tekent 5 vakken met 7 tekens per vak. Hoeveel tekens tekent hij?",
-              "hintParameters": {"a":5,"b":7},
+              "hintParameters": {
+                "a": 5,
+                "b": 7
+              },
               "explanation": "5 x 7 = 35."
             }
           ]
@@ -309,7 +321,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "48 : 8 = ?",
-              "hintParameters": {"a":48,"b":8},
+              "hintParameters": {
+                "a": 48,
+                "b": 8
+              },
               "explanation": "48 : 8 = 6, want 8 x 6 = 48."
             },
             {
@@ -327,7 +342,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
                 11
               ],
               "prompt": "Sven verdeelt 72 steentjes bij de tabletvitrine in 8 gelijke groepjes. Hoeveel steentjes krijgt elk groepje?",
-              "hintParameters": {"a":72,"b":8},
+              "hintParameters": {
+                "a": 72,
+                "b": 8
+              },
               "explanation": "72 : 8 = 9, want 8 x 9 = 72."
             }
           ]
@@ -396,7 +414,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
                 64
               ],
               "prompt": "8 x 6 = ?",
-              "hintParameters": {"a":8,"b":6},
+              "hintParameters": {
+                "a": 8,
+                "b": 6
+              },
               "explanation": "8 x 6 = 48."
             },
             {
@@ -408,7 +429,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
               "answerMode": "open",
               "answer": 45,
               "prompt": "9 x 5 = ?",
-              "hintParameters": {"a":9,"b":5},
+              "hintParameters": {
+                "a": 9,
+                "b": 5
+              },
               "explanation": "9 x 5 = 45."
             }
           ]
@@ -431,7 +455,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
                 96
               ],
               "prompt": "Bij de modelboot liggen 10 rijen met 8 kleine kaartjes. Hoeveel kaartjes zijn dat samen?",
-              "hintParameters": {"a":10,"b":8},
+              "hintParameters": {
+                "a": 10,
+                "b": 8
+              },
               "explanation": "10 x 8 = 80."
             },
             {
@@ -443,7 +470,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
               "answerMode": "open",
               "answer": 48,
               "prompt": "Nebu tekent 6 vakken met 8 tekens per vak. Hoeveel tekens tekent hij?",
-              "hintParameters": {"a":6,"b":8},
+              "hintParameters": {
+                "a": 6,
+                "b": 8
+              },
               "explanation": "6 x 8 = 48."
             }
           ]
@@ -460,7 +490,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
               "answerMode": "open",
               "answer": 5,
               "prompt": "20 : 4 = ?",
-              "hintParameters": {"a":20,"b":4},
+              "hintParameters": {
+                "a": 20,
+                "b": 4
+              },
               "explanation": "20 : 4 = 5, want 4 x 5 = 20."
             },
             {
@@ -478,7 +511,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
                 7
               ],
               "prompt": "Sven verdeelt 45 steentjes bij de modelboot in 9 gelijke groepjes. Hoeveel steentjes krijgt elk groepje?",
-              "hintParameters": {"a":45,"b":9},
+              "hintParameters": {
+                "a": 45,
+                "b": 9
+              },
               "explanation": "45 : 9 = 5, want 9 x 5 = 45."
             }
           ]
@@ -720,8 +756,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
       "y": 492,
       "radius": 74,
       "approach": {
-        "x": 1091,
-        "y": 611
+        "x": 1020,
+        "y": 621
       }
     },
     {
@@ -732,8 +768,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
       "y": 342,
       "radius": 76,
       "approach": {
-        "x": 1297,
-        "y": 610
+        "x": 1229,
+        "y": 621
       }
     },
     {
@@ -744,8 +780,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
       "y": 441,
       "radius": 112,
       "approach": {
-        "x": 1645,
-        "y": 632
+        "x": 1649,
+        "y": 647
       },
       "targetLevel": "LVL-0028",
       "lockedUntilComplete": true
@@ -785,20 +821,20 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0027"] = {
     },
     {
       "id": "modelBoat-approach",
-      "x": 1091,
-      "y": 611,
+      "x": 1020,
+      "y": 621,
       "role": "approach"
     },
     {
       "id": "reliefPanel-approach",
-      "x": 1297,
-      "y": 610,
+      "x": 1229,
+      "y": 621,
       "role": "approach"
     },
     {
       "id": "museumSarcophagus-approach",
-      "x": 1645,
-      "y": 632,
+      "x": 1649,
+      "y": 647,
       "role": "approach"
     }
   ],

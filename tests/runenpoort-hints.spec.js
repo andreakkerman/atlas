@@ -1,8 +1,10 @@
+const {withoutPilot,withoutPilotSource}=require('./helpers/pilot-e5-baseline.cjs');
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const vm = require('vm');
 const crypto = require('crypto');
 const hints = require('../src/challenge-hints');
+const {digitalMinnie,digitalMoose,currentE5HintPairs,currentE5Explanation}=require('./helpers/time-approval.cjs');
 const baseline = require('./fixtures/runenpoort-hints-baseline.json');
 const base = (process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173').split('?')[0];
 const ids = ['LVL-0001', 'LVL-0002', 'LVL-0003'];
@@ -10,7 +12,7 @@ const hash = s => crypto.createHash('sha256').update(s).digest('hex');
 function load(id) {
   const c = vm.createContext({ window: {} });
   vm.runInContext(fs.readFileSync(`Levels/${id}/level.js`, 'utf8'), c);
-  return JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id]));
+  return withoutPilot(JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id])));
 }
 function variants(l) { return l.learningChallenges.filter(ch => ch.active !== false).flatMap(ch => ch.questions.flatMap(s => s.variants)); }
 
@@ -27,7 +29,7 @@ test('all 88 active variants use structured strategies and preserve every non-hi
       expect(first).toBeTruthy(); expect(second).toBeTruthy(); expect(first).not.toBe(second);
       expect(first + second).not.toMatch(/undefined|NaN|null|\{|\}|=|antwoord is|dus is|Omdat/);
       if (q.visual) {
-        expect(first).toBe('Kijk eerst naar de grote wijzer.');
+        expect(first).toBe(q.visual.type==='digitalClock'?digitalMinnie(q):'Kijk eerst naar de grote wijzer.');
         expect((first + second).toLowerCase()).not.toContain(q.answer.toLowerCase());
         continue;
       }
@@ -76,7 +78,7 @@ test('five-minute Dutch clock guidance follows the visual without naming the fin
     55: 'De grote wijzer staat op de 11: dat is vijf voor. Kijk welk uur eraan komt.'
   };
   const clocks = variants(load('LVL-0003')).filter(q => q.visual);
-  for (const q of clocks) expect(hints.resolve('LVL-0003', q, 'moose')).toBe(expected[q.visual.minute]);
+  for (const q of clocks) expect(hints.resolve('LVL-0003', q, 'moose')).toBe(q.visual.type==='digitalClock'?digitalMoose(q):expected[q.visual.minute]);
   expect(clocks.find(q => q.visual.minute === 25)).toMatchObject({ visual: { hour: 6 }, answer: 'Vijf voor half zeven' });
   expect(clocks.find(q => q.visual.minute === 35)).toMatchObject({ visual: { hour: 10 }, answer: 'Vijf over half elf' });
   expect(hints.resolve('LVL-0003', { family: 'clock_reading_five_minutes', visual: { type: 'clock', hour: 6, minute: 30 } }, 'moose'))
@@ -84,9 +86,9 @@ test('five-minute Dutch clock guidance follows the visual without naming the fin
 });
 
 test('ARC output, unmigrated worlds, shared runtime and routing are unchanged', () => {
-  for (const [file, digest] of Object.entries(baseline.unchangedSources)) expect(hash(fs.readFileSync(file, 'utf8').replaceAll('\r\n', '\n')), file).toBe(digest);
+  for (const [file, digest] of Object.entries(baseline.unchangedSources)) expect(hash(withoutPilotSource(fs.readFileSync(file, 'utf8'))), file).toBe(digest);
   for (const [id, pairs] of Object.entries(baseline.arcHints)) {
-    expect(variants(load(id)).map(q => [q.id, hints.resolve(id, q, 'minnie'), hints.resolve(id, q, 'moose')])).toEqual(pairs);
+    expect(variants(load(id)).map(q => [q.id, hints.resolve(id, q, 'minnie'), hints.resolve(id, q, 'moose')])).toEqual(currentE5HintPairs(id,pairs));
   }
   // All production levels now opt in; authored inactive stages still take precedence.
   expect(hints.usesReusableHints('LVL-0036')).toBe(false);
@@ -94,6 +96,7 @@ test('ARC output, unmigrated worlds, shared runtime and routing are unchanged', 
 });
 
 async function enter(page, id) {
+  await page.addInitScript(() => localStorage.setItem('atlas.learning.m6Percentage', '0'));
   await page.route('**/__dev/levels/*/editor-draft', r => r.fulfill({ json: {} }));
   await page.goto(base + '/?atlasSessionTest=1');
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
@@ -140,7 +143,7 @@ for (const id of ids) test(`${id}: all variants follow Minnie → Moose → assi
     expect(stages[0]).toMatchObject({ message: { speaker: 'minnie', text: hints.resolve(id, q, 'minnie') }, feedback: '', assisted: false });
     expect(stages[1]).toMatchObject({ message: { speaker: 'moose', text: hints.resolve(id, q, 'moose') }, feedback: '', assisted: false });
     expect(stages[0].visible).toBe(stages[0].message.text); expect(stages[1].visible).toBe(stages[1].message.text);
-    expect(stages[2]).toMatchObject({ feedback: q.explanation, assisted: true });
+    expect(stages[2]).toMatchObject({ feedback: currentE5Explanation(id,q), assisted: true });
     if (q.visual) for (const s of stages) expect(s.clock).toEqual([String(q.visual.hour), String(q.visual.minute)]);
   }
   expect(errors).toEqual([]);

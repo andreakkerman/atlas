@@ -2,7 +2,7 @@
   "levels": {
     "LVL-0001": "bac190cdc823799bd50be61ceedb72711c61e412c7ab44a2243ce30d2160f053",
     "LVL-0002": "fbeb716adf53a2946384c08239854713c067aaebae7bcd3294dd9abcb9b217cc",
-    "LVL-0003": "6e0e7dee2dffac7fa0f321343b5245f0f76d30bfddebe32d19e3ac7ef986128d"
+    "LVL-0003": "5b5cbba2b3300daa38bbac7805aa32a5c3fba02e5d4fdacd6a76449588f35e28"
   },
   "arcHints": {
     "LVL-0032": [
@@ -135,8 +135,8 @@
       ],
       [
         "churchClock-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 07:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-2a",
@@ -145,8 +145,8 @@
       ],
       [
         "churchClock-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 08:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-3a",
@@ -155,8 +155,8 @@
       ],
       [
         "churchClock-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 06:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "churchClock-4a",
@@ -165,8 +165,8 @@
       ],
       [
         "churchClock-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 12:05 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "chimney-1a",
@@ -419,8 +419,8 @@
       ],
       [
         "roundContainer-1b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 6: dat is half. Kijk naar welk uur de kleine wijzer onderweg is."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 09:30 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-2a",
@@ -429,8 +429,8 @@
       ],
       [
         "roundContainer-2b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 02:35 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-3a",
@@ -439,8 +439,8 @@
       ],
       [
         "roundContainer-3b",
-        "Kijk eerst naar de grote wijzer.",
-        "Elke stap van de grote wijzer is 5 minuten. Tel vanaf de 12 tot waar hij staat."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 10:40 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "roundContainer-4a",
@@ -449,8 +449,8 @@
       ],
       [
         "roundContainer-4b",
-        "Kijk eerst naar de grote wijzer.",
-        "De grote wijzer staat op de 9: dat is kwart voor. Kijk welk uur eraan komt."
+        "Kijk eerst naar de minuten rechts van de dubbele punt. Die helpen je om de tijd in woorden te herkennen.",
+        "De digitale klok geeft 11:45 aan. Vergelijk die tijd met de antwoordopties en kies dezelfde tijd in woorden."
       ],
       [
         "crate-1a",
@@ -496,10 +496,10 @@
   },
   "unchangedSources": {
     "Levels/LVL-0032/level.js": "7f81309b2ac9b3415db2379210899e086742cfbe7030cc600904474e637565c1",
-    "Levels/LVL-0033/level.js": "1dcd179487d3c44a1471d00459afe0d5cddc5cff248cd0f66622928a89f2c412",
+    "Levels/LVL-0033/level.js": "e67b09c50a491ffb8e2ae94e005572127761688c7a438c81a106fd027a25549d",
     "Levels/LVL-0034/level.js": "17c37e4fa3e2b4d8ff8378cc6e05e76d379b805918136a121d734c3b979cdd00",
-    "Levels/LVL-0035/level.js": "c9acf2eeaf2964de37c843d065991370ac52bc04b2863528ca2bc9094342586a",
-    "src/app.js": "2c6863dcffe4a71bff3c2c949c8c8543591fe0563ff3bd70a3a42f957a40433c",
+    "Levels/LVL-0035/level.js": "366be3753d910b5f80038dd5b46d27542267fcd6f5074b73c99dc2032ef259c7",
+    "src/app.js": "0229cb46510901c94fd0b2f1d143b9be3f61ec498a369aee96f51eca9d738bc7",
     "Levels/world-config.js": "f5a85924286dc21e2af5c54b0c1f08b92e2f30033c6de1365c45e56a0c4c8f3b",
     "src/atlas-world.js": "bd94f187bda8a54e1d1fc30e519f7a3e0cf113b455c0a90354dd4709965be171"
   }

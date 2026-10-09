@@ -4,6 +4,10 @@ const vm = require("vm");
 const { discoverCharacters, discoverPlayableCharacters } = require("./generate-character-manifest");
 const playableCharacters = require("../src/playable-characters");
 const challengeHints = require("../src/challenge-hints");
+const learningLevels = require("../src/learning-levels");
+const challengeSupport = require("../src/challenge-support");
+const pilotContent = require("./runenpoort-m6-content.cjs");
+const pilotLevels = [];
 const ambientSystem = require("../src/ambient-system");
 
 const rootDir = path.resolve(__dirname, "..");
@@ -679,6 +683,9 @@ function validateReferences(level, objects, nodeIds, label) {
       fail(`${variantLabel} must be an object.`);
       return;
     }
+    try { learningLevels.resolveLevel(variant); }
+    catch (error) { fail(`${variantLabel}: ${error.message}`); }
+    challengeSupport.validate(variant).forEach(message => fail(`${variantLabel}: ${message}`));
     [
       "id", "domain", "schoolBand", "family", "presentation", "answerMode",
       "prompt", "explanation"
@@ -691,7 +698,7 @@ function validateReferences(level, objects, nodeIds, label) {
       }
     }
     if (variant.domain !== "math") fail(`${variantLabel}.domain must be "math".`);
-    if (variant.schoolBand !== "E5-intended") fail(`${variantLabel}.schoolBand must be "E5-intended".`);
+    if (!["E5-intended", "M6-intended"].includes(variant.schoolBand)) fail(`${variantLabel}.schoolBand must be "E5-intended" or "M6-intended".`);
     if (!["story", "bare"].includes(variant.presentation)) {
       fail(`${variantLabel}.presentation must be "story" or "bare".`);
     }
@@ -717,11 +724,14 @@ function validateReferences(level, objects, nodeIds, label) {
     if (variant.visual !== undefined) {
       if (!isObject(variant.visual)) {
         fail(`${variantLabel}.visual must be an object.`);
-      } else if (variant.visual.type !== "clock") {
-        fail(`${variantLabel}.visual.type must be "clock".`);
+      } else if (challengeSupport.VISUAL_TYPES.includes(variant.visual.type) && !(variant.visual.type === 'digitalClock' && learningLevels.resolveLevel(variant) === 'E5')) {
+        if (!variant.authoredSupport) fail(`${variantLabel}: instructional visuals require authored support.`);
+      } else if (!["clock", "digitalClock"].includes(variant.visual.type)) {
+        fail(`${variantLabel}.visual.type must be "clock" or "digitalClock".`);
       } else {
-        if (!Number.isInteger(variant.visual.hour) || variant.visual.hour < 1 || variant.visual.hour > 12) {
-          fail(`${variantLabel}.visual.hour must be an integer from 1 to 12.`);
+        const digital = variant.visual.type === 'digitalClock';
+        if (!Number.isInteger(variant.visual.hour) || variant.visual.hour < (digital ? 0 : 1) || variant.visual.hour > (digital ? 23 : 12)) {
+          fail(`${variantLabel}.visual.hour must be an integer from ${digital ? '0 to 23' : '1 to 12'}.`);
         }
         if (!Number.isInteger(variant.visual.minute) || variant.visual.minute < 0 || variant.visual.minute > 59) {
           fail(`${variantLabel}.visual.minute must be an integer from 0 to 59.`);
@@ -781,8 +791,8 @@ function validateReferences(level, objects, nodeIds, label) {
         validateRequiredString(slot.id, `${slotLabel}.id`);
         if (slotIds.has(slot.id)) fail(`${slotLabel}.id is duplicated: ${slot.id}`);
         slotIds.add(slot.id);
-        if (!Array.isArray(slot.variants) || slot.variants.length !== 2) {
-          fail(`${slotLabel}.variants must contain exactly 2 authored variants.`);
+        if (!Array.isArray(slot.variants) || slot.variants.length === 0) {
+          fail(`${slotLabel}.variants must contain at least 1 authored learning variant.`);
         }
         (slot.variants || []).forEach((variant, variantIndex) => {
           const variantLabel = `${slotLabel}.variants[${variantIndex}]`;
@@ -978,6 +988,7 @@ function validateLevel(entry) {
   if (!loaded) return;
 
   const { level, levelFolder } = loaded;
+  pilotLevels.push(level);
   const label = `Level ${entry.id}`;
 
   validateTopLevel(level, entry, label);
@@ -998,11 +1009,15 @@ function validateLevel(entry) {
 }
 
 function main() {
+  const m6 = require('./audit-m6.cjs').validateAndAudit();
+  m6.errors.forEach(fail);
+  console.log(`Central M6: ${m6.audit.total} questions; difficulty ${JSON.stringify(m6.audit.difficulty)}; domains ${JSON.stringify(m6.audit.domains)}. Full editorial audit: npm run audit:m6`);
   try { discoverPlayableCharacters(); } catch (error) { fail(error.message); }
   const manifest = validateManifest();
   if (manifest) {
     validateAudioConfig(manifest);
     manifest.levels.forEach(validateLevel);
+    pilotContent.validatePilot(pilotLevels).forEach(fail);
   }
 
   if (errors.length) {

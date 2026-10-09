@@ -49,8 +49,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   "player": {
     "startNode": "harbor-start",
     "start": {
-      "x": 224,
-      "y": 574
+      "x": 186,
+      "y": 596
     }
   },
   "ambientAnimals": [
@@ -135,19 +135,19 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
   "walkPath": [
     {
       "id": "harbor-start",
-      "x": 224,
-      "y": 574
+      "x": 186,
+      "y": 596
     },
     {
       "id": "map-stand-approach",
-      "x": 477,
-      "y": 605,
+      "x": 390,
+      "y": 600,
       "role": "approach"
     },
     {
       "id": "compass-approach",
-      "x": 1051,
-      "y": 542,
+      "x": 765,
+      "y": 583,
       "role": "approach"
     },
     {
@@ -157,8 +157,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
     },
     {
       "id": "crate-approach",
-      "x": 1361,
-      "y": 561,
+      "x": 1360,
+      "y": 576,
       "role": "approach"
     },
     {
@@ -329,7 +329,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "2 × 7 = ?",
               "answer": 14,
-              "hintParameters": {"a":2,"b":7},
+              "hintParameters": {
+                "a": 2,
+                "b": 7
+              },
               "explanation": "2 × 7 = 14."
             },
             {
@@ -341,7 +344,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintParameters": {"a":4,"b":8},
+              "hintParameters": {
+                "a": 4,
+                "b": 8
+              },
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -358,7 +364,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "In de haven koopt de Viking 4 zeekaarten voor 7 munten per stuk. Hoeveel munten betaalt hij?",
               "answer": 28,
-              "hintParameters": {"a":4,"b":7,"currency":"munten"},
+              "hintParameters": {
+                "a": 4,
+                "b": 7,
+                "currency": "munten"
+              },
               "explanation": "4 × 7 = 28 munten."
             },
             {
@@ -370,7 +380,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "3 × 5 = ?",
               "answer": 15,
-              "hintParameters": {"a":3,"b":5},
+              "hintParameters": {
+                "a": 3,
+                "b": 5
+              },
               "explanation": "3 × 5 = 15."
             }
           ]
@@ -387,7 +400,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "2 × 3 = ?",
               "answer": 6,
-              "hintParameters": {"a":2,"b":3},
+              "hintParameters": {
+                "a": 2,
+                "b": 3
+              },
               "explanation": "2 × 3 = 6."
             },
             {
@@ -399,7 +415,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "De havenmeester verdeelt 49 houten routepionnen eerlijk over 7 zeekaarten. Hoeveel pionnen komen op iedere kaart?",
               "answer": 7,
-              "hintParameters": {"a":49,"b":7},
+              "hintParameters": {
+                "a": 49,
+                "b": 7
+              },
               "explanation": "49 : 7 = 7."
             }
           ]
@@ -422,7 +441,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 63,
                 70
               ],
-              "hintParameters": {"a":8,"b":7},
+              "hintParameters": {
+                "a": 8,
+                "b": 7
+              },
               "explanation": "8 × 7 = 56."
             },
             {
@@ -434,7 +456,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "5 × 3 = ?",
               "answer": 15,
-              "hintParameters": {"a":5,"b":3},
+              "hintParameters": {
+                "a": 5,
+                "b": 3
+              },
               "explanation": "5 × 3 = 15."
             }
           ]
@@ -487,7 +512,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "Half vijf"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 4,
                 "minute": 20
               },
@@ -536,7 +561,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "Vijf voor elf"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 10,
                 "minute": 35
               },
@@ -585,7 +610,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "Acht uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 7,
                 "minute": 50
               },
@@ -634,7 +659,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 "Twee uur"
               ],
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 1,
                 "minute": 55
               },
@@ -661,7 +686,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "6 × 3 = ?",
               "answer": 18,
-              "hintParameters": {"a":6,"b":3},
+              "hintParameters": {
+                "a": 6,
+                "b": 3
+              },
               "explanation": "6 × 3 = 18."
             },
             {
@@ -679,7 +707,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 40,
                 48
               ],
-              "hintParameters": {"a":4,"b":8},
+              "hintParameters": {
+                "a": 4,
+                "b": 8
+              },
               "explanation": "4 × 8 = 32."
             }
           ]
@@ -696,7 +727,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "De Viking maakt 3 bundels van 6 touwlussen. Hoeveel touwlussen zijn dat samen?",
               "answer": 18,
-              "hintParameters": {"a":3,"b":6},
+              "hintParameters": {
+                "a": 3,
+                "b": 6
+              },
               "explanation": "3 × 6 = 18."
             },
             {
@@ -714,7 +748,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 12,
                 16
               ],
-              "hintParameters": {"a":2,"b":4},
+              "hintParameters": {
+                "a": 2,
+                "b": 4
+              },
               "explanation": "2 × 4 = 8."
             }
           ]
@@ -731,7 +768,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "Een meertouw is 18 meter lang. De Viking snijdt het in 2 gelijke stukken. Hoe lang is ieder stuk?",
               "answer": 9,
-              "hintParameters": {"a":18,"b":2},
+              "hintParameters": {
+                "a": 18,
+                "b": 2
+              },
               "explanation": "18 : 2 = 9 meter."
             },
             {
@@ -743,7 +783,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "De Viking verdeelt 49 touwlussen eerlijk over 7 boten. Hoeveel touwlussen krijgt iedere boot?",
               "answer": 7,
-              "hintParameters": {"a":49,"b":7},
+              "hintParameters": {
+                "a": 49,
+                "b": 7
+              },
               "explanation": "49 : 7 = 7."
             }
           ]
@@ -766,7 +809,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 8,
                 9
               ],
-              "hintParameters": {"a":42,"b":6},
+              "hintParameters": {
+                "a": 42,
+                "b": 6
+              },
               "explanation": "42 : 6 = 7."
             },
             {
@@ -784,7 +830,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 54,
                 60
               ],
-              "hintParameters": {"a":8,"b":6},
+              "hintParameters": {
+                "a": 8,
+                "b": 6
+              },
               "explanation": "8 × 6 = 48."
             }
           ]
@@ -828,7 +877,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 45,
                 54
               ],
-              "hintParameters": {"a":4,"b":9},
+              "hintParameters": {
+                "a": 4,
+                "b": 9
+              },
               "explanation": "4 × 9 = 36."
             },
             {
@@ -846,7 +898,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 5,
                 6
               ],
-              "hintParameters": {"a":32,"b":8},
+              "hintParameters": {
+                "a": 32,
+                "b": 8
+              },
               "explanation": "32 : 8 = 4."
             }
           ]
@@ -863,7 +918,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "5 × 8 = ?",
               "answer": 40,
-              "hintParameters": {"a":5,"b":8},
+              "hintParameters": {
+                "a": 5,
+                "b": 8
+              },
               "explanation": "5 × 8 = 40."
             },
             {
@@ -881,7 +939,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 72,
                 81
               ],
-              "hintParameters": {"a":7,"b":9},
+              "hintParameters": {
+                "a": 7,
+                "b": 9
+              },
               "explanation": "7 × 9 = 63."
             }
           ]
@@ -904,7 +965,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 64,
                 72
               ],
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             },
             {
@@ -916,7 +980,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "9 × 9 = ?",
               "answer": 81,
-              "hintParameters": {"a":9,"b":9},
+              "hintParameters": {
+                "a": 9,
+                "b": 9
+              },
               "explanation": "9 × 9 = 81."
             }
           ]
@@ -933,7 +1000,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
               "answerMode": "open",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintParameters": {"a":9,"b":8},
+              "hintParameters": {
+                "a": 9,
+                "b": 8
+              },
               "explanation": "9 × 8 = 72."
             },
             {
@@ -951,7 +1021,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0003"] = {
                 10,
                 12
               ],
-              "hintParameters": {"a":4,"b":2},
+              "hintParameters": {
+                "a": 4,
+                "b": 2
+              },
               "explanation": "4 × 2 = 8."
             }
           ]

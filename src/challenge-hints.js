@@ -64,6 +64,82 @@
     }
   }
 
+  const clockFamilies = new Set(["clock_reading", "clock_reading_quarter", "clock_reading_half_hour", "clock_reading_five_minutes"]);
+  const spokenHours = ["twaalf", "één", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen", "tien", "elf"];
+  // Authored templates for the eleven minute patterns in the production E5 bank.
+  // Keep reasoning independent of the options; only the final explanation quotes
+  // the canonical answer, preserving the bank's een/één spelling and vocabulary.
+  const digitalMinuteHints = {
+    0: "00 minuten betekent dat het precies een heel uur is.",
+    5: "Kijk naar de minuten rechts van de dubbele punt. 05 betekent dat er 5 minuten voorbij het hele uur zijn.",
+    15: "15 minuten is een kwartier.",
+    20: "De minuten zijn 20. Dat betekent 20 minuten na het hele uur.",
+    25: "25 minuten is 5 minuten vóór een half uur.",
+    30: "30 minuten betekent een half uur.",
+    35: "35 minuten is 5 minuten ná een half uur.",
+    40: "40 minuten is 10 minuten ná een half uur.",
+    45: "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    50: "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    55: "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur."
+  };
+  function usesDigitalSupport(levelId, question) {
+    return usesReusableHints(levelId) && (question.learningLevel === undefined || question.learningLevel === "E5")
+      && !question.authoredSupport && clockFamilies.has(question.family) && question.visual?.type === "digitalClock";
+  }
+  function digitalClockSupport(question) {
+    const { hour, minute } = question.visual;
+    if (!Number.isInteger(hour) || hour < 0 || hour > 23 || !Object.hasOwn(digitalMinuteHints, minute)) {
+      throw new Error("No approved E5 digital-clock support pattern; author an explicit support template.");
+    }
+    const hh = String(hour).padStart(2, "0"), time = `${hh}:${String(minute).padStart(2, "0")}`;
+    const spokenHour = spokenHours[hour % 12], nextHour = (hour + 1) % 24, nextSpokenHour = spokenHours[nextHour % 12];
+    const half = `Een half uur na ${spokenHour} noemen we half ${nextSpokenHour}.`;
+    const next = `Het volgende hele uur is ${nextSpokenHour}.`;
+    const bridge = hour > 12 || hour === 0
+      ? minute >= 20
+        ? `Na ${hour} uur komt ${nextHour} uur. In gewone kloktaal is dat ${nextSpokenHour} uur. `
+        : `${hh} uur is in gewone kloktaal ${spokenHour} uur. `
+      : "";
+    const moose = {
+      0: "Kijk naar het getal links van de dubbele punt. Welk heel uur staat daar?",
+      5: `Links staat ${hh}. Het is dus 5 minuten na ${spokenHour}. Hoe zeg je 5 minuten na ${spokenHour} in woorden?`,
+      15: `Het is 15 minuten na ${spokenHour}. Dat noemen we een kwartier over het uur.`,
+      20: `${half} Deze tijd is 10 minuten vóór dat halve uur.`,
+      25: `${half} Deze tijd is 5 minuten vóór half ${nextSpokenHour}.`,
+      // Leave the final combination to the learner, even for the half-hour case.
+      30: `Het is een half uur na ${spokenHour}. Bij 'half' noemen we het uur dat daarna komt: ${nextSpokenHour}.`,
+      35: `${half} Deze tijd is 5 minuten daarna.`,
+      40: `${half} Deze tijd is 10 minuten daarna.`,
+      45: `15 minuten is een kwartier. ${next}`,
+      50: `${next} Hoe zeg je 10 minuten vóór dat uur?`,
+      55: `${next} Hoe zeg je 5 minuten vóór dat uur?`
+    }[minute];
+    const reason = {
+      0: "De 00 betekent dat er nog geen minuten na het hele uur voorbij zijn.",
+      5: `De 05 betekent 5 minuten na het hele uur. Het hele uur is ${spokenHour} uur.`,
+      15: `15 minuten is een kwartier. Het is een kwartier na ${spokenHour}.`,
+      20: `${time} is 20 minuten na ${spokenHour}. ${half} 20 minuten is 10 minuten vóór dat halve uur.`,
+      25: `${time} is 25 minuten na ${spokenHour}. ${half} 25 minuten is 5 minuten vóór dat halve uur.`,
+      30: `30 minuten betekent een half uur. ${half}`,
+      35: `${half} 35 minuten is 5 minuten ná dat halve uur.`,
+      40: `${half} 40 minuten is 10 minuten ná dat halve uur.`,
+      45: `Er zijn nog 15 minuten tot ${nextSpokenHour} uur. 15 minuten is een kwartier.`,
+      50: `Er zijn nog 10 minuten tot ${nextSpokenHour} uur.`,
+      55: `Er zijn nog 5 minuten tot ${nextSpokenHour} uur.`
+    }[minute];
+    return {
+      minnie: digitalMinuteHints[minute], moose: bridge + moose,
+      explanation: `De digitale klok geeft ${time} aan. ${bridge}${reason} Daarom is ${time} ${String(question.answer).toLocaleLowerCase("nl")}.`
+    };
+  }
+  function resolveExplanation(levelId, question) {
+    return usesDigitalSupport(levelId, question) ? digitalClockSupport(question).explanation : question.explanation;
+  }
+  function resolveClockVisual(levelId, question, stage) {
+    if (!usesDigitalSupport(levelId, question)) return question.visual;
+    return { ...question.visual, highlightMinutes: stage === "minnie", highlightHours: stage === "moose" };
+  }
+
   function resolve(levelId, question, speaker) {
     if (!["minnie", "moose"].includes(speaker)) throw new Error("Unknown hint speaker.");
     const key = speaker === "minnie" ? "hintMinnie" : "hintMoose";
@@ -75,7 +151,8 @@
       return first ? "Lees de woorden rustig. Welke spelling herken je?"
         : "Vergelijk de woorden letter voor letter. Kijk waar ze van elkaar verschillen.";
     }
-    if (["clock_reading", "clock_reading_quarter", "clock_reading_half_hour", "clock_reading_five_minutes"].includes(question.family)) {
+    if (usesDigitalSupport(levelId, question)) return digitalClockSupport(question)[speaker];
+    if (clockFamilies.has(question.family)) {
       if (question.visual?.type !== "clock") throw new Error("Missing clock visual.");
       const strategy = clock(question.visual.minute, question.family === "clock_reading_five_minutes");
       return first ? "Kijk eerst naar de grote wijzer." : strategy;
@@ -116,7 +193,7 @@
     }
   }
 
-  const api = { isArcLevel, usesReusableHints, resolve, multiplication };
+  const api = { isArcLevel, usesReusableHints, resolve, resolveExplanation, resolveClockVisual, multiplication };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   global.AtlasChallengeHints = api;
 })(typeof window !== "undefined" ? window : globalThis);

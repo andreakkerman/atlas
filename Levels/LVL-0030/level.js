@@ -268,11 +268,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 6,
                 "minute": 15
               },
-              "explanation": "De wijzers tonen Kwart over zes."
+              "explanation": "De digitale klok toont Kwart over zes."
             }
           ]
         },
@@ -317,11 +317,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 4,
                 "minute": 45
               },
-              "explanation": "De wijzers tonen Kwart voor vijf."
+              "explanation": "De digitale klok toont Kwart voor vijf."
             }
           ]
         },
@@ -366,11 +366,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 8,
                 "minute": 35
               },
-              "explanation": "De wijzers tonen Vijf over half negen."
+              "explanation": "De digitale klok toont Vijf over half negen."
             }
           ]
         },
@@ -415,11 +415,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 12,
                 "minute": 5
               },
-              "explanation": "De wijzers tonen Vijf over twaalf."
+              "explanation": "De digitale klok toont Vijf over twaalf."
             }
           ]
         }
@@ -610,7 +610,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 49
               ],
               "prompt": "7 x 5 = ?",
-              "hintParameters": {"a":7,"b":5},
+              "hintParameters": {
+                "a": 7,
+                "b": 5
+              },
               "explanation": "7 x 5 = 35."
             },
             {
@@ -622,7 +625,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               "answerMode": "open",
               "answer": 72,
               "prompt": "8 x 9 = ?",
-              "hintParameters": {"a":8,"b":9},
+              "hintParameters": {
+                "a": 8,
+                "b": 9
+              },
               "explanation": "8 x 9 = 72."
             }
           ]
@@ -645,7 +651,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 42
               ],
               "prompt": "Bij het tempelpaneel liggen 4 rijen met 7 kleine kaartjes. Hoeveel kaartjes zijn dat samen?",
-              "hintParameters": {"a":4,"b":7},
+              "hintParameters": {
+                "a": 4,
+                "b": 7
+              },
               "explanation": "4 x 7 = 28."
             },
             {
@@ -657,7 +666,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               "answerMode": "open",
               "answer": 35,
               "prompt": "Nebu tekent 5 vakken met 7 tekens per vak. Hoeveel tekens tekent hij?",
-              "hintParameters": {"a":5,"b":7},
+              "hintParameters": {
+                "a": 5,
+                "b": 7
+              },
               "explanation": "5 x 7 = 35."
             }
           ]
@@ -674,7 +686,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
               "answerMode": "open",
               "answer": 6,
               "prompt": "48 : 8 = ?",
-              "hintParameters": {"a":48,"b":8},
+              "hintParameters": {
+                "a": 48,
+                "b": 8
+              },
               "explanation": "48 : 8 = 6, want 8 x 6 = 48."
             },
             {
@@ -692,7 +707,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
                 11
               ],
               "prompt": "Sven verdeelt 72 steentjes bij het tempelpaneel in 8 gelijke groepjes. Hoeveel steentjes krijgt elk groepje?",
-              "hintParameters": {"a":72,"b":8},
+              "hintParameters": {
+                "a": 72,
+                "b": 8
+              },
               "explanation": "72 : 8 = 9, want 8 x 9 = 72."
             }
           ]
@@ -748,8 +766,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "y": 500,
       "radius": 62,
       "approach": {
-        "x": 429,
-        "y": 600
+        "x": 422,
+        "y": 604
       }
     },
     {
@@ -760,8 +778,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "y": 477,
       "radius": 59,
       "approach": {
-        "x": 740,
-        "y": 611
+        "x": 738,
+        "y": 621
       }
     },
     {
@@ -784,8 +802,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
       "y": 456,
       "radius": 92,
       "approach": {
-        "x": 1437,
-        "y": 590
+        "x": 1433,
+        "y": 600
       }
     },
     {
@@ -825,14 +843,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
     },
     {
       "id": "offeringTable-approach",
-      "x": 429,
-      "y": 600,
+      "x": 422,
+      "y": 604,
       "role": "approach"
     },
     {
       "id": "sundial-approach",
-      "x": 740,
-      "y": 611,
+      "x": 738,
+      "y": 621,
       "role": "approach"
     },
     {
@@ -843,8 +861,8 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0030"] = {
     },
     {
       "id": "templePanel-approach",
-      "x": 1437,
-      "y": 590,
+      "x": 1433,
+      "y": 600,
       "role": "approach"
     },
     {

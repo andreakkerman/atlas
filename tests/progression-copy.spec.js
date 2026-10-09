@@ -26,10 +26,13 @@ async function completeChallenge(page, id, finalLabel) {
   for (let index = 0; index < count; index++) {
     const question = await page.evaluate(() => {
       const question = window.eval("currentChallengeQuestions")()[window.eval("state.questionIndex")];
-      return { answer: String(window.eval("answerFor")(question)), open: question.answerMode === "open" };
+      return { answer: String(question.answerSpec?.allowedForms?.[0] ?? window.eval("answerFor")(question)), open: question.answerMode === "open", money: question.learningLevel === "M6" && question.answerSpec?.type === "euro", cents: question.answer, label: question.answerSpec?.type === "euro" ? "Bedrag in euro’s" : "Jouw antwoord" };
     });
     if (question.open) {
-      await page.getByRole("textbox", { name: "Jouw antwoord" }).fill(question.answer);
+      if (question.money) {
+        await page.getByRole("textbox", { name: "Euro", exact: true }).fill(String(Math.floor(question.cents / 100)));
+        await page.getByRole("textbox", { name: "Cent", exact: true }).fill(String(question.cents % 100).padStart(2, "0"));
+      } else await page.getByRole("textbox", { name: question.label }).fill(question.answer);
       await page.getByRole("button", { name: "Controleer", exact: true }).click();
     } else await page.locator(`[data-choice='${question.answer}']`).click();
     await expect(page.getByRole("heading", { name: "Goed zo!" })).toBeVisible();

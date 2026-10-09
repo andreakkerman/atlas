@@ -1,0 +1,1622 @@
+{
+  "LVL-0003:shipCompass-1b": {
+    "question": {
+      "id": "shipCompass-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Tien voor half vijf",
+      "choices": [
+        "Kwart over vier",
+        "Tien voor half vijf",
+        "Tien over half vier",
+        "Half vijf"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 4,
+        "minute": 20
+      },
+      "explanation": "Het is tien voor half vijf."
+    },
+    "minnie": "De minuten zijn 20. Dat betekent 20 minuten na het hele uur.",
+    "moose": "Een half uur na vier noemen we half vijf. Deze tijd is 10 minuten vóór dat halve uur.",
+    "explanation": "De digitale klok geeft 04:20 aan. 04:20 is 20 minuten na vier. Een half uur na vier noemen we half vijf. 20 minuten is 10 minuten vóór dat halve uur. Daarom is 04:20 tien voor half vijf."
+  },
+  "LVL-0003:shipCompass-2b": {
+    "question": {
+      "id": "shipCompass-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf over half elf",
+      "choices": [
+        "Half elf",
+        "Vijf voor half elf",
+        "Vijf over half elf",
+        "Vijf voor elf"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 10,
+        "minute": 35
+      },
+      "explanation": "Het is vijf over half elf."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na tien noemen we half elf. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 10:35 aan. Een half uur na tien noemen we half elf. 35 minuten is 5 minuten ná dat halve uur. Daarom is 10:35 vijf over half elf."
+  },
+  "LVL-0003:shipCompass-3b": {
+    "question": {
+      "id": "shipCompass-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Tien voor acht",
+      "choices": [
+        "Tien over zeven",
+        "Vijf voor acht",
+        "Tien voor acht",
+        "Acht uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 7,
+        "minute": 50
+      },
+      "explanation": "Het is tien voor acht."
+    },
+    "minnie": "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is acht. Hoe zeg je 10 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 07:50 aan. Er zijn nog 10 minuten tot acht uur. Daarom is 07:50 tien voor acht."
+  },
+  "LVL-0003:shipCompass-4b": {
+    "question": {
+      "id": "shipCompass-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf voor twee",
+      "choices": [
+        "Vijf over één",
+        "Tien voor twee",
+        "Vijf voor twee",
+        "Twee uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 1,
+        "minute": 55
+      },
+      "explanation": "Het is vijf voor twee."
+    },
+    "minnie": "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is twee. Hoe zeg je 5 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 01:55 aan. Er zijn nog 5 minuten tot twee uur. Daarom is 01:55 vijf voor twee."
+  },
+  "LVL-0013:nl-clock-1b": {
+    "question": {
+      "id": "nl-clock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_quarter",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Kwart voor negen",
+      "choices": [
+        "Kwart over acht",
+        "Half negen",
+        "Kwart voor negen",
+        "Negen uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 8,
+        "minute": 45
+      },
+      "explanation": "Het is kwart voor negen."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is negen.",
+    "explanation": "De digitale klok geeft 08:45 aan. Er zijn nog 15 minuten tot negen uur. 15 minuten is een kwartier. Daarom is 08:45 kwart voor negen."
+  },
+  "LVL-0013:nl-clock-2b": {
+    "question": {
+      "id": "nl-clock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_quarter",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Kwart over één",
+      "choices": [
+        "Eén uur",
+        "Kwart over één",
+        "Half twee",
+        "Kwart voor twee"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 1,
+        "minute": 15
+      },
+      "explanation": "Het is kwart over één."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na één. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 01:15 aan. 15 minuten is een kwartier. Het is een kwartier na één. Daarom is 01:15 kwart over één."
+  },
+  "LVL-0013:nl-clock-3b": {
+    "question": {
+      "id": "nl-clock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_quarter",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Kwart voor twaalf",
+      "choices": [
+        "Kwart over elf",
+        "Half twaalf",
+        "Kwart voor twaalf",
+        "Twaalf uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 11,
+        "minute": 45
+      },
+      "explanation": "Het is kwart voor twaalf."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is twaalf.",
+    "explanation": "De digitale klok geeft 11:45 aan. Er zijn nog 15 minuten tot twaalf uur. 15 minuten is een kwartier. Daarom is 11:45 kwart voor twaalf."
+  },
+  "LVL-0013:nl-clock-4b": {
+    "question": {
+      "id": "nl-clock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_quarter",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Kwart over vijf",
+      "choices": [
+        "Vijf uur",
+        "Kwart over vijf",
+        "Half zes",
+        "Kwart voor zes"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 5,
+        "minute": 15
+      },
+      "explanation": "Het is kwart over vijf."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na vijf. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 05:15 aan. 15 minuten is een kwartier. Het is een kwartier na vijf. Daarom is 05:15 kwart over vijf."
+  },
+  "LVL-0014:uk-clock-1b": {
+    "question": {
+      "id": "uk-clock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_half_hour",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Half vijf",
+      "choices": [
+        "Vier uur",
+        "Half vier",
+        "Half vijf",
+        "Vijf uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 4,
+        "minute": 30
+      },
+      "explanation": "Het is half vijf."
+    },
+    "minnie": "30 minuten betekent een half uur.",
+    "moose": "Het is een half uur na vier. Bij 'half' noemen we het uur dat daarna komt: vijf.",
+    "explanation": "De digitale klok geeft 04:30 aan. 30 minuten betekent een half uur. Een half uur na vier noemen we half vijf. Daarom is 04:30 half vijf."
+  },
+  "LVL-0014:uk-clock-2b": {
+    "question": {
+      "id": "uk-clock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_half_hour",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Half negen",
+      "choices": [
+        "Acht uur",
+        "Half acht",
+        "Half negen",
+        "Negen uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 8,
+        "minute": 30
+      },
+      "explanation": "Het is half negen."
+    },
+    "minnie": "30 minuten betekent een half uur.",
+    "moose": "Het is een half uur na acht. Bij 'half' noemen we het uur dat daarna komt: negen.",
+    "explanation": "De digitale klok geeft 08:30 aan. 30 minuten betekent een half uur. Een half uur na acht noemen we half negen. Daarom is 08:30 half negen."
+  },
+  "LVL-0014:uk-clock-3b": {
+    "question": {
+      "id": "uk-clock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_half_hour",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Half één",
+      "choices": [
+        "Twaalf uur",
+        "Half twaalf",
+        "Half één",
+        "Eén uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 30
+      },
+      "explanation": "Het is half één."
+    },
+    "minnie": "30 minuten betekent een half uur.",
+    "moose": "Het is een half uur na twaalf. Bij 'half' noemen we het uur dat daarna komt: één.",
+    "explanation": "De digitale klok geeft 12:30 aan. 30 minuten betekent een half uur. Een half uur na twaalf noemen we half één. Daarom is 12:30 half één."
+  },
+  "LVL-0014:uk-clock-4b": {
+    "question": {
+      "id": "uk-clock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_half_hour",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Half zeven",
+      "choices": [
+        "Zes uur",
+        "Half zes",
+        "Half zeven",
+        "Zeven uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 30
+      },
+      "explanation": "Het is half zeven."
+    },
+    "minnie": "30 minuten betekent een half uur.",
+    "moose": "Het is een half uur na zes. Bij 'half' noemen we het uur dat daarna komt: zeven.",
+    "explanation": "De digitale klok geeft 06:30 aan. 30 minuten betekent een half uur. Een half uur na zes noemen we half zeven. Daarom is 06:30 half zeven."
+  },
+  "LVL-0015:fr-clock-1b": {
+    "question": {
+      "id": "fr-clock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf over zes",
+      "choices": [
+        "Vijf voor zes",
+        "Vijf over zes",
+        "Tien over zes",
+        "Zes uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 5
+      },
+      "explanation": "Het is vijf over zes."
+    },
+    "minnie": "Kijk naar de minuten rechts van de dubbele punt. 05 betekent dat er 5 minuten voorbij het hele uur zijn.",
+    "moose": "Links staat 06. Het is dus 5 minuten na zes. Hoe zeg je 5 minuten na zes in woorden?",
+    "explanation": "De digitale klok geeft 06:05 aan. De 05 betekent 5 minuten na het hele uur. Het hele uur is zes uur. Daarom is 06:05 vijf over zes."
+  },
+  "LVL-0015:fr-clock-2b": {
+    "question": {
+      "id": "fr-clock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf voor half twee",
+      "choices": [
+        "Vijf over één",
+        "Vijf voor half twee",
+        "Vijf over half twee",
+        "Half twee"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 1,
+        "minute": 25
+      },
+      "explanation": "Het is vijf voor half twee."
+    },
+    "minnie": "25 minuten is 5 minuten vóór een half uur.",
+    "moose": "Een half uur na één noemen we half twee. Deze tijd is 5 minuten vóór half twee.",
+    "explanation": "De digitale klok geeft 01:25 aan. 01:25 is 25 minuten na één. Een half uur na één noemen we half twee. 25 minuten is 5 minuten vóór dat halve uur. Daarom is 01:25 vijf voor half twee."
+  },
+  "LVL-0015:fr-clock-3b": {
+    "question": {
+      "id": "fr-clock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf over half tien",
+      "choices": [
+        "Vijf voor half tien",
+        "Half tien",
+        "Vijf over half tien",
+        "Vijf voor tien"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 9,
+        "minute": 35
+      },
+      "explanation": "Het is vijf over half tien."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na negen noemen we half tien. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 09:35 aan. Een half uur na negen noemen we half tien. 35 minuten is 5 minuten ná dat halve uur. Daarom is 09:35 vijf over half tien."
+  },
+  "LVL-0015:fr-clock-4b": {
+    "question": {
+      "id": "fr-clock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf voor drie",
+      "choices": [
+        "Vijf over twee",
+        "Tien voor drie",
+        "Vijf voor drie",
+        "Drie uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 2,
+        "minute": 55
+      },
+      "explanation": "Het is vijf voor drie."
+    },
+    "minnie": "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is drie. Hoe zeg je 5 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 02:55 aan. Er zijn nog 5 minuten tot drie uur. Daarom is 02:55 vijf voor drie."
+  },
+  "LVL-0017:at-clock-1b": {
+    "question": {
+      "id": "at-clock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Twaalf uur",
+      "choices": [
+        "Half twaalf",
+        "Twaalf uur",
+        "Half één",
+        "Eén uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 0
+      },
+      "explanation": "De digitale klok geeft 12:00 aan. Het is twaalf uur."
+    },
+    "minnie": "00 minuten betekent dat het precies een heel uur is.",
+    "moose": "Kijk naar het getal links van de dubbele punt. Welk heel uur staat daar?",
+    "explanation": "De digitale klok geeft 12:00 aan. De 00 betekent dat er nog geen minuten na het hele uur voorbij zijn. Daarom is 12:00 twaalf uur."
+  },
+  "LVL-0017:at-clock-2b": {
+    "question": {
+      "id": "at-clock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Negen uur",
+      "choices": [
+        "Half negen",
+        "Negen uur",
+        "Half tien",
+        "Tien uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 9,
+        "minute": 0
+      },
+      "explanation": "De digitale klok geeft 09:00 aan. Het is negen uur."
+    },
+    "minnie": "00 minuten betekent dat het precies een heel uur is.",
+    "moose": "Kijk naar het getal links van de dubbele punt. Welk heel uur staat daar?",
+    "explanation": "De digitale klok geeft 09:00 aan. De 00 betekent dat er nog geen minuten na het hele uur voorbij zijn. Daarom is 09:00 negen uur."
+  },
+  "LVL-0017:at-clock-3b": {
+    "question": {
+      "id": "at-clock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Tien over half zes",
+      "choices": [
+        "Tien voor half zes",
+        "Half zes",
+        "Tien over half zes",
+        "Tien voor zes"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 5,
+        "minute": 40
+      },
+      "explanation": "De digitale klok geeft 05:40 aan. Het is tien over half zes."
+    },
+    "minnie": "40 minuten is 10 minuten ná een half uur.",
+    "moose": "Een half uur na vijf noemen we half zes. Deze tijd is 10 minuten daarna.",
+    "explanation": "De digitale klok geeft 05:40 aan. Een half uur na vijf noemen we half zes. 40 minuten is 10 minuten ná dat halve uur. Daarom is 05:40 tien over half zes."
+  },
+  "LVL-0017:at-clock-4b": {
+    "question": {
+      "id": "at-clock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Tien voor één",
+      "choices": [
+        "Tien over twaalf",
+        "Vijf voor één",
+        "Tien voor één",
+        "Eén uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 50
+      },
+      "explanation": "De digitale klok geeft 12:50 aan. Het is tien voor één."
+    },
+    "minnie": "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is één. Hoe zeg je 10 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 12:50 aan. Er zijn nog 10 minuten tot één uur. Daarom is 12:50 tien voor één."
+  },
+  "LVL-0019:se-clock-1b": {
+    "question": {
+      "id": "se-clock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Tien voor half zes",
+      "choices": [
+        "Kwart over vijf",
+        "Tien voor half zes",
+        "Tien over half vijf",
+        "Half zes"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 5,
+        "minute": 20
+      },
+      "explanation": "Het is tien voor half zes."
+    },
+    "minnie": "De minuten zijn 20. Dat betekent 20 minuten na het hele uur.",
+    "moose": "Een half uur na vijf noemen we half zes. Deze tijd is 10 minuten vóór dat halve uur.",
+    "explanation": "De digitale klok geeft 05:20 aan. 05:20 is 20 minuten na vijf. Een half uur na vijf noemen we half zes. 20 minuten is 10 minuten vóór dat halve uur. Daarom is 05:20 tien voor half zes."
+  },
+  "LVL-0019:se-clock-2b": {
+    "question": {
+      "id": "se-clock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf over half acht",
+      "choices": [
+        "Half acht",
+        "Vijf voor half acht",
+        "Vijf over half acht",
+        "Vijf voor acht"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 7,
+        "minute": 35
+      },
+      "explanation": "Het is vijf over half acht."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na zeven noemen we half acht. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 07:35 aan. Een half uur na zeven noemen we half acht. 35 minuten is 5 minuten ná dat halve uur. Daarom is 07:35 vijf over half acht."
+  },
+  "LVL-0019:se-clock-3b": {
+    "question": {
+      "id": "se-clock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Tien voor twee",
+      "choices": [
+        "Tien over één",
+        "Vijf voor twee",
+        "Tien voor twee",
+        "Twee uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 1,
+        "minute": 50
+      },
+      "explanation": "Het is tien voor twee."
+    },
+    "minnie": "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is twee. Hoe zeg je 10 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 01:50 aan. Er zijn nog 10 minuten tot twee uur. Daarom is 01:50 tien voor twee."
+  },
+  "LVL-0019:se-clock-4b": {
+    "question": {
+      "id": "se-clock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading_five_minutes",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het?",
+      "answer": "Vijf voor twaalf",
+      "choices": [
+        "Vijf over elf",
+        "Tien voor twaalf",
+        "Vijf voor twaalf",
+        "Twaalf uur"
+      ],
+      "visual": {
+        "type": "digitalClock",
+        "hour": 11,
+        "minute": 55
+      },
+      "explanation": "Het is vijf voor twaalf."
+    },
+    "minnie": "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is twaalf. Hoe zeg je 5 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 11:55 aan. Er zijn nog 5 minuten tot twaalf uur. Daarom is 11:55 vijf voor twaalf."
+  },
+  "LVL-0023:water-clock-1b": {
+    "question": {
+      "id": "water-clock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart over vier",
+      "choices": [
+        "Kwart over vier",
+        "Kwart over vijf",
+        "Half vijf",
+        "Kwart voor vijf"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 4,
+        "minute": 15
+      },
+      "explanation": "De digitale klok toont Kwart over vier."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na vier. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 04:15 aan. 15 minuten is een kwartier. Het is een kwartier na vier. Daarom is 04:15 kwart over vier."
+  },
+  "LVL-0023:water-clock-2b": {
+    "question": {
+      "id": "water-clock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart voor negen",
+      "choices": [
+        "Kwart voor negen",
+        "Kwart voor tien",
+        "Acht uur",
+        "Kwart over acht"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 8,
+        "minute": 45
+      },
+      "explanation": "De digitale klok toont Kwart voor negen."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is negen.",
+    "explanation": "De digitale klok geeft 08:45 aan. Er zijn nog 15 minuten tot negen uur. 15 minuten is een kwartier. Daarom is 08:45 kwart voor negen."
+  },
+  "LVL-0023:water-clock-3b": {
+    "question": {
+      "id": "water-clock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Tien voor half een",
+      "choices": [
+        "Tien voor half een",
+        "Tien voor half twee",
+        "Vijf over half een",
+        "Tien voor een"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 20
+      },
+      "explanation": "De digitale klok toont Tien voor half een."
+    },
+    "minnie": "De minuten zijn 20. Dat betekent 20 minuten na het hele uur.",
+    "moose": "Een half uur na twaalf noemen we half één. Deze tijd is 10 minuten vóór dat halve uur.",
+    "explanation": "De digitale klok geeft 12:20 aan. 12:20 is 20 minuten na twaalf. Een half uur na twaalf noemen we half één. 20 minuten is 10 minuten vóór dat halve uur. Daarom is 12:20 tien voor half een."
+  },
+  "LVL-0023:water-clock-4b": {
+    "question": {
+      "id": "water-clock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Tien voor zes",
+      "choices": [
+        "Tien voor zes",
+        "Tien voor zeven",
+        "Vijf over vijf",
+        "Tien voor half zes"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 5,
+        "minute": 50
+      },
+      "explanation": "De digitale klok toont Tien voor zes."
+    },
+    "minnie": "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is zes. Hoe zeg je 10 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 05:50 aan. Er zijn nog 10 minuten tot zes uur. Daarom is 05:50 tien voor zes."
+  },
+  "LVL-0024:flight-controls-1b": {
+    "question": {
+      "id": "flight-controls-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf voor half acht",
+      "choices": [
+        "Vijf voor half acht",
+        "Vijf voor half negen",
+        "Tien over half acht",
+        "Vijf voor acht"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 7,
+        "minute": 25
+      },
+      "explanation": "De digitale klok toont Vijf voor half acht."
+    },
+    "minnie": "25 minuten is 5 minuten vóór een half uur.",
+    "moose": "Een half uur na zeven noemen we half acht. Deze tijd is 5 minuten vóór half acht.",
+    "explanation": "De digitale klok geeft 07:25 aan. 07:25 is 25 minuten na zeven. Een half uur na zeven noemen we half acht. 25 minuten is 5 minuten vóór dat halve uur. Daarom is 07:25 vijf voor half acht."
+  },
+  "LVL-0024:flight-controls-2b": {
+    "question": {
+      "id": "flight-controls-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf voor twaalf",
+      "choices": [
+        "Vijf voor twaalf",
+        "Vijf voor een",
+        "Tien over elf",
+        "Vijf voor half twaalf"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 11,
+        "minute": 55
+      },
+      "explanation": "De digitale klok toont Vijf voor twaalf."
+    },
+    "minnie": "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is twaalf. Hoe zeg je 5 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 11:55 aan. Er zijn nog 5 minuten tot twaalf uur. Daarom is 11:55 vijf voor twaalf."
+  },
+  "LVL-0024:flight-controls-3b": {
+    "question": {
+      "id": "flight-controls-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart over vijf",
+      "choices": [
+        "Kwart over vijf",
+        "Kwart over zes",
+        "Half zes",
+        "Kwart voor zes"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 5,
+        "minute": 15
+      },
+      "explanation": "De digitale klok toont Kwart over vijf."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na vijf. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 05:15 aan. 15 minuten is een kwartier. Het is een kwartier na vijf. Daarom is 05:15 kwart over vijf."
+  },
+  "LVL-0024:flight-controls-4b": {
+    "question": {
+      "id": "flight-controls-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart voor tien",
+      "choices": [
+        "Kwart voor tien",
+        "Kwart voor elf",
+        "Negen uur",
+        "Kwart over negen"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 9,
+        "minute": 45
+      },
+      "explanation": "De digitale klok toont Kwart voor tien."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is tien.",
+    "explanation": "De digitale klok geeft 09:45 aan. Er zijn nog 15 minuten tot tien uur. 15 minuten is een kwartier. Daarom is 09:45 kwart voor tien."
+  },
+  "LVL-0025:pulley-panel-1b": {
+    "question": {
+      "id": "pulley-panel-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Tien voor half twee",
+      "choices": [
+        "Tien voor half twee",
+        "Tien voor half drie",
+        "Vijf over half twee",
+        "Tien voor twee"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 1,
+        "minute": 20
+      },
+      "explanation": "De digitale klok toont Tien voor half twee."
+    },
+    "minnie": "De minuten zijn 20. Dat betekent 20 minuten na het hele uur.",
+    "moose": "Een half uur na één noemen we half twee. Deze tijd is 10 minuten vóór dat halve uur.",
+    "explanation": "De digitale klok geeft 01:20 aan. 01:20 is 20 minuten na één. Een half uur na één noemen we half twee. 20 minuten is 10 minuten vóór dat halve uur. Daarom is 01:20 tien voor half twee."
+  },
+  "LVL-0025:pulley-panel-2b": {
+    "question": {
+      "id": "pulley-panel-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Tien voor zeven",
+      "choices": [
+        "Tien voor zeven",
+        "Tien voor acht",
+        "Vijf over zes",
+        "Tien voor half zeven"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 50
+      },
+      "explanation": "De digitale klok toont Tien voor zeven."
+    },
+    "minnie": "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is zeven. Hoe zeg je 10 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 06:50 aan. Er zijn nog 10 minuten tot zeven uur. Daarom is 06:50 tien voor zeven."
+  },
+  "LVL-0025:pulley-panel-3b": {
+    "question": {
+      "id": "pulley-panel-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf voor half elf",
+      "choices": [
+        "Vijf voor half elf",
+        "Vijf voor half twaalf",
+        "Tien over half elf",
+        "Vijf voor elf"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 10,
+        "minute": 25
+      },
+      "explanation": "De digitale klok toont Vijf voor half elf."
+    },
+    "minnie": "25 minuten is 5 minuten vóór een half uur.",
+    "moose": "Een half uur na tien noemen we half elf. Deze tijd is 5 minuten vóór half elf.",
+    "explanation": "De digitale klok geeft 10:25 aan. 10:25 is 25 minuten na tien. Een half uur na tien noemen we half elf. 25 minuten is 5 minuten vóór dat halve uur. Daarom is 10:25 vijf voor half elf."
+  },
+  "LVL-0025:pulley-panel-4b": {
+    "question": {
+      "id": "pulley-panel-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf voor drie",
+      "choices": [
+        "Vijf voor drie",
+        "Vijf voor vier",
+        "Tien over twee",
+        "Vijf voor half drie"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 2,
+        "minute": 55
+      },
+      "explanation": "De digitale klok toont Vijf voor drie."
+    },
+    "minnie": "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is drie. Hoe zeg je 5 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 02:55 aan. Er zijn nog 5 minuten tot drie uur. Daarom is 02:55 vijf voor drie."
+  },
+  "LVL-0026:central-codex-1b": {
+    "question": {
+      "id": "central-codex-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart over zes",
+      "choices": [
+        "Kwart over zes",
+        "Kwart over zeven",
+        "Half zeven",
+        "Kwart voor zeven"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 15
+      },
+      "explanation": "De digitale klok toont Kwart over zes."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na zes. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 06:15 aan. 15 minuten is een kwartier. Het is een kwartier na zes. Daarom is 06:15 kwart over zes."
+  },
+  "LVL-0026:central-codex-2b": {
+    "question": {
+      "id": "central-codex-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart voor elf",
+      "choices": [
+        "Kwart voor elf",
+        "Kwart voor twaalf",
+        "Tien uur",
+        "Kwart over tien"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 10,
+        "minute": 45
+      },
+      "explanation": "De digitale klok toont Kwart voor elf."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is elf.",
+    "explanation": "De digitale klok geeft 10:45 aan. Er zijn nog 15 minuten tot elf uur. 15 minuten is een kwartier. Daarom is 10:45 kwart voor elf."
+  },
+  "LVL-0026:central-codex-3b": {
+    "question": {
+      "id": "central-codex-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf voor half drie",
+      "choices": [
+        "Vijf voor half drie",
+        "Vijf voor half vier",
+        "Tien over half drie",
+        "Vijf voor drie"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 2,
+        "minute": 25
+      },
+      "explanation": "De digitale klok toont Vijf voor half drie."
+    },
+    "minnie": "25 minuten is 5 minuten vóór een half uur.",
+    "moose": "Een half uur na twee noemen we half drie. Deze tijd is 5 minuten vóór half drie.",
+    "explanation": "De digitale klok geeft 02:25 aan. 02:25 is 25 minuten na twee. Een half uur na twee noemen we half drie. 25 minuten is 5 minuten vóór dat halve uur. Daarom is 02:25 vijf voor half drie."
+  },
+  "LVL-0026:central-codex-4b": {
+    "question": {
+      "id": "central-codex-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf voor acht",
+      "choices": [
+        "Vijf voor acht",
+        "Vijf voor negen",
+        "Tien over zeven",
+        "Vijf voor half acht"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 7,
+        "minute": 55
+      },
+      "explanation": "De digitale klok toont Vijf voor acht."
+    },
+    "minnie": "Bij 55 minuten zijn er nog 5 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is acht. Hoe zeg je 5 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 07:55 aan. Er zijn nog 5 minuten tot acht uur. Daarom is 07:55 vijf voor acht."
+  },
+  "LVL-0026:design-board-1b": {
+    "question": {
+      "id": "design-board-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart over elf",
+      "choices": [
+        "Kwart over elf",
+        "Kwart over twaalf",
+        "Half twaalf",
+        "Kwart voor twaalf"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 11,
+        "minute": 15
+      },
+      "explanation": "De digitale klok toont Kwart over elf."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na elf. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 11:15 aan. 15 minuten is een kwartier. Het is een kwartier na elf. Daarom is 11:15 kwart over elf."
+  },
+  "LVL-0026:design-board-2b": {
+    "question": {
+      "id": "design-board-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart voor vier",
+      "choices": [
+        "Kwart voor vier",
+        "Kwart voor vijf",
+        "Drie uur",
+        "Kwart over drie"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 3,
+        "minute": 45
+      },
+      "explanation": "De digitale klok toont Kwart voor vier."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is vier.",
+    "explanation": "De digitale klok geeft 03:45 aan. Er zijn nog 15 minuten tot vier uur. 15 minuten is een kwartier. Daarom is 03:45 kwart voor vier."
+  },
+  "LVL-0026:design-board-3b": {
+    "question": {
+      "id": "design-board-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Tien voor half acht",
+      "choices": [
+        "Tien voor half acht",
+        "Tien voor half negen",
+        "Vijf over half acht",
+        "Tien voor acht"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 7,
+        "minute": 20
+      },
+      "explanation": "De digitale klok toont Tien voor half acht."
+    },
+    "minnie": "De minuten zijn 20. Dat betekent 20 minuten na het hele uur.",
+    "moose": "Een half uur na zeven noemen we half acht. Deze tijd is 10 minuten vóór dat halve uur.",
+    "explanation": "De digitale klok geeft 07:20 aan. 07:20 is 20 minuten na zeven. Een half uur na zeven noemen we half acht. 20 minuten is 10 minuten vóór dat halve uur. Daarom is 07:20 tien voor half acht."
+  },
+  "LVL-0026:design-board-4b": {
+    "question": {
+      "id": "design-board-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "story",
+      "answerMode": "multipleChoice",
+      "answer": "Tien voor een",
+      "choices": [
+        "Tien voor een",
+        "Tien voor twee",
+        "Vijf over twaalf",
+        "Tien voor half een"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 50
+      },
+      "explanation": "De digitale klok toont Tien voor een."
+    },
+    "minnie": "Bij 50 minuten zijn er nog 10 minuten tot het volgende hele uur.",
+    "moose": "Het volgende hele uur is één. Hoe zeg je 10 minuten vóór dat uur?",
+    "explanation": "De digitale klok geeft 12:50 aan. Er zijn nog 10 minuten tot één uur. Daarom is 12:50 tien voor een."
+  },
+  "LVL-0028:tripod-instrument-1b": {
+    "question": {
+      "id": "tripod-instrument-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart over zes",
+      "choices": [
+        "Kwart over zes",
+        "Kwart over zeven",
+        "Half zeven",
+        "Kwart voor zeven"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 15
+      },
+      "explanation": "De digitale klok toont Kwart over zes."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na zes. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 06:15 aan. 15 minuten is een kwartier. Het is een kwartier na zes. Daarom is 06:15 kwart over zes."
+  },
+  "LVL-0028:tripod-instrument-2b": {
+    "question": {
+      "id": "tripod-instrument-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart voor vijf",
+      "choices": [
+        "Kwart voor vier",
+        "Kwart over vier",
+        "Half vijf",
+        "Kwart voor vijf"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 4,
+        "minute": 45
+      },
+      "explanation": "De digitale klok toont Kwart voor vijf."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is vijf.",
+    "explanation": "De digitale klok geeft 04:45 aan. Er zijn nog 15 minuten tot vijf uur. 15 minuten is een kwartier. Daarom is 04:45 kwart voor vijf."
+  },
+  "LVL-0028:tripod-instrument-3b": {
+    "question": {
+      "id": "tripod-instrument-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf over half negen",
+      "choices": [
+        "Vijf over acht",
+        "Vijf voor half negen",
+        "Vijf over half negen",
+        "Tien over half negen"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 8,
+        "minute": 35
+      },
+      "explanation": "De digitale klok toont Vijf over half negen."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na acht noemen we half negen. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 08:35 aan. Een half uur na acht noemen we half negen. 35 minuten is 5 minuten ná dat halve uur. Daarom is 08:35 vijf over half negen."
+  },
+  "LVL-0028:tripod-instrument-4b": {
+    "question": {
+      "id": "tripod-instrument-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf over twaalf",
+      "choices": [
+        "Vijf voor twaalf",
+        "Vijf over twaalf",
+        "Tien over twaalf",
+        "Twaalf uur"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 5
+      },
+      "explanation": "De digitale klok toont Vijf over twaalf."
+    },
+    "minnie": "Kijk naar de minuten rechts van de dubbele punt. 05 betekent dat er 5 minuten voorbij het hele uur zijn.",
+    "moose": "Links staat 12. Het is dus 5 minuten na twaalf. Hoe zeg je 5 minuten na twaalf in woorden?",
+    "explanation": "De digitale klok geeft 12:05 aan. De 05 betekent 5 minuten na het hele uur. Het hele uur is twaalf uur. Daarom is 12:05 vijf over twaalf."
+  },
+  "LVL-0030:sundial-1b": {
+    "question": {
+      "id": "sundial-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart over zes",
+      "choices": [
+        "Kwart over zes",
+        "Kwart over zeven",
+        "Half zeven",
+        "Kwart voor zeven"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 15
+      },
+      "explanation": "De digitale klok toont Kwart over zes."
+    },
+    "minnie": "15 minuten is een kwartier.",
+    "moose": "Het is 15 minuten na zes. Dat noemen we een kwartier over het uur.",
+    "explanation": "De digitale klok geeft 06:15 aan. 15 minuten is een kwartier. Het is een kwartier na zes. Daarom is 06:15 kwart over zes."
+  },
+  "LVL-0030:sundial-2b": {
+    "question": {
+      "id": "sundial-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Kwart voor vijf",
+      "choices": [
+        "Kwart voor vier",
+        "Kwart over vier",
+        "Half vijf",
+        "Kwart voor vijf"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 4,
+        "minute": 45
+      },
+      "explanation": "De digitale klok toont Kwart voor vijf."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is vijf.",
+    "explanation": "De digitale klok geeft 04:45 aan. Er zijn nog 15 minuten tot vijf uur. 15 minuten is een kwartier. Daarom is 04:45 kwart voor vijf."
+  },
+  "LVL-0030:sundial-3b": {
+    "question": {
+      "id": "sundial-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf over half negen",
+      "choices": [
+        "Vijf over acht",
+        "Vijf voor half negen",
+        "Vijf over half negen",
+        "Tien over half negen"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 8,
+        "minute": 35
+      },
+      "explanation": "De digitale klok toont Vijf over half negen."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na acht noemen we half negen. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 08:35 aan. Een half uur na acht noemen we half negen. 35 minuten is 5 minuten ná dat halve uur. Daarom is 08:35 vijf over half negen."
+  },
+  "LVL-0030:sundial-4b": {
+    "question": {
+      "id": "sundial-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "answer": "Vijf over twaalf",
+      "choices": [
+        "Vijf voor twaalf",
+        "Vijf over twaalf",
+        "Tien over twaalf",
+        "Twaalf uur"
+      ],
+      "prompt": "Welke tijd staat op de klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 5
+      },
+      "explanation": "De digitale klok toont Vijf over twaalf."
+    },
+    "minnie": "Kijk naar de minuten rechts van de dubbele punt. 05 betekent dat er 5 minuten voorbij het hele uur zijn.",
+    "moose": "Links staat 12. Het is dus 5 minuten na twaalf. Hoe zeg je 5 minuten na twaalf in woorden?",
+    "explanation": "De digitale klok geeft 12:05 aan. De 05 betekent 5 minuten na het hele uur. Het hele uur is twaalf uur. Daarom is 12:05 vijf over twaalf."
+  },
+  "LVL-0033:churchClock-1b": {
+    "question": {
+      "id": "churchClock-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 7,
+        "minute": 30
+      },
+      "answer": "Half acht",
+      "choices": [
+        "Half zeven",
+        "Half acht",
+        "Zeven uur",
+        "Acht uur"
+      ],
+      "explanation": "De digitale klok geeft 07:30 aan. Het is half acht."
+    },
+    "minnie": "30 minuten betekent een half uur.",
+    "moose": "Het is een half uur na zeven. Bij 'half' noemen we het uur dat daarna komt: acht.",
+    "explanation": "De digitale klok geeft 07:30 aan. 30 minuten betekent een half uur. Een half uur na zeven noemen we half acht. Daarom is 07:30 half acht."
+  },
+  "LVL-0033:churchClock-2b": {
+    "question": {
+      "id": "churchClock-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 8,
+        "minute": 35
+      },
+      "answer": "Vijf over half negen",
+      "choices": [
+        "Vijf over acht",
+        "Vijf voor half negen",
+        "Half negen",
+        "Vijf over half negen"
+      ],
+      "explanation": "De digitale klok geeft 08:35 aan. Het is vijf over half negen."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na acht noemen we half negen. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 08:35 aan. Een half uur na acht noemen we half negen. 35 minuten is 5 minuten ná dat halve uur. Daarom is 08:35 vijf over half negen."
+  },
+  "LVL-0033:churchClock-3b": {
+    "question": {
+      "id": "churchClock-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 6,
+        "minute": 40
+      },
+      "answer": "Tien over half zeven",
+      "choices": [
+        "Tien voor half zeven",
+        "Kwart voor zeven",
+        "Tien over half zeven",
+        "Tien over zes"
+      ],
+      "explanation": "De digitale klok geeft 06:40 aan. Het is tien over half zeven."
+    },
+    "minnie": "40 minuten is 10 minuten ná een half uur.",
+    "moose": "Een half uur na zes noemen we half zeven. Deze tijd is 10 minuten daarna.",
+    "explanation": "De digitale klok geeft 06:40 aan. Een half uur na zes noemen we half zeven. 40 minuten is 10 minuten ná dat halve uur. Daarom is 06:40 tien over half zeven."
+  },
+  "LVL-0033:churchClock-4b": {
+    "question": {
+      "id": "churchClock-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 12,
+        "minute": 5
+      },
+      "answer": "Vijf over twaalf",
+      "choices": [
+        "Vijf voor twaalf",
+        "Tien over twaalf",
+        "Vijf over twaalf",
+        "Vijf over één"
+      ],
+      "explanation": "De digitale klok geeft 12:05 aan. Het is vijf over twaalf."
+    },
+    "minnie": "Kijk naar de minuten rechts van de dubbele punt. 05 betekent dat er 5 minuten voorbij het hele uur zijn.",
+    "moose": "Links staat 12. Het is dus 5 minuten na twaalf. Hoe zeg je 5 minuten na twaalf in woorden?",
+    "explanation": "De digitale klok geeft 12:05 aan. De 05 betekent 5 minuten na het hele uur. Het hele uur is twaalf uur. Daarom is 12:05 vijf over twaalf."
+  },
+  "LVL-0035:roundContainer-1b": {
+    "question": {
+      "id": "roundContainer-1b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 9,
+        "minute": 30
+      },
+      "answer": "Half tien",
+      "choices": [
+        "Half negen",
+        "Half tien",
+        "Negen uur",
+        "Tien uur"
+      ],
+      "explanation": "De digitale klok geeft 09:30 aan. Het is half tien."
+    },
+    "minnie": "30 minuten betekent een half uur.",
+    "moose": "Het is een half uur na negen. Bij 'half' noemen we het uur dat daarna komt: tien.",
+    "explanation": "De digitale klok geeft 09:30 aan. 30 minuten betekent een half uur. Een half uur na negen noemen we half tien. Daarom is 09:30 half tien."
+  },
+  "LVL-0035:roundContainer-2b": {
+    "question": {
+      "id": "roundContainer-2b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 2,
+        "minute": 35
+      },
+      "answer": "Vijf over half drie",
+      "choices": [
+        "Vijf over half drie",
+        "Vijf voor half drie",
+        "Vijf over twee",
+        "Half drie"
+      ],
+      "explanation": "De digitale klok geeft 02:35 aan. Het is vijf over half drie."
+    },
+    "minnie": "35 minuten is 5 minuten ná een half uur.",
+    "moose": "Een half uur na twee noemen we half drie. Deze tijd is 5 minuten daarna.",
+    "explanation": "De digitale klok geeft 02:35 aan. Een half uur na twee noemen we half drie. 35 minuten is 5 minuten ná dat halve uur. Daarom is 02:35 vijf over half drie."
+  },
+  "LVL-0035:roundContainer-3b": {
+    "question": {
+      "id": "roundContainer-3b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 10,
+        "minute": 40
+      },
+      "answer": "Tien over half elf",
+      "choices": [
+        "Tien voor half elf",
+        "Tien over half elf",
+        "Kwart voor elf",
+        "Tien over tien"
+      ],
+      "explanation": "De digitale klok geeft 10:40 aan. Het is tien over half elf."
+    },
+    "minnie": "40 minuten is 10 minuten ná een half uur.",
+    "moose": "Een half uur na tien noemen we half elf. Deze tijd is 10 minuten daarna.",
+    "explanation": "De digitale klok geeft 10:40 aan. Een half uur na tien noemen we half elf. 40 minuten is 10 minuten ná dat halve uur. Daarom is 10:40 tien over half elf."
+  },
+  "LVL-0035:roundContainer-4b": {
+    "question": {
+      "id": "roundContainer-4b",
+      "domain": "math",
+      "schoolBand": "E5-intended",
+      "family": "clock_reading",
+      "presentation": "bare",
+      "answerMode": "multipleChoice",
+      "prompt": "Hoe laat is het op deze klok?",
+      "visual": {
+        "type": "digitalClock",
+        "hour": 11,
+        "minute": 45
+      },
+      "answer": "Kwart voor twaalf",
+      "choices": [
+        "Kwart voor twaalf",
+        "Kwart over elf",
+        "Half twaalf",
+        "Kwart voor elf"
+      ],
+      "explanation": "De digitale klok geeft 11:45 aan. Het is kwart voor twaalf."
+    },
+    "minnie": "45 minuten betekent dat er nog 15 minuten tot het volgende hele uur zijn.",
+    "moose": "15 minuten is een kwartier. Het volgende hele uur is twaalf.",
+    "explanation": "De digitale klok geeft 11:45 aan. Er zijn nog 15 minuten tot twaalf uur. 15 minuten is een kwartier. Daarom is 11:45 kwart voor twaalf."
+  }
+}

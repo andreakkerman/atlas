@@ -108,13 +108,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 6,
                 "minute": 15
               },
-              "hintMinnie": "De grote wijzer staat op de 3.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
-              "explanation": "De wijzers tonen Kwart over zes."
+              "explanation": "De digitale klok toont Kwart over zes."
             }
           ]
         },
@@ -161,13 +159,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 4,
                 "minute": 45
               },
-              "hintMinnie": "De grote wijzer staat op de 9.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
-              "explanation": "De wijzers tonen Kwart voor vijf."
+              "explanation": "De digitale klok toont Kwart voor vijf."
             }
           ]
         },
@@ -214,13 +210,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 8,
                 "minute": 35
               },
-              "hintMinnie": "De grote wijzer staat op de 7.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
-              "explanation": "De wijzers tonen Vijf over half negen."
+              "explanation": "De digitale klok toont Vijf over half negen."
             }
           ]
         },
@@ -267,13 +261,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0028"] = {
               ],
               "prompt": "Welke tijd staat op de klok?",
               "visual": {
-                "type": "clock",
+                "type": "digitalClock",
                 "hour": 12,
                 "minute": 5
               },
-              "hintMinnie": "De grote wijzer staat op de 1.",
-              "hintMoose": "Gebruik daarna de kleine wijzer om het uur te vinden.",
-              "explanation": "De wijzers tonen Vijf over twaalf."
+              "explanation": "De digitale klok toont Vijf over twaalf."
             }
           ]
         }
