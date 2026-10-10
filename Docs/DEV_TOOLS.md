@@ -12,7 +12,7 @@ npm.cmd run dev:editor
 
 This runs the character-manifest generation prehook, then `scripts/dev-server.js`. Reuse an existing server when available. The normal editor URL is `http://127.0.0.1:4173/?dev=editor`; choose a level and start it. `Ctrl+Shift+D` toggles Developer Tools. Without the editor query/API, tools cannot apply source changes. `dev:walkpath` is a legacy alias for the same server, not a separate workflow.
 
-The main-menu world editor edits adventure ordering/visibility and level settings through the existing world-config API. In-level Developer Tools has **Characters**, **Challenges**, and **Graphics** tabs. Graphics contains Cinematic tooling, level rendering, flybys, audio and Illustrated effects; Audio/Effects are not additional top-level tabs.
+The main-menu world editor edits adventure ordering/visibility and level settings through the existing world-config API. In-level Developer Tools uses the persistent desktop Scene workspace and contextual inspector. Scene search (`Ctrl+K`) finds authored objects; Level settings, Environment, Shared Settings and Audio are fixed entries. Add consolidates instance creation. Focus Mode is a visible canvas-toolbar toggle (`Ctrl+Shift+F`) that restores the previous panel arrangement on exit. Tab keeps normal keyboard navigation. The editor is desktop-only; game runtime iPad support is unchanged.
 
 `Ctrl+Shift+L` is a development completion shortcut, not evidence of learning success. Do not use it to validate answers or earned learning records.
 
@@ -31,15 +31,49 @@ The implementation authorities are [app editor handlers](../src/app.js) and [dev
 | Apply audio | Writes shared `src/audio-config.js`; audio is not isolated to one level file. |
 | Change level tuning/Cinematic/emissive settings or authored Illustrated feature gates or global per-character Player Locomotion | Updates the shared world resolver in memory. These settings are not covered by the level-draft JSON guarantee. During menu-launched play, Illustrated feature toggles instead change only the temporary graphics session. |
 | Apply with dirty world settings / world-editor Save | Writes `Levels/world-config.js` through the shared API. This can include other staged world settings; inspect scope before saving. |
-| Revert in-level editor | Deletes the applicable draft and restores captured level/audio baselines plus tracked Cinematic/emissive/Illustrated-feature originals. It does not reload every source file or universally undo unrelated world-editor settings. |
+| Revert in-level editor | Waits for queued autosaves, reads saved current-level/world/audio files, deletes only the current level draft, and restores all pending authored scopes through existing setters. Previously applied writes remain. Other levels’ drafts and uploaded assets are untouched. If saved state cannot be read, nothing is discarded. |
 | Background upload | Creates a new level asset through the upload endpoint before the world-setting save; this is a deliberate file-writing operation separate from Apply. |
 | Play, answer, reset local data | Uses existing browser storage/progress handlers; does not rewrite authored level files. |
 
 The server's effect-only distinction considers the changed level sections; an accompanying audio payload retains its own Apply behavior. Ordinary Apply clears its disk draft; effect-only Apply clears the transient draft without discarding a separate disk draft.
 
-Opening a level captures its original editor baseline before overlaying an available draft. Successful Apply refreshes those baselines; errors remain visible. Mixed level/audio/world-config saves are separate operations, not one cross-file atomic transaction. Inspect an error and the resulting diff before retrying; do not assume all writes rolled back.
+Opening a level captures its original editor baseline before overlaying an available draft. Shared audio uses a saved baseline independent of level navigation, so a level switch cannot silently accept pending audio. Successful Apply refreshes those baselines; errors remain visible. Mixed level/audio/world-config saves are separate operations, not one cross-file atomic transaction. After a failed Apply, the editor reads `GET /__dev/levels/<id>/saved-editor` to reconcile existing baselines without replacing pending values. Changes lists remaining level-content, level-settings, world-settings, character-profile and audio scopes. If that read fails, pending values remain and the uncertainty is reported; Revert requires a successful saved-state read. Apply/Revert temporarily suspend UI input and drain queued draft writes to avoid overlapping authoring operations. No rollback transaction or new authored model is introduced.
 
 Keep existing drafts intact during unrelated development. Browser preview, draft persistence, Apply and gameplay progress are different states. Closing/minimizing tools is not Apply. A browser reload is not a guaranteed recovery mechanism for unsaved world settings or a server-restarted transient effect draft.
+
+## Configuration ownership audit
+
+Storage in a shared file does not make every value global. The existing editor mutation paths and runtime consumers establish these boundaries:
+
+| Scope / values | Storage and mutation | Runtime and saving |
+| --- | --- | --- |
+| Level geometry, challenges/NPC configuration, animals, flybys, procedural effects | `Levels/<id>/level.js`; existing `setLevel*` / challenge / ambient handlers and changed-section draft | Level normalization, interaction/challenge and effect runtimes consume these records. Draft then Apply; Revert restores its saved source. |
+| Level playable character, per-character appearance/scale/speed, background, cinematic/environment lighting, glow and authored Illustrated gates | `Levels/world-config.js → levels[id]`; `selectMainCharacter`, `updateLevelSetting`, cinematic/emissive/feature handlers through `worldResolver.updateLevelSettings` | Character tuning and renderer projection read the current level. World-config Apply saves these overrides. Revert reloads the saved whole-world configuration, including these settings. |
+| World level order, enabled levels and inherited Nieuw policy | Same file, `worlds[rootId]`; world resolver reorder/enable handlers (with per-level Nieuw override in `levels[id]`) | Menu ordering, availability, next-level and replay policy. Main-menu world editor Save / dirty world-config Apply. Not stored in a level draft; Revert restores the saved world configuration. |
+| Global character locomotion | Same file, `characterLocomotion.sven` and `.sven_arc`; `updateLocomotionSetting` → `updateLocomotionSettings` | `locomotionTuning` / shared controller read the playable character's profile across worlds. Apply writes world config. Revert restores the saved profiles, preserving previously applied edits. Shared Settings selects the editing profile independently of the level's playable character; contextual controls render the identical component. |
+| Global master, companion purr and SFX volumes | `src/audio-config.js → volumes`; `updateAudioDraft` → `setAudioConfig` | Master/playback/SFX consumers share the values across levels. The full audio config participates in the draft and shared-file Apply. Revert restores the saved whole-audio configuration. |
+| Per-level music and ambience volumes | Same audio file, `levels[id].musicVolume/ambienceVolume`; same audio handler | `getLevelAudioConfig(id)` / audio playback resolve the level. These are level-scoped values despite sharing an audio file and Apply boundary. Audio owns both groups; Shared Settings does not duplicate them. Track libraries/menu defaults also live in audio config but are not new editor controls. |
+| Browser graphics preferences and learning mix | `atlas.graphics.v1` via graphics runtime settings; `atlas.learning.m6Percentage` via `learningLevels.savePreference` | Local browser preferences, not authored world settings. Apply/Revert do not own them. Runtime/menu Illustrated gates may instead be temporary session overrides; editor gates are authored level values. |
+| Editor panels, Focus Mode, search, selection, zoom and profile-selector choice | `editorWorkspace`; panel arrangement/widths alone saved to `atlas.editor.workspace.v1` | UI state. Focus, camera, inspector expansion and profile selection are not authored global configuration. FPS/debug are session flags. |
+
+World membership itself is declared by the catalog/connected-level relationship. Lighting, character appearance and music/ambience do not become world-wide merely because levels share a world. NPC appearance is instance/level data; shared character art, procedural preset definitions and central learning banks are shared resources, not additional numeric configuration controls to move into Shared Settings.
+
+Apply can write level content, shared audio and world config in separate operations; it is not a cross-file transaction. World-config Apply may include other pending world edits, and audio Apply writes a shared file even when only a level volume changed. These existing boundaries are preserved and labeled; no additional ownership store or universal undo semantics were introduced.
+
+## Challenge creation boundary
+
+There is currently no supported Add-challenge factory. Existing editor actions select existing runes and mutate their linked challenge records (active state, supported type/NPC settings, authored preview and geometry). Safe creation needs an interactive object with a valid approach node, a rune binding/progression identity and narrative strings, and a challenge with matching anchor and presentation identity. The full level validator requires exactly four local question slots with nonempty authored variants; inactive status does not exempt a record. Central M6 supplies eligible individual questions at runtime, not a complete local challenge template or replacement E5 bank.
+
+The draft endpoint and `applyLevelDraft` accept objects and learningChallenges but do not accept new rune bindings. The endpoint's challenge validation checks IDs/active flags, not the complete cross-reference/content contract enforced by `scripts/validate-levels.js`. Consequently merely adding a challenge record would not create a valid discoverable/playable challenge after reload.
+
+**Add → Challenge is deferred.** A separate authoring extension must establish an approved source/import mechanism for complete authored challenge content, persist and validate object + rune + challenge bindings together, and define unique IDs, route placement and progression behavior. It needs save/reload/rollback tests on a developer fixture. This UX change does not invent questions, copy production learning material, add invalid placeholders, or widen persistence contracts implicitly.
+
+### Deferred challenge implementation path
+
+1. Accept a complete challenge package from existing approved local content or an explicitly approved import. Preserve its questions, answers and support text. Require four valid local slots; a central M6 record alone is insufficient. Do not create empty/placeholder questions or silently duplicate production content.
+2. Reuse supported challenge types and NPC conversion. Allocate unique object, rune, challenge, slot and variant IDs; bind the challenge anchor and rune object to the same interactive object, select a valid approach node, and retain presentation identity, prerequisites and progression flags. Require authored intro/solved text where the contract requires it.
+3. Extend the existing changed-section draft/Apply contract to include rune bindings. Validate the complete candidate level and all cross-references/content before any write, then use the existing atomic level-file serializer. Include bindings in baseline, draft reload and Revert handling.
+4. Only after that path is valid, expose Add → Challenge → approved package/type → canvas placement → existing contextual inspector. Validate save/reload/re-edit, NPC relationships, ID collisions and progression on a developer fixture; reject incomplete imports without modifying source or drafts.
 
 ## Editing and asset workflow
 
@@ -49,13 +83,13 @@ for provenance and maskable composition. When replacing the icon identity, updat
 the versioned URLs in HTML, manifest and service-worker precache together, and bump
 the worker cache version. Keep intro artwork independent of application icons.
 
-- Characters: Sven tuning, shared NPC General/Visual controls and ambient animals. NPC discovery reads the generated character manifest; run `npm.cmd run generate:characters` after library changes. Do not edit generated manifest entries by hand or normalize source image sizes as an incidental edit.
-- Challenges: select existing anchors, edit their geometry and active state, and preview authored questions/clock data. Keep IDs, variants and progression references intact unless intentionally changing them.
-- Graphics: use the existing Cinematic layers, procedural preset library, geometry/mask controls, flyby paths and shared audio controls. [Editor and Effects](EDITOR_AND_EFFECTS.md) defines their invariants.
-- Minimize preserves editing state; fully closing the editor removes editable route tooling. Maintain selection, focus, panel scroll and camera alignment during live edits.
+- Scene selection: playable-character tuning, shared NPC General/Visual controls and ambient animals. NPC discovery reads the generated character manifest; run `npm.cmd run generate:characters` after library changes. Do not edit generated manifest entries by hand or normalize source image sizes as an incidental edit.
+- Challenge inspectors: select existing anchors, edit their geometry and active state, and preview authored questions/clock data. Keep IDs, variants and progression references intact unless intentionally changing them.
+- Environment and object inspectors reuse Cinematic systems, procedural properties and geometry/mask controls. Add contains the preset library; flybys expose their existing path editor; Audio is a fixed Scene entry. [Editor and Effects](EDITOR_AND_EFFECTS.md) defines their invariants.
+- Independent panel collapse and Focus Mode preserve editing state; fully closing the editor removes editable route tooling. Maintain selection, focus, panel scroll and camera alignment during live edits.
 - Use measured artwork dimensions, valid approach nodes and contextual interactions. New artwork/concepts should be reviewed before being promoted into playable content; generated content is authored before gameplay, not by runtime AI. There is no operational `world-metadata.json` compiler.
 
-FPS and Debug controls in the main-menu gear area and Graphics share the same handlers/state. They are session flags (Debug can start from `debug3d=1`), not independently persisted preferences. The reset action uses its existing confirmation and Atlas-owned storage cleanup. Do not duplicate or change these semantics when adding access points.
+FPS and Debug controls in the main-menu gear area, runtime Graphics and editor Tools share the same handlers/state. They are session flags (Debug can start from `debug3d=1`), not independently persisted preferences. The reset action uses its existing confirmation and Atlas-owned storage cleanup. Do not duplicate or change these semantics when adding access points.
 
 ## Validation and tests
 
@@ -71,23 +105,29 @@ Use focused existing Playwright suites appropriate to the change. For example, a
 
 ```powershell
 $env:ATLAS_EDITOR_URL='http://127.0.0.1:4173'
-npx.cmd playwright test tests/editor-interactions.spec.js tests/challenge-active.spec.js --project=desktop-chromium --workers=1
+npx.cmd playwright test tests/editor-interactions.spec.js tests/editor-workspace.spec.js tests/challenge-active.spec.js --project=desktop-chromium --workers=1
 ```
 
 Test files supply their editor navigation; inspect a fixture before changing the base URL or appending a second query string. The configured projects are `desktop-chromium`, `ipad-landscape`, and `ipad-portrait`. `npm.cmd run test:e2e` also regenerates the character manifest via its prehook; direct Playwright invocation does not. Browser traces/reports are local work products. The shared test config blocks service workers, so those runs alone do not validate an installed PWA cache upgrade.
 
 | Change | Relevant existing coverage |
 | --- | --- |
+| Cross-scope discard, partial writes, lost acknowledgements and autosave ordering | `editor-revert-scopes.spec.js` |
+| Shared profile selection, ownership and Apply/reload; mixed Audio scope | `editor-shared-settings.spec.js` |
+| Unified Add families, direct character editing, inline Environment controls/state, participation and prepared ambient assets | `editor-simplification.spec.js` |
+| Desktop workspace, Focus Mode and save status | `editor-workspace.spec.js` |
+| Live editor movement, scale parity, Add search, information and Illustrated production audit | `editor-review.spec.js` (desktop Chromium with `ATLAS_WEBGPU_QA=1`) |
 | Editor geometry/persistence | `editor-interactions.spec.js`, `cinematic-route-overlay.spec.js` |
 | Learning/active state | `challenge-active.spec.js`, `npc-challenges.spec.js`, existing adventure progression tests |
 | Character discovery/appearance | `character-discovery.spec.js`, `npc-challenges.spec.js`, locomotion and Voxel tests |
 | Ambient library/instances | `ambient-library.spec.js`, `ambient-animals.spec.js`, `ambient-flybys.spec.js` |
+| Flyby preview ownership/appearance | `flyby-preview.spec.js`, `flyby-graphics.spec.js` |
 | Procedural layers/effects | `scene-effects.spec.js`, `render-layers.spec.js` |
 | Cinematic | `cinematic-lighting.spec.js`, `cinematic-fx-lab.spec.js`, route-overlay tests |
 | Menu controls/carousel | `menu-settings.spec.js`, `menu-carousel.spec.js` |
 | 3D/resources | Conditional gate and suite selection in [Renderer Specification](renderer-current-spec.md) |
 
-Persistence tests must use the repository's draft/source-restoration fixtures. Do not run competing persistence or GPU suites against shared mutable files/devices. Check desktop and both iPad orientations for affected layout/input; emulation does not certify physical Safari GPU behavior.
+Persistence tests must use the repository's draft/source-restoration fixtures. Do not run competing persistence or GPU suites against shared mutable files/devices. Check desktop editor workflows; check desktop and both iPad orientations for affected game-runtime layout/input. Emulation does not certify physical Safari GPU behavior.
 
 For documentation-only work, validate links, implementation claims and the diff; do not run GPU suites or asset-generating commands without a relevant change. Finish with `git diff --check` and inspect `git status`/the diff for unintended source, asset or draft modifications. Report pre-existing failures separately from regressions caused by the change.
 

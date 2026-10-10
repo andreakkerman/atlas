@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -5,7 +6,7 @@ const path = require("path");
 const vm = require("vm");
 const { pathToFileURL } = require("url");
 
-const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const root = path.join(__dirname, "..");
 require("./editor-draft-fixture").preserveEditorDrafts(test, root);
 
@@ -20,8 +21,13 @@ async function restoreWorldConfig(page, source) {
 }
 
 async function enterLevel(page) {
-  await page.goto(gameUrl);
-  await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
+  await bootEditorTest(page,gameUrl);
+  await page.evaluate(async () => {
+    window.eval("voxelRenderer").updateSettings({renderer:"illustrated"});
+    await window.eval("selectLevel")("LVL-0001", { startImmediately: true });
+  });
+  await page.waitForFunction(() => window.eval("cinematicStatus.ready || Boolean(cinematicStatus.error)"));
+  await expect(page.locator("[data-gpu-preparation]")).toHaveCount(0);
   await expect.poll(() => page.evaluate(() => window.eval("locomotion.snapshot().state"))).toBe("idle");
 }
 
@@ -186,14 +192,14 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
       if (route.request().method() === "GET") return route.fulfill({ json: {} });
       return route.continue();
     });
-    await page.goto(process.env.ATLAS_EDITOR_URL);
+    await bootEditorTest(page,process.env.ATLAS_EDITOR_URL);
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0001", { startImmediately: true }));
     const otherLevelDefaults = await page.evaluate(() => window.eval("locomotionTuning")("LVL-0002"));
     await page.keyboard.press("Control+Shift+D");
     const panel = page.locator("[data-developer-tools]");
     await expect(panel).toBeVisible();
 
-    await panel.getByRole("button", { name: "Graphics", exact: true }).click();
+    await selectSceneItem(page,'level','level');
     const graphicsVisual = panel.locator('[data-editor-panel-key="simple-visual-controls"]');
     await graphicsVisual.evaluate((element) => { element.open = true; });
     await panel.evaluate((element) => { element.scrollTop = 420; });
@@ -204,11 +210,12 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
       await input.fill(value);
       await expect(graphicsVisual).toHaveAttribute("open", "");
     }
-    await panel.getByRole("button", { name: "Characters", exact: true }).click();
+    await selectSceneItem(page,'player','player');
     const characterVisual = panel.locator('[data-character-visuals="sven"]');
     const locomotionPanel = panel.locator('[data-editor-panel-key="sven-locomotion"]');
     await characterVisual.evaluate((element) => { element.open = true; });
     await locomotionPanel.evaluate((element) => { element.open = true; });
+    for(const key of ["short-moves","animation","idle"])await locomotionPanel.locator(`[data-editor-panel-key="locomotion-${key}"] > summary`).click();
     const movement = panel.locator('[data-level-setting="movementSpeed"]');
     await movement.fill("310");
     await expect(movement).toBeFocused();
@@ -232,16 +239,16 @@ test("level editor keeps tuning panels, scroll, focus, scope and persistence sta
     }
     await page.screenshot({ path: path.join(__dirname, "..", "test-results", "atlas-sven-locomotion-editor.png"), fullPage: false });
 
-    await panel.getByRole("button", { name: "Apply" }).click();
-    await expect(panel).toContainText("Applied", { timeout: 15_000 });
+    await page.getByRole("button", { name: "Apply",exact:true }).click();
+    await expect(page.locator("[data-editor-draft-status]")).toHaveText("Changes: Applied", { timeout: 15_000 });
     await expect(characterVisual).toHaveAttribute("open", "");
     await expect(locomotionPanel).toHaveAttribute("open", "");
 
-    await page.reload();
+    await bootEditorTest(page,page.url());
     await page.evaluate(async () => window.eval("selectLevel")("LVL-0002", { startImmediately: true }));
     await page.keyboard.press("Control+Shift+D");
     const otherPanel = page.locator("[data-developer-tools]");
-    await otherPanel.locator('[data-editor-panel-key="sven-locomotion"] summary').click();
+    await otherPanel.locator('[data-editor-panel-key="sven-locomotion"] > summary').click();
     const sharedProfile = await page.evaluate(() => window.eval("locomotionTuning")("LVL-0001"));
     expect(await page.evaluate(() => window.eval("locomotionTuning")())).toEqual(sharedProfile);
     for (const key of ["toIdleMaxDistance", "fromIdleMovement", "toIdleMovement", "shortMoveThreshold", "shortMoveAnimationSpeed", "shortMoveStartFrame", "shortMoveMaxFromIdleAnimation"]) {

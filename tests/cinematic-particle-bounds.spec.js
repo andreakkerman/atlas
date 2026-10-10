@@ -1,3 +1,4 @@
+const {selectSystem,addCinematic,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const contract=require('../src/cinematic-settings');
 const fs=require('fs'),path=require('path');
@@ -164,10 +165,10 @@ test('Particle Field editor drag, resize, Apply and reload preserve the rendered
     await page.setViewportSize({width:2600,height:900});await scene(page);
     const existingParticleCount=await page.evaluate(()=>window.eval('cinematicRenderer').snapshot().particles);
     await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});window.eval('render')();});await ready(page);
-    await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
-    await page.locator('[data-cinematic-layer="environment"]').click();
+    await page.keyboard.press('Control+Shift+D');await selectSystem(page,'depth');
+    await selectSystem(page,'particles');
     const group=page.locator('[data-cinematic-group="particles"]');if(!await group.evaluate(e=>e.open))await group.locator('summary').click();
-    await group.locator('[data-cinematic-action="add"]').click();
+    await addCinematic(page,'particles');
     await group.locator('[data-cinematic-preset="particles"]').selectOption('Drizzle');
     await group.locator('[data-cinematic-setting="boundsRotation"]').fill('90');
     const field=key=>group.locator(`[data-cinematic-setting="${key}"]`);

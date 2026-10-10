@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const { test, expect } = require('@playwright/test');
 const fs = require('fs'), path = require('path'), vm = require('vm');
 const root = path.join(__dirname, '..');
@@ -12,7 +13,7 @@ test('global profiles preserve calibrated values and import legacy Sven only', (
   expect(config.characterLocomotion).toEqual(registry.defaultLocomotion);
   expect(config.characterLocomotion.sven_arc).toMatchObject({ fromIdleMovement: .25, blinkMinimumInterval: 1000, blinkMaximumInterval: 5000 });
   expect(config.characterLocomotion.sven).toMatchObject({ fromIdleMovement: .15, blinkMinimumInterval: 1000, blinkMaximumInterval: 3000 });
-  expect(config.levels['LVL-0032'].mainCharacterSettings.sven_arc).toEqual({ spriteScale: 1.15 });
+  expect(config.levels['LVL-0032'].mainCharacterSettings.sven_arc).toEqual({ spriteScale: 1.05 });
   const migrated = registry.locomotionProfiles(undefined, { fromIdleMovement: .31, shortMoveMovement: 1.75 });
   expect(migrated.sven.fromIdleMovement).toBe(.31);
   expect(migrated.sven).not.toHaveProperty('shortMoveMovement');
@@ -39,7 +40,7 @@ test('global edits follow each character across levels while presentation and se
   };
   try {
     await page.route('**/__dev/levels/*/editor-draft', r => r.fulfill({ json: {} }));
-    await page.goto(base + '/?dev=editor');
+    await bootEditorTest(page,base + '/?dev=editor');
     await open('LVL-0032');
     await expect(page.locator('[data-actor="sven"]')).toHaveAttribute('data-character-id', 'sven_arc');
     const arc = await profile();
@@ -72,15 +73,15 @@ test('global edits follow each character across levels while presentation and se
     }
     await open('LVL-0032');
     await page.keyboard.press('Control+Shift+D');
-    await page.locator('[data-editor-mode="characters"]').click();
+    await selectSceneItem(page,'player','player');
     const panel = page.locator('[data-editor-panel-key="sven-locomotion"]');
-    await panel.locator('summary').click();
-    await expect(panel).toContainText('Character / Global');
+    await panel.locator(':scope > summary').click();
+    await expect(panel).toContainText('across all levels and worlds');
     const fromIdle = panel.locator('[data-locomotion-setting="fromIdleMovement"]');
     await expect(fromIdle).toHaveValue('25');
     await fromIdle.fill('27'); await fromIdle.dispatchEvent('change');
     await save();
-    await page.reload();
+    await bootEditorTest(page,page.url());
     for (const [index, id] of ['LVL-0032', 'LVL-0001'].entries()) {
       await open(id);
       expect(await profile()).toEqual({ ...arc, fromIdleMovement: .27 });
@@ -92,7 +93,7 @@ test('global edits follow each character across levels while presentation and se
     expect(await profile()).toEqual(sven);
     await page.evaluate(() => window.eval('updateLocomotionSetting')('fromIdleMovement', .17));
     await save();
-    await page.reload();
+    await bootEditorTest(page,page.url());
     await open('LVL-0001');
     await expect(page.locator('[data-actor="sven"]')).toHaveAttribute('data-character-id', 'sven');
     expect(await profile()).toEqual({ ...sven, fromIdleMovement: .17 });

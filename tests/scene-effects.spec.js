@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -6,11 +7,11 @@ const { pathToFileURL } = require("url");
 
 const root = path.join(__dirname, "..");
 require("./editor-draft-fixture").preserveEditorDrafts(test, root);
-const gameUrl = pathToFileURL(path.join(root, "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(root, "index.html")).toString();
 const editorUrl = process.env.ATLAS_EDITOR_URL || `${gameUrl}?dev=editor`;
 
 async function startFixture(page, options = {}) {
-  await page.goto(options.editor ? editorUrl : gameUrl);
+  await bootEditorTest(page,options.editor ? editorUrl : gameUrl);
   await page.evaluate(async () => {
     await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
     const level = window.eval("level");
@@ -72,7 +73,7 @@ async function startFixture(page, options = {}) {
 }
 
 async function openEffectsEditor(page) {
-  await page.goto(`${gameUrl}?dev=editor`);
+  await bootEditorTest(page,`${gameUrl}?dev=editor`);
   await page.evaluate(async () => {
     await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
     const level = window.eval("level");
@@ -82,8 +83,8 @@ async function openEffectsEditor(page) {
     window.eval("render")();
   });
   await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
-  await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
+    await page.locator('[data-workspace-action="add"]').click();
+  await expect(page.locator('[data-editor-add]')).toBeVisible();
 }
 
 async function dragCenter(page, locator, dx, dy) {
@@ -112,18 +113,12 @@ async function clickWorld(page, x, y, surface = "workspace") {
   await page.mouse.click(point.x, point.y);
 }
 
-async function addPresetEffect(page, presetId) {
-  const before = await page.evaluate(() => window.eval("(level.sceneEffects || []).length"));
-  const button = page.locator(`[data-effect-preset-card='${presetId}']`).getByRole("button", { name: "Add effect" });
-  await button.scrollIntoViewIfNeeded();
-  await button.click({ force: true });
-  const added = await page.evaluate((count) => window.eval("(level.sceneEffects || []).length") > count, before);
-  if (!added) {
-    await page.evaluate((id) => {
-      const select = document.querySelector(`[data-effect-library-variant="${CSS.escape(id)}"]`);
-      window.eval("addSceneEffect")(id, select?.value);
-    }, presetId);
-  }
+async function addPresetEffect(page,presetId) {
+ const before=await page.evaluate(()=>window.eval('(level.sceneEffects || []).length'));
+ if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
+ await page.locator(`[data-effect-preset-card='${presetId}']`).getByRole('button',{name:'Add effect',exact:true}).click();
+ const box=await page.locator('[data-world-stage]').boundingBox();await page.mouse.click(box.x+box.width*.4,box.y+box.height*.4);
+ await expect.poll(()=>page.evaluate(()=>window.eval('(level.sceneEffects || []).length'))).toBe(before+1);
 }
 
 async function setGuidesVisible(page, visible) {
@@ -140,45 +135,22 @@ async function setGuidesVisible(page, visible) {
 }
 
 async function openEffectGeometry(page) {
-  await page.getByRole("button", { name: "Edit geometry" }).click({ force: true }).catch(() => {});
-  await page.waitForTimeout(50);
-  if (await page.locator("[data-effect-geometry-workspace]").count() === 0) {
-    await page.evaluate(() => {
-      window.eval("walkPathEditor.effectGeometryMode = true");
-      window.eval("walkPathEditor.effectViewBox = { x: 0, y: 0, width: level.world.width, height: level.world.height }");
-      window.eval("walkPathEditor.selectedEffectVertex = null");
-      window.eval("walkPathEditor.effectPolygonDraft = null");
-      window.eval("render")();
-    });
-  }
-  await expect(page.locator("[data-effect-geometry-workspace]")).toBeVisible();
+  await page.getByRole('button',{name:'Edit geometry',exact:true}).click();
+  await expect(page.locator('[data-effect-geometry-workspace]')).toBeVisible();
 }
-
 async function closeEffectGeometry(page) {
-  await page.getByRole("button", { name: "Done" }).click({ force: true }).catch(() => {});
-  await page.waitForTimeout(50);
-  if (await page.locator("[data-effect-geometry-workspace]").count() > 0) {
-    await page.evaluate(() => {
-      window.eval("walkPathEditor.effectGeometryMode = false");
-      window.eval("walkPathEditor.effectDrag = null");
-      window.eval("walkPathEditor.effectPolygonDraft = null");
-      window.eval("render")();
-    });
-  }
+  await page.getByRole('button',{name:'Done',exact:true}).click();
+  await expect(page.locator('[data-effect-geometry-workspace]')).toHaveCount(0);
 }
 
-async function openEffectDetails(page, title) {
-  await page.evaluate((label) => {
-    const details = [...document.querySelectorAll("details")].find((item) =>
-      item.querySelector("summary")?.textContent?.trim() === label
-    );
-    if (details) details.open = true;
-  }, title);
+async function openEffectDetails(page,title) {
+  const details=page.locator('[data-effect-control-section="'+title.toLowerCase()+'"]');
+  if(!await details.evaluate(node=>node.open))await details.locator('summary').click();
 }
 
 test.describe("scene effects registry and runtime", () => {
   test("ships all Phase 1 preset families through the versioned registry", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const registry = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       return {
@@ -286,7 +258,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("resolves priority presets into distinct visual identities", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const signatures = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
@@ -480,7 +452,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("registers a valid sun-presence pointRadius effect with reduced-motion scaling", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const result = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
@@ -601,7 +573,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("registers Focused Fog with prominent controls, validation and reduced-motion scaling", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const result = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
@@ -785,7 +757,7 @@ test.describe("scene effects registry and runtime", () => {
 
   test("renders Focused Fog visibly under reduced motion without runtime random", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0015", { startImmediately: true });
       const api = window.AtlasSceneEffects;
@@ -849,7 +821,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("registers Twinkling Stars with polygon and rectangle geometry, safe controls and reduced-motion scaling", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const result = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
@@ -962,7 +934,7 @@ test.describe("scene effects registry and runtime", () => {
 
   test("renders Twinkling Stars visibly under reduced motion with deterministic polygon clipping", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0018", { startImmediately: true });
       const api = window.AtlasSceneEffects;
@@ -1042,7 +1014,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("registers Water Shimmer with polygon and rectangle geometry, safe controls and quality caps", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const result = await page.evaluate(() => {
       const api = window.AtlasSceneEffects;
       const level = { world: { width: 1000, height: 700 }, sceneEffects: [], sceneEffectGroups: [] };
@@ -1270,7 +1242,7 @@ test.describe("scene effects registry and runtime", () => {
 
   test("renders Water Shimmer visibly under reduced motion with deterministic polygon clipping", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
       const api = window.AtlasSceneEffects;
@@ -1353,7 +1325,7 @@ test.describe("scene effects registry and runtime", () => {
 
   test("renders Sun Presence visibly on the worldLight layer under reduced motion", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0015", { startImmediately: true });
       const api = window.AtlasSceneEffects;
@@ -1427,7 +1399,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("keeps authored effects empty while providing the challenge cue canvas", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const result = await page.evaluate(async () => {
       // LVL-0005 now has authored effects. Build the empty fixture in memory.
       const empty = await window.eval("loadLevelDefinition")(window.eval("levelCatalog").find(entry => entry.id === "LVL-0005"));
@@ -1586,14 +1558,14 @@ test.describe("scene effects registry and runtime", () => {
     expect(cleaned).toEqual({ paused: null, count: 0, canvases: 1 });
   });
 
-  test("shows the lightweight performance HUD only for editor and perf query modes", async ({ page }) => {
-    await page.goto(gameUrl);
+  test("shows the lightweight performance HUD only for explicit debug and perf modes", async ({ page }) => {
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
     });
     await expect(page.locator("[data-performance-hud]")).toHaveCount(0);
 
-    await page.goto(`${gameUrl}?perf=1`);
+    await bootEditorTest(page,`${gameUrl}?perf=1`);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
     });
@@ -1601,17 +1573,20 @@ test.describe("scene effects registry and runtime", () => {
     await expect(page.locator("[data-performance-hud]")).toContainText("FPS");
     expect(await page.locator("[data-performance-hud]").evaluate((node) => getComputedStyle(node).pointerEvents)).toBe("none");
 
-    await page.goto(`${gameUrl}?dev=editor`);
+    await bootEditorTest(page,`${gameUrl}?dev=editor`);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
     });
     await expect(page.locator("[data-performance-hud]")).toHaveCount(0);
     await page.keyboard.press("Control+Shift+D");
+    await expect(page.locator("[data-performance-hud]")).toHaveCount(0);
+    await page.locator('[data-workspace-action="tools"]').click();
+    await page.locator('[data-display-toggle="debug"]').click();
     await expect(page.locator("[data-performance-hud]")).toBeVisible();
   });
 
   test("draws active effect families immediately after sync and canvas remount", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     const results = await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
       const api = window.AtlasSceneEffects;
@@ -1700,7 +1675,7 @@ test.describe("scene effects registry and runtime", () => {
 
   test("renders every delivered preset family and skips only invalid instances", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
       const level = window.eval("level");
@@ -1741,7 +1716,7 @@ test.describe("scene effects registry and runtime", () => {
   });
 
   test("keeps an overlapping ambient animal clickable through effect canvases", async ({ page }) => {
-    await page.goto(gameUrl);
+    await bootEditorTest(page,gameUrl);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0004", { startImmediately: true });
       const level = window.eval("level");
@@ -1793,7 +1768,7 @@ test.describe("scene effects registry and runtime", () => {
 
 test.describe("scene effects editor", () => {
   test("exposes Sun Presence in the preset library and adds the default pointRadius variant", async ({ page }) => {
-    await page.goto(`${gameUrl}?dev=editor`);
+    await bootEditorTest(page,`${gameUrl}?dev=editor`);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
       const level = window.eval("level");
@@ -1803,8 +1778,8 @@ test.describe("scene effects editor", () => {
       window.eval("render")();
     });
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
-    await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
+    await page.locator('[data-workspace-action="add"]').click();
+    await expect(page.locator('[data-editor-add]')).toBeVisible();
     const sunCard = await page.locator("[data-effect-preset-card='sun-presence']").textContent();
     expect(sunCard).toContain("Sun Presence");
     expect(sunCard).toContain("Warm day sun");
@@ -2094,14 +2069,14 @@ test.describe("scene effects editor", () => {
   });
 
   test("switches mode, adds a preset, edits colors and overrides, resets, duplicates and deletes", async ({ page }) => {
-    await page.goto(`${gameUrl}?dev=editor`);
+    await bootEditorTest(page,`${gameUrl}?dev=editor`);
     await page.evaluate(async () => {
       await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
       window.eval("render")();
     });
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
-    await expect(page.locator("[data-scene-effects-editor]")).toBeVisible();
+    await page.locator('[data-workspace-action="add"]').click();
+    await expect(page.locator('[data-editor-add]')).toBeVisible();
     const pollenCard = await page.locator("[data-effect-preset-card='ambient-floating-particles']").textContent();
     expect(pollenCard).toContain("Best for:");
     expect(pollenCard).toContain("Avoid for:");
@@ -2185,7 +2160,7 @@ test.describe("scene effects editor", () => {
       await page.evaluate(() => window.eval("createSceneEffectGroup")());
     }
     const groupId = await page.evaluate(() => window.eval("level.sceneEffectGroups[0].id"));
-    await page.locator("[data-select-effect]").first().click();
+    await selectSceneItem(page,'effect',await page.evaluate(()=>window.eval('level.sceneEffects[0].id')));
     await page.locator("[data-effect-field='groupId']").selectOption(groupId);
     await page.evaluate((id) => {
       const level = window.eval("level");
@@ -2220,13 +2195,13 @@ test.describe("scene effects editor", () => {
       await page.evaluate(() => window.eval("deleteSceneEffect")());
     }
     expect(await page.evaluate(() => window.eval("level.sceneEffects.length"))).toBe(1);
-    await expect(page.getByText("Draft Status: Modified")).toBeVisible();
+    await expect(page.getByText("Changes: Modified")).toBeVisible();
   });
 
   test("edits polygon vertices and cutouts, directional handles, nudging and preview lifecycle", async ({ page }) => {
     await startFixture(page, { editor: true });
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
+    await selectSceneItem(page,'effect',await page.evaluate(()=>window.eval('walkPathEditor.selectedEffectId')));
     await openEffectGeometry(page);
     await expect(page.locator("[data-effect-geometry-workspace]")).toBeVisible();
     await expect(page.locator("[data-effect-vertex]")).toHaveCount(8);
@@ -2254,7 +2229,7 @@ test.describe("scene effects editor", () => {
     await page.mouse.up();
     expect(await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.id === 'test-water').geometry.width"))).toBeGreaterThan(ellipseWidth);
     await closeEffectGeometry(page);
-    await page.getByRole("button", { name: "Test brazier" }).click({ force: true }).catch(() => {});
+    await selectSceneItem(page,'effect','test-brazier');
     await page.evaluate(() => {
       window.eval("walkPathEditor.selectedEffectId = 'test-brazier'");
       window.eval("walkPathEditor.effectEditScope = 'source'");
@@ -2271,7 +2246,7 @@ test.describe("scene effects editor", () => {
     await page.mouse.up();
     expect(await page.evaluate(() => window.eval("level.sceneEffects.find((effect) => effect.id === 'test-brazier').geometry.radius"))).toBeGreaterThan(radiusBefore);
     await closeEffectGeometry(page);
-    await page.getByRole("button", { name: "Test chimney smoke" }).click({ force: true }).catch(() => {});
+    await selectSceneItem(page,'effect','test-smoke');
     await page.evaluate(() => {
       window.eval("walkPathEditor.selectedEffectId = 'test-smoke'");
       window.eval("walkPathEditor.effectEditScope = 'source'");
@@ -2331,6 +2306,7 @@ test.describe("scene effects editor", () => {
     test.slow();
     await openEffectsEditor(page);
 
+    if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
     await page.locator("[data-effect-preset-card='light-source-enhancement'] [data-effect-library-variant]").selectOption("wall-torch");
     await addPresetEffect(page, "light-source-enhancement");
     await page.evaluate(() => {
@@ -2408,6 +2384,7 @@ test.describe("scene effects editor", () => {
     expect(await page.evaluate(() => window.eval("level.sceneEffects[1].mask.includes.length"))).toBe(1);
     await closeEffectGeometry(page);
 
+    if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
     await page.locator("[data-effect-preset-card='sparks-and-embers'] [data-effect-library-variant]").selectOption("rising-sparks");
     await addPresetEffect(page, "sparks-and-embers");
     await page.locator("[data-effect-field='geometryType']").selectOption("directionalEmitter");
@@ -2420,6 +2397,7 @@ test.describe("scene effects editor", () => {
     expect(await page.evaluate(() => window.eval("level.sceneEffects[2].geometry.width"))).not.toBe(widthBefore);
     await closeEffectGeometry(page);
 
+    if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
     await page.locator("[data-effect-preset-card='bubbles-and-spray'] [data-effect-library-variant]").selectOption("rising-bubbles");
     await addPresetEffect(page, "bubbles-and-spray");
     await openEffectGeometry(page);
@@ -2502,7 +2480,7 @@ test.describe("scene effects editor", () => {
     const originalDraft = fs.existsSync(draftPath) ? fs.readFileSync(draftPath, "utf8") : null;
     try {
       if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
-      await page.goto(editorUrl);
+      await bootEditorTest(page,editorUrl);
       await page.evaluate(async () => {
         await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
         window.eval("level.sceneEffects = []");
@@ -2511,7 +2489,7 @@ test.describe("scene effects editor", () => {
         window.eval("render")();
       });
       await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
+    await page.locator('[data-workspace-action="add"]').click();
       await addPresetEffect(page, "light-source-enhancement");
       await page.locator("[data-effect-color='primaryColor']").fill("#CC7733");
       await page.locator("[data-effect-override='intensity']").fill("0.83");

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "svenadventure-static-";
-const CACHE_NAME = "svenadventure-static-v270-m6-expansion";
+const CACHE_NAME = "svenadventure-static-v276-revert-scopes";
 const CORE_ASSETS = [
   "src/geometry-diagram.js", "src/content/m6/expansion-20261010.js",
   "src/content/m6/expansion/number-sense.js",
@@ -91,6 +91,7 @@ const CORE_ASSETS = [
   "src/locomotion.js",
   "src/playable-characters.js",
   "src/gameplay-cadence.js",
+  "src/editor-workspace.js",
   "src/app.js",
   "src/audio-config.js",
   "Levels/manifest.js",

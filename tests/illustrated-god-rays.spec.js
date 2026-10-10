@@ -1,10 +1,11 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const path=require('path');
 require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,'..'));
 const base=(process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173').split('?')[0].replace(/\/$/,'');
 async function scene(page,id='LVL-0001',editor=false){
   await page.route('**/__dev/levels/*/editor-draft',route=>route.fulfill({json:{}}));
-  await page.goto(base+(editor?'/?dev=editor':'/'));
+  await bootEditorTest(page,base+(editor?'/?dev=editor':'/'));
   await page.evaluate(async id=>{
     await window.eval('selectLevel')(id,{startImmediately:true,recordStart:false});
     window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});
@@ -13,7 +14,7 @@ async function scene(page,id='LVL-0001',editor=false){
 }
 async function openEditor(page){
   await page.keyboard.press('Control+Shift+D');
-  await page.locator('[data-editor-mode="graphics"]').click();
+  await page.locator('[data-workspace-action="add"]').click();
 }
 async function pixels(page){
   return page.evaluate(()=>{
@@ -64,6 +65,7 @@ test('classic God Rays use generic add, drag, radius, Apply, reload, reselect an
   await expect(card).toContainText('God Rays (Sun Presence)');
   await card.locator('select').selectOption('golden-hour-sun');
   await card.getByRole('button',{name:'Add effect',exact:true}).click();
+  const box=await page.locator('[data-world-stage]').boundingBox();await page.mouse.click(box.x+box.width*.4,box.y+box.height*.4);
   const original=await page.evaluate(()=>window.eval('selectedSceneEffect')());
   expect(original).toMatchObject({presetId:'sun-presence',variantId:'golden-hour-sun',geometry:{type:'pointRadius'}});
   await expect(page.locator('[data-effect-property-panel]')).toBeVisible();
@@ -86,7 +88,7 @@ test('classic God Rays use generic add, drag, radius, Apply, reload, reselect an
   await page.screenshot({path:info.outputPath('classic-runtime.png')});
   await scene(page,'LVL-0032',true);
   await openEditor(page);
-  await page.locator(`[data-select-effect="${saved.id}"]`).click();
+  await page.getByRole('button',{name:'Close Add',exact:true}).click();await selectSceneItem(page,'effect',saved.id);
   await dragSource(page);
   expect(await page.evaluate(()=>window.eval('selectedSceneEffect')().geometry)).not.toEqual(saved.geometry);
   await page.locator('[data-debug-action="delete-effect"]').click();

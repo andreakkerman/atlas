@@ -1,3 +1,4 @@
+const {selectSceneItem,selectSystem,addCinematic,bootEditorTest}=require('./editor-workspace-helpers');
 const { test, expect } = require("@playwright/test");
 const path = require("path");
 const { pathToFileURL } = require("url");
@@ -6,7 +7,7 @@ const contract = require("../src/cinematic-settings");
 const runtimeUrl = process.env.ATLAS_EDITOR_URL || `${pathToFileURL(path.join(__dirname, "..", "index.html"))}?dev=editor`;
 async function scene(page, id = "LVL-0001") {
   await page.route("**/__dev/levels/*/editor-draft", route => route.fulfill({ json: {} }));
-  await page.goto(runtimeUrl);
+  await bootEditorTest(page,runtimeUrl);
   await page.evaluate(async id => { await window.eval("selectLevel")(id, { startImmediately: true, recordStart: false }); }, id);
   await expect(page.locator('[data-actor="sven"]')).toBeVisible();
 }
@@ -23,12 +24,8 @@ function differenceBounds(a,b,threshold=12){a=decodePNG(a);b=decodePNG(b);let mi
 function bluePixels(buffer){const image=decodePNG(buffer);let count=0;for(let i=0;i<image.data.length;i+=image.channels)if(image.data[i+2]>image.data[i]+45&&image.data[i+2]>image.data[i+1]+18)count++;return count;}
 function bluePixelsIn(buffer,box){const image=decodePNG(buffer);let count=0;for(let y=Math.max(0,Math.floor(box.y));y<Math.min(image.height,Math.ceil(box.y+box.height));y++)for(let x=Math.max(0,Math.floor(box.x));x<Math.min(image.width,Math.ceil(box.x+box.width));x++){const at=(y*image.width+x)*image.channels;if(image.data[at+2]>image.data[at]+45&&image.data[at+2]>image.data[at+1]+18)count++;}return count;}
 async function nextFrames(page, count=3) { const frame=await page.evaluate(()=>window.eval("cinematicRenderer").snapshot().frame); await expect.poll(()=>page.evaluate(()=>window.eval("cinematicRenderer").snapshot().frame)).toBeGreaterThan(frame+count); }
-async function openEditor(page) { await page.keyboard.press("Control+Shift+D"); await page.locator('[data-editor-mode="graphics"]').click(); await expect(page.locator("[data-cinematic-editor]")).toBeVisible(); }
-async function pane(page,key) {
-  await page.locator(`[data-cinematic-layer="${contract.systems[key].layer}"]`).click();
-  const group=page.locator(`[data-cinematic-group="${key}"]`);
-  if(!await group.evaluate(el=>el.open))await group.locator(':scope > summary').click();
-}
+async function openEditor(page) { await page.keyboard.press("Control+Shift+D"); await selectSystem(page,'depth'); await expect(page.locator("[data-cinematic-editor]")).toBeVisible(); }
+async function pane(page,key) {await selectSystem(page,key);}
 async function mode(page, renderer) {
   await page.evaluate(renderer => { window.eval("voxelRenderer").updateSettings({ renderer }); window.eval("render")(); }, renderer);
 }
@@ -237,17 +234,18 @@ test("GPU default Cinematic settings draw character shadows without enabling rel
   expect(result.settings).toMatchObject({enabled:false,groundingShadow:true,shadowStrength:5,shadowLocalLightInfluence:2});
   expect(result.snapshot.shadowDraws).toBeGreaterThan(0);expect(result.snapshot.groundedSprites).toBeGreaterThan(0);expect(result.snapshot.error).toBeNull();expect(log).toEqual([]);
 });
-test("Cinematic Characters groups Grounding Shadow controls and conditionally shows Silhouette without remount",async({page})=>{
+test("Environment exposes complete character lighting controls inline without remount",async({page})=>{
   await scene(page);await mode(page,'cinematic');await openEditor(page);await pane(page,'characters');const root=page.locator('[data-cinematic-group="characters"]');
-  await root.evaluate(el=>el.dataset.qaIdentity='stable');
+  await root.evaluate(el=>window.__shadowInspectorNode=el);
   for(const key of ['groundingShadow','showShadowContactDebug','shadowLightSourceX','shadowLightSourceY','shadowShape','shadowGroundlineOffset','shadowStrength','shadowOpacity','shadowSoftness','shadowWidth','shadowLength','shadowScale','shadowOffsetX','shadowOffsetY','shadowDirection','shadowGlobalLightInfluence','shadowLocalLightInfluence','shadowDirectionSmoothing','shadowDarkBackgroundSuppression','shadowAtmosphereSuppression'])await expect(root.locator(`[data-cinematic-section="characters"][data-cinematic-setting="${key}"]`)).toHaveCount(1);
   await expect(root.locator('[data-cinematic-setting="shadowStrength"]')).toHaveAttribute('max','10');await expect(root.locator('[data-cinematic-setting="shadowLocalLightInfluence"]')).toHaveAttribute('max','5');
-  const shadow=root.locator('[data-cinematic-subsection="grounding-shadow"]'),relighting=root.locator('[data-cinematic-subsection="character-relighting"]');await expect(shadow.locator('summary')).toHaveText('Grounding Shadow');await expect(relighting.locator('summary')).toHaveText('Character Relighting');
-  await expect(shadow).toContainText('General');await expect(shadow).toContainText('Grounding');await expect(shadow).toContainText('Direction / Lighting');await expect(shadow).toContainText('Appearance');await expect(shadow).toContainText('Shadow Light Source');await expect(shadow).toContainText('Groundline / Sole Offset');await expect(shadow).toContainText('Direction Bias');await expect(shadow).toContainText('Global Light Influence');await expect(shadow).toContainText('Local Light Influence');await expect(shadow).toContainText('Direction Smoothing');await expect(shadow).toContainText('Receiver Darkness Matching');await expect(shadow).toContainText('Atmosphere Suppression');await relighting.locator('summary').click();
+  const more=root.locator('[data-editor-panel-key="environment-more-characters"]');
+  await expect(more).toHaveJSProperty('open',true);
+  for(const label of ['Shadow Light Source','Groundline / Sole Offset','Direction Bias','Global Light Influence','Local Light Influence','Direction Smoothing','Receiver Darkness Matching','Atmosphere Suppression'])await expect(more).toContainText(label);
   const placement=await page.evaluate(()=>{const state=window.eval('state');return {x:state.worldX,y:120,actor:{x:state.worldX,y:state.worldY}};});await root.locator('[data-cinematic-setting="shadowLightSourceX"]').fill(String(placement.x));await root.locator('[data-cinematic-setting="shadowLightSourceY"]').fill(String(placement.y));await expect(page.locator('[data-cinematic-handle="shadow-source"]')).toHaveCount(1);
   await root.locator('[data-cinematic-setting="shadowShape"]').selectOption('silhouette');await root.locator('[data-cinematic-setting="shadowScale"]').fill('1.4');await root.locator('[data-cinematic-setting="shadowShape"]').selectOption('wideSoft');await root.locator('[data-cinematic-setting="shadowStrength"]').fill('5');await root.locator('[data-cinematic-setting="shadowOpacity"]').fill('63');await root.locator('[data-cinematic-setting="shadowOffsetX"]').fill('24');await root.locator('[data-cinematic-setting="shadowOffsetY"]').fill('-9');
   const persisted=await page.evaluate(()=>({characters:window.eval('worldResolver').levelSettings('LVL-0001').cinematicLighting.characters,actor:{x:window.eval('state').worldX,y:window.eval('state').worldY}}));expect(persisted.characters).toMatchObject({shadowShape:'wideSoft',shadowStrength:5,shadowOpacity:63,shadowLightSourceX:placement.x,shadowLightSourceY:placement.y,shadowOffsetX:24,shadowOffsetY:-9,shadowScale:1.4});expect(persisted.actor).toEqual(placement.actor);
-  await expect(root).toHaveAttribute('data-qa-identity','stable');await expect(root).toHaveJSProperty('open',true);await expect(shadow).toHaveJSProperty('open',true);await expect(relighting).toHaveJSProperty('open',false);
+  expect(await root.evaluate(el=>el===window.__shadowInspectorNode)).toBe(true);await expect(root).toHaveJSProperty('open',true);await expect(more).toHaveJSProperty('open',true);
 });
 
 test("Graphics editor separates shared artwork appearance from Illustrated-only glow",async({page})=>{
@@ -355,16 +353,16 @@ test("legacy suppression is selective and Illustrated data stays untouched",asyn
 test("editor controls retain DOM identity, focus, selection, scroll; reset and revert",async({page})=>{
   await scene(page);await openEditor(page);const root=page.locator('[data-cinematic-editor]');
   await pane(page,'localLights');
-  await root.locator('[data-cinematic-action="add"][data-section="localLights"]').click();
+  await addCinematic(page,'localLights');
   const input=root.locator('[data-cinematic-section="localLights"][data-cinematic-setting="intensity"]');
   await input.scrollIntoViewIfNeeded();await input.focus();
-  const prior=await input.evaluate(el=>{window.cinematicIdentity={input:el,root:el.closest('[data-developer-tools]'),scroll:el.closest('[data-developer-tools]').scrollTop};return {scroll:window.cinematicIdentity.scroll,selected:document.querySelector('[data-cinematic-select="localLights"]').value};});
+  const prior=await input.evaluate(el=>{window.cinematicIdentity={input:el,root:el.closest('[data-developer-tools]'),scroll:el.closest('[data-developer-tools]').scrollTop};return {scroll:window.cinematicIdentity.scroll,selected:window.eval('editorWorkspace.selection.id')};});
   await input.fill("1.21");
   expect(await input.evaluate(el=>({same:el===window.cinematicIdentity.input,panel:el.closest('[data-developer-tools]')===window.cinematicIdentity.root,focus:document.activeElement===el,scroll:el.closest('[data-developer-tools]').scrollTop}))).toEqual({same:true,panel:true,focus:true,scroll:prior.scroll});
-  await expect(root.locator('[data-cinematic-select="localLights"]')).toHaveValue(prior.selected);
-  await expect(page.locator('[data-developer-tools]')).toHaveAttribute('data-current-editor-mode','graphics');
+  expect(await page.evaluate(()=>window.eval('editorWorkspace.selection.id'))).toBe(prior.selected);
+  await expect(page.locator('[data-developer-tools]')).toHaveAttribute('data-editor-view',/:cinematic:/);
   await pane(page,'atmosphere');
-  await root.locator('[data-cinematic-action="add"][data-section="atmosphere"]').click();
+  await addCinematic(page,'atmosphere');
   await root.locator('[data-cinematic-section="atmosphere"][data-cinematic-setting="density"]').fill('0.42');
   const animalsBeforeReset=await page.evaluate(()=>JSON.stringify(window.eval('level').ambientAnimals));
   await pane(page,'localLights');
@@ -372,8 +370,8 @@ test("editor controls retain DOM identity, focus, selection, scroll; reset and r
   await expect(root.locator('[data-cinematic-system="localLights"]')).not.toBeChecked();
   expect(await page.evaluate(()=>JSON.stringify(window.eval('level').ambientAnimals))).toBe(animalsBeforeReset);
   const reset=await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0001').cinematicLighting);expect(reset.localLights).toEqual({enabled:false,items:[]});expect(reset.atmosphere.items.at(-1).density).toBe(0.42);
-  await page.locator('[data-debug-action="revert-walkpath"]').click();
-  await expect(page.locator('[data-editor-draft-status]')).toHaveText('Draft Status: Reverted');
+  await page.locator('[data-workspace-action="changes"]').click();await page.locator('[data-debug-action="revert-walkpath"]').click();await page.getByRole('button',{name:'Close',exact:true}).click();
+  await expect(page.locator('[data-editor-draft-status]')).toHaveText('Changes: Reverted');
   expect(await page.evaluate(()=>window.AtlasCinematicSettings.normalize(window.eval('worldResolver').levelSettings('LVL-0001').cinematicLighting).localLights.items.some(i=>i.id==='rune-spill'))).toBe(true);
 });
 
@@ -384,10 +382,10 @@ test("Apply persists local lights and atmosphere per level over HTTP",async({pag
     await scene(page);await openEditor(page);const root=page.locator('[data-cinematic-editor]');
     await pane(page,'localLights');await root.locator('[data-cinematic-section="localLights"][data-cinematic-setting="intensity"]').fill('1.37');
     await pane(page,'atmosphere');await root.locator('[data-cinematic-section="atmosphere"][data-cinematic-setting="density"]').fill('0.37');
-    await root.locator('[data-cinematic-layer-enabled]').uncheck();
+    await selectSceneItem(page,'environment','environment');await page.locator('[data-environment-participation-panel] > summary').click();await page.locator('[data-environment-layer="environment"]').uncheck();
     await pane(page,'depth');await root.locator('[data-cinematic-section="depth"][data-cinematic-setting="filterRadius"]').fill('2.25');
     await page.locator('[data-debug-action="apply-walkpath"]').click();await expect.poll(()=>page.evaluate(()=>window.eval('walkPathEditor').status)).toBe('Applied');
-    await page.reload();const persisted=await page.evaluate(()=>window.SVEN_WORLD_CONFIG.levels['LVL-0001'].cinematicLighting);expect(persisted.localLights.items[0].intensity).toBe(1.37);expect(persisted.atmosphere.items[0].density).toBe(0.37);
+    await page.reload();await page.getByRole('button',{name:'Start avontuur',exact:true}).click();await page.locator('.menuScreen').waitFor();const persisted=await page.evaluate(()=>window.SVEN_WORLD_CONFIG.levels['LVL-0001'].cinematicLighting);expect(persisted.localLights.items[0].intensity).toBe(1.37);expect(persisted.atmosphere.items[0].density).toBe(0.37);
     expect(persisted.layers.environment).toBe(false);expect(persisted.depth.filterRadius).toBe(2.25);expect(persisted.localLights.items[0].layer).toBe('effects');expect(persisted.localLights.items[0].name).toBeTruthy();
     expect(await page.evaluate(()=>window.SVEN_WORLD_CONFIG.levels['LVL-0002'].cinematicLighting.localLights.items[0].id)).toBe('left-brazier');
   }finally{fs.writeFileSync(configPath,original);}
@@ -587,9 +585,9 @@ test("GPU presentation survives gameplay DOM rebuilds and walking reversals",asy
   expect(result.configurations).toBe(0);expect(log).toEqual([]);
 });
 
-test("layer controls, scoped guides, duplicate, delete and touch help preserve authoring state",async({page},info)=>{
+test("layer controls, unified discovery, duplicate, delete and help preserve authoring state",async({page},info)=>{
   await scene(page);await openEditor(page);const root=page.locator('[data-cinematic-editor]');
-  await expect(root.locator('[data-cinematic-layer="environment"]')).toHaveAttribute('aria-selected','true');
+  await expect(root.locator('[data-cinematic-group="depth"]')).toBeVisible();
   await expect(root.locator('[data-cinematic-guides]')).toHaveValue('selected');
   await expect(root.locator('[data-cinematic-group="localLights"]')).toBeHidden();
   await pane(page,'localLights');
@@ -599,7 +597,7 @@ test("layer controls, scoped guides, duplicate, delete and touch help preserve a
   const duplicate=await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0001').cinematicLighting.localLights.items.at(-1));
   expect(duplicate).toMatchObject({...initial.localLights.items[0],enabled:false,id:expect.any(String),name:expect.any(String),x:initial.localLights.items[0].x+24,y:initial.localLights.items[0].y+18});
   expect(duplicate.id).not.toBe(initial.localLights.items[0].id);expect(duplicate.name).not.toBe(initial.localLights.items[0].name);
-  await expect(root.locator('[data-cinematic-select="localLights"]')).toHaveValue(duplicate.id);
+  await expect(root.locator('[data-cinematic-selected]')).toHaveAttribute('data-cinematic-selected',duplicate.id);
   await root.locator('[data-cinematic-action="remove"][data-section="localLights"]').click();
   expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0001').cinematicLighting.localLights.items.length)).toBe(initial.localLights.items.length);
   await root.locator('[data-cinematic-layer-enabled]').uncheck();
@@ -610,20 +608,21 @@ test("layer controls, scoped guides, duplicate, delete and touch help preserve a
   await page.screenshot({path:info.outputPath('layer-editor-help.png')});
   expect(await root.locator('[data-cinematic-help]').evaluateAll(nodes=>nodes.every(n=>n.title&&!n.title.includes('undefined')))).toBe(true);
   const intensity=root.locator('[data-cinematic-section="localLights"][data-cinematic-setting="intensity"]');await intensity.focus();
-  await page.evaluate(()=>window.eval('render')());await expect(root.locator('[data-cinematic-layer="effects"]')).toHaveAttribute('aria-selected','true');await expect(intensity).toBeFocused();
+  await page.evaluate(()=>window.eval('render')());await expect(root.locator('[data-cinematic-group="localLights"]')).toBeVisible();await expect(intensity).toBeFocused();
   if(process.env.ATLAS_WEBGPU_QA&&info.project.name==='desktop-chromium'){
     await mode(page,'cinematic');await ready(page);
-    await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(initial.localLights.items.length);
+    const markerCount=Object.entries(contract.systems).filter(([,def])=>def.type).reduce((sum,[key])=>sum+initial[key].items.length,0);
+    await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(markerCount);
     await expect(page.locator('[data-cinematic-detail]')).toHaveCount(1);
-    expect(await page.locator('[data-cinematic-handle]').evaluateAll(nodes=>nodes.every(n=>n.dataset.section==='localLights'))).toBe(true);
-    await root.locator('[data-cinematic-guides]').selectOption('all');await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(initial.localLights.items.length);
-    await pane(page,'atmosphere');expect(await page.locator('[data-cinematic-handle]').evaluateAll(nodes=>nodes.every(n=>['atmosphere','particles'].includes(n.dataset.section)))).toBe(true);
-    await page.locator('[data-cinematic-handle="move"][data-section="particles"]').click();
+    await expect(page.locator('.cinematicGuide.selected [data-cinematic-handle="move"]')).toHaveAttribute('data-section','localLights');
+    await root.locator('[data-cinematic-guides]').selectOption('all');await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(markerCount);
+    await pane(page,'atmosphere');await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(markerCount);
+    await page.locator('[data-cinematic-handle="move"][data-section="particles"]').first().click();
     await root.locator('[data-cinematic-guides]').selectOption('selected');
-    await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(initial.atmosphere.items.length+initial.particles.items.filter(i=>i.layer==='environment').length);
+    await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(markerCount);
     await expect(page.locator('[data-cinematic-detail]')).toHaveCount(1);await expect(page.locator('.cinematicGuide.selected [data-cinematic-handle="move"]')).toHaveAttribute('data-section','particles');
-    await root.locator('[data-cinematic-layer="characters"]').click();await expect(page.locator('[data-cinematic-handle]')).toHaveCount(0);
-    await root.locator('[data-cinematic-guides]').selectOption('hidden');await pane(page,'localLights');await expect(page.locator('[data-cinematic-handle]')).toHaveCount(0);
+    await pane(page,'characters');await expect(page.locator('[data-cinematic-group="characters"]')).toBeVisible();
+    await root.locator('[data-environment-participation-panel] > summary').click();await root.locator('[data-cinematic-guides]').selectOption('hidden');await pane(page,'localLights');await expect(page.locator('[data-cinematic-handle]')).toHaveCount(0);
   }
 });
 
@@ -722,7 +721,7 @@ test('GPU God Rays authoring retains all active-layer markers and accurate influ
   await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(count+1);
   await root.locator('[data-cinematic-action="remove"][data-section="godRays"]').click();
   await expect(page.locator('[data-cinematic-handle="move"]')).toHaveCount(count);
-  await pane(page,'localLights');await root.locator('[data-cinematic-select="localLights"]').selectOption('rune-spill');
+  await pane(page,'localLights');await selectSceneItem(page,'cinematic','rune-spill');
   const ellipse=page.locator('.cinematicGuide.selected ellipse');await expect(ellipse).toHaveAttribute('rx',String(before.localLights.items[0].radius*before.localLights.items[0].aspect));await expect(ellipse).toHaveAttribute('ry',String(before.localLights.items[0].radius));
   expect(await root.locator('[data-cinematic-help]').evaluateAll(nodes=>nodes.every(n=>n.title&&!n.title.includes('undefined')))).toBe(true);expect(log).toEqual([]);
 });

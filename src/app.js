@@ -87,6 +87,7 @@ function toggleDisplayControl(kind) {
   }
   updateDisplayControls();
   syncFpsDisplay();
+  syncPerformanceHud();
 }
 const LOCAL_ATLAS_CACHE_PREFIX = "svenadventure-";
 const VIKING_LEVEL_IDS = new Set(["LVL-0001", "LVL-0002", "LVL-0003"]);
@@ -145,6 +146,7 @@ const menuAdventureStats = {
 };
 
 let audioConfig = cloneAudioConfig(window.SVEN_AUDIO_CONFIG || {});
+let savedAudioConfig = cloneAudioConfig(audioConfig);
 const originalAudioTracks = cloneAudioConfig(window.SVEN_AUDIO_CONFIG?.tracks || {});
 const audioState = {
   unlocked: false,
@@ -189,7 +191,8 @@ const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
 const npcEditorReadyImages = new Map();
 const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
   canDebug: () => EDITOR_DEV_MODE,
-  isEditing: () => debugOverlayEnabled && walkPathEditor.enabled,
+  getPresentationScale: () => desktopEditorActive() && !editorWorkspace.playtest ? (document.querySelector("[data-world-stage]")?.getBoundingClientRect().height || innerHeight) / innerHeight : 1,
+  isEditing: () => debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest,
   onPreviewChange: () => updateFlybyPreviewButtons(),
   getLevel: () => level,
   getScreen: () => state.screen,
@@ -366,9 +369,18 @@ const threeRenderer = window.AtlasThreeRenderer.createRuntime({
   }
 });
 const cinematicEditor = window.AtlasCinematicEditor.createEditor({
+  isEditing: () => desktopEditorActive() && !editorWorkspace.playtest,
+  getIllustratedFeatures: () => illustratedFeatures(),
+  isSelected: (system,id) => editorWorkspace.selection.kind==='cinematic' && editorWorkspace.selection.system===system && (editorWorkspace.selection.id===id || editorWorkspace.selection.id===system),
+  onSelect: (system, id, options = {}) => {
+    editorWorkspace.selection = {kind:'cinematic', id, system};
+    editorWorkspace.addOpen = false;
+    if (!editorWorkspace.focus) editorWorkspace.inspectorOpen = true;
+    if (!options.dragging) render();
+  },
   getLevel: () => level,
   getSettings: () => worldResolver.levelSettings(level?.id).cinematicLighting,
-  getRenderer: () => voxelRenderer.getSettings().renderer,
+  getRenderer: () => editorPreviewRenderer(),
   getCameraX: () => getCameraX(),
   getViewportWorldWidth: () => state.viewportWorldWidth,
   setSettings: (settings) => {
@@ -403,7 +415,6 @@ let walkPathEditor = {
   modified: false,
   message: "",
   busy: false,
-  panelCollapsed: false,
   audioDirty: false
 };
 let worldEditor = {
@@ -412,6 +423,7 @@ let worldEditor = {
   selectedWorldId: visibleLevelCatalog()[0]?.id || null,
   selectedLevelId: null,
   dirty: false,
+  persistedConfig: JSON.parse(JSON.stringify(worldResolver.getConfig())),
   busy: false,
   message: ""
 };
@@ -903,7 +915,7 @@ function persistedLevelEditorPayload() {
   const currentSceneEffects = cloneSceneEffects(level.sceneEffects || []);
   const currentSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
   const currentAudioConfig = persistedAudioConfig();
-  const originalAudioConfig = persistedAudioConfigFrom(walkPathEditor?.originalAudioConfig || {});
+  const originalAudioConfig = persistedAudioConfigFrom(savedAudioConfig);
 
   if (!editorValuesEqual(currentWalkPath, walkPathEditor?.originalWalkPath || [])) payload.walkPath = currentWalkPath;
   if (!editorValuesEqual(currentInteractiveObjects, walkPathEditor?.originalInteractiveObjects || [])) payload.interactiveObjects = currentInteractiveObjects;
@@ -917,7 +929,7 @@ function persistedLevelEditorPayload() {
     payload.sceneEffects = currentSceneEffects;
     payload.sceneEffectGroups = currentSceneEffectGroups;
   }
-  if (walkPathEditor?.audioDirty && !editorValuesEqual(currentAudioConfig, originalAudioConfig)) payload.audioConfig = currentAudioConfig;
+  if (!editorValuesEqual(currentAudioConfig, originalAudioConfig)) payload.audioConfig = currentAudioConfig;
   return payload;
 }
 
@@ -1025,7 +1037,6 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     originalAmbientFlybys: cloneAmbientFlybys(selectedLevel.ambientFlybys || []),
     originalSceneEffects: cloneSceneEffects(selectedLevel.sceneEffects || []),
     originalSceneEffectGroups: cloneSceneEffectGroups(selectedLevel.sceneEffectGroups || []),
-    originalAudioConfig: cloneAudioConfig(audioConfig),
     originalEmissiveGlow: cloneOptionalConfig(worldResolver.levelSettings(selectedLevel.id).emissiveGlow),
     emissiveGlowDirty: false,
     worldDirtyBeforeEmissiveGlow: false,
@@ -1069,7 +1080,6 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     modified: false,
     message: EDITOR_DEV_MODE ? "Gebruik Ctrl + Shift + D om levelpunten, objecten of audio te bewerken." : "",
     busy: false,
-    panelCollapsed: false,
     audioDirty: false
   };
 
@@ -1082,6 +1092,7 @@ async function prepareWalkPathEditorForLevel(selectedLevel) {
     if (!worldEditor.dirty) {
       const config = await requestEditorApi("/__dev/world-config");
       worldResolver.setConfig(config);
+      worldEditor.persistedConfig = JSON.parse(JSON.stringify(worldResolver.getConfig()));
       window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
       normalizeLevel(selectedLevel);
       walkPathEditor.originalEmissiveGlow = cloneOptionalConfig(worldResolver.levelSettings(selectedLevel.id).emissiveGlow);
@@ -1194,9 +1205,12 @@ async function prepareWorldEditor() {
   render();
   try {
     await requestEditorApi("/__dev/status");
-    const config = await requestEditorApi("/__dev/world-config");
-    worldResolver.setConfig(config);
-    window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+    if (!worldEditor.dirty) {
+      const config = await requestEditorApi("/__dev/world-config");
+      worldResolver.setConfig(config);
+      worldEditor.persistedConfig = JSON.parse(JSON.stringify(worldResolver.getConfig()));
+      window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
+    }
     // The world inspector also edits levels that have not been played yet.
     await Promise.all(levelCatalog.map(entry => loadLevelDefinition(entry)));
     worldEditor.apiAvailable = true;
@@ -1213,9 +1227,17 @@ async function prepareWorldEditor() {
 
 function markWorldConfigDirty(message = "Niet-opgeslagen wijzigingen.") {
   window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
-  worldEditor.dirty = true;
+  worldEditor.dirty = !editorValuesEqual(worldResolver.getConfig(), worldEditor.persistedConfig);
   worldEditor.message = message;
+  const status=document.querySelector('[data-editor-draft-status]');
+  if(status)status.textContent=`Changes: ${editorSaveStatus()}`;
   invalidateMenuAdventureStats();
+}
+
+function editorSaveStatus() {
+  if (walkPathEditor.status === "Error") return "Error";
+  if (worldEditor.dirty || (level && walkPathEditor.enabled && Object.keys(persistedLevelEditorPayload()).length)) return "Modified";
+  return walkPathEditor.status;
 }
 
 async function saveWorldConfig() {
@@ -1226,6 +1248,7 @@ async function saveWorldConfig() {
   try {
     const payload = await persistWorldConfigRequest();
     worldResolver.setConfig(payload.config);
+    worldEditor.persistedConfig = JSON.parse(JSON.stringify(worldResolver.getConfig()));
     window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
     worldEditor.dirty = false;
     worldEditor.message = "Wereldconfiguratie opgeslagen.";
@@ -1260,6 +1283,7 @@ function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
     throw new Error("De editorserver heeft Emissive Glow niet opgeslagen. Herstart npm run dev:editor en klik opnieuw op Apply.");
   }
   worldResolver.setConfig(payload.config);
+  worldEditor.persistedConfig = JSON.parse(JSON.stringify(worldResolver.getConfig()));
   window.SVEN_WORLD_CONFIG = worldResolver.getConfig();
   cinematicOriginals.delete(level?.id);
   illustratedOriginals.delete(level?.id);
@@ -1319,7 +1343,7 @@ function updateEmissiveGlowSetting(levelId, key, value) {
     markWorldConfigDirty(`${levelId}: Emissive Glow ${key} aangepast.`);
     markEditorModified(`Emissive Glow: ${key} aangepast.`);
   } else {
-    worldEditor.dirty = walkPathEditor.worldDirtyBeforeEmissiveGlow;
+    worldEditor.dirty = !editorValuesEqual(worldResolver.getConfig(), worldEditor.persistedConfig);
     if (!Object.keys(persistedLevelEditorPayload()).length) {
       walkPathEditor.status = "Clean";
       walkPathEditor.modified = false;
@@ -1330,16 +1354,16 @@ function updateEmissiveGlowSetting(levelId, key, value) {
   return next;
 }
 
-function updateLocomotionSetting(key, value, levelId = level?.id || worldEditor.selectedLevelId) {
+function updateLocomotionSetting(key, value, levelId = level?.id || worldEditor.selectedLevelId, profileId) {
   const range = window.AtlasPlayableCharacters.locomotionRanges[key];
   if (!range) return;
-  const current = locomotionTuning(levelId);
+  const characterId = profileId || mainCharacterId(null, levelId);
+  const current = worldResolver.locomotionSettings(characterId);
   let nextValue = clamp(Number.isFinite(Number(value)) ? Number(value) : current[key], range[0], range[1]);
   if (key === "arrivalDynamicSpeedMin") nextValue = Math.min(nextValue, current.arrivalDynamicSpeedMax);
   if (key === "arrivalDynamicSpeedMax") nextValue = Math.max(nextValue, current.arrivalDynamicSpeedMin);
   if (key === "blinkMinimumInterval") nextValue = Math.min(nextValue, current.blinkMaximumInterval);
   if (key === "blinkMaximumInterval") nextValue = Math.max(nextValue, current.blinkMinimumInterval);
-  const characterId = mainCharacterId(null, levelId);
   worldResolver.updateLocomotionSettings({ [key]: nextValue }, characterId);
   markWorldConfigDirty(`Player locomotion (${characterId}, global): ${key} aangepast.`);
   return nextValue;
@@ -2427,6 +2451,7 @@ function isInArea(id) {
 }
 
 function refreshViewportMetrics() {
+  if (desktopEditorActive() && !editorWorkspace.playtest && !window.AtlasGraphicsModes.isThree(editorPreviewRenderer())) { layoutEditorWorkspace(); return; }
   const viewport = document.querySelector(".stageViewport");
   if (!viewport) return;
 
@@ -2443,6 +2468,7 @@ function refreshViewportMetrics() {
 }
 
 function syncCamera() {
+  if (desktopEditorActive() && !editorWorkspace.playtest && editorWorkspace.camera && !window.AtlasGraphicsModes.isThree(editorPreviewRenderer())) return;
   state.cameraX = getDesiredCameraX();
 }
 
@@ -2487,6 +2513,7 @@ function updateWorldDom() {
   if (areaName) {
     areaName.textContent = getAreaName();
   }
+  if(desktopEditorActive())ambientFlybyRuntime.refreshPreviews();
   voxelRenderer.invalidate();
 }
 
@@ -2680,22 +2707,30 @@ function pointFromViewportEvent(event, viewportElement) {
   };
 }
 
-async function persistWalkPathDraft() {
-  if (!walkPathEditor.apiAvailable || !level) return;
-  try {
-    const payload = persistedLevelEditorPayload();
-    if (!Object.keys(payload).length) {
-      await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
-      return;
+let editorDraftWrite = Promise.resolve();
+function persistWalkPathDraft() {
+  if (!walkPathEditor.apiAvailable || !level || walkPathEditor.busy) return;
+  const url=editorApiUrl("editor-draft"),payload=persistedLevelEditorPayload();
+  editorDraftWrite=editorDraftWrite.then(async()=>{
+    try {
+      await requestEditorApi(url,Object.keys(payload).length?{method:"POST",body:JSON.stringify(payload)}:{method:"DELETE"});
+    } catch(error) {
+      walkPathEditor.status="Error";walkPathEditor.message=`Draft opslaan mislukt. ${error.message}`;
     }
-    await requestEditorApi(editorApiUrl("editor-draft"), {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-  } catch (error) {
-    walkPathEditor.status = "Error";
-    walkPathEditor.message = `Draft opslaan mislukt. ${error.message}`;
-  }
+  });
+  return editorDraftWrite;
+}
+
+// Refresh only baselines after a partial/uncertain save; leave pending edits visible.
+function acceptSavedEditorBaselines(saved) {
+  const source=saved.level;
+  walkPathEditor.originalWalkPath=cloneWalkPath(authoredWalkPathPoints(source));
+  for(const [key,original] of [['interactiveObjects','originalInteractiveObjects'],['learningChallenges','originalLearningChallenges'],['ambientAnimals','originalAmbientAnimals'],['ambientFlybys','originalAmbientFlybys'],['sceneEffects','originalSceneEffects'],['sceneEffectGroups','originalSceneEffectGroups']])walkPathEditor[original]=JSON.parse(JSON.stringify(source[key] || []));
+  savedAudioConfig=cloneAudioConfig(saved.audio);
+  worldEditor.persistedConfig=window.AtlasWorld.createWorldResolver(levelCatalog,saved.config).getConfig();
+  worldEditor.dirty=!editorValuesEqual(worldResolver.getConfig(),worldEditor.persistedConfig);
+  walkPathEditor.audioDirty=!editorValuesEqual(persistedAudioConfig(),persistedAudioConfigFrom(savedAudioConfig));
+  walkPathEditor.modified=Object.keys(persistedLevelEditorPayload()).length>0;
 }
 
 async function applyWalkPathDraft() {
@@ -2703,9 +2738,13 @@ async function applyWalkPathDraft() {
   walkPathEditor.busy = true;
   walkPathEditor.message = "Editorwijzigingen toepassen...";
   render();
+  app.inert = true;
 
+  let levelApplied = false;
   try {
+    await editorDraftWrite;
     const payload = persistedLevelEditorPayload();
+    const worldWasDirty = worldEditor.dirty;
     const emissiveGlowDirty = Boolean(walkPathEditor.emissiveGlowDirty);
     const stagedEmissiveGlow = emissiveGlowDirty
       ? cloneOptionalConfig(worldResolver.levelSettings(level.id).emissiveGlow)
@@ -2724,18 +2763,14 @@ async function applyWalkPathDraft() {
       }
       walkPathEditor.status = "Applied";
       walkPathEditor.modified = false;
-      walkPathEditor.message = emissiveGlowDirty ? "Editorwijzigingen opgeslagen." : "Geen wijzigingen om toe te passen.";
+      walkPathEditor.message = (worldWasDirty || emissiveGlowDirty) ? "Editorwijzigingen opgeslagen." : "Geen wijzigingen om toe te passen.";
       return;
     }
     await requestEditorApi(editorApiUrl("apply-editor"), {
       method: "POST",
       body: JSON.stringify(payload)
     });
-    if (worldEditor.dirty) {
-      const savedConfig = await persistWorldConfigRequest();
-      acceptPersistedWorldConfig(savedConfig, stagedEmissiveGlow);
-      worldEditor.dirty = false;
-    }
+    levelApplied = true;
     walkPathEditor.originalWalkPath = cloneWalkPath(authoredWalkPathPoints(level));
     walkPathEditor.originalInteractiveObjects = cloneInteractiveObjects(level.interactiveObjects);
     walkPathEditor.originalLearningChallenges = cloneLearningChallenges(level.learningChallenges || []);
@@ -2743,7 +2778,13 @@ async function applyWalkPathDraft() {
     walkPathEditor.originalAmbientFlybys = cloneAmbientFlybys(level.ambientFlybys || []);
     walkPathEditor.originalSceneEffects = cloneSceneEffects(level.sceneEffects || []);
     walkPathEditor.originalSceneEffectGroups = cloneSceneEffectGroups(level.sceneEffectGroups || []);
-    walkPathEditor.originalAudioConfig = cloneAudioConfig(audioConfig);
+    savedAudioConfig = cloneAudioConfig(audioConfig);
+    walkPathEditor.audioDirty = false;
+    if (worldEditor.dirty) {
+      const savedConfig = await persistWorldConfigRequest();
+      acceptPersistedWorldConfig(savedConfig, stagedEmissiveGlow);
+      worldEditor.dirty = false;
+    }
     walkPathEditor.originalEmissiveGlow = cloneOptionalConfig(worldResolver.levelSettings(level.id).emissiveGlow);
     walkPathEditor.emissiveGlowDirty = false;
     walkPathEditor.worldDirtyBeforeEmissiveGlow = false;
@@ -2756,8 +2797,11 @@ async function applyWalkPathDraft() {
     walkPathEditor.message = "Editorwijzigingen opgeslagen.";
   } catch (error) {
     walkPathEditor.status = "Error";
-    walkPathEditor.message = `Toepassen mislukt. ${error.message}`;
+    let confirmed=false;
+    try {acceptSavedEditorBaselines(await requestEditorApi(editorApiUrl("saved-editor")));confirmed=true;} catch { /* Keep every pending edit until saved state can be read. */ }
+    walkPathEditor.message = `${levelApplied && confirmed && worldEditor.dirty ? 'Level/audio applied; world configuration is still pending.' : 'Apply incomplete; saved writes are preserved.'} ${error.message}${confirmed ? ' Remaining pending scopes are listed in Changes.' : ' Saved state could not be confirmed; reconnect before Revert.'}`;
   } finally {
+    app.inert = false;
     walkPathEditor.busy = false;
     render();
   }
@@ -2768,39 +2812,34 @@ async function revertWalkPathDraft() {
   walkPathEditor.busy = true;
   walkPathEditor.message = "Revert...";
   render();
+  app.inert = true;
 
   try {
-    if (walkPathEditor.apiAvailable) {
-      await requestEditorApi(editorApiUrl("editor-draft"), { method: "DELETE" });
-    }
+    if(!walkPathEditor.apiAvailable)throw new Error("The editor server is required to confirm saved changes.");
+    await editorDraftWrite;
+    const saved=await requestEditorApi(editorApiUrl("saved-editor"));
+    if(!saved.level || !saved.config || !saved.audio)throw new Error("Saved state is incomplete; nothing was discarded.");
+    const profile=window.AtlasWorld.createWorldResolver(levelCatalog,saved.config).levelSettings(level.id).mainCharacter || saved.level.player.characterId || 'sven';
+    await window.AtlasLocomotion.preloadAll({characterId:profile});
+    await requestEditorApi(editorApiUrl("editor-draft"),{method:"DELETE"});
+    acceptSavedEditorBaselines(saved);
+    worldResolver.setConfig(worldEditor.persistedConfig);
+    window.SVEN_WORLD_CONFIG=worldResolver.getConfig();
+    cinematicOriginals.clear();illustratedOriginals.clear();
     setLevelWalkPath(walkPathEditor.originalWalkPath);
     setLevelInteractiveObjects(walkPathEditor.originalInteractiveObjects);
     setLevelLearningChallenges(walkPathEditor.originalLearningChallenges);
     setLevelAmbientAnimals(walkPathEditor.originalAmbientAnimals);
     setLevelAmbientFlybys(walkPathEditor.originalAmbientFlybys);
-    setLevelSceneEffects(walkPathEditor.originalSceneEffects, walkPathEditor.originalSceneEffectGroups);
-    setAudioConfig(walkPathEditor.originalAudioConfig);
-    if (illustratedOriginals.has(level.id)) {
-      const original = illustratedOriginals.get(level.id);
-      worldResolver.updateLevelSettings(level.id, { illustratedFeatures:original.settings });
-      worldEditor.dirty = original.worldDirty;
-      illustratedOriginals.delete(level.id);
-    }
-    if (cinematicOriginals.has(level.id)) {
-      const original = cinematicOriginals.get(level.id);
-      worldResolver.updateLevelSettings(level.id, { cinematicLighting: original.settings });
-      worldEditor.dirty = original.worldDirty;
-      cinematicOriginals.delete(level.id);
-      cinematicRenderer.sync();
-      threeRenderer.sync();
-    }
-    if (walkPathEditor.emissiveGlowDirty) {
-      worldResolver.updateLevelSettings(level.id, { emissiveGlow: cloneOptionalConfig(walkPathEditor.originalEmissiveGlow) });
-      worldEditor.dirty = walkPathEditor.worldDirtyBeforeEmissiveGlow;
-      walkPathEditor.emissiveGlowDirty = false;
-      walkPathEditor.worldDirtyBeforeEmissiveGlow = false;
-      emissiveGlowRenderer.sync();
-    }
+    setLevelSceneEffects(walkPathEditor.originalSceneEffects,walkPathEditor.originalSceneEffectGroups);
+    setAudioConfig(savedAudioConfig);
+    normalizeLevel(level);
+    stopMovement({invalidateIntent:true});locomotion.setCharacter(profile);
+    walkPathEditor.originalEmissiveGlow=cloneOptionalConfig(worldResolver.levelSettings(level.id).emissiveGlow);
+    walkPathEditor.emissiveGlowDirty=false;walkPathEditor.worldDirtyBeforeEmissiveGlow=false;
+    worldEditor.dirty=false;
+    invalidateMenuAdventureStats();
+    cinematicRenderer.sync();threeRenderer.sync();emissiveGlowRenderer.sync();
     walkPathEditor.audioDirty = false;
     walkPathEditor.currentPoint = null;
     walkPathEditor.currentObject = null;
@@ -2809,11 +2848,12 @@ async function revertWalkPathDraft() {
     walkPathEditor.currentFlyby = null;
     walkPathEditor.status = "Reverted";
     walkPathEditor.modified = false;
-    walkPathEditor.message = "Draft weggegooid. Opgeslagen punten, objecten en audio hersteld.";
+    walkPathEditor.message = "Unapplied current-level, world/character and audio changes discarded. Previously saved changes preserved.";
   } catch (error) {
     walkPathEditor.status = "Error";
     walkPathEditor.message = `Revert mislukt. ${error.message}`;
   } finally {
+    app.inert = false;
     walkPathEditor.busy = false;
     render();
   }
@@ -2977,6 +3017,8 @@ function selectChallengeForEditor(runeId) {
   const rune = runeById(runeId);
   if (!rune) return;
   walkPathEditor.selectedChallengeId = rune.id;
+  editorWorkspace.selection={kind:npcChallengeForRune(rune)?'npc':'challenge',id:rune.id};
+  if(!editorWorkspace.focus)editorWorkspace.inspectorOpen=true;
   walkPathEditor.currentChallenge = learningChallengeForRune(rune) || rune;
   walkPathEditor.currentObject = interactiveObjectForTarget(rune) || null;
   walkPathEditor.currentPoint = null;
@@ -3021,6 +3063,7 @@ function commitLearningChallengeEditorUpdate(challenges, challenge, message, opt
 }
 
 function refreshChallengePresentationDom(challenge) {
+  if(desktopEditorActive()) { render();return; }
   const editorPanel = document.querySelector("[data-developer-tools]");
   const editorScrollTop = editorPanel?.scrollTop || 0;
   const rune = (level.runes || []).find((item) => item.challengeId === challenge.id);
@@ -3059,6 +3102,7 @@ async function updateChallengePresentation(challengeId, presentationType) {
     }
   }
   challenge.presentationType = nextType;
+  if(nextType === "standard" && editorWorkspace.selection.kind === "npc")editorWorkspace.selection={kind:"challenge",id:walkPathEditor.selectedChallengeId};
   commitLearningChallengeEditorUpdate(challenges, challenge, `${challenge.id}: ${nextType === "npc" ? "NPC" : "Standard"}.`, { render: false });
   refreshChallengePresentationDom(challenge);
 }
@@ -3126,6 +3170,7 @@ function deleteAmbientAnimal(animalId) {
   if (!walkPathEditor.enabled || !level) return;
   setLevelAmbientAnimals((level.ambientAnimals || []).filter((animal) => animal.id !== animalId));
   walkPathEditor.currentAnimal = null;
+  if(editorWorkspace.selection.kind === "animal" && editorWorkspace.selection.id === animalId)editorWorkspace.selection={kind:"environment",id:"environment"};
   walkPathEditor.status = "Modified";
   walkPathEditor.modified = true;
   walkPathEditor.message = `${animalId} verwijderd uit de draft.`;
@@ -3137,8 +3182,8 @@ function markEditorModified(message) {
   walkPathEditor.status = "Modified";
   walkPathEditor.modified = true;
   walkPathEditor.message = message;
-  const draftStatus = document.querySelector("[data-developer-tools] [data-editor-draft-status]");
-  if (draftStatus) { draftStatus.className = "walkPathStatusModified"; draftStatus.textContent = "Draft Status: Modified"; }
+  const draftStatus = document.querySelector("[data-editor-draft-status]");
+  if (draftStatus) { draftStatus.textContent = "Changes: Modified"; }
   persistWalkPathDraft();
 }
 
@@ -3244,6 +3289,7 @@ async function addAmbientAnimalFromEditor() {
   walkPathEditor.selectedObjectId = id;
   walkPathEditor.currentAnimal = animal;
   const warning = await frameDimensionWarning(openFrame, closedFrame);
+  editorWorkspace.selection={kind:'animal',id};editorWorkspace.addOpen=false;
   markEditorModified(`${label} toegevoegd.${warning ? ` ${warning}` : ""}`);
   render();
 }
@@ -3320,6 +3366,7 @@ async function addAmbientFlybyFromEditor() {
   walkPathEditor.selectedObjectId = id;
   walkPathEditor.currentFlyby = flyby;
   const warning = await frameDimensionWarning(frameA, frameB);
+  editorWorkspace.selection={kind:'flyby',id};editorWorkspace.addOpen=false;
   markEditorModified(`${label} toegevoegd.${warning ? ` ${warning}` : ""}`);
   render();
 }
@@ -3337,6 +3384,7 @@ function duplicateSelectedAmbient() {
     copy.y += 20;
     setLevelAmbientAnimals([...(level.ambientAnimals || []), copy]);
     walkPathEditor.selectedObjectId = copy.id;
+    editorWorkspace.selection = {kind:type,id:copy.id};
     markEditorModified(`${copy.label} gedupliceerd.`);
   } else {
     const source = (level.ambientFlybys || []).find((item) => item.id === id);
@@ -3347,6 +3395,7 @@ function duplicateSelectedAmbient() {
     copy.label = `${source.label || source.id} kopie`;
     setLevelAmbientFlybys([...(level.ambientFlybys || []), copy]);
     walkPathEditor.selectedObjectId = copy.id;
+    editorWorkspace.selection = {kind:type,id:copy.id};
     markEditorModified(`${copy.label} gedupliceerd.`);
   }
   render();
@@ -3355,6 +3404,7 @@ function duplicateSelectedAmbient() {
 function deleteAmbientFlyby(id) {
   setLevelAmbientFlybys((level.ambientFlybys || []).filter((item) => item.id !== id));
   walkPathEditor.selectedObjectId = level.ambientFlybys?.[0]?.id || null;
+  editorWorkspace.selection = walkPathEditor.selectedObjectId ? {kind:"flyby",id:walkPathEditor.selectedObjectId} : {kind:"environment",id:"environment"};
   walkPathEditor.pathMode = false;
   markEditorModified(`${id} verwijderd uit de draft.`);
   render();
@@ -4598,6 +4648,7 @@ function debugWalkGraph() {
 }
 
 function renderDebugOverlay() {
+  if(editorWorkspace.playtest)return '';
   const approachIds = new Set(level.interactiveObjects.map((object) => object.approachNode).filter(Boolean));
   const graph = debugWalkGraph();
   const debugNodesById = new Map(graph.nodes.map((node) => [node.id, node]));
@@ -4689,13 +4740,14 @@ function renderAudioEditorControls() {
 
   return `
     <section class="audioEditorSection" data-audio-editor>
-      <strong>Audio</strong>
+      <strong>Audio</strong><p>Saved together in shared audio configuration. Scope is shown for each group.</p><strong>All levels</strong>
       ${renderVolumeSlider("Master", "volumes.master", audioConfig.volumes?.master ?? 1)}
       ${renderVolumeSlider("Companion purr volume", "volumes.companionPurr", audioConfig.volumes?.companionPurr ?? 0.55)}
+      <strong>This level · music and ambience</strong>
       ${renderVolumeSlider("Music", `levels.${level.id}.musicVolume`, levelAudio.musicVolume ?? 0.55)}
       ${renderVolumeSlider("Ambience", `levels.${level.id}.ambienceVolume`, levelAudio.ambienceVolume ?? 0.5)}
       <div class="audioEditorSfx">
-        <span>SFX</span>
+        <span>SFX · all levels</span>
         ${sfxRows}
       </div>
     </section>
@@ -4805,7 +4857,7 @@ function renderFlybyField(label, flyby, field, options = {}) {
     <label class="editorToggle"><input type="checkbox" data-flyby-setting="${field}" data-flyby-id="${flyby.id}" ${flyby[field] ? "checked" : ""}/><span>${label}</span></label>
   `;
   return `
-    <label class="editorField" title="${options.help || ''}"><span>${label}</span><input type="${options.type || "number"}"
+    <label class="editorField" title="${options.help || ''}"><span>${label}${options.help ? renderEditorInfo(label,options.help) : ''}</span><input type="${options.type || "number"}"
       ${options.min !== undefined ? `min="${options.min}"` : ""} ${options.max !== undefined ? `max="${options.max}"` : ""}
       step="${options.step || "1"}" value="${options.display ? options.display(flyby[field]) : flyby[field]}"
       data-flyby-setting="${field}" data-flyby-id="${flyby.id}" data-value-scale="${options.scale || 1}"/></label>
@@ -5009,18 +5061,7 @@ function renderChallengeEditorControls() {
   return `
     <details class="editorSection" open data-challenge-editor>
       <summary>Opdrachten <span>${activeCount}/${runes.length} actief</span></summary>
-      <div class="editorObjectPicker challengeObjectPicker">
-        ${runes.map((rune) => {
-          const challenge = learningChallengeForRune(rune);
-          const active = isRuneActive(rune);
-          return `<button
-            type="button"
-            data-select-challenge="${rune.id}"
-            class="${selectedRune?.id === rune.id ? "editorObjectSelected" : ""} ${!active ? "editorChallengeInactive" : ""}"
-            aria-label="Selecteer opdracht ${rune.name || rune.id}"
-          >${rune.name || rune.id}<span>${active ? "Actief" : "Inactief"}</span>${challenge ? "" : "<span>legacy</span>"}</button>`;
-        }).join("") || "<span>Geen opdrachten.</span>"}
-      </div>
+
       ${renderChallengeContentPreview(selectedChallenge, selectedRune)}
     </details>
   `;
@@ -5035,16 +5076,10 @@ function renderAmbientEditorControls(options = {}) {
   const flyby = flybys.find((item) => walkPathEditor.selectedObjectType === "flyby" && item.id === walkPathEditor.selectedObjectId);
   const syncMembers = flyby?.syncKey ? flybys.filter((item) => item.syncKey === flyby.syncKey) : [];
   return `
-    <div class="assetDiscoveryBar">
-      <button type="button" data-debug-action="refresh-assets">Refresh assets</button>
-      <span>${walkPathEditor.assetMessage || "Place shared files in assets/ambient/animals or assets/ambient/flybys."}</span>
-    </div>
-    ${renderAssetWarnings()}
+
     ${includeAnimals ? `<details class="editorSection" open data-editor-panel-key="ambient-animals">
       <summary>Ambient animals <span>${animals.length}</span></summary>
-      <div class="editorObjectPicker">
-        ${animals.map((item) => `<button type="button" aria-label="Selecteer ${item.label || item.id}" data-select-ambient-type="animal" data-select-ambient-id="${item.id}" class="${animal?.id === item.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>${animal?.id === item.id ? "" : `<input class="editorLegacyControl" type="checkbox" data-animal-setting="mirrorX" data-animal-id="${item.id}" ${item.mirrorX ? "checked" : ""}/>`}`).join("") || "<span>Geen dieren.</span>"}
-      </div>
+
       ${animal ? `
         <div class="animalEditorCard" data-animal-editor-id="${animal.id}">
           <div><strong>${animal.id}</strong><span>${animal.label || animal.type}</span></div>
@@ -5061,13 +5096,11 @@ function renderAmbientEditorControls(options = {}) {
             <button type="button" data-debug-action="delete-animal" data-animal-id="${animal.id}">Delete</button>
           </div>
         </div>` : ""}
-      <details class="editorNestedSection"><summary>Add ambient animal</summary>${renderAmbientAddForm("animal")}</details>
+
     </details>` : ""}
     ${includeFlybys ? `<details class="editorSection" open data-editor-panel-key="ambient-flybys">
       <summary>Ambient flybys <span>${flybys.length}</span></summary>
-      <div class="editorObjectPicker">
-        ${flybys.map((item) => `<button type="button" aria-label="Selecteer ${item.label || item.id}" data-select-ambient-type="flyby" data-select-ambient-id="${item.id}" class="${flyby?.id === item.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>`).join("") || "<span>Geen flybys.</span>"}
-      </div>
+
       ${flyby ? `
         <div class="flybyEditorCard" data-flyby-editor-id="${flyby.id}">
           <div class="editorCommonControls"><strong>${flyby.label}</strong><span>${flyby.id}</span>
@@ -5115,7 +5148,7 @@ function renderAmbientEditorControls(options = {}) {
             ${Object.entries(window.AtlasAmbientSystem.graphicsControls).map(([field,control])=>renderFlybyField(control.label,flyby,field,{...control,display:()=>window.AtlasAmbientSystem.graphicsFor(flyby)[field]})).join('')}
           </details>
         </div>` : ""}
-      <details class="editorNestedSection"><summary>Add ambient flyby</summary>${renderAmbientAddForm("flyby")}</details>
+
     </details>` : ""}
   `;
 }
@@ -5143,7 +5176,7 @@ function commitSceneEffects(message, options = {}) {
   if (options.render !== false) render();
 }
 
-function addSceneEffect(presetId, variantId) {
+function addSceneEffect(presetId, variantId, placement) {
   const instance = window.AtlasSceneEffects.defaultInstance(
     presetId,
     variantId,
@@ -5152,8 +5185,10 @@ function addSceneEffect(presetId, variantId) {
   );
   if (!instance) return;
   instance.id = uniqueSceneEffectId(instance.id);
+  if (placement) { const center=effectGeometryCenter(instance.geometry);translateEffectGeometry(instance.geometry,placement.x-center.x,placement.y-center.y); }
   level.sceneEffects = [...(level.sceneEffects || []), instance];
   walkPathEditor.selectedEffectId = instance.id;
+  editorWorkspace.selection={kind:'effect',id:instance.id};
   walkPathEditor.editorMode = "graphics";
   walkPathEditor.effectEditScope = "source";
   walkPathEditor.selectedEffectVertex = null;
@@ -5175,6 +5210,7 @@ function duplicateSceneEffect() {
   if (copy.mask) translateEffectMask(copy.mask, 24, 18);
   level.sceneEffects.push(copy);
   walkPathEditor.selectedEffectId = copy.id;
+  editorWorkspace.selection = {kind:"effect",id:copy.id};
   commitSceneEffects(`${copy.label} duplicated.`);
 }
 
@@ -5183,6 +5219,7 @@ function deleteSceneEffect() {
   if (!selected) return;
   level.sceneEffects = (level.sceneEffects || []).filter((effect) => effect.id !== selected.id);
   walkPathEditor.selectedEffectId = level.sceneEffects[0]?.id || null;
+  editorWorkspace.selection = walkPathEditor.selectedEffectId ? {kind:"effect",id:walkPathEditor.selectedEffectId} : {kind:"environment",id:"environment"};
   commitSceneEffects(`${selected.label || selected.id} deleted.`);
 }
 
@@ -5207,6 +5244,7 @@ function pasteSceneEffect() {
   level.sceneEffects ||= [];
   level.sceneEffects.push(copy);
   walkPathEditor.selectedEffectId = copy.id;
+  editorWorkspace.selection = {kind:"effect",id:copy.id};
   commitSceneEffects(`${copy.label} pasted.`);
 }
 
@@ -5440,37 +5478,6 @@ function sceneEffectBalancedEstimate(effect) {
   return particleCost;
 }
 
-function renderEffectLibrary() {
-  return window.AtlasSceneEffects.CATEGORIES.map((category) => {
-    const presets = Object.values(window.AtlasSceneEffects.PRESETS).filter((preset) => preset.category === category && !preset.hiddenFromLibrary);
-    if (!presets.length) return "";
-    return `
-      <details class="effectLibraryCategory" ${["Light and fire", "Water"].includes(category) ? "open" : ""}>
-        <summary>${category}</summary>
-        <div class="effectPresetGrid">
-          ${presets.map((preset) => `
-            <article class="effectPresetCard" data-effect-preset-card="${preset.id}">
-              <span class="effectPresetSwatch" style="--effect-card-color:${preset.colors.primaryColor}"></span>
-              <strong>${preset.name}</strong>
-              <p>${preset.description}</p>
-              <p><b>Best for:</b> ${preset.bestFor}</p>
-              <p><b>Avoid for:</b> ${preset.avoidFor}</p>
-              <p><b>Looks like:</b> ${preset.visualSignature}</p>
-              <small>Placement: ${preset.geometryTypes.join(" / ")} · Performance: ${preset.performance}</small>
-              <label>Variant
-                <select data-effect-library-variant="${preset.id}">
-                  ${preset.variants.filter((item) => !item.hiddenFromLibrary).map((item) => `<option value="${item.id}">${item.name}</option>`).join("")}
-                </select>
-              </label>
-              <button type="button" data-add-effect="${preset.id}">Add effect</button>
-            </article>
-          `).join("")}
-        </div>
-      </details>
-    `;
-  }).join("");
-}
-
 function renderSceneEffectsEditorControls() {
   const effects = level.sceneEffects || [];
   const effect = selectedSceneEffect();
@@ -5481,18 +5488,7 @@ function renderSceneEffectsEditorControls() {
   const budgetLevel = totalBudget > 220 ? "High" : totalBudget > 155 ? "Medium" : "Low";
   return `
     <section class="sceneEffectsEditor" data-scene-effects-editor>
-      <details class="editorSection effectLibrary" open>
-        <summary>Effect preset library</summary>
-        ${renderEffectLibrary()}
-      </details>
-      <details class="editorSection" open>
-        <summary>Level effects <span>${effects.length}</span></summary>
-        <div class="effectBudget effectBudget${budgetLevel}">iPad budget: ${budgetLevel} · balanced estimate ${Math.round(totalBudget)} cost</div>
-        <div class="editorObjectPicker">
-          ${effects.map((item) => `<button type="button" data-select-effect="${item.id}" class="${item.id === effect?.id ? "editorObjectSelected" : ""}">${item.label || item.id}</button>`).join("") || "<span>No effects yet.</span>"}
-        </div>
-      </details>
-      ${effect && preset ? `
+<p class="effectBudget effectBudget${budgetLevel}">Runtime tablet budget: ${budgetLevel} · balanced estimate ${Math.round(totalBudget)} cost</p>${effect && preset ? `
         <section class="effectPropertyPanel" data-effect-property-panel="${effect.id}">
           <div class="effectHeading">
             <strong>${preset.name} · ${variant?.name || effect.variantId}</strong>
@@ -6155,11 +6151,11 @@ function nudgeSelectedEffect(dx, dy) {
   updateEffectGeometry(`${effect.label}: nudged ${dx}, ${dy}.`);
 }
 
-function renderEmissiveGlowControls(levelId) {
+function renderEmissiveGlowControls(levelId, {expanded = true} = {}) {
   const emissiveGlow = emissiveGlowTuning(levelId);
-  return `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" open>
+  return `<details class="atlasVisualAdjustments" data-editor-panel-key="emissive-glow" ${expanded ? "open" : ""}>
     <summary>Emissive Glow (Illustrated)</summary>
-    <p>This legacy artwork glow is used only by Illustrated Mode. Cinematic Mode uses Effects → Emissive / bloom.</p>
+    <p>This legacy artwork glow is used only by Illustrated Mode. Cinematic Mode uses its separate bloom settings.</p>
     <fieldset class="atlasEmissiveGlowControls" ${voxelRenderer.getSettings().renderer === "illustrated" && illustratedFeatures(levelId).globalLighting ? 'disabled title="Suppressed while Global Lighting is on; saved settings are preserved."' : ""}>
       <label class="atlasToggleField"><input type="checkbox" data-emissive-setting="enabled" data-level-id="${levelId}" ${emissiveGlow.enabled ? "checked" : ""}> <span>Enabled</span></label>
       <label class="graphicsRange">Intensity <output data-emissive-output="intensity">${emissiveGlow.intensity.toFixed(2)}</output>
@@ -6175,17 +6171,72 @@ function renderEmissiveGlowControls(levelId) {
   </details>`;
 }
 
+const locomotionHelp = {
+  "fromIdleMovement": "Movement during the transition out of idle, as a percentage of the normal phase movement.",
+  "loopMovement": "Movement during the walking loop, as a percentage of the normal phase movement.",
+  "toIdleMovement": "Movement during the stopping animation.",
+  "toIdleMaxDistance": "Maximum world-pixel travel allowed during the stopping animation.",
+  "turnMovement": "Movement during the turning animation.",
+  "stopEntryDistance": "Remaining route distance at which stopping may begin.",
+  "shortMoveThreshold": "Routes shorter than this world-pixel distance use the short-move behavior.",
+  "shortMoveAnimationSpeed": "Animation multiplier for short moves.",
+  "shortMoveStartFrame": "Starting position within the start animation, expressed as a percentage.",
+  "shortMoveMaxFromIdleAnimation": "Maximum portion of the start animation used by short moves.",
+  "fromIdleAnimationSpeed": "Playback multiplier for the start animation.",
+  "loopAnimationSpeed": "Playback multiplier for the walking loop.",
+  "toIdleAnimationSpeed": "Playback multiplier for the stopping animation.",
+  "turnAnimationSpeed": "Playback multiplier for turning.",
+  "arrivalDynamicSpeedMin": "Lower bound of the animation speed adjustment near arrival.",
+  "arrivalDynamicSpeedMax": "Upper bound of the animation speed adjustment near arrival.",
+  "blinkMinimumInterval": "Shortest delay between idle blinks, in milliseconds.",
+  "blinkMaximumInterval": "Longest delay between idle blinks, in milliseconds."
+};
+function renderLocomotionControls(levelId, profileId, expanded = false) {
+  const characterId=profileId || mainCharacterId(null,levelId);
+  const globalTuning=worldResolver.locomotionSettings(characterId);
+  const globalControl = (label, key, value, min, max, step, factor = 1) => `
+    <label class="atlasConfigField"><span>${label} ${renderEditorInfo(label, locomotionHelp[key])}</span><input type="number" min="${min}" max="${max}" step="${step}" value="${Number(value * factor).toFixed(step < 1 ? 2 : 0).replace(/\.00$/, "")}" data-locomotion-setting="${key}" data-locomotion-profile="${characterId}" data-level-id="${levelId}" data-value-factor="${factor}"></label>
+  `;
+  return `<details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion" ${expanded ? "open" : ""}>
+        <summary>Shared locomotion profile · ${window.AtlasPlayableCharacters.characters[characterId]}</summary><p>Applies to this character across all levels and worlds. Apply saves the shared profile; Revert discards unapplied changes across authored scopes.</p>
+        <div class="atlasLocomotionGroups">
+          <fieldset><legend>Movement</legend><div class="atlasTuningGrid">
+            ${globalControl("Start travel %", "fromIdleMovement", globalTuning.fromIdleMovement, 0, 200, 5, 100)}
+            ${globalControl("Walking travel %", "loopMovement", globalTuning.loopMovement, 10, 200, 5, 100)}
+            ${globalControl("Stopping travel %", "toIdleMovement", globalTuning.toIdleMovement, 0, 150, 5, 100)}
+            ${globalControl("Maximum stopping distance", "toIdleMaxDistance", globalTuning.toIdleMaxDistance, 1, 200, 1)}
+            ${globalControl("Turning travel %", "turnMovement", globalTuning.turnMovement, 10, 200, 5, 100)}
+            ${globalControl("Begin stopping distance", "stopEntryDistance", globalTuning.stopEntryDistance, 1, 250, 1)}
+          </div></fieldset>
+          <details data-editor-panel-key="locomotion-short-moves"><summary>Short Moves</summary><div class="atlasTuningGrid">
+            ${globalControl("Distance threshold", "shortMoveThreshold", globalTuning.shortMoveThreshold, 1, 300, 1)}
+            ${globalControl("Playback speed", "shortMoveAnimationSpeed", globalTuning.shortMoveAnimationSpeed, 0.25, 4, 0.05)}
+            ${globalControl("Start frame %", "shortMoveStartFrame", globalTuning.shortMoveStartFrame, 0, 80, 5, 100)}
+            ${globalControl("Start animation limit %", "shortMoveMaxFromIdleAnimation", globalTuning.shortMoveMaxFromIdleAnimation, 5, 100, 5, 100)}
+          </div></details>
+          <details data-editor-panel-key="locomotion-animation"><summary>Animation</summary><div class="atlasTuningGrid">
+            ${globalControl("Start speed", "fromIdleAnimationSpeed", globalTuning.fromIdleAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Walking speed", "loopAnimationSpeed", globalTuning.loopAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Stopping speed", "toIdleAnimationSpeed", globalTuning.toIdleAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Turning speed", "turnAnimationSpeed", globalTuning.turnAnimationSpeed, 0.25, 3, 0.05)}
+            ${globalControl("Arrival minimum speed", "arrivalDynamicSpeedMin", globalTuning.arrivalDynamicSpeedMin, 0.25, 2, 0.05)}
+            ${globalControl("Arrival maximum speed", "arrivalDynamicSpeedMax", globalTuning.arrivalDynamicSpeedMax, 0.25, 3, 0.05)}
+          </div></details>
+          <details data-editor-panel-key="locomotion-idle"><summary>Idle</summary><div class="atlasTuningGrid">
+            ${globalControl("Minimum blink interval (ms)", "blinkMinimumInterval", globalTuning.blinkMinimumInterval, 250, 30000, 250)}
+            ${globalControl("Maximum blink interval (ms)", "blinkMaximumInterval", globalTuning.blinkMaximumInterval, 250, 60000, 250)}
+          </div></details>
+        </div>
+      </details>`;
+}
+
 function renderLevelTuningControls(levelId, options = {}) {
   const tuning = levelTuning(levelId);
-  const globalTuning = locomotionTuning(levelId);
   const settings = worldResolver.levelSettings(levelId);
   const includeCharacters = options.scope !== "graphics";
   const includeGraphics = options.scope !== "characters";
   const numberControl = (label, key, value, min, max, step) => `
     <label class="atlasConfigField"><span>${label}</span><input type="number" min="${min}" max="${max}" step="${step}" value="${value}" data-level-setting="${key}" data-level-id="${levelId}"></label>
-  `;
-  const globalControl = (label, key, value, min, max, step, factor = 1) => `
-    <label class="atlasConfigField"><span>${label} <em>(Character / Global)</em></span><input type="number" min="${min}" max="${max}" step="${step}" value="${Number(value * factor).toFixed(step < 1 ? 2 : 0).replace(/\.00$/, "")}" data-locomotion-setting="${key}" data-level-id="${levelId}" data-value-factor="${factor}"></label>
   `;
   return `
     <div class="atlasLevelTuning" data-level-tuning="${levelId}">
@@ -6200,7 +6251,7 @@ function renderLevelTuningControls(levelId, options = {}) {
           <button type="button" data-config-action="reset-background" data-level-id="${levelId}" ${settings.backgroundOverride ? "" : "disabled"}>Reset to default</button>
         </div>
       `}
-      ${includeCharacters ? `<details class="editorNestedSection characterControlGroup" open data-editor-panel-key="sven-general"><summary>General</summary><div class="atlasTuningGrid">
+      ${includeCharacters ? `<details class="editorNestedSection characterControlGroup" open data-editor-panel-key="sven-general"><summary>Playable character · this level</summary><div class="atlasTuningGrid">
         <label class="atlasConfigField"><span>Playable character</span><select data-main-character="${levelId}">${Object.entries(window.AtlasPlayableCharacters.characters).map(([id,name]) => `<option value="${id}" ${id === mainCharacterId(level?.id === levelId ? level : window.SVEN_LEVEL_DEFINITIONS[levelId], levelId) ? 'selected' : ''}>${name}</option>`).join('')}</select></label>
         ${numberControl("Sprite Scale (Level)", "spriteScale", tuning.spriteScale, 0.5, 1.8, 0.05)}
         ${numberControl("Movement Speed (Level)", "movementSpeed", tuning.movementSpeed, 80, 520, 10)}
@@ -6219,44 +6270,13 @@ function renderLevelTuningControls(levelId, options = {}) {
           </fieldset>` : ""}
         </div>
       </details>` : ""}
-      ${includeCharacters ? `<details class="atlasLocomotionAdjustments" data-editor-panel-key="sven-locomotion">
-        <summary>Player Locomotion</summary>
-        <div class="atlasLocomotionGroups">
-          <fieldset><legend>Character / Global — Movement</legend><div class="atlasTuningGrid">
-            ${globalControl("From Idle Movement %", "fromIdleMovement", globalTuning.fromIdleMovement, 0, 200, 5, 100)}
-            ${globalControl("Loop Movement %", "loopMovement", globalTuning.loopMovement, 10, 200, 5, 100)}
-            ${globalControl("To Idle Movement %", "toIdleMovement", globalTuning.toIdleMovement, 0, 150, 5, 100)}
-            ${globalControl("To Idle Max Distance", "toIdleMaxDistance", globalTuning.toIdleMaxDistance, 1, 200, 1)}
-            ${globalControl("Turn Movement %", "turnMovement", globalTuning.turnMovement, 10, 200, 5, 100)}
-            ${globalControl("Stop Entry Distance", "stopEntryDistance", globalTuning.stopEntryDistance, 1, 250, 1)}
-          </div></fieldset>
-          <fieldset><legend>Character / Global — Short Moves</legend><div class="atlasTuningGrid">
-            ${globalControl("Short Move Threshold", "shortMoveThreshold", globalTuning.shortMoveThreshold, 1, 300, 1)}
-            ${globalControl("Short Move Animation Speed", "shortMoveAnimationSpeed", globalTuning.shortMoveAnimationSpeed, 0.25, 4, 0.05)}
-            ${globalControl("Short Move Start Frame %", "shortMoveStartFrame", globalTuning.shortMoveStartFrame, 0, 80, 5, 100)}
-            ${globalControl("Short Move Max From-Idle Animation %", "shortMoveMaxFromIdleAnimation", globalTuning.shortMoveMaxFromIdleAnimation, 5, 100, 5, 100)}
-          </div></fieldset>
-          <fieldset><legend>Character / Global — Animation</legend><div class="atlasTuningGrid">
-            ${globalControl("From Idle Animation Speed", "fromIdleAnimationSpeed", globalTuning.fromIdleAnimationSpeed, 0.25, 3, 0.05)}
-            ${globalControl("Loop Animation Speed", "loopAnimationSpeed", globalTuning.loopAnimationSpeed, 0.25, 3, 0.05)}
-            ${globalControl("To Idle Animation Speed", "toIdleAnimationSpeed", globalTuning.toIdleAnimationSpeed, 0.25, 3, 0.05)}
-            ${globalControl("Turn Animation Speed", "turnAnimationSpeed", globalTuning.turnAnimationSpeed, 0.25, 3, 0.05)}
-            ${globalControl("Arrival Dynamic Speed Min", "arrivalDynamicSpeedMin", globalTuning.arrivalDynamicSpeedMin, 0.25, 2, 0.05)}
-            ${globalControl("Arrival Dynamic Speed Max", "arrivalDynamicSpeedMax", globalTuning.arrivalDynamicSpeedMax, 0.25, 3, 0.05)}
-          </div></fieldset>
-          <fieldset><legend>Character / Global — Idle</legend><div class="atlasTuningGrid">
-            ${globalControl("Blink Minimum Interval (ms)", "blinkMinimumInterval", globalTuning.blinkMinimumInterval, 250, 30000, 250)}
-            ${globalControl("Blink Maximum Interval (ms)", "blinkMaximumInterval", globalTuning.blinkMaximumInterval, 250, 60000, 250)}
-          </div></fieldset>
-        </div>
-      </details>` : ""}
-    </div>
+      ${includeCharacters ? renderLocomotionControls(levelId) : ""}    </div>
   `;
 }
 
 function renderDeveloperToolsPanel() {
   if (!debugOverlayEnabled || state.screen === "menu" || state.screen === "loading" || !level) return "";
-  if (walkPathEditor.pathMode || walkPathEditor.effectGeometryMode) return "";
+
 
   if (!EDITOR_DEV_MODE) {
     return `
@@ -6276,62 +6296,7 @@ function renderDeveloperToolsPanel() {
     `;
   }
 
-  if (walkPathEditor.panelCollapsed) {
-    return `
-      <button
-        type="button"
-        class="walkPathEditorRestore"
-        data-debug-action="restore-editor-panel"
-        aria-label="Editorpaneel herstellen"
-      >
-        Editor
-      </button>
-    `;
-  }
-
-  const point = walkPathEditor.currentPoint;
-  const object = walkPathEditor.currentObject;
-  const animal = walkPathEditor.currentAnimal;
-  const serverDisabled = !walkPathEditor.apiAvailable || walkPathEditor.busy ? "disabled" : "";
-  const statusClass = `walkPathStatus${walkPathEditor.status}`;
-
-  return `
-    <aside class="walkPathEditorPanel" data-developer-tools data-current-editor-mode="${walkPathEditor.editorMode}">
-      <div class="walkPathEditorHeader">
-        <strong>Developer Tools</strong>
-        <button type="button" data-debug-action="collapse-editor-panel" aria-label="Editorpaneel inklappen">Minimize</button>
-      </div>
-      <span class="developerToolMode">Current Mode: Level Editing</span>
-      <span class="${statusClass}" data-editor-draft-status>Draft Status: ${walkPathEditor.status}</span>
-      <nav class="editorModeTabs" aria-label="Editor sections">
-        <button type="button" data-editor-mode="characters" class="${walkPathEditor.editorMode === "characters" ? "editorObjectSelected" : ""}">Characters</button>
-        <button type="button" data-editor-mode="challenges" class="${walkPathEditor.editorMode === "challenges" ? "editorObjectSelected" : ""}">Challenges</button>
-        <button type="button" data-editor-mode="graphics" class="${walkPathEditor.editorMode === "graphics" ? "editorObjectSelected" : ""}">Graphics</button>
-      </nav>
-      <p>Real files change only when Apply is pressed.</p>
-      ${walkPathEditor.editorMode === "characters" ? `
-        <details class="editorSection" open data-editor-panel-key="characters-sven"><summary>Sven</summary>${renderLevelTuningControls(level.id, { scope: "characters" })}</details>
-        ${renderNpcCharacterEditorControls()}
-        ${renderAmbientEditorControls({ animals: true, flybys: false })}
-      ` : walkPathEditor.editorMode === "challenges" ? `
-        <p>Drag the selected challenge marker or its linked object guides in the world to adjust its existing position and approach point.</p>
-        ${renderChallengeEditorControls()}
-      ` : `
-        ${cinematicEditor.render()}
-        <details class="editorSection" open data-editor-panel-key="graphics-level"><summary>Level rendering</summary>${renderLevelTuningControls(level.id, { scope: "graphics" })}</details>
-        ${renderAmbientEditorControls({ animals: false, flybys: true })}
-        <details class="editorSection" open data-editor-panel-key="graphics-audio"><summary>Audio</summary>${renderAudioEditorControls()}</details>
-        <h3>Illustrated effects</h3>
-        ${renderEmissiveGlowControls(level.id)}
-        ${renderSceneEffectsEditorControls()}
-      `}
-      <div class="walkPathEditorActions">
-        <button type="button" data-debug-action="apply-walkpath" ${serverDisabled}>Apply</button>
-        <button type="button" data-debug-action="revert-walkpath" ${walkPathEditor.busy ? "disabled" : ""}>Revert</button>
-      </div>
-      <p>${walkPathEditor.message}</p>
-    </aside>
-  `;
+  return renderEditorWorkspace();
 }
 
 function renderFlightPathWorkspace() {
@@ -6435,7 +6400,6 @@ function renderWorldStage() {
       ${["illustrated", "cinematic"].includes(renderer) ? cinematicEditor.renderGuides() : ""}
       ${renderFlightPathWorkspace()}
       ${renderEffectGeometryWorkspace()}
-      ${renderDeveloperToolsPanel()}
     </section>
   `;
 }
@@ -6489,13 +6453,13 @@ function renderSceneEffectCanvases() {
 }
 
 function renderSceneEffectGuides() {
-  if (!EDITOR_DEV_MODE || !debugOverlayEnabled || walkPathEditor.editorMode !== "graphics" || walkPathEditor.effectGeometryMode || !walkPathEditor.showEffectGuides) return "";
-  const effects = (level.sceneEffects || []).filter((effect) => effect.enabled !== false);
+  if (!EDITOR_DEV_MODE || !debugOverlayEnabled || editorWorkspace.playtest || walkPathEditor.effectGeometryMode || !walkPathEditor.showEffectGuides) return "";
+  const effects = level.sceneEffects || [];
   return `
     <svg class="sceneEffectGuides" viewBox="0 0 ${level.world.width} ${level.world.height}" preserveAspectRatio="none" data-effect-geometry-surface="scene" aria-hidden="true">
       ${effects.map((effect) => {
         const geometry = effect.geometry;
-        const isSelected = effect.id === walkPathEditor.selectedEffectId;
+        const isSelected = effect.id === walkPathEditor.selectedEffectId && editorWorkspace.selection.kind === 'effect';
         const selected = isSelected ? " sceneEffectGuideSelected" : "";
         if (isSelected) {
           const center = effectGeometryCenter(geometry);
@@ -6505,13 +6469,8 @@ function renderSceneEffectGuides() {
             <text class="effectGuideLabel" x="${center.x + 24}" y="${center.y - 28}">${effect.label || effect.id}</text>
           </g>`;
         }
-        if (geometry.type === "polygon") return `<path class="sceneEffectGuide${selected}" d="${geometryPathData(geometry.points)}"></path>`;
-        if (geometry.type === "ellipse") return `<ellipse class="sceneEffectGuide${selected}" cx="${geometry.x}" cy="${geometry.y}" rx="${geometry.width / 2}" ry="${geometry.height / 2}"></ellipse>`;
-        if (geometry.type === "rectangle") return `<rect class="sceneEffectGuide${selected}" x="${geometry.x - geometry.width / 2}" y="${geometry.y - geometry.height / 2}" width="${geometry.width}" height="${geometry.height}"></rect>`;
-        if (geometry.type === "point" || geometry.type === "pointRadius") return `<circle class="sceneEffectGuide${selected}" cx="${geometry.x}" cy="${geometry.y}" r="${geometry.radius || 28}"></circle>`;
-        const length = geometry.type === "directionalBeam" ? geometry.length : Math.max(120, (geometry.width || 20) * 6);
-        const angle = geometry.directionDeg * Math.PI / 180;
-        return `<line class="sceneEffectGuide${selected}" x1="${geometry.x}" y1="${geometry.y}" x2="${geometry.x + Math.cos(angle) * length}" y2="${geometry.y + Math.sin(angle) * length}"></line>`;
+        const marker=effectGeometryCenter(geometry);
+        return `<circle class="effectGuideCenter" cx="${marker.x}" cy="${marker.y}" r="7" data-workspace-kind="effect" data-workspace-id="${editorEscape(effect.id)}"><title>${editorEscape(effect.label || effect.id)}</title></circle>`;
       }).join("")}
     </svg>
   `;
@@ -6524,7 +6483,7 @@ function renderAmbientFlyby(flyby) {
   const canvasVisual = window.AtlasAmbientSystem.canvasVisual(flyby) || (EDITOR_DEV_MODE && debugOverlayEnabled && ambientFlybyRuntime.active.get(flyby.id)?.preview);
   // `enabled` is editing capability, not visibility; closed tools must leave
   // gameplay input available on the development URL too.
-  const editing = debugOverlayEnabled && walkPathEditor.enabled;
+  const editing = debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
       data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.frames, flyby.depthOcclusion, flyby.depthBias, flyby.softness, flyby.saturation, canvasVisual]))}"
@@ -6558,11 +6517,11 @@ function renderAmbientAnimal(animal) {
   const runtime = animalRuntimeState(animal);
   return `
     <button
-      class="ambientAnimal ${debugOverlayEnabled && walkPathEditor.enabled ? "ambientAnimalEditable" : ""}"
+      class="ambientAnimal ${debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest ? "ambientAnimalEditable" : ""}"
       style="${ambientAnimalTrackStyle(animal)}"
       type="button"
     data-ambient-animal="${animal.id}"
-      ${debugOverlayEnabled && walkPathEditor.enabled ? `data-animal-drag="${animal.id}"` : ""}
+      ${debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest ? `data-animal-drag="${animal.id}"` : ""}
       data-animal-type="${animal.type}"
       data-frame="${runtime.frame}"
       data-ready="${ready}"
@@ -6576,11 +6535,11 @@ function renderAmbientAnimal(animal) {
       data-anchor="bottom-center"
       aria-label="${animal.label || "Dier"}"
     >
-      <span class="ambientAnimalFrames" ${debugOverlayEnabled && walkPathEditor.enabled ? `data-animal-drag="${animal.id}"` : ""}>
+      <span class="ambientAnimalFrames" ${debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest ? `data-animal-drag="${animal.id}"` : ""}>
         <img class="ambientAnimalFrame ambientAnimalOpen" src="${readyAssetSrc(animal.openFrame)}" alt="" draggable="false" decoding="sync" />
         <img class="ambientAnimalFrame ambientAnimalClosed" src="${readyAssetSrc(closedFrame)}" alt="" draggable="false" decoding="sync" />
       </span>
-      ${debugOverlayEnabled && walkPathEditor.enabled ? `<span class="ambientAnimalAnchor" aria-hidden="true"></span>` : ""}
+      ${debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest ? `<span class="ambientAnimalAnchor" aria-hidden="true"></span>` : ""}
     </button>
   `;
 }
@@ -6656,7 +6615,7 @@ function renderHotspot(hotspot) {
 
 function renderRuneHotspot(rune) {
   const active = isRuneActive(rune);
-  const editorPreview = EDITOR_DEV_MODE && debugOverlayEnabled;
+  const editorPreview = EDITOR_DEV_MODE && debugOverlayEnabled && !editorWorkspace.playtest;
   if (!active && !editorPreview) return "";
   const done = active && state.completedRunes.has(rune.id);
   const justCompleted = state.justCompletedRuneId === rune.id;
@@ -6753,7 +6712,13 @@ function renderDisplayToggles() {
 
 function renderIllustratedFeatureControls(id) {
   const flags = illustratedFeatures(id);
-  const toggle = (key, label, child = false) => `<label class="atlasToggleField${child ? " illustratedFeatureChild" : ""}"><input type="checkbox" data-illustrated-feature="${key}" data-level-id="${id}" ${flags[key] ? "checked" : ""} ${child && !flags.globalLighting ? "disabled" : ""}><span>${label}</span></label>`;
+  const help = {
+    globalLighting:'Optional Illustrated grading, area/directional lighting and depth perspective. Snow and rain use the separate Particle Fields gate. Global Lighting suppresses the separate Emissive Glow overlay while enabled.',
+    sceneDepth:'Controls depth perspective under Global Lighting. Particle depth masks can still sample the depth map while this switch or Global Lighting is off; each field has its own Depth Influence.',
+    characterShadows:'Independent Illustrated grounding-shadow gate. Also requires the Characters layer and each character’s shadow setting. Character relighting, wrap and rim remain Cinematic-only.',
+    particleFields:'Independent of Global Lighting. Snow and rain use WebGPU; Sand uses Canvas 2D. The field system, instance and assigned layer must also be enabled.'
+  };
+  const toggle = (key, label, child = false) => `<label class="atlasToggleField${child ? " illustratedFeatureChild" : ""}"><input type="checkbox" data-illustrated-feature="${key}" data-level-id="${id}" ${flags[key] ? "checked" : ""} ${child && !flags.globalLighting ? "disabled" : ""}><span>${label}</span>${help[key] ? renderEditorInfo(label,help[key]) : ''}</label>`;
   return `<div class="illustratedFeatureControls" data-illustrated-features>
     ${toggle("globalLighting", "Global Lighting")}
     ${toggle("globalGrading", "Global Grading", true)}
@@ -6782,7 +6747,7 @@ function renderGraphicsSettings() {
         ${window.AtlasGraphicsModes.list(settings.renderer).filter(mode=>mode.group===group).map(mode=>`<button type="button" data-renderer-choice="${mode.id}" aria-pressed="${mode.selected}" ${mode.enabled?'':'disabled title="Desktop only"'}>${mode.label}${mode.enabled?'':'<small>Desktop only</small>'}</button>`).join('')}
       </div></fieldset>`).join('')}
       <p class="rendererTechnicalDescription">${descriptions[settings.renderer]}</p>
-      ${settings.renderer === "illustrated" && level ? renderIllustratedFeatureControls(level.id) : ""}
+      ${settings.renderer === "illustrated" && level ? (desktopEditorActive() ? '<button data-environment-participation>Environment participation…</button>' : renderIllustratedFeatureControls(level.id)) : ""}
       <fieldset><legend>Weergave-informatie</legend><div class="displayToggles">
         ${renderDisplayToggles()}
       </div></fieldset>
@@ -6950,6 +6915,7 @@ function renderScene(options = {}) {
     <main class="gameShell ${debugOverlayEnabled ? "debugOverlayActive" : ""} ${rendererModeClass} ${voxelReadyClass}" data-active-renderer="${renderer}">
       ${renderReturnToMenuButton()}
       ${renderWorldStage()}
+      ${renderDeveloperToolsPanel()}
       ${options.hideTeamBar ? "" : renderAdventureTeamBar(options.instructionalChallenge)}
       ${renderGraphicsSettings()}
       ${renderVoxelTuningPanel()}
@@ -6959,7 +6925,7 @@ function renderScene(options = {}) {
 
 function performanceHudShouldRun() {
   if (!level || !["scene", "challenge", "correct"].includes(state.screen)) return false;
-  return PERFORMANCE_HUD_MODE || (EDITOR_DEV_MODE && debugOverlayEnabled);
+  return PERFORMANCE_HUD_MODE || (EDITOR_DEV_MODE && debugOverlayEnabled && debugInfoEnabled);
 }
 
 function ensurePerformanceHudElement() {
@@ -7881,11 +7847,12 @@ function renderTransition() {
 }
 
 function captureEditorUiState() {
-  const roots = ["[data-developer-tools]", "[data-world-editor]"];
+  const roots = ["[data-developer-tools]", "[data-world-editor]", "[data-editor-browser]"];
   const result = { roots: {}, details: [] };
+  result.view=document.querySelector('[data-developer-tools]')?.dataset.editorView;
   roots.forEach((selector) => {
     const root = document.querySelector(selector);
-    if (root) result.roots[selector] = root.scrollTop;
+    if (root) result.roots[selector] = root.hidden ? (editorWorkspace.views.get(result.view)?.roots[selector] || 0) : root.scrollTop;
   });
   const occurrences = new Map();
   document.querySelectorAll("[data-developer-tools] details, [data-world-editor] details").forEach((details) => {
@@ -7895,6 +7862,13 @@ function captureEditorUiState() {
     result.details.push({ base, index, open: details.open });
   });
   const active = document.activeElement;
+  if (active?.closest?.('[data-developer-tools], [data-world-editor]') && active.matches('input, select, textarea, button')) {
+    const attrs = [...active.attributes].filter(attr => attr.name.startsWith('data-') || ['id', 'name'].includes(attr.name));
+    if (attrs.length) result.controlFocus = {
+      selector: active.tagName.toLowerCase() + attrs.map(attr => `[${attr.name}="${CSS.escape(attr.value)}"]`).join(''),
+      start: active.selectionStart, end: active.selectionEnd
+    };
+  }
   if(active?.matches?.('[data-flyby-setting]'))result.flybyFocus={id:active.dataset.flybyId,field:active.dataset.flybySetting};
   if(active?.matches?.('[data-debug-action="preview-flyby"], [data-debug-action="stop-preview-flyby"]'))result.flybyButton=active.dataset.flybyId;
   if(active?.matches?.('[data-cinematic-setting]')) result.cinematicFocus={section:active.dataset.cinematicSection,key:active.dataset.cinematicSetting};
@@ -7907,14 +7881,13 @@ function captureEditorUiState() {
       end: active.selectionEnd
     };
   }
+  if(result.view)editorWorkspace.views.set(result.view,result);
   return result;
 }
 
 function restoreEditorUiState(saved) {
-  Object.entries(saved.roots || {}).forEach(([selector, scrollTop]) => {
-    const root = document.querySelector(selector);
-    if (root) root.scrollTop = scrollTop;
-  });
+  const view=document.querySelector('[data-developer-tools]')?.dataset.editorView;
+  if(view && saved.view!==view)saved=editorWorkspace.views.get(view)||{roots:{},details:[]};
   const occurrences = new Map();
   document.querySelectorAll("[data-developer-tools] details, [data-world-editor] details").forEach((details) => {
     const base = details.dataset.editorPanelKey || details.querySelector(":scope > summary")?.textContent?.trim() || "details";
@@ -7922,6 +7895,12 @@ function restoreEditorUiState(saved) {
     occurrences.set(base, index + 1);
     const prior = saved.details?.find((item) => item.base === base && item.index === index);
     if (prior) details.open = prior.open;
+  });
+  // Expanded sections determine scrollHeight. Restore only after those sections
+  // are open, otherwise the browser clamps the saved position to collapsed content.
+  Object.entries(saved.roots || {}).forEach(([selector, scrollTop]) => {
+    const root = document.querySelector(selector);
+    if (root) root.scrollTop = scrollTop;
   });
   if (saved.focus) {
     const selector = saved.focus.global
@@ -7938,6 +7917,11 @@ function restoreEditorUiState(saved) {
     input?.focus({preventScroll:true});
     const root=input?.closest('[data-developer-tools]');
     if(root)root.scrollTop=saved.roots['[data-developer-tools]']||0;
+  }
+  if (saved.controlFocus) {
+    const input = document.querySelector(saved.controlFocus.selector);
+    input?.focus({ preventScroll: true });
+    if (typeof saved.controlFocus.start === 'number' && input?.setSelectionRange) input.setSelectionRange(saved.controlFocus.start, saved.controlFocus.end);
   }
 }
 
@@ -7988,7 +7972,12 @@ function render() {
   } else if (state.screen === "reward") {
     app.innerHTML = renderReward();
   } else {
-    app.innerHTML = renderScene();
+    const current=app.querySelector('.gameShell');
+    if(desktopEditorActive() && current?.dataset.editorLevel === level.id && current.dataset.activeRenderer===voxelRenderer.getSettings().renderer) {
+      const template=document.createElement('template');template.innerHTML=renderScene();
+      patchEditorDom(current,template.content.firstElementChild);
+    } else app.innerHTML = renderScene();
+    const shell=app.querySelector('.gameShell');if(desktopEditorActive() && shell)shell.dataset.editorLevel=level.id;
   }
 
   // Walk arrival and other scene refreshes must not reset an active visual to
@@ -8002,24 +7991,24 @@ function render() {
     retained.dataset.flybyVisual = replacement.dataset.flybyVisual;
     retained.style.setProperty('--flyby-softness',replacement.style.getPropertyValue('--flyby-softness'));
     retained.style.setProperty('--flyby-saturation',replacement.style.getPropertyValue('--flyby-saturation'));
-    replacement.replaceWith(retained);
+    if(replacement!==retained)replacement.replaceWith(retained);
   }
   ambientFlybyRuntime.refreshPreviews();
   const replacementShadowCanvas = app.querySelector("[data-illustrated-shadow-canvas]");
-  if(retainedShadowCanvas && replacementShadowCanvas && retainedShadowCanvas.dataset.shadowLevel === level?.id) replacementShadowCanvas.replaceWith(retainedShadowCanvas);
+  if(retainedShadowCanvas && replacementShadowCanvas && retainedShadowCanvas.dataset.shadowLevel === level?.id) if(replacementShadowCanvas!==retainedShadowCanvas)replacementShadowCanvas.replaceWith(retainedShadowCanvas);
   const replacementCinematicCanvas = app.querySelector("[data-cinematic-canvas], [data-particle-fields-canvas]");
   const replacementThreeCanvas = app.querySelector("[data-three-canvas]");
-  if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) replacementThreeCanvas.replaceWith(retainedThreeCanvas);
-  if (retainedCinematicCanvas && replacementCinematicCanvas && retainedCinematicCanvas.dataset.cinematicLevel === level?.id && retainedCinematicCanvas.dataset.cinematicMode === replacementCinematicCanvas.dataset.cinematicMode) replacementCinematicCanvas.replaceWith(retainedCinematicCanvas);
+  if (retainedThreeCanvas && replacementThreeCanvas && retainedThreeCanvas.dataset.threeLevel === level?.id && retainedThreeCanvas.dataset.threeMode === replacementThreeCanvas.dataset.threeMode) if(replacementThreeCanvas!==retainedThreeCanvas)replacementThreeCanvas.replaceWith(retainedThreeCanvas);
+  if (retainedCinematicCanvas && replacementCinematicCanvas && retainedCinematicCanvas.dataset.cinematicLevel === level?.id && retainedCinematicCanvas.dataset.cinematicMode === replacementCinematicCanvas.dataset.cinematicMode) if(replacementCinematicCanvas!==retainedCinematicCanvas)replacementCinematicCanvas.replaceWith(retainedCinematicCanvas);
   const replacementVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   if (retainedVoxelCanvas && replacementVoxelCanvas && (!retainedVoxelLevel || retainedVoxelLevel === level?.id)) {
-    replacementVoxelCanvas.replaceWith(retainedVoxelCanvas);
+    if(replacementVoxelCanvas!==retainedVoxelCanvas)replacementVoxelCanvas.replaceWith(retainedVoxelCanvas);
   }
   const activeVoxelCanvas = app.querySelector("[data-voxel-canvas]");
   if (activeVoxelCanvas && level?.id) activeVoxelCanvas.dataset.voxelLevel = level.id;
   const replacementEmissiveCanvas = app.querySelector("[data-emissive-glow-canvas]");
   if (retainedEmissiveCanvas && replacementEmissiveCanvas && (!retainedEmissiveLevel || retainedEmissiveLevel === level?.id)) {
-    replacementEmissiveCanvas.replaceWith(retainedEmissiveCanvas);
+    if(replacementEmissiveCanvas!==retainedEmissiveCanvas)replacementEmissiveCanvas.replaceWith(retainedEmissiveCanvas);
   }
   const activeEmissiveCanvas = app.querySelector("[data-emissive-glow-canvas]");
   if (activeEmissiveCanvas && level?.id) activeEmissiveCanvas.dataset.emissiveLevel = level.id;
@@ -8110,6 +8099,16 @@ function flybyHitAt(event) {
   return null;
 }
 app.addEventListener("click", (event) => {
+  const workspaceButton = event.target.closest('[data-workspace-action]');
+  if (workspaceButton) { event.preventDefault(); workspaceAction(workspaceButton.dataset.workspaceAction); return; }
+  const workspaceItem = event.target.closest('[data-workspace-kind]');
+  if (workspaceItem) { event.preventDefault();selectWorkspaceItem(workspaceItem.dataset.workspaceKind,workspaceItem.dataset.workspaceId,workspaceItem.dataset.workspaceSystem);return; }
+  if (desktopEditorActive() && !editorWorkspace.playtest && editorWorkspace.placement && event.target.closest('[data-world-stage]') && !event.target.closest('button,input,select')) {
+    const point = pointFromViewportEvent(event,document.querySelector('[data-world-stage]'));
+    const placement = editorWorkspace.placement;editorWorkspace.placement=null;
+    addSceneEffect(placement.preset,placement.variant,point);
+    return;
+  }
   ensureAudioUnlocked();
   const tappedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"]');
   const press=flybyPress;flybyPress=null;
@@ -8138,6 +8137,7 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     graphicsSettingsOpen = graphicsAction.dataset.graphicsAction === "toggle" ? !graphicsSettingsOpen : false;
+    if(graphicsSettingsOpen && desktopEditorActive())editorWorkspace.addOpen=editorWorkspace.changesOpen=editorWorkspace.toolsOpen=false;
     render();
     return;
   }
@@ -8218,14 +8218,6 @@ app.addEventListener("click", (event) => {
     }
     return;
   }
-  const editorMode = event.target.closest(".editorModeTabs button[data-editor-mode]");
-  if (editorMode) {
-    event.preventDefault();
-    event.stopPropagation();
-    walkPathEditor.editorMode = editorMode.dataset.editorMode;
-    render();
-    return;
-  }
   const effectSelector = event.target.closest("[data-select-effect]");
   if (effectSelector) {
     event.preventDefault();
@@ -8248,7 +8240,9 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     const select = document.querySelector(`[data-effect-library-variant="${CSS.escape(addEffectTarget.dataset.addEffect)}"]`);
-    addSceneEffect(addEffectTarget.dataset.addEffect, select?.value);
+    editorWorkspace.placement={preset:addEffectTarget.dataset.addEffect,variant:select?.value};
+    editorWorkspace.addOpen=false;
+    refreshEditorWorkspace();
     return;
   }
   const resetEffectFieldTarget = event.target.closest("[data-effect-reset-field]");
@@ -8351,10 +8345,10 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
     const animal = level?.ambientAnimals?.find((item) => item.id === animalTarget.dataset.ambientAnimal);
-    if (animal && walkPathEditor.enabled && debugOverlayEnabled) {
+    if (animal && walkPathEditor.enabled && debugOverlayEnabled && !editorWorkspace.playtest) {
       walkPathEditor.selectedObjectType = "animal";
       walkPathEditor.selectedObjectId = animal.id;
-      render();
+      selectWorkspaceItem("animal",animal.id);
     } else if (animal) playAmbientAnimalSound(animal);
     return;
   }
@@ -8375,14 +8369,6 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     playSfx("uiClick");
     const action = debugActionTarget.dataset.debugAction;
-    if (action === "collapse-editor-panel") {
-      walkPathEditor.panelCollapsed = true;
-      render();
-    }
-    if (action === "restore-editor-panel") {
-      walkPathEditor.panelCollapsed = false;
-      render();
-    }
     if (action === "apply-walkpath") applyWalkPathDraft();
     if (action === "revert-walkpath") revertWalkPathDraft();
     if (action === "preview-animal-blink") {
@@ -8575,6 +8561,7 @@ app.addEventListener("click", (event) => {
 
   const hotspotTarget = event.target.closest("[data-hotspot]");
   if (hotspotTarget) {
+    if(desktopEditorActive() && !editorWorkspace.playtest) { const target=hotspotById(hotspotTarget.dataset.hotspot);selectWorkspaceItem('object',target.objectId);return; }
     playSfx("uiClick");
     const target = hotspotById(hotspotTarget.dataset.hotspot);
     if (target.type === "ambient") {
@@ -8588,7 +8575,7 @@ app.addEventListener("click", (event) => {
 
   const runeTarget = event.target.closest("[data-rune]");
   if (runeTarget) {
-    if (EDITOR_DEV_MODE && debugOverlayEnabled && walkPathEditor.enabled) {
+    if (EDITOR_DEV_MODE && debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest) {
       selectChallengeForEditor(runeTarget.dataset.rune);
       return;
     }
@@ -8613,11 +8600,18 @@ app.addEventListener("click", (event) => {
 
   const stageTarget = event.target.closest("[data-world-stage]");
   if (stageTarget) {
+    if(desktopEditorActive() && !editorWorkspace.playtest && event.target.closest('[data-actor-shell="sven"]')) {selectWorkspaceItem('player','player');return;}
+    if (desktopEditorActive() && !editorWorkspace.playtest && (walkPathEditor.pathMode || walkPathEditor.effectGeometryMode || editorWorkspace.placement || event.target.closest('[data-object-drag], [data-animal-drag], [data-debug-point], [data-effect-handle], [data-cinematic-handle], [data-workspace-kind], button, input, select'))) return;
     beginFreeWalk(pointFromViewportEvent(event, stageTarget));
   }
 });
 
 app.addEventListener("input", (event) => {
+  if(event.target.matches('[data-editor-add-search]')) {filterWorkspaceAdd(event.target.value);return;}
+  if (event.target.matches('[data-editor-search]')) {
+    editorWorkspace.search=event.target.value;
+    document.querySelectorAll('[data-search-text]').forEach(row=>row.hidden=!row.dataset.searchText.includes(editorWorkspace.search.toLowerCase()));return;
+  }
   if (event.target.matches('[data-currency-count]')) {
     state.currencyAnswerDraft = readCurrencyAnswer();
     return;
@@ -8705,7 +8699,7 @@ app.addEventListener("input", (event) => {
   const locomotionSetting = event.target.closest("[data-locomotion-setting]");
   if (locomotionSetting) {
     const factor = Number(locomotionSetting.dataset.valueFactor || 1);
-    updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor, locomotionSetting.dataset.levelId);
+    updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor, locomotionSetting.dataset.levelId, locomotionSetting.dataset.locomotionProfile);
     return;
   }
   const effectColor = event.target.closest("[data-effect-color]");
@@ -8736,6 +8730,12 @@ app.addEventListener("input", (event) => {
 });
 
 app.addEventListener("change", (event) => {
+  if(event.target.matches('[data-workspace-level]')) {selectLevel(event.target.value,{startImmediately:true,recordStart:false,allowDisabledForEditor:true});return;}
+  if (event.target.matches('[data-workspace-object-field]')) {
+    const object = level.interactiveObjects.find(item=>item.id===editorWorkspace.selection.id), key=event.target.dataset.workspaceObjectField;
+    const value=Number(event.target.value);
+    if(object && Number.isFinite(value)) { if(key==='radius')object.radius=Math.max(12,value);else object.center[key]=value;setLevelInteractiveObjects(level.interactiveObjects);markEditorModified(`${object.id}: geometry updated.`);render(); }return;
+  }
   const flybySet = event.target.closest('[data-add-flyby-form] [name="assetSet"]');
   if (flybySet) {
     const form = flybySet.closest('form');
@@ -8817,7 +8817,7 @@ app.addEventListener("change", (event) => {
   const locomotionSetting = event.target.closest("[data-locomotion-setting]");
   if (locomotionSetting) {
     const factor = Number(locomotionSetting.dataset.valueFactor || 1);
-    const nextValue = updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor, locomotionSetting.dataset.levelId);
+    const nextValue = updateLocomotionSetting(locomotionSetting.dataset.locomotionSetting, Number(locomotionSetting.value) / factor, locomotionSetting.dataset.levelId, locomotionSetting.dataset.locomotionProfile);
     if (nextValue !== undefined) locomotionSetting.value = String(nextValue * factor);
     return;
   }
@@ -8902,7 +8902,22 @@ app.addEventListener("change", (event) => {
   updateAmbientAnimalSetting(animalSetting.dataset.animalId, "mirrorX", animalSetting.checked);
 });
 
+app.addEventListener('wheel',event=>{
+  if(!desktopEditorActive() || window.AtlasGraphicsModes.isThree(editorPreviewRenderer()) || editorWorkspace.playtest || walkPathEditor.effectGeometryMode || walkPathEditor.pathMode || !editorWorkspace.camera || !event.target.closest('[data-world-stage]'))return;
+  event.preventDefault();
+  const stage=document.querySelector('[data-world-stage]'),rect=stage.getBoundingClientRect(),camera=editorWorkspace.camera;
+  const worldX=camera.center+(event.clientX-rect.left-rect.width/2)/camera.scale;
+  const worldY=(event.clientY-rect.top)/camera.scale;
+  camera.scale=clamp(camera.scale*Math.exp(-event.deltaY*.001),.1,4);
+  camera.center=worldX-(event.clientX-rect.left-rect.width/2)/camera.scale;
+  camera.y=event.clientY-worldY*camera.scale-54-(innerHeight-54-camera.scale*level.world.height)/2;
+  layoutEditorWorkspace();updateWorldDom();cinematicEditor.updateGuides();
+},{passive:false});
+
 app.addEventListener("pointerdown", (event) => {
+  const resize=event.target.closest('[data-editor-resize]');
+  if(resize && desktopEditorActive()) {event.preventDefault();editorWorkspace.pan={resize:resize.dataset.editorResize,x:event.clientX,width:editorWorkspace[`${resize.dataset.editorResize}Width`]};resize.setPointerCapture(event.pointerId);return;}
+  if(desktopEditorActive() && editorWorkspace.camera && !window.AtlasGraphicsModes.isThree(editorPreviewRenderer()) && !editorWorkspace.playtest && event.button===1 && event.target.closest('[data-world-stage]')) {event.preventDefault();editorWorkspace.pan={x:event.clientX,y:event.clientY,center:editorWorkspace.camera.center,offset:editorWorkspace.camera.y};event.target.setPointerCapture?.(event.pointerId);return;}
   if(event.isPrimary)flybyPress=null;
   const pressedFlyby = event.target.closest('[data-ambient-flyby][data-sound-trigger="tap"][data-active="true"]');
   if (pressedFlyby && event.isPrimary && event.button === 0) {
@@ -8914,7 +8929,7 @@ app.addEventListener("pointerdown", (event) => {
   ensureAudioUnlocked();
   updateCinematicCueInteraction("pressed", cinematicCueIdForTarget(event.target));
   // Form controls must not pick a world/animal drag handle behind the panel.
-  if (event.target.closest("[data-developer-tools]")) return;
+  if (event.target.closest("[data-editor-workspace], [data-developer-tools]")) return;
   const effectHandle = event.target.closest("[data-effect-handle]");
   if (effectHandle && (walkPathEditor.effectGeometryMode || walkPathEditor.editorMode === "graphics")) {
     event.preventDefault();
@@ -9000,6 +9015,8 @@ app.addEventListener("pointerdown", (event) => {
     walkPathEditor.draggingAnimalId = animalTarget.dataset.animalDrag;
     walkPathEditor.selectedObjectType = "animal";
     walkPathEditor.selectedObjectId = animalTarget.dataset.animalDrag;
+    editorWorkspace.selection={kind:'animal',id:animalTarget.dataset.animalDrag};
+    if(!editorWorkspace.focus)editorWorkspace.inspectorOpen=true;
     walkPathEditor.draggingObjectId = null;
     walkPathEditor.draggingIndex = null;
     return;
@@ -9008,6 +9025,8 @@ app.addEventListener("pointerdown", (event) => {
   if (objectTarget && walkPathEditor.enabled && debugOverlayEnabled) {
     event.preventDefault();
     walkPathEditor.draggingObjectId = objectTarget.dataset.objectId;
+    editorWorkspace.selection={kind:'object',id:objectTarget.dataset.objectId};
+    if(!editorWorkspace.focus)editorWorkspace.inspectorOpen=true;
     walkPathEditor.draggingObjectMode = objectTarget.dataset.objectDrag;
     walkPathEditor.draggingAnimalId = null;
     walkPathEditor.draggingIndex = null;
@@ -9026,6 +9045,13 @@ app.addEventListener("pointerdown", (event) => {
 });
 
 window.addEventListener("pointermove", (event) => {
+  const pan=editorWorkspace.pan;
+  if(pan) {
+    event.preventDefault();
+    if(pan.resize) { editorWorkspace[`${pan.resize}Width`]=clamp(pan.width+(event.clientX-pan.x)*(pan.resize==='browser'?1:-1),pan.resize==='browser'?180:280,pan.resize==='browser'?360:500);const root=document.querySelector('[data-editor-workspace]');root?.style.setProperty(`--${pan.resize}-width`,`${editorWorkspace[`${pan.resize}Width`]}px`); }
+    else {editorWorkspace.camera.center=pan.center-(event.clientX-pan.x)/editorWorkspace.camera.scale;editorWorkspace.camera.y=pan.offset+event.clientY-pan.y;}
+    layoutEditorWorkspace();updateWorldDom();return;
+  }
   if (walkPathEditor.effectDrag) {
     event.preventDefault();
     updateEffectDrag(event);
@@ -9070,10 +9096,13 @@ window.addEventListener("pointermove", (event) => {
 });
 
 window.addEventListener("pointercancel",(event)=>{if(flybyPress?.pointerId===event.pointerId)flybyPress=null;});
-window.addEventListener("blur",()=>{flybyPress=null;});
+window.addEventListener("blur",()=>{flybyPress=null;editorWorkspace.pan=null;});
+window.addEventListener("pointercancel",()=>{editorWorkspace.pan=null;});
 window.addEventListener("pointerup", (event) => {
+  if(editorWorkspace.pan?.resize)saveWorkspaceLayout();
+  editorWorkspace.pan=null;
   if(flybyPress?.pointerId===event.pointerId){flybyPress.released=true;flybyPress.valid=ambientFlybyRuntime.validateHit(flybyPress.hit);}
-  const finishedAnimalDrag = Boolean(walkPathEditor.draggingAnimalId);
+  const finishedAnimalDrag = Boolean(walkPathEditor.draggingAnimalId || walkPathEditor.draggingObjectId);
   updateCinematicCueInteraction("pressed", null);
   if (walkPathEditor.effectDrag && walkPathEditor.effectDrag.type !== "pan") {
     const effect = selectedSceneEffect();
@@ -9153,6 +9182,13 @@ window.addEventListener("resize", () => {
 });
 
 window.addEventListener("keydown", (event) => {
+  if(desktopEditorActive()) {
+    if(event.ctrlKey && event.key.toLowerCase()==='k') {event.preventDefault();workspaceAction('search');return;}
+    if(event.ctrlKey && event.shiftKey && event.key.toLowerCase()==='f') {event.preventDefault();workspaceAction('focus');return;}
+    if(event.key==='Escape' && editorWorkspace.placement) {editorWorkspace.placement=null;refreshEditorWorkspace();return;}
+    const separator=event.target.closest?.('[data-editor-resize]');
+    if(separator && ['ArrowLeft','ArrowRight'].includes(event.key)) {event.preventDefault();const side=separator.dataset.editorResize;editorWorkspace[`${side}Width`]=clamp(editorWorkspace[`${side}Width`]+(event.key==='ArrowRight'?10:-10)*(side==='browser'?1:-1),side==='browser'?180:280,side==='browser'?360:500);refreshEditorWorkspace();return;}
+  }
   ensureAudioUnlocked();
   if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "v") {
     event.preventDefault();
@@ -9212,12 +9248,12 @@ window.addEventListener("keydown", (event) => {
     );
     return;
   }
-  if (!editingText && walkPathEditor.editorMode === "graphics" && event.ctrlKey && event.key.toLowerCase() === "c") {
+  if (!editingText && desktopEditorActive() && !editorWorkspace.playtest && editorWorkspace.selection.kind === "effect" && event.ctrlKey && event.key.toLowerCase() === "c") {
     event.preventDefault();
     copySceneEffect();
     return;
   }
-  if (!editingText && walkPathEditor.editorMode === "graphics" && event.ctrlKey && event.key.toLowerCase() === "v") {
+  if (!editingText && desktopEditorActive() && !editorWorkspace.playtest && editorWorkspace.selection.kind === "effect" && event.ctrlKey && event.key.toLowerCase() === "v") {
     event.preventDefault();
     pasteSceneEffect();
     return;

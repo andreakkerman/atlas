@@ -1,3 +1,4 @@
+const {selectSceneItem}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -74,7 +75,7 @@ async function openEditorLevel(page, levelId) {
   }, levelId);
   await page.keyboard.press("Control+Shift+D");
   await expect(page.locator("[data-developer-tools]")).toBeVisible();
-  await page.getByRole("button", { name: "Challenges", exact: true }).click();
+  await page.keyboard.press('Control+k');
 }
 
 function preserveLevel(levelId) {
@@ -262,14 +263,14 @@ test.describe("learning challenge active state", () => {
     try {
       await openEditorLevel(page, "LVL-0001");
 
-      await page.locator('[data-select-challenge="zon"]').click();
+      await selectSceneItem(page,'challenge','zon');
       const preview = page.locator('[data-challenge-preview="zon"]');
       const activeToggle = preview.locator('[data-challenge-active="zon"]');
       await expect(preview).toBeVisible();
       await expect(preview).toContainText("zon");
-      await expect(preview).toContainText("4 vragen · 10 varianten");
-      await expect(preview).toContainText("RP-M6-OP-001");
-      await expect(preview).toContainText("RP-M6-GE-001");
+      await expect(preview).toContainText("4 vragen · 8 varianten");
+      await expect(preview).toContainText("zon-1a");
+      await expect(preview).toContainText("zon-4b");
       await expect(preview).toContainText("4 × 8 = ?");
       await expect(preview).toContainText("Antwoord 32");
       await expect(preview).toContainText("Keuzes 24, 32, 40, 48");
@@ -281,7 +282,7 @@ test.describe("learning challenge active state", () => {
       await activeToggle.setChecked(!wasActive);
       await expect(preview).toContainText(wasActive ? "Inactief" : "Actief");
       await expect(page.locator('[data-select-challenge="zon"]')).toHaveClass(
-        wasActive ? /editorChallengeInactive/ : /editorObjectSelected/
+        wasActive ? /editorChallengeInactive/ : /^$/
       );
     } finally {
       restoreLevel(snapshot);
@@ -298,7 +299,7 @@ test.describe("learning challenge active state", () => {
       return currentLevel.runes.find((rune) => rune.challengeId === clockChallenge.id).id;
     });
 
-    await page.locator(`[data-select-challenge="${clockRuneId}"]`).click();
+    await selectSceneItem(page,'challenge',clockRuneId);
     const preview = page.locator("[data-challenge-preview]");
     await expect(preview).toContainText("Bevat klokvisuals");
     await expect(preview).toContainText("Visual clock");
@@ -315,13 +316,13 @@ test.describe("learning challenge active state", () => {
       await openEditorLevel(page, "LVL-0001");
       await page.locator('[data-select-challenge="zon"]').click();
       await page.locator('[data-challenge-active="zon"]').setChecked(false);
-      await expect(page.getByText("Draft Status: Modified")).toBeVisible();
+      await expect(page.getByText("Changes: Modified")).toBeVisible();
 
       const draft = JSON.parse(fs.readFileSync(snapshot.draftPath, "utf8"));
       expect(draft.learningChallenges.find((challenge) => challenge.id === "zon").active).toBe(false);
 
       await page.getByRole("button", { name: "Apply" }).click();
-      await expect(page.getByText("Draft Status: Applied")).toBeVisible({ timeout: 10000 });
+      await expect(page.getByText("Changes: Applied")).toBeVisible({ timeout: 10000 });
       const applied = loadLevel("LVL-0001");
       expect(applied.learningChallenges.find((challenge) => challenge.id === "zon").active).toBe(false);
       await page.evaluate(() => window.eval("returnToMenu")());

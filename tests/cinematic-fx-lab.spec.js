@@ -1,3 +1,4 @@
+const {selectSystem,addCinematic,bootEditorTest}=require('./editor-workspace-helpers');
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
 const path = require("path");
@@ -103,14 +104,14 @@ function differenceMaskOverlap(before, afterA, afterB, box, threshold = 3) {
 
 async function loadLab(page) {
   await page.route("**/__dev/levels/*/editor-draft", route => route.fulfill({ json: {} }));
-  await page.goto(runtimeUrl);
+  await bootEditorTest(page,runtimeUrl);
   await page.evaluate(async id => {
     await window.eval("selectLevel")(id, { startImmediately: true, recordStart: false });
   }, labId);
   await expect(page.locator('[data-actor="sven"]')).toBeVisible();
 }
 
-test("LVL-0000 is a valid authored renderer scene alongside 32 production levels", () => {
+test("LVL-0000 is a valid authored renderer scene alongside 35 production levels", () => {
   const context = { window: { SVEN_LEVEL_DEFINITIONS: {} } };
   runScript("Levels/manifest.js", context);
   runScript("Levels/LVL-0000/level.js", context);
@@ -122,7 +123,7 @@ test("LVL-0000 is a valid authored renderer scene alongside 32 production levels
   const settings = context.window.SVEN_WORLD_CONFIG.levels[labId]?.cinematicLighting;
   const normalized = cinematic.normalize(settings);
 
-  expect(manifest.levels.filter(item => !item.developerOnly)).toHaveLength(32);
+  expect(manifest.levels.filter(item => !item.developerOnly)).toHaveLength(35);
   expect(manifest.levels.filter(item => item.developerOnly).map(item => item.id)).toEqual([labId]);
   expect(entry).toMatchObject({ developerOnly: true, script: "Levels/LVL-0000/level.js" });
   expect(level.world).toMatchObject({
@@ -145,7 +146,8 @@ test("LVL-0000 is a valid authored renderer scene alongside 32 production levels
   expect(normalized.shafts.items).toHaveLength(1);
   expect(normalized.particles.items).toHaveLength(1);
   expect(normalized.waterSurface.items).toHaveLength(2);
-  expect(normalized.waterSparkles.items.every(item => item.shape === "polygon" && item.points.length >= 6 && item.points.length <= 8)).toBe(true);
+  expect(normalized.waterSparkles.items.map(item => ({shape:item.shape,points:item.points}))).toEqual(settings.waterSparkles.items.map(item => ({shape:item.shape,points:item.points})));
+  expect(normalized.waterSparkles.items.map(item => item.points.length)).toEqual([4]);
   expect(normalized.waterSurface.items.every(item => item.shape === "polygon" && item.points.length >= 6 && item.points.length <= 8)).toBe(true);
   expect(normalized.waterSurface.items.every(item => !Object.hasOwn(item, "motionStrength") && !Object.hasOwn(item, "motionScale") && !Object.hasOwn(item, "motionSpeed"))).toBe(true);
   expect(normalized.waterSurface.items.every(item => Object.values(item).flatMap(value => typeof value === "object" ? [] : [value]).filter(value => typeof value === "number").every(Number.isFinite))).toBe(true);
@@ -265,6 +267,7 @@ test("developer visibility is hostname-driven and excluded from adventure progre
     const context = { window: { location: { hostname }, localStorage: { getItem: () => null, setItem: () => {} } } };
     runScript("Levels/manifest.js", context);
     runScript("Levels/world-config.js", context);
+    runScript("src/playable-characters.js", context);
     runScript("src/atlas-world.js", context);
     return context.window.AtlasWorld.createWorldResolver(
       context.window.SVEN_LEVEL_MANIFEST.levels,
@@ -275,7 +278,7 @@ test("developer visibility is hostname-driven and excluded from adventure progre
   for (const hostname of ["localhost", "127.0.0.1"]) {
     const resolver = make(hostname);
     expect(resolver.rootEntries().map(entry => entry.id)).toContain(labId);
-    expect(resolver.allEnabledIds()).toHaveLength(31);
+    expect(resolver.allEnabledIds()).toHaveLength(29);
     expect(resolver.allEnabledIds()).not.toContain(labId);
     expect(resolver.nextEnabled(labId)).toBeNull();
   }
@@ -283,13 +286,12 @@ test("developer visibility is hostname-driven and excluded from adventure progre
   const production = make("atlas.example");
   expect(production.rootEntries().map(entry => entry.id)).not.toContain(labId);
   expect(production.entryIsAvailable({ developerOnly: true })).toBe(false);
-  expect(production.allEnabledIds()).toHaveLength(31);
+  expect(production.allEnabledIds()).toHaveLength(29);
 });
 
 test("localhost menu exposes the FX Lab and the normal level pipeline loads it", async ({ page }) => {
   test.skip(!runtimeUrl.startsWith("http"), "HTTP local-development host required");
-  await page.goto(runtimeUrl);
-  await page.getByRole("button", { name: "Start avontuur" }).click();
+  await bootEditorTest(page,runtimeUrl);
   const tile = page.locator('[data-menu-tile="LVL-0000"]');
   await expect(tile).toBeVisible();
   await expect(tile).toContainText("Cinematic FX Lab");
@@ -300,10 +302,10 @@ test("localhost menu exposes the FX Lab and the normal level pipeline loads it",
   expect(await page.evaluate(() => window.eval("level").id)).toBe(labId);
   expect(await page.evaluate(() => window.eval("resolvedNextLevelId")())).toBeNull();
   await page.keyboard.press("Control+Shift+D");
-  await page.locator('[data-editor-mode="graphics"]').click();
+  await selectSystem(page,'depth');
   await expect(page.locator("[data-cinematic-editor]")).toBeVisible();
   await expect(page.locator('[data-cinematic-group="depth"]')).toContainText("Scene depth");
-  await page.locator('[data-cinematic-layer="environment"]').click();
+  await selectSystem(page,'waterSurface');
   await expect(page.locator('[data-cinematic-group="waterSurface"]')).toContainText("Water Surface");
   await expect(page.locator('[data-cinematic-group="waterSurface"]')).toContainText("Evolution Speed");
   await expect(page.locator('[data-cinematic-group="waterSurface"]')).toContainText("Shimmer Coverage");
@@ -315,10 +317,11 @@ test("localhost menu exposes the FX Lab and the normal level pipeline loads it",
   await expect(page.locator('[data-cinematic-group="waterSurface"]')).not.toContainText("Glint Cluster Size");
   await expect(page.locator('[data-cinematic-group="waterSurface"]')).not.toContainText("Shimmer Threshold");
   await expect(page.locator('[data-cinematic-group="waterSurface"]')).not.toContainText("Motion Strength");
+  await selectSystem(page,'waterSparkles');
   const sparkleGroup = page.locator('[data-cinematic-group="waterSparkles"]');
   await expect(sparkleGroup).toContainText("Water Sparkles");
   await sparkleGroup.evaluate(element => { element.open = true; });
-  if (await sparkleGroup.getByText("No instances.").count()) await sparkleGroup.getByRole("button", { name: "Add", exact: true }).click();
+  if (await sparkleGroup.locator('[data-cinematic-selected=""]').count()) await addCinematic(page,'waterSparkles');
   await expect(sparkleGroup).toContainText("Sparkle Strength");
   await expect(sparkleGroup).toContainText("Sparkle Density");
   await expect(sparkleGroup).toContainText("Twinkle Speed");
@@ -385,7 +388,7 @@ test("GPU Cinematic uploads valid prepared sources on LVL-0000 and a production 
   page.on("pageerror", error => errors.push(error.message));
   page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
   await page.setViewportSize({ width: 1280, height: 720 });
-  await page.goto(runtimeUrl);
+  await bootEditorTest(page,runtimeUrl);
   await page.evaluate(() => {
     localStorage.clear();
     const nativeCopy = GPUQueue.prototype.copyExternalImageToTexture;

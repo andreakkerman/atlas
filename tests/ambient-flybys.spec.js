@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const path = require("path");
@@ -5,8 +6,10 @@ const { pathToFileURL } = require("url");
 
 const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const editorUrl = `${gameUrl}?dev=editor`;
+require("./editor-draft-fixture").preserveEditorDrafts(test,path.join(__dirname,".."));
 
 async function startItaly(page, url = gameUrl) {
+  await page.route("**/__dev/levels/*/editor-draft",route=>route.request().method()==="GET"?route.fulfill({json:{}}):route.continue());
   await page.goto(url);
   await page.getByRole('button', { name: 'Start avontuur', exact: true }).click();
   await expect(page.locator('.menuScreen')).toBeVisible();
@@ -171,8 +174,7 @@ test.describe("ambient editor usability", () => {
   test("panel scrolls, sections collapse, and flight points remain editable off-screen", async ({ page }) => {
     await startItaly(page, editorUrl);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
-    await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
+    await selectSceneItem(page,'flyby','italyCommonSwift');
     const panel = page.locator("[data-developer-tools]");
     const scroll = await panel.evaluate((node) => {
       node.scrollTop = node.scrollHeight;
@@ -182,17 +184,7 @@ test.describe("ambient editor usability", () => {
     expect(scroll.top).toBeGreaterThan(0);
     expect(scroll.overflow).toBe("auto");
 
-    await page.getByRole("button", { name: "Edit flight path" }).click({ force: true }).catch(() => {});
-    if (await page.locator("[data-flight-path-workspace]").count() === 0) {
-      await page.evaluate(() => {
-        walkPathEditor.selectedObjectType = "flyby";
-        walkPathEditor.selectedObjectId = level.ambientFlybys?.[0]?.id || null;
-        walkPathEditor.pathMode = true;
-        walkPathEditor.pathViewBox = null;
-        walkPathEditor.selectedPathPoint = 0;
-        render();
-      });
-    }
+    await page.getByRole("button", { name: "Edit flight path" }).click();
     await expect(page.locator("[data-flight-path-workspace]")).toBeVisible();
     await expect(page.locator("[data-flyby-point]")).toHaveCount(4);
     const authored = await page.evaluate(() => window.eval("level.ambientFlybys[0].path"));
@@ -223,8 +215,7 @@ test.describe("ambient editor usability", () => {
       httpEditor.searchParams.set('dev', 'editor');
       await startItaly(page, httpEditor.href);
       await page.keyboard.press("Control+Shift+D");
-      await page.getByRole("button", { name: "Graphics", exact: true }).click();
-      await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click();
+      await selectSceneItem(page,'flyby','italyCommonSwift');
       await page.locator("[data-flyby-setting='motionProfile'][data-flyby-id='italyCommonSwift']").selectOption("organic");
       await page.locator("[data-flyby-setting='wobble'][data-flyby-id='italyCommonSwift']").fill("18");
       await page.locator("[data-flyby-setting='wobble'][data-flyby-id='italyCommonSwift']").dispatchEvent("change");
@@ -248,8 +239,8 @@ test.describe("ambient editor usability", () => {
       });
 
       await page.getByRole("button", { name: "Apply" }).click();
-      await expect(page.getByText("Draft Status: Applied")).toBeVisible({ timeout: 10000 });
-      await page.reload();
+      await expect(page.getByText("Changes: Applied")).toBeVisible({ timeout: 10000 });
+      await bootEditorTest(page,page.url());
       await page.evaluate(async () => {
         await window.eval("selectLevel")("LVL-0016", { startImmediately: true });
         window.eval("render")();

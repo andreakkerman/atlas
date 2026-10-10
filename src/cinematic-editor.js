@@ -15,7 +15,7 @@
     grading: "Adjust overall color and brightness without blurring the illustration. Keep saturation near one to preserve painted color.",
     localLights: "Place a torch, lantern or rune spill. Radius sets its reach; intensity and falloff control how quickly light fades away.",
     areaLights: "Broad directional illumination for sun, moon or room bounce. Rotate the region to shape the light across the scene.",
-    shafts: "A single local shaft for a window or opening. For a family of sun rays use God Rays in Global Lighting.",
+    shafts: "A single local shaft for a window or opening. For a family of sun rays use the God Rays system.",
     godRays:"One light origin emits a structured fan of rays. Spread opens the fan; ray count and width shape its rhythm. Depth places rays behind nearer artwork.",
     gameplayCues:"Uses existing challenge and exit states. Cyan invites interaction, gold marks completion, green marks an open exit, and muted amber marks a locked exit. Does not change progression.",
     spread:"How widely rays fan outward from the source. Higher values cover a broader part of the scene.",
@@ -66,7 +66,7 @@
     depthSpread: "Range of particle distances around the field depth. Higher values mix foreground and background particles.",
     pulse: "Smooth particle brightness variation. Zero is steady; higher values give a magical shimmer.",
     grounding: "Gently darkens the lower part of the sprite near contact. Higher values strengthen grounding without drawing a shadow rectangle.",
-    groundingShadow: "Draws one soft Cinematic-only grounding shadow for Sven and standard NPCs. Ambient animals are unaffected.",
+    groundingShadow: "Draws one grounding shadow for Sven and standard NPCs. Illustrated additionally requires Character Shadows in Preview. Ambient animals are unaffected.",
     shadowShape: "Chooses one Grounding Shadow shape. Silhouette derives a softened cast shape from the current displayed sprite alpha.",
     shadowStrength: "Artistic shadow intensity. One is a clear normal shadow; higher values progressively strengthen the result.",
     shadowOpacity: "Final master visibility from 0 to 100%. This does not change shape, grounding, lighting response or softness.",
@@ -163,7 +163,9 @@
     finalContrast:"Final display contrast. One leaves it unchanged; higher values strengthen light/dark separation."
   });
   const help = (key, section) => key === "depth" && section !== "depth" ? "Distance of this effect: zero is far, one is near. Nearer artwork softly occludes effects behind it." : helpText[key];
-  const info = (key, section) => `<span class="cinematicInfo"><button type="button" data-cinematic-help title="${help(key, section)}" aria-label="Help: ${label(key)}" aria-expanded="false">ⓘ</button><span class="cinematicHelp" role="tooltip" hidden>${help(key, section)}</span></span>`;
+  const explainedFields=new Set(['depthInfluence','depthSoftness','depthBias','perspective','distribution','boundsRotation','scaleCountWithArea','count','groundingShadow','shadowLightSourceX','shadowLightSourceY','shadowGlobalLightInfluence','shadowAtmosphereSuppression','edgeSoftness','rayMotion','enabled']);
+  const info = (key, section) => explainedFields.has(key) ? `<button type="button" class="editorInfoButton" data-cinematic-help data-help-section="${section}" data-help-key="${key}" aria-label="Information: ${label(key)}" title="About ${label(key)}">i</button>` : '';
+
   function createEditor(options) {
     const selection = new Map();
     const views = new Map();
@@ -194,27 +196,72 @@
     const lightingShadowFields = new Set(["shadowLightSourceX","shadowLightSourceY","shadowDirection","shadowGlobalLightInfluence","shadowLocalLightInfluence","shadowDirectionSmoothing"]);
     const shadowFields = new Set([...generalShadowFields,...groundingShadowFields,...appearanceShadowFields,...lightingShadowFields]);
     function fields(key, value, include = () => true) { return Object.entries(api.systems[key].fields).filter(([field])=>include(field)).map(([field, def]) => `<div class="cinematicControl">${control(key, field, def, value[field])}${info(field,key)}</div>`).join(""); }
-    function characterFields(value) { return `<details class="cinematicSubsection" data-editor-panel-key="cinematic-characters-shadow" data-cinematic-subsection="grounding-shadow" open><summary>Grounding Shadow</summary><div class="cinematicShadowGroup" data-cinematic-shadow-group="general"><strong>General</strong>${fields("characters",value,field=>generalShadowFields.has(field))}</div><div class="cinematicShadowGroup" data-cinematic-shadow-group="grounding"><strong>Grounding</strong>${fields("characters",value,field=>groundingShadowFields.has(field))}</div><div class="cinematicShadowGroup" data-cinematic-shadow-group="lighting"><strong>Direction / Lighting</strong><div class="cinematicShadowSource"><strong>Shadow Light Source</strong>${fields("characters",value,field=>sourceFields.has(field))}</div>${fields("characters",value,field=>lightingShadowFields.has(field)&&!sourceFields.has(field))}</div><div class="cinematicShadowGroup" data-cinematic-shadow-group="appearance"><strong>Appearance</strong>${fields("characters",value,field=>appearanceShadowFields.has(field))}</div></details><details class="cinematicSubsection" data-editor-panel-key="cinematic-characters-relighting" data-cinematic-subsection="character-relighting" open><summary>Character Relighting</summary>${fields("characters",value,field=>!shadowFields.has(field))}</details>`; }
+    function characterFields(value, include = () => true) {
+      const groups=[['Grounding',new Set([...generalShadowFields,...groundingShadowFields])],['Shadow Light Source / Direction',lightingShadowFields],['Shadow appearance',appearanceShadowFields],['Character relighting',new Set(Object.keys(api.systems.characters.fields).filter(field=>!shadowFields.has(field)))]];
+      return groups.map(([name,keys])=>'<fieldset class="cinematicShadowGroup"><legend>'+name+'</legend>'+fields('characters',value,field=>keys.has(field)&&include(field))+'</fieldset>').join('');
+    }
     function instances(key, settings) {
       const item = selected(key, settings);
-      return `<label class="graphicsSelect">Selected instance<select data-cinematic-select="${key}">${settings[key].items.filter(i=>inLayer(key,i)).map(i => `<option value="${i.id}" ${i.id === item?.id ? "selected" : ""}>${i.name}</option>`).join("")}</select></label>
-        <div class="cinematicActions"><button type="button" data-cinematic-action="add" data-section="${key}" ${settings[key].items.length >= 12 ? "disabled" : ""}>Add</button><button type="button" data-cinematic-action="duplicate" data-section="${key}" ${item && settings[key].items.length < 12 ? "" : "disabled"}>Duplicate</button><button type="button" data-cinematic-action="remove" data-section="${key}" ${item ? "" : "disabled"}>Delete</button></div>
+      return `<strong data-cinematic-selected="${item?.id || ''}">${item?.name || 'No instance selected'}</strong><div class="cinematicActions"><button type="button" data-cinematic-action="duplicate" data-section="${key}" ${item && settings[key].items.length < 12 ? '' : 'disabled'}>Duplicate</button><button type="button" data-cinematic-action="remove" data-section="${key}" ${item ? '' : 'disabled'}>Delete</button></div>
         ${item && api.presets[key] ? `<label class="graphicsSelect">Starting preset<select data-cinematic-preset="${key}"><option value="">Custom / choose a starting point</option>${Object.keys(api.presets[key]).map(name=>`<option title="${presetHelp[name]}">${name}</option>`).join("")}</select></label><p class="cinematicHint" data-cinematic-preset-help>${presetHelp[view().presets[item.id]] || "Presets change behavior; placement stays put."} ${item.distribution === "ribbon" ? "Depth masking is GPU-only; the other field controls remain editable." : "All controls remain editable."}</p>` : ""}
-        <div data-cinematic-instance="${key}">${item ? fields(key, item) : "<p>No instances. Add one at the current camera position.</p>"}</div>`;
+        <div data-cinematic-instance="${key}">${item ? fields(key, item) : "<p>No instances. Use Add in the canvas toolbar.</p>"}</div>`;
     }
-    function render() {
+    function select(key, id) {
+      if (!api.systems[key]) return;
+      const item = get()[key].items?.find(item => item.id === id);
+      view().layer = item?.layer || api.systems[key].layer;
+      view().system = key;
+      if (id) selection.set(selectionKey(key), id);
+    }
+    function availability(key) {
+      const mode=options.getRenderer(),settings=get();
+      if(mode==='cinematic')return 'Cinematic · authored world configuration';
+      if(mode!=='illustrated')return 'Inactive in this preview renderer; saved settings remain editable.';
+      const projected=api.forIllustrated(settings,options.getIllustratedFeatures?.());
+      if(key==='particles')return projected.particles.enabled ? 'Active in Illustrated · Particle Fields, independently of Global Lighting. GPU particles and Canvas Sand use the same authored fields.' : 'Illustrated Particle Fields: inactive. Check Particle Fields in Preview, System enabled, instance Enabled and its layer.';
+      if(key==='depth')return projected.depth.enabled ? 'Active in Illustrated: spatial guidance for lighting and/or particle masks. Particle masking can use depth with Global Lighting off; perspective requires Global Lighting and Scene Depth.' : 'Illustrated depth is inactive. Enable Depth and a lighting or depth-masked particle consumer. Flyby depth occlusion uses its own prepared depth map.';
+      if(key==='characters')return (projected.characters.groundingShadow ? 'Grounding shadows active in Illustrated.' : 'Illustrated grounding shadows inactive: check Character Shadows in Preview, shadow Enabled and Characters layer.')+' Character relighting, wrap and rim remain Cinematic-only.';
+      if(['grading','areaLights'].includes(key))return projected[key].enabled ? 'Active in Illustrated · Global Lighting and its feature gate are enabled.' : 'Inactive in Illustrated. Check Global Lighting, '+(key==='grading'?'Global Grading':'Area Directional Lights')+', system/instance Enabled and the authored layer.';
+      return 'Cinematic-only contribution. Authored settings remain editable; switch Preview to see this system.';
+    }
+    const environmentGroups={particles:'Weather & atmosphere',atmosphere:'Weather & atmosphere',waterSurface:'Water',waterSparkles:'Water',localLights:'Lighting',areaLights:'Lighting',shafts:'Lighting',godRays:'Lighting',grading:'Color & grading',finishing:'Color & grading',characters:'Shadows & depth',depth:'Shadows & depth',bloom:'Lighting',wrap:'Advanced',rim:'Advanced',autoExposure:'Advanced',gameplayCues:'Advanced'};
+    function creationFamilies() {
+      return Object.entries(api.systems).filter(([,def])=>def.type).map(([key,def])=>({key:'cinematic:'+key,kind:'cinematic',id:key,name:({localLights:'Local light',areaLights:'Area / directional light',particles:'Particle field',atmosphere:'Haze volume'})[key] || def.label,category:environmentGroups[key],help:helpText[key],description:({particles:'Weather, dust or sparks in a positioned field.',localLights:'A local source for a torch, lantern or rune.',areaLights:'Broad illumination for sun, moon or room light.',atmosphere:'A positioned region of haze or mist.'})[key] || helpText[key],applicability:['particles','areaLights'].includes(key)?'Illustrated + Cinematic':'Cinematic preview; editable in every mode',variants:api.presets[key]?[{id:'',name:'Default'},...Object.keys(api.presets[key]).map(name=>({id:name,name}))]:[]}));
+    }
+    // Display priorities only: every control still comes from the existing schema and handler.
+    const environmentQuickFields={depth:['enabled','filterRadius','perspective'],grading:['enabled','exposure','warmth'],characters:['groundingShadow','shadowStrength','enabled'],bloom:['enabled','intensity'],wrap:['enabled','strength'],rim:['enabled','strength'],autoExposure:['enabled','strength'],finishing:['enabled','intensity'],gameplayCues:['enabled','intensity']};
+    function renderEnvironment() {
+      const settings=get(),defaults=api.normalize(),mode=options.getRenderer(),effective=mode==='illustrated'?api.forIllustrated(settings,options.getIllustratedFeatures?.()):mode==='cinematic'?api.effective(settings):null;
+      const rows=Object.entries(api.systems).map(([key,def])=>{
+        const active=Boolean(effective && (effective[key].enabled || key==='characters'&&effective.characters.groundingShadow));
+        const authored=def.type?settings[key].items.length>0:JSON.stringify(settings[key])!==JSON.stringify(defaults[key]);
+        return {key,def,active,authored};
+      }).sort((a,b)=>Number(b.active)-Number(a.active)||Number(b.authored)-Number(a.authored));
+      const rowMarkup=rows.filter(r=>r.active||r.authored||editorWorkspace.environmentAll).map(({key,def,active,authored})=>{
+        const name=({characters:'Character lighting & shadows',wrap:'Scene-wide light wrap',rim:'Scene-wide rim lighting'})[key] || def.label;
+        const status=active?'Active':authored?'Authored · inactive':'Available';
+        const quick=new Set(environmentQuickFields[key] || ['enabled']);
+        const properties=def.type?'<label class="atlasToggleField"><input type="checkbox" data-cinematic-system="'+key+'" '+(settings[key].enabled?'checked':'')+'>Participate in this scene</label><p class="editorQuiet">'+settings[key].items.length+' instances · select an object in Scene to edit its shape and appearance.</p><button data-environment-find="'+def.label+'">Find instances in Scene</button>':fields(key,settings[key],field=>quick.has(field))+('<details data-editor-panel-key="environment-more-'+key+'"><summary>'+ (Object.keys(def.fields).some(field=>!quick.has(field))?'More '+name.toLowerCase()+' controls':'Reset '+name.toLowerCase()) +'</summary>'+(key==='characters'?characterFields(settings[key],field=>!quick.has(field)):fields(key,settings[key],field=>!quick.has(field)))+'<button data-cinematic-action="reset" data-section="'+key+'">Reset '+name.toLowerCase()+'</button></details>');
+        return '<details class="editorEnvironmentSystem" data-environment-system="'+key+'" data-cinematic-group="'+key+'" data-editor-panel-key="environment-'+key+'" '+(active?'open':'')+'><summary>'+name+' <small>'+status+'</small></summary><p class="editorAvailability">'+(active?(mode==='illustrated'?'Illustrated':'Cinematic'):availability(key))+' '+renderEditorInfo(name,helpText[key]+' '+availability(key))+'</p>'+properties+'</details>';
+      }).join('');
+      const glow=emissiveGlowTuning(options.getLevel().id);
+      const glowAuthored=JSON.stringify(glow)!==JSON.stringify(window.AtlasEmissiveGlow.normalizeSettings());
+      const glowRow=glow.enabled||glowAuthored||editorWorkspace.environmentAll?'<section data-environment-system="emissive">'+renderEmissiveGlowControls(options.getLevel().id,{expanded:mode==='illustrated'&&glow.enabled&&!illustratedFeatures().globalLighting})+'</section>':'';
+      const participation='<details data-environment-participation-panel data-editor-panel-key="environment-participation"><summary>Renderer & layer participation</summary><p>Illustrated gates · this level. Individual objects retain their own Enabled setting. These gates do not limit Cinematic.</p>'+renderIllustratedFeatureControls(options.getLevel().id)+'<label>Placement guides<select data-cinematic-guides>'+['selected','all','hidden'].map(mode=>'<option '+(mode===view().guides?'selected':'')+'>'+mode+'</option>').join('')+'</select></label><strong>Authored layers · both modes</strong>'+Object.entries(api.layers).map(([key,def])=>'<label class="atlasToggleField"><input type="checkbox" data-environment-layer="'+key+'" '+(settings.layers[key]?'checked':'')+'>'+def.label+'</label>').join('')+'</details>';
+      return '<section data-environment-overview data-cinematic-editor><p class="editorQuiet">Scene-wide settings · this level. Active systems first.</p>'+participation+rowMarkup+glowRow+'<button data-environment-other aria-expanded="'+Boolean(editorWorkspace.environmentAll)+'">'+(editorWorkspace.environmentAll?'Hide unused systems':'Other environment systems')+'</button></section>';
+    }
+    function render(context = {}) {
       const settings = get();
-      return `<section class="cinematicEditor" data-cinematic-editor><h3>Cinematic Lighting · shared Particle Fields</h3><p>Particle Fields and their depth settings are shared by Illustrated and Cinematic. Other lighting controls apply to Cinematic. For classic Illustrated God Rays, use God Rays (Sun Presence) in the scene-effect library. World units in pixels. Drag a center, region corner, direction arrow or polygon vertex in the scene. Apply saves to this level.</p>
-        <p role="status" data-cinematic-status></p><button type="button" data-renderer-choice="cinematic">Preview Cinematic Lighting</button>
-        <div class="cinematicActions"><button type="button" data-cinematic-action="reset-all">Reset all to neutral</button><label>Placement guides<select data-cinematic-guides>${["selected","all","hidden"].map(mode=>`<option value="${mode}" ${mode===view().guides?"selected":""}>${mode==="selected"?"Selected only":label(mode)}</option>`).join("")}</select></label></div>
-        <div class="cinematicLayerTabs" role="tablist" aria-label="Cinematic layers">${Object.entries(api.layers).map(([key,def])=>`<button type="button" role="tab" data-cinematic-layer="${key}" aria-selected="${key===view().layer}">${def.label}</button>`).join("")}</div>
-        <p data-cinematic-layer-help>${api.layers[view().layer].help}</p><label class="atlasToggleField"><input type="checkbox" data-cinematic-layer-enabled ${settings.layers[view().layer]?"checked":""}> Layer enabled</label>
-        ${Object.entries(api.systems).map(([key, def]) => `<details class="editorSection" data-editor-panel-key="cinematic-${key}" data-cinematic-group="${key}" ${visibleGroup(key)?"":"hidden"}><summary>${def.label}</summary><p>${helpText[key]}</p><button type="button" data-cinematic-action="reset" data-section="${key}">Reset section</button>
-          ${key === "characters" ? characterFields(settings[key]) : def.type ? `<label class="atlasToggleField"><input type="checkbox" data-cinematic-system="${key}" ${settings[key].enabled ? "checked" : ""}> Enabled</label><div data-cinematic-instances="${key}">${instances(key, settings)}</div>` : fields(key, settings[key])}
-          ${key === "autoExposure" ? "<p>Disabled by default: authored exposure is the stable A/B baseline. Adaptation uses a slow GPU log-luminance meter.</p>" : ""}</details>`).join("")}</section>`;
+      if (context.system && api.systems[context.system]?.type) {
+        const key = context.system, def = api.systems[key];
+        return `<section data-cinematic-editor class="cinematicEditor"><p class="editorAvailability" data-cinematic-availability>${availability(key)}</p><p>${helpText[key]}</p><label>Placement guides<select data-cinematic-guides>${['selected','all','hidden'].map(mode=>`<option ${mode===view().guides?'selected':''}>${mode}</option>`).join('')}</select></label><details open data-editor-panel-key="cinematic-${key}" data-cinematic-group="${key}"><summary>${def.label}</summary>${`<div data-cinematic-instances="${key}">${instances(key,settings)}</div>`}</details><button data-cinematic-action="reset" data-section="${key}">Reset section</button></section>`;
+      }
+      return renderEnvironment();
     }
     function updateFields() {
       const settings = get();
+      const availabilityNode=document.querySelector('[data-cinematic-availability]');
+      if(availabilityNode)availabilityNode.textContent=availability(view().system);
       const master=document.querySelector('[data-cinematic-layer-enabled]');if(master) master.checked=settings.layers[view().layer];
       document.querySelectorAll("[data-cinematic-setting]").forEach(input => {
         const key = input.dataset.cinematicSection; const field = input.dataset.cinematicSetting;
@@ -233,16 +280,17 @@
     function updateLayer() {
       document.querySelectorAll('[data-cinematic-layer]').forEach(node=>node.setAttribute('aria-selected',String(node.dataset.cinematicLayer===view().layer)));
       const hint=document.querySelector('[data-cinematic-layer-help]');if(hint)hint.textContent=api.layers[view().layer].help;
-      document.querySelectorAll('[data-cinematic-group]').forEach(node=>{const key=node.dataset.cinematicGroup;node.hidden=!visibleGroup(key);if(api.systems[key].type)updateInstances(key);});
+      document.querySelectorAll('[data-cinematic-group]').forEach(node=>{const key=node.dataset.cinematicGroup;if(api.systems[key].type)updateInstances(key);});
       updateFields();
     }
     function guideMarkup() {
-      if (!document.querySelector("[data-cinematic-editor]") || view().guides === "hidden" || !["illustrated", "cinematic"].includes(options.getRenderer())) return "";
+      if(options.isEditing && !options.isEditing())return '';
+      if ((!options.isEditing && !document.querySelector("[data-cinematic-editor]")) || view().guides === "hidden" || !["illustrated", "cinematic"].includes(options.getRenderer())) return "";
       const settings = get();
-      const effectGuides=Object.entries(api.systems).filter(([key, def]) => def.type && visibleGroup(key) && (options.getRenderer() === "cinematic" || key === "particles")).map(([key]) => settings[key].items.filter(item=>inLayer(key,item)).map(item => {
+      const effectGuides=Object.entries(api.systems).filter(([key, def]) => def.type && (options.isEditing || visibleGroup(key)) && (options.getRenderer() === "cinematic" || ['particles','areaLights'].includes(key))).map(([key]) => settings[key].items.filter(item=>options.isEditing || inLayer(key,item)).map(item => {
         const w = item.radius ? item.radius*2*item.aspect : item.length || item.width, h = item.radius ? item.radius*2 : item.height || item.width*2;
         const attrs = `data-cinematic-handle="move" data-section="${key}" data-id="${item.id}"`;
-        const active = view().system===key && selected(key, settings)?.id === item.id;
+        const active = view().system===key && selected(key, settings)?.id === item.id && (!options.isSelected || options.isSelected(key,item.id));
         const detailed = active || view().guides === "all";
         const marker = `<circle cx="${item.x}" cy="${item.y}" r="${active?10:7}" ${attrs}><title>${item.name}</title></circle>`;
         if(!detailed)return `<g class="cinematicGuide cinematicMarker" data-cinematic-marker="${item.id}">${marker}</g>`;
@@ -272,51 +320,58 @@
     function updateGuides() { const svg = document.querySelector("[data-cinematic-placement]"); if (svg) { updateGuideCamera(); svg.innerHTML = guideMarkup(); } }
     function point(event, svg) { const p = new DOMPoint(event.clientX, event.clientY).matrixTransform(svg.getScreenCTM().inverse()); return { x: p.x, y: p.y }; }
     document.addEventListener("input", event => {
-      const input = event.target.closest("[data-cinematic-setting], [data-cinematic-system], [data-cinematic-guides], [data-cinematic-layer-enabled]"); if (!input) return;
+      const input = event.target.closest("[data-cinematic-setting], [data-cinematic-system], [data-cinematic-guides], [data-cinematic-layer-enabled], [data-environment-layer]"); if (!input) return;
       event.stopImmediatePropagation();
       if (input.hasAttribute("data-cinematic-guides")) { view().guides=input.value;updateGuides(); return; }
       const settings = get();
-      if(input.hasAttribute('data-cinematic-layer-enabled')) settings.layers[view().layer]=input.checked;
+      if(input.dataset.environmentLayer)settings.layers[input.dataset.environmentLayer]=input.checked;
+      else if(input.hasAttribute('data-cinematic-layer-enabled')) settings.layers[view().layer]=input.checked;
       else if (input.dataset.cinematicSystem) settings[input.dataset.cinematicSystem].enabled = input.checked;
       else { const key = input.dataset.cinematicSection; const item = api.systems[key].type ? selected(key, settings) : settings[key]; item[input.dataset.cinematicSetting] = input.type === "checkbox" ? input.checked : ["number", "range"].includes(input.type) ? Number(input.value) : input.value; }
       view().system=input.dataset.cinematicSection||input.dataset.cinematicSystem||view().system;
+      if(input.closest('[data-environment-overview]'))view().layer=api.systems[view().system].layer;
       commit(settings);
+      if(input.closest('[data-environment-overview]'))refreshEditorWorkspace();
       if(input.dataset.cinematicSetting==='layer'){view().layer=input.value;updateLayer();}
     }, true);
     document.addEventListener("change", event => {
       const preset=event.target.closest('[data-cinematic-preset]');
       if(preset?.value){const key=preset.dataset.cinematicPreset,settings=get(),item=selected(key,settings),next=api.preset(key,preset.value,item);view().presets[item.id]=preset.value;settings[key].items[settings[key].items.indexOf(item)]=next;selection.set(selectionKey(key),next.id);view().layer=next.layer;view().system=key;commit(settings);updateLayer();}
-      const select = event.target.closest("[data-cinematic-select]");
-      if (select) { event.stopImmediatePropagation(); view().system=select.dataset.cinematicSelect;selection.set(selectionKey(select.dataset.cinematicSelect), select.value); updateInstances(select.dataset.cinematicSelect); }
-      if (event.target.closest("[data-cinematic-editor]")) event.stopImmediatePropagation();
+      if (event.target.closest("[data-cinematic-editor]") && !event.target.closest("[data-environment-overview]")) event.stopImmediatePropagation();
     }, true);
     document.addEventListener("click", event => {
       if(suppressReleaseClick){suppressReleaseClick=false;event.preventDefault();event.stopImmediatePropagation();return;}
       const handle=event.target.closest('[data-cinematic-handle]');if(handle){event.preventDefault();event.stopImmediatePropagation();return;}
-      const tip=event.target.closest('[data-cinematic-help]');if(tip){event.preventDefault();event.stopImmediatePropagation();const body=tip.nextElementSibling;body.hidden=!body.hidden;tip.setAttribute('aria-expanded',String(!body.hidden));return;}
-      const tab=event.target.closest('[data-cinematic-layer]');if(tab){event.preventDefault();event.stopImmediatePropagation();view().layer=tab.dataset.cinematicLayer;view().system=Object.keys(api.systems).find(key=>visibleGroup(key)&&api.systems[key].type);updateLayer();return;}
-      const summary=event.target.closest('[data-cinematic-group] summary');if(summary){view().system=summary.closest('[data-cinematic-group]').dataset.cinematicGroup;updateGuides();}
+      const tip=event.target.closest('[data-cinematic-help]');if(tip){event.preventDefault();event.stopImmediatePropagation();openEditorInfo(tip,label(tip.dataset.helpKey),help(tip.dataset.helpKey,tip.dataset.helpSection)+' '+availability(tip.dataset.helpSection));return;}
+      const summary=event.target.closest('[data-cinematic-group] summary');if(summary){select(summary.closest('[data-cinematic-group]').dataset.cinematicGroup);updateGuides();}
       const button = event.target.closest("[data-cinematic-action]");
       if (!button) return;
       event.preventDefault(); event.stopImmediatePropagation();
       const settings = get(); const action = button.dataset.cinematicAction, key = button.dataset.section;
+      if (action === 'add') select(key);
       if (action === "reset-all") { commit(api.normalize()); Object.entries(api.systems).filter(([, def]) => def.type).forEach(([k]) => updateInstances(k)); return; }
       if (action === "reset") settings[key] = api.normalize()[key];
       if (action === "add" && settings[key].items.length < 12) {
         const world = options.getLevel().world; const id = `${key}-${Date.now().toString(36)}`;
-        settings[key].items.push(api.instance(key, { id, layer:view().layer, x: options.getCameraX()+options.getViewportWorldWidth()/2, y: world.height*0.55 })); settings[key].enabled = true; selection.set(selectionKey(key), id);
+        const item=api.instance(key, { id, layer:view().layer, x: options.getCameraX()+options.getViewportWorldWidth()/2, y: world.height*0.55 });
+        const added=button.dataset.addCinematicPreset ? api.preset(key,button.dataset.addCinematicPreset,item) : item;
+        settings[key].items.push(added);view().layer=added.layer;
+        settings[key].enabled = true; selection.set(selectionKey(key), id);
       }
       if(action==='duplicate' && settings[key].items.length<12){const original=selected(key,settings);if(original){const id=`${key}-${global.crypto.randomUUID()}`,baseName=original.name.slice(0,80);let name=`${baseName} copy`,suffix=2;while(settings[key].items.some(item=>item.name===name))name=`${baseName} copy ${suffix++}`;settings[key].items.push(api.instance(key,{...api.clone(original),id,name,x:original.x+24,y:original.y+18}));selection.set(selectionKey(key),id);}}
       if (action === "remove") settings[key].items = settings[key].items.filter(i => i.id !== selected(key, settings)?.id);
       view().system=key;commit(settings); if (api.systems[key].type) updateInstances(key);
+      if(button.closest('[data-environment-overview]'))refreshEditorWorkspace();
+      else options.onSelect?.(key, selected(key)?.id || key);
     }, true);
     document.addEventListener("pointerdown", event => {
       const handle = event.target.closest("[data-cinematic-handle]"); if (!handle) return;
       event.preventDefault(); event.stopImmediatePropagation();
       const svg = handle.closest("svg"); const key = handle.dataset.section; view().system=key;
       if(handle.dataset.cinematicHandle==="shadow-source"){const characters=get().characters;drag={svg,key,type:"shadow-source",start:point(event,svg),item:{x:characters.shadowLightSourceX,y:characters.shadowLightSourceY},pointerId:event.pointerId};}
-      else{selection.set(selectionKey(key), handle.dataset.id);drag = { svg, key, id: handle.dataset.id, type: handle.dataset.cinematicHandle, index: Number(handle.dataset.index), start: point(event, svg), item: api.clone(selected(key)), pointerId: event.pointerId };}
+      else{select(key, handle.dataset.id);drag = { svg, key, id: handle.dataset.id, type: handle.dataset.cinematicHandle, index: Number(handle.dataset.index), start: point(event, svg), item: api.clone(selected(key)), pointerId: event.pointerId };}
       svg.setPointerCapture(event.pointerId); if(api.systems[key].type)updateInstances(key);
+      options.onSelect?.(key, handle.dataset.id || key, { dragging: true });
     }, true);
     document.addEventListener("pointermove", event => {
       if (!drag || drag.pointerId !== event.pointerId) return; event.preventDefault(); event.stopImmediatePropagation();
@@ -333,9 +388,9 @@
       if (drag.type === "vertex") item.points[drag.index] = { x: local.x/item.width, y: local.y/item.height };
       commit(settings);
     }, true);
-    const endDrag = event => { if (!drag) return; event.preventDefault();event.stopImmediatePropagation(); drag.svg.releasePointerCapture?.(drag.pointerId); drag = null;suppressReleaseClick=true;setTimeout(()=>{suppressReleaseClick=false;},0); };
+    const endDrag = event => { if (!drag) return; event.preventDefault();event.stopImmediatePropagation(); const ended=drag;drag.svg.releasePointerCapture?.(drag.pointerId); drag = null;suppressReleaseClick=true;options.onSelect?.(ended.key,ended.id || ended.key);setTimeout(()=>{suppressReleaseClick=false;},0); };
     document.addEventListener("pointerup", endDrag, true); document.addEventListener("pointercancel", endDrag, true);
-    return { render, renderGuides, updateGuides, updateFields, updateGuideCamera };
+    return { render, renderEnvironment, creationFamilies, select, renderGuides, updateGuides, updateFields, updateGuideCamera };
   }
   global.AtlasCinematicEditor = { createEditor };
 })(window);

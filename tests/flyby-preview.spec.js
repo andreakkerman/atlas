@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const path=require('path');
 require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,'..'));
@@ -5,9 +6,9 @@ const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 test.beforeEach(async({page},info)=>{info.previewErrors=[];page.on('pageerror',e=>info.previewErrors.push(e.message));page.on('console',m=>{if(m.type()==='error')info.previewErrors.push(m.text());});});
 test.afterEach(async({},info)=>expect(info.previewErrors).toEqual([]));
 async function enter(page,mode='illustrated',extra={}){
- await page.goto(base+'/?dev=editor');
+ await bootEditorTest(page,base+'/?dev=editor');
  await page.evaluate(async({mode,extra})=>{await window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false});const r=window.eval('ambientFlybyRuntime');r.stopAll();const c={...window.eval('level').ambientFlybys[0],path:[{x:350,y:499},{x:1200,y:499}],depthBias:0,motionProfile:'smooth',speed:60,mirrorX:true,rotateAlongPath:false,soundTriggers:[],...extra};await window.eval('setLevelAmbientFlybys')([c]);window.eval('voxelRenderer').updateSettings({renderer:mode});window.eval('walkPathEditor').selectedObjectType='flyby';window.eval('walkPathEditor').selectedObjectId=c.id;window.eval('walkPathEditor').editorMode='graphics';window.eval('render')();}, {mode,extra});
- await page.keyboard.press('Control+Shift+D');
+ await page.keyboard.press('Control+Shift+D');await selectSceneItem(page,'flyby',await page.evaluate(()=>window.eval('level').ambientFlybys[0].id));
  await page.evaluate(()=>window.eval('ambientFlybyRuntime').stopAll());
  await page.evaluate(()=>document.querySelectorAll('[data-developer-tools] details').forEach(d=>d.open=true));
  if(await page.evaluate(()=>Boolean(navigator.gpu)))await expect(page.locator('.gameShell')).toHaveClass(mode==='cinematic'?/cinematicReady/:/particleFieldsReady/);
@@ -77,6 +78,6 @@ test('playing speed changes in place and selection stops only preview ownership'
  const before=await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),i=[...r.active.values()][0];window.previewRef=i;const distance=i.distance;window.eval('updateAmbientFlybySetting')(i.id,'speed',180);return {distance,after:i.distance,elapsed:i.elapsed};});expect(before.after).toBe(before.distance);
  await page.clock.runFor(200);const after=await snapshot(page);expect(after.same).toBe(true);expect(after.distance-before.distance).toBeCloseTo((after.elapsed-before.elapsed)*180,3);
  await button(page).click();await page.evaluate(async()=>{const c=window.eval('level').ambientFlybys[0];await window.eval('setLevelAmbientFlybys')([c,{...c,id:'second-preview'}]);});
- await page.locator('[data-select-ambient-id="second-preview"]').first().click();expect((await snapshot(page)).state).toBe('idle');
+ await selectSceneItem(page,'flyby','second-preview');expect((await snapshot(page)).state).toBe('idle');
  for(let i=0;i<3;i++){await button(page).click();await button(page).click();await button(page).click();await page.locator('[data-debug-action="stop-preview-flyby"]').first().click();expect(await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime');return [r.active.size,r.timers.size,r.activeAudio.size];})).toEqual([0,0,0]);}
 });

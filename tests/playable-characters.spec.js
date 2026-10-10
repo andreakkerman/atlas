@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const root=path.join(__dirname,'..');
@@ -48,12 +49,12 @@ test('sprite sets discover independent frames and share all ten animation states
 
 async function enter(page,id='LVL-0032',editor=false){
   await page.route('**/__dev/levels/*/editor-draft',route=>route.fulfill({json:{}}));
-  await page.goto(base+(editor?'/?dev=editor':'/'));
+  await bootEditorTest(page,base+(editor?'/?dev=editor':'/'));
   await page.evaluate(async id=>window.eval('selectLevel')(id,{startImmediately:true,recordStart:false}),id);
   await expect(page.locator('[data-actor="sven"]')).toBeVisible();
 }
 test('world inspector resolves character defaults before a level has been played',async({page})=>{
-  await page.goto(base+'/?dev=editor');
+  await bootEditorTest(page,base+'/?dev=editor');
   await page.evaluate(async()=>{
     window.eval('state').screen='menu';
     await window.eval('prepareWorldEditor')();
@@ -89,6 +90,9 @@ test('ARC initializes its own sprite set and old levels retain standard Sven',as
 
 test('both sprite sets walk, reverse and arrive idle through the same player controller',async({page})=>{
   await enter(page);
+  // GPU preparation freezes movement until the level is ready.
+  await page.waitForFunction(()=>window.eval('cinematicStatus.ready || Boolean(cinematicStatus.error)'));
+  await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
   for(const id of ['sven_arc','sven']){
     await page.evaluate(async id=>window.eval('selectMainCharacter')('LVL-0032',id),id);
     for(const direction of [1,-1]){
@@ -113,7 +117,7 @@ test('editor selection keeps every player control in independent saved character
   try {
     await enter(page,'LVL-0032',true);
     await page.keyboard.press('Control+Shift+D');
-    await page.locator('[data-editor-mode="characters"]').click();
+    await selectSceneItem(page,'player','player');
     const select=page.locator('[data-main-character="LVL-0032"]');
     await expect(select).toHaveValue('sven_arc');
     expect(await select.locator('option').allTextContents()).toEqual(['Sven','ARC Sven']);
@@ -144,7 +148,7 @@ test('editor selection keeps every player control in independent saved character
     await expect(page.locator('[data-actor="sven"]')).toHaveAttribute('data-character-id','sven_arc');
     expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0032').mainCharacterSettings)).toEqual(expected);
     await page.keyboard.press('Control+Shift+D');
-    await page.locator('[data-editor-mode="characters"]').click();
+    await selectSceneItem(page,'player','player');
     await select.selectOption('sven');
     await expect(page.locator('[data-actor="sven"]')).toHaveAttribute('data-character-id','sven');
     expect(await page.evaluate(()=>window.eval('levelTuning')())).toMatchObject(values.sven);

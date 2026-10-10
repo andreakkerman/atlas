@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path');
 require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,'..'));
@@ -9,13 +10,13 @@ const field=(page,key)=>page.locator(`[data-flyby-setting="${key}"]`).first();
 test.beforeEach(async({page},info)=>{info.flybyErrors=[];page.on('pageerror',e=>info.flybyErrors.push(e.message));page.on('console',m=>{if(m.type()==='error')info.flybyErrors.push(m.text());});});
 test.afterEach(async({},info)=>expect(info.flybyErrors).toEqual([]));
 async function enter(page,mode='illustrated',extra={}){
- await page.goto(base+'/?dev=editor');
+ await bootEditorTest(page,base+'/?dev=editor');
  await page.evaluate(async({mode,extra})=>{
   await window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false});window.eval('ambientFlybyRuntime').stopAll();
   const c={...window.eval('level').ambientFlybys[0],path:[{x:350,y:499},{x:1200,y:499}],scale:1,depthBias:-.1,motionProfile:'smooth',speed:60,mirrorX:true,rotateAlongPath:false,soundTriggers:[],brightness:1,contrast:1,warmth:0,tint:0,saturation:1,softness:0,...extra};
   await window.eval('setLevelAmbientFlybys')([c]);window.eval('voxelRenderer').updateSettings({renderer:mode});window.eval('walkPathEditor').selectedObjectType='flyby';window.eval('walkPathEditor').selectedObjectId=c.id;window.eval('walkPathEditor').editorMode='graphics';window.eval('render')();
  },{mode,extra});
- await page.keyboard.press('Control+Shift+D');await page.evaluate(()=>{window.eval('ambientFlybyRuntime').stopAll();document.querySelectorAll('[data-developer-tools] details').forEach(d=>d.open=true);});
+ await page.keyboard.press('Control+Shift+D');await selectSceneItem(page,'flyby',await page.evaluate(()=>window.eval('level').ambientFlybys[0].id));await page.evaluate(()=>{window.eval('ambientFlybyRuntime').stopAll();document.querySelectorAll('[data-developer-tools] details').forEach(d=>d.open=true);});
  if(mode==='cinematic'&&await page.evaluate(()=>Boolean(navigator.gpu)))await expect(page.locator('.gameShell')).toHaveClass(/cinematicReady/);
  await page.clock.install();await page.clock.pauseAt(await page.evaluate(()=>new Date(Date.now()+100).toISOString()));
 }
@@ -23,7 +24,7 @@ async function remember(page){await page.evaluate(()=>{const r=window.eval('ambi
 async function snapshot(page){return page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),i=[...r.active.values()][0],c=document.querySelector('[data-flyby-canvas]'),ctx=c.getContext('2d'),p=ctx.getImageData(0,0,c.width,c.height).data;let rgb=0,alpha=0,hash=0;for(let n=0;n<p.length;n+=4){rgb+=p[n]+p[n+1]+p[n+2];alpha+=p[n+3];hash=(Math.imul(hash,31)+p[n+3])|0;}return {frame:i.frameIndex||0,distance:i.distance,progress:i.progress,elapsed:i.elapsed,held:!!i.held,rgb,alpha,hash,same:i===gInstance&&c===gCanvas,frames:r.readiness.get('LVL-0034:'+i.id).images===gFrames,mask:i.mask===gMask,filter:getComputedStyle(c.closest('.ambientFlybyFrames')).filter,transform:c.closest('[data-ambient-flyby]').style.transform};});}
 
 test('graphics defaults, directions, alpha and validation',async({page})=>{
- await page.goto(base);const p=await page.evaluate(()=>{const a=window.AtlasAmbientSystem;
+ await bootEditorTest(page,base);const p=await page.evaluate(()=>{const a=window.AtlasAmbientSystem;
  const sample=c=>Array.from(a.adjustGraphics({data:new Uint8ClampedArray([64,128,192,128,0,0,0,0])},c).data);
  return {neutral:sample({}),explicit:sample({brightness:1,contrast:1,warmth:0,tint:0}),dark:sample({brightness:.8}),light:sample({brightness:1.2}),contrast:sample({contrast:1.5}),warm:sample({warmth:1}),cool:sample({warmth:-1}),magenta:sample({tint:1}),green:sample({tint:-1}),fallback:a.graphicsFor({brightness:NaN,contrast:Infinity}),invalid:['brightness','contrast','warmth','tint'].map(k=>a.sequenceErrors({frameA:'a.png',[k]:99}).some(e=>e.includes(k))),old:a.sequenceErrors({frameA:'a.png',softness:12,saturation:3})};});
  expect(p.neutral).toEqual([64,128,192,128,0,0,0,0]);expect(p.explicit).toEqual(p.neutral);
@@ -64,7 +65,7 @@ for(const mode of ['static','legacy','hold'])test(`${mode} graphics use prepared
 });
 test('Graphics Apply reload persists only instance values',async({page})=>{
  await enter(page);for(const [k,v]of Object.entries(controls))await field(page,k).fill(String(v));await page.clock.resume();
- await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByText('Draft Status: Applied')).toBeVisible();await page.reload();
+ await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByText('Changes: Applied')).toBeVisible();await bootEditorTest(page,page.url());
  await page.evaluate(async()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));
  expect(await page.evaluate(()=>window.AtlasAmbientSystem.graphicsFor(window.eval('level').ambientFlybys[0]))).toEqual(controls);
 });

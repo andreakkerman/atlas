@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest,selectEmissive}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs');
 const contract=require('../src/cinematic-settings');
@@ -7,8 +8,8 @@ const ready=async p=>expect.poll(async()=>(await snap(p)).error||(await snap(p))
 async function open(page){
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base+'/?dev=editor&level=LVL-0034');
- await page.waitForFunction(()=>window.eval('typeof selectLevel')==='function');
- await page.evaluate(async()=>{window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});await window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false,allowDisabledForEditor:true});});
+ await page.waitForFunction(()=>window.eval('state.screen')==='scene'&&window.eval('level.id')==='LVL-0034');
+ await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});window.eval('render')();});
 }
 async function flags(page,value){await page.evaluate(value=>{window.eval('worldResolver').updateLevelSettings('LVL-0034',{illustratedFeatures:value});window.eval('render')();},value);}
 const off={globalLighting:false,globalGrading:false,areaDirectionalLights:false,sceneDepth:false,characterShadows:false,particleFields:false};
@@ -45,10 +46,11 @@ test('Graphics gates are Illustrated-only, retain choices, suppress glow and rev
  const indent=await gate('globalGrading').evaluate(e=>e.parentElement.getBoundingClientRect().left-document.querySelector('[data-illustrated-feature="globalLighting"]').parentElement.getBoundingClientRect().left);expect(indent).toBeGreaterThan(16);
  await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'cinematic'});window.eval('render')();});await expect(gate('globalLighting')).toHaveCount(0);
  await page.evaluate(()=>{window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});window.eval('render')();});await expect(gate('globalGrading')).toBeChecked();
- await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
+ await page.keyboard.press('Control+Shift+D');await selectEmissive(page);
  await page.evaluate(()=>window.eval('updateIllustratedFeature')('LVL-0034','globalLighting',true));
  await expect(page.locator('[data-emissive-setting="enabled"]')).toBeDisabled();
- await page.locator('[data-debug-action="revert-walkpath"]').click();await expect(gate('globalLighting')).not.toBeChecked();
+ await page.locator('[data-workspace-action="changes"]').click();await page.locator('[data-debug-action="revert-walkpath"]').click();await page.getByRole('button',{name:'Close',exact:true}).click();
+ await selectSceneItem(page,'environment','environment');await page.locator('[data-environment-participation-panel] > summary').click();await expect(gate('globalLighting')).not.toBeChecked();
 });
 
 test('selected GPU passes, combinations, recovery and measured tablet cost',async({page},info)=>{
@@ -91,24 +93,19 @@ test('selected GPU passes, combinations, recovery and measured tablet cost',asyn
 
 test('Apply/reload saves only feature gates and preserves authored settings',async({page},info)=>{
  test.skip(info.project.name!=='desktop-chromium','One source-restoring persistence run');
- const {spawn}=require('child_process'),path=require('path');
+ const path=require('path');
  const configPath=path.join(__dirname,'../Levels/world-config.js'),original=fs.readFileSync(configPath,'utf8');
- // A temporary editor API loads the changed validator without restarting the
- // user's asset server or losing its transient drafts. Assets still use base.
- const server=spawn(process.execPath,['scripts/dev-server.js'],{cwd:path.join(__dirname,'..'),env:{...process.env,PORT:'4174'},windowsHide:true,stdio:['ignore','pipe','pipe']});
  try{
-  await new Promise((resolve,reject)=>{server.stdout.on('data',data=>{if(String(data).includes('dev server:'))resolve();});server.once('error',reject);server.once('exit',code=>reject(Error(`Editor API exited ${code}`)));});
-  await page.route('**/__dev/world-config',async route=>{const response=await route.fetch({url:'http://127.0.0.1:4174/__dev/world-config'});await route.fulfill({response});});
   await open(page);await page.keyboard.press('Control+Shift+D');
   const before=await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0034'));
   await page.evaluate(()=>{for(const [key,value] of Object.entries({globalLighting:true,globalGrading:true,areaDirectionalLights:false,sceneDepth:true,characterShadows:true,particleFields:false}))window.eval('updateIllustratedFeature')('LVL-0034',key,value);});
   await page.locator('[data-debug-action="apply-walkpath"]').click();
   await expect.poll(()=>page.evaluate(()=>window.eval('walkPathEditor').status)).toBe('Applied');
-  await page.reload();
+  await bootEditorTest(page,page.url());
   const saved=await page.evaluate(()=>window.SVEN_WORLD_CONFIG.levels['LVL-0034']);
   expect(saved.illustratedFeatures).toEqual({globalLighting:true,globalGrading:true,areaDirectionalLights:false,sceneDepth:true,characterShadows:true,particleFields:false});
   expect(saved.cinematicLighting).toEqual(contract.normalize(before.cinematicLighting));expect(saved.emissiveGlow).toEqual(before.emissiveGlow);
  }finally{
-  await page.close();server.kill();await new Promise(resolve=>server.exitCode!==null?resolve():server.once('exit',resolve));fs.writeFileSync(configPath,original);
+  await page.close();fs.writeFileSync(configPath,original);
  }
 });

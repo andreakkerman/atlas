@@ -466,9 +466,18 @@
       return true;
     }
 
+    // Authored scale is unchanged. The editor projects native-pixel sprites into
+    // its zoomed canvas; gameplay retains the original presentation scale of 1.
+    const spriteScale = config => (Number(config.scale)||0.2) * (options.getPresentationScale?.() ?? 1);
+    function refreshTransformMetrics(runtime) {
+      const rect=document.querySelector('.worldTrack')?.getBoundingClientRect(), world=getLevel().world;
+      runtime.scaleX=(rect?.width || world.width)/world.width;
+      runtime.scaleY=(rect?.height || world.height)/world.height;
+    }
     function refreshPreviews() {
       for(const runtime of active.values()) if((runtime.preview || runtime.held) && !runtime.rebuilding) {
         const config=configById(runtime.id);if(!config)continue;
+        refreshTransformMetrics(runtime);
         const cache=cacheFor(config),point=pointAtDistance(cache,runtime.distance);
         const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
         const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
@@ -476,7 +485,7 @@
         if(!shell)continue;
         shell.style.setProperty('--flyby-softness',`${Math.max(0,Number(config.softness)||0)}px`);
         shell.style.setProperty('--flyby-saturation',String(Math.max(0,Number(config.saturation??1))));
-        shell.style.transform=`translate3d(${point.x*runtime.scaleX}px, ${point.y*runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale)||0.2}) scaleX(${facing})`;
+        shell.style.transform=`translate3d(${point.x*runtime.scaleX}px, ${point.y*runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${spriteScale(config)}) scaleX(${facing})`;
         shell.dataset.active='true';
         drawPreparedFrame(config,runtime,shell,point,rotation,facing);
       }
@@ -837,7 +846,7 @@
           const runtime=active.get(config.id),point=pointAtDistance(cache,0);
           const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
           const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
-          shell.style.transform=`translate3d(${point.x*runtime.scaleX}px, ${point.y*runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale)||0.2}) scaleX(${facing})`;
+          shell.style.transform=`translate3d(${point.x*runtime.scaleX}px, ${point.y*runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${spriteScale(config)}) scaleX(${facing})`;
           drawPreparedFrame(config,runtime,shell,point,rotation,facing);
         }
         shell.dataset.active = "true";
@@ -918,20 +927,20 @@
       const debug=depthDebug && config.depthOcclusion && depth;
       shell.style.setProperty('--flyby-softness',`${debug?0:g.softness}px`);
       shell.style.setProperty('--flyby-saturation',String(debug?1:g.saturation));
-      const key = [runtime.frameIndex || 0, config.scale, config.depthBias, depthDebug, ...Object.values(g), ...(config.depthOcclusion ? [point.x,point.y,rotation,facing] : [])].join(':');
+      const key = [runtime.frameIndex || 0, spriteScale(config), runtime.scaleX, runtime.scaleY, config.depthBias, depthDebug, ...Object.values(g), ...(config.depthOcclusion ? [point.x,point.y,rotation,facing] : [])].join(':');
       if (runtime.drawCanvas === canvas && runtime.drawKey === key) return;
       runtime.drawCanvas=canvas;runtime.drawKey=key;
       const ctx=canvas.getContext('2d');ctx.clearRect(0,0,width,height);ctx.drawImage(image,0,0);
       if(!debug && hasColorAdjustment(config))ctx.putImageData(adjustGraphics(ctx.getImageData(0,0,width,height),config),0,0);
       if (config.depthOcclusion && depth) {
-        const world=getLevel().world, scale=Number(config.scale)||0.2, angle=rotation*Math.PI/180, cos=Math.cos(angle),sin=Math.sin(angle);
+        const world=getLevel().world, scale=spriteScale(config), angle=rotation*Math.PI/180, cos=Math.cos(angle),sin=Math.sin(angle);
         const sample=(x,y)=>depth.data[(Math.max(0,Math.min(depth.height-1,Math.round(y/world.height*(depth.height-1))))*depth.width+Math.max(0,Math.min(depth.width-1,Math.round(x/world.width*(depth.width-1)))))*4]/255;
         const groundY=height*0.46*scale;
         const actorDepth=Math.max(0,Math.min(1,sample(point.x-sin*groundY/runtime.scaleX,point.y+cos*groundY/runtime.scaleY)+Number(config.depthBias||0)));
         const mask=runtime.mask || (runtime.mask=document.createElement('canvas'));
         if(mask.width!==width||mask.height!==height){mask.width=width;mask.height=height;runtime.maskPixels=null;}
         const maskCtx=mask.getContext('2d'),pixels=runtime.maskPixels || (runtime.maskPixels=maskCtx.createImageData(width,height));
-        const maskKey=[point.x,point.y,rotation,facing,scale,config.depthBias].join(':');
+        const maskKey=[point.x,point.y,rotation,facing,scale,runtime.scaleX,runtime.scaleY,config.depthBias].join(':');
         if(runtime.maskKey!==maskKey){
         for(let y=0;y<height;y++)for(let x=0;x<width;x++){
           const dx=(x+0.5-width/2)*scale*facing,dy=(y+0.5-height/2)*scale;
@@ -997,6 +1006,7 @@
           * organicSpeedFactor(config, runtime.elapsed, runtime.progress) * delta;
         const point = pointAtDistance(cache, runtime.distance);
         runtime.progress = point.progress;
+        refreshTransformMetrics(runtime);
         const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
         if (shell) {
           shell.dataset.active = "true";
@@ -1009,7 +1019,7 @@
             ? Math.max(-Math.abs(Number(config.maxRotationDeg) || 0), Math.min(Math.abs(Number(config.maxRotationDeg) || 0), point.angle))
             : 0;
           shell.style.transform =
-            `translate3d(${point.x * runtime.scaleX}px, ${point.y * runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${Number(config.scale) || 0.2}) scaleX(${facing})`;
+            `translate3d(${point.x * runtime.scaleX}px, ${point.y * runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${spriteScale(config)}) scaleX(${facing})`;
           const ready = readiness.get(keyFor(id));
           if ((canvasVisual(config) || runtime.preview) && shell.querySelector('[data-flyby-canvas]')) {
             if (playback==='legacy' && frames.length>1 && !runtime.preview) runtime.frameIndex=Math.floor((runtime.distance/Math.max(1,Number(config.speed)||260))*Math.max(0,Number(config.flapFrequencyHz)||0)*2)%2;

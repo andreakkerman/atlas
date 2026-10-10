@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path');
 require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,'..'));
@@ -188,11 +189,12 @@ for(const mode of ['illustrated','cinematic'])test(`depth masks prepared frames 
  }
 });
 test('editor Add, sequence controls and Apply/reload keep both independent definitions',async({page},info)=>{
- await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));await page.goto(base+'/?dev=editor');
+ await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));await bootEditorTest(page,base+'/?dev=editor');
  await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
- await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
+ await page.keyboard.press('Control+Shift+D');
  for(const [set,playback,count]of [['bastion_walk','loop',73],['bastion_walk_aim','once',101]]){
-  const details=page.locator('details').filter({has:page.locator('summary').filter({hasText:/^Add ambient flyby$/})}).last();if(await details.getAttribute('open')===null)await details.locator('summary').first().click();
+  await page.locator('[data-workspace-action="add"]').click();
+  const details=page.locator('[data-editor-add] details').filter({has:page.locator('summary').filter({hasText:/^Flyby$/})}).last();if(await details.getAttribute('open')===null)await details.locator('summary').first().click();
   const form=page.locator('[data-add-flyby-form]');await form.locator('[name="assetSet"]').selectOption('flybys/'+set);await expect(form.locator('[data-flyby-sequence-summary]')).toContainText(`Frames: ${count}`);
   await expect(form.locator('[name="playback"]')).toHaveValue('');await form.locator('[name="playback"]').selectOption(playback);await form.locator('[name="id"]').fill(set);await form.locator('[name="label"]').fill(set);await form.locator('[data-debug-action="add-flyby"]').click();
   await expect(page.locator(`[data-flyby-editor-id="${set}"]`)).toBeVisible();
@@ -203,7 +205,7 @@ test('editor Add, sequence controls and Apply/reload keep both independent defin
   }
  }
  await page.screenshot({path:`output/flyby-editor-${info.project.name}.png`});
- await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByText('Draft Status: Applied',{exact:true})).toBeVisible();await page.reload();await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
+ await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByText('Changes: Applied',{exact:true})).toBeVisible();await page.reload();await page.getByRole('button',{name:'Start avontuur',exact:true}).click();await page.locator('.menuScreen').waitFor();await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
  const stored=await page.evaluate(()=>window.eval('level').ambientFlybys.filter(f=>f.id.startsWith('bastion_')));
  expect(stored.map(c=>c.frames.length)).toEqual([73,101]);expect(stored[0].playback).toBe('loop');expect(stored[1]).toMatchObject({playback:'once',movementEndFrame:45,endBehavior:'hold',depthOcclusion:true});
 });

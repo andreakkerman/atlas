@@ -1,3 +1,4 @@
+const {selectSceneItem}=require('./editor-workspace-helpers');
 const challengeHints = require('../src/challenge-hints');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path'),vm=require('vm');
@@ -32,6 +33,7 @@ async function enter(page,editor=false){
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base+(editor?'/?dev=editor':'/?atlasSessionTest=1'));
  await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await page.locator('.menuScreen').waitFor();
  await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true}));
  await expect(page.locator('[data-actor="sven"]')).toHaveAttribute('data-character-id','sven_arc');
 }
@@ -82,7 +84,7 @@ for(const variant of [0,1])test(`Riven Tides variant ${variant+1}: walk, math, g
 });
 test('Riven Tides editor exposes the shared path, three challenges, local scale and global ARC profile',async({page},info)=>{
  await enter(page,true);await page.keyboard.press('Control+Shift+D');
- await page.locator('[data-editor-mode="characters"]').click();
+ await selectSceneItem(page,'player','player');
  await expect(page.locator('[data-main-character="LVL-0034"]')).toHaveValue('sven_arc');
  await page.locator('[data-editor-panel-key="sven-locomotion"] summary').click();
  await expect(page.locator('[data-locomotion-setting="fromIdleMovement"]')).toHaveValue('25');
@@ -90,10 +92,10 @@ test('Riven Tides editor exposes the shared path, three challenges, local scale 
  await page.locator('[data-level-setting="spriteScale"]').fill('1.2');
  expect(await page.evaluate(()=>window.eval('levelTuning')().spriteScale)).toBe(1.2);
  expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0034').mainCharacterSettings.sven_arc)).not.toHaveProperty('locomotion');
- await page.locator('[data-editor-mode="challenges"]').click();
- for(const name of ['Blauwe zeecontainer','Raider Cache','Blauwe koffer'])await expect(page.locator('[data-developer-tools]')).toContainText(name);
+ await page.keyboard.press('Control+k');
+ for(const name of ['Blauwe zeecontainer','Raider Cache','Blauwe koffer'])await expect(page.locator('[data-editor-browser]')).toContainText(name);
  await expect(page.locator('[data-walkpath-index]').first()).toBeVisible();
- await page.locator('[data-debug-action="collapse-editor-panel"]').click();
+ await page.locator('[data-workspace-action="focus"]').click();
  const point=page.locator('[data-debug-node="seaContainer-approach"] circle');
  const before=await page.evaluate(()=>window.eval('level').walkPath.find(p=>p.id==='seaContainer-approach').x);
  const box=await point.boundingBox();
@@ -103,7 +105,7 @@ test('Riven Tides editor exposes the shared path, three challenges, local scale 
  await page.mouse.move(box.x+box.width/2+20,box.y+box.height/2+5,{steps:5});
  await page.mouse.up();
  expect(await page.evaluate(()=>window.eval('level').walkPath.find(p=>p.id==='seaContainer-approach').x)).not.toBe(before);
- await page.locator('[data-debug-action="restore-editor-panel"]').click();
+ await page.locator('[data-workspace-action="focus"]').click();
  await expect(page.locator('[data-developer-tools]')).toBeVisible();
  await page.screenshot({path:info.outputPath('riven-tides-editor.png')});
 });

@@ -1,14 +1,16 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const path = require("path");
 const { pathToFileURL } = require("url");
 
-const gameUrl = pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
+const gameUrl = process.env.ATLAS_EDITOR_URL || pathToFileURL(path.join(__dirname, "..", "index.html")).toString();
 const editorUrl = `${gameUrl}?dev=editor`;
 
 async function startLayerScene(page, url = gameUrl) {
-  await page.goto(url);
+  await bootEditorTest(page,url);
   await page.evaluate(async () => {
+    window.eval("voxelRenderer").updateSettings({renderer:"illustrated"});
     await window.eval("selectLevel")("LVL-0016", { startImmediately: true });
     const currentLevel = window.eval("level");
     currentLevel.ambientAnimals = [{
@@ -36,6 +38,8 @@ async function startLayerScene(page, url = gameUrl) {
     window.eval("ambientAnimalRuntime.loaded").add("LVL-0016:layerTestAnimal");
     window.eval("render")();
   });
+  await page.waitForFunction(() => window.eval("cinematicStatus.ready || Boolean(cinematicStatus.error)"));
+  await expect(page.locator("[data-gpu-preparation]")).toHaveCount(0);
 }
 
 test.describe("global render layers", () => {
@@ -93,26 +97,15 @@ test.describe("global render layers", () => {
 
   test("keeps modal overlays and editor path handles above every world layer", async ({ page }) => {
     await startLayerScene(page);
-    await page.getByRole("button", { name: "Colosseum", exact: true }).dispatchEvent("click");
+    await page.getByRole("button", { name: "Colosseum", exact: true }).click();
     await expect(page.locator(".modalLayer")).toBeVisible({ timeout: 30000 });
     expect(await page.locator(".modalLayer").evaluate((node) => Number(getComputedStyle(node).zIndex))).toBe(60);
 
     await startLayerScene(page, editorUrl);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
-    await page.getByRole("button", { name: "Selecteer Gierzwaluw", exact: true }).click({ force: true }).catch(() => {});
-    await page.getByRole("button", { name: "Edit flight path" }).click({ force: true }).catch(() => {});
-    if (await page.locator("[data-flight-path-workspace]").count() === 0) {
-      await page.evaluate(() => {
-        const flyby = (level.ambientFlybys || []).find((item) => (item.label || item.id) === "Gierzwaluw") || level.ambientFlybys?.[0];
-        walkPathEditor.selectedObjectType = "flyby";
-        walkPathEditor.selectedObjectId = flyby?.id || null;
-        walkPathEditor.pathMode = true;
-        walkPathEditor.pathViewBox = null;
-        walkPathEditor.selectedPathPoint = 0;
-        render();
-      });
-    }
+    await selectSceneItem(page,'flyby','italyCommonSwift');
+    await page.getByRole("button", { name: "Edit flight path",exact:true }).click();
+    await expect(page.locator("[data-flight-path-workspace]")).toBeVisible();
     const editorLayers = await page.evaluate(() => ({
       workspace: Number(getComputedStyle(document.querySelector("[data-flight-path-workspace]")).zIndex),
       toolbar: Number(getComputedStyle(document.querySelector(".flybyPathToolbar")).zIndex),

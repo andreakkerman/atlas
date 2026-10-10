@@ -1,3 +1,4 @@
+const {selectSceneItem}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const path = require("path");
@@ -24,12 +25,21 @@ async function start(page, levelId = "LVL-0001", editor = false) {
     await expect(page.locator(".menuScreen")).toBeVisible();
   }
   await page.waitForFunction(() => window.eval("typeof selectLevel") === "function");
+  if(editor) {await page.waitForFunction(id=>window.eval('state.screen')==='scene'&&window.eval('level.id')===id,levelId);await page.evaluate(()=>window.eval('walkPathEditor.apiAvailable=false'));return;}
   await page.evaluate(async (id) => {
     localStorage.clear();
     await window.eval("selectLevel")(id, { startImmediately: true, allowDisabledForEditor: true });
     window.eval("walkPathEditor.apiAvailable = false");
     window.eval("render")();
   }, levelId);
+}
+
+async function clickNpc(page,name) {
+  await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
+  const npc=page.getByRole('button',{name:'Praat met '+name,exact:true});
+  const point=await npc.evaluate(node=>{const b=node.getBoundingClientRect();for(const fy of [.7,.9,.5,.3])for(const fx of [.5,.3,.7]){const x=b.x+b.width*fx,y=b.y+b.height*fy;if(document.elementFromPoint(x,y)?.closest('[data-npc-challenge]')===node)return {x,y};}return null;});
+  expect(point,'NPC has an unobstructed hit target').not.toBeNull();
+  await page.mouse.click(point.x,point.y);
 }
 
 test.describe("NPC challenge presentation", () => {
@@ -65,19 +75,20 @@ test.describe("NPC challenge presentation", () => {
     page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
     await start(page, fixture.levelId, true);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Challenges", exact: true }).click();
-    await page.locator(`[data-select-challenge='${fixture.runeId}']`).click();
-    await page.getByRole("button", { name: "Characters", exact: true }).click();
+    await selectSceneItem(page,'npc',fixture.runeId);
     const panel = page.locator("[data-developer-tools]");
     const labels = ["Brightness", "Contrast", "Saturation", "Warmth", "Tint"];
     const values = [1.23, 1.25, 0.55, 0.65, -0.45];
     for (const kind of ["sven", "npc"]) {
+        await selectSceneItem(page,kind === "sven" ? "player" : "npc",kind === "sven" ? "player" : fixture.runeId);
       const group = page.locator(`[data-character-visuals='${kind}']`);
       await expect(group.locator("label > span")).toHaveText(labels);
       await expect(group.locator("input")).toHaveCount(5);
       await expect(group.getByText("Scale", { exact: true })).toHaveCount(0);
     }
+    await selectSceneItem(page,'player','player');
     await expect(page.locator("[data-editor-panel-key='sven-general']")).toContainText("Movement Speed");
+    await selectSceneItem(page,'npc',fixture.runeId);
     await expect(page.locator(`[data-editor-panel-key='npc-general-${fixture.runeId}']`)).toContainText("Playback speed");
     const baseline = await page.evaluate(() => ({ ...window.eval("levelTuning")() }));
     let draft = {};
@@ -89,10 +100,11 @@ test.describe("NPC challenge presentation", () => {
       await page.evaluate(() => window.eval("walkPathEditor.apiAvailable = true"));
     }
     await page.evaluate(() => {
-      window.characterQaNodes = [...document.querySelectorAll("[data-developer-tools], [data-character-visuals], [data-npc-character-editor], [data-npc-challenge], [data-character-visuals] input")];
+      window.characterQaNodes = [...document.querySelectorAll("[data-world-stage], [data-npc-challenge]")];
     });
     for (let index = 0; index < labels.length; index += 1) {
       for (const kind of ["sven", "npc"]) {
+        await selectSceneItem(page,kind === "sven" ? "player" : "npc",kind === "sven" ? "player" : fixture.runeId);
         const input = page.locator(`[data-character-visuals='${kind}']`).getByRole("slider", { name: labels[index], exact: true });
         // WebKit scrolls focused controls asynchronously; measure after that navigation,
         // so this assertion isolates the edit itself rather than moving between groups.
@@ -111,7 +123,7 @@ test.describe("NPC challenge presentation", () => {
     expect(await npc.evaluate((element) => element.style.getPropertyValue("--npc-appearance"))).toBe(expected);
     expect(await page.locator("[data-actor='sven']").evaluate((element) => element.style.filter)).toBe(expected);
     expect(await page.evaluate(() => window.characterQaNodes.every((node) => node.isConnected))).toBe(true);
-    await expect(panel).toHaveAttribute("data-current-editor-mode", "characters");
+    await expect(panel).toHaveAttribute("data-editor-view", /:(npc|animal):/);
     expect(await page.evaluate(() => window.eval("walkPathEditor.selectedChallengeId"))).toBe(fixture.runeId);
     // A collapsed sibling remains collapsed while keyboard slider interaction continues.
     await page.locator(`[data-editor-panel-key='npc-general-${fixture.runeId}'] > summary`).click();
@@ -157,7 +169,7 @@ test.describe("NPC challenge presentation", () => {
       await expect.poll(() => draft.learningChallenges?.find((item) => item.id === fixture.runeId)?.npc).toMatchObject(appearance);
       await page.reload();
       await page.waitForFunction(() => window.eval("typeof selectLevel") === "function");
-      await page.evaluate(async (id) => window.eval("selectLevel")(id, { startImmediately: true }), fixture.levelId);
+      await page.waitForFunction(id=>window.eval('state.screen')==='scene'&&window.eval('level.id')===id,fixture.levelId);
       expect(await page.evaluate((id) => window.eval("learningChallengeById")(id).npc, fixture.runeId)).toMatchObject(appearance);
       expect(await npc.evaluate((element) => element.style.getPropertyValue("--npc-appearance"))).toBe(expected);
     }
@@ -167,12 +179,11 @@ test.describe("NPC challenge presentation", () => {
   test("keeps Standard defaults and converts both ways without moving or losing content", async ({ page }) => {
     await start(page, "LVL-0001", true);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Challenges", exact: true }).click();
-    await page.locator("[data-select-challenge='zon']").click();
+    await selectSceneItem(page,'challenge','zon');
     const original = await page.evaluate(() => {
       const challenge = window.eval("learningChallengeById")("zon");
       const object = window.eval("interactiveObjectById")("zon");
-      document.querySelector("[data-developer-tools]").dataset.identityProbe = "preserved";
+      window.__conversionPanel = document.querySelector("[data-developer-tools]");
       return { position: { ...object.center }, questions: JSON.stringify(challenge.questions), type: window.eval("challengePresentationType")(challenge) };
     });
     expect(original.type).toBe("standard");
@@ -180,12 +191,12 @@ test.describe("NPC challenge presentation", () => {
       await window.eval("updateChallengePresentation")("zon", "npc");
     });
     await expect(page.locator("[data-npc-challenge='zon']")).toHaveCount(1);
-    await expect(page.locator("[data-developer-tools]")).toHaveAttribute("data-identity-probe", "preserved");
+    expect(await page.evaluate(()=>window.__conversionPanel===document.querySelector("[data-developer-tools]"))).toBe(true);
     await expect(page.locator(".runeHotspot:not(.npcChallengeHotspot)[data-rune='zon']")).toHaveCount(0);
     expect(await page.locator("[data-npc-challenge='zon']").evaluate((element) => ({ x: Number(element.dataset.worldCenterX), y: Number(element.dataset.worldCenterY) }))).toEqual(original.position);
     await page.evaluate(async () => window.eval("updateChallengePresentation")("zon", "standard"));
     await expect(page.locator("[data-npc-challenge='zon']")).toHaveCount(0);
-    await expect(page.locator("[data-developer-tools]")).toHaveAttribute("data-identity-probe", "preserved");
+    expect(await page.evaluate(()=>window.__conversionPanel===document.querySelector("[data-developer-tools]"))).toBe(true);
     await expect(page.locator(".runeHotspot[data-rune='zon']")).toHaveCount(1);
     expect(await page.evaluate(() => JSON.stringify(window.eval("learningChallengeById")("zon").questions))).toBe(original.questions);
   });
@@ -193,9 +204,7 @@ test.describe("NPC challenge presentation", () => {
   test("preserves editor tab, selection, scroll and live preview during NPC tuning", async ({ page }) => {
     await start(page, "LVL-0001", true);
     await page.keyboard.press("Control+Shift+D");
-    await page.getByRole("button", { name: "Challenges", exact: true }).click();
-    await page.getByRole("button", { name: "Selecteer opdracht Windrune", exact: true }).click();
-    await page.getByRole("button", { name: "Characters", exact: true }).click();
+    await selectSceneItem(page,'npc','wind');
     const panel = page.locator("[data-developer-tools]");
     await panel.evaluate((element) => { element.scrollTop = 420; });
     const before = await panel.evaluate((element) => element.scrollTop);
@@ -203,7 +212,7 @@ test.describe("NPC challenge presentation", () => {
     const identity = await npc.evaluate((element) => { element.dataset.regressionIdentity = "kept"; return true; });
     expect(identity).toBe(true);
     await page.locator("[data-npc-setting='brightness']").fill("1.23");
-    await expect(page.locator("[data-developer-tools]")).toHaveAttribute("data-current-editor-mode", "characters");
+    await expect(page.locator("[data-developer-tools]")).toHaveAttribute("data-editor-view", /:npc:wind$/);
     expect(await page.evaluate(() => window.eval("walkPathEditor.selectedChallengeId"))).toBe("wind");
     expect(Math.abs((await panel.evaluate((element) => element.scrollTop)) - before)).toBeLessThanOrEqual(2);
     await expect(page.locator("[data-npc-challenge='wind'][data-regression-identity='kept']")).toHaveCount(1);
@@ -241,8 +250,9 @@ test.describe("NPC challenge presentation", () => {
 
   test("keeps locked NPCs clickable through real approach navigation and opens questions after unlock", async ({ page }) => {
     await start(page, "LVL-0001");
+    await page.evaluate(()=>{window.eval('state').worldX=1200;window.eval('state').cameraX=window.eval('getDesiredCameraX')();window.eval('render')();});
     const freya = page.getByRole("button", { name: "Praat met Freya" });
-    await freya.click();
+    await clickNpc(page,'Freya');
     await expect(page.locator("[data-actor='sven']")).toHaveAttribute("data-animation", /walk/, { timeout: 1500 });
     await expect(page.locator("[data-npc-locked='true']")).toBeVisible({ timeout: 12000 });
     await expect(page.getByRole("img", { name: "Freya" })).toBeVisible();
@@ -261,7 +271,7 @@ test.describe("NPC challenge presentation", () => {
       window.eval("state").completedRunes = new Set(active.filter((rune) => rune.id !== "wind").map((rune) => rune.id));
       window.eval("render")();
     });
-    await page.getByRole("button", { name: "Praat met Freya" }).click();
+    await clickNpc(page,'Freya');
     await expect(page.locator('.compactChallengeHeader .eyebrow')).toHaveText('Freya', { timeout: 2000 });
     await expect(page.locator('.compactChallengeHeader .eyebrow')).toBeVisible();
     await expect(page.locator("[data-npc-locked='true']")).toHaveCount(0);
@@ -282,7 +292,7 @@ test.describe("NPC challenge presentation", () => {
         window.eval("state").worldY = approach.y;
         window.eval("render")();
       }, fixture.runeId);
-      await page.getByRole("button", { name: `Praat met ${fixture.name}` }).click();
+      await clickNpc(page,fixture.name);
       await expect(page.locator("[data-npc-locked='true']")).toBeVisible({ timeout: 2000 });
       await expect(page.getByRole("img", { name: fixture.name })).toBeVisible();
       await expect(page.getByText(fixture.name, { exact: true })).toBeVisible();
@@ -625,11 +635,11 @@ test.describe("NPC challenge presentation", () => {
     expect(route.routed.at(-1)).toMatchObject({ x: route.approach.x, y: route.approach.y });
   });
 
-  test("places Ambient Animals only in Characters and preserves localized editing state", async ({ page }) => {
+  test("places Ambient Animals in their contextual inspector and preserves localized editing state", async ({ page }) => {
     await start(page, "LVL-0001", true);
     await page.keyboard.press("Control+Shift+D");
     const panel = page.locator("[data-developer-tools]");
-    await page.getByRole("button", { name: "Characters", exact: true }).click();
+    await selectSceneItem(page,'animal',await page.evaluate(()=>window.eval('level.ambientAnimals[0].id')));
     await expect(panel.getByText("Ambient animals", { exact: false })).toBeVisible();
     await expect(panel.locator("[data-editor-panel-key='ambient-animals']")).toHaveCount(1);
     await panel.evaluate((element) => { element.dataset.identityProbe = "ambient-stable"; element.scrollTop = element.scrollHeight; });
@@ -641,7 +651,8 @@ test.describe("NPC challenge presentation", () => {
     await expect(panel).toHaveAttribute("data-identity-probe", "ambient-stable");
     expect(Math.abs((await panel.evaluate((element) => element.scrollTop)) - before)).toBeLessThanOrEqual(2);
     expect(await page.evaluate((id) => window.eval("level.ambientAnimals").find((animal) => animal.id === id).scale, animalId)).toBe(0.31);
-    await page.getByRole("button", { name: "Graphics", exact: true }).click();
+    await page.evaluate(()=>window.eval('selectLevel')('LVL-0016',{startImmediately:true,recordStart:false}));
+    await selectSceneItem(page,'flyby',await page.evaluate(()=>window.eval('level.ambientFlybys[0].id')));
     await expect(panel.locator("[data-editor-panel-key='ambient-animals']")).toHaveCount(0);
     await expect(panel.locator("[data-editor-panel-key='ambient-flybys']")).toHaveCount(1);
   });

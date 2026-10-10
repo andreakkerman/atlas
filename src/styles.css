@@ -804,6 +804,57 @@ button {
   background: #0b1513;
 }
 
+/* Desktop authoring shell. Runtime layouts retain their existing sizing rules. */
+.atlasEditorWorkspace { position:fixed; inset:0; z-index:var(--layer-editor-controls); pointer-events:none; color:#e3eeeb; font:13px/1.45 system-ui,sans-serif; }
+.gameShell:has([data-editor-placement="true"]) [data-world-stage] * { pointer-events:none !important; }
+.gameShell:has([data-editor-placement="true"]) [data-world-stage] { cursor:crosshair; }
+.atlasEditorWorkspace [hidden] { display:none !important; }
+.atlasEditorWorkspace button,.atlasEditorWorkspace input,.atlasEditorWorkspace select { font:inherit; }
+.atlasEditorWorkspace button { color:inherit; background:#23332f; border:1px solid #496057; border-radius:5px; padding:6px 9px; cursor:pointer; }
+.atlasEditorWorkspace button:hover { background:#344b43; }
+.atlasEditorWorkspace button[aria-pressed="true"] { background:#30695c; border-color:#90d9c5; }
+.atlasEditorWorkspace button:focus-visible,.atlasEditorWorkspace input:focus-visible { outline:2px solid #9cf2e9; outline-offset:2px; }
+.editorCanvasToolbar { position:absolute; z-index:3; inset:0 0 auto; height:54px; display:flex; align-items:center; gap:5px; padding:7px 10px; background:#14241f; border-bottom:1px solid #496057; pointer-events:auto; white-space:nowrap; }
+.editorCanvasToolbar>strong { max-width:150px; overflow:hidden; text-overflow:ellipsis; margin-right:8px; }
+.editorCanvasToolbar>select { width:125px; color:inherit; background:#23332f; border:1px solid #496057; padding:6px; border-radius:5px; }
+.gameShell:has([data-editor-workspace])~.performanceHud, body:has([data-editor-workspace])>.performanceHud { top:62px; bottom:auto; left:auto; right:12px; }
+.editorCanvasToolbar [data-workspace-action="changes"] { margin-left:auto; }
+.editorCanvasToolbar .editorFocusToggle { border-color:#86baa8; }
+.editorCanvasToolbar .editorFocusToggle[aria-pressed="true"] { color:#10281f; background:#a6e8cf; box-shadow:0 0 0 1px #a6e8cf; }
+.editorSceneBrowser,.walkPathEditorPanel.editorInspector { position:absolute; top:54px; bottom:0; height:auto; max-height:none; overflow:auto; overscroll-behavior:contain; pointer-events:auto; border:0; border-radius:0; background:#172923; padding:12px; box-sizing:border-box; }
+.editorSceneBrowser { z-index:1; display:flex; flex-direction:column; overflow:hidden; left:0; width:var(--browser-width); border-right:1px solid #496057; }
+.atlasEditorWorkspace .walkPathEditorPanel.editorInspector { z-index:1; right:0; width:var(--inspector-width); display:block; box-shadow:none; border-left:1px solid #496057; }
+.atlasEditorWorkspace header { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.atlasEditorWorkspace header small { display:block; opacity:.7; }
+.editorSceneBrowser nav,.editorSceneList,.editorEnvironmentSystems { display:grid; gap:5px; }
+.editorSceneBrowser nav { margin-bottom:12px; }
+.editorSceneBrowser > header,.editorSceneBrowser > nav,.editorSceneBrowser > label { flex-shrink:0; }
+.editorSceneList { flex:1; min-height:0; overflow:auto; align-content:start; }
+.editorSearchLabel { display:block; color:#b3c6bf; }
+.editorSearchLabel kbd { float:right; font-size:10px; }
+.editorSearchLabel input { width:100%; margin:5px 0 12px; padding:7px; box-sizing:border-box; background:#0d1d17; color:#eff9f5; border:1px solid #496057; border-radius:4px; }
+.editorSceneList button,.editorEnvironmentSystems button { text-align:left; overflow-wrap:anywhere; }
+.editorSceneList small,.editorEnvironmentSystems small { display:block; color:#b3c6bf; font-size:11px; }
+.editorInspector .atlasTuningGrid,.editorInspector .atlasVisualColumns { grid-template-columns:1fr; }
+.editorInspector .editorSection { margin:10px 0; }
+.editorInspector input[type="number"],.editorInspector select { max-width:100%; }
+.editorInspector > .editorField { display:grid; grid-template-columns:70px 1fr; align-items:center; gap:8px; margin:8px 0; }
+.editorInspector > .editorField input { min-width:0; padding:7px; color:inherit; background:#0d1d17; border:1px solid #496057; border-radius:4px; }
+.editorAddPicker,.editorChanges { position:absolute; z-index:4; top:60px; left:240px; width:400px; max-height:calc(100vh - 90px); padding:14px; overflow:auto; pointer-events:auto; background:#172923; border:1px solid #668b7b; border-radius:8px; box-shadow:0 10px 30px #0008; }
+.editorAddPicker details { margin:12px 0; }
+.editorChanges { left:auto;right:12px; }
+.editorContextToolbar { position:absolute; z-index:2; left:50%; bottom:14px; transform:translateX(-50%); background:#14241fee; border:1px solid #668b7b; padding:7px 12px; border-radius:6px; pointer-events:auto; display:flex; align-items:center; gap:10px; }
+.editorPanelResize { position:absolute; top:0; bottom:0; width:6px; cursor:col-resize; }
+.editorSceneBrowser .editorPanelResize { right:0; }
+.editorInspector .editorPanelResize { left:0; }
+.editorPanelResize:hover,.editorPanelResize:focus-visible { background:#90d9c5; }
+.editorAvailability { padding:8px; border-left:3px solid #d8b879; background:#d8b87912; }
+.stageViewport[data-editor-viewport] .svenInWorld { height:calc(clamp(168px, 24dvh, 218px) * var(--editor-actor-scale)); pointer-events:auto; }
+.stageViewport[data-editor-viewport] .npcChallengeHotspot { width:calc(clamp(92px, 14dvh, 142px) * var(--editor-actor-scale)); height:calc(clamp(154px, 23dvh, 232px) * var(--editor-actor-scale)); }
+.gameShell:has([data-editor-workspace]) .flybyPathWorkspace,.gameShell:has([data-editor-workspace]) .effectGeometryWorkspace { position:fixed; inset:54px 0 0; width:auto; height:auto; }
+.gameShell:has([data-editor-workspace])>.gameplayTopControls,.gameShell:has([data-editor-workspace])>.menuReturnButton,.gameShell:has([data-editor-workspace])>.adventureTeamBar { display:none; }
+.gameShell:has([data-editor-workspace]) .graphicsSettingsPopover { top:58px; }
+
 .menuReturnButton {
   position: fixed;
   left: max(12px, calc(env(safe-area-inset-left) + 12px));
@@ -1601,38 +1652,6 @@ button {
   color: #9cf2e9;
 }
 
-.walkPathEditorHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.walkPathEditorHeader button,
-.walkPathEditorRestore {
-  min-height: 34px;
-  border: 1px solid rgba(156, 242, 233, 0.5);
-  border-radius: 999px;
-  color: #fff7de;
-  background: rgba(10, 18, 16, 0.9);
-  font-weight: 900;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.walkPathEditorHeader button {
-  padding: 4px 10px;
-}
-
-.walkPathEditorRestore {
-  position: absolute;
-  right: 12px;
-  top: 12px;
-  z-index: var(--layer-editor-controls);
-  padding: 8px 14px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34);
-}
-
 .walkPathEditorPanel ol {
   margin: 0;
   padding-left: 18px;
@@ -2127,7 +2146,6 @@ button {
   background: rgba(91, 47, 16, 0.22);
 }
 
-.editorModeTabs,
 .effectActions,
 .effectPreviewControls,
 .effectGeometryToolbar {
@@ -2137,7 +2155,6 @@ button {
   align-items: center;
 }
 
-.editorModeTabs button,
 .effectActions button,
 .effectPreviewControls button,
 .effectGeometryToolbar button,
@@ -2312,17 +2329,6 @@ button {
   stroke-width: 3;
 }
 
-.editorModeTabs {
-  position: sticky;
-  top: -10px;
-  z-index: 2;
-  padding: 8px 0;
-  background: rgba(10, 18, 16, 0.96);
-}
-
-.editorModeTabs button {
-  flex: 1 1 110px;
-}
 
 .challengePresentationControls,
 .npcCharacterEditor,
@@ -4826,8 +4832,6 @@ body.keyboard-open .npcChallengeLayer .npcPortraitFrame img { max-height: 160px;
 .cinematicControl > label { flex:1; min-width:0; }
 .cinematicInfo { position:relative; flex:0 0 auto; }
 .cinematicInfo button { padding:3px 6px; min-height:26px; background:transparent; }
-.cinematicHelp { position:absolute; z-index:10; right:0; top:100%; width:240px; padding:12px; background:#172d36; border:1px solid #80aaa6; box-shadow:0 6px 20px #0008; color:#f4f4e8; font-size:12px; line-height:1.5; }
-.cinematicInfo:hover .cinematicHelp[hidden] { display:block !important; }
 .cinematicHint { font-size:12px; opacity:.8; }
 
 .segmentedControl button:disabled { opacity: .45; cursor: not-allowed; }
@@ -5331,3 +5335,44 @@ body.keyboard-open .challengeNotebook { --notebook-header: 52px; --notebook-gap:
 .numberLineJumps { position:absolute; top:4px; left:28px; width:calc(100% - 56px); height:64px; overflow:visible; }
 .numberLineJumps path { fill:none; stroke:currentColor; stroke-width:2; vector-effect:non-scaling-stroke; }
 .numberLineJumps text { fill:currentColor; text-anchor:middle; font:36px sans-serif; }
+.editorInfoButton { display:inline-flex; justify-content:center; align-items:center; width:19px; height:19px; min-height:0; padding:0!important; margin-left:6px; border:1px solid #83a69a!important; border-radius:50%!important; font:italic bold 12px Georgia; color:#bce7d9; background:transparent; cursor:pointer; }
+.editorInfoPopup { position:fixed; z-index:120; width:300px; max-width:calc(100vw - 24px); box-sizing:border-box; padding:14px; color:#edf7f2; background:#172923; border:1px solid #8dbbaa; border-radius:8px; box-shadow:0 8px 32px #0008; font:14px/1.5 system-ui; }
+.editorInfoPopup header { display:flex; justify-content:space-between; gap:12px; align-items:start; }
+.editorInfoPopup button { color:inherit; background:transparent; border:1px solid #668b7b; border-radius:4px; cursor:pointer; }
+.editorInfoPopup p { margin:10px 0 0; }
+.gameShell:has([data-editor-workspace]) > .graphicsSettingsPopover { top:60px; z-index:85; box-sizing:border-box; }
+.editorAddPicker,.editorChanges { box-sizing:border-box; }
+.editorAssetResults { display:grid; gap:6px; margin:8px 0; }
+.atlasEditorWorkspace [data-add-entry][hidden], .atlasEditorWorkspace details[hidden], [data-add-asset-form][hidden] { display:none!important; }
+.editorAddPicker [data-add-entry] small { display:block; color:#b3c6bf; font-size:11px; }
+
+/* Search results prioritize recognition and creation over browsing guidance. */
+.editorAddPicker[data-searching="true"] .effectPresetGrid { grid-template-columns:1fr; }
+.editorAddPicker[data-searching="true"] .effectPresetCard { grid-template-columns:1fr auto; }
+.editorAddPicker[data-searching="true"] .effectPresetCard > strong,
+.editorAddPicker[data-searching="true"] .effectPresetCard > p:first-of-type { grid-column:1 / -1; }
+.editorAddPicker[data-searching="true"] .effectPresetCard > .effectPresetSwatch,
+.editorAddPicker[data-searching="true"] .effectPresetCard > p:not(:first-of-type),
+.editorAddPicker[data-searching="true"] .effectPresetCard > small { display:none; }
+
+.editorCompactField { display:grid; gap:5px; margin:10px 0; }
+.editorCompactField select { width:100%; min-width:0; color:inherit; background:#10251d; border:1px solid #496057; padding:7px; border-radius:4px; }
+.editorCompactField select[size] { max-height:160px; }
+.editorCompactField option { padding:5px; }
+.editorCreationDetail { border-top:1px solid #496057; padding-top:12px; }
+.editorCreationDetail p { margin:7px 0; }
+.editorCreationDetail small,.editorEnvironmentRow small,.editorQuiet { display:block; color:#b3c6bf; font-size:12px; }
+.editorCreationDetail>button:not(.editorInfoButton) { margin-top:12px; width:100%; }
+.editorEnvironmentRow { border-bottom:1px solid #496057; padding:12px 0; }
+.editorEnvironmentRow small { margin:5px 0; }
+.editorEnvironmentRow button:not(.editorInfoButton) { margin:4px 0; }
+
+.editorEnvironmentSystem { border-bottom:1px solid #496057; padding:9px 0; }
+.editorEnvironmentSystem > summary { cursor:pointer; font-weight:700; }
+.editorEnvironmentSystem > summary small { display:block; margin:3px 0 0 15px; color:#b3c6bf; font-size:11px; font-weight:400; }
+.editorEnvironmentSystem .editorAvailability { margin:7px 0; font-size:11px; }
+.editorEnvironmentSystem > details { margin-top:8px; }
+.editorEnvironmentSystem .cinematicControl { margin:6px 0; }
+
+[data-environment-overview] .graphicsRange, [data-environment-overview] .graphicsSelect { margin:5px 0; gap:4px; }
+[data-environment-overview] .graphicsRange input { margin:4px 0; }

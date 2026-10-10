@@ -1021,7 +1021,7 @@ async function handleDevRequest(request, response, url) {
     return true;
   }
 
-  const match = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/(editor-draft|apply-editor|ambient-assets)$/);
+  const match = url.pathname.match(/^\/__dev\/levels\/([^/]+)\/(editor-draft|apply-editor|ambient-assets|saved-editor)$/);
   if (!match) return false;
 
   const [, levelId, action] = match;
@@ -1032,6 +1032,12 @@ async function handleDevRequest(request, response, url) {
   }
 
   try {
+    if (request.method === "GET" && action === "saved-editor") {
+      const context={window:{}};
+      vm.runInNewContext(fs.readFileSync(audioConfigPath(),"utf8"),context,{filename:audioConfigPath()});
+      sendJson(response,200,{level:loadLevelDefinition(levelId),config:loadWorldConfig(),audio:context.window.SVEN_AUDIO_CONFIG});
+      return true;
+    }
     if (request.method === "GET" && action === "ambient-assets") {
       const ambientDir = ambientLibraryDir();
       if (!fs.existsSync(ambientDir)) {

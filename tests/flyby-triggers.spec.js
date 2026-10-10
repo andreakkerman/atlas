@@ -1,3 +1,4 @@
+const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const path=require('path');
 const {flybyPixel}=require('./flyby-hit-fixture');
@@ -87,12 +88,12 @@ test('Apply rejects malformed trigger combinations before changing a level',asyn
 
 for(const triggers of combinations)test(`Snitch discovery and checkbox ${triggers.join('+')||'neither'} survive Apply/reload`,async({page})=>{
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
- await page.goto(base+'/?dev=editor');await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
- if(!await page.evaluate(()=>window.eval('debugOverlayEnabled')))await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
+ await bootEditorTest(page,base+'/?dev=editor');await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
+ if(!await page.evaluate(()=>window.eval('debugOverlayEnabled')))await page.keyboard.press('Control+Shift+D');await selectSceneItem(page,'flyby','arc_wasp2');
  // The current authored Wasp enables both triggers; each Snitch combination is tested below.
  await expect(page.locator('[data-flyby-id="arc_wasp2"][data-flyby-sound-trigger="during"]')).toBeChecked();
  await expect(page.locator('[data-flyby-id="arc_wasp2"][data-flyby-sound-trigger="tap"]')).toBeChecked();
- await page.locator('summary').filter({hasText:/^Add ambient flyby$/}).click();
+ await page.locator('[data-workspace-action="add"]').click();await page.locator('[data-editor-add] summary').filter({hasText:/^Flyby$/}).click();
  const form=page.locator('[data-add-flyby-form]');
  for(const [set,a,b,sound]of [['arc_wasp','awc_wasp.png','', 'arc_wasp.mp3'],['common-swift','common-swift-a.png','common-swift-b.png','common-swift-call.mp3'],['arc_snitch','arc_snitch.png','','arc_snitch.mp3']]){
   await form.locator('[name="assetSet"]').selectOption('flybys/'+set);await expect(form.locator('[name="frameA"]')).toHaveValue(`assets/ambient/flybys/${set}/${a}`);await expect(form.locator('[name="frameB"]')).toHaveValue(b?`assets/ambient/flybys/${set}/${b}`:'');await expect(form.locator('[name="sound"]')).toHaveValue(`assets/ambient/flybys/${set}/${sound}`);if(!b)await expect(form.locator('[name="frameB"]')).toBeDisabled();else await expect(form.locator('[name="frameB"]')).toBeEnabled();
@@ -101,11 +102,11 @@ for(const triggers of combinations)test(`Snitch discovery and checkbox ${trigger
   const card=page.locator('[data-flyby-editor-id="qaSnitch"]');const audio=card.locator('details').filter({has:page.locator('summary').filter({hasText:/^Audio$/})});if(await audio.getAttribute('open')===null)await audio.locator('summary').click();
   await expect(card.locator('select[data-flyby-setting="soundTrigger"]')).toHaveCount(0);
   for(const trigger of ['during','tap'])await card.locator(`[data-flyby-sound-trigger="${trigger}"]`).setChecked(triggers.includes(trigger));
-  await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByText('Draft Status: Applied',{exact:true})).toBeVisible();
-  await page.reload();await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
+  await page.getByRole('button',{name:'Apply',exact:true}).click();await expect(page.getByText('Changes: Applied',{exact:true})).toBeVisible();
+  await page.reload();await page.getByRole('button',{name:'Start avontuur',exact:true}).click();await page.locator('.menuScreen').waitFor();await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
   const stored=await page.evaluate(()=>window.eval('level').ambientFlybys.find(c=>c.id==='qaSnitch'));
   expect(require('../src/ambient-system').soundTriggers(stored)).toEqual(triggers);expect(stored.frameB).toBeNull();expect(stored.frameA).toBe('assets/ambient/flybys/arc_snitch/arc_snitch.png');expect(stored.sound).toBe('assets/ambient/flybys/arc_snitch/arc_snitch.mp3');
-  if(!await page.evaluate(()=>window.eval('debugOverlayEnabled')))await page.keyboard.press('Control+Shift+D');await page.locator('[data-editor-mode="graphics"]').click();
-  await page.locator('[data-select-ambient-type="flyby"][data-select-ambient-id="qaSnitch"]').click();
+  if(!await page.evaluate(()=>window.eval('debugOverlayEnabled')))await page.keyboard.press('Control+Shift+D');await selectSceneItem(page,'flyby','arc_wasp2');
+  await selectSceneItem(page,'flyby','qaSnitch');
   for(const trigger of ['during','tap'])await expect(page.locator(`[data-flyby-id="qaSnitch"][data-flyby-sound-trigger="${trigger}"]`)).toBeChecked({checked:triggers.includes(trigger)});
 });

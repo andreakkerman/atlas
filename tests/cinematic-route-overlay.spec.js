@@ -44,7 +44,7 @@ for (const renderer of ['cinematic', 'illustrated']) {
     expect(layering.nodes).toBe(layering.expectedNodes);
     expect(layering.edges).toBeGreaterThan(0);
     expect(layering.markersPaintedAndInteractive).toBe(true);
-    await page.locator('[data-debug-action="collapse-editor-panel"]').click();
+    await page.locator('[data-workspace-action="focus"]').click();
     expect(await page.evaluate(() => Boolean(document.elementFromPoint(30, 200)?.closest('.editorWorldTrack')))).toBe(false);
     const node = page.locator('[data-walkpath-index] circle').first();
     const initial = await node.evaluate(circle => ({ x: Number(circle.getAttribute('cx')), y: Number(circle.getAttribute('cy')) }));
