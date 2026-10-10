@@ -159,7 +159,7 @@
   {
     "id": "M6-MD-002",
     "learningLevel": "M6",
-    "contentVersion": 1,
+    "contentVersion": 2,
     "domain": "math",
     "schoolBand": "M6-intended",
     "difficulty": 1,
@@ -189,7 +189,7 @@
         "prompt": "Een boek heeft **160 pagina’s**. Je leest steeds **16 pagina’s**. Hoeveel keer moet je 16 pagina’s lezen om het boek uit te krijgen?",
         "answerDisplay": "10",
         "hintMinnie": "Je zoekt niet hoeveel er in één groep komt. Je weet al dat elke groep 16 bevat. Je zoekt **hoeveel groepjes van 16** er in 160 passen.",
-        "hintMoose": "Denk aan de keersom **16 × ? = 160**. Tien groepjes van 16 kun je controleren met 16 × 10.",
+        "hintMoose": "Denk aan de keersom **16 × ? = 160**. Je weet dat **16 × 5 = 80**. En 160 is twee keer zoveel als 80. Wat betekent dat voor het aantal groepjes?",
         "explanation": "We zoeken hoeveel groepjes van 16 in 160 passen.\n\nDat is dezelfde vraag als:\n\n**16 × ? = 160**.\n\n**16 × 10 = 160**.\n\nEr passen dus **10 groepjes van 16** in 160.\n\nHet antwoord is **10**.",
         "authoredSupport": {
           "explanationSteps": [
@@ -231,7 +231,9 @@
               "groups": [
                 {
                   "lines": [
-                    "16 × ? = 160"
+                    "16 × ? = 160",
+                    "16 × 5 = 80",
+                    "160 = 2 × 80"
                   ]
                 }
               ]
@@ -261,7 +263,7 @@
         "prompt": "Er zijn **160 onderdelen**. In elk pakket gaan **16 onderdelen**. Hoeveel pakketten kun je maken?",
         "answerDisplay": "10",
         "hintMinnie": "Je zoekt niet hoeveel er in één groep komt. Je weet al dat elke groep 16 bevat. Je zoekt **hoeveel groepjes van 16** er in 160 passen.",
-        "hintMoose": "Denk aan de keersom **16 × ? = 160**. Tien groepjes van 16 kun je controleren met 16 × 10.",
+        "hintMoose": "Denk aan de keersom **16 × ? = 160**. Je weet dat **16 × 5 = 80**. En 160 is twee keer zoveel als 80. Wat betekent dat voor het aantal groepjes?",
         "explanation": "We zoeken hoeveel groepjes van 16 in 160 passen.\n\nDat is dezelfde vraag als:\n\n**16 × ? = 160**.\n\n**16 × 10 = 160**.\n\nEr passen dus **10 groepjes van 16** in 160.\n\nHet antwoord is **10**.",
         "authoredSupport": {
           "explanationSteps": [
@@ -303,7 +305,9 @@
               "groups": [
                 {
                   "lines": [
-                    "16 × ? = 160"
+                    "16 × ? = 160",
+                    "16 × 5 = 80",
+                    "160 = 2 × 80"
                   ]
                 }
               ]

@@ -7733,7 +7733,7 @@ function renderScratchpad() {
       <div class="notebookClear">${notes.confirmClear ? '<div class="notebookClearConfirm" role="group" aria-label="Je kladwerk wissen?"><span>Je kladwerk wissen?</span><button class="secondaryButton" type="button" data-action="scratchpad-confirm">Wis</button><button class="secondaryButton" type="button" data-action="scratchpad-cancel">Annuleren</button></div>' : '<button class="secondaryButton notebookClearIcon" type="button" data-action="scratchpad-clear" aria-label="Wis kladwerk" title="Wis kladwerk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 13 8-8a2 2 0 0 1 3 0l5 5a2 2 0 0 1 0 3l-6 6H9l-5-5a1 1 0 0 1 0-1Z"/><path d="m8 9 9 9M14 19h7"/></svg></button>'}</div>
     </header>
     <div class="notebookSheet">${renderNotebookMaterial()}
-    <textarea class="notebookPaper" data-scratchpad-notes aria-label="Eigen kladwerk" spellcheck="false" autocomplete="off">
+    <textarea class="notebookPaper" data-scratchpad-notes aria-label="Eigen kladwerk" inputmode="decimal" autocorrect="off" autocapitalize="off" spellcheck="false" autocomplete="off">
 ${challengeSupport.escape(notes.text)}</textarea>
     </div>${renderNotebookBindings()}
   </section>`;

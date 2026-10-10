@@ -74,13 +74,9 @@ vec4 deposit(vec2 q,float grain){
  float gain=max(.05,.40+(glyphFinal-.40)*smoothstep(glyphStart,peakTime,time)+ignition*(glyphPeak-glyphFinal)*glyphPulse);
  surface*=mix(1.,cyan*gain,energy);
  vec4 material=vec4(surface*tex.a,tex.a)*solid;
- // Preserve the existing fine compass guide without transporting a JPEG plate.
- // This is analytic pixel coverage, separate from the PNG's untouched silhouette.
- float px=1./(placement.z*dpr);
- float guide=(1.-smoothstep(px*.15,px*.85,abs(radius-.293)))*.34;
- guide*=smoothstep(2.12,2.30,formationClock);
- vec4 orbit=vec4(vec3(.40,.31,.13)*guide,guide);
- return material+orbit*(1.-material.a);
+ // Coverage comes only from the emblem: an extra analytic orbit here creates
+ // a visible outer circle even where the source PNG is fully transparent.
+ return material;
 }
 void main(){
  vec2 pixel=vec2(uv.x,1.-uv.y)*resolution;

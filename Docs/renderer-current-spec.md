@@ -163,7 +163,7 @@ Illustrated legacy Canvas consumption uses producer-owned revisions and active-s
 
 ## Disposable startup reveal
 
-The production intro in `src/intro/` is a separate WebGL2 subsystem with its approved DPR cap of 2, full-resolution foreground, half-resolution atmosphere and third-resolution magic/bloom targets. Its shaders, authored assets and five-second defaults are preserved from the accepted reveal. It imports no gameplay graphics presets.
+The production intro in `src/intro/` is a separate WebGL2 subsystem with its approved DPR cap of 2, full-resolution foreground, half-resolution atmosphere and third-resolution magic/bloom targets. Its authored assets and five-second defaults are preserved from the accepted reveal. The logo shader uses only PNG coverage: the separate analytic outer guide circle was removed after the iPad outline report. Source alpha, premultiplied filtering/mipmaps, edge antialiasing and reveal/glow are unchanged; `tests/atlas-intro-logo.spec.js` checks the actual draw at reveal and completion. It imports no gameplay graphics presets.
 
 The final carrier descends past ATLAS to the top of Start at 4.2 seconds, then
 follows the button's measured contour clockwise before fading from 4.65 to 4.95

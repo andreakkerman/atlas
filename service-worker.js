@@ -1,6 +1,7 @@
 const CACHE_PREFIX = "svenadventure-static-";
-const CACHE_NAME = "svenadventure-static-v268-e5-digital-support";
+const CACHE_NAME = "svenadventure-static-v270-m6-expansion";
 const CORE_ASSETS = [
+  "src/geometry-diagram.js", "src/content/m6/expansion-20261010.js",
   "src/content/m6/expansion/number-sense.js",
   "src/content/m6/expansion/addition-subtraction.js",
   "src/content/m6/expansion/multiplication-division.js",

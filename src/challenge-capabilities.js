@@ -1,8 +1,9 @@
 (function (global) {
   'use strict';
-  const TYPES = ['none', 'currency', 'digitalClock', 'analogueClock', 'numberLine', 'measurement', 'compactDataTable'];
+  const geometry = typeof module !== 'undefined' && module.exports ? require('./geometry-diagram') : global.AtlasGeometryDiagram;
+  const TYPES = ['none', 'currency', 'digitalClock', 'analogueClock', 'numberLine', 'measurement', 'compactDataTable', 'geometryDiagram'];
   const DENOMINATIONS = Object.freeze([5,10,20,50,100,200,500,1000,2000,5000]);
-  const UNITS = ['mm','cm','dm','m','g','kg'];
+  const UNITS = ['mm','cm','dm','m','g','kg','ml','cl','dl','l'];
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const amount = cents => `€${Math.floor(cents/100)},${String(cents%100).padStart(2,'0')}`;
   const validCents = value => Number.isSafeInteger(value) && value >= 0;
@@ -55,6 +56,7 @@
   }
   function validateFrame(type, frame, assetExists) {
     const errors = []; validateRich(frame, errors);
+    if (type === 'geometryDiagram') errors.push(...geometry.validate(frame));
     if (type === 'currency') validateCurrency(frame, errors, assetExists);
     if (['digitalClock','analogueClock'].includes(type) && (!Number.isInteger(frame.hour) || frame.hour < 0 || frame.hour > 23 || !Number.isInteger(frame.minute) || frame.minute < 0 || frame.minute > 59)) errors.push('invalid clock');
     if (frame.highlightNumerals?.some(n=>!Number.isInteger(n)||n<1||n>12) || frame.referenceMinute!==undefined && (!Number.isInteger(frame.referenceMinute)||frame.referenceMinute<0||frame.referenceMinute>59)) errors.push('invalid clock emphasis');
@@ -62,6 +64,7 @@
       if (!Number.isFinite(frame.min) || !Number.isFinite(frame.max) || frame.min >= frame.max) errors.push('invalid number-line range');
       if (!Array.isArray(frame.markers) || frame.markers.some(m => !Number.isFinite(m.value) || m.value < frame.min || m.value > frame.max || m.label === undefined)) errors.push('invalid authored number-line markers');
       if (frame.jumps?.some(j=>![j.from,j.to].every(n=>Number.isFinite(n)&&n>=frame.min&&n<=frame.max)||j.from===j.to||typeof j.label!=='string')) errors.push('invalid authored number-line jumps');
+      if (frame.ranges?.some(r=>![r.from,r.to].every(n=>Number.isFinite(n)&&n>=frame.min&&n<=frame.max)||r.from>=r.to)) errors.push('invalid authored number-line intervals');
     }
     if (type === 'measurement') {
       const sources=frame.sourceGroups?.flat()||frame.sources||(frame.source?[frame.source]:[]);
@@ -115,6 +118,7 @@ function renderClockVisual(visual) {
   `;
 }
   function render(type, frame) {
+    if (type === 'geometryDiagram') return geometry.render(frame);
     if (type === 'currency') {
       const itemHTML=item=>`<div class="currencyGroup">${Array.from({length:item.count},()=>`<img src="${currencyAssetForCents(item.denomination)}" alt="${amount(item.denomination)}" class="currencyAsset ${item.denomination>=500?'currencyNote':'currencyCoin'}" />`).join('')}</div>`;
       return frame.mode === 'count' ? `<div class="currencyCollection">${frame.rows?frame.rows.map(row=>`<div class="currencyAuthoredRow">${row.map(i=>itemHTML(frame.items[i])).join('')}</div>`).join(''):frame.items.map(itemHTML).join('')}</div>` : (frame.label ? `<p>${richText(frame.label)}</p>` : '') + (frame.highlightDenominations||[]).map(d=>`<img class="currencyAsset authoredFocus" src="${currencyAssetForCents(d)}" alt="${amount(d)}" />`).join('');
@@ -131,12 +135,12 @@ function renderClockVisual(visual) {
     if (type === 'numberLine') {
       const position=n=>100*(n-frame.min)/(frame.max-frame.min);
       const jumps=(frame.jumps||[]).map(j=>{const a=position(j.from)*10,b=position(j.to)*10;return `<g><path d="M${a} 90 Q${(a+b)/2} 0 ${b} 90"/><text x="${(a+b)/2}" y="38">${escape(j.label)}</text></g>`;}).join('');
-      return `<div class="authoredNumberLine ${frame.jumps?'stagedNumberLine':''}" role="img" aria-label="Getallenlijn">${jumps?`<svg class="numberLineJumps" viewBox="-25 0 1050 110" aria-hidden="true">${jumps}</svg>`:''}<div class="numberLineTrack">${frame.markers.map(m=>`<span class="numberLineMarker ${m.focus?'numberLineFocus':''}" style="--marker-position:${position(m.value)}%;--marker-lane:${m.lane||0}"><span>${richText(m.label)}</span></span>`).join('')}</div></div>`;
+      return `<div class="authoredNumberLine ${frame.jumps?'stagedNumberLine':''}" role="img" aria-label="Getallenlijn">${jumps?`<svg class="numberLineJumps" viewBox="-25 0 1050 110" aria-hidden="true">${jumps}</svg>`:''}<div class="numberLineTrack">${(frame.ranges||[]).map(r=>`<span class="numberLineInterval" style="left:${position(r.from)}%;width:${position(r.to)-position(r.from)}%"></span>`).join('')}${frame.markers.map(m=>`<span class="numberLineMarker ${m.focus?'numberLineFocus':''}" style="--marker-position:${position(m.value)}%;--marker-lane:${m.lane||0}"><span>${richText(m.label)}</span></span>`).join('')}</div></div>`;
     }
     if (type === 'measurement') {
       const unit=s=>`${richText(s.value)} <strong>${escape(s.unit)}</strong>`;
       const source=frame.sourceGroups?frame.sourceGroups.map(g=>g.map(unit).join(' ')).join(' + '):(frame.sources||[frame.source]).map(unit).join(' ');
-      return `<div class="authoredMeasurement"><span>${frame.multiplier?`${frame.multiplier} × `:''}${source}</span><span aria-hidden="true">→</span><span>${frame.targetLabel === undefined ? '?' : richText(frame.targetLabel)} <strong>${escape(frame.targetUnit)}</strong></span></div>${frame.pieces?`<div class="measurementPieces">${frame.pieces.map(p=>`<span>${richText(p)}</span>`).join('')}</div>`:''}`;
+      return (frame.hideConversion?'':`<div class="authoredMeasurement"><span>${frame.multiplier?`${frame.multiplier} × `:''}${source}</span><span aria-hidden="true">→</span><span>${frame.targetLabel === undefined ? '?' : richText(frame.targetLabel)} <strong>${escape(frame.targetUnit)}</strong></span></div>`)+`${frame.pieces?`<div class="measurementPieces">${frame.pieces.map(p=>`<span>${richText(p)}</span>`).join('')}</div>`:''}`;
     }
     return '';
   }

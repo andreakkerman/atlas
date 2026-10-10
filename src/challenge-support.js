@@ -69,11 +69,20 @@
       const frame = visual.stages?.[stage];
       if (!frame || typeof frame!=='object') { fail(`missing visual stage ${stage}`); continue; }
       if (capabilities.TYPES.includes(visual.type)) errors.push(...capabilities.validateFrame(visual.type, frame, assetExists).map(message=>`${question.id}/${stage}: ${message}`));
-      if (visual.type==='fractionStrip' && (!Array.isArray(frame.segments) || frame.segments.length < (frame.partitioned===false?1:2) || frame.segments.length > 12 || frame.segments.some(s=>typeof s.selected!=='boolean' || (s.symbols!==undefined && (!Number.isInteger(s.symbols) || s.symbols<0 || s.symbols>20))))) fail(`invalid fraction segments at ${stage}`);
-      if (visual.type==='fractionStrip' && (frame.groups||[]).some(g=>!Number.isInteger(g.from)||!Number.isInteger(g.count)||g.from<0||g.count<1||g.from+g.count>frame.segments.length)) fail(`invalid fraction grouping at ${stage}`);
-      if (visual.type==='moneyReceipt' && (!Array.isArray(frame.items)||!frame.items.length||!frame.paid||frame.items.some(i=>!i.label||!i.amount))) fail(`invalid receipt at ${stage}`);
+      if (visual.type==='fractionStrip') {
+        const strips=frame.strips || [frame];
+        if(!Array.isArray(strips)||!strips.length||strips.length>3) fail(`invalid fraction rows at ${stage}`);
+        else for(const strip of strips){
+          if(!Array.isArray(strip.segments) || strip.segments.length < (strip.partitioned===false?1:2) || strip.segments.length>12 || strip.segments.some(s=>typeof s.selected!=='boolean'||s.symbols!==undefined&&(!Number.isInteger(s.symbols)||s.symbols<0||s.symbols>20))) fail(`invalid fraction segments at ${stage}`);
+          if((strip.groups||[]).some(g=>!Number.isInteger(g.from)||!Number.isInteger(g.count)||g.from<0||g.count<1||g.from+g.count>strip.segments?.length)) fail(`invalid fraction grouping at ${stage}`);
+          if(strip.boundaries?.some(i=>!Number.isInteger(i)||i<1||i>=strip.segments?.length))fail(`invalid fraction boundary at ${stage}`);
+        }
+      }
+      if (visual.type==='moneyReceipt' && (!Array.isArray(frame.items)||!frame.items.length||frame.paid!==undefined&&!frame.paid||frame.items.some(i=>!i.label||!i.amount))) fail(`invalid receipt at ${stage}`);
       if (visual.type==='calculationSteps' && !Array.isArray(frame.groups)) fail(`missing calculation groups at ${stage}`);
       if (frame.quantities?.some(q=>!Number.isInteger(q.count)||q.count<0||q.count>20||typeof q.label!=='string')) fail(`invalid quantity group at ${stage}`);
+      if(frame.boxes&&(!Array.isArray(frame.boxes.labels)||!frame.boxes.labels.length||frame.boxes.labels.length>20||frame.boxes.labels.some(s=>typeof s!=='string')||frame.boxes.removed?.some(i=>!Number.isInteger(i)||i<0||i>=frame.boxes.labels.length)))fail(`invalid boxes at ${stage}`);
+      if(frame.bars&&(!Array.isArray(frame.bars)||!frame.bars.length||frame.bars.some(b=>typeof b.label!=='string'||b.parts?.some(p=>typeof p.label!=='string'||!Number.isFinite(p.weight)||p.weight<=0))))fail(`invalid duration bars at ${stage}`);
       if (visual.type==='timeLine' && (!['forward','backward'].includes(frame.direction)||!Array.isArray(frame.nodes)||frame.nodes.length<2)) fail(`invalid timeline at ${stage}`);
       for (const sequence of [frame,...(frame.groups||[])]) if (sequence.nodes && (!Array.isArray(sequence.nodes)||!Array.isArray(sequence.jumps)||(sequence.jumps.length && sequence.jumps.length !== sequence.nodes.length-1))) fail(`invalid sequence at ${stage}`);
     }
@@ -99,16 +108,22 @@
   }
   function renderVisualFrame(type, frame, stage) {
     const visual = {type};
-    if (visual.type==='none' || visual.type==='calculationSteps' && !frame.groups.length && !frame.quantities?.length) return '';
+    if (visual.type==='none' || visual.type==='calculationSteps' && !frame.groups.length && !frame.quantities?.length && !frame.boxes && !frame.bars) return '';
     let body = '';
     if (visual.type==='fractionStrip') {
+      if(frame.strips) body=`<div class="fractionStripRows">${frame.strips.map(strip=>renderVisualFrame('fractionStrip',strip,stage)).join('')}</div>`;
+      else {
       body = `<div class="fractionStrip ${frame.texture==='rope'?'fractionRope':''}" style="--parts:${frame.segments.length}">${frame.segments.map((part,i)=>`<div class="fractionPart ${part.selected?'fractionSelected':''} ${frame.focus?.includes(i)?'fractionFocus':''}${frame.joined?.includes(i)?' fractionJoined':''}">${part.symbols?`<div class="fractionSymbols">${Array.from({length:part.symbols},()=>symbolSvg(frame.symbol)).join('')}</div>`:''}${part.label?`<span>${richText(part.label)}</span>`:''}</div>`).join('')}</div><div class="fractionGroups" style="--parts:${frame.segments.length}">${(frame.groups||[]).map(g=>`<span style="grid-column:${g.from+1} / span ${g.count}">${richText(g.label)}</span>`).join('')}</div><p class="fractionTotal">${richText(frame.totalLabel)}</p>${frame.outsideSymbols?`<div class="fractionOutside">${Array.from({length:frame.outsideSymbols},()=>symbolSvg(frame.symbol)).join('')}</div>`:''}`;
+        if(frame.boundaries)body=body.replace(/class="fractionPart /g,(()=>{let i=0;return ()=>`class="fractionPart ${frame.boundaries.includes(i++)?'fractionBoundary ':''}`;})());
+      }
     } else if (visual.type==='moneyReceipt') {
-      body = `<div class="learningReceipt">${frame.items.map((item,i)=>`<div${frame.highlight?.includes(i)?' class="authoredFocus"':''}><span>${escape(item.label)}</span><strong>${escape(item.amount)}</strong></div>`).join('')}<div class="receiptPaid"><span>Betaald</span><strong>${escape(frame.paid)}</strong></div>${frame.change!==undefined?`<div class="receiptChange"><span>Wisselgeld</span><strong>${escape(frame.change)}</strong></div>`:''}</div>${renderGroups(frame.groups)}`;
+      body = `<div class="learningReceipt">${frame.items.map((item,i)=>`<div${frame.highlight?.includes(i)?' class="authoredFocus"':''}><span>${escape(item.label)}</span><strong>${escape(item.amount)}</strong></div>`).join('')}${frame.paid!==undefined?`<div class="receiptPaid"><span>Betaald</span><strong>${escape(frame.paid)}</strong></div>`:''}${frame.change!==undefined?`<div class="receiptChange"><span>Wisselgeld</span><strong>${escape(frame.change)}</strong></div>`:''}</div>${renderGroups(frame.groups)}`;
     } else if (visual.type==='timeLine') body = renderSequence(frame,true);
     else if (capabilities.TYPES.includes(visual.type)) body = capabilities.render(visual.type,frame) + renderGroups(frame.groups);
     else body = renderGroups(frame.groups);
     if (frame.quantities) body+=`<div class="authoredQuantities">${frame.quantities.map(q=>`<div><span>${escape(q.label)}</span><span aria-hidden="true">${'●'.repeat(q.count)}</span></div>`).join('')}</div>`;
+    if(frame.boxes)body+=`<div class="learningBoxes" role="group" aria-label="${escape(frame.boxes.label)}">${frame.boxes.labels.map((label,i)=>`<span class="learningBox${frame.boxes.removed?.includes(i)?' learningBoxRemoved':''}" aria-label="${frame.boxes.removed?.includes(i)?'weggehaald':'bak'}">${escape(label)}</span>`).join('')}<p>${escape(frame.boxes.label)}</p></div>`;
+    if(frame.bars)body+=`<div class="learningDurationBars">${frame.bars.map(bar=>`<div class="learningDurationBar">${bar.label?`<span>${escape(bar.label)}</span>`:''}${bar.parts?`<div class="learningDurationParts">${bar.parts.map(part=>`<span style="flex:${part.weight}">${escape(part.label)}</span>`).join('')}</div>`:''}</div>`).join('')}</div>`;
     body += (frame.notes||[]).map(note=>`<p class="learningVisualNote">${richText(note)}</p>`).join('');
     return visualContainer(visual.type, stage, body);
   }

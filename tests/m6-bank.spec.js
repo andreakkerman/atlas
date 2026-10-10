@@ -11,7 +11,7 @@ const hash=x=>crypto.createHash('sha256').update(JSON.stringify(canonical(x))).d
 test('24 exact currently approved generic records, preserved E5 and no embedded M6',()=>{
   const baseline=require('./fixtures/m6-migration-baseline.json');
   expect(bank.metadata.filter(q=>q.id.startsWith('RP-M6-')).map(q=>q.id)).toEqual(expectedIds);
-  expect(bank.metadata.map(q=>q.id)).toEqual([...expectedIds,...require('../scripts/m6-expansion-content.cjs').expectedIds]);
+  expect(bank.metadata.map(q=>q.id)).toEqual([...expectedIds,...require('../scripts/m6-expansion-content.cjs').expectedIds,...require('../scripts/m6-expansion-20261010.cjs').readApproved().map(q=>q.id)]);
   expect(validatePilot([1,2,3].map(n=>load(`LVL-000${n}`)))).toEqual([]);
   for(const {question} of readApproved()){
     const {centralQuestionId,surfaceId,educationalCore,educationalDomain,...actual}=bank.recover(question.id);

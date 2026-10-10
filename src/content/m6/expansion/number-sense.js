@@ -66,7 +66,7 @@
   {
     "id": "M6-NS-002",
     "learningLevel": "M6",
-    "contentVersion": 1,
+    "contentVersion": 2,
     "domain": "math",
     "schoolBand": "M6-intended",
     "difficulty": 1,
@@ -99,7 +99,7 @@
         "prompt": "Je mag de cijfers **3, 8, 5 en 7** elk één keer gebruiken. Welk is het grootste getal dat je kunt maken?",
         "answerDisplay": "8.753",
         "hintMinnie": "Voor het grootste getal zet je het grootste cijfer op de plek met de grootste waarde: helemaal links.",
-        "hintMoose": "Van 3, 8, 5 en 7 is 8 het grootst. Daarna komt 7, daarna 5 en daarna 3. Zet ze in die volgorde.",
+        "hintMoose": "Van **3, 8, 5 en 7** is **8** het grootste, dus die staat vooraan. Kijk nu naar de cijfers **7, 5 en 3**: welk daarvan hoort op de volgende plek met de grootste waarde?",
         "explanation": "Bij een viercijferig getal is de eerste plek het belangrijkst.\n\nHet grootste cijfer is **8**, dus dat wordt het duizendtal.\n\nDaarna komt **7** bij de honderdtallen, **5** bij de tientallen en **3** bij de eenheden.\n\nZo krijg je **8.753**.\n\nDus **8.753** is het grootste getal dat je met deze vier cijfers kunt maken.",
         "authoredSupport": {
           "explanationSteps": [
@@ -438,7 +438,7 @@
   {
     "id": "M6-NS-005",
     "learningLevel": "M6",
-    "contentVersion": 1,
+    "contentVersion": 2,
     "domain": "math",
     "schoolBand": "M6-intended",
     "difficulty": 2,
@@ -471,7 +471,7 @@
         "prompt": "Rond **6.451** af op het dichtstbijzijnde honderdtal.",
         "answerDisplay": "6.500",
         "hintMinnie": "6.451 ligt tussen 6.400 en 6.500. Kijk waar het midden tussen die twee honderdtallen ligt.",
-        "hintMoose": "Het midden is **6.450**. Het getal 6.451 ligt net boven dat middenpunt en dus aan de kant van 6.500.",
+        "hintMoose": "Het midden is **6.450**. **6.451** ligt daar net boven. Bedenk nu welk van de twee honderdtallen daardoor het dichtst bij 6.451 ligt.",
         "explanation": "6.451 ligt tussen **6.400** en **6.500**.\n\nPrecies in het midden ligt **6.450**.\n\nGetallen van 6.450 en hoger ronden we bij deze twee honderdtallen naar **6.500** af.\n\n6.451 ligt één boven het middenpunt.\n\nDaarom wordt **6.451 afgerond naar 6.500**.",
         "authoredSupport": {
           "explanationSteps": [
@@ -623,7 +623,7 @@
   {
     "id": "M6-NS-006",
     "learningLevel": "M6",
-    "contentVersion": 1,
+    "contentVersion": 2,
     "domain": "math",
     "schoolBand": "M6-intended",
     "difficulty": 2,
@@ -656,7 +656,7 @@
         "prompt": "Rond **8.620** af op het dichtstbijzijnde duizendtal.",
         "answerDisplay": "9.000",
         "hintMinnie": "8.620 ligt tussen 8.000 en 9.000. Zoek eerst het midden tussen die twee duizendtallen.",
-        "hintMoose": "Het midden is **8.500**. 8.620 ligt boven 8.500, dus het ligt aan de kant van 9.000.",
+        "hintMoose": "Het midden is **8.500**. **8.620** ligt boven dat midden. Bedenk nu welk van de twee duizendtallen het dichtst bij 8.620 ligt.",
         "explanation": "Het dichtstbijzijnde lagere duizendtal is **8.000**.\n\nHet dichtstbijzijnde hogere duizendtal is **9.000**.\n\nHet midden is **8.500**.\n\nOmdat **8.620 groter is dan 8.500**, ligt het dichter bij 9.000.\n\nDus **8.620 rond je af naar 9.000**.",
         "authoredSupport": {
           "explanationSteps": [

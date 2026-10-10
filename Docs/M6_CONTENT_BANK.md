@@ -1,6 +1,6 @@
-# Central M6 bank and challenge capabilities v2 — 99 approved questions
+# Central M6 bank and challenge capabilities v2 — 159 approved questions
 
-Current contract, 9 October 2026. This supersedes the pilot's historical slot placements and local M6 fallback. Approved source documents remain immutable; explicitly dated addenda supersede only their stated fields. Runtime authorities: `src/m6-bank.js`, `src/learning-levels.js`, `src/challenge-support.js`, `src/challenge-capabilities.js` and the existing app/session handlers.
+Current contract, 10 October 2026. This supersedes the pilot's historical slot placements and local M6 fallback. Approved source documents remain immutable; explicitly dated addenda supersede only their stated fields. Runtime authorities: `src/m6-bank.js`, `src/learning-levels.js`, `src/challenge-support.js`, `src/challenge-capabilities.js` and the existing app/session handlers.
 
 ## Ownership and data flow
 
@@ -22,17 +22,41 @@ Production modules in `src/content/m6/`:
 | `expansion/time.js` | 18 | time |
 | `expansion/measurement.js` | 7 | measurementGeometry |
 | `expansion/data-patterns.js` | 6 | dataPatterns |
-| `index.js` | **99 combined** | One logical indexed bank |
+| `expansion-20261010.js` | 60 | Eight existing central domains |
+| `index.js` | **159 combined** | One logical indexed bank |
 
 All 24 stable `RP-M6-*` IDs remain with one generic `original` surface. The 6 October genericization used contentVersion `"0.2"`; the four explicitly recalibrated time cores below now use `"0.3"`. No legacy surface or recovery alias is preserved. Non-time content remains exact. Canonical educational domains and machine objective IDs replace transitional metadata. Historical migration checks and the full pre-recalibration level fixture protect all E5 fields outside the authorized representation conversion.
 
-The bank contains **99 IDs / 132 surfaces**: 24 genericized original records plus 75 expansion records. After the seven approved reclassifications, expansion difficulties are **37 / 26 / 12** and full-bank difficulties are **45 / 34 / 20**. The default D1 pool contains **35 non-time** and **10 time** questions. Raw bank counts do not implement the planner’s delivery policy. Expansion surface counts are 33 double-surface records and 42 single-surface records; M6-TI-009 now uses only its newly approved glue-drying surface.
+The bank contains **159 IDs / 192 surfaces**: the unchanged current 99 (24 original + 75 earlier expansion) plus 60 approved additions. The prior 99 retain difficulties **42 / 37 / 20**; the new 60 add **22 / 21 / 17**, giving **64 / 58 / 37**. The default D1 pool contains **55 non-time** and **9 time** questions. Raw bank counts do not implement the planner’s delivery policy. There are 33 double-surface records and 126 single-surface records. Answer modes: **122 open, 34 multipleChoice, 3 currencyCompose**.
 
-The editorial source is `scripts/content/atlas-m6-central-approved.md`, a byte-for-byte copy of the attachment. The separately approved `atlas-m6-visual-addendum.md` supplies the missing stages for M6-MD-002/003/004. `scripts/m6-expansion-content.cjs` parses exact fields, and `scripts/content/atlas-m6-expansion-visuals.cjs` transcribes their fixed visual frames. `node scripts/import-m6-expansion.cjs` deliberately rebuilds only the eight expansion modules; it does not run in the browser. The source's “draft” batch heading is historical: the user's explicit approval covers all 75 records. Source prose is never rewritten to satisfy a schema.
+## Approved 60-question addition — 10 October 2026
+
+The sole educational source is the unchanged [approved authoring file](../scripts/content/atlas-m6-expansion-20261010-approved.md). The attached audit report is verification evidence, not an import source. All additions have `contentVersion:1` and one `original` surface. The previous 99 records, resolved support/visual HTML, all 960 E5 variants, level files, planner, routing, report handlers and notebook UI are frozen by `tests/fixtures/m6-expansion-20261010-baseline.json`.
+
+| Domain | Final questions |
+| --- | ---: |
+| additionSubtraction | 20 |
+| dataPatterns | 15 |
+| fractionsRatios | 28 |
+| measurementGeometry | 16 |
+| money | 20 |
+| multiplicationDivision | 16 |
+| numberSense | 14 |
+| time | 30 |
+
+`node scripts/m6-expansion-20261010.cjs` mechanically imports the approved fields and fixed visual transcription into **only** `src/content/m6/expansion-20261010.js`. Markdown backticks and trailing hard-break spaces are formatting, not learner-visible characters; words, emphasis, numbers, choices and explanation paragraph order remain exact. Fractions use the existing rich-text parts. Source titles supply report labels. `values.authored` retains the prompt, `values.table` retains any table givens, and `values.task` records the numerical task independently of wording for duplicate auditing. The offline core transcription also independently calculates all 60 answers. No exercise is generated at runtime.
+
+The 60 additions contain **45 open / 15 multipleChoice** questions. MO-011..014 use the existing open `euro` contract, canonical cents **335 / 1100 / 475 / 30**, and unchanged euro/cent controls. DP-012 deliberately remains D2, NS-014 stretch-D3, and DP-007 multiple choice. FR-014 Moose highlights four intervals and shows only “3 stappen vanaf 0”: no three-jump route or selected endpoint. DP-009 uses a table with stage notes only.
+
+`node scripts/export-m6-expansion-20261010.cjs` recovers every new question through the production bank and writes [the resolved runtime review artifact](qa/M6_EXPANSION_20261010_RUNTIME.json): full metadata/core, choices, all support text, four visual data/HTML frames, versions and surfaces. Its inventory includes all 159 IDs, answer modes, capabilities and the zero-duplicate numerical-core result. The immutable provenance file is also hashed in that export. The PWA shell loads/pre-caches the new module and geometry capability under cache **v270**.
+
+Focused QA: **46/46** content/bank/presentation/quality/time regression tests; **30/30 distinct browser scenarios** across desktop Chromium and iPad landscape/portrait WebKit (24 expansion scenarios plus six existing notebook persistence/clear scenarios). ME-008/009/012/013 preserve geometry across all four stages, actual openings remain interrupted, FR-014 retains its unselected Moose endpoint, and euro grading/report evidence remains canonical. Close labels in AS-010/013 use existing label lanes; the overlap regression now passes. All 35 production levels plus the developer level validate. Historical exhaustion fixtures now fill the eligible bucket because the full bank exceeds the unchanged 128-entry recent-history cap. No educational correction was required. WebKit emulation is not physical iPad testing; its existing WebGPU-unavailable background warning does not affect these 2D notebook diagrams. Screenshots are in ignored `qa-screenshots/m6-expansion-20261010/`.
+
+The earlier 75-record expansion's editorial source is `scripts/content/atlas-m6-central-approved.md`, a byte-for-byte copy of that attachment. The separately approved `atlas-m6-visual-addendum.md` supplies the missing stages for M6-MD-002/003/004. `scripts/m6-expansion-content.cjs` parses exact fields, and `scripts/content/atlas-m6-expansion-visuals.cjs` transcribes their fixed visual frames. `node scripts/import-m6-expansion.cjs` deliberately rebuilds only the eight earlier expansion modules; it does not run in the browser. The source's “draft” batch heading is historical: the user's explicit approval covers those 75 records. Source prose is never rewritten to satisfy a schema.
 
 ## Time recalibration — 9 October 2026
 
-The exact approval is [atlas-time-recalibration-approved.md](../scripts/content/atlas-time-recalibration-approved.md). `atlas-time-recalibration.cjs` is the final offline transcription layer in both importers. It supplies fixed authored values, prose and four-stage visuals, never runtime-generated exercises. Analogue/digital is a representation choice: E5 now has one of each in all 60 explicit time positions. M6 time remains exactly 24 IDs with difficulty counts **10 / 9 / 5**.
+The exact approval is [atlas-time-recalibration-approved.md](../scripts/content/atlas-time-recalibration-approved.md). `atlas-time-recalibration.cjs` is the offline time transcription layer in both earlier importers; the expansion importer subsequently applies the seven-ID approval in `atlas-m6-targeted-review.cjs`. It supplies fixed authored values, prose and four-stage visuals, never runtime-generated exercises. Analogue/digital is a representation choice: E5 has one of each in all 60 explicit time positions. Those 24 M6 time IDs retain difficulty counts **7 / 12 / 5**; TI-019..024 add six, giving **30 time IDs / 9 / 14 / 7** today.
 
 | Replaced ID | Current core | Version |
 | --- | --- | --- |
@@ -42,17 +66,17 @@ The exact approval is [atlas-time-recalibration-approved.md](../scripts/content/
 | RP-M6-TI-004 | 5 minutes 20 seconds → 320 seconds | "0.3" |
 | M6-TI-001 | 15:58 + 4 minutes → 16:02 | 2 |
 | M6-TI-002 | 08:57 + 8 minutes → 09:05 | 2 |
-| M6-TI-003 | 14:51–15:32 → 41 minutes | 2 |
+| M6-TI-003 | 14:51–15:32 → 41 minutes | 3 |
 | M6-TI-004 | 19:43–20:28 → 45 minutes | 2 |
-| M6-TI-005 | 15:29–16:12 → 43 minutes | 2 |
-| M6-TI-006 | 08:50–09:34 → 44 minutes | 2 |
+| M6-TI-005 | 15:29–16:12 → 43 minutes | 3 |
+| M6-TI-006 | 08:50–09:34 → 44 minutes | 3 |
 | M6-TI-007 | 17:36 + 48 minutes → 18:24 | 2 |
 | M6-TI-008 | 20:13 − 47 minutes → 19:26 | 2 |
 | M6-TI-009 | 300 seconds → 5 minutes | 3 |
 | M6-TI-010 | 4 minutes → 240 seconds | 3 |
 | M6-TI-013 | 2 minutes 30 seconds → 150 seconds | 2 |
 
-RP-M6-TI-005/006 and M6-TI-011/012/014/015/016/017/018 remain exact full records, including all nine educational cores, surfaces and versions. No aliases retain replaced cores. Stored report snapshots are not rewritten. The 15 versions increase once; difficulty labels and the entire planner/policy source remain unchanged. The numerical audit includes canonical minutes/seconds conversions and reports zero exact duplicate cores across 99 questions.
+RP-M6-TI-005/006 and M6-TI-011/012/014/015/016/017/018 remain exact full records, including all nine educational cores, surfaces and versions. No aliases retain replaced cores. Stored report snapshots are not rewritten. The time recalibration increased the 15 versions once and retained their difficulty labels; the subsequent D1→D2 approval increases M6-TI-003/005/006 to version 3. The entire planner/policy source remains unchanged. The numerical audit includes canonical minutes/seconds conversions and reports zero exact duplicate cores across 99 questions.
 
 Unchanged cores: RP-M6-TI-005: 13:50 + 85 min = 15:15; RP-M6-TI-006: 16:20 − 95 min = 14:45; M6-TI-011: 14:31–15:20 = 49 min; M6-TI-012: 15:42–16:39 = 57 min; M6-TI-014: 08:45 + 1 h 35 min = 10:20; M6-TI-015: 15:10 − 35 min = 14:35; M6-TI-016: 17:10 − 1 h 45 min = 15:25; M6-TI-017: 13:42–14:05 = 23 min; M6-TI-018: 10:35 + 45 + 20 + 55 min = 12:35.
 
@@ -184,9 +208,12 @@ All staged visuals use `visual: {type, stages: {question, minnie, moose, explana
 | analogueClock | Authored hour/minute plus optional hand/numeral emphasis and reference-minute mark. Uses the existing E5 clock geometry/markup, extracted unchanged into the shared capability module. No digital/spoken answer is added unless authored for that stage. |
 | compactDataTable | Authored `columns`/`rows`, optional `highlightRows`/`highlightCells`; semantic column and row headers. A question table belongs in rich prompt parts; `inPrompt` prevents a second copy. Each help frame retains the table and only its authored highlighting/calculation. |
 | numberLine | `{min:9000,max:10000,markers:[{value:9000,label:'9000'}]}`; only authored markers/labels appear. |
-| measurement | `{source:{value:300,unit:'cm'},targetUnit:'m'}`; target remains `?` unless an authored `targetLabel` is supplied. Units: mm/cm/dm/m/g/kg. No conversion rule is generated. |
+| measurement | `{source:{value:300,unit:'cm'},targetUnit:'m'}`; target remains `?` unless an authored `targetLabel` is supplied. Units: mm/cm/dm/m/g/kg/ml/cl/dl/l. `hideConversion` shows only the authored pieces where no conversion arrow is specified. No conversion rule is generated. |
+| geometryDiagram | Shared schematic SVG in `src/geometry-diagram.js`, dispatched/validated by challenge capabilities. `shape: square\|rectangle`, `sideLabels`, optional `grid:{rows,columns}`, `opening:{side,label}`, `unknownSides`, `highlightSides`, `highlightRegion: all\|row:N`, and stage `notes`. Bounds stay fixed across stages; an opening replaces the side with two separated line segments. Optional `sidePairLabels:{horizontal,vertical}` and `partitions:[{fraction,labelBefore,labelAfter}]` express only the approved pair totals and area split. No question IDs or inferred lengths in rendering. |
 
 Number lines additionally accept authored jumps, emphasis and label lanes; measurement accepts multiple source quantities, grouped lengths, repeated pieces and an explicit multiplier. Existing calculation/fraction/timeline/receipt types gained only the declarative fields required by the expansion: quantity groups, an initially undivided strip, joined strip boundaries, authored time-node emphasis and receipt change/highlighting. `none` deliberately draws nothing for the three questions whose source says no visual. Notebook geometry, paper/rings, scrolling and flip handlers are unchanged.
+
+The 10 October additions extend those same types without changing old frames: number-line `ranges:[{from,to}]` highlight intervals independently of jumps/markers; fraction `strips:[frame,...]` renders up to three equal-width rows and `boundaries:[index]` retains original partitions; receipt `paid` is optional for a pure price comparison. Calculation frames accept `boxes:{labels,removed,label}` for equal bins and `bars:[{label,parts:[{label,weight}]}]` for authored duration blocks; timelines can use the same bars. These are literal visual data, never automatic calculation or answer disclosure. All prior 99 rendered frames/explanations remain byte-equivalent.
 
 `currencyAssetForCents` is the sole denomination path resolver. Supported files currently are 5, 10, 20, 50, 100, 200, 500, 1000, 2000 and 5000 cents. The supplied `assets/ui/currency/20.png` is supported for counting, composition and change. Unsupported denominations are rejected, not replaced by a different coin. Asset existence is checked by normal validation. Asset images are app-shell cached. Individual questions still explicitly authorize their available denominations.
 
@@ -200,7 +227,7 @@ The offline import converts only explicitly authored mathematical fractions to t
 
 Session v2 adds optional `centralQuestionId`, `surfaceId`, `domain`, `educationalDomain` and rich prompt parts alongside its existing prompt/version/objective/report-label snapshots. Composition adds the count evidence above. Storage keys, three-unchecked-report retention, historical outcomes and help timing are unchanged. `afterMoose` and `afterExplanation` remain distinct; notes and flips remain private/non-learning actions. No direct `Leg uit` route exists.
 
-`npm run validate:levels` includes bank validation, actual currency assets, exact 24-ID/content migration, exact 75-record expansion and rejection of redundant M6 level copies. `npm run audit:m6` reports the full bank and expansion separately: exact IDs, domain/difficulty counts, objectives, visual types, missing labels, duplicate IDs/explicit cores and surfaces. Production contains no TEST records. The expansion adds no session schema/version or storage-key migration; current report snapshots and answer evidence already cover the data. Historical reports are not rewritten.
+`npm run validate:levels` includes bank validation, actual currency assets, exact 24-ID/content migration, exact 75-record earlier expansion, exact 60-record addition and rejection of redundant M6 level copies. `npm run audit:m6` reports the full 159-question bank and both expansions separately: exact IDs, domain/difficulty counts, objectives, visual types, missing labels, duplicate IDs/explicit and numerical cores, and surfaces. Production contains no TEST records. The expansion adds no session schema/version or storage-key migration; current report snapshots and answer evidence already cover the data. Historical reports are not rewritten.
 
 Tests: `m6-bank.spec.js` (migration, schema, surfaces, selection, history, 600-record performance), `m6-capabilities.spec.js` (real runtime/global access/controls/reporting/desktop and iPad), plus existing `runenpoort-m6`, workspace, E5 learning/hints, grading, progression and session suites. Synthetic fixtures are isolated from bootstrap, levels and production bank. The existing broader fingerprint/NPC failures are not rebaselined or hidden. Physical iPad keyboard and installed-PWA upgrade behavior require device verification beyond WebKit emulation.
 
@@ -219,7 +246,7 @@ Tests: `m6-bank.spec.js` (migration, schema, surfaces, selection, history, 600-r
 | Existing test integration | `tests/{runenpoort-m6,challenge-workspace,challenge-consistency,learning-levels,batch1-hints,batch2-hints,npc-challenges}.spec.js`; only the intentional app-source digest in three hint-baseline fixtures |
 | Owning documentation | This contract, `LEVEL_CONTRACT.md`, `ATLAS_LEARNING_CONTENT_RULES.md`, `DEV_TOOLS.md`; supersession notice in `runenpoort-m6-pilot.md` |
 
-The migration gate protects the exact `RP-M6-*` collection. The inventory tests now assert those same 24 plus exactly the 75 approved expansion IDs. A future content batch must deliberately update that inventory expectation. The original importer verifies central content by default and explicitly rebuilds only its four central modules with `--write`; it cannot put retired copies back into slots.
+The migration gate protects the exact `RP-M6-*` collection. Inventory tests assert those same 24 plus the earlier 75 and the approved 60 addition IDs. Historical correction tests retain their exact 99-record scope; the current freeze additionally checks all their recovered/rendered output. A future content batch must deliberately update the inventory expectation. The original importer verifies central content by default and explicitly rebuilds only its four central modules with `--write`; it cannot put retired copies back into slots.
 
 No changes were made to the authored source bundle, reusable E5 hint resolver, currency/notebook assets, notebook material/animation algorithms, progression, rewards, world geometry or renderer. Count controls use the existing keyboard-viewport accommodation and answer form; Enter submits the same canonical-cent answer as Controleer.
 

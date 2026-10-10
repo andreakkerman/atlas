@@ -1,8 +1,10 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),vm=require('vm'),crypto=require('crypto');
-const {records,bank}=require('../src/content/m6'),engine=require('../src/m6-bank'),learning=require('../src/learning-levels'),hints=require('../src/challenge-hints'),support=require('../src/challenge-support'),cap=require('../src/challenge-capabilities');
+const {records:productionRecords,bank}=require('../src/content/m6'),engine=require('../src/m6-bank'),learning=require('../src/learning-levels'),hints=require('../src/challenge-hints'),support=require('../src/challenge-support'),cap=require('../src/challenge-capabilities');
+const records=productionRecords.filter(r=>require('./fixtures/m6-expansion-20261010-baseline.json').records[r.id]);
 const before=require('./fixtures/time-recalibration-baseline.json');
 const {digitalMinnie,digitalMoose}=require('./helpers/time-approval.cjs');
+const {beforeTargetedReview}=require('./helpers/m6-targeted-review.cjs');
 const canonical=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(canonical):Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(canonical(x))).digest('hex');
 const load=id=>{const c={window:{}};vm.runInNewContext(fs.readFileSync(`Levels/${id}/level.js`,'utf8'),c);return JSON.parse(JSON.stringify(c.window.SVEN_LEVEL_DEFINITIONS[id]));};
@@ -40,8 +42,10 @@ test('all 60 original semantic positions have exactly one analogue and one digit
 test('all 15 replacements use the exact new approved prose and answers; nine time records and other domains stay byte-equivalent',()=>{
  expect(records).toHaveLength(99);expect(records.map(r=>r.id)).toEqual(Object.keys(before.records));
  expect(records.filter(r=>r.educationalDomain==='time')).toHaveLength(24);
- expect(records.filter(r=>r.educationalDomain==='time').reduce((a,r)=>(a[r.difficulty]=(a[r.difficulty]||0)+1,a),{})).toEqual({1:10,2:9,3:5});
- for(const r of records){
+ expect(records.filter(r=>r.educationalDomain==='time').reduce((a,r)=>(a[r.difficulty]=(a[r.difficulty]||0)+1,a),{})).toEqual({1:7,2:12,3:5});
+ // Preserve this approval's exact baseline, allowing only the subsequent seven
+ // fields covered by the independent complete-record targeted-review tests.
+ for(const r of records.map(beforeTargetedReview)){
   const baseline=before.records[r.id];expect(r.difficulty).toBe(baseline.difficulty);
   if(!changed.includes(r.id)){expect(hash(r),r.id).toBe(baseline.hash);continue;}
   expect(r.contentVersion).toBe(typeof baseline.version==='number'?baseline.version+1:'0.3');

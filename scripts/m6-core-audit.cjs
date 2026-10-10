@@ -6,6 +6,7 @@ const minutes=s=>{const[h,m]=s.split(':').map(Number);return h*60+m;};
 const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
 function signature(r) {
   const v=r.educationalCore.values,q=r.educationalCore.question,s=r.surfaces[0],frame=s.visual?.stages.question;
+  if(v.task)return v.task;
   const authored=(v.authored||'').replaceAll('**',''),domain=r.educationalDomain;
   if(v.operands)return ['arithmetic',v.operation,...v.operands];
   if(domain==='additionSubtraction'||domain==='multiplicationDivision') {

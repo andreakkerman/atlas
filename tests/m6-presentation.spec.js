@@ -2,7 +2,8 @@ const {test,expect}=require('@playwright/test');
 const crypto=require('node:crypto');
 const {records,bank}=require('../src/content/m6');
 const {currentExpansion,time}=require('./helpers/time-approval.cjs');
-const readApproved=()=>require('../scripts/m6-expansion-content.cjs').readApproved().map(currentExpansion);
+const review=require('./helpers/m6-targeted-review.cjs');
+const readApproved=()=>require('../scripts/m6-expansion-content.cjs').readApproved().map(currentExpansion).map(review.currentExpansion);
 const support=require('../src/challenge-support');
 const visuals={...require('../scripts/content/atlas-m6-expansion-visuals.cjs'),...require('../scripts/content/atlas-m6-quality.cjs').replacementVisuals,...time.visuals};
 const {surfaceEdits,expectedSupport,expectedVisualNotes}=require('./fixtures/m6-presentation-expectations.cjs');
@@ -25,16 +26,19 @@ test('all 75 questions / 108 surfaces retain their exact core, prompts and selec
     expect(bank.recover(q.id,surface.id)).toEqual(actual);
   }
   expect(count).toBe(108);expect(changed).toBe(20);expect([...changedIds]).toEqual(Object.keys(surfaceEdits));
-  // Current approved correction snapshot. m6-quality.spec independently limits
-  // changes against the pre-correction numerical/record baseline.
-  expect(hash(records.map(({surfaces,contentVersion,...r})=>r))).toBe('5fdef4d70e99749dd8cc2c294a0174598a40d06aa5032727a0e0ac70cd498153');
+  // Preserve the historical fingerprint; the seven superseding fields have a
+  // separate complete-record scope check in m6-targeted-review.spec.
+  const original99=records.filter(r=>require('./fixtures/m6-expansion-20261010-baseline.json').records[r.id]);
+  expect(original99).toHaveLength(99);
+  expect(hash(original99.map(review.beforeTargetedReview).map(({surfaces,contentVersion,...r})=>r))).toBe('5fdef4d70e99749dd8cc2c294a0174598a40d06aa5032727a0e0ac70cd498153');
   expect(hash(records.filter(r=>r.id.startsWith('RP-')))).toBe('a084a3c455108d9ac0dacbbfa7918df87b24228de70a65498281f0f4b56f3d0c');
 });
 
-test('all 300 authored visual stages preserve useful diagrams and equations, with only four prose-note edits',()=>{
+test('all 300 authored visual stages preserve useful diagrams and equations, with four prose-note edits and the approved MD-002 Moose frame',()=>{
   let changed=0;
   for(const q of readApproved()){
     const actual=bank.recover(q.id),expected=structuredClone(visuals[q.id]);
+    if(q.id==='M6-MD-002')expected.stages.moose=structuredClone(review.mooseVisual);
     for(const [stage,notes] of Object.entries(expectedVisualNotes[q.id]||{})){
       changed++;
       const original=expected.stages[stage].notes;
@@ -59,6 +63,6 @@ test('all 300 authored visual stages preserve useful diagrams and equations, wit
   for(const record of records.filter(r=>r.id.startsWith('M6-'))){
     const prior=surfaceEdits[record.id]||expectedVisualNotes[record.id]?2:1;
     const changed=require('../scripts/content/atlas-m6-quality.cjs').changedExpansionIds.includes(record.id);
-    expect(record.contentVersion).toBe(prior+(changed?1:0)+(time.ids.includes(record.id)?1:0));
+    expect(record.contentVersion).toBe(prior+(changed?1:0)+(time.ids.includes(record.id)?1:0)+(review.ids.includes(record.id)?1:0));
   }
 });

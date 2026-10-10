@@ -4,7 +4,7 @@ const engine=require('../src/m6-bank'),support=require('../src/challenge-support
 const {records,bank}=require('../src/content/m6');
 const source=require('../scripts/m6-expansion-content.cjs');
 const {expectedSupport}=require('./fixtures/m6-presentation-expectations.cjs');
-const approved=source.readApproved().map(require('./helpers/time-approval.cjs').currentExpansion),ids=source.expectedIds;
+const approved=source.readApproved().map(require('./helpers/time-approval.cjs').currentExpansion).map(require('./helpers/m6-targeted-review.cjs').currentExpansion),ids=source.expectedIds;
 const load=id=>{const c={window:{}};vm.runInNewContext(fs.readFileSync(`Levels/${id}/level.js`,'utf8'),c);return c.window.SVEN_LEVEL_DEFINITIONS[id];};
 const history=()=>engine.createHistory({getItem:()=>null,setItem(){}});
 
@@ -14,10 +14,10 @@ test('approved expansion inventory and every support word match the immutable so
   expect(hash('scripts/content/atlas-m6-visual-addendum.md')).toBe('d5c0fd5461154acfdc86e75cc310606de9d8edb7b8e12384a6a420f9350c2da4');
   expect(hash('scripts/content/atlas-m6-expansion-visuals.cjs')).toBe('2d9221c1c5839ee9f51f826a1a4d4d3a8f1196877da54478c5a49c40bf19241e');
   expect(source.validateExpansion(records)).toEqual([]);
-  expect(records).toHaveLength(99);expect(approved.map(q=>q.id)).toEqual(ids);
-  expect(new Set(records.map(q=>q.id)).size).toBe(99);expect(records.some(q=>q.id.startsWith('TEST-'))).toBe(false);
+  expect(records).toHaveLength(159);expect(approved.map(q=>q.id)).toEqual(ids);
+  expect(new Set(records.map(q=>q.id)).size).toBe(159);expect(records.some(q=>q.id.startsWith('TEST-'))).toBe(false);
   const audit=engine.audit(records.filter(q=>ids.includes(q.id)));
-  expect(audit.difficulty).toEqual({1:37,2:26,3:12});expect(audit.domains).toEqual({numberSense:8,additionSubtraction:8,multiplicationDivision:10,fractionsRatios:10,money:8,time:18,measurementGeometry:7,dataPatterns:6});
+  expect(audit.difficulty).toEqual({1:34,2:29,3:12});expect(audit.domains).toEqual({numberSense:8,additionSubtraction:8,multiplicationDivision:10,fractionsRatios:10,money:8,time:18,measurementGeometry:7,dataPatterns:6});
   expect(audit.multipleSurfaces).toBe(33);expect(audit.duplicateIds).toEqual([]);expect(audit.duplicateEducationalCores).toEqual([]);
   for(const q of approved) {
     const record=bank.get(q.id);expect(record.surfaces).toHaveLength(q.surfaces.length);
@@ -69,7 +69,7 @@ test('clock semantics constrain the existing selector in several worlds, includi
       const result=learning.selectPosition(slots[0].variants,p,bank,{random:()=>draw,history:h,used});
       expect(result.variant.educationalDomain).toBe('time');expect(result.deliveredDifficulty).toBe(result.requestedDifficulty);used.push(result.variant);
     }
-    for(const r of records)h.remember(r.id,r.surfaces[0].id);
+    for(const r of records.filter(r=>r.educationalDomain==='time'))h.remember(r.id,r.surfaces[0].id);
     p.nextDifficulty=()=>1;
     const oldest=h.entries.find(e=>bank.get(e.id).educationalDomain==='time'&&bank.get(e.id).difficulty===1).id;
     const selected=learning.selectPosition(slots[0].variants,p,bank,{random:()=>0,history:h,used:records});
@@ -106,7 +106,8 @@ for(const [kind,variants,isTime] of [
     }
     expect(h.entries.some(e=>e.id===other.id)).toBe(false);expect(p.selections).toBe(6);
     for(const [difficulty,draw] of [[1,0],[2,.6],[3,.9]]){
-      const exhausted=history();for(const r of records)exhausted.remember(r.id,r.surfaces[0].id);
+      // Fill the eligible bucket: the whole 159-ID bank exceeds the unchanged 128-ID history cap.
+      const exhausted=history();for(const r of records.filter(r=>eligible(r)&&r.difficulty===difficulty))exhausted.remember(r.id,r.surfaces[0].id);
       p.nextDifficulty=()=>difficulty;
       const oldest=records.find(r=>eligible(r)&&r.difficulty===difficulty);
       const result=learning.selectPosition(variants,p,bank,{random:()=>draw,history:exhausted,used:records});

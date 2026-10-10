@@ -63,7 +63,8 @@ function makeRecords(visuals) {
         authoredSupport:{explanationSteps:copy.explanation.split(/\n\s*\n/).map(step=>q.domain==='fractionsRatios'?fractionParts(step):step)},
         visual:{...presentation.presentVisual(q.id,visuals[q.id]),instructions:q.instructions}};
     })
-  })).map(require('./content/atlas-time-recalibration.cjs').correctRecord);
+  })).map(require('./content/atlas-time-recalibration.cjs').correctRecord)
+    .map(require('./content/atlas-m6-targeted-review.cjs').correctRecord);
 }
 function validateExpansion(records) {
   const {isDeepStrictEqual}=require('node:util');

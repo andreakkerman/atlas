@@ -5279,6 +5279,30 @@ body.keyboard-open .challengeNotebook { --notebook-header: 52px; --notebook-gap:
 .authoredDigitalClock.digitalClockCompact { width:192px; padding:10px 12px; border-radius:13px; }
 .authoredNumberLine { padding:38px 28px 14px; min-width:0; }
 .numberLineTrack { height:24px; border-top:2px solid currentColor; position:relative; }
+.numberLineInterval { position:absolute; top:-9px; height:14px; background:color-mix(in srgb,currentColor 20%,transparent); border:1px solid currentColor; border-radius:4px; box-sizing:border-box; }
+.geometryDiagram { color:inherit; width:100%; max-width:540px; margin-inline:auto; }
+.geometryDiagram svg { display:block; width:100%; height:auto; overflow:visible; }
+.geometryDiagram line { stroke:currentColor; stroke-width:2.5; vector-effect:non-scaling-stroke; }
+.geometryDiagram text { fill:currentColor; font-family:inherit; font-size:21px; text-anchor:middle; dominant-baseline:middle; }
+.geometryDiagram .geometryGrid { opacity:.28; stroke-width:1; }
+.geometryDiagram .geometryFocus { stroke-width:5; }
+.geometryDiagram .geometryRegion { fill:currentColor; opacity:.18; }
+.geometryDiagram .geometryPartition { stroke-dasharray:5 4; }
+.geometryDiagram .geometryUnknown { font-weight:700; }
+.geometryPair { display:flex; align-items:center; justify-content:center; gap:10px; text-align:center; font-size:inherit; line-height:1.5; }
+.geometryPair svg { display:inline-block; flex:none; width:28px; height:28px; }
+.fractionStripRows { display:grid; gap:12px; width:100%; }
+.fractionStripRows > .learningVisual { margin:0; padding:4px 0; border:0; background:none; }
+.fractionPart.fractionBoundary { border-left:3px solid currentColor; }
+.learningBoxes { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.learningBox { width:38px; height:34px; border:2px solid currentColor; border-radius:3px; position:relative; }
+.learningBoxRemoved { opacity:.55; }
+.learningBoxRemoved::after { content:''; position:absolute; inset:50% -4px auto; border-top:2px solid currentColor; transform:rotate(-35deg); }
+.learningBoxes p { width:100%; text-align:center; }
+.learningDurationBars { display:grid; gap:12px; }
+.learningDurationBar { border:1px solid currentColor; border-radius:6px; padding:8px; text-align:center; }
+.learningDurationParts { display:flex; gap:0; }
+.learningDurationParts > span { min-width:0; padding:6px; border:1px solid currentColor; }
 .numberLineMarker { position:absolute; left:var(--marker-position); top:-7px; width:0; height:12px; border-left:2px solid currentColor; }
 .numberLineMarker > span { position:absolute; bottom:16px; transform:translateX(-50%); font-variant-numeric:tabular-nums; white-space:nowrap; font-size:18px; }
 .authoredMeasurement { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:16px; padding:10px; font-variant-numeric:tabular-nums; }

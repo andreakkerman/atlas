@@ -1,9 +1,12 @@
 const {test,expect}=require('@playwright/test');
 const crypto=require('node:crypto'),fs=require('node:fs');
-const {records,bank}=require('../src/content/m6'),support=require('../src/challenge-support');
+const {records:productionRecords,bank}=require('../src/content/m6'),support=require('../src/challenge-support');
+// Historical correction assertions still cover exactly their original 99 records.
+const records=productionRecords.filter(r=>require('./fixtures/m6-expansion-20261010-baseline.json').records[r.id]);
 const baseline=require('./fixtures/m6-quality-baseline.json');
 const {auditCores}=require('../scripts/m6-core-audit.cjs');
 const {time}=require('./helpers/time-approval.cjs');
+const {beforeTargetedReview}=require('./helpers/m6-targeted-review.cjs');
 const recalibrations={'M6-AS-004':2,'M6-TI-017':2,'M6-NS-008':1,'M6-AS-007':3,'M6-MO-007':3,'M6-FR-008':3,'M6-FR-010':2};
 const replacements=['M6-MO-003','M6-MO-006','M6-TI-009','M6-TI-010','M6-TI-014','M6-TI-016'];
 const canonical=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(canonical):Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
@@ -12,13 +15,16 @@ const approval=fs.readFileSync('scripts/content/atlas-m6-quality-approved.md','u
 
 test('99 IDs, seven reclassifications, canonical domains and exact scoped version changes',()=>{
   const audit=require('../scripts/audit-m6.cjs').validateAndAudit();
-  expect(audit.errors).toEqual([]);expect(audit.audit.difficulty).toEqual({1:45,2:34,3:20});
-  expect(audit.audit.domains).toEqual({numberSense:8,additionSubtraction:14,multiplicationDivision:10,fractionsRatios:16,money:14,time:24,measurementGeometry:7,dataPatterns:6});
+  expect(audit.errors).toEqual([]);const originalInventory=require('../src/m6-bank').audit(records);
+  expect(originalInventory.difficulty).toEqual({1:42,2:37,3:20});
+  expect(originalInventory.domains).toEqual({numberSense:8,additionSubtraction:14,multiplicationDivision:10,fractionsRatios:16,money:14,time:24,measurementGeometry:7,dataPatterns:6});
   expect(records.map(r=>r.id)).toEqual(Object.keys(baseline));
   expect(records.filter(r=>r.difficulty===1&&r.educationalDomain!=='time')).toHaveLength(35);
-  expect(records.filter(r=>r.difficulty===1&&r.educationalDomain==='time')).toHaveLength(10);
+  expect(records.filter(r=>r.difficulty===1&&r.educationalDomain==='time')).toHaveLength(7);
   for(const r of records.filter(r=>r.educationalDomain==='money'))expect(Number.isInteger(r.educationalCore.question.answer),r.id).toBe(true);
-  for(const r of records){
+  // Keep the historical fingerprint checks; the seven superseding fields are
+  // independently checked against the complete task-start records in m6-targeted-review.spec.
+  for(const r of records.map(beforeTargetedReview)){
     const b=baseline[r.id],original=r.id.startsWith('RP-'),changed=original||replacements.includes(r.id)||r.id in recalibrations;
     expect(r.difficulty,r.id).toBe(recalibrations[r.id]||b.difficulty);
     if(time.ids.includes(r.id)){

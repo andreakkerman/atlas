@@ -1,0 +1,665 @@
+{
+  "records": {
+    "RP-M6-BR-001": {
+      "hash": "2737599f16ef9533e80de8130e905d1cfdba7eca6aca687fa8cea92e41e34fd5",
+      "coreHash": "ce09c30caf3a09f8aa5e297bf7242ee13b0da2450afb5aff992a9a97a6536c3c"
+    },
+    "RP-M6-BR-002": {
+      "hash": "86a606e9211856dd57910b4e1137e15ec1d7ae6ffed1d1032f23e179adb86d5c",
+      "coreHash": "c696934c6c464c61bd6160df41813402c55ccaa034b7eed8d40186bb586a49f9"
+    },
+    "RP-M6-BR-003": {
+      "hash": "e8f72dbe919c5db31c582265db61d5ebb0ed1333baa66806744639ffd6ac521c",
+      "coreHash": "bd7dc29caf858efebd919801d33643be0d56c5c4ccd661a3165f6cabcc31bfef"
+    },
+    "RP-M6-BR-004": {
+      "hash": "c0ccbf6a0020cb48d56db992f2ad1d67e4e89bfd94f96d9dd95a1134c6135168",
+      "coreHash": "fc6401f8454e3a4e86679607aba102ef6c61b95c3d80b220db1ab444bd1de3fe"
+    },
+    "RP-M6-BR-005": {
+      "hash": "b8984fd12118bd871cb01288b052928339574192b43939e1e9e39693acaba09f",
+      "coreHash": "1ca56474063b165cb0651b50ba301290d31c5529f7e84d7862cf493850b31856"
+    },
+    "RP-M6-BR-006": {
+      "hash": "e41fa387872099714329e01fa46322f016c003ff30c94534e03a9ced8703e30c",
+      "coreHash": "ef33611f7f66d55952d716bfd141dc680164881135e73ffba573c8357a9de444"
+    },
+    "RP-M6-OP-001": {
+      "hash": "ec3306164b3ed412904a0bf82367943d81dd88d0e0b5dceb88d13bcf11f6c9fd",
+      "coreHash": "84fbff6134b9ae98da31575337eaa577fd245b6da73330b0f65e2e6323520714"
+    },
+    "RP-M6-OP-002": {
+      "hash": "4d9e2aa6bca8b5a80c57cedd697441a620354d91a8395cd380230ae983079f63",
+      "coreHash": "875d578cc8dccbc4b6b2d79589738e9e5c1cc1b6399330995e517149ec8f9cf5"
+    },
+    "RP-M6-OP-003": {
+      "hash": "76a80345dd4e84a6cff3bcf29865c07ce6b7f77033149908cc293c7a2d088935",
+      "coreHash": "b2eaf0931944c71bc903c08f114be0836f00c7a0d92803cede02c194a5bda9ee"
+    },
+    "RP-M6-OP-004": {
+      "hash": "8b37a66a718664c1cd68e9932c0ff77416ce330e75cf1fb4eb506f00d92ec41c",
+      "coreHash": "030cdf6995693add0780c134bde59c8552f0fe8525aa8f033f8a6d44f3a8f35d"
+    },
+    "RP-M6-OP-005": {
+      "hash": "34e3914981682ec52cb29670d28217a07a0145e088348de2343bf843e0a1b911",
+      "coreHash": "77d821348e56c05f3a67600efe6ec165a0b199d79cc1b160f37028cae3792945"
+    },
+    "RP-M6-OP-006": {
+      "hash": "31ff1b0f09dd84899e74c214073712d3a45c44866145062634eba423e2dcfa96",
+      "coreHash": "5a20e1ecc933b574acefae670e6fb304cb13fb39c089b6e6584a6c7963566f58"
+    },
+    "RP-M6-GE-001": {
+      "hash": "b8f0269eda483719d2c1d846de784481992c0b05fed235a737a40aef111f5d8b",
+      "coreHash": "17a65fbf68716583f74ff31d16c654bf36c901151c0d819a29d272b32bf3e8bc"
+    },
+    "RP-M6-GE-002": {
+      "hash": "40074233e7b2fa014517eb2979be2d77d245ef597e7c5633cf33b3433ff978d8",
+      "coreHash": "e165febab2d2bc27b685bb86d927c11581cdca61bcbac77674ac0c8dacbc4001"
+    },
+    "RP-M6-GE-003": {
+      "hash": "dc92652cfb41ad7666cbc03ce9b2d8e62a429bc80725d53772f0a444a9264c04",
+      "coreHash": "16d69ab544d679c8c74c071c955e79ca50fe9226299c0e3ab48446a163f78c62"
+    },
+    "RP-M6-GE-004": {
+      "hash": "899eb45ae8ec58ffea5ad99769798713535beb696f58b782e887892e313d3af0",
+      "coreHash": "667404211eea419bcdf3167faa2bd1fba75ca6b1642067c8090989c97195d693"
+    },
+    "RP-M6-GE-005": {
+      "hash": "66676c3a05ecc742d8b74434818ad8fc9edafeebf5e80c6b17e69fdd1c5847d8",
+      "coreHash": "ddb85c178085504a3695c0763db511397a58057e4393eb9f9d8cc7ddb01490ee"
+    },
+    "RP-M6-GE-006": {
+      "hash": "b67176706684ccc57ddfddeb049679ce49647bc86705d739149a892ec4ab35ea",
+      "coreHash": "26b8be9538259c01e68bafbca5a80e92c92add68cd8b5e702da67ba1bde2a793"
+    },
+    "RP-M6-TI-001": {
+      "hash": "7d3df2f9a1a86b12f8d45f441b9c336cc1298af60dbf45670aa7c88baac040ed",
+      "coreHash": "72dd0a6ae17b213d853a1d98431d5f9635d1201b2c29d85e2ac5a57c642f64a3"
+    },
+    "RP-M6-TI-002": {
+      "hash": "5196661cfccbc8781782995305bcbcd6958e97a318bc240ba6601e94a90af5dd",
+      "coreHash": "eab80df3411f491e6356a7a5079fe6694b428fa9b7e3ab081eaaf2751a2faea8"
+    },
+    "RP-M6-TI-003": {
+      "hash": "ccb79e61e936e7cc3006d10f8cd5940367ab97d438daa5ec69ddfef75f29f8ca",
+      "coreHash": "b4dddac966d0fc8079c72ba24d75dfcbbe45a3c1a9eaa2f99687cf4a2d5253c1"
+    },
+    "RP-M6-TI-004": {
+      "hash": "c885d887bdba2d6b69f04a6e4a9c3e4b26847ba151edf85661396d23676aeb58",
+      "coreHash": "fcd0d610e61b54c3aa2873b59b68e0f97722d3cb37de4a3cbf754eed63d8525f"
+    },
+    "RP-M6-TI-005": {
+      "hash": "844d30aff2efce3646fc88f6160cd39a66b626eab4bc33ec316f09ddb11d52fb",
+      "coreHash": "0d2a6051778a7b0c28e5c508effceaf0c569873d812492e2ca6454326c90d611"
+    },
+    "RP-M6-TI-006": {
+      "hash": "2fddd928e3d88073640572b40b5c030202f133a0b48e42be2f110629cbad2ea3",
+      "coreHash": "a4a7f587f42469e10891191fcd0aed9535105d5004167cca7f4a3239d9ea877d"
+    },
+    "M6-NS-001": {
+      "hash": "ed18070d6ab3f16544d4da57ee4fd16613ec2b6e06b968d5d8f1c0011d0aa35a",
+      "coreHash": "cd1e45b272dc48e89e6ff454d338dae9a96c3bcc59ca3e3ce44ebf31c1d9138b"
+    },
+    "M6-NS-002": {
+      "hash": "2e98e5eb28eddb79e519cb43afe6e44a61d66cccb04aa3b6ec0ca5c1193f8a4f",
+      "coreHash": "d18cbc5ef7778e4ef15fbea618742f65174027c569cc1a7643ef40b8df381363"
+    },
+    "M6-NS-003": {
+      "hash": "2f5b3451511b4bde42ad0a6ddee4eac58be0ebb78850504d889fff76c7e7f28a",
+      "coreHash": "1903563233be2d1fbf1c4469d7ed18178245ba6ce90356f53e71c0ff7e77bb57"
+    },
+    "M6-NS-004": {
+      "hash": "7686e659c8c21830f04d39c648071624dcea62cabd658943a073cb2dbecb08a8",
+      "coreHash": "b0c394653b862c62c9c2bff8c6fa497e2fbb918268d5e16c20e06d82052fb9ce"
+    },
+    "M6-NS-005": {
+      "hash": "1a8837cf9b251a122d268f36fe18b712a313cafe6333174fb09f28cd93cfa18d",
+      "coreHash": "2c1e172991b7bd7e37f2b5db34340569b83e90fb7018cce4d926a2c3dff0c8b8"
+    },
+    "M6-NS-006": {
+      "hash": "bf9f4b93149b6b13a90bb576334d1798c7b32b27a191d43270098179f9d1ee39",
+      "coreHash": "8a266955a0c17bbd4eed50c4f9d3bdba111d3d843f45de7ce566686a339a3b75"
+    },
+    "M6-NS-007": {
+      "hash": "5bac90bc8a14d329cba77884bfd5bb4f36754bef7d23069a9216e18bb05d655d",
+      "coreHash": "954beb623cb07f45551696778ca129620faf5267d695e7475e77d367aca8346c"
+    },
+    "M6-NS-008": {
+      "hash": "e63cb522e8ecf9dbab92d7c37dd2c74825a98c15592aff90dd77fa81bf4bd4ad",
+      "coreHash": "b383f646e5f817680464ef7d8a28fac2a736ba9032f7fbfc400dc35c1b17caa3"
+    },
+    "M6-AS-001": {
+      "hash": "5e6474d77e7163588f012fce16ee6d879e801a27c82d4e0944b47a12bd87368b",
+      "coreHash": "834ced1673e6375a8bd520f8e52913e9c93c3f41aa667d1228aab7179702c571"
+    },
+    "M6-AS-002": {
+      "hash": "edf258eb3766b905dcf6b30f699b620056dfb2ff9f1763d22b0db6013bf1c458",
+      "coreHash": "9d354427e080a878f1b0618ed786b1ac3f7c5fc15fbcd932ad4e8ad7d6572f9d"
+    },
+    "M6-AS-003": {
+      "hash": "7f9ad236a23a759f12d01bc8cf0bcb4694f0966fc18650b7e74237ea25907a59",
+      "coreHash": "98f8549b30575ec4ee5995adbb37f2e129097511d9675d56b7a936efba15238e"
+    },
+    "M6-AS-004": {
+      "hash": "680423611a8b4a30b79395e8bca8f63337d26855d807b29b104d72c7f35266a6",
+      "coreHash": "889cf3694bb7d4fbf963625b29467ebaf0fbddfbd9f95da42f32e19e34a1d7c6"
+    },
+    "M6-AS-005": {
+      "hash": "d9bf127196a3dc899fdceaa290e15cfb5e08721da9c8285fb144ad652311434b",
+      "coreHash": "2eafcf1c84b85d039fac2bb98b1504adb18b4d531392a907a9137eabf443ce0e"
+    },
+    "M6-AS-006": {
+      "hash": "951d5aa8655a6865fe250f681a036ae5c5a29eea444103a1dae6b11ea7ce4e2f",
+      "coreHash": "41dc64b5bbc5c45668cf2c339b2745a840c45fd90871dcd2ff31d1af479c06e1"
+    },
+    "M6-AS-007": {
+      "hash": "0db586a279aa3fb58d9c9a7e085c8601ff6132198c056d8ad9c2fe27a84ec192",
+      "coreHash": "674f510e2e83ee67f6ad71946e46b1dc6b2db279ac217d5436f4f06e63645d0e"
+    },
+    "M6-AS-008": {
+      "hash": "8352a490397fa05b0d51dbb582dedb66b8c1a73521904d29ff00056e3a1eab30",
+      "coreHash": "164f22243786369de8d50a627c094f9e58e7d508579ce82d27748f81312b7efb"
+    },
+    "M6-MD-001": {
+      "hash": "858c285592eef7fac283417c116ca19527320a9a442bef57c9a9feb1e3ac35b8",
+      "coreHash": "795a7487d0f83fd0dcee56a590cd4309a4f921eb8478cd1062f61e07dd694290"
+    },
+    "M6-MD-002": {
+      "hash": "710cdb42cc903ff75088f45638045eb1d20f1b684926cdd71ec362c8ed6aaef8",
+      "coreHash": "3d679ebe1962b65c75fde0b69ac22bb67d6c5d96b8cd5da2a630b9be2a34d8dc"
+    },
+    "M6-MD-003": {
+      "hash": "7234ad60c5fbf6258052886e053e841f52c91edc25fd959d63a9bb8348953e75",
+      "coreHash": "ec7a97cc5c82002b1a1ea361a0e4d3c236392c6c2ac433b6599c155b4a4d0802"
+    },
+    "M6-MD-004": {
+      "hash": "cb626d18ac9527201768594767c889b2b197798394cb78e906c82dfb878e8919",
+      "coreHash": "1c41f48092fbd1b951326bd09c259af8980ed1a2fb24499d82dbe7c217d346f6"
+    },
+    "M6-MD-005": {
+      "hash": "8e34375474e3430899392fa55a40009b3df600327832006e7d9f40a3d688cebc",
+      "coreHash": "6894d3410adf891698b75000044d6a642433ae479d10c665c09ee5da0c3b91c8"
+    },
+    "M6-MD-006": {
+      "hash": "72a9675e027787cb28f2061eb16b6dffc2549d7738c1e88bb6db854afddc570d",
+      "coreHash": "15ecaf9a7ec8482cdf5073d850732be68dc26db6ccb6e4df81dc11ba58e93cff"
+    },
+    "M6-MD-007": {
+      "hash": "ae6336fd7e286aac07c2c6635a0e9628e16db979efec2ba7a6ca648548f37602",
+      "coreHash": "4301726d0420f5dcd61a7f72bf98c2e876d04ae85a38244486295b4ad0066e25"
+    },
+    "M6-MD-008": {
+      "hash": "eb937f4028ec8d44650784b8f9291ffc56d9a493359609a5d312ae9c11d64035",
+      "coreHash": "8399b71ddbb594fe89e16482d28b498d4187f2e86143e7516952cdf2b169ec45"
+    },
+    "M6-MD-009": {
+      "hash": "6ff8b06ed13faa11178c6b48bcc22f1fbc9b3783f3e4b653f0b04eb1c0839f59",
+      "coreHash": "be8728694f114d31a861449ad98de4ceec6b5ddd0305190701212ffebe72054f"
+    },
+    "M6-MD-010": {
+      "hash": "339b7eed250cdba5a4eab24dff348dc3cc8a856acd37e11bcdf34aedb20d47bc",
+      "coreHash": "072a7adee39ec731d62a6b938571d1f01d19f5d11e0b3bda22eb55c132314391"
+    },
+    "M6-FR-001": {
+      "hash": "8f235c86b00f8d6bde5934d727b1c5e7eca2988e4cf723bb514e3e274dc64242",
+      "coreHash": "538c2ae5b35580d75232e0b758ba50ac13ce1c1edfa8eb9cfa6eaaa1f1ccc293"
+    },
+    "M6-FR-002": {
+      "hash": "3f019f61cbdb976706af8ad529b1ebf31f6541fc15f83278410e991215fef8f1",
+      "coreHash": "71567d647a7e9c6ea1d70a1187ea27998f863457cba759de5746fdb001cdcc20"
+    },
+    "M6-FR-003": {
+      "hash": "3aedb6a2b81298d8c2d11649224ec366b8d89ece25539c9a7bb42b78e71b970b",
+      "coreHash": "04d5968f5fddf7cd66bf810213f7436f14011c7d2c980e3bb2f54bfa5021d484"
+    },
+    "M6-FR-004": {
+      "hash": "956a1630573d76d1db347056d83f70b47e9ba4a67b865d6a43fc316a3b570e84",
+      "coreHash": "68e3b2f9ac7de8fb7766cba6b5a9ff5e2a3c246664a788533130a6821f069e69"
+    },
+    "M6-FR-005": {
+      "hash": "cd6503bbfffe272c8eb173924bab76b2870a593126231171c67226086a6a89c3",
+      "coreHash": "05a7190e65d44fb8d04a99b00dafa30a55fcddfc0986c21b0598fb36ebc7849b"
+    },
+    "M6-FR-006": {
+      "hash": "15c7d69bc63eb1f54f2eab2f46c308e4e765807217b95db58690c3c5c795c363",
+      "coreHash": "d796732bd67190c44b1fd55027e3b59943fce8bd6bbc708b693dfa6bceaa09a8"
+    },
+    "M6-FR-007": {
+      "hash": "ce0a19f05c947712636c770233a4e951bd56b35e7f037a71a70d23671aeb9f35",
+      "coreHash": "5eafa0ad8b2f1cf350b89cc45690c475538494a92b3ebdfde74067146f18c117"
+    },
+    "M6-FR-008": {
+      "hash": "afc5d8a77a5595bc78f8f66ddb3610c99f77cc215bca6c8e33f8f5db9eaf2468",
+      "coreHash": "3eff84bf6b186cb4b95c98991fe0a3aabe6f36d21871f74c62a5ddb79dccc843"
+    },
+    "M6-FR-009": {
+      "hash": "3b46c5de9185df9e998e6da77385e9cd7ea7d3653de198480ac201683b95df14",
+      "coreHash": "e641e459340bd1e7334c94856acd1f4ec586e6704f980d9434932b1a415788e8"
+    },
+    "M6-FR-010": {
+      "hash": "03e5acc91fff72909475ef4c5ae357738d91bbc0340bc529438ff3d5c4d7985d",
+      "coreHash": "d13c433860b5704225fbd5880c1079ffd53023588e14326b1ded639fe5bc118c"
+    },
+    "M6-MO-001": {
+      "hash": "d03a06a910a56654ec8e1c40731ceeedff0c0672ce034b3266ede097bbd53241",
+      "coreHash": "0fba5ab8ec46af8cd310ccad3b3532b2a293d44d5dcb64916d203171f6603fa6"
+    },
+    "M6-MO-002": {
+      "hash": "304058f3866e8977c3057c734a2631030eb0d744c6544b073338403b18121d4c",
+      "coreHash": "8e6c63c7699eb9a8b7247961bb42bb1aff43d97d03c10f0f7ccf7cba4f41dd79"
+    },
+    "M6-MO-003": {
+      "hash": "d7215c0d01f6e179d4e75cd9eace86c5d1a8cc47a23d1e3d1a7c8287bbce0203",
+      "coreHash": "0dc308df915e6c50987a7eaaa1b08df8aa8701fdc65debe694e80424a1196fe1"
+    },
+    "M6-MO-004": {
+      "hash": "859001e9fab10f9a5f4cc2158f2fc4ef787a691c0cd0620314f18fd334b80439",
+      "coreHash": "8a387a9a20a9f959f095c91b958977510ee383a853b822c4b74478bf70e96fe0"
+    },
+    "M6-MO-005": {
+      "hash": "c8a46a4d2731e9fff34f44be3192a246406f4b8974bd3b2d8610a0f0e180441a",
+      "coreHash": "585b74de84f484a54484ac7d85fba33bd2aaa1d69553af5b8d03f18e5d4e6191"
+    },
+    "M6-MO-006": {
+      "hash": "954097e8ab0b43572dc45a2c58765757c1f7ee9409178b0129eaafec1c824528",
+      "coreHash": "94c8a3ac9113355b7554cd4264db0f8e761c20bb2cb0404def18b0f27f625942"
+    },
+    "M6-MO-007": {
+      "hash": "19bfcdc726a071f4830960ae3be1b120aecfdb55fe2f06dade82afab5afa35e7",
+      "coreHash": "c54b298793ee340842e899e87cc8c0b169b8b74ddf37fbf22192f2217a910104"
+    },
+    "M6-MO-008": {
+      "hash": "16ead9d40830cff8ec490e8c0f1d7fc3559499d18d399a43039c4e8a72e86fe1",
+      "coreHash": "85e135e64502a02ba8dc95e803704cb48a22be033350057b431c202d266e3d7d"
+    },
+    "M6-TI-001": {
+      "hash": "e782b60caa6350ec5b7ddb050a5a0f43d5992fa35fc0842f94f9b17dee0f2a34",
+      "coreHash": "deae769c441659a78696f93a11fa4dd5a6fe16bbaabd49a6a7318c30f3f16794"
+    },
+    "M6-TI-002": {
+      "hash": "f6ba5025fbe865d05e10d1d28e21553a558554ff877ad5dfe796ca33af7be405",
+      "coreHash": "e2cb4c209aea3aafebea91287ac5b5e24a0e481a1ae59e68bea06f75a6814489"
+    },
+    "M6-TI-003": {
+      "hash": "35f5610cef58ad7d834a3cfc01ab9b8b9f7057ecb05bba22151ec664d886494c",
+      "coreHash": "459dcd41deb9b713cfb73e3fa0e293fe4a31e5ef0b32d83f6dfd971357f71343"
+    },
+    "M6-TI-004": {
+      "hash": "a2c833ba57bfd36229d326e8ca328d398f48f9d74dca0eb477bf286ea0e3bc79",
+      "coreHash": "052596986d6232885a38cc50ed6c9c5821857a382e30eba13becdd690c1d7f66"
+    },
+    "M6-TI-005": {
+      "hash": "3fd674f605dcad03268befbfd3c6bece919dc65000977ec13a860125ed805b78",
+      "coreHash": "9a5402d5ddb3c11b4ef51fd02eeaa71e3229f686cc69d3b3e23a40fd1bca6a06"
+    },
+    "M6-TI-006": {
+      "hash": "8566c5fcd823b1b439b639cf8413266f9c1c9f1d94aa2d50f4a4f80845c22f8f",
+      "coreHash": "794e9d14f87632259a9cf1d43787ef44ab1b7184ec58709c0a435e26a452953f"
+    },
+    "M6-TI-007": {
+      "hash": "996b7bf60ca8425c18a282e75be3ac9990ad6f9595e1e2a07475b58207a42508",
+      "coreHash": "7dbf0fea1b5dc7c55194c91af055ecf013da57cb7d279e15ccf684909bc858df"
+    },
+    "M6-TI-008": {
+      "hash": "361c80c3c5ac0d9b3ed10c13f874b2b6d22d443a956014784cda9592224f62bb",
+      "coreHash": "296fea9ab79d385a11c06a1b607677a0fc0880fbe89e944923abcaa83a3dd25c"
+    },
+    "M6-TI-009": {
+      "hash": "e6e31c869b57afe157c647f8e6f17a45e4d16205ac08db77d7cdeb10a59f0473",
+      "coreHash": "06e15d203378fe6877532335c20e6e8500bf4277dbeaf46855a8ef5465ac8d69"
+    },
+    "M6-TI-010": {
+      "hash": "00ad5984122199a7c96b54060684b3f2eb7d0ff8455f4422087b0c69dc5700f3",
+      "coreHash": "b8fd4183212951be01f26b0f08a41f828fb62a8e8aa451202023a53da822dfc5"
+    },
+    "M6-TI-011": {
+      "hash": "0ffd75aff9c9cb66487c87a4269bb314093c11cb27afa3b9f2c88ec37b66ec34",
+      "coreHash": "f4d4fdc5ae2c54aa69f579c343f59bd0ca3b43ab839b818ca9a4e627b890c4ad"
+    },
+    "M6-TI-012": {
+      "hash": "2293062193d145504460def119f38ad3c10574057a05a4142afd49a979610454",
+      "coreHash": "8d9682cbb7569a34bb52482b10b18a9a63b45ae5c6da57c3733cfa359134da0f"
+    },
+    "M6-TI-013": {
+      "hash": "438e91de5496e03c50ce671ce82fa16fdff7f48486046d795f57fc6de9fb7814",
+      "coreHash": "a601370239abce49d62bd1b0a6d8ee6e68cbbd6fc8c4b7eb6591a1ede2ef8718"
+    },
+    "M6-TI-014": {
+      "hash": "5d0cb7f1b1702da6acbc8533c9ec7851d0a45ee1ddd03e31f531460cdc2dd535",
+      "coreHash": "cf5f52de0ae55b6f45756b1fac0e37966b67ab6ca2cc8846dfb5981c6c97e463"
+    },
+    "M6-TI-015": {
+      "hash": "07ce2000aee81e87ab36a99fa3382b77ccb8cc816b412a59d75591187afe9f8f",
+      "coreHash": "0db40ad0cfd80d42733bda336d4a1682fca20f2348c2f08f2fbe5ae0357eae44"
+    },
+    "M6-TI-016": {
+      "hash": "3b2ca91b2dacc16676fd502b5383f097c6954a9b76b502f7877ac8fab4f19a2a",
+      "coreHash": "1b24c82656f47f03107cf65b51d788b365c404665eda93acf0b4d25ecbd4edcf"
+    },
+    "M6-TI-017": {
+      "hash": "f674e5ca927e1a4a01f91a226fc05011a458ebfdcfce8e021c20b1ebdbdaa006",
+      "coreHash": "2cf6498f5c226d8d8c550fc3efc0f902673b187aeb3c32143504dcb219a31aa9"
+    },
+    "M6-TI-018": {
+      "hash": "ee98dbce8ca82f9dacddd8647df4768d250cfab2f31ba458ba5a746234364963",
+      "coreHash": "5bd51fb9a28dd0127ec168fccbfb9ed24aad1cb04802f14a412d80192909a7c3"
+    },
+    "M6-ME-001": {
+      "hash": "dc52a71a3cc037853e2f6f00d32bb6bb786182414b755a52b993a362a47a4976",
+      "coreHash": "6e5f8c59a06992b4c4c197f18cf620ed2aac7f5f01c34dbbfdf7128df2426110"
+    },
+    "M6-ME-002": {
+      "hash": "73c829c651c46291ee1d97e20f89cabfaeb046daa0acb5ff92dbf373055e3fc6",
+      "coreHash": "441cc190a9f52ec0716ac976fac81a38b5eee5e1764f4846ee20bb153923e13b"
+    },
+    "M6-ME-003": {
+      "hash": "58294f82a03e03dc7e035ddd3f7061837ec47844b7b97a94399d0004c31a6a7a",
+      "coreHash": "41efc22973f8e9ed4dd4b0fea0b860536aea6d74e73f7c52f82d271317b20a6d"
+    },
+    "M6-ME-004": {
+      "hash": "2c81374a72207d89f366c60fa12a312969a9e0474cb7c74b46a85c0532ac0935",
+      "coreHash": "826998c031e020efac024891ec90b078dab9ff15055b005dd38a9359aac985df"
+    },
+    "M6-ME-005": {
+      "hash": "24a9fcb38b095f1e06dd4b3b5dff999ea433429ae19c8110bc26414138daf875",
+      "coreHash": "c98cfffda1d847e3a653871fbda282d8f25050545c649a3d5a091e499ba2cbc0"
+    },
+    "M6-ME-006": {
+      "hash": "cc85db3887dc8f167933baa7fc3283aae1b32a8d9894e2bd00cc260b0bd1fffe",
+      "coreHash": "9f512301cf3e6bd656cebdc69fe424456786fef2566c6e7535de9cf5280651f4"
+    },
+    "M6-ME-007": {
+      "hash": "f033ed17a239807c17a785b6c23cbb2b5cae0e7973523613abc089e77fe35723",
+      "coreHash": "1e6dc73129fe059cafa905db5e0bad8b71cfae4a148a0da9b31b2311d48d225d"
+    },
+    "M6-DP-001": {
+      "hash": "89f1f4e390db62159592d818f9c32fc6eb1e1d681946a699947aaacf122ed53e",
+      "coreHash": "54d729a318180f16b36d54096b941841f453c6cb6ae9fcccbec6e04c4a8ac9f6"
+    },
+    "M6-DP-002": {
+      "hash": "3849cdfa26499253fbc432afdac66e7cb25ee3fd7349736804ad8c3df39dc674",
+      "coreHash": "49a287013dc7843957011a27421f585901c1e16018dfcfc86a2626272f4b16e4"
+    },
+    "M6-DP-003": {
+      "hash": "43c8a7235fc219da172a9e2ac025c137599c3e5c1f019c4cd2ccbcc3de7024ef",
+      "coreHash": "7e47a02e08d528a9bafa9ce3b6f8066c5bba362164247f24cc28e7b26dc903df"
+    },
+    "M6-DP-004": {
+      "hash": "0a842fb547c4f7c64f730c0fbec941996b482ba4d50859d2bc59a7b0c1b870a1",
+      "coreHash": "b6ab4ecb62249482959fc3e86636ec025d1a0b0e8a9781cba8793e0f8de0174a"
+    },
+    "M6-DP-005": {
+      "hash": "6710b21bcd9821998cf8d174bc5abfbc82ef384b4158893bd7790fcf5aaa60c9",
+      "coreHash": "925b634da829afa299d25f4fb6e1ca7f86c05fa9884dd2ee068ef4c106e91b17"
+    },
+    "M6-DP-006": {
+      "hash": "e545082d78d65841e077ff859221d3a80c216370bd458968fdebbef8a18cc005",
+      "coreHash": "715e1b37c0f1f1634a2d35f1f956d2efcef55398c88025b944bdd1777159c54e"
+    }
+  },
+  "changedBefore": {
+    "M6-NS-002": {
+      "contentVersion": 1,
+      "difficulty": 1,
+      "surfaces": [
+        {
+          "id": "original",
+          "hintMoose": "Van 3, 8, 5 en 7 is 8 het grootst. Daarna komt 7, daarna 5 en daarna 3. Zet ze in die volgorde.",
+          "mooseVisual": {}
+        }
+      ]
+    },
+    "M6-NS-005": {
+      "contentVersion": 1,
+      "difficulty": 2,
+      "surfaces": [
+        {
+          "id": "original",
+          "hintMoose": "Het midden is **6.450**. Het getal 6.451 ligt net boven dat middenpunt en dus aan de kant van 6.500.",
+          "mooseVisual": {
+            "min": 6400,
+            "max": 6500,
+            "markers": [
+              {
+                "value": 6400,
+                "label": "6.400",
+                "focus": false,
+                "lane": 0
+              },
+              {
+                "value": 6450,
+                "label": "6.450",
+                "focus": false,
+                "lane": 1
+              },
+              {
+                "value": 6451,
+                "label": "6.451",
+                "focus": true,
+                "lane": 0
+              },
+              {
+                "value": 6500,
+                "label": "6.500",
+                "focus": false,
+                "lane": 0
+              }
+            ],
+            "jumps": [],
+            "notes": [
+              "6.451 = 6.450 + 1"
+            ]
+          }
+        }
+      ]
+    },
+    "M6-NS-006": {
+      "contentVersion": 1,
+      "difficulty": 2,
+      "surfaces": [
+        {
+          "id": "original",
+          "hintMoose": "Het midden is **8.500**. 8.620 ligt boven 8.500, dus het ligt aan de kant van 9.000.",
+          "mooseVisual": {
+            "min": 8000,
+            "max": 9000,
+            "markers": [
+              {
+                "value": 8000,
+                "label": "8.000",
+                "focus": false,
+                "lane": 0
+              },
+              {
+                "value": 8500,
+                "label": "8.500",
+                "focus": false,
+                "lane": 1
+              },
+              {
+                "value": 8620,
+                "label": "8.620",
+                "focus": true,
+                "lane": 0
+              },
+              {
+                "value": 9000,
+                "label": "9.000",
+                "focus": false,
+                "lane": 0
+              }
+            ],
+            "jumps": [
+              {
+                "from": 8000,
+                "to": 8620,
+                "label": ""
+              },
+              {
+                "from": 8620,
+                "to": 9000,
+                "label": ""
+              }
+            ],
+            "notes": []
+          }
+        }
+      ]
+    },
+    "M6-MD-002": {
+      "contentVersion": 1,
+      "difficulty": 1,
+      "surfaces": [
+        {
+          "id": "pages",
+          "hintMoose": "Denk aan de keersom **16 × ? = 160**. Tien groepjes van 16 kun je controleren met 16 × 10.",
+          "mooseVisual": {
+            "groups": [
+              {
+                "lines": [
+                  "16 × ? = 160"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "packs",
+          "hintMoose": "Denk aan de keersom **16 × ? = 160**. Tien groepjes van 16 kun je controleren met 16 × 10.",
+          "mooseVisual": {
+            "groups": [
+              {
+                "lines": [
+                  "16 × ? = 160"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "M6-TI-003": {
+      "contentVersion": 2,
+      "difficulty": 1,
+      "surfaces": [
+        {
+          "id": "original",
+          "hintMoose": "Van 14:51 naar 15:00 zijn **9 minuten**.\nVan 15:00 naar 15:32 zijn **32 minuten**.",
+          "mooseVisual": {
+            "nodes": [
+              "14:51",
+              "15:00",
+              "15:32"
+            ],
+            "jumps": [
+              "9 min",
+              "32 min"
+            ],
+            "notes": [],
+            "direction": "forward"
+          }
+        }
+      ]
+    },
+    "M6-TI-005": {
+      "contentVersion": 2,
+      "difficulty": 1,
+      "surfaces": [
+        {
+          "id": "original",
+          "hintMoose": "Van 15:29 naar 16:00 zijn **31 minuten**.\nDaarna zijn het nog **12 minuten** tot 16:12.",
+          "mooseVisual": {
+            "nodes": [
+              "15:29",
+              "16:00",
+              "16:12"
+            ],
+            "jumps": [
+              "31 min",
+              "12 min"
+            ],
+            "notes": [],
+            "direction": "forward"
+          }
+        }
+      ]
+    },
+    "M6-TI-006": {
+      "contentVersion": 2,
+      "difficulty": 1,
+      "surfaces": [
+        {
+          "id": "original",
+          "hintMoose": "Dat eerste stuk duurt **10 minuten**.\nVan 09:00 tot 09:34 zijn nog **34 minuten**.",
+          "mooseVisual": {
+            "nodes": [
+              "08:50",
+              "09:00",
+              "09:34"
+            ],
+            "jumps": [
+              "10 min",
+              "34 min"
+            ],
+            "notes": [],
+            "direction": "forward"
+          }
+        }
+      ]
+    }
+  },
+  "levels": {
+    "Levels/LVL-0000/level.js": "00612eae69d14d8609c10d8c243c4d131c0f2563f415b4e8acaa01716beec097",
+    "Levels/LVL-0001/level.js": "48a1884698ebd69489bf49bc1be8b9c734a04aea8c2e4bf6d67b57d95dc126d1",
+    "Levels/LVL-0002/level.js": "7c09bb9776a1c363642f014eaa2303a731579c0042ca7d3aed2fba90a807bb19",
+    "Levels/LVL-0003/level.js": "02810162fd58a0209158bfb6b10cadbc81840cb9048c52630cc3c9519902557f",
+    "Levels/LVL-0004/level.js": "771a6d3c3b4dd6230a0e37c0fb0aa71d291004ff4d49b7faf933614d8f2fda57",
+    "Levels/LVL-0005/level.js": "abc4add2acd77eb667445d2585c3b89ae7d18e6b950d0c1168784c26511bd34e",
+    "Levels/LVL-0006/level.js": "ce2691e796878c73bc9049c48f6f14d35ff422e1442129acc88262adead06bd0",
+    "Levels/LVL-0007/level.js": "ef42b213737390452140239c607a906005cb57b378033d0f4fef0dcb44dab0cb",
+    "Levels/LVL-0008/level.js": "d383218379151e541a4df9d661adb826e0bd86cfd676e955782dfaeb3e69bf35",
+    "Levels/LVL-0009/level.js": "0d09f38fe2af5e6f5ac4a9cece035f091d6b117b84ae31ab5986a982138b6346",
+    "Levels/LVL-0010/level.js": "7a27b254ce81111b0d9988869a59dee4c986db9f9879029eb4b6eebff1869333",
+    "Levels/LVL-0011/level.js": "3ffbfb89c2af84c09517856bc761d9e1c5581306ee3a0a0bbdb5865e2c416315",
+    "Levels/LVL-0012/level.js": "586436f59307703bbe9d4df364a519b47a2f85eb6ef0bf560e09d61b4c91f102",
+    "Levels/LVL-0013/level.js": "2dd7786db7c10633c5305391e5d9f47b33b6f3307051579b277ed5d5c12fc961",
+    "Levels/LVL-0014/level.js": "7481d86c72625823cb8700070f08a9d13981fdc8c49cf27050485315905e7575",
+    "Levels/LVL-0015/level.js": "15132e5713571d8720a91c9e5303328e77f4bebb3b62893d156c505d88dc99cd",
+    "Levels/LVL-0016/level.js": "e9041500d7a68e11e10ea6885eff4ed3a8d098f25ef3c72257a0bb436afc1eed",
+    "Levels/LVL-0017/level.js": "dedd189a0bc4a3ee6d246270002a6ea0479590113faf3a404eeb29605e8934ec",
+    "Levels/LVL-0018/level.js": "80cc15d8a43380d0b396babbf34112763cb20c3bf8ec19cbd554267915b8d4f0",
+    "Levels/LVL-0019/level.js": "9fe7eaaa9bc09818ed60cbf984349be9cf10ad4b350c603381f5b59ce7ef46ab",
+    "Levels/LVL-0020/level.js": "0fdf41bccd50890a09feec51b7408e7c3396bb8da26d56701068ab1b18059c72",
+    "Levels/LVL-0021/level.js": "dbfeb7f17cac41efa011fb12f10377369bf96c46d7ef66d6586dba81bbc9d36f",
+    "Levels/LVL-0022/level.js": "8cc08edb081e8f504f89831fc53ce8ffba1cfa767090f4870c58b9928ec712ba",
+    "Levels/LVL-0023/level.js": "157f15cc024bddf10fa4426737150fa984727768f843c530864e848a33f7faf2",
+    "Levels/LVL-0024/level.js": "d5288d87bcee87ca8aef13e7207da114d44dcf423509df36a9978d24fccf6ba8",
+    "Levels/LVL-0025/level.js": "394ede5073475d8659267ca1449f18a9d2cec8cc6ada57745c493013642f1303",
+    "Levels/LVL-0026/level.js": "369e81f3b6342293351c91777703f99a085e0f1843a11379ccb861478b852374",
+    "Levels/LVL-0027/level.js": "39101835fe3f27a4ff41ae5e97b04369f863a592663702a19c4e82c090596ad2",
+    "Levels/LVL-0028/level.js": "4f591b40b4fc96e1f7aa43a7230a031b0aef72fc851f2959d62b7b6745ee4570",
+    "Levels/LVL-0029/level.js": "97931c47d8c457d7fcd3cf9a92169fea8485731c5f60d4651025b3225607aa0c",
+    "Levels/LVL-0030/level.js": "f26c69e0340e443e10d0222ba4e178a2cab5f7fe54fd55d8c2b37672d7af2dc4",
+    "Levels/LVL-0031/level.js": "f581e864c01be08ee4343aabb27eb21bc9639f360b7481c633a1958738e1aa82",
+    "Levels/LVL-0032/level.js": "7f81309b2ac9b3415db2379210899e086742cfbe7030cc600904474e637565c1",
+    "Levels/LVL-0033/level.js": "fb2641c80e7f2aa897a696397516a516dace3312affdde9844d9d6e6718dffee",
+    "Levels/LVL-0034/level.js": "17c37e4fa3e2b4d8ff8378cc6e05e76d379b805918136a121d734c3b979cdd00",
+    "Levels/LVL-0035/level.js": "366be3753d910b5f80038dd5b46d27542267fcd6f5074b73c99dc2032ef259c7",
+    "Levels/manifest.js": "e0c58b693ff5c1041cb39ffef781d5e2a79d594385c1f5934a7bf1083092b59b",
+    "Levels/world-config.js": "f4116a5a0911373d3e802a88caac03e4ad5b9d1ce3a0df1b1a5036c63a209c66"
+  },
+  "protectedFiles": {
+    "src/app.js": "2c09acb9f5c05e6b2a5762a4b96ff0a78565e15e37cdaec7684bb3c3d15aaf0d",
+    "src/challenge-hints.js": "c854a419327842f25f809c50ddd4a4ba688de7f221a52f0bdf5308cf867cb577",
+    "src/challenge-support.js": "702724baad48b1e9f799280f67269faa46c2e3e05804be9e2f01aafd594c5b3e",
+    "src/challenge-capabilities.js": "d6cf3be35bc2d6c153a16bf6eb8f7cb5197c2bd425e68e742bf682093ea5cefd",
+    "src/challenge-explanation-layouts.js": "51561aa6ec7e275fcdc629d624b2cf9ff015a1b018b6c86248b2b01010a590f3",
+    "src/learning-levels.js": "5aef69b9f69f0cc1a6cf5b699f60f82338ba21c2a247b0f35ca12278a4e2a4ef",
+    "src/m6-bank.js": "8248f565f645255fb57ec8ce4da67ca1c07e53f3a2a930f33e7543af05872465",
+    "src/styles.css": "a7ae27b6a0c48624214fe29a26dd7993ee88f0c7fa533ffe721fab34de13daf4",
+    "src/session-report.js": "ef572def80b03e5ecd0efcffd5f5af07251acc01a9320b3de948c7a88288691b",
+    "index.html": "0c1d722e2d5f613f3d4c5dfe4e4831a0e8e8553cf1b36fed37f5d2ed2d00a72a",
+    "service-worker.js": "424a1734afa58855239aab64cd0a4454492eaa0c39fcf697874c966f5db8661d"
+  },
+  "resolvedE5Hash": "e943f85acc0a1d8bd694522dcd57e723f2d027295abaca5bcd3a350b63f3f24f"
+}

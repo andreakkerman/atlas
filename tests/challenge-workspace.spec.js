@@ -217,10 +217,13 @@ test('scratchpad survives every help stage and reopening',async({page})=>{
   const before=await snapshot(page);
   await page.getByRole('button',{name:'Kladblok',exact:true}).click();
   const notes=page.getByRole('textbox',{name:'Eigen kladwerk'});
-  await expect(notes).toHaveValue('');await notes.fill('Mijn eigen werk\n368 + 200');
+  await expect(notes).toHaveJSProperty('tagName','TEXTAREA');
+  for(const [name,value]of Object.entries({inputmode:'decimal',autocorrect:'off',autocapitalize:'off',spellcheck:'false',autocomplete:'off'}))await expect(notes).toHaveAttribute(name,value);
+  const text='Mijn eigen werk\n368 + 200\n€5,50 − 0.25';
+  await expect(notes).toHaveValue('');await notes.fill(text);
   await page.getByRole('button',{name:'Sluit kladblok',exact:true}).click();
   expect((await snapshot(page)).record).toEqual(before.record);
-  await page.getByRole('button',{name:'Kladblok',exact:true}).click();await expect(notes).toHaveValue('Mijn eigen werk\n368 + 200');
+  await page.getByRole('button',{name:'Kladblok',exact:true}).click();await expect(notes).toHaveValue(text);
   for(const stage of ['question','minnie','moose','explanation']){
     if(stage!=='question')await wrong(page);
     if(stage!=='question'){
@@ -228,7 +231,7 @@ test('scratchpad survives every help stage and reopening',async({page})=>{
       await expect(notes).toHaveCount(0);
       await page.getByRole('button',{name:'Kladblok',exact:true}).click();
     }
-    await reopen(page);await expect(notes).toHaveValue('Mijn eigen werk\n368 + 200');await expect(page.locator('[data-open-answer]')).toHaveValue('61');
+    await reopen(page);await expect(notes).toHaveValue(text);await expect(notes).toHaveAttribute('inputmode','decimal');await expect(page.locator('[data-open-answer]')).toHaveValue('61');
     expect((await snapshot(page)).stage).toBe(stage);
   }
 });
