@@ -20,6 +20,10 @@ The shortcut accepts one non-repeated keydown per press: holding it across a lev
 
 ## Persistence boundaries
 
+Flyby FX Editing saves only `assets/ambient/flybys/<asset>/fx.json` through `GET/POST /__dev/flyby-fx?asset=<discovered-key>`. The level-independent `GET /__dev/flyby-assets` uses the existing ambient discovery function. Writes validate PNG identity/dimensions, preset geometry/masks and resource limits, constrain the resolved destination to the flyby library, reject symbolic-link sidecars and stale content revisions, then use the existing temporary-file replacement helper. The Windows copy fallback is not a cross-file/crash-atomic guarantee. FX drafts remain in memory; explicit Save/Revert and navigation protection are independent of level drafts, audio and world Apply. Saving affects every use of the source sprite. New library assets still enter by manually creating their ordinary folder; there is no FX upload system.
+
+The asset server returns 204 for an absent optional `fx.json` in an existing flyby folder. Static hosts returning 404 are also supported. Other request/parse/validation failures remain diagnostics. The existing ambient service-worker refresh policy covers sidecars; browser tests blocking service workers do not establish offline-update coverage.
+
 The implementation authorities are [app editor handlers](../src/app.js) and [dev-server endpoints](../scripts/dev-server.js).
 
 | Operation | Persistence and scope |

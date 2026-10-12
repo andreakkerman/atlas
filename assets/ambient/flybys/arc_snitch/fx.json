@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "sprite": "arc_snitch.png",
+  "sourceSize": {
+    "width": 501,
+    "height": 282
+  },
+  "effects": [
+    {
+      "id": "fx-050ddb28-280a-4fcf-8252-aa4558de83bd",
+      "label": "Blue-white search beam 1",
+      "presetId": "blue-white-spotlight",
+      "variantId": "search",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 735577330,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 271.9,
+        "y": 246.5,
+        "directionDeg": 90,
+        "width": 12,
+        "spreadDeg": 28,
+        "length": 1000
+      },
+      "overrides": {
+        "sweepAmplitude": 10
+      },
+      "plane": "front"
+    }
+  ]
+}

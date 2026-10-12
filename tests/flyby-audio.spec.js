@@ -1,4 +1,5 @@
 const {test,expect}=require('@playwright/test');
+const {flybyPixel,tapPixel}=require('./flyby-hit-fixture');
 require('./editor-draft-fixture').preserveEditorDrafts(test,require('path').join(__dirname,'..'));
 let errors;
 test.beforeEach(async({page})=>{errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});});
@@ -19,10 +20,20 @@ async function setup(page,trigger){
  await expect.poll(()=>page.evaluate(()=>window.eval('ambientFlybyRuntime').readiness.get('LVL-0032:'+window.waspId)?.sound)).toBe(true);
 }
 async function visible(page){
+ // Native taps must wait for the same preparation cover and rendered pose as users.
+ await page.waitForFunction(()=>{const s=window.eval('cinematicRenderer').snapshot();return s.ready||Boolean(s.error);});
+ await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
  await page.evaluate(()=>{const s=window.eval('state');s.worldX=1100;s.cameraX=window.eval('getDesiredCameraX')();window.eval('render')();const r=window.eval('ambientFlybyRuntime');r.preview(window.waspId);r.active.get(window.waspId).distance=r.cacheFor(window.eval('level').ambientFlybys.find(x=>x.id===window.waspId)).totalLength*.55;});
- await expect.poll(()=>page.evaluate(()=>document.querySelector(`[data-ambient-flyby="${window.waspId}"]`)?.dataset.progress)).not.toBeUndefined();
+ await expect.poll(()=>page.evaluate(()=>Number(document.querySelector(`[data-ambient-flyby="${window.waspId}"]`)?.dataset.progress))).toBeGreaterThanOrEqual(.55);
 }
-async function tap(page,info){const id=await page.evaluate(()=>window.waspId);const b=await page.locator(`[data-ambient-flyby="${id}"]`).boundingBox();if(info.project.name.startsWith('ipad'))await page.touchscreen.tap(b.x+b.width/2,b.y+b.height/2);else await page.mouse.click(b.x+b.width/2,b.y+b.height/2);}
+async function tap(page,info){
+ const id=await page.evaluate(()=>window.waspId);
+ // A wing pose can have transparent centre pixels. Freeze the prepared pose
+ // while locating a solid pixel; still exercise the actual pointer/audio path.
+ const playing=await page.evaluate(id=>{const r=window.eval('ambientFlybyRuntime'),playing=r.previewState(id)==='playing';if(playing)r.togglePreview(id);return playing;},id);
+ try{await tapPixel(page,info,await flybyPixel(page,id));}
+ finally{if(playing)await page.evaluate(id=>{const r=window.eval('ambientFlybyRuntime');if(r.previewState(id)==='paused')r.togglePreview(id);},id);}
+}
 for(const position of ['offscreen','visible'])test(`During audio starts once at actual ${position} flight start, independent of player distance`,async({page})=>{
  await setup(page,'during');
  await page.locator('[data-graphics-action="toggle"]').click();await page.locator('[data-graphics-action="toggle"]').click();

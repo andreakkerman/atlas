@@ -5,6 +5,8 @@ for(const asset of ['arc_wasp','arc_snitch','common-swift'])test(`${asset} remai
  await page.emulateMedia({reducedMotion:'no-preference'});
  await page.route('**/__dev/levels/*/editor-draft',r=>r.fulfill({json:{}}));
  await page.goto(base);
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await page.locator('.menuScreen').waitFor();
  await page.evaluate(async asset=>{
   await window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false});
   window.eval('voxelRenderer').updateSettings({renderer:'illustrated'});
@@ -28,6 +30,9 @@ for(const asset of ['arc_wasp','arc_snitch','common-swift'])test(`${asset} remai
   window.continuity.observer=new MutationObserver(sample);window.continuity.observer.observe(document.getElementById('app'),{childList:true,subtree:true});
   const frame=()=>{sample();window.continuity.raf=requestAnimationFrame(frame);};frame();
  },asset);
+ // Native movement is blocked while the shared GPU preparation cover is active.
+ await page.waitForFunction(()=>{const s=window.eval('cinematicRenderer').snapshot();return s.ready||Boolean(s.error);});
+ await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
  for(const distance of [220,-180,20]){
   await page.evaluate(distance=>{const s=window.eval('state');window.eval('beginFreeWalk')({x:s.worldX+distance,y:s.worldY});},distance);
   await expect.poll(()=>page.evaluate(()=>window.eval('state').movement===null),{timeout:10000}).toBe(true);

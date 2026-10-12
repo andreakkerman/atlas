@@ -482,7 +482,7 @@
           const width = source.naturalWidth*scale, height = source.naturalHeight*scale;
           rect = { ...rect.toJSON(), left: rect.left+(rect.width-width)/2, top: rect.bottom-height, width, height };
         }
-        const dynamic = image.hasAttribute('data-flyby-canvas');
+        const dynamic = image.hasAttribute('data-flyby-canvas') || image.hasAttribute('data-flyby-fx-canvas');
         const cacheKey = dynamic ? image : source.currentSrc || source.src;
         const fallbackKey = image.dataset.characterId ? `${key}:${image.dataset.characterId}` : key;
         let resource = uploaded.get(cacheKey);
@@ -516,7 +516,13 @@
         const display=illustratedScene && !animal && uploaded.get(cacheKey)===resource && source.complete && source.naturalWidth ? illustratedSprite(image,source,bounds,rect,stage,fallbackKey,mirror) : null;
         entries.push({ key, resource, grounding, display, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
       };
-      document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => { const img = el.querySelector('[data-flyby-canvas]') || el.querySelector(el.dataset.frame === "b" ? ".ambientFlybyFrameB" : ".ambientFlybyFrameA"); add(img, img, `flyby:${el.dataset.ambientFlyby}`,true); });
+      document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => {
+        const back=el.querySelector('[data-flyby-fx-canvas="behind"]'),front=el.querySelector('[data-flyby-fx-canvas="front"]');
+        const key=`flyby:${el.dataset.ambientFlyby}`;
+        if(back)add(back,back,`${key}:fx:behind`,true);
+        const img = el.querySelector('[data-flyby-canvas]') || el.querySelector(el.dataset.frame === "b" ? ".ambientFlybyFrameB" : ".ambientFlybyFrameA"); add(img, img, key,true);
+        if(front)add(front,front,`${key}:fx:front`,true);
+      });
       document.querySelectorAll(".ambientAnimal[data-ready='true']").forEach(el => add(el.querySelector(el.dataset.frame === "closed" ? ".ambientAnimalClosed" : ".ambientAnimalOpen"), el, `animal:${el.dataset.ambientAnimal}`, true, el.dataset.mirrorX === "true"));
       document.querySelectorAll("[data-npc-challenge] [data-npc-sprite]").forEach(img => { const el = img.closest("[data-npc-challenge]"); add(img, el, `npc:${el.dataset.npcChallenge}`, true, Number(el.dataset.npcFacingScale) < 0); });
       const actor = document.querySelector("[data-actor='sven']"); add(actor, actor, "actor:sven", true);

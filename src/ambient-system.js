@@ -13,6 +13,16 @@
   }
   function framesFor(config) { return Array.isArray(config.frames) ? config.frames : [config.frameA, config.frameB].filter(Boolean); }
   function playbackFor(config) { return config.playback || (config.frames ? "static" : config.frameB ? "legacy" : "static"); }
+  // The asset workspace and Level Editor expose the same units and limits.
+  const previewControls = {
+    scale: {label:'Scale',min:0.02,max:2,step:0.01},
+    speed: {label:'Speed px/s',min:1,max:2000,step:1},
+    wobble: {label:'Wobble',min:0,max:80,step:1,default:14},
+    speedVariation: {label:'Speed variation',min:0,max:0.45,step:0.01,default:0.14},
+    flutterFrequency: {label:'Flutter frequency',min:0.1,max:8,step:0.1,default:2.1},
+    maxRotationDeg: {label:'Max rotation',min:0,max:45,step:1},
+    soundVolume: {label:'Sound volume',min:0,max:1,step:0.05}
+  };
   const graphicsControls = {
     brightness: {label:'Brightness', min:0, max:2, step:0.01, neutral:1, help:'1 = neutral'},
     contrast: {label:'Contrast', min:0, max:2, step:0.01, neutral:1, help:'1 = neutral'},
@@ -57,6 +67,7 @@
     if (config.endBehavior !== undefined && !["despawn", "hold"].includes(config.endBehavior)) errors.push("invalid endBehavior");
     if (config.depthOcclusion !== undefined && typeof config.depthOcclusion !== "boolean") errors.push("depthOcclusion must be boolean");
     if (config.enabled !== undefined && typeof config.enabled !== "boolean") errors.push("enabled must be boolean");
+    if (config.loopDuringFlyby !== undefined && typeof config.loopDuringFlyby !== 'boolean') errors.push('loopDuringFlyby must be boolean');
     if (config.depthBias !== undefined && (!Number.isFinite(config.depthBias) || Math.abs(config.depthBias) > 1)) errors.push("depthBias must be -1–1");
     if (config.actions !== undefined && (!config.actions || typeof config.actions !== "object" || Array.isArray(config.actions) || Object.entries(config.actions).some(([k,v]) => !["onTap", "onAnimationComplete"].includes(k) || (v !== null && (typeof v !== "string" || !/^[\w-]+$/.test(v)))))) errors.push("actions must map onTap/onAnimationComplete to action IDs or null");
     return errors;
@@ -439,7 +450,7 @@
       for (const key of id ? [id] : [...previewIds]) {
         const instance=active.get(key);
         if(instance?.preview) {
-          for(const [audioKey,value] of activeAudio) if(value.triggerId===instance.triggerId){value.audio.pause();activeAudio.delete(audioKey);}
+          for(const [audioKey,value] of activeAudio) if(!value.loop && value.triggerId===instance.triggerId){value.audio.pause();activeAudio.delete(audioKey);}
           cancelActive(key);
         }
         previewIds.delete(key);
@@ -459,6 +470,7 @@
       }
       if(!instance?.preview){stopPreview();return preview(id);}
       instance.paused=!instance.paused;
+      updateAudio();
       instance.lastTime=0;
       if(instance.paused && ![...active.values()].some(item=>!item.held&&!item.paused)&&!activeAudio.size){window.cancelAnimationFrame(rafId);rafId=null;}
       else ensureRaf();
@@ -481,6 +493,7 @@
         const cache=cacheFor(config),point=pointAtDistance(cache,runtime.distance);
         const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
         const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
+        options.onPreviewFrame?.(runtime,{point,rotation,facing});
         const shell=document.querySelector(`[data-ambient-flyby="${CSS.escape(runtime.id)}"]`);
         if(!shell)continue;
         shell.style.setProperty('--flyby-softness',`${Math.max(0,Number(config.softness)||0)}px`);
@@ -525,14 +538,17 @@
             runtime.animationStep=Math.floor(runtime.animationTime);runtime.frameIndex=runtime.animationStep%framesFor(config).length;runtime.animationComplete=false;runtime.held=false;
             runtime.drawKey=null;
           }
-          if(assetsChanged)runtime.rebuilding=true;
+          if(assetsChanged){
+            runtime.rebuilding=true;
+            runtime.fx?.planes.forEach(p=>p.canvas.remove());runtime.fx?.dispose();runtime.fx=null;
+          }
         }
         if(assetsChanged)tasks.push(prepareOne(config));
         else if(before?.sound!==config.sound && config.sound){readiness.get(keyFor(config.id)).sound=false;tasks.push(assetCache.sound(config.sound).then(()=>{const ready=readiness.get(keyFor(config.id));if(ready)ready.sound=true;}));}
       }
       if((getLevel().ambientFlybys||[]).some(c=>c.enabled!==false&&c.depthOcclusion)&&!depth)tasks.push(prepareDepth(getLevel()));
       // Compatible changes with prepared assets are synchronous, including paused masks.
-      if(!tasks.length){refreshPreviews();scheduleAll();return;}
+      if(!tasks.length){updateAudio();refreshPreviews();scheduleAll();return;}
       try{await Promise.all(tasks);}catch(error){warn(`[Atlas] Flyby preview update failed: ${error.message}`);}
       if(version!==editVersion||token!==preparation)return;
       for(const runtime of active.values()) {runtime.rebuilding=false;runtime.lastTime=0;runtime.drawKey=null;}
@@ -629,6 +645,9 @@
           warn(`[Atlas] ${levelId} flyby "${config.id}" sound disabled: ${config.sound}`);
         });
       }
+      if(options.loadAssetFX!==false&&window.AtlasFlybyFX)try {
+        state.fx=await window.AtlasFlybyFX.load(config,state.images[0]);
+      } catch(error) {warn(`[Atlas] Flyby ${config.id} FX disabled: ${error.message}`);state.fx=null;}
       if (token !== preparation || preparingStates.get(key)!==state || configById(config.id)?.enabled===false) return state;
       state.ready = true;
       readiness.set(key,state);
@@ -644,6 +663,7 @@
       const token = ++preparation;
       ++editVersion;depthPreparation=null;assetPreparations.clear();preparingStates.clear();
       depth = null;
+      if(options.loadAssetFX!==false)window.AtlasFlybyFX?.clearCache();
       levelId = selectedLevel?.id || null;
       readiness.clear();
       pathCaches.clear();
@@ -737,6 +757,7 @@
         const ready = readiness.get(keyFor(config.id));
         if (!soundTriggers(config).includes("during") || !config.sound || !ready?.sound) continue;
         const path = assetCache.normalize(config.sound);
+        if(config.loopDuringFlyby===true){playAudio(config,path,`loop:${path}`,triggerId);continue;}
         const previous = byPath.get(path);
         if (!previous || Number(config.soundVolume || 0) > Number(previous.soundVolume || 0)) {
           byPath.set(path, config);
@@ -750,16 +771,30 @@
 
     function playAudio(config, path, key, triggerId, instanceId = null) {
       // Both trigger sources share ownership of an already playing clip.
-      if ([...activeAudio.values()].some(state => state.path === path)) return;
+      const loop=!instanceId && config.loopDuringFlyby===true;
+      if(loop){const shared=[...activeAudio.values()].find(s=>s.path===path&&s.loop);if(shared){shared.owners.add(config.id);updateAudio();return;}}
+      if ([...activeAudio.values()].some(state => state.path === path && (loop ? state.loop : !state.loop))) return;
       const audio = new Audio(path);
-      const state = { audio, path, triggerId, instanceId, maxVolume: Number(config.soundVolume ?? 1) };
+      const state = { audio, path, triggerId, instanceId, loop, owners:loop?new Set([config.id]):null, ownerId:config.id, maxVolume: Number(config.soundVolume ?? 1) };
+      audio.loop=loop;
       audio.volume = instanceId ? Math.max(0, Math.min(1, getMasterVolume() * state.maxVolume)) : 0;
       activeAudio.set(key, state);
       ensureRaf();
-      const finish = () => { if (activeAudio.get(key) === state) activeAudio.delete(key); };
+      const finish = () => { audio.pause();if (activeAudio.get(key) === state) activeAudio.delete(key); };
       audio.addEventListener("ended", finish, { once: true });
-      audio.addEventListener("error", finish, { once: true });
-      audio.play().catch(finish);
+      audio.addEventListener("error", () => {const owned=activeAudio.get(key)===state;finish();if(owned)options.onAudioError?.(audio.error);}, { once: true });
+      resumeOwnedAudio(key,state);
+    }
+
+    function resumeOwnedAudio(key,state) {
+      const generation=state.playGeneration=(state.playGeneration||0)+1;
+      state.audio.play().catch(error=>{
+        // Pausing can reject a still-pending play() with AbortError. A newer
+        // pause/resume owns the media element and must not be cancelled by it.
+        if(state.playGeneration!==generation||activeAudio.get(key)!==state)return;
+        state.audio.pause();activeAudio.delete(key);
+        options.onAudioError?.(error);
+      });
     }
 
     function tap(id, hit) {
@@ -774,7 +809,7 @@
       if (!soundTriggers(config).includes("tap") || !config.sound || !getAudioUnlocked() || !readiness.get(keyFor(id))?.sound) return Boolean(config.actions?.onTap);
       const path = assetCache.normalize(config.sound);
       // Ignore repeated taps while this sound is playing, including another instance of it.
-      if ([...activeAudio.values()].some((state) => state.path === path)) return true;
+      if ([...activeAudio.values()].some((state) => state.path === path && !state.loop)) return true;
       playAudio(config, path, `tap:${path}`, instance.triggerId, id);
       return true;
     }
@@ -829,20 +864,21 @@
       if (!readiness.get(keyFor(config.id))?.ready) return false;
       const cache = cacheFor(config);
       if (cache.totalLength <= 0) return false;
+      const stationary=preview&&options.stationaryPreview?.();
       active.set(config.id, {
         id: config.id,
         triggerId,
         preview,
-        distance: 0,
+        distance: stationary?cache.totalLength/2:0,
         elapsed: 0,
         lastTime: 0,
-        progress: 0,
+        progress: stationary?0.5:0,
         scaleX: (document.querySelector(".worldTrack")?.getBoundingClientRect().width || getLevel().world.width) / getLevel().world.width,
         scaleY: (document.querySelector(".worldTrack")?.getBoundingClientRect().height || getLevel().world.height) / getLevel().world.height
       });
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(config.id)}"]`);
       if (shell) {
-        if (canvasVisual(config)) {
+        if (canvasVisual(config) || readiness.get(keyFor(config.id))?.fx) {
           const runtime=active.get(config.id),point=pointAtDistance(cache,0);
           const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
           const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
@@ -872,9 +908,18 @@
       return Boolean(startTrigger(members, true));
     }
 
+    function retryPreviewAudio(id) {
+      const instance=active.get(id),config=configById(id);
+      if(instance?.preview&&!instance.paused&&config)playTriggerAudio([config],instance.triggerId);
+    }
+
     function cancelActive(id) {
+      const runtime=active.get(id);
+      runtime?.fx?.planes.forEach(p=>p.canvas.remove());
+      runtime?.fx?.dispose();
       active.delete(id);
       for (const [key, state] of activeAudio) {
+        if(state.loop){state.owners.delete(id);if(!state.owners.size){state.audio.pause();activeAudio.delete(key);}continue;}
         if (state.instanceId !== id) continue;
         state.audio.pause();
         activeAudio.delete(key);
@@ -890,6 +935,7 @@
       if ([...active.values()].some((item) => item.triggerId === triggerId)) return;
       if ([...pendingStarts.values()].some((item) => item.triggerId === triggerId)) return;
       for (const [key, state] of activeAudio) {
+        if(state.loop)continue;
         if (state.triggerId !== triggerId) continue;
         state.audio.pause();
         activeAudio.delete(key);
@@ -899,7 +945,28 @@
     }
 
     function updateAudio() {
-      for (const state of activeAudio.values()) {
+      for (const [key,state] of activeAudio) {
+        if(state.loop){
+          const owners=[...state.owners].map(id=>({runtime:active.get(id),config:configById(id)})).filter(o=>o.runtime&&!o.runtime.held&&o.runtime.progress<1&&o.config?.loopDuringFlyby&&soundTriggers(o.config).includes('during')&&assetCache.normalize(o.config.sound)===state.path);
+          if(!owners.length){state.audio.pause();activeAudio.delete(key);continue;}
+          const paused=owners.every(o=>o.runtime.paused);
+          if(paused&&!state.paused){state.playGeneration=(state.playGeneration||0)+1;state.audio.pause();}
+          if(!paused&&state.paused)resumeOwnedAudio(key,state);
+          state.paused=paused;
+          state.audio.volume=Math.max(0,Math.min(1,getMasterVolume()*Math.max(...owners.map(o=>(o.config.soundVolume??1)*volumeEnvelope(o.runtime.progress)))));
+          continue;
+        }
+        const ownerConfig=configById(state.ownerId);
+        if(!ownerConfig||assetCache.normalize(ownerConfig.sound)!==state.path||!soundTriggers(ownerConfig).includes(state.instanceId?'tap':'during')){state.audio.pause();activeAudio.delete(key);continue;}
+        // The FX workspace uses a single transport for visuals and sound. Keep
+        // the Level Editor's existing one-shot audio behavior unless requested.
+        if(options.pausePreviewAudio){
+          const owners=[...active.values()].filter(item=>item.triggerId===state.triggerId);
+          const paused=owners.length>0&&owners.every(item=>item.preview&&item.paused);
+          if(paused&&!state.paused){state.playGeneration=(state.playGeneration||0)+1;state.audio.pause();}
+          if(!paused&&state.paused)resumeOwnedAudio(key,state);
+          state.paused=paused;
+        }
         const progresses = [...active.values()]
           .filter((item) => item.triggerId === state.triggerId)
           .map((item) => item.progress);
@@ -915,7 +982,58 @@
       }
     }
 
+    function drawAttachedFX(config,runtime,shell,point,rotation,facing,force=false){
+      const ready=readiness.get(keyFor(config.id));
+      if(!ready?.fx?.effects.length||!shell)return;
+      runtime.fx ||= window.AtlasFlybyFX.create(ready.fx);
+      const host=shell.querySelector('.ambientFlybyFrames');if(!host)return;
+      // Motion uses the normal flyby transform every frame; effect pixels and
+      // their scene-depth mask share the preset quality cadence. An authored
+      // depth edit must also redraw immediately while a preview is paused.
+      const depthSettings=[Boolean(config.depthOcclusion),config.depthBias,spriteScale(config),runtime.scaleX,runtime.scaleY,facing,
+        ...(runtime.paused||runtime.held?[point.x,point.y,rotation]:[])].join(':');
+      const changed=runtime.fx.draw(runtime.elapsed||0,force||runtime.fxDepthSettings!==depthSettings);
+      runtime.fxDepthSettings=depthSettings;
+      for(const p of runtime.fx.planes){
+        if(!p.items.length)continue;
+        if(p.canvas.parentElement!==host){
+          p.canvas.dataset.flybyFxCanvas=p.plane;p.canvas.className='ambientFlybyFX';
+          Object.assign(p.canvas.style,{left:`${p.box.x}px`,top:`${p.box.y}px`,zIndex:p.plane==='behind'?'0':'2'});
+          host.append(p.canvas);
+        }
+        if(changed){
+          if(config.depthOcclusion&&depth){
+            const mask=makeDepthMask(config,runtime,point,rotation,facing,p.canvas.width,p.canvas.height,ready.images[0].naturalHeight,p.box,p);
+            const ctx=p.canvas.getContext('2d');ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalCompositeOperation='destination-in';ctx.drawImage(mask.mask,0,0);ctx.restore();
+          }
+          p.canvas.dataset.revision=String(Number(p.canvas.dataset.revision||0)+1);
+        }
+      }
+    }
+
+    function makeDepthMask(config,runtime,point,rotation,facing,width,height,sourceHeight,box,owner){
+      const world=getLevel().world, scale=spriteScale(config), angle=rotation*Math.PI/180, cos=Math.cos(angle),sin=Math.sin(angle);
+      const image=readiness.get(keyFor(config.id)).images[0];
+      const sample=(x,y)=>depth.data[(Math.max(0,Math.min(depth.height-1,Math.round(y/world.height*(depth.height-1))))*depth.width+Math.max(0,Math.min(depth.width-1,Math.round(x/world.width*(depth.width-1)))))*4]/255;
+      const groundY=sourceHeight*0.46*scale;
+      const actorDepth=Math.max(0,Math.min(1,sample(point.x-sin*groundY/runtime.scaleX,point.y+cos*groundY/runtime.scaleY)+Number(config.depthBias||0)));
+      const mask=owner.mask || (owner.mask=document.createElement('canvas'));
+      if(mask.width!==width||mask.height!==height){mask.width=width;mask.height=height;owner.maskPixels=null;}
+      const maskCtx=mask.getContext('2d'),pixels=owner.maskPixels || (owner.maskPixels=maskCtx.createImageData(width,height));
+      const maskKey=[point.x,point.y,rotation,facing,scale,runtime.scaleX,runtime.scaleY,config.depthBias,box.x,box.y].join(':');
+      if(owner.maskKey!==maskKey){
+        for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+          const dx=(x+box.x+0.5-image.naturalWidth/2)*scale*facing,dy=(y+box.y+0.5-sourceHeight/2)*scale;
+          const scene=sample(point.x+(cos*dx-sin*dy)/runtime.scaleX,point.y+(sin*dx+cos*dy)/runtime.scaleY);
+          pixels.data[(y*width+x)*4+3]=Math.round(255*Math.max(0,Math.min(1,(actorDepth-scene)/0.01+1)));
+        }
+        maskCtx.putImageData(pixels,0,0);owner.maskKey=maskKey;
+      }
+      return {mask,pixels,groundY,actorDepth,sample,sin,cos};
+    }
+
     function drawPreparedFrame(config, runtime, shell, point, rotation, facing) {
+      drawAttachedFX(config,runtime,shell,point,rotation,facing);
       const canvas = shell?.querySelector?.('[data-flyby-canvas]');
       const images = readiness.get(keyFor(config.id))?.images;
       if (!canvas || !images?.length) return;
@@ -933,22 +1051,8 @@
       const ctx=canvas.getContext('2d');ctx.clearRect(0,0,width,height);ctx.drawImage(image,0,0);
       if(!debug && hasColorAdjustment(config))ctx.putImageData(adjustGraphics(ctx.getImageData(0,0,width,height),config),0,0);
       if (config.depthOcclusion && depth) {
-        const world=getLevel().world, scale=spriteScale(config), angle=rotation*Math.PI/180, cos=Math.cos(angle),sin=Math.sin(angle);
-        const sample=(x,y)=>depth.data[(Math.max(0,Math.min(depth.height-1,Math.round(y/world.height*(depth.height-1))))*depth.width+Math.max(0,Math.min(depth.width-1,Math.round(x/world.width*(depth.width-1)))))*4]/255;
-        const groundY=height*0.46*scale;
-        const actorDepth=Math.max(0,Math.min(1,sample(point.x-sin*groundY/runtime.scaleX,point.y+cos*groundY/runtime.scaleY)+Number(config.depthBias||0)));
-        const mask=runtime.mask || (runtime.mask=document.createElement('canvas'));
-        if(mask.width!==width||mask.height!==height){mask.width=width;mask.height=height;runtime.maskPixels=null;}
-        const maskCtx=mask.getContext('2d'),pixels=runtime.maskPixels || (runtime.maskPixels=maskCtx.createImageData(width,height));
-        const maskKey=[point.x,point.y,rotation,facing,scale,runtime.scaleX,runtime.scaleY,config.depthBias].join(':');
-        if(runtime.maskKey!==maskKey){
-        for(let y=0;y<height;y++)for(let x=0;x<width;x++){
-          const dx=(x+0.5-width/2)*scale*facing,dy=(y+0.5-height/2)*scale;
-          const scene=sample(point.x+(cos*dx-sin*dy)/runtime.scaleX,point.y+(sin*dx+cos*dy)/runtime.scaleY);
-          pixels.data[(y*width+x)*4+3]=Math.round(255*Math.max(0,Math.min(1,(actorDepth-scene)/0.01+1)));
-        }
-        maskCtx.putImageData(pixels,0,0);runtime.maskKey=maskKey;
-        }
+        const world=getLevel().world;
+        const {mask,pixels,groundY,actorDepth,sample,sin,cos}=makeDepthMask(config,runtime,point,rotation,facing,width,height,height,{x:0,y:0},runtime);
         ctx.globalCompositeOperation='destination-in';ctx.drawImage(mask,0,0);ctx.globalCompositeOperation='source-over';
         if (depthDebug) {
           const foot = {x:point.x-sin*groundY/runtime.scaleX,y:point.y+cos*groundY/runtime.scaleY};
@@ -1002,26 +1106,23 @@
         if (playback==='once') {
           const end=Math.max(0,(config.movementEndFrame ?? frames.length)-1);
           runtime.distance=cache.totalLength*(end?Math.min(1,animationTime/end):1);
-        } else runtime.distance += Math.max(1, Number(config.speed) || 260)
+        } else if(runtime.preview&&options.stationaryPreview?.())runtime.distance=cache.totalLength/2;
+        else runtime.distance += Math.max(1, Number(config.speed) || 260)
           * organicSpeedFactor(config, runtime.elapsed, runtime.progress) * delta;
         const point = pointAtDistance(cache, runtime.distance);
         runtime.progress = point.progress;
         refreshTransformMetrics(runtime);
+        const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
+        const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
+        if(runtime.preview)options.onPreviewFrame?.(runtime,{point,rotation,facing});
         const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
         if (shell) {
           shell.dataset.active = "true";
           shell.style.willChange = "transform";
-          const overallDirection = cache.samples.at(-1).x >= cache.samples[0].x ? 1 : -1;
-          const facing = config.faceFlightDirection === false
-            ? (config.mirrorX ? -1 : 1)
-            : overallDirection;
-          const rotation = config.rotateAlongPath
-            ? Math.max(-Math.abs(Number(config.maxRotationDeg) || 0), Math.min(Math.abs(Number(config.maxRotationDeg) || 0), point.angle))
-            : 0;
           shell.style.transform =
             `translate3d(${point.x * runtime.scaleX}px, ${point.y * runtime.scaleY}px, 0) translate(-50%, -50%) rotate(${rotation}deg) scale(${spriteScale(config)}) scaleX(${facing})`;
           const ready = readiness.get(keyFor(id));
-          if ((canvasVisual(config) || runtime.preview) && shell.querySelector('[data-flyby-canvas]')) {
+          if ((canvasVisual(config) || runtime.preview || ready?.fx) && shell.querySelector('[data-flyby-canvas]')) {
             if (playback==='legacy' && frames.length>1 && !runtime.preview) runtime.frameIndex=Math.floor((runtime.distance/Math.max(1,Number(config.speed)||260))*Math.max(0,Number(config.flapFrequencyHz)||0)*2)%2;
             drawPreparedFrame(config,runtime,shell,point,rotation,facing);
           } else if (config.frameB && ready?.frameB) {
@@ -1055,7 +1156,7 @@
     }
 
     function ensureRaf() {
-      if (!rafId && ([...active.values()].some(item=>!item.held&&!item.paused&&!item.rebuilding) || activeAudio.size)) rafId = window.requestAnimationFrame(tick);
+      if (!rafId && ([...active.values()].some(item=>!item.held&&!item.paused&&!item.rebuilding) || [...activeAudio.values()].some(a=>!a.paused))) rafId = window.requestAnimationFrame(tick);
     }
 
     function stopAll({preserveHeld=false,preservePreviews=false} = {}) {
@@ -1065,7 +1166,7 @@
       active.forEach((instance, id) => { if(!(preserveHeld&&instance.held) && !(preservePreviews&&instance.preview)) cancelActive(id); });
       if(!preservePreviews)previewIds.clear();
       activeAudio.forEach((value,key) => {
-        if(preservePreviews&&[...active.values()].some(i=>i.preview&&i.triggerId===value.triggerId))return;
+        if(preservePreviews&&[...active.values()].some(i=>i.preview&&(value.loop?value.owners.has(i.id):i.triggerId===value.triggerId)))return;
         value.audio.pause();activeAudio.delete(key);
       });
       if (rafId) window.cancelAnimationFrame(rafId);
@@ -1092,7 +1193,7 @@
       active,
       activeAudio,
       prepareLevel,
-      updateLevel,previewState,togglePreview,stopPreview,refreshPreviews,
+      updateLevel,previewState,togglePreview,stopPreview,refreshPreviews,retryPreviewAudio,
       cacheFor,
       invalidatePath,
       preview,
@@ -1109,7 +1210,7 @@
 
   const api = {
     framesFor, playbackFor, canvasVisual, depthPathFor, sequenceErrors, registerAction,
-    graphicsControls, graphicsFor, adjustGraphics, FLYBY_HIT_ALPHA_THRESHOLD,
+    previewControls, graphicsControls, graphicsFor, adjustGraphics, FLYBY_HIT_ALPHA_THRESHOLD,
     actionIds: () => [...actions.keys()],
     soundTriggers,
     validSoundTriggers,

@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "svenadventure-static-";
-const CACHE_NAME = "svenadventure-static-v276-revert-scopes";
+const CACHE_NAME = "svenadventure-static-v281-indicator-lights";
 const CORE_ASSETS = [
   "src/geometry-diagram.js", "src/content/m6/expansion-20261010.js",
   "src/content/m6/expansion/number-sense.js",
@@ -58,6 +58,8 @@ const CORE_ASSETS = [
   "src/ambient-system.js",
   "src/asset-readiness.js",
   "src/scene-effects.js",
+  "src/flyby-fx.js",
+  "src/flyby-fx-editor.js",
   "src/webgpu-capabilities.js",
   "src/voxel-renderer.js",
   "src/character-appearance.js",

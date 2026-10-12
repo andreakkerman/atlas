@@ -183,7 +183,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "7 × 8 = ?",
               "answer": 56,
-              "hintParameters": {"a":7,"b":8},
+              "hintParameters": {
+                "a": 7,
+                "b": 8
+              },
               "explanation": "7 × 8 = 56."
             },
             {
@@ -201,7 +204,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 54,
                 72
               ],
-              "hintParameters": {"a":6,"b":9},
+              "hintParameters": {
+                "a": 6,
+                "b": 9
+              },
               "explanation": "6 × 9 = 54."
             }
           ]
@@ -224,7 +230,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 24,
                 36
               ],
-              "hintParameters": {"a":4,"b":6},
+              "hintParameters": {
+                "a": 4,
+                "b": 6
+              },
               "explanation": "4 × 6 = 24."
             },
             {
@@ -236,7 +245,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "8 × 3 = ?",
               "answer": 24,
-              "hintParameters": {"a":8,"b":3},
+              "hintParameters": {
+                "a": 8,
+                "b": 3
+              },
               "explanation": "8 × 3 = 24."
             }
           ]
@@ -253,7 +265,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "Valente heeft 6 doosjes met elk 7 bouten. Hoeveel bouten zijn dat samen?",
               "answer": 42,
-              "hintParameters": {"a":6,"b":7},
+              "hintParameters": {
+                "a": 6,
+                "b": 7
+              },
               "explanation": "6 × 7 = 42."
             },
             {
@@ -271,7 +286,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 20,
                 28
               ],
-              "hintParameters": {"a":5,"b":4},
+              "hintParameters": {
+                "a": 5,
+                "b": 4
+              },
               "explanation": "5 × 4 = 20."
             }
           ]
@@ -288,7 +306,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "56 : 7 = ?",
               "answer": 8,
-              "hintParameters": {"a":56,"b":7},
+              "hintParameters": {
+                "a": 56,
+                "b": 7
+              },
               "explanation": "56 : 7 = 8, want 8 × 7 = 56."
             },
             {
@@ -306,7 +327,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 7,
                 6
               ],
-              "hintParameters": {"a":54,"b":9},
+              "hintParameters": {
+                "a": 54,
+                "b": 9
+              },
               "explanation": "54 : 9 = 6, want 6 × 9 = 54."
             }
           ]
@@ -330,7 +354,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "8 × 8 = ?",
               "answer": 64,
-              "hintParameters": {"a":8,"b":8},
+              "hintParameters": {
+                "a": 8,
+                "b": 8
+              },
               "explanation": "8 × 8 = 64."
             },
             {
@@ -348,7 +375,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 36,
                 44
               ],
-              "hintParameters": {"a":9,"b":4},
+              "hintParameters": {
+                "a": 9,
+                "b": 4
+              },
               "explanation": "9 × 4 = 36."
             }
           ]
@@ -371,7 +401,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 42,
                 54
               ],
-              "hintParameters": {"a":7,"b":6},
+              "hintParameters": {
+                "a": 7,
+                "b": 6
+              },
               "explanation": "7 × 6 = 42."
             },
             {
@@ -383,7 +416,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "3 × 5 = ?",
               "answer": 15,
-              "hintParameters": {"a":3,"b":5},
+              "hintParameters": {
+                "a": 3,
+                "b": 5
+              },
               "explanation": "3 × 5 = 15."
             }
           ]
@@ -406,7 +442,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 32,
                 48
               ],
-              "hintParameters": {"a":4,"b":8},
+              "hintParameters": {
+                "a": 4,
+                "b": 8
+              },
               "explanation": "4 × 8 = 32."
             },
             {
@@ -418,7 +457,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "Valente verdeelt 42 batterijen gelijk over 6 tasjes. Hoeveel batterijen krijgt elk tasje?",
               "answer": 7,
-              "hintParameters": {"a":42,"b":6},
+              "hintParameters": {
+                "a": 42,
+                "b": 6
+              },
               "explanation": "42 : 6 = 7, want 7 × 6 = 42."
             }
           ]
@@ -441,7 +483,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 10,
                 9
               ],
-              "hintParameters": {"a":72,"b":8},
+              "hintParameters": {
+                "a": 72,
+                "b": 8
+              },
               "explanation": "72 : 8 = 9, want 9 × 8 = 72."
             },
             {
@@ -453,7 +498,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "24 : 4 = ?",
               "answer": 6,
-              "hintParameters": {"a":24,"b":4},
+              "hintParameters": {
+                "a": 24,
+                "b": 4
+              },
               "explanation": "24 : 4 = 6, want 6 × 4 = 24."
             }
           ]
@@ -477,7 +525,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "9 × 7 = ?",
               "answer": 63,
-              "hintParameters": {"a":9,"b":7},
+              "hintParameters": {
+                "a": 9,
+                "b": 7
+              },
               "explanation": "9 × 7 = 63."
             },
             {
@@ -495,7 +546,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 48,
                 60
               ],
-              "hintParameters": {"a":8,"b":6},
+              "hintParameters": {
+                "a": 8,
+                "b": 6
+              },
               "explanation": "8 × 6 = 48."
             }
           ]
@@ -518,7 +572,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 30,
                 36
               ],
-              "hintParameters": {"a":10,"b":3},
+              "hintParameters": {
+                "a": 10,
+                "b": 3
+              },
               "explanation": "10 × 3 = 30."
             },
             {
@@ -530,7 +587,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "7 × 4 = ?",
               "answer": 28,
-              "hintParameters": {"a":7,"b":4},
+              "hintParameters": {
+                "a": 7,
+                "b": 4
+              },
               "explanation": "7 × 4 = 28."
             }
           ]
@@ -547,7 +607,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "In de voorraad liggen 3 dozen met elk 6 lampen. Hoeveel lampen zijn dat samen?",
               "answer": 18,
-              "hintParameters": {"a":3,"b":6},
+              "hintParameters": {
+                "a": 3,
+                "b": 6
+              },
               "explanation": "3 × 6 = 18."
             },
             {
@@ -565,7 +628,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 45,
                 63
               ],
-              "hintParameters": {"a":5,"b":9},
+              "hintParameters": {
+                "a": 5,
+                "b": 9
+              },
               "explanation": "5 × 9 = 45."
             }
           ]
@@ -588,7 +654,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
                 9,
                 8
               ],
-              "hintParameters": {"a":40,"b":5},
+              "hintParameters": {
+                "a": 40,
+                "b": 5
+              },
               "explanation": "40 : 5 = 8, want 8 × 5 = 40."
             },
             {
@@ -600,7 +669,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
               "answerMode": "open",
               "prompt": "Een fles water kost 2 euro. Valente koopt 6 flessen. Hoeveel euro betaalt hij?",
               "answer": 12,
-              "hintParameters": {"a":6,"b":2,"currency":"euro"},
+              "hintParameters": {
+                "a": 6,
+                "b": 2,
+                "currency": "euro"
+              },
               "explanation": "6 × 2 = 12."
             }
           ]
@@ -741,7 +814,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
     }
   },
   "companionPolicy": {
-    "disabledEvents": ["CHALLENGE_OPEN", "CHALLENGE_SUCCESS", "LEVEL_PROGRESS_MILESTONE"],
+    "disabledEvents": [
+      "CHALLENGE_OPEN",
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
     "attentionOncePerVisit": true
   },
   "companionMoments": [
@@ -821,7 +898,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0032"] = {
       "intervalMaxMs": 15000,
       "syncKey": "",
       "startDelayMs": 0,
-      "softness": 0,
+      "softness": 1.25,
       "saturation": 1,
       "soundVolume": 0.8,
       "rotateAlongPath": false,

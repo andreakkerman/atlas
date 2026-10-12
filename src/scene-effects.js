@@ -23,6 +23,12 @@
     reduced: { particles: 0.38, layers: 0.45, blur: 0.48, segments: 0.45, updateFps: 24 }
   });
   const CONTROL_DEFS = Object.freeze({
+    lightShape: { label: "Shape", type: "select", options: { round: "Round", square: "Square", oval: "Oval" } },
+    glowRadius: { label: "Glow radius", min: 0, max: 160, step: 1, section: "quick" },
+    sweepEnabled: { label: "Sweep enabled", type: "checkbox" },
+    sweepAmplitude: { label: "Sweep amplitude (°)", min: 0, max: 90, step: 1, section: "advanced" },
+    sweepSpeed: { label: "Sweep speed (cycles/s)", min: 0, max: 2, step: 0.01, section: "advanced" },
+    sweepPhase: { label: "Sweep phase (°)", min: -360, max: 360, step: 1, section: "advanced" },
     intensity: { label: "Intensity", min: 0, max: 3, step: 0.01, section: "quick" },
     amount: { label: "Amount / density", min: 0, max: 2, step: 0.01, section: "quick" },
     speed: { label: "Speed", min: 0, max: 3, step: 0.01, section: "quick" },
@@ -136,7 +142,7 @@
       ...config
     };
     definition.hardRanges = Object.fromEntries(controls
-      .filter((field) => CONTROL_DEFS[field])
+      .filter((field) => Number.isFinite(CONTROL_DEFS[field]?.min))
       .map((field) => [field, { min: CONTROL_DEFS[field].min, max: CONTROL_DEFS[field].max }]));
     definition.recommendedRanges = Object.fromEntries(controls
       .filter((field) => CONTROL_DEFS[field] && Number.isFinite(definition.defaults[field]))
@@ -153,6 +159,63 @@
   }
 
   const PRESETS = Object.freeze({
+    ...Object.fromEntries([
+      ['blue', 'Blue', '#38AFFF', '#165DFF'],
+      ['green', 'Green', '#53FF88', '#12CE50'],
+      ['orange', 'Orange', '#FFAE36', '#FF680C'],
+      ['red', 'Red', '#FF4A50', '#F01428']
+    ].map(([id,name,core,glow])=>[`${id}-light`,preset({
+      id: `${id}-light`, name: `${name} Light`, category: 'Light and fire', attachmentOnly: true, hiddenFromLibrary: true,
+      renderer: 'glowField', glowStyle: 'indicator', geometryTypes: ['rectangle'],
+      defaultGeometry: { type: 'rectangle', x: 200, y: 200, width: 24, height: 12, directionDeg: 0 },
+      variants: [variant('indicator',`${name} Light`)],
+      colors: { primaryColor: core, secondaryColor: core, glowColor: glow, tintColor: '#FFFFFF' },
+      colorFields: ['primaryColor','glowColor'], colorLabels: ['Core color','Glow color'],
+      defaults: { ...preset({}).defaults, lightShape: 'square', intensity: 1.4, opacity: 1, glowRadius: 18, softness: 1, pulseAmount: 0, pulseRate: .7, sparkAmount: 0, edgeFeatherPx: 0 },
+      reducedMotion: { pulseAmount: .2 },
+      controls: ['lightShape','intensity','opacity','glowRadius','softness','pulseAmount','pulseRate']
+    })])),
+    "blue-thruster": preset({
+      id: "blue-thruster", name: "Blue Thruster", category: "Smoke and steam", attachmentOnly: true, hiddenFromLibrary: true,
+      renderer: "plumeEmitter", propulsion: "jet", geometryTypes: ["directionalEmitter"],
+      defaultGeometry: { type: "directionalEmitter", x: 200, y: 400, directionDeg: 90, width: 25, spreadDeg: 12, length: 95 },
+      variants: [variant("blue", "Blue-white propulsion")],
+      colors: { primaryColor: "#F1FDFF", secondaryColor: "#20CBFF", glowColor: "#125AFF", tintColor: "#FFFFFF" },
+      defaults: { ...preset({}).defaults, intensity: 1.6, opacity: 1, amount: 1, size: 1, speed: 1.2, lifetime: 0.6, glow: 1.2, softness: 0.65, turbulence: 0.5, flickerAmount: 0.18, animationSpeed: 1, particleCap: 28, edgeFeatherPx: 0 },
+      hardCap: 80, recommendedBudget: 28,
+      controls: ["intensity", "opacity", "glow", "softness", "amount", "size", "speed", "lifetime", "turbulence", "flickerAmount", "animationSpeed", "particleCap"]
+    }),
+    "orange-yellow-thruster": preset({
+      id: "orange-yellow-thruster", name: "Orange / Yellow Thruster", category: "Smoke and steam", attachmentOnly: true, hiddenFromLibrary: true,
+      renderer: "plumeEmitter", propulsion: "jet", jetStyle: "warm", geometryTypes: ["directionalEmitter"],
+      defaultGeometry: { type: "directionalEmitter", x: 200, y: 400, directionDeg: 90, width: 28, spreadDeg: 16, length: 58 },
+      variants: [variant("warm", "Compact warm propulsion")],
+      colors: { primaryColor: "#FFF7D5", secondaryColor: "#FFC34B", glowColor: "#FF691F", tintColor: "#FFFFFF" },
+      defaults: { ...preset({}).defaults, intensity: 1.45, opacity: 1, amount: .7, size: 1, speed: .9, lifetime: .45, glow: .95, softness: .8, turbulence: .3, flickerAmount: .12, animationSpeed: 1, particleCap: 22, edgeFeatherPx: 0 },
+      hardCap: 80, recommendedBudget: 22,
+      controls: ["intensity", "opacity", "glow", "softness", "amount", "size", "speed", "lifetime", "turbulence", "flickerAmount", "animationSpeed", "particleCap"]
+    }),
+    "blue-white-spotlight": preset({
+      id: "blue-white-spotlight", name: "Blue-White Spotlight", category: "Light and fire", attachmentOnly: true, hiddenFromLibrary: true,
+      renderer: "lightBeam", beamStyle: "searchlight", geometryTypes: ["directionalEmitter"],
+      defaultGeometry: { type: "directionalEmitter", x: 200, y: 400, directionDeg: 90, width: 12, spreadDeg: 28, length: 620 },
+      variants: [variant("search", "Blue-white search beam")],
+      colors: { primaryColor: "#F2FEFF", secondaryColor: "#B8E9FF", glowColor: "#6AB7FF", tintColor: "#FFFFFF" },
+      colorLabels: ["Core color", "Beam color", "Glow color"],
+      defaults: { ...preset({}).defaults, intensity: 1.5, opacity: .85, glow: .8, softness: .85, flickerAmount: .025, sweepEnabled: true, sweepAmplitude: 18, sweepSpeed: .12, sweepPhase: 0, edgeFeatherPx: 0 },
+      reducedMotion: { sweepSpeed: .35, flickerAmount: .2 },
+      controls: ["intensity", "opacity", "glow", "softness", "flickerAmount", "sweepEnabled", "sweepAmplitude", "sweepSpeed", "sweepPhase"]
+    }),
+    "jetwash": preset({
+      id: "jetwash", name: "Jetwash", category: "Smoke and steam", attachmentOnly: true, hiddenFromLibrary: true,
+      renderer: "plumeEmitter", propulsion: "wash", geometryTypes: ["directionalEmitter"],
+      defaultGeometry: { type: "directionalEmitter", x: 200, y: 410, directionDeg: 90, width: 90, spreadDeg: 65, length: 240 },
+      variants: [variant("gray", "Illuminated gray vapor")],
+      colors: { primaryColor: "#BAEAFF", secondaryColor: "#87939E", glowColor: "#499BFF", tintColor: "#FFFFFF" },
+      defaults: { ...preset({}).defaults, intensity: 1.15, opacity: 0.72, amount: 1, size: 1, speed: 0.8, lifetime: 2.4, glow: 0.65, softness: 1, turbulence: 0.8, plumeExpansion: 1, fadeIn: 0.1, fadeOut: 0.5, animationSpeed: 1, particleCap: 44, edgeFeatherPx: 0 },
+      hardCap: 100, recommendedBudget: 44,
+      controls: ["intensity", "opacity", "glow", "softness", "amount", "size", "speed", "lifetime", "turbulence", "plumeExpansion", "fadeIn", "fadeOut", "animationSpeed", "particleCap"]
+    }),
     "light-source-enhancement": preset({
       id: "light-source-enhancement", name: "Light source enhancement", category: "Light and fire",
       description: "Flicker, warm glow, light spill and restrained sparks for painted lights.",
@@ -632,7 +695,7 @@
       ...shared,
       ...(instance.overrides || {})
     };
-    if (Object.hasOwn(instance.overrides || {}, "primaryColor")) {
+    if (selectedPreset.glowStyle !== 'indicator' && Object.hasOwn(instance.overrides || {}, "primaryColor")) {
       if (!Object.hasOwn(instance.overrides || {}, "secondaryColor")) resolved.secondaryColor = mixColor(resolved.primaryColor, "#FFFFFF", 0.18);
       if (!Object.hasOwn(instance.overrides || {}, "glowColor")) resolved.glowColor = mixColor(resolved.primaryColor, "#FFFFFF", 0.36);
     }
@@ -813,7 +876,9 @@
         if (/Color$/.test(field) && !/^#[0-9A-F]{6}$/i.test(String(value))) errors.push(`${field} must be a six-digit hex color.`);
         if (field === "blendMode" && !["source-over", "lighter", "screen", "soft-light"].includes(value)) errors.push("blendMode is invalid.");
         const range = selectedPreset.hardRanges[field] || CONTROL_DEFS[field];
-        if (range && (!Number.isFinite(value) || value < range.min || value > range.max)) errors.push(`${field} must be between ${range.min} and ${range.max}.`);
+        if (range?.type === "checkbox") { if(typeof value !== "boolean") errors.push(`${field} must be boolean.`); }
+        else if (range?.type === 'select') { if(!Object.hasOwn(range.options,value)) errors.push(`${field} is invalid.`); }
+        else if (range && (!Number.isFinite(value) || value < range.min || value > range.max)) errors.push(`${field} must be between ${range.min} and ${range.max}.`);
       }
       const cap = Number(instance.overrides?.particleCap ?? selectedPreset.defaults.particleCap);
       if (cap > selectedPreset.hardCap) errors.push(`particleCap exceeds preset hard cap ${selectedPreset.hardCap}.`);
@@ -997,6 +1062,7 @@
     const buffer = resolved._maskCanvas.getContext("2d");
     buffer.setTransform(1, 0, 0, 1, 0, 0);
     buffer.clearRect(0, 0, width, height);
+    buffer.setTransform(ctx.getTransform());
     paint(buffer);
     buffer.save();
     buffer.globalCompositeOperation = "destination-in";
@@ -1009,6 +1075,7 @@
     buffer.restore();
     ctx.save();
     ctx.globalCompositeOperation = resolved.blendMode || resolved.preset.blendMode || "source-over";
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(resolved._maskCanvas, 0, 0);
     ctx.restore();
   }
@@ -1021,8 +1088,43 @@
     drawWithFeatheredMask(ctx, resolved, paint);
   }
 
+  // Source-local dimensions shared with cropped attachment bounds.
+  function indicatorExtent(r) {
+    const x=r.geometry.width/2,y=r.lightShape==='round'?x:r.geometry.height/2;
+    const feather=r.glowRadius*(1+r.softness*.5);
+    return {x,y,rx:x+feather,ry:y+feather};
+  }
+
+  function drawIndicator(ctx,r,time) {
+    const g=r.geometry,{x,y,rx,ry}=indicatorExtent(r);
+    const pulse=1-r.pulseAmount*(.5+.5*Math.sin(time*r.pulseRate*Math.PI*2+hash(r.instance.seed)*Math.PI*2));
+    ctx.save();ctx.translate(g.x,g.y);ctx.rotate(g.directionDeg*Math.PI/180);
+    ctx.globalAlpha*=pulse;
+    if(r.glowRadius>0){
+      ctx.save();ctx.scale(rx,ry);
+      const glow=ctx.createRadialGradient(0,0,0,0,0,1);
+      glow.addColorStop(0,rgba(r.glowColor,Math.min(1,r.intensity*.65)));
+      glow.addColorStop(.3,rgba(r.glowColor,Math.min(1,r.intensity*.4)));
+      glow.addColorStop(.65,rgba(r.glowColor,Math.min(1,r.intensity*.1)));
+      glow.addColorStop(1,rgba(r.glowColor,0));
+      ctx.fillStyle=glow;ctx.fillRect(-1,-1,2,2);ctx.restore();
+    }
+    ctx.beginPath();
+    if(r.lightShape==='square')ctx.roundRect(-x,-y,x*2,y*2,Math.min(x,y)*.3);
+    else ctx.ellipse(0,0,x,y,0,0,Math.PI*2);
+    ctx.fillStyle=rgba(r.primaryColor,Math.min(1,r.intensity));ctx.fill();
+    // A small pale hot center gives the saturated source an emissive appearance.
+    ctx.save();ctx.clip();ctx.scale(x,y);
+    const core=ctx.createRadialGradient(0,0,0,0,0,1);
+    core.addColorStop(0,rgba(mixColor(r.primaryColor,'#FFFFFF',.85),Math.min(1,r.intensity*.85)));
+    core.addColorStop(.45,rgba(r.primaryColor,Math.min(1,r.intensity*.5)));
+    core.addColorStop(1,rgba(r.primaryColor,0));ctx.fillStyle=core;ctx.fillRect(-1,-1,2,2);
+    ctx.restore();ctx.restore();
+  }
+
   function drawGlow(ctx, resolved, time, particlesOnly = false) {
     ctx.globalCompositeOperation = resolved.blendMode || resolved.preset.blendMode;
+    if(resolved.preset.glowStyle==='indicator'){if(!particlesOnly)drawIndicator(ctx,resolved,time);return;}
     // Gameplay cues reuse the Rune motes without its central light field or solid core.
     if (!particlesOnly) {
       const geometry = resolved.geometry;
@@ -1781,7 +1883,84 @@
     ctx.restore();
   }
 
+  // Propulsion stays in the shared directed-plume family. These styles use the
+  // same seeded clock, geometry, masks and quality policy as authored effects.
+  function drawPropulsion(ctx, r, time) {
+    const g=r.geometry, width=g.width, length=g.length || 180;
+    const t=time*r.animationSpeed*r.speed, seed=r.instance.seed;
+    ctx.save();ctx.translate(g.x,g.y);ctx.rotate((g.directionDeg-90)*Math.PI/180);
+    if(r.preset.propulsion==='jet') {
+      ctx.filter=`blur(${r.softness*.8}px)`;
+      const flicker=1-r.flickerAmount*(0.5+0.25*Math.sin(t*27+seed)+0.25*Math.sin(t*43+seed*0.7));
+      ctx.globalCompositeOperation='lighter';
+      const halo=ctx.createRadialGradient(0,width*.2,0,0,width*.2,width*(1.4+r.glow));
+      halo.addColorStop(0,rgba(r.secondaryColor,Math.min(1,r.intensity*.65)));
+      halo.addColorStop(.3,rgba(r.glowColor,.28*r.glow));halo.addColorStop(1,rgba(r.glowColor,0));
+      ctx.fillStyle=halo;ctx.fillRect(-width*3,-width*3,width*6,width*6);
+      for(let layer=0;layer<3;layer++) {
+        const warm=r.preset.jetStyle==='warm';
+        const span=(warm?[1.65,1,.42]:[1.5,.8,.35])[layer]*r.size, reach=length*(warm?[1,.7,.42]:[1,.86,.67])[layer]*flicker;
+        const gradient=ctx.createLinearGradient(0,0,0,reach);
+        const hue=[r.glowColor,r.secondaryColor,r.primaryColor][layer];
+        gradient.addColorStop(0,rgba(hue,Math.min(1,r.intensity*[.48,.8,1][layer])));
+        gradient.addColorStop(.35,rgba(hue,[.35,.7,.95][layer]*flicker));gradient.addColorStop(1,rgba(hue,0));
+        ctx.fillStyle=gradient;ctx.beginPath();
+        for(const side of [-1,1])for(let n=0;n<=24;n++){
+          const p=(side<0?n:24-n)/24;
+          const wave=Math.sin(p*19-t*15+seed)*Math.sin(p*Math.PI)*r.turbulence*width*.1;
+          const taper=Math.pow(1-p,.72)*(.8+.2*Math.cos(p*18-t*10))*(1+p*Math.tan(g.spreadDeg*Math.PI/360));
+          const x=wave+side*width*.5*span*taper, y=p*reach;
+          if(side===-1&&n===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+        }
+        ctx.closePath();ctx.fill();
+      }
+      // Advect small stretched core filaments, not free glowing dots.
+      const count=particleCount(r);
+      for(let i=0;i<count;i++){
+        const p=(t/Math.max(.1,r.lifetime)+hash(seed,i))%1;
+        const x=(hash(seed,i+80)-.5)*width*.45*(1-p)+Math.sin(t*8+i)*width*.035*r.turbulence;
+        ctx.strokeStyle=rgba(r.primaryColor,Math.sin(p*Math.PI)*.38*r.intensity);
+        ctx.lineWidth=(1-p)*2*r.size;ctx.beginPath();ctx.moveTo(x,p*length*.85);ctx.lineTo(x,p*length*.85+5+10*r.size);ctx.stroke();
+      }
+    } else {
+      // Cached irregular vapor tiles, made once per resolved instance. Overlap
+      // stretched lobes heavily so the plume has no discrete circular particles.
+      if(!r._vapor){
+        r._vapor=Array.from({length:3},(_,k)=>{
+          const canvas=document.createElement('canvas');canvas.width=canvas.height=128;
+          const c=canvas.getContext('2d');
+          for(let j=0;j<20;j++){
+            const x=34+hash(seed+k,j)*60,y=38+hash(seed+k,j+30)*52,rad=15+hash(seed+k,j+60)*26;
+            const gradient=c.createRadialGradient(x,y,0,x,y,rad);
+            gradient.addColorStop(0,'rgba(255,255,255,.13)');gradient.addColorStop(Math.max(.15,.65-r.softness*.2),'rgba(255,255,255,.07)');gradient.addColorStop(1,'rgba(255,255,255,0)');
+            c.fillStyle=gradient;c.fillRect(x-rad,y-rad,rad*2,rad*2);
+          }
+          return canvas;
+        });
+      }
+      const count=particleCount(r), spread=Math.tan(g.spreadDeg*Math.PI/360);
+      r._vaporTint ||= r._vapor.map(tile=>[r.primaryColor,r.secondaryColor].map(hue=>{
+        const surface=document.createElement('canvas');surface.width=surface.height=128;
+        const context=surface.getContext('2d');context.drawImage(tile,0,0);context.globalCompositeOperation='source-in';context.fillStyle=hue;context.fillRect(0,0,128,128);return surface;
+      }));
+      for(let i=0;i<count;i++){
+        const p=(t/Math.max(.1,r.lifetime)+hash(seed,i+91))%1;
+        const radius=(width*.8+p*length*spread*r.plumeExpansion)*r.size;
+        const sway=(hash(seed,i+22)-.5)*radius*.7+Math.sin(p*7+t*.65+i)*r.turbulence*radius*.22;
+        const alpha=fade(p,r.fadeIn,r.fadeOut)*r.intensity*.38;
+        const transition=Math.min(1,p*2.3),tiles=r._vaporTint[i%3];
+        ctx.save();ctx.globalAlpha*=alpha;ctx.translate(sway,p*length);ctx.rotate(Math.sin(i+p*3)*.4);
+        const opacity=ctx.globalAlpha;ctx.globalAlpha=opacity*(1-transition);ctx.drawImage(tiles[0],-radius,-radius*.65,radius*2,radius*1.3);ctx.globalAlpha=opacity*transition;ctx.drawImage(tiles[1],-radius,-radius*.65,radius*2,radius*1.3);ctx.restore();
+      }
+      const light=ctx.createRadialGradient(0,0,0,0,0,width*(.8+r.glow*.3));
+      light.addColorStop(0,rgba(r.glowColor,.22*r.glow));light.addColorStop(1,rgba(r.glowColor,0));
+      ctx.globalCompositeOperation='screen';ctx.fillStyle=light;ctx.fillRect(-width*2,-width*2,width*4,width*4);
+    }
+    ctx.restore();
+  }
+
   function drawPlume(ctx, resolved, time) {
+    if(resolved.preset.propulsion){drawPropulsion(ctx,resolved,time);return;}
     const geometry = resolved.geometry;
     const count = particleCount(resolved);
     const directionDeg = resolved.overriddenFields.includes("directionDeg") ? resolved.directionDeg : (geometry.directionDeg ?? resolved.directionDeg);
@@ -1817,7 +1996,53 @@
     }
   }
 
+  function drawSearchlight(ctx, r, time) {
+    const g=r.geometry, phase=r.sweepPhase*Math.PI/180;
+    const sweep=r.sweepEnabled?r.sweepAmplitude*Math.sin(time*r.sweepSpeed*Math.PI*2+phase):0;
+    const shimmer=1-r.flickerAmount*(.5+.3*Math.sin(time*7+r.instance.seed)+.2*Math.sin(time*11));
+    const endWidth=g.width/2+g.length*Math.tan(g.spreadDeg*Math.PI/360);
+    ctx.save();ctx.translate(g.x,g.y);ctx.rotate((g.directionDeg+sweep-90)*Math.PI/180);
+    // Cache the local beam, then apply its elliptical fade once. Fading each
+    // cone separately compounds low-alpha rounding into visible rings.
+    if(!r._searchlightCanvas){
+      const canvas=r._searchlightCanvas=document.createElement('canvas');
+      canvas.width=256;canvas.height=512;
+      const c=canvas.getContext('2d');
+      c.scale(128/endWidth,512/g.length);c.translate(endWidth,0);
+      const count=Math.ceil(16*QUALITY[r.quality].layers);
+      for(let i=0;i<count;i++){
+        const p=i/(count-1),span=1-p*(.35+.25*r.softness),start=g.width/2*span;
+        const end=endWidth*(1-p*(.6+.15*r.softness));
+        const gradient=c.createLinearGradient(0,0,0,g.length);
+        const alpha=Math.min(1,r.intensity/count*(1.2+.5*p));
+        gradient.addColorStop(0,rgba(r.primaryColor,alpha));
+        gradient.addColorStop(.14,rgba(r.secondaryColor,alpha*.9));
+        gradient.addColorStop(.55,rgba(r.secondaryColor,alpha*.85));
+        gradient.addColorStop(1,rgba(r.glowColor,alpha*.8));
+        c.fillStyle=gradient;c.beginPath();c.moveTo(-start,0);
+        c.quadraticCurveTo(-(start+endWidth*span)*.5,g.length*.5,-end,g.length);
+        c.lineTo(end,g.length);c.quadraticCurveTo((start+endWidth*span)*.5,g.length*.5,start,0);c.closePath();c.fill();
+      }
+      c.globalCompositeOperation='destination-in';
+      c.scale(endWidth*1.25,g.length);
+      const fade=c.createRadialGradient(0,0,0,0,0,1);
+      // Smoothstep reaches zero with zero slope; dense stops avoid kinks.
+      for(let i=0;i<=32;i++){
+        const t=i/32,u=Math.max(0,(t-.14)/.86);
+        fade.addColorStop(t,rgba('#FFFFFF',1-u*u*(3-2*u)));
+      }
+      c.fillStyle=fade;c.fillRect(-1,0,2,1);
+    }
+    ctx.save();ctx.globalAlpha*=shimmer;
+    ctx.drawImage(r._searchlightCanvas,-endWidth,0,endWidth*2,g.length);
+    ctx.restore();
+    const radius=g.width*(1.4+r.glow*.6),halo=ctx.createRadialGradient(0,0,0,0,0,radius);
+    halo.addColorStop(0,rgba(r.primaryColor,Math.min(1,r.intensity*.8)*shimmer));halo.addColorStop(.15,rgba(r.secondaryColor,.5*r.glow));halo.addColorStop(1,rgba(r.glowColor,0));
+    ctx.fillStyle=halo;ctx.fillRect(-radius,-radius,radius*2,radius*2);ctx.restore();
+  }
+
   function drawBeam(ctx, resolved, time) {
+    if(resolved.preset.beamStyle==='searchlight'){drawSearchlight(ctx,resolved,time);return;}
     const geometry = resolved.geometry;
     const directionDeg = resolved.overriddenFields.includes("directionDeg") ? resolved.directionDeg : (geometry.directionDeg ?? resolved.directionDeg);
     const angle = directionDeg * Math.PI / 180;
@@ -2329,11 +2554,14 @@
     validateInstance,
     validateLevel,
     geometryBounds,
+    indicatorExtent,
     maskBounds,
     pointInsideGeometry,
     pointInsideMask,
     polygonSelfIntersects,
     defaultInstance,
+    drawResolved,
+    detectQuality,
     createRuntime
   };
 })();

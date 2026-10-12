@@ -62,6 +62,13 @@ test('delayed boot registers PWA, upgrades cache, and reloads intro offline',asy
  expect(iconAudit).toHaveLength(6);
  expect(new Set(iconAudit.map(icon=>icon.src)).size).toBe(6);
  const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+ // Editor UX updates must reach cached/PWA sessions too. Ordinary editor
+ // tests bypass the worker, so compare the offline-served UI bytes with disk.
+ for(const file of ['src/flyby-fx-editor.js','src/styles.css']){
+  const cached=await page.evaluate(async file=>(await fetch(file)).text(),file);
+  expect(cached).toBe(fs.readFileSync(path.join(__dirname,'..',file),'utf8'));
+  if(file.endsWith('flyby-fx-editor.js'))expect(cached).toContain('data-action="preview-settings"');
+ }
  for(const icon of iconAudit){
   expect(icon.src).toMatch(/\?v=atlas-compass-1$/);
   expect(icon.status).toBe(200);expect(icon.mime).toContain('image/png');

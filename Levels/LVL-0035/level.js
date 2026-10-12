@@ -183,7 +183,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "7 × 9 = ?",
               "answer": 63,
-              "hintParameters": {"a":7,"b":9},
+              "hintParameters": {
+                "a": 7,
+                "b": 9
+              },
               "explanation": "7 × 9 = 63."
             },
             {
@@ -195,7 +198,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "6 × 8 = ?",
               "answer": 48,
-              "hintParameters": {"a":6,"b":8},
+              "hintParameters": {
+                "a": 6,
+                "b": 8
+              },
               "explanation": "6 × 8 = 48.",
               "choices": [
                 56,
@@ -218,7 +224,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "4 × 8 = ?",
               "answer": 32,
-              "hintParameters": {"a":4,"b":8},
+              "hintParameters": {
+                "a": 4,
+                "b": 8
+              },
               "explanation": "4 × 8 = 32.",
               "choices": [
                 32,
@@ -236,7 +245,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "9 × 3 = ?",
               "answer": 27,
-              "hintParameters": {"a":9,"b":3},
+              "hintParameters": {
+                "a": 9,
+                "b": 3
+              },
               "explanation": "9 × 3 = 27."
             }
           ]
@@ -253,7 +265,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "Op het scherm staan 6 rijen met elk 7 vakjes. Hoeveel vakjes zijn dat samen?",
               "answer": 42,
-              "hintParameters": {"a":6,"b":7},
+              "hintParameters": {
+                "a": 6,
+                "b": 7
+              },
               "explanation": "6 × 7 = 42."
             },
             {
@@ -265,7 +280,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Er zijn 8 kabelbundels met elk 6 kabels. Hoeveel kabels zijn dat samen?",
               "answer": 48,
-              "hintParameters": {"a":8,"b":6},
+              "hintParameters": {
+                "a": 8,
+                "b": 6
+              },
               "explanation": "8 × 6 = 48.",
               "choices": [
                 54,
@@ -288,7 +306,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "56 : 7 = ?",
               "answer": 8,
-              "hintParameters": {"a":56,"b":7},
+              "hintParameters": {
+                "a": 56,
+                "b": 7
+              },
               "explanation": "56 : 7 = 8."
             },
             {
@@ -300,7 +321,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "72 : 8 = ?",
               "answer": 9,
-              "hintParameters": {"a":72,"b":8},
+              "hintParameters": {
+                "a": 72,
+                "b": 8
+              },
               "explanation": "72 : 8 = 9.",
               "choices": [
                 17,
@@ -533,7 +557,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "8 × 9 = ?",
               "answer": 72,
-              "hintParameters": {"a":8,"b":9},
+              "hintParameters": {
+                "a": 8,
+                "b": 9
+              },
               "explanation": "8 × 9 = 72.",
               "choices": [
                 72,
@@ -551,7 +578,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "7 × 6 = ?",
               "answer": 42,
-              "hintParameters": {"a":7,"b":6},
+              "hintParameters": {
+                "a": 7,
+                "b": 6
+              },
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -568,7 +598,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "5 × 4 = ?",
               "answer": 20,
-              "hintParameters": {"a":5,"b":4},
+              "hintParameters": {
+                "a": 5,
+                "b": 4
+              },
               "explanation": "5 × 4 = 20."
             },
             {
@@ -580,7 +613,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintParameters": {"a":9,"b":8},
+              "hintParameters": {
+                "a": 9,
+                "b": 8
+              },
               "explanation": "9 × 8 = 72.",
               "choices": [
                 80,
@@ -603,7 +639,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "48 : 6 = ?",
               "answer": 8,
-              "hintParameters": {"a":48,"b":6},
+              "hintParameters": {
+                "a": 48,
+                "b": 6
+              },
               "explanation": "48 : 6 = 8.",
               "choices": [
                 8,
@@ -621,7 +660,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "63 : 9 = ?",
               "answer": 7,
-              "hintParameters": {"a":63,"b":9},
+              "hintParameters": {
+                "a": 63,
+                "b": 9
+              },
               "explanation": "63 : 9 = 7."
             }
           ]
@@ -638,7 +680,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "multipleChoice",
               "prompt": "Valente verdeelt 42 batterijen over 7 gelijke doosjes. Hoeveel batterijen gaan in elk doosje?",
               "answer": 6,
-              "hintParameters": {"a":42,"b":7},
+              "hintParameters": {
+                "a": 42,
+                "b": 7
+              },
               "explanation": "42 : 7 = 6.",
               "choices": [
                 6,
@@ -656,7 +701,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
               "answerMode": "open",
               "prompt": "Een zaklamp kost 4 euro. Valente koopt 5 zaklampen. Hoeveel euro betaalt hij?",
               "answer": 20,
-              "hintParameters": {"a":5,"b":4,"currency":"euro"},
+              "hintParameters": {
+                "a": 5,
+                "b": 4,
+                "currency": "euro"
+              },
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -768,7 +817,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
     }
   },
   "companionPolicy": {
-    "disabledEvents": ["CHALLENGE_OPEN", "CHALLENGE_SUCCESS", "LEVEL_PROGRESS_MILESTONE"],
+    "disabledEvents": [
+      "CHALLENGE_OPEN",
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
     "attentionOncePerVisit": true
   },
   "companionMoments": [
@@ -864,7 +917,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
       "intervalMaxMs": 10000,
       "syncKey": "",
       "startDelayMs": 0,
-      "softness": 0,
+      "softness": 1.25,
       "saturation": 1,
       "soundVolume": 0.65,
       "rotateAlongPath": false,
@@ -915,17 +968,59 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
       "intervalMaxMs": 12000,
       "syncKey": "",
       "startDelayMs": 0,
-      "softness": 0,
+      "softness": 1.5,
       "saturation": 1,
       "soundVolume": 0.65,
       "rotateAlongPath": false,
       "maxRotationDeg": 8,
+      "brightness": 0.85,
       "soundTriggers": [
         "during",
         "tap"
       ],
       "motionProfile": "smooth",
       "wobble": 25,
+      "speedVariation": 0.14,
+      "flutterFrequency": 2.1
+    },
+    {
+      "id": "shredder-1",
+      "label": "shredder",
+      "frameA": "assets/ambient/flybys/shredder/shredder.png",
+      "frameB": null,
+      "sound": "assets/ambient/flybys/shredder/shredder.mp3",
+      "path": [
+        {
+          "x": -43,
+          "y": 526
+        },
+        {
+          "x": 1071,
+          "y": 526
+        },
+        {
+          "x": 2217,
+          "y": 530
+        }
+      ],
+      "scale": 0.36,
+      "speed": 150,
+      "flapFrequencyHz": 7,
+      "faceFlightDirection": false,
+      "mirrorX": true,
+      "intervalMinMs": 8000,
+      "intervalMaxMs": 10000,
+      "syncKey": "",
+      "startDelayMs": 0,
+      "softness": 1.75,
+      "saturation": 1,
+      "soundVolume": 0.1,
+      "rotateAlongPath": false,
+      "maxRotationDeg": 8,
+      "loopDuringFlyby": true,
+      "brightness": 0.66,
+      "motionProfile": "smooth",
+      "wobble": 14,
       "speedVariation": 0.14,
       "flutterFrequency": 2.1
     }

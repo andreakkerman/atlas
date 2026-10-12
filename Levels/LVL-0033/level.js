@@ -386,7 +386,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "8 × 7 = ?",
               "answer": 56,
-              "hintParameters": {"a":8,"b":7},
+              "hintParameters": {
+                "a": 8,
+                "b": 7
+              },
               "explanation": "8 × 7 = 56."
             },
             {
@@ -404,7 +407,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 54,
                 56
               ],
-              "hintParameters": {"a":6,"b":8},
+              "hintParameters": {
+                "a": 6,
+                "b": 8
+              },
               "explanation": "6 × 8 = 48."
             }
           ]
@@ -427,7 +433,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 36,
                 45
               ],
-              "hintParameters": {"a":9,"b":4},
+              "hintParameters": {
+                "a": 9,
+                "b": 4
+              },
               "explanation": "9 × 4 = 36."
             },
             {
@@ -439,7 +448,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "7 × 6 = ?",
               "answer": 42,
-              "hintParameters": {"a":7,"b":6},
+              "hintParameters": {
+                "a": 7,
+                "b": 6
+              },
               "explanation": "7 × 6 = 42."
             }
           ]
@@ -456,7 +468,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "Er staan 3 dozen met elk 8 dakpannen. Hoeveel dakpannen zijn dat samen?",
               "answer": 24,
-              "hintParameters": {"a":3,"b":8},
+              "hintParameters": {
+                "a": 3,
+                "b": 8
+              },
               "explanation": "3 × 8 = 24."
             },
             {
@@ -474,7 +489,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 30,
                 36
               ],
-              "hintParameters": {"a":5,"b":6},
+              "hintParameters": {
+                "a": 5,
+                "b": 6
+              },
               "explanation": "5 × 6 = 30."
             }
           ]
@@ -491,7 +509,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "54 : 9 = ?",
               "answer": 6,
-              "hintParameters": {"a":54,"b":9},
+              "hintParameters": {
+                "a": 54,
+                "b": 9
+              },
               "explanation": "54 : 9 = 6."
             },
             {
@@ -509,7 +530,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 9,
                 8
               ],
-              "hintParameters": {"a":56,"b":7},
+              "hintParameters": {
+                "a": 56,
+                "b": 7
+              },
               "explanation": "56 : 7 = 8."
             }
           ]
@@ -533,7 +557,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "9 × 8 = ?",
               "answer": 72,
-              "hintParameters": {"a":9,"b":8},
+              "hintParameters": {
+                "a": 9,
+                "b": 8
+              },
               "explanation": "9 × 8 = 72."
             },
             {
@@ -551,7 +578,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 72,
                 56
               ],
-              "hintParameters": {"a":7,"b":9},
+              "hintParameters": {
+                "a": 7,
+                "b": 9
+              },
               "explanation": "7 × 9 = 63."
             }
           ]
@@ -574,7 +604,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 24,
                 32
               ],
-              "hintParameters": {"a":6,"b":4},
+              "hintParameters": {
+                "a": 6,
+                "b": 4
+              },
               "explanation": "6 × 4 = 24."
             },
             {
@@ -586,7 +619,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "8 × 5 = ?",
               "answer": 40,
-              "hintParameters": {"a":8,"b":5},
+              "hintParameters": {
+                "a": 8,
+                "b": 5
+              },
               "explanation": "8 × 5 = 40."
             }
           ]
@@ -609,7 +645,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 48,
                 49
               ],
-              "hintParameters": {"a":6,"b":7},
+              "hintParameters": {
+                "a": 6,
+                "b": 7
+              },
               "explanation": "6 × 7 = 42."
             },
             {
@@ -621,7 +660,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "Er zijn 4 doosjes met elk 5 schroeven. Hoeveel schroeven zijn dat samen?",
               "answer": 20,
-              "hintParameters": {"a":4,"b":5},
+              "hintParameters": {
+                "a": 4,
+                "b": 5
+              },
               "explanation": "4 × 5 = 20."
             }
           ]
@@ -644,7 +686,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
                 8,
                 9
               ],
-              "hintParameters": {"a":48,"b":6},
+              "hintParameters": {
+                "a": 48,
+                "b": 6
+              },
               "explanation": "48 : 6 = 8."
             },
             {
@@ -656,7 +701,10 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
               "answerMode": "open",
               "prompt": "Een pad van 72 meter wordt verdeeld in 8 gelijke stukken. Hoeveel meter is elk stuk?",
               "answer": 9,
-              "hintParameters": {"a":72,"b":8},
+              "hintParameters": {
+                "a": 72,
+                "b": 8
+              },
               "explanation": "72 : 8 = 9."
             }
           ]
@@ -746,28 +794,28 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
     "badge": "3 opdrachten",
     "detail": "Kerkklok, schoorsteen en ARC Probe"
   },
-  sceneEffects: [
-        {
-              id: "sun-presence-01",
-              label: "Warm day sun 1",
-              presetId: "sun-presence",
-              variantId: "warm-day-sun",
-              presetVersion: 1,
-              enabled: true,
-              seed: 833553467,
-              qualityTier: "auto",
-              layerSlot: "worldLight",
-              groupId: "",
-              geometry: {
-                    type: "pointRadius",
-                    x: 248,
-                    y: 189,
-                    radius: 94
-              },
-              overrides: {
-                    rayEndAngle: 90
-              }
-        }
+  "sceneEffects": [
+    {
+      "id": "sun-presence-01",
+      "label": "Warm day sun 1",
+      "presetId": "sun-presence",
+      "variantId": "warm-day-sun",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 833553467,
+      "qualityTier": "auto",
+      "layerSlot": "worldLight",
+      "groupId": "",
+      "geometry": {
+        "type": "pointRadius",
+        "x": 248,
+        "y": 189,
+        "radius": 94
+      },
+      "overrides": {
+        "rayEndAngle": 90
+      }
+    }
   ],
   "reward": {
     "title": "Buried City voltooid",
@@ -792,7 +840,11 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
     }
   },
   "companionPolicy": {
-    "disabledEvents": ["CHALLENGE_OPEN", "CHALLENGE_SUCCESS", "LEVEL_PROGRESS_MILESTONE"],
+    "disabledEvents": [
+      "CHALLENGE_OPEN",
+      "CHALLENGE_SUCCESS",
+      "LEVEL_PROGRESS_MILESTONE"
+    ],
     "attentionOncePerVisit": true
   },
   "companionMoments": [
@@ -888,7 +940,7 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0033"] = {
       "intervalMaxMs": 8000,
       "syncKey": "",
       "startDelayMs": 0,
-      "softness": 0,
+      "softness": 1.25,
       "saturation": 1,
       "soundVolume": 0.65,
       "rotateAlongPath": false,

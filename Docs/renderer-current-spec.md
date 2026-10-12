@@ -83,6 +83,8 @@ Cancel held input on blur, cancellation, navigation, suspension and disposal. Re
 
 ## GPU ownership, lifecycle and failure
 
+Static flyby attachments can supply cropped rear/front Canvas2D surfaces alongside the original sprite. The existing Cinematic/Illustrated sprite compositor uploads them only when their producer revision changes and draws them around that sprite. They add no GPU device, shader family or world target. Source-sized body canvases, sprite-only hit testing and original contact points are retained. FX canvases are detached/cleared on despawn; the existing dynamic-sprite texture owner releases disconnected uploads and all uploads on level/device release. Effect surfaces use the existing flyby scheduler and Canvas effect quality cadence, with scene-depth masking through the ambient depth owner. Renderer/resource changes to this path require the repository's conditional GPU acceptance checks.
+
 Cinematic/Voxel use the shared [WebGPU capability broker](../src/webgpu-capabilities.js). Three owns its active world/device. Before acquiring Three resources, dispose other renderer resources and release the shared device; guard late acquisition so a canceled request cannot destroy a replacement renderer's device. Join canceled GLTF preparation before starting another world to avoid overlapping decode/resource ownership.
 
 Disposal invalidates generation callbacks, cancels pending preparation/input/animation, releases scene/material/texture/postprocessing resources, unconfigures contexts and destroys owned devices. Mode/world identity participates in canvas retention and readiness. Late callbacks must not resurrect a canceled renderer or fail a newer generation.

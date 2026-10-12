@@ -3414,7 +3414,7 @@ function updateAmbientFlybySetting(id, field, value) {
   const flybys = cloneAmbientFlybys(level.ambientFlybys || []);
   const flyby = flybys.find((item) => item.id === id);
   if (!flyby) return;
-  const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath", "depthOcclusion", "enabled"]);
+  const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath", "depthOcclusion", "enabled", "loopDuringFlyby"]);
   const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile", "playback", "endBehavior"]);
   if (booleans.has(field)) flyby[field] = Boolean(value);
   else if (field === "motionProfile") flyby[field] = String(value) === "organic" ? "organic" : "smooth";
@@ -4853,6 +4853,9 @@ function renderAmbientAddForm(type) {
 }
 
 function renderFlybyField(label, flyby, field, options = {}) {
+  const shared=window.AtlasAmbientSystem.previewControls[field];
+  options={...shared,...options};
+  if(shared?.default!==undefined&&!options.display)options.display=v=>v??shared.default;
   if (options.toggle) return `
     <label class="editorToggle"><input type="checkbox" data-flyby-setting="${field}" data-flyby-id="${flyby.id}" ${flyby[field] ? "checked" : ""}/><span>${label}</span></label>
   `;
@@ -5104,8 +5107,8 @@ function renderAmbientEditorControls(options = {}) {
       ${flyby ? `
         <div class="flybyEditorCard" data-flyby-editor-id="${flyby.id}">
           <div class="editorCommonControls"><strong>${flyby.label}</strong><span>${flyby.id}</span>
-            ${renderFlybyField("Scale", flyby, "scale", { min: 0.02, max: 2, step: 0.01 })}
-            ${renderFlybyField("Speed px/s", flyby, "speed", { min: 1, max: 2000, step: 1 })}
+            ${renderFlybyField("Scale", flyby, "scale")}
+            ${renderFlybyField("Speed px/s", flyby, "speed")}
             <div class="animalEditorActions">
               <button type="button" data-debug-action="edit-flight-path" data-flyby-id="${flyby.id}">Edit flight path</button>
               ${renderFlybyPreviewControls(flyby)}
@@ -5122,14 +5125,14 @@ function renderAmbientEditorControls(options = {}) {
           <details class="editorNestedSection" open><summary>Animation</summary>
             ${renderFlybyField("Enabled", {...flyby,enabled:flyby.enabled!==false}, "enabled", {toggle:true})}${renderFlybySequenceControls(flyby)}
             ${renderFlybyMotionProfile(flyby)}
-            ${renderFlybyField("Wobble", flyby, "wobble", { min: 0, max: 80, step: 1, display: (v) => Number(v ?? 14) })}
-            ${renderFlybyField("Speed variation", flyby, "speedVariation", { min: 0, max: 0.45, step: 0.01, display: (v) => Number(v ?? 0.14) })}
-            ${renderFlybyField("Flutter frequency", flyby, "flutterFrequency", { min: 0.1, max: 8, step: 0.1, display: (v) => Number(v ?? 2.1) })}
+            ${renderFlybyField("Wobble", flyby, "wobble")}
+            ${renderFlybyField("Speed variation", flyby, "speedVariation")}
+            ${renderFlybyField("Flutter frequency", flyby, "flutterFrequency")}
             ${!flyby.frames && flyby.frameB ? renderFlybyField("Flap Hz", flyby, "flapFrequencyHz", { min: 0, max: 20, step: 0.5 }) : ''}
             ${renderFlybyField("Face flight direction", flyby, "faceFlightDirection", { toggle: true })}
             ${renderFlybyField("Manual mirror", flyby, "mirrorX", { toggle: true })}
             ${renderFlybyField("Rotate along path", flyby, "rotateAlongPath", { toggle: true })}
-            ${renderFlybyField("Max rotation", flyby, "maxRotationDeg", { min: 0, max: 45 })}
+            ${renderFlybyField("Max rotation", flyby, "maxRotationDeg")}
           </details>
           <details class="editorNestedSection"><summary>Timing</summary>
             ${renderFlybyField("Minimum interval (s)", flyby, "intervalMinMs", { min: 5, max: 120, display: (v) => Number(v) / 1000, scale: 1000 })}
@@ -5142,7 +5145,8 @@ function renderAmbientEditorControls(options = {}) {
           <details class="editorNestedSection"><summary>Audio</summary>
             <label class="editorField"><span>Sound</span><select data-flyby-setting="sound" data-flyby-id="${flyby.id}">${assetOptions(walkPathEditor.assets.audio || [], flyby.sound, true)}</select></label>
             ${["during", "tap"].map(trigger => `<label class="editorToggle"><input type="checkbox" data-flyby-sound-trigger="${trigger}" data-flyby-id="${flyby.id}" ${window.AtlasAmbientSystem.soundTriggers(flyby).includes(trigger) ? "checked" : ""}/><span>${trigger === "during" ? "During Flyby" : "On Tap"}</span></label>`).join("")}
-            ${renderFlybyField("Sound volume", flyby, "soundVolume", { min: 0, max: 1, step: 0.05 })}
+            ${renderFlybyField("Sound volume", flyby, "soundVolume")}
+            <label class="editorToggle"><input type="checkbox" data-flyby-setting="loopDuringFlyby" data-flyby-id="${flyby.id}" ${flyby.loopDuringFlyby===true?'checked':''}/><span>Loop during flyby</span></label>
           </details>
           <details class="editorNestedSection"><summary>Graphics</summary>
             ${Object.entries(window.AtlasAmbientSystem.graphicsControls).map(([field,control])=>renderFlybyField(control.label,flyby,field,{...control,display:()=>window.AtlasAmbientSystem.graphicsFor(flyby)[field]})).join('')}
@@ -6480,12 +6484,12 @@ function renderAmbientFlyby(flyby) {
   const ready = ambientFlybyRuntime.readiness.get(`${level.id}:${flyby.id}`);
   if (!ready?.frameA) return "";
   const frameB = ready.frameB ? flyby.frameB : null;
-  const canvasVisual = window.AtlasAmbientSystem.canvasVisual(flyby) || (EDITOR_DEV_MODE && debugOverlayEnabled && ambientFlybyRuntime.active.get(flyby.id)?.preview);
+  const canvasVisual = window.AtlasAmbientSystem.canvasVisual(flyby) || Boolean(ready.fx) || (EDITOR_DEV_MODE && debugOverlayEnabled && ambientFlybyRuntime.active.get(flyby.id)?.preview);
   // `enabled` is editing capability, not visibility; closed tools must leave
   // gameplay input available on the development URL too.
   const editing = debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest;
   return `
-    <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a"
+    <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a" ${ready.fx?'data-has-fx="true"':''}
       data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.frames, flyby.depthOcclusion, flyby.depthBias, flyby.softness, flyby.saturation, canvasVisual]))}"
       data-sound-trigger="${((window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound) || flyby.actions?.onTap) && state.screen === "scene" && (!editing || ambientFlybyRuntime.active.get(flyby.id)?.preview) ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
@@ -7034,6 +7038,7 @@ function renderWorldManagementPanel() {
           <button type="button" data-config-action="close-world-editor" aria-label="Wereldeditor sluiten">×</button>
         </header>
         <div class="worldEditorToolbar">
+          <nav aria-label="Developer Tools sections"><button type="button" aria-current="page">World Editing</button><button type="button" data-config-action="open-fx-editor">FX Editing</button></nav>
           <label>World
             <select data-world-editor-select>
               ${roots.map((root) => `<option value="${root.id}" ${root.id === selectedRoot.id ? "selected" : ""}>${root.title}</option>`).join("")}
@@ -8188,6 +8193,10 @@ app.addEventListener("click", (event) => {
     event.stopPropagation();
     const action = configActionTarget.dataset.configAction;
     const levelId = configActionTarget.dataset.levelId;
+    if(action==='open-fx-editor'){
+      window.AtlasFlybyFXEditor.open({assetCache,getAudioUnlocked:()=>audioState.unlocked,getMasterVolume:audioMasterVolume,unlockAudio:ensureAudioUnlocked,canSave:EDITOR_DEV_MODE,onWorld:()=>render(),onClose:()=>{worldEditor.open=false;debugOverlayEnabled=false;render();}});
+      return;
+    }
     if (action === "close-world-editor") {
       worldEditor.open = false;
       debugOverlayEnabled = false;

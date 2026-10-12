@@ -1,4 +1,4 @@
-const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
+const {selectSceneItem,bootEditorTest,chooseCreation}=require('./editor-workspace-helpers');
 // @ts-check
 const { test, expect } = require("@playwright/test");
 const fs = require("fs");
@@ -113,10 +113,12 @@ async function clickWorld(page, x, y, surface = "workspace") {
   await page.mouse.click(point.x, point.y);
 }
 
-async function addPresetEffect(page,presetId) {
+async function addPresetEffect(page,presetId,variantId) {
  const before=await page.evaluate(()=>window.eval('(level.sceneEffects || []).length'));
  if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
- await page.locator(`[data-effect-preset-card='${presetId}']`).getByRole('button',{name:'Add effect',exact:true}).click();
+ await chooseCreation(page,'effect:'+presetId);
+ if(variantId)await page.locator('[data-add-variant]').selectOption(variantId);
+ await page.locator('[data-add-effect]').click();
  const box=await page.locator('[data-world-stage]').boundingBox();await page.mouse.click(box.x+box.width*.4,box.y+box.height*.4);
  await expect.poll(()=>page.evaluate(()=>window.eval('(level.sceneEffects || []).length'))).toBe(before+1);
 }
@@ -2307,8 +2309,7 @@ test.describe("scene effects editor", () => {
     await openEffectsEditor(page);
 
     if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
-    await page.locator("[data-effect-preset-card='light-source-enhancement'] [data-effect-library-variant]").selectOption("wall-torch");
-    await addPresetEffect(page, "light-source-enhancement");
+    await addPresetEffect(page, "light-source-enhancement", "wall-torch");
     await page.evaluate(() => {
       const effect = window.eval("level.sceneEffects[0]");
       effect.geometry.x = 180;
@@ -2385,8 +2386,7 @@ test.describe("scene effects editor", () => {
     await closeEffectGeometry(page);
 
     if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
-    await page.locator("[data-effect-preset-card='sparks-and-embers'] [data-effect-library-variant]").selectOption("rising-sparks");
-    await addPresetEffect(page, "sparks-and-embers");
+    await addPresetEffect(page, "sparks-and-embers", "rising-sparks");
     await page.locator("[data-effect-field='geometryType']").selectOption("directionalEmitter");
     await openEffectGeometry(page);
     const directionBefore = await page.evaluate(() => window.eval("level.sceneEffects[2].geometry.directionDeg"));
@@ -2398,8 +2398,7 @@ test.describe("scene effects editor", () => {
     await closeEffectGeometry(page);
 
     if(!await page.locator('[data-editor-add]').count())await page.locator('[data-workspace-action="add"]').click();
-    await page.locator("[data-effect-preset-card='bubbles-and-spray'] [data-effect-library-variant]").selectOption("rising-bubbles");
-    await addPresetEffect(page, "bubbles-and-spray");
+    await addPresetEffect(page, "bubbles-and-spray", "rising-bubbles");
     await openEffectGeometry(page);
     await page.getByRole("button", { name: "Mask", exact: true }).click({ force: true });
     await page.getByRole("button", { name: "Draw include polygon" }).click();
@@ -2530,7 +2529,7 @@ test.describe("scene effects editor", () => {
       expect(fs.readFileSync(levelPath, "utf8")).toContain("sceneEffects:");
 
       const reload = await page.context().newPage();
-      await reload.goto(process.env.ATLAS_EDITOR_URL);
+      await bootEditorTest(reload,process.env.ATLAS_EDITOR_URL);
       const result = await reload.evaluate(async () => {
         await window.eval("selectLevel")("LVL-0003", { startImmediately: true });
         return {

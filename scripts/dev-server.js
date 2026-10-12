@@ -21,6 +21,31 @@ const sceneEffectsApi = loadSceneEffectsApi();
 const playableCharactersApi = require("../src/playable-characters.js");
 const cinematicSettingsApi = require("../src/cinematic-settings.js");
 const ambientSystemApi = require("../src/ambient-system.js");
+const crypto = require("crypto");
+const fxContext={window:{AtlasSceneEffects:sceneEffectsApi,AtlasAmbientSystem:ambientSystemApi}};
+vm.runInNewContext(fs.readFileSync(path.join(rootDir,'src/flyby-fx.js'),'utf8'),fxContext);
+const flybyFxApi=fxContext.window.AtlasFlybyFX;
+
+function ambientFiles(){
+  const dir=ambientLibraryDir();
+  return fs.readdirSync(dir,{recursive:true,withFileTypes:true}).filter(e=>e.isFile())
+    .map(e=>path.relative(dir,path.join(e.parentPath||e.path,e.name)).replace(/\\/g,'/')).sort();
+}
+function fxAsset(key){
+  const asset=discoverAmbientAssetSets(ambientFiles()).flybys.find(a=>a.key===key);
+  if(!asset||asset.frames.length!==1||!asset.frameA.toLowerCase().endsWith('.png'))throw new Error('Choose a single PNG flyby asset.');
+  const base=fs.realpathSync(path.join(ambientLibraryDir(),'flybys'))+path.sep;
+  const file=fs.realpathSync(path.join(rootDir,asset.frameA));
+  if(!file.startsWith(base))throw new Error('Asset escapes the flyby library.');
+  const bytes=fs.readFileSync(file);
+  if(bytes.length<24||bytes.subarray(0,8).toString('hex')!=='89504e470d0a1a0a')throw new Error('Invalid PNG.');
+  return {...asset,sourceSize:{width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20)},file:path.join(path.dirname(file),'fx.json')};
+}
+function readFx(asset){
+  if(fs.existsSync(asset.file)&&fs.lstatSync(asset.file).isSymbolicLink())throw new Error('FX sidecar cannot be a symbolic link.');
+  const source=fs.existsSync(asset.file)?fs.readFileSync(asset.file,'utf8'):null;
+  return {document:source===null?flybyFxApi.empty(asset.frameA,asset.sourceSize.width,asset.sourceSize.height):JSON.parse(source),revision:source===null?null:crypto.createHash('sha256').update(source).digest('hex')};
+}
 
 function sendJson(response, status, payload) {
   response.writeHead(status, {
@@ -469,6 +494,7 @@ function validateAmbientFlybys(value, levelId) {
       maxRotationDeg: number("maxRotationDeg", 0, 180)
     };
     const sequenceErrors=ambientSystemApi.sequenceErrors(flyby);
+    if(flyby.loopDuringFlyby!==undefined)result.loopDuringFlyby=flyby.loopDuringFlyby;
     if(sequenceErrors.length)throw new Error(`ambientFlybys[${index}]: ${sequenceErrors.join('; ')}`);
     if(flyby.frames!==undefined)result.frames=flyby.frames.map((p,i)=>validateAmbientAsset(levelId,p,`ambientFlybys[${index}].frames[${i}]`,ambientImageExtensions));
     for(const field of ['playback','animationFps','movementEndFrame','endBehavior','depthOcclusion','depthBias','actions','enabled','brightness','contrast','warmth','tint'])if(flyby[field]!==undefined)result[field]=flyby[field];
@@ -973,6 +999,27 @@ function applyAudioConfigDraft(audioConfig) {
 }
 
 async function handleDevRequest(request, response, url) {
+  if(url.pathname==='/__dev/flyby-assets'){
+    if(request.method!=='GET'){sendJson(response,405,{error:'Method not allowed.'});return true;}
+    const found=discoverAmbientAssetSets(ambientFiles());
+    sendJson(response,200,{assets:found.flybys.filter(a=>a.frames.length===1&&a.frameA.toLowerCase().endsWith('.png')),warnings:found.warnings});return true;
+  }
+  if(url.pathname==='/__dev/flyby-fx'){
+    try{
+      const asset=fxAsset(url.searchParams.get('asset')),saved=readFx(asset);
+      if(request.method==='GET'){sendJson(response,200,{...saved,sourceSize:asset.sourceSize});return true;}
+      if(request.method!=='POST'){sendJson(response,405,{error:'Method not allowed.'});return true;}
+      const body=JSON.parse(await readBody(request)||'{}');
+      // Recheck after awaiting the request body: another editor may have saved
+      // while it was being received. Validation and replacement below are sync.
+      if(body.revision!==readFx(asset).revision){sendJson(response,409,{error:'This FX file changed externally. Revert to saved before saving again.'});return true;}
+      const errors=flybyFxApi.validate(body.document,asset.frameA,asset.sourceSize);
+      if(errors.length)throw new Error(errors.join(' '));
+      writeTextAtomic(asset.file,JSON.stringify(body.document,null,2)+'\n');
+      sendJson(response,200,{ok:true,...readFx(asset)});
+    }catch(error){sendJson(response,400,{error:error.message});}
+    return true;
+  }
   if (url.pathname === "/__dev/status") {
     sendJson(response, 200, { ok: true, feature: "level-editor" });
     return true;
@@ -1175,6 +1222,11 @@ function serveStatic(response, url) {
     return;
   }
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    // An absent optional attachment is a normal asset-library state. Do not
+    // turn every legacy flyby into a failed resource request in local tooling.
+    if(/^assets\/ambient\/flybys\/.+\/fx\.json$/.test(relative) && fs.existsSync(path.dirname(filePath))){
+      response.writeHead(204,{'cache-control':'no-store'});response.end();return;
+    }
     sendText(response, 404, "Not found");
     return;
   }

@@ -234,6 +234,7 @@ test("main-menu world editor opens through the existing shortcut on the HTTP dev
   test.skip(!process.env.ATLAS_EDITOR_URL, "Requires the HTTP editor server.");
   await page.goto(process.env.ATLAS_EDITOR_URL);
   await page.getByRole("button", { name: "Start avontuur" }).click();
+  await expect(page.locator('.menuScreen')).toBeVisible();
   await page.keyboard.press("Control+Shift+D");
   await expect(page.locator("[data-world-editor]")).toBeVisible();
   await expect(page.getByRole("heading", { name: "World & Level Management" })).toBeVisible();
