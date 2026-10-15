@@ -1,3 +1,4 @@
+const {bootEditorTest}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),vm=require('vm');
 const contract=require('../src/cinematic-settings');
@@ -11,7 +12,7 @@ test.beforeEach(async({page},info)=>{
 const snapshot=page=>page.evaluate(()=>window.eval('cinematicRenderer').snapshot());
 async function ready(page){await expect.poll(async()=>{const s=await snapshot(page);return s.error||s.status;},{timeout:25000}).toBe('ready');}
 async function mode(page,renderer){await page.evaluate(renderer=>{window.eval('voxelRenderer').updateSettings({renderer});window.eval('render')();},renderer);await ready(page);}
-async function open(page,id){await page.goto(base+'/?dev=editor');await page.evaluate(id=>window.eval('selectLevel')(id,{startImmediately:true,recordStart:false,allowDisabledForEditor:true}),id);}
+async function open(page,id){await bootEditorTest(page,base+'/?dev=editor');await page.evaluate(id=>window.eval('selectLevel')(id,{startImmediately:true,recordStart:false,allowDisabledForEditor:true}),id);await page.waitForFunction(id=>window.eval('state.screen')==='scene'&&window.eval('level.id')===id,id);}
 function errors(page){const result=[];page.on('pageerror',e=>result.push(e.message));page.on('console',m=>{if(m.type()==='error')result.push(m.text());});return result;}
 
 // Audit every production level, including authored fields that are disabled.

@@ -106,7 +106,7 @@
         if (key === "localLights") { v.set([item.flickerAmount, item.flickerSpeed, item.randomness, ["steady", "fire", "slowPulse", "arcane"].indexOf(item.behavior)], 16); v.set([item.colorSpill, item.characterInfluence, item.atmosphereInfluence, 0], 20); }
         if (key === "shafts") v.set([item.noiseAmount, item.noiseScale, item.noiseSpeed, 0], 16);
         if (key === "atmosphere") { v.set([item.driftSpeed, radians(item.driftDirection), item.turbulence, item.noiseScale], 16); v[20] = item.noiseDetail; }
-        if (key === "particles") { v[12] = radians(item.boundsRotation ?? item.direction ?? 0); v[32] = radians(item.direction || 0); v.set([contract.particleCount(item), item.speed, item.turbulence, item.lifetime], 16); v.set([item.opacity, item.glow, item.gravity, item.randomness], 20); }
+        if (key === "particles") { v[12] = radians(item.boundsRotation ?? item.direction ?? 0); v[32] = radians(item.direction || 0); v[33] = item.gustStrength || 0; v[34] = item.motion === "windFlow" ? 1 : 0; v.set([contract.particleCount(item), item.speed, item.turbulence, item.lifetime], 16); v.set([item.opacity, item.glow, item.gravity, item.randomness], 20); }
         v.set([item.depth ?? 0.65, item.depthInfluence ?? 0, item.depthSoftness ?? 0.12, item.depthBias ?? item.depthSpread ?? 0], 24);
         if(key === "atmosphere") v.set([item.nearClear, item.farDensity, item.depthCurve, item.floorBias],28);
         if(key === "particles") v.set([item.wind, item.streak, item.pulse, item.distribution === "source" ? 1 : 0],28);
@@ -430,12 +430,12 @@
       targets = [texture(width, height, "rgba16float"), ...(!shadowOverlay ? [texture(width, height, "rgba16float")] : []), ...(mode === "cinematic" ? Array.from({ length: 3 }, () => texture(Math.max(2, width >> 2), Math.max(2, height >> 2), "rgba16float")) : [])];
       if(pipeline.adapt){computeGroup=device.createBindGroup({layout:pipeline.adapt.getBindGroupLayout(0),entries:[{binding:0,resource:{buffer:uniform}},{binding:1,resource:targets[1].view},{binding:2,resource:{buffer:exposureBuffer}}]});bindGroups++;}
     }
-    function illustratedSprite(image, source, bounds, rect, stage, key, mirror) {
+    function illustratedSprite(image, source, bounds, rect, stage, key, mirror, prepared) {
       const owner = image.closest('[data-actor-shell], [data-npc-challenge]') || bounds;
       const imageStyle = getComputedStyle(image), imageFilter = imageStyle.filter, ownerStyle = getComputedStyle(owner);
       const ratio = canvas.width / stage.width;
       const ownerScale = Math.abs(new DOMMatrix(ownerStyle.transform).a) || 1;
-      const filter = ownerStyle.filter.replace(/(-?[\d.]+)px/g, (_, n) => `${Number(n)*ratio*ownerScale}px`);
+      const filter = (prepared ? options.getPlayerDepthShadowFilter() : ownerStyle.filter).replace(/(-?[\d.]+)px/g, (_, n) => `${Number(n)*ratio*ownerScale}px`);
       const lengths = [...filter.matchAll(/(-?[\d.]+)px/g)].map(match=>Math.abs(Number(match[1])));
       const padding = Math.ceil(Math.max(0,...lengths)*4)+2;
       const cacheKey=`illustrated display:${key}`;
@@ -450,7 +450,7 @@
       const width=Math.ceil(pixelWidth)+padding*2,height=Math.ceil(pixelHeight)+padding*2;
       const x=padding,y=padding;
       const left=(rect.left-stage.left)*ratio-padding,top=(rect.top-stage.top)*ratio-padding;
-      const revision=JSON.stringify([source.currentSrc||source.src,width,height,x,y,pixelWidth,pixelHeight,ratio,imageFilter,filter,mirror]);
+      const revision=JSON.stringify([source.currentSrc||source.src,width,height,x,y,pixelWidth,pixelHeight,ratio,imageFilter,filter,mirror,...(prepared?[prepared.dataset.revision]:[])]);
       if(!resource || resource.displayRevision!==revision){
         // Import only this known scene sprite and its existing CSS filters,
         // never arbitrary DOM/UI. The original image still owns grounding.
@@ -459,7 +459,17 @@
         ctx.translate(x+(mirror?pixelWidth:0),y);ctx.scale(mirror?-1:1,1);
         ctx.drawImage(source,0,0,pixelWidth,pixelHeight);
         const filtered=document.createElement('canvas');filtered.width=pixels.width;filtered.height=pixels.height;
-        const output=filtered.getContext('2d');output.filter=filter;output.drawImage(pixels,0,0);
+        const output=filtered.getContext('2d');
+        if(prepared){
+          // Preserve the original drop shadow without leaving unmasked color
+          // at partially transparent sprite edges.
+          const offsets=[...filter.matchAll(/(-?[\d.]+)px/g)].map(match=>Number(match[1]));
+          if(offsets.length===3){
+            output.filter='blur('+offsets[2]+'px)';output.drawImage(pixels,offsets[0],offsets[1]);output.filter='none';
+            output.globalCompositeOperation='source-in';output.fillStyle=filter.match(/rgba?\([^)]*\)/)?.[0] || 'rgba(0,0,0,.35)';output.fillRect(0,0,width,height);output.globalCompositeOperation='source-over';
+          }
+          ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,width,height);ctx.restore();ctx.drawImage(prepared,0,0,pixelWidth,pixelHeight);output.drawImage(pixels,0,0);
+        }else{output.filter=filter;output.drawImage(pixels,0,0);}
         resource=uploadDynamicCanvas(filtered,resource,{purpose:`Illustrated sprite ${key}`,path:source.currentSrc||source.src});
         resource.displayRevision=revision;resource.displayWidth=pixelWidth;resource.displayHeight=pixelHeight;uploaded.set(cacheKey,resource);
       }
@@ -507,14 +517,18 @@
         resource.used = frame;
         const animal=bounds.closest('.ambientAnimal,.ambientFlyby');
         const style=getComputedStyle(animal || bounds);
+        const actorShell=key==='actor:sven'?image.closest('[data-actor-shell]'):null;
+        const actorOpacity=actorShell?Number(getComputedStyle(actorShell).opacity):1;
         let flybyUV;
         if(dynamic){
           const m=new DOMMatrix(style.transform),det=m.a*m.d-m.b*m.c;
           flybyUV=[m.d*rect.width/det/image.width,-m.b*rect.width/det/image.height,-m.c*rect.height/det/image.width,m.a*rect.height/det/image.height];
         }
-        const grounding=!animal&&character&&effective.characters.groundingShadow?displayedGrounding(analyzeSpriteGrounding(source),mirror):null;
-        const display=illustratedScene && !animal && uploaded.get(cacheKey)===resource && source.complete && source.naturalWidth ? illustratedSprite(image,source,bounds,rect,stage,fallbackKey,mirror) : null;
-        entries.push({ key, resource, grounding, display, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : 1, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
+        const grounding=!animal&&character&&actorOpacity===1&&effective.characters.groundingShadow?displayedGrounding(analyzeSpriteGrounding(source),mirror):null;
+        const prepared=key==='actor:sven'?options.preparePlayerDepth?.(mode==='cinematic'):null;
+        if(prepared && mode==='cinematic' && depthStatus!=='ready')throw new Error('Playable character occlusion requires the scene depth texture; using the Illustrated sprite fallback.');
+        const display=illustratedScene && !animal && uploaded.get(cacheKey)===resource && source.complete && source.naturalWidth ? illustratedSprite(image,source,bounds,rect,stage,fallbackKey,mirror,prepared) : null;
+        entries.push({ key, resource, grounding, display, uv:flybyUV, rect: [(rect.left-stage.left)/stage.width, (rect.top-stage.top)/stage.height, rect.width/stage.width, rect.height/stage.height], flags: [+character, +mirror, dynamic?2:+key.startsWith("flyby:"), prepared && mode==='cinematic' ? -2-options.getPlayerDepthValue() : 0], facing:key.startsWith("npc:")?(mirror?"mirrored":"native"):(image.dataset.resolvedFacing||"native"), opacity: animal ? Number(style.opacity) : actorOpacity, appearance: animal ? {saturation:Number(animal.dataset.saturation ?? (style.getPropertyValue('--flyby-saturation').trim() || 1))} : character ? options.getCharacterAppearance(key) : undefined, softness:animal ? Number(animal.dataset.softness ?? parseFloat(style.getPropertyValue('--flyby-softness')))||0 : 0, kind: key.startsWith("npc:") ? "npc" : "sven", shadow: !animal && settings.layers.characters !== false && effective.characters.groundingShadow && options.getGroundingShadow?.(key) !== false });
       };
       document.querySelectorAll(".ambientFlyby[data-active='true'][data-ready='true']").forEach(el => {
         const back=el.querySelector('[data-flyby-fx-canvas="behind"]'),front=el.querySelector('[data-flyby-fx-canvas="front"]');

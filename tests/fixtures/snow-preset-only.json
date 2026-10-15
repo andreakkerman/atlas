@@ -1,0 +1,53 @@
+{
+  "Snow": {
+    "color": "#e2efff",
+    "count": 1600,
+    "size": 2.2,
+    "sizeVariation": 0.9,
+    "speed": 65,
+    "direction": 90,
+    "gravity": 0.6,
+    "turbulence": 1,
+    "wind": 18,
+    "lifetime": 18,
+    "streak": 1,
+    "glow": 0,
+    "opacity": 0.7,
+    "depth": 0.7,
+    "depthSpread": 0.6
+  },
+  "Windblown Snow": {
+    "color": "#e2efff",
+    "count": 1300,
+    "size": 1.8,
+    "sizeVariation": 0.8,
+    "speed": 34,
+    "direction": 68,
+    "gravity": 0.2,
+    "turbulence": 2.7,
+    "wind": 64,
+    "lifetime": 24,
+    "streak": 1,
+    "glow": 0,
+    "opacity": 0.6,
+    "depth": 0.7,
+    "depthSpread": 0.6
+  },
+  "Blizzard": {
+    "color": "#dae8fa",
+    "count": 2000,
+    "size": 1.7,
+    "sizeVariation": 0.9,
+    "speed": 72,
+    "direction": 64,
+    "gravity": 0.35,
+    "turbulence": 3,
+    "wind": 115,
+    "lifetime": 18,
+    "streak": 1.35,
+    "glow": 0,
+    "opacity": 0.58,
+    "depth": 0.7,
+    "depthSpread": 0.65
+  }
+}

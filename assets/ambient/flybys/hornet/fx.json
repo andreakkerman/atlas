@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "sprite": "hornet.png",
+  "sourceSize": {
+    "width": 461,
+    "height": 461
+  },
+  "effects": [
+    {
+      "id": "fx-0b142eb9-c9fb-47cb-a0a8-4223d1ede34d",
+      "label": "Blue Light 1",
+      "presetId": "blue-light",
+      "variantId": "indicator",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 821777144,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "rectangle",
+        "x": 333.7,
+        "y": 261.5,
+        "width": 16.041934896964865,
+        "height": 17.06924725076982,
+        "directionDeg": 83.79705078135234
+      },
+      "overrides": {},
+      "plane": "front"
+    },
+    {
+      "id": "fx-ad6ebdcc-1f51-4c22-96cc-83b73cc81e14",
+      "label": "Compact warm propulsion 2",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 1323338503,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 73.4,
+        "y": 258.1,
+        "directionDeg": 85.51992341190035,
+        "width": 18.764431672625555,
+        "spreadDeg": 80.76192799581804,
+        "length": 11.429694274785774
+      },
+      "overrides": {
+        "opacity": 0.51
+      },
+      "plane": "behind"
+    },
+    {
+      "id": "fx-26353b7e-508c-4a99-b3ea-6400990afee7",
+      "label": "Compact warm propulsion 2 copy",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 1323338503,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 371.2,
+        "y": 242.3,
+        "directionDeg": 89.60742044414629,
+        "width": 18.764431672625555,
+        "spreadDeg": 80.76192799581804,
+        "length": 12.437477511113665
+      },
+      "overrides": {
+        "opacity": 0.51
+      },
+      "plane": "behind"
+    },
+    {
+      "id": "fx-a08fb181-4fcb-48a8-a3a2-a76b8dbd93f8",
+      "label": "Compact warm propulsion 2 copy copy",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 1323338503,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 242.3,
+        "y": 295.2,
+        "directionDeg": 89.60742044414629,
+        "width": 18.764431672625555,
+        "spreadDeg": 80.76192799581804,
+        "length": 12.437477511113665
+      },
+      "overrides": {
+        "opacity": 0.51
+      },
+      "plane": "front"
+    }
+  ]
+}

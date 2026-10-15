@@ -173,6 +173,15 @@ const assetCache = window.AtlasAmbientSystem.createAssetCache({
     if (EDITOR_DEV_MODE) console.warn(message);
   }
 });
+const playerDepth = window.AtlasPlayerDepth.create({
+  getLevel:()=>level,
+  getSettings:()=>level && worldResolver.levelSettings(level.id).playerDepthOcclusion,
+  getMode:()=>document.querySelector('[data-world-stage]')?.dataset.renderer,
+  getNativeReady:()=>cinematicStatus.ready && cinematicStatus.mode==='cinematic' && cinematicStatus.levelId===level?.id,
+  getPosition:()=>({x:state.worldX,y:state.worldY}),
+  loadImage:path=>assetCache.image(path),
+  onError:message=>{walkPathEditor.message='Character depth unavailable: '+message;walkPathEditor.status='Error';}
+});
 const guideBlinkRuntime = {
   minnie: { ready: false, timer: null, sequenceTimers: new Set(), frame: "open", blinking: false },
   moose: { ready: false, timer: null, sequenceTimers: new Set(), frame: "open", blinking: false }
@@ -190,6 +199,7 @@ const assetReadiness = window.AtlasAssetReadiness.createCoordinator({
 });
 const npcEditorReadyImages = new Map();
 const ambientFlybyRuntime = window.AtlasAmbientSystem.createFlybyRuntime({
+  isInputLocked: () => state.exitTransitionPending,
   canDebug: () => EDITOR_DEV_MODE,
   getPresentationScale: () => desktopEditorActive() && !editorWorkspace.playtest ? (document.querySelector("[data-world-stage]")?.getBoundingClientRect().height || innerHeight) / innerHeight : 1,
   isEditing: () => debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest,
@@ -273,7 +283,7 @@ const challengeFx = challengeFxApi.createRuntime({
     const sprite=spriteImage?.getBoundingClientRect();
     const player=sprite&&track?.width?[(sprite.left+sprite.width*.5-track.left)*level.world.width/track.width,(sprite.top+sprite.height*.48-track.top)*level.world.height/track.height]:[state.worldX,state.worldY-70];
     const occluder=spriteImage?.complete&&spriteImage.naturalWidth&&track?.width&&sprite?.width
-      ? {image:spriteImage,x:(sprite.left-track.left)*level.world.width/track.width,y:(sprite.top-track.top)*level.world.height/track.height,width:sprite.width*level.world.width/track.width,height:sprite.height*level.world.height/track.height}:null;
+      ? {image:playerDepth.surface || spriteImage,x:(sprite.left-track.left)*level.world.width/track.width,y:(sprite.top-track.top)*level.world.height/track.height,width:sprite.width*level.world.width/track.width,height:sprite.height*level.world.height/track.height}:null;
     return{id:level.id,world:level.world,anchors,markers:anchors.filter(a=>a.idleMarker&&!state.completedRunes.has(a.id)),completed:state.completedRunes,player,occluder,exit:isLevelExitReady()&&exitObject?[exitObject.center.x,exitObject.center.y]:null};
   }
 });
@@ -289,6 +299,9 @@ let cinematicStatus = { status: "idle", ready: false };
 const cinematicCueInteraction = { hoveredId: null, pressedId: null };
 const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
   getPreparedImage: path => assetCache.images.get(assetCache.normalize(path)),
+  preparePlayerDepth:gpuNative=>playerDepth.sync(gpuNative),
+  getPlayerDepthShadowFilter:()=>playerDepth.shadowFilter,
+  getPlayerDepthValue:()=>playerDepth.actorDepth,
   getLevel: () => level,
   getRenderer: () => window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level?.id !== "LVL-0001" ? "illustrated" : voxelRenderer.getSettings().renderer,
   getSettings: (id) => worldResolver.levelSettings(id).cinematicLighting,
@@ -304,7 +317,9 @@ const cinematicRenderer = window.AtlasCinematicRenderer.createRuntime({
     ? window.AtlasCinematicSettings.normalize(worldResolver.levelSettings(level.id).cinematicLighting).characters.groundingShadow !== false
     : key.startsWith("npc:") ? npcConfigForChallenge(npcChallengeForRune(runeById(key.slice(4)))).groundingShadow : false,
   onStatus: (snapshot) => {
+    const previous=cinematicStatus;
     cinematicStatus = snapshot;
+    if(previous.ready!==snapshot.ready || previous.mode!==snapshot.mode)playerDepth.sync();
     syncPreparationCover(snapshot);
     const label = snapshot.mode === "illustrated" ? "Illustrated Graphics" : "Cinematic";
     const message = snapshot.error ? `${label} unavailable: ${snapshot.error}` : `${label} · ${snapshot.status} · Depth ${snapshot.depthStatus || "none"} · ${snapshot.fps?.toFixed(0) || 0} fps · ${snapshot.averageMs?.toFixed(2) || 0} ms CPU · ${snapshot.drawCalls || 0} draws`;
@@ -553,6 +568,7 @@ const locomotion = window.AtlasLocomotion.createController({
     actor.dataset.worldY = String(Math.round(state.worldY || 0));
     actor.dataset.actor = "sven";
     if (currentActor !== actor) (currentActor || mount).replaceWith(actor);
+    playerDepth.sync();
   }
 });
 locomotion.onIdle(() => finishMovementIfReady());
@@ -1271,6 +1287,7 @@ function persistWorldConfigRequest() {
 }
 
 function acceptPersistedWorldConfig(payload, expectedEmissiveGlow) {
+  if(!editorValuesEqual(payload?.config?.levels?.[level?.id]?.playerDepthOcclusion,worldResolver.levelSettings(level?.id).playerDepthOcclusion))throw new Error('Playable character depth was not saved. Restart the editor server and Apply again.');
   if (!editorValuesEqual(payload?.config?.levels?.[level?.id]?.illustratedFeatures, worldResolver.levelSettings(level?.id).illustratedFeatures)) {
     throw new Error("Illustrated Graphics was not saved. Restart the editor server and Apply again.");
   }
@@ -1305,6 +1322,27 @@ function updateIllustratedFeature(id, key, value) {
   markWorldConfigDirty(`${id}: Illustrated Graphics aangepast.`);
   markEditorModified("Illustrated Graphics aangepast. Apply slaat dit level op.");
   render();
+}
+
+function updatePlayerDepth(levelId, key, value, source, commit = false) {
+  const previous=worldResolver.levelSettings(levelId).playerDepthOcclusion || {};
+  const next={enabled:previous.enabled===true,offset:Number(previous.offset)||0};
+  // Incomplete numeric entry keeps the last valid authored value.
+  if (key === 'offset' && (value === '' || !Number.isFinite(Number(value)))) {
+    if (commit && source) source.value = next.offset.toFixed(3);
+    return;
+  }
+  next[key]=key==='enabled'?value===true:clamp(Number(value),-1,1);
+  worldResolver.updateLevelSettings(levelId,{playerDepthOcclusion:next});
+  markWorldConfigDirty(levelId+': playable character depth changed.');
+  playerDepth.sync();
+  if(key==='enabled')render();
+  document.querySelectorAll('[data-player-depth="offset"]').forEach(input=>{
+    if (input.dataset.levelId !== levelId) return;
+    // Preserve unfinished text, such as a trailing decimal, while typing.
+    if (input === source && input.type === 'number' && !commit) return;
+    input.value = input.type === 'number' ? next.offset.toFixed(3) : String(next.offset);
+  });
 }
 
 function updateLevelSetting(levelId, key, value) {
@@ -1378,6 +1416,7 @@ function applyLiveTuningDom(levelId) {
   if (shell) shell.style.setProperty("--sven-scale", tuning.spriteScale);
   if (actor) actor.style.filter = visualFilter("sven", levelId);
   if (background) background.style.filter = visualFilter("background", levelId);
+  playerDepth.sync();
 }
 
 async function importLevelBackground(levelId, file) {
@@ -2134,6 +2173,7 @@ function loadLevelDefinition(entry) {
 }
 
 async function selectLevel(id, options = {}) {
+  cancelExitTransition();
   const loadSequence = ++levelLoadSequence;
   window.AtlasWebGPUCapabilities.cancelPending({retryTransient:true});
   assetReadiness.beginStatus(loadSequence);
@@ -2177,7 +2217,7 @@ async function selectLevel(id, options = {}) {
   const nextLevel = normalizeLevel(selectedLevel);
   const selectedRenderer=voxelRenderer.getSettings().renderer;
   const effectiveRenderer=window.AtlasGraphicsModes.isThree(selectedRenderer)&&nextLevel.id!=="LVL-0001"?"illustrated":selectedRenderer;
-  const assetOptions={guideBlinkPaths:GUIDE_BLINK_PATHS,prepareDepth:Boolean(navigator.gpu)&&window.AtlasCinematicRenderer.requiresGPU(effectiveRenderer,worldResolver.levelSettings(nextLevel.id).cinematicLighting,illustratedFeatures(nextLevel.id))};
+  const assetOptions={guideBlinkPaths:GUIDE_BLINK_PATHS,playerDepth:["illustrated","cinematic"].includes(effectiveRenderer)&&worldResolver.levelSettings(nextLevel.id).playerDepthOcclusion?.enabled===true,prepareDepth:Boolean(navigator.gpu)&&window.AtlasCinematicRenderer.requiresGPU(effectiveRenderer,worldResolver.levelSettings(nextLevel.id).cinematicLighting,illustratedFeatures(nextLevel.id))};
   let assetPlan;
   try {
     assetReadiness.setStatus(loadSequence,"Sprites laden...");
@@ -2216,7 +2256,7 @@ async function selectLevel(id, options = {}) {
     assetReadiness.discard(assetPlan);
     return false;
   }
-  const failedFlyby=(nextLevel.ambientFlybys||[]).find(c=>c.enabled!==false&&(c.frames||c.depthOcclusion)&&!ambientFlybyRuntime.readiness.get(`${nextLevel.id}:${c.id}`)?.ready);
+  const failedFlyby=(nextLevel.ambientFlybys||[]).find(c=>c.enabled!==false&&!window.AtlasAmbientSystem.isExitFlyby(c)&&(c.frames||c.depthOcclusion)&&!ambientFlybyRuntime.readiness.get(`${nextLevel.id}:${c.id}`)?.ready);
   if(failedFlyby){
     const failure=ambientFlybyRuntime.readiness.get(`${nextLevel.id}:${failedFlyby.id}`)?.error;
     assetReadiness.discard(assetPlan);ambientFlybyRuntime.releaseLevel();
@@ -2363,12 +2403,14 @@ function resolvedNextLevelId(levelId = level?.id) {
 }
 
 function returnToMenu() {
+  cancelExitTransition();
   learningPlanner = null;
   levelLoadSequence += 1;
   window.AtlasWebGPUCapabilities.cancelPending();
   assetReadiness.beginStatus(levelLoadSequence);
   assetReadiness.supersede();
   stopMovement({ invalidateIntent: true });
+  playerDepth.dispose();
   ambientFlybyRuntime.releaseLevel();
   challengeFx.dispose();
   sceneEffectRuntime.dispose();
@@ -2514,6 +2556,7 @@ function updateWorldDom() {
     areaName.textContent = getAreaName();
   }
   if(desktopEditorActive())ambientFlybyRuntime.refreshPreviews();
+  playerDepth.sync();
   voxelRenderer.invalidate();
 }
 
@@ -3417,7 +3460,17 @@ function updateAmbientFlybySetting(id, field, value) {
   const booleans = new Set(["faceFlightDirection", "mirrorX", "rotateAlongPath", "depthOcclusion", "enabled", "loopDuringFlyby"]);
   const strings = new Set(["label", "frameA", "frameB", "sound", "syncKey", "motionProfile", "playback", "endBehavior"]);
   if (booleans.has(field)) flyby[field] = Boolean(value);
+  else if (field === "depthMode") {
+    flyby.depthMode = value === "fixed" ? "fixed" : "relative";
+    if (flyby.depthMode === "fixed" && flyby.fixedDepth === undefined) flyby.fixedDepth = 0.5;
+  }
+  else if (field === "fixedDepth") {
+    if (value === '' || !Number.isFinite(Number(value))) return;
+    flyby.fixedDepth = Math.max(0, Math.min(1, Number(value)));
+  }
   else if (field === "motionProfile") flyby[field] = String(value) === "organic" ? "organic" : "smooth";
+  else if (field === 'activation') flyby.activation = value === 'exit' ? 'exit' : 'ambient';
+  else if (field === 'postExitDelay') flyby.postExitDelay = clamp(Number(value) || 0, 0, 10);
   else if (field === "soundTriggers") {
     flyby.soundTriggers = window.AtlasAmbientSystem.soundTriggers({ soundTriggers: value });
     delete flyby.soundTrigger;
@@ -3438,7 +3491,7 @@ function updateAmbientFlybySetting(id, field, value) {
   }
   if(window.AtlasAmbientSystem.graphicsControls[field])flyby[field]=window.AtlasAmbientSystem.graphicsFor(flyby)[field];
   const needsCanvas=window.AtlasAmbientSystem.canvasVisual(flyby) && !document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"] [data-flyby-canvas]`);
-  const inline=!needsCanvas && new Set(['depthBias','scale','speed','animationFps','brightness','contrast','warmth','tint','softness','saturation','soundVolume','maxRotationDeg']).has(field);
+  const inline=!needsCanvas && new Set(['depthBias','fixedDepth','scale','speed','animationFps','brightness','contrast','warmth','tint','softness','saturation','soundVolume','maxRotationDeg']).has(field);
   setLevelAmbientFlybys(flybys,{renderAfter:!inline});
   walkPathEditor.currentFlyby = flyby;
   markEditorModified(`${flyby.id}: ${field} aangepast.`);
@@ -4294,7 +4347,7 @@ function finishInteraction(target, kind, action) {
 }
 
 function beginFreeWalk(point) {
-  if (state.screen !== "scene") return;
+  if (state.screen !== "scene" || state.exitTransitionPending || state.sceneTransitionPending) return;
   if (window.AtlasGraphicsModes.isThree(voxelRenderer.getSettings().renderer) && level.id === "LVL-0001") return;
 
   const interactionToken = replaceMovementIntent({ type: "ground", point: { ...point } });
@@ -4311,6 +4364,7 @@ function beginFreeWalk(point) {
 }
 
 function openRuneChallenge(id) {
+  if(state.exitTransitionPending || state.sceneTransitionPending)return;
   const rune = runeById(id);
   if (!isRuneActive(rune)) return;
   const authored = Boolean(rune.challengeId) || Array.isArray(rune.challengeIds);
@@ -4568,10 +4622,49 @@ function showReward() {
   render();
 }
 
+let exitTransitionController = null;
+function cancelExitTransition() {
+  exitTransitionController?.abort();
+  exitTransitionController=null;
+  app.classList.remove('exitReducedFadeOut','exitRewardFadeIn');
+  app.querySelector('.exitIrisOverlay')?.remove();
+}
+
+function waitForExit(ms, signal) {
+  return new Promise(resolve=>{
+    if(signal.aborted){resolve(false);return;}
+    const done=()=>{window.clearTimeout(timer);signal.removeEventListener('abort',done);resolve(!signal.aborted);};
+    const timer=window.setTimeout(done,ms);
+    signal.addEventListener('abort',done,{once:true});
+  });
+}
+
 async function transitionToReward(target) {
   if (state.exitTransitionPending) return;
+  const runState=state, runLevel=level;
+  const controller=new AbortController();
+  exitTransitionController=controller;
+  const current=()=>!controller.signal.aborted && state===runState && level===runLevel && state.screen==='scene';
   state.exitTransitionPending = true;
+  stopMovement({invalidateIntent:true});
   render();
+
+  const exitFlybys=(level.ambientFlybys || []).filter(c=>c.enabled!==false && window.AtlasAmbientSystem.isExitFlyby(c));
+  if(exitFlybys.length){
+    state.exitFlybyPhase='boarding';
+    state.exitPlayerHidden=true;
+    document.querySelector('[data-actor-shell="sven"]')?.classList.add('exitPlayerDeparting');
+    if(!await waitForExit(500,controller.signal) || !current())return;
+    state.exitPlayerGone=true;
+    document.querySelector('[data-actor-shell="sven"]')?.classList.add('exitPlayerGone');
+    state.exitFlybyPhase='launch';
+    try {await ambientFlybyRuntime.activateExit();}
+    catch(error){console.warn(`[Atlas] Exit flyby unavailable: ${error.message}`);ambientFlybyRuntime.stopAll();}
+    if(!current())return;
+    state.exitFlybyPhase='delay';
+    if(!await waitForExit(Math.max(...exitFlybys.map(window.AtlasAmbientSystem.postExitDelay))*1000,controller.signal) || !current())return;
+    state.exitFlybyPhase='transition';
+  }
 
   const object = interactiveObjectForTarget(target);
   const focus = objectViewportPoint(object);
@@ -4579,7 +4672,7 @@ async function transitionToReward(target) {
   const settleMs = reduceMotion ? 40 : 100;
   const fadeOutMs = reduceMotion ? 160 : 750;
 
-  await new Promise((resolve) => window.setTimeout(resolve, settleMs));
+  if(!await waitForExit(settleMs,controller.signal) || !current())return;
 
   if (reduceMotion) {
     app.classList.add("exitReducedFadeOut");
@@ -4592,11 +4685,12 @@ async function transitionToReward(target) {
     app.append(overlay);
   }
 
-  await new Promise((resolve) => window.setTimeout(resolve, fadeOutMs));
+  if(!await waitForExit(fadeOutMs,controller.signal) || !current())return;
   showReward();
   app.classList.remove("exitReducedFadeOut");
   app.classList.add("exitRewardFadeIn");
-  window.setTimeout(() => app.classList.remove("exitRewardFadeIn"), reduceMotion ? 180 : 300);
+  await waitForExit(reduceMotion ? 180 : 300,controller.signal);
+  if(exitTransitionController===controller){app.classList.remove('exitRewardFadeIn');exitTransitionController=null;}
 }
 
 async function continueToNextLevel() {
@@ -4627,6 +4721,8 @@ async function continueToNextLevel() {
 }
 
 function restart() {
+  cancelExitTransition();
+  ambientFlybyRuntime.resetExit();
   learningPlanner = null;
   stopMovement({ invalidateIntent: true });
   challengeFx.dispose();
@@ -4836,8 +4932,8 @@ function renderAmbientAddForm(type) {
   const flyby = type === "flyby";
   const imagePrefix = flyby ? "assets/ambient/flybys/" : "assets/ambient/animals/";
   const audioPrefix = imagePrefix;
-  const images = (walkPathEditor.assets.images || []).filter((path) => path.startsWith(imagePrefix));
-  const audio = (walkPathEditor.assets.audio || []).filter((path) => path.startsWith(audioPrefix));
+  const images = (walkPathEditor.assets.images || []).filter((path) => path.startsWith(imagePrefix) || flyby && path.startsWith('assets/ambient/exit/'));
+  const audio = (walkPathEditor.assets.audio || []).filter((path) => path.startsWith(audioPrefix) || flyby && path.startsWith('assets/ambient/exit/'));
   return `
     <form class="editorAddForm" data-add-${type}-form>
       <label><span>Unique ID</span><input name="id" required pattern="[A-Za-z0-9_\\-]+" /></label>
@@ -4859,6 +4955,7 @@ function renderFlybyField(label, flyby, field, options = {}) {
   if (options.toggle) return `
     <label class="editorToggle"><input type="checkbox" data-flyby-setting="${field}" data-flyby-id="${flyby.id}" ${flyby[field] ? "checked" : ""}/><span>${label}</span></label>
   `;
+  if (options.slider) return `<div class="editorField"><span>${label}</span><div class="atlasDepthOffsetControls">${['range','number'].map(type=>`<input type="${type}" aria-label="${label}" min="${options.min}" max="${options.max}" step="${options.step}" value="${Number(flyby[field]).toFixed(3)}" data-flyby-setting="${field}" data-flyby-id="${flyby.id}"/>`).join('')}</div></div>`;
   return `
     <label class="editorField" title="${options.help || ''}"><span>${label}${options.help ? renderEditorInfo(label,options.help) : ''}</span><input type="${options.type || "number"}"
       ${options.min !== undefined ? `min="${options.min}"` : ""} ${options.max !== undefined ? `max="${options.max}"` : ""}
@@ -4889,7 +4986,10 @@ function renderFlybySequenceControls(flyby) {
     ${mode==='once'?renderFlybyField('Movement End Frame',{...flyby,movementEndFrame:flyby.movementEndFrame??frames.length},'movementEndFrame',{min:1,max:frames.length}):''}
     ${select('End Behavior','endBehavior',[['despawn','Despawn'],['hold','Hold Final Frame']],flyby.endBehavior||'despawn')}` : ''}
     ${renderFlybyField('Depth Occlusion',flyby,'depthOcclusion',{toggle:true})}
-    ${flyby.depthOcclusion?renderFlybyField('Depth Bias (− farther / + nearer)',{...flyby,depthBias:flyby.depthBias??0},'depthBias',{min:-1,max:1,step:0.001})+'<p>Added to foot depth, then clamped to 0–1. Try small negative values (e.g. −0.10) to move behind scenery.</p>':''}
+    ${flyby.depthOcclusion?`${select('Mode','depthMode',[['relative','Relative'],['fixed','Fixed']],flyby.depthMode||'relative')}
+      ${flyby.depthMode==='fixed'
+        ? renderFlybyField('Depth',{...flyby,fixedDepth:flyby.fixedDepth??0.5},'fixedDepth',{min:0,max:1,step:0.001,slider:true})+'<p>0.000 = far · 1.000 = near. Constant throughout the flyby.</p>'
+        : renderFlybyField('Depth Bias (− farther / + nearer)',{...flyby,depthBias:flyby.depthBias??0},'depthBias',{min:-1,max:1,step:0.001})+'<p>Added to foot depth, then clamped to 0–1. Try small negative values (e.g. −0.10) to move behind scenery.</p>'}`:''}
     ${['onTap',...(mode==='once'?['onAnimationComplete']:[])].map(trigger=>select(trigger==='onTap'?'On Tap Action':'On Animation Complete Action',trigger,[['','None'],...[...new Set([...api.actionIds(),flyby.actions?.[trigger]].filter(Boolean))].map(id=>[id,id])],flyby.actions?.[trigger]||'')).join('')}`;
 }
 
@@ -5106,6 +5206,8 @@ function renderAmbientEditorControls(options = {}) {
 
       ${flyby ? `
         <div class="flybyEditorCard" data-flyby-editor-id="${flyby.id}">
+          <label class="editorField"><span>Activation</span><select data-flyby-setting="activation" data-flyby-id="${flyby.id}"><option value="ambient" ${flyby.activation!=='exit'?'selected':''}>Ambient</option><option value="exit" ${flyby.activation==='exit'?'selected':''}>On Exit Activated</option></select></label>
+          ${flyby.activation==='exit'?renderFlybyField('Post-Exit Delay (s)',{...flyby,postExitDelay:window.AtlasAmbientSystem.postExitDelay(flyby)},'postExitDelay',{min:0,max:10,step:0.5,slider:true}):''}
           <div class="editorCommonControls"><strong>${flyby.label}</strong><span>${flyby.id}</span>
             ${renderFlybyField("Scale", flyby, "scale")}
             ${renderFlybyField("Speed px/s", flyby, "speed")}
@@ -5139,7 +5241,7 @@ function renderAmbientEditorControls(options = {}) {
             ${renderFlybyField("Maximum interval (s)", flyby, "intervalMaxMs", { min: 5, max: 120, display: (v) => Number(v) / 1000, scale: 1000 })}
             <label class="editorField"><span>Sync ID</span><input list="flyby-sync-keys" value="${flyby.syncKey || ""}" data-flyby-setting="syncKey" data-flyby-id="${flyby.id}"/></label>
             <datalist id="flyby-sync-keys">${[...new Set(flybys.map((item) => item.syncKey).filter(Boolean))].map((key) => `<option value="${key}"></option>`).join("")}</datalist>
-            ${renderFlybyField("Start delay (ms)", flyby, "startDelayMs", { min: 0, max: 10000, step: 50 })}
+            ${renderFlybyField(flyby.activation==='exit'?"Engine start (ms)":"Start delay (ms)", flyby, "startDelayMs", { min: 0, max: 10000, step: 50 })}
             ${syncMembers.length > 1 ? `<p>Shared with: ${syncMembers.map((item) => item.label || item.id).join(", ")}</p><button type="button" data-debug-action="preview-sync-flybys" data-sync-key="${flyby.syncKey}">Preview synchronized flybys</button>` : ""}
           </details>
           <details class="editorNestedSection"><summary>Audio</summary>
@@ -6260,6 +6362,9 @@ function renderLevelTuningControls(levelId, options = {}) {
         ${numberControl("Sprite Scale (Level)", "spriteScale", tuning.spriteScale, 0.5, 1.8, 0.05)}
         ${numberControl("Movement Speed (Level)", "movementSpeed", tuning.movementSpeed, 80, 520, 10)}
         ${numberControl("Animation Speed (Level)", "animationSpeed", tuning.animationSpeed, 0.5, 1.8, 0.05)}
+        <label class="atlasConfigField"><span>Depth Occlusion</span><input type="checkbox" data-player-depth="enabled" data-level-id="${levelId}" ${settings.playerDepthOcclusion?.enabled===true?'checked':''}>Enabled</label>
+        <div class="atlasConfigField"><span>Depth Offset · Back ↔ Front</span><div class="atlasDepthOffsetControls"><input aria-label="Depth Offset · Back ↔ Front" type="range" min="-1" max="1" step="0.001" value="${settings.playerDepthOcclusion?.offset || 0}" data-player-depth="offset" data-level-id="${levelId}" ${settings.playerDepthOcclusion?.enabled===true?'':'disabled'}><input aria-label="Depth Offset" type="number" min="-1" max="1" step="0.001" value="${settings.playerDepthOcclusion?.offset || 0}" data-player-depth="offset" data-level-id="${levelId}" ${settings.playerDepthOcclusion?.enabled===true?'':'disabled'}></div></div>
+        <small>Illustrated and Cinematic only. Negative values move behind nearer scenery; position and scale stay unchanged.</small>
       </div></details>${renderCharacterVisualControls("sven", tuning, levelId)}` : ""}
       ${includeGraphics ? `<details class="atlasVisualAdjustments" data-editor-panel-key="simple-visual-controls">
         <summary>Base artwork appearance</summary>
@@ -6389,7 +6494,7 @@ function renderWorldStage() {
         ${level.hotspots.filter(isTargetVisible).map(renderHotspot).join("")}
         ${level.runes.map(renderRuneHotspot).join("")}
         <span
-          class="${svenClasses}"
+          class="${svenClasses}${state.exitPlayerHidden?' exitPlayerDeparting':''}${state.exitPlayerGone?' exitPlayerGone':''}"
           data-actor-shell="sven"
           style="left:${actorPosition.x}%; top:${actorPosition.y}%; --sven-scale:${levelTuning().spriteScale}"
         >
@@ -6490,8 +6595,8 @@ function renderAmbientFlyby(flyby) {
   const editing = debugOverlayEnabled && walkPathEditor.enabled && !editorWorkspace.playtest;
   return `
     <span class="ambientFlyby" data-ambient-flyby="${flyby.id}" data-active="false" data-frame="a" ${ready.fx?'data-has-fx="true"':''}
-      data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.frames, flyby.depthOcclusion, flyby.depthBias, flyby.softness, flyby.saturation, canvasVisual]))}"
-      data-sound-trigger="${((window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound) || flyby.actions?.onTap) && state.screen === "scene" && (!editing || ambientFlybyRuntime.active.get(flyby.id)?.preview) ? "tap" : "during"}"
+      data-flyby-visual="${encodeURIComponent(JSON.stringify([level.id, flyby.frameA, frameB, flyby.frames, flyby.depthOcclusion, flyby.depthBias, flyby.depthMode, flyby.fixedDepth, flyby.softness, flyby.saturation, canvasVisual]))}"
+      data-sound-trigger="${((window.AtlasAmbientSystem.soundTriggers(flyby).includes("tap") && flyby.sound) || flyby.actions?.onTap) && state.screen === "scene" && !state.exitTransitionPending && !ambientFlybyRuntime.active.get(flyby.id)?.idle && (!editing || ambientFlybyRuntime.active.get(flyby.id)?.preview) ? "tap" : "during"}"
       data-ready="${Boolean(ready?.ready)}" data-object-id="${flyby.id}"
       style="--flyby-softness:${Math.max(0, Number(flyby.softness || 0))}px; --flyby-saturation:${Math.max(0, Number(flyby.saturation ?? 1))}">
       <span class="ambientFlybyFrames">
@@ -8050,6 +8155,7 @@ function render() {
   cinematicRenderer.sync();
   cinematicEditor.updateGuides();
   emissiveGlowRenderer.sync();
+  playerDepth.sync();
   syncPerformanceHud();
   syncFpsDisplay();
   syncMenuAutoRotation();
@@ -8668,7 +8774,7 @@ app.addEventListener("input", (event) => {
     return;
   }
   const flybyInput=event.target.closest('[data-flyby-setting]');
-  if(flybyInput?.type==='number' && flybyInput.value!=='' && flybyInput.validity.valid){
+  if(['number','range'].includes(flybyInput?.type) && flybyInput.value!=='' && flybyInput.validity.valid){
     updateAmbientFlybySetting(flybyInput.dataset.flybyId,flybyInput.dataset.flybySetting,Number(flybyInput.value)*Number(flybyInput.dataset.valueScale||1));
     return;
   }
@@ -8700,6 +8806,8 @@ app.addEventListener("input", (event) => {
   }
   const characterSelect = event.target.closest("[data-main-character]");
   if (characterSelect) { if (event.type === "change") selectMainCharacter(characterSelect.dataset.mainCharacter, characterSelect.value); return; }
+  const playerDepthControl=event.target.closest('[data-player-depth]');
+  if(playerDepthControl){updatePlayerDepth(playerDepthControl.dataset.levelId,playerDepthControl.dataset.playerDepth,playerDepthControl.type==='checkbox'?playerDepthControl.checked:playerDepthControl.value,playerDepthControl,event.type==='change');return;}
   const levelSetting = event.target.closest("[data-level-setting]");
   if (levelSetting) {
     updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
@@ -8818,6 +8926,8 @@ app.addEventListener("change", (event) => {
   }
   const characterSelect = event.target.closest("[data-main-character]");
   if (characterSelect) { if (event.type === "change") selectMainCharacter(characterSelect.dataset.mainCharacter, characterSelect.value); return; }
+  const playerDepthControl=event.target.closest('[data-player-depth]');
+  if(playerDepthControl){updatePlayerDepth(playerDepthControl.dataset.levelId,playerDepthControl.dataset.playerDepth,playerDepthControl.type==='checkbox'?playerDepthControl.checked:playerDepthControl.value,playerDepthControl,event.type==='change');return;}
   const levelSetting = event.target.closest("[data-level-setting]");
   if (levelSetting) {
     updateLevelSetting(levelSetting.dataset.levelId, levelSetting.dataset.levelSetting, levelSetting.value);
@@ -9187,6 +9297,7 @@ installKeyboardViewportTracking();
 
 window.addEventListener("resize", () => {
   updateWorldDom();
+  ambientFlybyRuntime.refreshPreviews();
   if (voxelRenderer.getSettings().renderer === "illustrated") sceneEffectRuntime.sync();
 });
 

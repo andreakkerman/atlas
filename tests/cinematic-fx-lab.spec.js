@@ -111,7 +111,7 @@ async function loadLab(page) {
   await expect(page.locator('[data-actor="sven"]')).toBeVisible();
 }
 
-test("LVL-0000 is a valid authored renderer scene alongside 35 production levels", () => {
+test("LVL-0000 is a valid authored renderer scene alongside 39 production levels", () => {
   const context = { window: { SVEN_LEVEL_DEFINITIONS: {} } };
   runScript("Levels/manifest.js", context);
   runScript("Levels/LVL-0000/level.js", context);
@@ -123,7 +123,7 @@ test("LVL-0000 is a valid authored renderer scene alongside 35 production levels
   const settings = context.window.SVEN_WORLD_CONFIG.levels[labId]?.cinematicLighting;
   const normalized = cinematic.normalize(settings);
 
-  expect(manifest.levels.filter(item => !item.developerOnly)).toHaveLength(35);
+  expect(manifest.levels.filter(item => !item.developerOnly)).toHaveLength(39);
   expect(manifest.levels.filter(item => item.developerOnly).map(item => item.id)).toEqual([labId]);
   expect(entry).toMatchObject({ developerOnly: true, script: "Levels/LVL-0000/level.js" });
   expect(level.world).toMatchObject({

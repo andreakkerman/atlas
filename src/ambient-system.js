@@ -13,6 +13,9 @@
   }
   function framesFor(config) { return Array.isArray(config.frames) ? config.frames : [config.frameA, config.frameB].filter(Boolean); }
   function playbackFor(config) { return config.playback || (config.frames ? "static" : config.frameB ? "legacy" : "static"); }
+  const isExitFlyby = config => config.activation === 'exit';
+  const postExitDelay = config => Number.isFinite(config.postExitDelay) ? Math.max(0, Math.min(10, config.postExitDelay)) : 2.5;
+  const launchDistance = time => time <= 1 ? time*time/2 : time-0.5;
   // The asset workspace and Level Editor expose the same units and limits.
   const previewControls = {
     scale: {label:'Scale',min:0.02,max:2,step:0.01},
@@ -56,6 +59,8 @@
   function depthPathFor(level) { return level.world.depthmap || `Levels/${level.id}/assets/depthmap.png`; }
   function sequenceErrors(config) {
     const errors = [], frames = framesFor(config);
+    if (config.activation !== undefined && !['ambient', 'exit'].includes(config.activation)) errors.push('activation must be ambient or exit');
+    if (config.postExitDelay !== undefined && (!Number.isFinite(config.postExitDelay) || config.postExitDelay < 0 || config.postExitDelay > 10)) errors.push('postExitDelay must be 0–10 seconds');
     for(const [field,control] of Object.entries(graphicsControls)) {
       const max=['softness','saturation'].includes(field)?Infinity:control.max;
       if(config[field]!==undefined && (!Number.isFinite(config[field]) || config[field]<control.min || config[field]>max))errors.push(`${field} must be finite and between ${control.min} and ${max}`);
@@ -69,6 +74,8 @@
     if (config.enabled !== undefined && typeof config.enabled !== "boolean") errors.push("enabled must be boolean");
     if (config.loopDuringFlyby !== undefined && typeof config.loopDuringFlyby !== 'boolean') errors.push('loopDuringFlyby must be boolean');
     if (config.depthBias !== undefined && (!Number.isFinite(config.depthBias) || Math.abs(config.depthBias) > 1)) errors.push("depthBias must be -1–1");
+    if (config.depthMode !== undefined && !["relative", "fixed"].includes(config.depthMode)) errors.push("depthMode must be relative or fixed");
+    if (config.fixedDepth !== undefined && (!Number.isFinite(config.fixedDepth) || config.fixedDepth < 0 || config.fixedDepth > 1)) errors.push("fixedDepth must be 0–1");
     if (config.actions !== undefined && (!config.actions || typeof config.actions !== "object" || Array.isArray(config.actions) || Object.entries(config.actions).some(([k,v]) => !["onTap", "onAnimationComplete"].includes(k) || (v !== null && (typeof v !== "string" || !/^[\w-]+$/.test(v)))))) errors.push("actions must map onTap/onAnimationComplete to action IDs or null");
     return errors;
   }
@@ -364,6 +371,9 @@
     const pathCaches = new Map();
     const timers = new Map();
     const active = new Map();
+    const completions = new Map();
+    let exitActivated = false;
+    let exitPromise = null;
     let hitCanvas = null;
 
     function displayedFrame(id) {
@@ -455,12 +465,14 @@
         }
         previewIds.delete(key);
       }
-      if(![...active.values()].some(item=>!item.held&&!item.paused)&&!activeAudio.size){window.cancelAnimationFrame(rafId);rafId=null;}
+      syncIdle();
+      if(![...active.values()].some(item=>!item.idle&&!item.held&&!item.paused)&&!activeAudio.size){window.cancelAnimationFrame(rafId);rafId=null;}
       options.onPreviewChange?.();
     }
 
     function togglePreview(id) {
       const instance=active.get(id);
+      if(instance?.idle){stopPreview();return preview(id);}
       if(instance&&!instance.preview){
         stopPreview();instance.preview=true;
         const config=configById(id);
@@ -487,7 +499,7 @@
       runtime.scaleY=(rect?.height || world.height)/world.height;
     }
     function refreshPreviews() {
-      for(const runtime of active.values()) if((runtime.preview || runtime.held) && !runtime.rebuilding) {
+      for(const runtime of active.values()) if((runtime.preview || runtime.held || runtime.idle) && !runtime.rebuilding) {
         const config=configById(runtime.id);if(!config)continue;
         refreshTransformMetrics(runtime);
         const cache=cacheFor(config),point=pointAtDistance(cache,runtime.distance);
@@ -511,10 +523,7 @@
       depthPreparation=(async()=>{
         const img=await assetCache.image(depthPathFor(selectedLevel));
         if(token!==preparation)return;
-        const surface=document.createElement('canvas');surface.width=img.naturalWidth;surface.height=img.naturalHeight;
-        const ctx=surface.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
-        depth={data:ctx.getImageData(0,0,surface.width,surface.height).data,width:surface.width,height:surface.height};
-        surface.width=surface.height=0;
+        depth=window.AtlasSpriteDepth.prepare(img);
       })();
       try{await depthPreparation;}finally{if(token===preparation)depthPreparation=null;}
     }
@@ -528,7 +537,9 @@
       for(const [id,runtime] of active)if(!configById(id)||configById(id).enabled===false){if(runtime.preview)stopPreview(id);else cancelActive(id);}
       for(const config of getLevel().ambientFlybys||[]) {
         if(config.enabled===false)continue;
-        const before=old.get(config.id),runtime=active.get(config.id);
+        const before=old.get(config.id);
+        if(before && isExitFlyby(before)!==isExitFlyby(config)) {stopPreview(config.id);cancelActive(config.id);}
+        const runtime=active.get(config.id);
         const assetsChanged=!before || JSON.stringify(framesFor(before))!==JSON.stringify(framesFor(config)) || !readiness.get(keyFor(config.id))?.ready || assetPreparations.has(keyFor(config.id));
         if(runtime && before){
           for(const sound of activeAudio.values())if(sound.triggerId===runtime.triggerId)sound.maxVolume=Number(config.soundVolume??1);
@@ -548,11 +559,11 @@
       }
       if((getLevel().ambientFlybys||[]).some(c=>c.enabled!==false&&c.depthOcclusion)&&!depth)tasks.push(prepareDepth(getLevel()));
       // Compatible changes with prepared assets are synchronous, including paused masks.
-      if(!tasks.length){updateAudio();refreshPreviews();scheduleAll();return;}
+      if(!tasks.length){syncIdle();updateAudio();refreshPreviews();scheduleAll();return;}
       try{await Promise.all(tasks);}catch(error){warn(`[Atlas] Flyby preview update failed: ${error.message}`);}
       if(version!==editVersion||token!==preparation)return;
       for(const runtime of active.values()) {runtime.rebuilding=false;runtime.lastTime=0;runtime.drawKey=null;}
-      refreshPreviews();ensureRaf();scheduleAll();
+      syncIdle();refreshPreviews();ensureRaf();scheduleAll();
     }
 
     function setDepthDebug(enabled) {
@@ -660,6 +671,7 @@
 
     async function prepareLevel(selectedLevel) {
       stopAll();
+      exitActivated=false;exitPromise=null;
       const token = ++preparation;
       ++editVersion;depthPreparation=null;assetPreparations.clear();preparingStates.clear();
       depth = null;
@@ -677,6 +689,7 @@
     }
 
     function dispatch(config, trigger, instance) {
+      if(instance?.preview && isExitFlyby(config))return;
       const id = config.actions?.[trigger];
       if (!id) return;
       const handler = actions.get(id);
@@ -693,7 +706,7 @@
     function groups() {
       const result = new Map();
       for (const config of getLevel()?.ambientFlybys || []) {
-        if(config.enabled===false)continue;
+        if(config.enabled===false || isExitFlyby(config))continue;
         const key = String(config.syncKey || "").trim();
         if (!key) continue;
         if (!result.has(key)) result.set(key, []);
@@ -708,6 +721,32 @@
       return min + Math.round(Math.random() * (max - min));
     }
 
+    function inScene() {
+      return getLevel()?.id===levelId && ['scene','challenge','correct'].includes(getScreen());
+    }
+
+    function syncIdle() {
+      if(!inScene() || exitActivated)return;
+      for(const config of getLevel().ambientFlybys || []) {
+        if(isExitFlyby(config) && config.enabled!==false && !isBusy(config.id)) startOne(config, `idle:${config.id}`, false, true);
+      }
+    }
+
+    function activateExit() {
+      if(exitPromise)return exitPromise;
+      const members=(getLevel()?.ambientFlybys || []).filter(c=>isExitFlyby(c) && c.enabled!==false);
+      if(!members.length)return Promise.resolve(false);
+      exitActivated=true;
+      exitPromise=new Promise(resolve=>{
+        // A preview is never a gameplay launch and cannot retain exit ownership.
+        members.forEach(c=>{stopPreview(c.id);cancelActive(c.id);});
+        if(!startTrigger(members,false,resolve))resolve(false);
+      });
+      return exitPromise;
+    }
+
+    function resetExit() {stopAll();exitActivated=false;exitPromise=null;syncIdle();}
+
     function canRun() {
       return Boolean(
         getLevel() &&
@@ -719,7 +758,7 @@
     }
 
     function scheduleIndependent(config) {
-      if(config.enabled===false||previewIds.has(config.id))return;
+      if(config.enabled===false||isExitFlyby(config)||previewIds.has(config.id))return;
       const key = `one:${config.id}`;
       if (timers.has(key) || isBusy(config.id) || !readiness.get(keyFor(config.id))?.ready) return;
       timers.set(key, window.setTimeout(() => {
@@ -801,7 +840,7 @@
       if(!hit || hit.id!==id || !validateHit(hit))return false;
       const config = configById(id), instance = active.get(id);
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
-      if (!instance || getScreen() !== "scene" || document.hidden || shell?.dataset.active !== "true") return false;
+      if (!instance || instance.idle || options.isInputLocked?.() || getScreen() !== "scene" || document.hidden || shell?.dataset.active !== "true") return false;
       const bounds = shell.getBoundingClientRect();
       if (!bounds.width || !bounds.height || bounds.right <= 0 || bounds.bottom <= 0 ||
           bounds.left >= window.innerWidth || bounds.top >= window.innerHeight) return false;
@@ -818,10 +857,12 @@
       return active.has(id) || pendingStarts.has(id);
     }
 
-    function startTrigger(members, preview) {
+    function startTrigger(members, preview, onComplete) {
       // Preview and automatic triggers share ownership. Ignore a retrigger until done.
-      if (members.some((config) => isBusy(config.id))) return false;
+      if (members.some((config) => isBusy(config.id) && !active.get(config.id)?.idle)) return false;
+      members.forEach(config=>{if(active.get(config.id)?.idle)cancelActive(config.id);});
       const triggerId = `flyby-${++triggerSequence}`;
+      if(onComplete)completions.set(triggerId,{resolve:onComplete,completed:true});
       members.forEach((config) => {
         clearTimer(`one:${config.id}`);
         if (config.syncKey) clearTimer(`sync:${String(config.syncKey).trim()}`);
@@ -829,7 +870,7 @@
       });
       const startsByDelay = new Map();
       members.forEach((config) => {
-        const delay = preview ? 0 : Math.max(0, Number(config.startDelayMs) || 0);
+        const delay = preview || isExitFlyby(config) ? 0 : Math.max(0, Number(config.startDelayMs) || 0);
         if (!startsByDelay.has(delay)) startsByDelay.set(delay, []);
         startsByDelay.get(delay).push(config);
       });
@@ -837,7 +878,16 @@
         const start = () => {
           const started = starting.filter(config => {
             pendingStarts.delete(config.id);
-            return startOne(config, triggerId, preview);
+            try {
+              const started=startOne(config, triggerId, preview);
+              if(!started && completions.has(triggerId))completions.get(triggerId).completed=false;
+              return started;
+            }
+            catch(error){
+              if(!isExitFlyby(config))throw error;
+              warn(`[Atlas] Exit flyby ${config.id} failed: ${error.message}`);
+              cancelActive(config.id);return false;
+            }
           });
           // Atmospheric audio belongs to actual flight start, including offscreen
           // starts. No camera, sprite bounds or player distance is consulted.
@@ -857,18 +907,21 @@
       return triggerId;
     }
 
-    function startOne(config, triggerId, preview) {
+    function startOne(config, triggerId, preview, idle=false) {
       if(config.enabled===false)return false;
       if (active.has(config.id)) return false;
-      if (!preview && !canRun()) return false;
+      if (!preview && !(isExitFlyby(config) ? inScene() : canRun())) return false;
       if (!readiness.get(keyFor(config.id))?.ready) return false;
       const cache = cacheFor(config);
-      if (cache.totalLength <= 0) return false;
+      if (!idle && (!Number.isFinite(cache.totalLength) || cache.totalLength <= 0)) return false;
       const stationary=preview&&options.stationaryPreview?.();
       active.set(config.id, {
         id: config.id,
         triggerId,
         preview,
+        idle,
+        exitFlight: isExitFlyby(config) && !idle,
+        ignition: isExitFlyby(config) ? Math.max(0, Number(config.startDelayMs ?? 600))/1000 : 0,
         distance: stationary?cache.totalLength/2:0,
         elapsed: 0,
         lastTime: 0,
@@ -878,7 +931,8 @@
       });
       const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(config.id)}"]`);
       if (shell) {
-        if (canvasVisual(config) || readiness.get(keyFor(config.id))?.fx) {
+        if(idle){shell.dataset.frame='a';shell.dataset.soundTrigger='during';}
+        if (idle || isExitFlyby(config) || canvasVisual(config) || readiness.get(keyFor(config.id))?.fx) {
           const runtime=active.get(config.id),point=pointAtDistance(cache,0);
           const facing=config.faceFlightDirection===false?(config.mirrorX?-1:1):(cache.samples.at(-1).x>=cache.samples[0].x?1:-1);
           const rotation=config.rotateAlongPath?Math.max(-Math.abs(Number(config.maxRotationDeg)||0),Math.min(Math.abs(Number(config.maxRotationDeg)||0),point.angle)):0;
@@ -886,7 +940,8 @@
           drawPreparedFrame(config,runtime,shell,point,rotation,facing);
         }
         shell.dataset.active = "true";
-        shell.style.willChange = "transform";
+        shell.style.willChange = idle ? "" : "transform";
+        shell.dataset.flybyPhase = idle ? 'idle' : isExitFlyby(config) ? 'ignition' : 'flight';
       }
       ensureRaf();
       return true;
@@ -913,7 +968,7 @@
       if(instance?.preview&&!instance.paused&&config)playTriggerAudio([config],instance.triggerId);
     }
 
-    function cancelActive(id) {
+    function cancelActive(id, completed=false) {
       const runtime=active.get(id);
       runtime?.fx?.planes.forEach(p=>p.canvas.remove());
       runtime?.fx?.dispose();
@@ -929,6 +984,10 @@
         shell.dataset.active = "false";
         shell.style.willChange = "";
       }
+      if(runtime && completions.has(runtime.triggerId)) {
+        if(!completed)completions.get(runtime.triggerId).completed=false;
+        finishTriggerIfDone(runtime.triggerId,runtime.preview);
+      }
     }
 
     function finishTriggerIfDone(triggerId, preview) {
@@ -940,6 +999,9 @@
         state.audio.pause();
         activeAudio.delete(key);
       }
+      const completion=completions.get(triggerId);
+      if(completion){completions.delete(triggerId);completion.resolve(completion.completed);}
+      if(preview)syncIdle();
       if(preview)options.onPreviewChange?.();
       else scheduleAll();
     }
@@ -953,7 +1015,7 @@
           if(paused&&!state.paused){state.playGeneration=(state.playGeneration||0)+1;state.audio.pause();}
           if(!paused&&state.paused)resumeOwnedAudio(key,state);
           state.paused=paused;
-          state.audio.volume=Math.max(0,Math.min(1,getMasterVolume()*Math.max(...owners.map(o=>(o.config.soundVolume??1)*volumeEnvelope(o.runtime.progress)))));
+          state.audio.volume=Math.max(0,Math.min(1,getMasterVolume()*Math.max(...owners.map(o=>(o.config.soundVolume??1)*volumeEnvelope(audioProgress(o.runtime))))));
           continue;
         }
         const ownerConfig=configById(state.ownerId);
@@ -969,7 +1031,7 @@
         }
         const progresses = [...active.values()]
           .filter((item) => item.triggerId === state.triggerId)
-          .map((item) => item.progress);
+          .map(audioProgress);
         const progress = progresses.length ? Math.max(...progresses) : 1;
         // A short call can finish before a slow flight clears its fade-in.
         // Keep the same envelope, bounded by both the flight and the clip:
@@ -982,7 +1044,13 @@
       }
     }
 
+    function audioProgress(runtime) {
+      // The existing fade envelope includes ignition, while path progress stays zero.
+      return runtime.exitFlight ? 0.2*Math.min(1,runtime.elapsed/0.3)+0.8*runtime.progress : runtime.progress;
+    }
+
     function drawAttachedFX(config,runtime,shell,point,rotation,facing,force=false){
+      if(runtime.idle)return;
       const ready=readiness.get(keyFor(config.id));
       if(!ready?.fx?.effects.length||!shell)return;
       runtime.fx ||= window.AtlasFlybyFX.create(ready.fx);
@@ -990,7 +1058,7 @@
       // Motion uses the normal flyby transform every frame; effect pixels and
       // their scene-depth mask share the preset quality cadence. An authored
       // depth edit must also redraw immediately while a preview is paused.
-      const depthSettings=[Boolean(config.depthOcclusion),config.depthBias,spriteScale(config),runtime.scaleX,runtime.scaleY,facing,
+      const depthSettings=[Boolean(config.depthOcclusion),config.depthBias,config.depthMode,config.fixedDepth,spriteScale(config),runtime.scaleX,runtime.scaleY,facing,
         ...(runtime.paused||runtime.held?[point.x,point.y,rotation]:[])].join(':');
       const changed=runtime.fx.draw(runtime.elapsed||0,force||runtime.fxDepthSettings!==depthSettings);
       runtime.fxDepthSettings=depthSettings;
@@ -1014,18 +1082,23 @@
     function makeDepthMask(config,runtime,point,rotation,facing,width,height,sourceHeight,box,owner){
       const world=getLevel().world, scale=spriteScale(config), angle=rotation*Math.PI/180, cos=Math.cos(angle),sin=Math.sin(angle);
       const image=readiness.get(keyFor(config.id)).images[0];
-      const sample=(x,y)=>depth.data[(Math.max(0,Math.min(depth.height-1,Math.round(y/world.height*(depth.height-1))))*depth.width+Math.max(0,Math.min(depth.width-1,Math.round(x/world.width*(depth.width-1)))))*4]/255;
+      const sample=(x,y)=>window.AtlasSpriteDepth.sample(depth,world,x,y);
       const groundY=sourceHeight*0.46*scale;
-      const actorDepth=Math.max(0,Math.min(1,sample(point.x-sin*groundY/runtime.scaleX,point.y+cos*groundY/runtime.scaleY)+Number(config.depthBias||0)));
+      const actorDepth=config.depthMode==='fixed'
+        ? Math.max(0,Math.min(1,config.fixedDepth??0.5))
+        : Math.max(0,Math.min(1,sample(point.x-sin*groundY/runtime.scaleX,point.y+cos*groundY/runtime.scaleY)+Number(config.depthBias||0)));
       const mask=owner.mask || (owner.mask=document.createElement('canvas'));
       if(mask.width!==width||mask.height!==height){mask.width=width;mask.height=height;owner.maskPixels=null;}
       const maskCtx=mask.getContext('2d'),pixels=owner.maskPixels || (owner.maskPixels=maskCtx.createImageData(width,height));
-      const maskKey=[point.x,point.y,rotation,facing,scale,runtime.scaleX,runtime.scaleY,config.depthBias,box.x,box.y].join(':');
+      const maskKey=actorDepth===1?`foreground:${width}:${height}`:[point.x,point.y,rotation,facing,scale,runtime.scaleX,runtime.scaleY,actorDepth,box.x,box.y].join(':');
       if(owner.maskKey!==maskKey){
-        for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+        // At the nearest depth every scene sample is visible. Reuse the exact
+        // all-visible mask instead of resampling a large launch sprite each frame.
+        if(actorDepth===1)pixels.data.fill(255);
+        else for(let y=0;y<height;y++)for(let x=0;x<width;x++){
           const dx=(x+box.x+0.5-image.naturalWidth/2)*scale*facing,dy=(y+box.y+0.5-sourceHeight/2)*scale;
           const scene=sample(point.x+(cos*dx-sin*dy)/runtime.scaleX,point.y+(sin*dx+cos*dy)/runtime.scaleY);
-          pixels.data[(y*width+x)*4+3]=Math.round(255*Math.max(0,Math.min(1,(actorDepth-scene)/0.01+1)));
+          pixels.data[(y*width+x)*4+3]=Math.round(255*window.AtlasSpriteDepth.visibility(actorDepth,scene));
         }
         maskCtx.putImageData(pixels,0,0);owner.maskKey=maskKey;
       }
@@ -1045,7 +1118,8 @@
       const debug=depthDebug && config.depthOcclusion && depth;
       shell.style.setProperty('--flyby-softness',`${debug?0:g.softness}px`);
       shell.style.setProperty('--flyby-saturation',String(debug?1:g.saturation));
-      const key = [runtime.frameIndex || 0, spriteScale(config), runtime.scaleX, runtime.scaleY, config.depthBias, depthDebug, ...Object.values(g), ...(config.depthOcclusion ? [point.x,point.y,rotation,facing] : [])].join(':');
+      const movingMask=config.depthOcclusion && !(config.depthMode==='fixed' && config.fixedDepth===1 && !depthDebug);
+      const key = [runtime.frameIndex || 0, spriteScale(config), runtime.scaleX, runtime.scaleY, config.depthBias, config.depthMode, config.fixedDepth, depthDebug, ...Object.values(g), ...(movingMask ? [point.x,point.y,rotation,facing] : [])].join(':');
       if (runtime.drawCanvas === canvas && runtime.drawKey === key) return;
       runtime.drawCanvas=canvas;runtime.drawKey=key;
       const ctx=canvas.getContext('2d');ctx.clearRect(0,0,width,height);ctx.drawImage(image,0,0);
@@ -1060,7 +1134,7 @@
           runtime.depthDebug = {world:{x:point.x,y:point.y},foot,
             uv:{x:foot.x/world.width,y:foot.y/world.height},
             pixel:{x:Math.max(0,Math.min(depth.width-1,Math.round(foot.x/world.width*(depth.width-1)))),y:Math.max(0,Math.min(depth.height-1,Math.round(foot.y/world.height*(depth.height-1))))},
-            rawDepth,bias:Number(config.depthBias||0),actorDepth};
+            rawDepth,bias:Number(config.depthBias||0),mode:config.depthMode==='fixed'?'fixed':'relative',actorDepth};
           // Diagnostics intentionally show the original silhouette, including hidden pixels.
           ctx.clearRect(0,0,width,height);ctx.drawImage(image,0,0);
           const overlay=ctx.getImageData(0,0,width,height);
@@ -1072,7 +1146,7 @@
           ctx.save();ctx.translate(width/2,height*.96);ctx.scale(facing,1);
           ctx.strokeStyle='white';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-8,0);ctx.lineTo(8,0);ctx.moveTo(0,-8);ctx.lineTo(0,8);ctx.stroke();
           ctx.font='14px monospace';ctx.fillStyle='black';ctx.fillRect(-155,-65,310,20);ctx.fillStyle='white';
-          ctx.fillText(`${rawDepth.toFixed(3)} + ${Number(config.depthBias||0).toFixed(3)} = ${actorDepth.toFixed(3)}`,-150,-50);ctx.restore();
+          ctx.fillText(config.depthMode==='fixed'?`Fixed depth = ${actorDepth.toFixed(3)}`:`${rawDepth.toFixed(3)} + ${Number(config.depthBias||0).toFixed(3)} = ${actorDepth.toFixed(3)}`,-150,-50);ctx.restore();
         } else delete runtime.depthDebug;
       }
       canvas.dataset.frameIndex=String(runtime.frameIndex||0);
@@ -1083,12 +1157,13 @@
       rafId = null;
       const completed = [];
       for (const [id, runtime] of active) {
+        try {
         const config = configById(id);
         if (!config) {
           completed.push([runtime, id]);
           continue;
         }
-        if (runtime.held || runtime.paused || runtime.rebuilding) continue;
+        if (runtime.idle || runtime.held || runtime.paused || runtime.rebuilding) continue;
         if (!runtime.lastTime) runtime.lastTime = timestamp;
         const delta = Math.max(0, Math.min(0.1, (timestamp - runtime.lastTime) / 1000));
         runtime.lastTime = timestamp;
@@ -1097,18 +1172,25 @@
         const frames=framesFor(config), playback=playbackFor(config), fps=Number(config.animationFps)||24;
         // Never omit an authored pose after a slow frame. FPS is the target;
         // under load animation and Once movement slow together rather than skip.
-        const animationTime=Math.min((runtime.animationTime||0)+delta*fps+1e-7,(runtime.animationStep||0)+1);
+        const flightTime=runtime.exitFlight?Math.max(0,runtime.elapsed-runtime.ignition):runtime.elapsed;
+        const movementDelta=runtime.exitFlight?Math.min(delta,flightTime):delta;
+        const animationTime=Math.min((runtime.animationTime||0)+movementDelta*fps+1e-7,(runtime.animationStep||0)+1);
         runtime.animationTime=animationTime;
         const animationFrame=Math.floor(animationTime);
         runtime.animationStep=animationFrame;
         runtime.frameIndex=playback==='loop'?animationFrame%frames.length:playback==='once'?Math.min(frames.length-1,animationFrame):0;
         if(playback==='legacy'&&runtime.preview){runtime.legacyPhase=(runtime.legacyPhase||0)+delta*Math.max(0,Number(config.flapFrequencyHz)||0)*2;runtime.frameIndex=Math.floor(runtime.legacyPhase)%frames.length;}
-        if (playback==='once') {
+        if (runtime.exitFlight && runtime.elapsed<=runtime.ignition) runtime.distance=0;
+        else if (playback==='once') {
           const end=Math.max(0,(config.movementEndFrame ?? frames.length)-1);
           runtime.distance=cache.totalLength*(end?Math.min(1,animationTime/end):1);
         } else if(runtime.preview&&options.stationaryPreview?.())runtime.distance=cache.totalLength/2;
-        else runtime.distance += Math.max(1, Number(config.speed) || 260)
-          * organicSpeedFactor(config, runtime.elapsed, runtime.progress) * delta;
+        else {
+          // A one-second ease-in integrates velocity on the same path clock.
+          const step=runtime.exitFlight?launchDistance(flightTime)-launchDistance(Math.max(0,flightTime-movementDelta)):delta;
+          runtime.distance += Math.max(1, Number(config.speed) || 260)
+            * organicSpeedFactor(config, runtime.elapsed, runtime.progress) * step;
+        }
         const point = pointAtDistance(cache, runtime.distance);
         runtime.progress = point.progress;
         refreshTransformMetrics(runtime);
@@ -1117,6 +1199,7 @@
         if(runtime.preview)options.onPreviewFrame?.(runtime,{point,rotation,facing});
         const shell = document.querySelector(`[data-ambient-flyby="${CSS.escape(id)}"]`);
         if (shell) {
+          shell.dataset.flybyPhase = runtime.exitFlight && runtime.elapsed<runtime.ignition ? 'ignition' : 'flight';
           shell.dataset.active = "true";
           shell.style.willChange = "transform";
           shell.style.transform =
@@ -1135,7 +1218,7 @@
           shell.dataset.progress = point.progress.toFixed(4);
           shell.dataset.rotation = rotation.toFixed(3);
         }
-        const animationComplete=playback==='once' && runtime.frameIndex===frames.length-1;
+        const animationComplete=playback==='once' && runtime.frameIndex===frames.length-1 && (!runtime.exitFlight || runtime.elapsed>=runtime.ignition);
         if (animationComplete && !runtime.animationComplete) {
           runtime.animationComplete=true;
           dispatch(config,'onAnimationComplete',runtime);
@@ -1143,27 +1226,33 @@
         // Despawn only after the last pose has had its display interval. Hiding
         // it in the same tick that draws it would skip that pose on screen.
         if (playback==='once' ? animationComplete && (config.endBehavior==='hold' || animationTime>=frames.length) : runtime.distance>=cache.totalLength) {
-          if(config.endBehavior==='hold')runtime.held=true;
+          if(config.endBehavior==='hold' && !runtime.exitFlight)runtime.held=true;
           else completed.push([runtime,id]);
+        }
+        } catch(error) {
+          if(!runtime.exitFlight)throw error;
+          warn(`[Atlas] Exit flyby ${id} failed: ${error.message}`);
+          cancelActive(id);finishTriggerIfDone(runtime.triggerId,runtime.preview);
         }
       }
       updateAudio();
       completed.forEach(([runtime, id]) => {
-        cancelActive(id);
+        cancelActive(id,true);
         finishTriggerIfDone(runtime.triggerId, runtime.preview);
       });
       ensureRaf();
     }
 
     function ensureRaf() {
-      if (!rafId && ([...active.values()].some(item=>!item.held&&!item.paused&&!item.rebuilding) || [...activeAudio.values()].some(a=>!a.paused))) rafId = window.requestAnimationFrame(tick);
+      if (!rafId && ([...active.values()].some(item=>!item.idle&&!item.held&&!item.paused&&!item.rebuilding) || [...activeAudio.values()].some(a=>!a.paused))) rafId = window.requestAnimationFrame(tick);
     }
 
     function stopAll({preserveHeld=false,preservePreviews=false} = {}) {
+      completions.forEach(c=>c.resolve(false));completions.clear();
       timers.forEach((timer) => window.clearTimeout(timer));
       timers.clear();
       pendingStarts.clear();
-      active.forEach((instance, id) => { if(!(preserveHeld&&instance.held) && !(preservePreviews&&instance.preview)) cancelActive(id); });
+      active.forEach((instance, id) => { if(!(preserveHeld&&(instance.held||instance.idle)) && !(preservePreviews&&instance.preview)) cancelActive(id); });
       if(!preservePreviews)previewIds.clear();
       activeAudio.forEach((value,key) => {
         if(preservePreviews&&[...active.values()].some(i=>i.preview&&(value.loop?value.owners.has(i.id):i.triggerId===value.triggerId)))return;
@@ -1174,8 +1263,12 @@
     }
 
     function sync() {
+      syncIdle();
       if (!canRun()) {
         const sameScene=getLevel()?.id===levelId && ["scene","challenge","correct"].includes(getScreen());
+        // Explicit exit activation remains available with reduced motion. Hiding
+        // or leaving still cancels its ownership through stopAll/releaseLevel.
+        if(sameScene && !document.hidden && exitActivated){ensureRaf();return;}
         stopAll({preserveHeld:sameScene,preservePreviews:sameScene&&!document.hidden});
         ensureRaf();
         return;
@@ -1183,7 +1276,7 @@
       scheduleAll();
     }
 
-    function releaseLevel() {stopAll();++preparation;++editVersion;assetPreparations.clear();preparingStates.clear();depthPreparation=null;readiness.clear();pathCaches.clear();depth=null;hitCanvas=null;levelId=null;}
+    function releaseLevel() {stopAll();exitActivated=false;exitPromise=null;++preparation;++editVersion;assetPreparations.clear();preparingStates.clear();depthPreparation=null;readiness.clear();pathCaches.clear();depth=null;hitCanvas=null;levelId=null;}
 
     return {
       readiness,
@@ -1192,6 +1285,7 @@
       timers,
       active,
       activeAudio,
+      activateExit,resetExit,
       prepareLevel,
       updateLevel,previewState,togglePreview,stopPreview,refreshPreviews,retryPreviewAudio,
       cacheFor,
@@ -1209,6 +1303,7 @@
   }
 
   const api = {
+    isExitFlyby, postExitDelay,
     framesFor, playbackFor, canvasVisual, depthPathFor, sequenceErrors, registerAction,
     previewControls, graphicsControls, graphicsFor, adjustGraphics, FLYBY_HIT_ALPHA_THRESHOLD,
     actionIds: () => [...actions.keys()],

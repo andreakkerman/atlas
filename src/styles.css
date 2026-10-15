@@ -1093,6 +1093,8 @@ button {
 .cinematicReady .worldArt, .cinematicReady .sceneEffectsCanvas,
 .cinematicReady .ambientAnimalFrames, .cinematicReady .ambientFlybyFrames,
 .cinematicReady [data-actor='sven'], .cinematicReady [data-npc-sprite] { opacity: 0 !important; }
+[data-actor-shell='sven'].exitPlayerDeparting { opacity: 0; transition: opacity 500ms ease-out; }
+[data-actor-shell='sven'].exitPlayerGone { display: none; }
 .cinematicReady .ambientAnimalEditable { z-index: 46; opacity: 1; }
 .cinematicError { position: absolute; z-index: 60; left: 12px; top: 70px; max-width: min(600px, 90%); padding: 16px; background: #381b20; color: #ffe5cf; white-space: pre-wrap; pointer-events: none; }
 .cinematicError[hidden] { display: none; }
@@ -3379,6 +3381,7 @@ button {
 .atlasTuningGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .atlasConfigField { display: grid; gap: 5px; font-size: .8rem; font-weight: 750; }
 .atlasConfigField input { width: 100%; min-width: 0; }
+.atlasDepthOffsetControls { display: grid; grid-template-columns: minmax(0, 1fr) 88px; align-items: center; gap: 8px; }
 .atlasVisualAdjustments,
 .atlasLocomotionAdjustments { padding: 10px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 8px; }
 .atlasVisualColumns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
@@ -5422,3 +5425,11 @@ body.keyboard-open .challengeNotebook { --notebook-header: 52px; --notebook-gap:
 
 [data-environment-overview] .graphicsRange, [data-environment-overview] .graphicsSelect { margin:5px 0; gap:4px; }
 [data-environment-overview] .graphicsRange input { margin:4px 0; }
+
+/* Opt-in only: the original decoded frame retains layout and shadow geometry. */
+.playerDepthActive { filter:none; }
+.playerDepthActive > [data-actor="sven"] { opacity:0; }
+.playerDepthSurface { position:absolute; left:0; top:0; pointer-events:none; }
+.playerDepthShadow { position:absolute; inset:0; pointer-events:none; filter:url(#player-depth-shadow); }
+.cinematicReady .playerDepthSurface, .cinematicReady .playerDepthShadow,
+.illustratedSceneReady .playerDepthSurface, .illustratedSceneReady .playerDepthShadow { opacity:0 !important; }

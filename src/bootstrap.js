@@ -22,11 +22,22 @@
   }
  }
  if(!(query.get('dev')==='editor'&&query.get('level')))document.querySelector('#app').dataset.introEntered='true';
- for(const source of document.querySelectorAll('script[data-atlas-src]')){
-  await new Promise((resolve,reject)=>{
-   const script=document.createElement('script');script.src=source.dataset.atlasSrc;
-   script.onload=resolve;script.onerror=()=>source.hasAttribute('data-atlas-optional')?resolve():reject(new Error('Atlas script unavailable: '+script.src));
-   document.head.append(script);
-  });
+ const sources=[...document.querySelectorAll('script[data-atlas-src]')];
+ // Fetch dependencies together after intro teardown; evaluate in authored order.
+ // In particular, offline network-first cache fallbacks must not add up serially.
+ const preloads=sources.map(source=>{
+  const link=document.createElement('link');link.rel='preload';link.as='script';link.href=source.dataset.atlasSrc;
+  document.head.append(link);return link;
+ });
+ try {
+  for(const source of sources){
+   await new Promise((resolve,reject)=>{
+    const script=document.createElement('script');script.src=source.dataset.atlasSrc;
+    script.onload=resolve;script.onerror=()=>source.hasAttribute('data-atlas-optional')?resolve():reject(new Error('Atlas script unavailable: '+script.src));
+    document.head.append(script);
+   });
+  }
+ } finally {
+  preloads.forEach(link=>link.remove());
  }
 })().catch(error=>{console.error(error);document.querySelector('#app').textContent='Atlas kon niet laden. Probeer de pagina opnieuw te openen.';});

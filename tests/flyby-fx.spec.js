@@ -5,17 +5,31 @@ require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,
 const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
 const rigPath=path.join(__dirname,'../assets/ambient/flybys/shredder/fx.json');
 const hash=file=>crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'../assets/ambient/flybys/shredder/',file))).digest('hex');
+const shredderEffects=[
+  ['shredder-jetwash','jetwash','behind'],
+  ['shredder-left-jet','blue-thruster','behind'],
+  ['shredder-right-jet','blue-thruster','behind'],
+  ['shredder-center-jet','blue-thruster','behind'],
+  ['fx-83f160b9-2ee6-4dab-8f67-096946a4e75d','blue-light','front']
+];
 test('attachment schema rejects incompatible sprites, duplicate IDs and excessive surfaces',()=>{
   const vm=require('vm'),scope={window:{AtlasAmbientSystem:require('../src/ambient-system')}};
   for(const file of ['scene-effects','flyby-fx'])vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../src/'+file+'.js'),'utf8'),scope);
   const fx=scope.window.AtlasFlybyFX,source=JSON.parse(fs.readFileSync(rigPath)),sprite='assets/ambient/flybys/shredder/shredder.png',size={width:407,height:543};
+  // Preserve the complete authored rig, including its later front indicator.
+  expect(crypto.createHash('sha256').update(JSON.stringify(source)).digest('hex')).toBe('6aa9ba8a611564ddc5da92a80905f439ccc94ac08299c516b6c6cfb1bacc4211');
+  expect(source.effects.map(e=>[e.id,e.presetId,e.plane])).toEqual(shredderEffects);
   expect(fx.validate(source,sprite,size)).toEqual([]);
   for(const mutate of [d=>d.version=2,d=>d.sourceSize.width=408,d=>d.sprite='different.png',d=>d.effects[1].id=d.effects[0].id,d=>d.effects[0].plane='worldAtmosphere',d=>d.effects[0].geometry.length=1201,d=>{d.effects[0].geometry.width=800;d.effects[0].geometry.length=1200;d.effects[0].geometry.spreadDeg=120;}]){
     const doc=structuredClone(source);mutate(doc);expect(fx.validate(doc,sprite,size).length).toBeGreaterThan(0);
   }
   expect(fx.eligible({frames:[sprite],playback:'static'})).toBe(true);expect(fx.eligible({frames:[sprite,sprite],playback:'loop'})).toBe(false);
 });
-async function editor(page){await bootEditorTest(page,base+'/?dev=editor');await page.keyboard.press('Control+Shift+D');await page.getByRole('button',{name:'FX Editing',exact:true}).click();await expect(page.locator('[data-dimensions]')).toHaveText('407 × 543 source pixels');await expect(page.locator('[data-effects] li')).toHaveCount(4);}
+async function editor(page){
+  await bootEditorTest(page,base+'/?dev=editor');await page.keyboard.press('Control+Shift+D');await page.getByRole('button',{name:'FX Editing',exact:true}).click();
+  await expect(page.locator('[data-dimensions]')).toHaveText('407 × 543 source pixels');await expect(page.locator('[data-effects] li')).toHaveCount(5);
+  expect(await page.evaluate(()=>AtlasFlybyFXEditor.state.document.effects.map(e=>[e.id,e.presetId,e.plane]))).toEqual(shredderEffects);
+}
 test('dedicated workspace edits real Shredder with precise geometry and unsaved protection',async({page},info)=>{
   test.skip(info.project.name!=='desktop-chromium','Desktop authoring workspace');
   const errors=[];page.on('pageerror',e=>errors.push(e.message));await editor(page);
@@ -31,10 +45,10 @@ test('dedicated workspace edits real Shredder with precise geometry and unsaved 
   const mirrored=await handle.boundingBox();await page.mouse.move(mirrored.x+mirrored.width/2,mirrored.y+mirrored.height/2);await page.mouse.down();await page.mouse.move(mirrored.x+mirrored.width/2+7,mirrored.y+mirrored.height/2+7);await page.mouse.up();
   await expect(page.getByRole('spinbutton',{name:'X',exact:true})).toHaveValue(String(before.x-3));await expect(page.getByRole('spinbutton',{name:'Y',exact:true})).toHaveValue(String(before.y+29));
   await page.getByRole('spinbutton',{name:'Intensity',exact:true}).fill('2.5');
-  await page.locator('[data-action="duplicate"]').click();await expect(page.locator('[data-effects] li')).toHaveCount(5);
+  await page.locator('[data-action="duplicate"]').click();await expect(page.locator('[data-effects] li')).toHaveCount(6);
   await page.locator('[data-action="up"]').click();await page.locator('[data-property="plane"]').selectOption('front');
-  await page.locator('[data-action="delete"]').click();await expect(page.locator('[data-effects] li')).toHaveCount(4);
-  await page.locator('[data-preset]').selectOption('blue-thruster');await page.locator('[data-action="add"]').click();await expect(page.locator('[data-effects] li')).toHaveCount(5);
+  await page.locator('[data-action="delete"]').click();await expect(page.locator('[data-effects] li')).toHaveCount(5);
+  await page.locator('[data-preset]').selectOption('blue-thruster');await page.locator('[data-action="add"]').click();await expect(page.locator('[data-effects] li')).toHaveCount(6);
   await page.evaluate(()=>{window.closedFX={root:AtlasFlybyFXEditor.state.root,planes:AtlasFlybyFXEditor.state.composer.planes.map(p=>p.canvas),preview:document.querySelector('[data-preview]')};});
   await page.locator('[data-action="world"]').click();await expect(page.locator('[data-unsaved]')).toBeVisible();await page.locator('[data-choice="discard"]').click();await expect(page.locator('[data-world-editor]')).toBeVisible();expect(errors).toEqual([]);expect(await page.evaluate(()=>({attached:closedFX.root.isConnected,pixels:closedFX.planes.reduce((n,c)=>n+c.width*c.height,0),preview:closedFX.preview.width}))).toEqual({attached:false,pixels:0,preview:0});
 });
@@ -82,7 +96,8 @@ async function runtime(page,mode='illustrated',expectFX=true){
     await window.eval('setLevelAmbientFlybys')([c]);window.eval('voxelRenderer').updateSettings({renderer:mode});window.eval('render')();window.eval('ambientFlybyRuntime').preview(c.id);
   },mode);
   await expect(page.locator('[data-ambient-flyby="fx-test"]')).toHaveAttribute('data-active','true');
-  await expect(page.locator('[data-flyby-fx-canvas]')).toHaveCount(expectFX?1:0);
+  await expect(page.locator('[data-flyby-fx-canvas]')).toHaveCount(expectFX?2:0);
+  expect(await page.locator('[data-flyby-fx-canvas]').evaluateAll(nodes=>nodes.map(n=>[n.dataset.flybyFxCanvas,n.style.zIndex]))).toEqual(expectFX?[['behind','0'],['front','2']]:[]);
 }
 for(const mode of ['illustrated','cinematic'])test(`runtime ${mode}: auto sidecar, transforms, pause, sprite hits, lifecycle`,async({page},info)=>{
   if(mode==='cinematic'&&info.project.name==='desktop-chromium'&&process.env.ATLAS_WEBGPU_QA==='1')await page.addInitScript(()=>{
@@ -90,17 +105,21 @@ for(const mode of ['illustrated','cinematic'])test(`runtime ${mode}: auto sideca
     GPUQueue.prototype.copyExternalImageToTexture=function(source,destination,size){if(source.source?.hasAttribute?.('data-flyby-fx-canvas'))window.fxUploads.push({plane:source.source.dataset.flybyFxCanvas,revision:source.source.dataset.revision,width:source.source.width,height:source.source.height});return Reflect.apply(copy,this,arguments);};
   });
   await runtime(page,mode);
-  if(mode==='cinematic'&&info.project.name==='desktop-chromium'&&process.env.ATLAS_WEBGPU_QA==='1')await expect.poll(()=>page.evaluate(()=>window.fxUploads.length)).toBeGreaterThan(0);
+  if(mode==='cinematic'&&info.project.name==='desktop-chromium'&&process.env.ATLAS_WEBGPU_QA==='1'){
+    await expect.poll(()=>page.evaluate(()=>window.fxUploads.length)).toBeGreaterThan(0);
+    await expect.poll(()=>page.evaluate(()=>[...new Set(window.fxUploads.map(upload=>upload.plane))].sort())).toEqual(['behind','front']);
+  }
   await page.waitForFunction(()=>window.eval('ambientFlybyRuntime').active.get('fx-test')?.elapsed>.3);
   const result=await page.evaluate(()=>{
     const r=window.eval('ambientFlybyRuntime'),active=r.active.get('fx-test'),shell=document.querySelector('[data-ambient-flyby="fx-test"]');
-    r.togglePreview('fx-test');return {width:shell.offsetWidth,height:shell.offsetHeight,fxWidth:active.fx.planes[0].canvas.width,transparentHit:r.hitAlpha('fx-test',.03,.03),elapsed:active.elapsed,revision:shell.querySelector('[data-flyby-fx-canvas]').dataset.revision,transform:shell.style.transform};
+    r.togglePreview('fx-test');return {width:shell.offsetWidth,height:shell.offsetHeight,fxWidths:active.fx.planes.map(p=>p.canvas.width),transparentHit:r.hitAlpha('fx-test',.03,.03),elapsed:active.elapsed,revisions:[...shell.querySelectorAll('[data-flyby-fx-canvas]')].map(n=>n.dataset.revision),transform:shell.style.transform};
   });
-  expect(result.width).toBe(407);expect(result.height).toBe(543);expect(result.fxWidth).toBeGreaterThan(100);expect(result.transparentHit).toBe(0);expect(result.transform).toContain('scaleX(-1)');
-  await page.waitForTimeout(150);expect(await page.locator('[data-flyby-fx-canvas]').getAttribute('data-revision')).toBe(result.revision);
-  await page.evaluate(()=>window.eval('ambientFlybyRuntime').togglePreview('fx-test'));await expect.poll(()=>page.locator('[data-flyby-fx-canvas]').getAttribute('data-revision')).not.toBe(result.revision);
+  expect(result.width).toBe(407);expect(result.height).toBe(543);for(const width of result.fxWidths)expect(width).toBeGreaterThan(100);expect(result.transparentHit).toBe(0);expect(result.transform).toContain('scaleX(-1)');
+  await page.waitForTimeout(150);expect(await page.locator('[data-flyby-fx-canvas]').evaluateAll(nodes=>nodes.map(n=>n.dataset.revision))).toEqual(result.revisions);
+  await page.evaluate(()=>window.eval('ambientFlybyRuntime').togglePreview('fx-test'));
+  for(const [i,plane] of ['behind','front'].entries())await expect.poll(()=>page.locator(`[data-flyby-fx-canvas="${plane}"]`).getAttribute('data-revision')).not.toBe(result.revisions[i]);
   if(info.project.name==='desktop-chromium')await page.screenshot({path:`qa-screenshots/flyby-fx-runtime-${mode}.png`});
-  const stats=await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),canvas=r.active.get('fx-test').fx.planes[0].canvas;r.releaseLevel();return {width:canvas.width,connected:canvas.isConnected,size:r.active.size};});expect(stats).toEqual({width:0,connected:false,size:0});
+  const stats=await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),canvases=r.active.get('fx-test').fx.planes.map(p=>p.canvas);r.releaseLevel();return {planes:canvases.map(c=>({width:c.width,height:c.height,connected:c.isConnected})),size:r.active.size};});expect(stats).toEqual({planes:[{width:0,height:0,connected:false},{width:0,height:0,connected:false}],size:0});
 });
 test('missing and invalid sidecars preserve the static sprite',async({page})=>{
   await page.route('**/shredder/fx.json',route=>route.fulfill({status:200,contentType:'application/json',body:'{"version":999}'}));await runtimeMissing(page);
@@ -110,9 +129,9 @@ async function runtimeMissing(page){await runtime(page,'illustrated',false);expe
 
 test('attached planes share scene depth while source dimensions and contact stay unchanged',async({page})=>{
   await runtime(page);await page.evaluate(async()=>{const r=window.eval('ambientFlybyRuntime');r.togglePreview('fx-test');await window.eval('setLevelAmbientFlybys')([{...window.eval('level').ambientFlybys[0],depthOcclusion:true,depthBias:1}]);});
-  const alpha=()=>page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),i=r.active.get('fx-test');const sum=c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let j=3;j<d.length;j+=4)n+=d[j];return n;};return {fx:sum(i.fx.planes[0].canvas),body:sum(document.querySelector('[data-flyby-canvas]')),height:document.querySelector('[data-flyby-canvas]').height};});
-  const visible=await alpha();expect(visible.fx).toBeGreaterThan(10000);expect(visible.body).toBeGreaterThan(10000);expect(visible.height).toBe(543);
-  await page.evaluate(async()=>{await window.eval('setLevelAmbientFlybys')([{...window.eval('level').ambientFlybys[0],depthBias:-1}]);});const hidden=await alpha();expect(hidden.fx).toBeLessThan(visible.fx*.05);expect(hidden.body).toBeLessThan(visible.body*.05);expect(hidden.height).toBe(543);
+  const alpha=()=>page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),i=r.active.get('fx-test');const sum=c=>{const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;let n=0;for(let j=3;j<d.length;j+=4)n+=d[j];return n;};return {fx:Object.fromEntries(i.fx.planes.map(p=>[p.plane,sum(p.canvas)])),body:sum(document.querySelector('[data-flyby-canvas]')),height:document.querySelector('[data-flyby-canvas]').height};});
+  const visible=await alpha();for(const plane of ['behind','front'])expect(visible.fx[plane]).toBeGreaterThan(10000);expect(visible.body).toBeGreaterThan(10000);expect(visible.height).toBe(543);
+  await page.evaluate(async()=>{await window.eval('setLevelAmbientFlybys')([{...window.eval('level').ambientFlybys[0],depthBias:-1}]);});const hidden=await alpha();for(const plane of ['behind','front'])expect(hidden.fx[plane]).toBeLessThan(visible.fx[plane]*.05);expect(hidden.body).toBeLessThan(visible.body*.05);expect(hidden.height).toBe(543);
 });
 
 test('mask vertices, front plane and isolated preview use editable source geometry',async({page},info)=>{

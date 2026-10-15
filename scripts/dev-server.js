@@ -34,7 +34,9 @@ function ambientFiles(){
 function fxAsset(key){
   const asset=discoverAmbientAssetSets(ambientFiles()).flybys.find(a=>a.key===key);
   if(!asset||asset.frames.length!==1||!asset.frameA.toLowerCase().endsWith('.png'))throw new Error('Choose a single PNG flyby asset.');
-  const base=fs.realpathSync(path.join(ambientLibraryDir(),'flybys'))+path.sep;
+  const family=asset.key.split('/')[0];
+  if(!['flybys','exit'].includes(family))throw new Error('Invalid flyby library.');
+  const base=fs.realpathSync(path.join(ambientLibraryDir(),family))+path.sep;
   const file=fs.realpathSync(path.join(rootDir,asset.frameA));
   if(!file.startsWith(base))throw new Error('Asset escapes the flyby library.');
   const bytes=fs.readFileSync(file);
@@ -256,6 +258,11 @@ function normalizeWorldConfig(value) {
       if (!settings.cinematicLighting || typeof settings.cinematicLighting !== "object" || Array.isArray(settings.cinematicLighting)) throw new Error(`${levelId}.cinematicLighting must be an object.`);
       next.cinematicLighting = cinematicSettingsApi.normalize(settings.cinematicLighting);
     }
+    if (settings.playerDepthOcclusion !== undefined) {
+      const depth=settings.playerDepthOcclusion;
+      if(!depth || typeof depth!=='object' || Array.isArray(depth) || typeof depth.enabled!=='boolean' || !Number.isFinite(depth.offset) || depth.offset < -1 || depth.offset > 1 || Object.keys(depth).some(key=>!['enabled','offset'].includes(key)))throw new Error('Invalid playerDepthOcclusion: expected enabled and offset in [-1, 1].');
+      next.playerDepthOcclusion={enabled:depth.enabled,offset:depth.offset};
+    }
     if (settings.mainCharacter !== undefined) next.mainCharacter = playableCharactersApi.validateId(settings.mainCharacter);
     if (settings.mainCharacterSettings !== undefined) next.mainCharacterSettings = playableCharactersApi.validateBank(settings.mainCharacterSettings);
     result.levels[levelId] = next;
@@ -335,7 +342,7 @@ function discoverAmbientAssetSets(files) {
   for (const relativePath of files) {
     const parts = relativePath.split("/");
     const kind = parts[0];
-    if (!["animals", "flybys"].includes(kind) || parts.length < 3) continue;
+    if (!["animals", "flybys", "exit"].includes(kind) || parts.length < 3) continue;
     const folder = parts.slice(0, -1).join("/");
     if (!groups.has(folder)) groups.set(folder, { kind, folder, images: [], audio: [] });
     const group = groups.get(folder);
@@ -497,7 +504,7 @@ function validateAmbientFlybys(value, levelId) {
     if(flyby.loopDuringFlyby!==undefined)result.loopDuringFlyby=flyby.loopDuringFlyby;
     if(sequenceErrors.length)throw new Error(`ambientFlybys[${index}]: ${sequenceErrors.join('; ')}`);
     if(flyby.frames!==undefined)result.frames=flyby.frames.map((p,i)=>validateAmbientAsset(levelId,p,`ambientFlybys[${index}].frames[${i}]`,ambientImageExtensions));
-    for(const field of ['playback','animationFps','movementEndFrame','endBehavior','depthOcclusion','depthBias','actions','enabled','brightness','contrast','warmth','tint'])if(flyby[field]!==undefined)result[field]=flyby[field];
+    for(const field of ['activation','postExitDelay','playback','animationFps','movementEndFrame','endBehavior','depthOcclusion','depthBias','depthMode','fixedDepth','actions','enabled','brightness','contrast','warmth','tint'])if(flyby[field]!==undefined)result[field]=flyby[field];
     if (!ambientSystemApi.validSoundTriggers(flyby)) throw new Error(`ambientFlybys[${index}].soundTriggers must contain unique during/tap values (or a valid legacy soundTrigger).`);
     if (flyby.soundTriggers !== undefined) {
       result.soundTriggers = ambientSystemApi.soundTriggers(flyby);
@@ -1224,7 +1231,7 @@ function serveStatic(response, url) {
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
     // An absent optional attachment is a normal asset-library state. Do not
     // turn every legacy flyby into a failed resource request in local tooling.
-    if(/^assets\/ambient\/flybys\/.+\/fx\.json$/.test(relative) && fs.existsSync(path.dirname(filePath))){
+    if(/^assets\/ambient\/(?:flybys|exit)\/.+\/fx\.json$/.test(relative) && fs.existsSync(path.dirname(filePath))){
       response.writeHead(204,{'cache-control':'no-store'});response.end();return;
     }
     sendText(response, 404, "Not found");

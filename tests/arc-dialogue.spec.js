@@ -3,7 +3,7 @@ const fs = require('fs');
 const vm = require('vm');
 const crypto = require('crypto');
 const hints = require('../src/challenge-hints');
-const {beforeE5RepresentationChange,digitalMinnie,currentE5Explanation}=require('./helpers/time-approval.cjs');
+const {beforeE5RepresentationChange,digitalMinnie,digitalMoose,currentE5Explanation}=require('./helpers/time-approval.cjs');
 const base = (process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173').split('?')[0];
 const ids = ['LVL-0032', 'LVL-0033', 'LVL-0034', 'LVL-0035'];
 const unlock = [
@@ -165,8 +165,10 @@ test('clock strategies preserve Dutch half semantics, reject invalid inputs, and
   for (let i = 21; i <= 31; i++) {
     const id = `LVL-${String(i).padStart(4, '0')}`;
     for (const ch of load(id).learningChallenges.filter(ch => ch.active === false)) for (const slot of ch.questions) for (const v of slot.variants) {
-      expect(hints.resolve(id, v, 'minnie')).toBe(v.hintMinnie);
-      expect(hints.resolve(id, v, 'moose')).toBe(v.hintMoose);
+      // The approved digital support correction also covers inactive clocks.
+      const digital = v.visual?.type === 'digitalClock';
+      expect(hints.resolve(id, v, 'minnie')).toBe(digital ? digitalMinnie(v) : v.hintMinnie);
+      expect(hints.resolve(id, v, 'moose')).toBe(digital ? digitalMoose(v) : v.hintMoose);
     }
   }
 });
@@ -180,6 +182,8 @@ async function enter(page, id) {
 }
 
 for (const id of ids) test(`${id}: all variants follow Minnie → Moose → assistance without changing question or choices`, async ({ page }) => {
+  // Exhaust the local E5 bank; mixed E5/M6 selection has separate coverage.
+  await page.addInitScript(() => localStorage.setItem('atlas.learning.m6Percentage', '0'));
   await enter(page, id);
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   const results = await page.evaluate(() => {

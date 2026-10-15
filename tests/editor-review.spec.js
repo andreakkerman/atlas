@@ -56,12 +56,12 @@ test('Add search spans preset metadata, weather and discovered assets without co
  const results=await page.locator('[data-add-family] option').evaluateAll(nodes=>nodes.map(n=>n.value));
  expect(results).toContain('cinematic:particles');
  expect(results.some(key=>key.startsWith('animal:')||key.startsWith('flyby:'))).toBe(false);
- await page.locator('[data-add-family]').selectOption('cinematic:particles');
- expect(await page.locator('[data-add-variant] option').allTextContents()).toContain('Snow');
+ await page.locator('[data-add-family]').selectOption('cinematic:snow');
+ expect(await page.locator('[data-add-variant] option').allTextContents()).toEqual(['Light Snow','Snowfall','Fluffy Snow','Windblown Snow','Blizzard']);
  await page.screenshot({path:'qa-screenshots/editor-review/add-particles.png'});
  expect(results).not.toContain('effect:light-source-enhancement');
  expect(results).not.toContain('effect:sand');
- await input.fill('snow');await page.locator('[data-add-cinematic-preset="Snow"]').click();
+ await input.fill('snowfall');await page.locator('[data-add-cinematic-preset="Snow"]').click();
  const authored=await page.evaluate(()=>{const s=window.eval('editorWorkspace.selection');return window.AtlasCinematicSettings.normalize(window.eval('worldResolver').levelSettings(window.eval('level.id')).cinematicLighting)[s.system].items.find(i=>i.id===s.id);});
  expect(authored).toMatchObject(require('../src/cinematic-settings').presets.particles.Snow);
  await page.locator('[data-workspace-action="add"]').click();await input.fill('wasp');
@@ -136,6 +136,6 @@ test('all production Illustrated contributions retain Scene discovery',async({pa
    result.push({id:entry.id,active,missing,spatial:spatial.length});
   }return result;
  });
- expect(audit).toHaveLength(35);expect(audit.flatMap(r=>r.missing)).toEqual([]);
+ expect(audit).toHaveLength(39);expect(audit.flatMap(r=>r.missing)).toEqual([]);
  await require('fs').promises.writeFile(info.outputPath('illustrated-parity.json'),JSON.stringify(audit,null,2));
 });

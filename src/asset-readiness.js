@@ -20,6 +20,7 @@
     };
 
     add(level?.world?.background, "background", true);
+    if(options.playerDepth)add(global.AtlasAmbientSystem.depthPathFor(level),"player-depth",true);
     if(options.prepareDepth)add(global.AtlasAmbientSystem.depthPathFor(level),"scene-depth",false);
     add(level?.companion?.portrait, "companion-portrait", true);
     Object.values(level?.guides || {}).forEach((guide) => add(guide?.portrait, "guide-portrait", true));
@@ -30,12 +31,13 @@
     });
     (level?.ambientFlybys || []).forEach((flyby) => {
       if(flyby.enabled===false)return;
-      if (flyby.frames) flyby.frames.forEach(path=>add(path,"ambient-flyby-sequence",true,flyby.id));
+      const required=!global.AtlasAmbientSystem.isExitFlyby(flyby);
+      if (flyby.frames) flyby.frames.forEach(path=>add(path,"ambient-flyby-sequence",required,flyby.id));
       else {
         add(flyby.frameA, "ambient-flyby-a", false, flyby.id);
         add(flyby.frameB, "ambient-flyby-b", false, flyby.id);
       }
-      if (flyby.depthOcclusion) add(global.AtlasAmbientSystem.depthPathFor(level),"flyby-depth",true,flyby.id);
+      if (flyby.depthOcclusion) add(global.AtlasAmbientSystem.depthPathFor(level),"flyby-depth",required,flyby.id);
     });
     add(level?.challengeCharacter?.portrait, "challenge-portrait", true);
     add(level?.challengeArt, "challenge-art", true);

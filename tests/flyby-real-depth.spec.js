@@ -1,10 +1,10 @@
 const {test,expect}=require('@playwright/test');
 const fs=require('fs');
-const base='http://127.0.0.1:4173';
+const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173';
+const {bootEditorTest}=require('./editor-workspace-helpers');
 for(const mode of ['illustrated','cinematic'])test(`real Riven Tides depth comparison and debug in ${mode}`,async({page},info)=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
- await page.goto(base+'/?dev=editor');
- await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));
+ await bootEditorTest(page,base+'/?dev=editor&level=LVL-0034');
  await page.evaluate(mode=>{window.eval('ambientFlybyRuntime').stopAll();window.eval('voxelRenderer').updateSettings({renderer:mode});window.eval('render')();},mode);
  if(mode==='cinematic'&&info.project.name==='desktop-chromium')await expect(page.locator('.gameShell')).toHaveClass(/cinematicReady/);
  const measurements=[];
@@ -48,24 +48,28 @@ for(const mode of ['illustrated','cinematic'])test(`real Riven Tides depth compa
 
 
 for(const kind of ['static','legacy','loop','once','hold'])for(const set of ['bastion_walk','bastion_walk_aim'])test(`real Riven Tides ${kind} ${set} masking and debug cleanup`,async({page})=>{
- await page.goto(base+'/?dev=editor');await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));await page.clock.install();
+ await bootEditorTest(page,base+'/?dev=editor&level=LVL-0034');await page.clock.install();
 
   const frames=fs.readdirSync(`assets/ambient/flybys/${set}`).filter(f=>f.endsWith('.png')).sort().map(f=>`assets/ambient/flybys/${set}/${f}`);
   await page.evaluate(async({kind,frames})=>{const r=window.eval('ambientFlybyRuntime');r.stopAll();const c={...window.eval('level').ambientFlybys[0],frames,frameA:frames[0],frameB:null,depthBias:-.1,path:[{x:550,y:499},{x:551,y:499}],motionProfile:'linear',speed:1,animationFps:60,playback:kind==='hold'?'once':kind,movementEndFrame:1,endBehavior:kind==='hold'?'hold':'despawn'};if(kind==='legacy'){delete c.frames;delete c.playback;c.frameB=frames[1];}await window.eval('setLevelAmbientFlybys')([c]);r.stopAll();r.setDepthDebug(true);r.preview(c.id);}, {kind,frames});
-  await page.clock.runFor(kind==='hold'?1800:32);
+  // Playback preserves every pose, rather than skipping frames to hit nominal
+  // FPS. Drive a complete sequence of virtual frame slots before testing Hold.
+  if(kind==='hold')for(let frame=0;frame<=frames.length;frame++)await page.clock.runFor(34);
+  else await page.clock.runFor(32);
   const result=await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime'),inst=[...r.active.values()][0];if(!inst)return {active:false};const canvas=document.querySelector('[data-flyby-canvas]');const debug=inst.depthDebug; r.setDepthDebug(false);const p=canvas.getContext('2d').getImageData(0,0,640,360).data;let alpha=0;for(let i=3;i<p.length;i+=4)alpha+=p[i];window.eval('state').cameraX+=50;window.eval('render')();return {active:true,held:!!inst.held,frame:inst.frameIndex||0,alpha,debug,retained:document.querySelector('[data-flyby-canvas]')===canvas,diagnosticsCleared:!inst.depthDebug};});
   expect(result.active).toBe(true);expect(result.alpha).toBeGreaterThan(0);expect(result.alpha).toBeLessThan(10000000);expect(result.retained).toBe(true);expect(result.diagnosticsCleared).toBe(true);expect(result.debug.bias).toBe(-.1);
   if(kind==='hold'){expect(result.held).toBe(true);expect(result.frame).toBe(frames.length-1);const a=result.debug.rawDepth;await page.clock.runFor(100);expect(await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime');r.setDepthDebug(true);return [...r.active.values()][0].depthDebug.rawDepth;})).toBe(a);}
  await page.evaluate(()=>window.eval('returnToMenu')());expect(await page.evaluate(()=>window.eval('ambientFlybyRuntime').active.size)).toBe(0);
- await page.goto(base);expect(await page.evaluate(()=>window.eval('ambientFlybyRuntime').setDepthDebug(true))).toBe(false);
+ await page.goto(base);await page.getByRole('button',{name:'Start avontuur',exact:true}).click();await page.waitForFunction(()=>window.eval('typeof selectLevel')==='function');expect(await page.evaluate(()=>window.eval('ambientFlybyRuntime').setDepthDebug(true))).toBe(false);
 });
 
 
 for(const mode of ['illustrated','cinematic'])test(`real container crossing retains the moving canvas in ${mode}`,async({page},info)=>{
- const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto(base+'/?dev=editor');await page.evaluate(()=>window.eval('selectLevel')('LVL-0034',{startImmediately:true,recordStart:false}));
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));await bootEditorTest(page,base+'/?dev=editor&level=LVL-0034');
  await page.evaluate(async mode=>{const r=window.eval('ambientFlybyRuntime');r.stopAll();const c={...window.eval('level').ambientFlybys[0],depthBias:-.1,path:[{x:70,y:499},{x:750,y:499}],motionProfile:'linear',speed:680,playback:'loop'};await window.eval('setLevelAmbientFlybys')([c]);r.stopAll();window.eval('voxelRenderer').updateSettings({renderer:mode});window.eval('render')();},mode);
  if(mode==='cinematic'&&info.project.name==='desktop-chromium')await expect(page.locator('.gameShell')).toHaveClass(/cinematicReady/);
- await page.clock.install();await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime');r.preview(window.eval('level').ambientFlybys[0].id);window.crossingCanvas=document.querySelector('[data-flyby-canvas]');});
+ await page.clock.install();await page.clock.pauseAt(await page.evaluate(()=>new Date(Date.now()+100).toISOString()));
+ await page.evaluate(()=>{const r=window.eval('ambientFlybyRuntime');r.preview(window.eval('level').ambientFlybys[0].id);window.crossingCanvas=document.querySelector('[data-flyby-canvas]');});
  const samples=[];
  for(let step=0;step<10;step++){
   await page.clock.runFor(90);

@@ -873,65 +873,6 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
   ],
   "ambientFlybys": [
     {
-      "id": "arc_snitch2",
-      "label": "arc_snitch2",
-      "frameA": "assets/ambient/flybys/arc_snitch/arc_snitch.png",
-      "frameB": null,
-      "sound": "assets/ambient/flybys/arc_snitch/arc_snitch.mp3",
-      "path": [
-        {
-          "x": 707,
-          "y": -38
-        },
-        {
-          "x": 747,
-          "y": 110
-        },
-        {
-          "x": 876,
-          "y": 84
-        },
-        {
-          "x": 999,
-          "y": 67
-        },
-        {
-          "x": 1121,
-          "y": 129
-        },
-        {
-          "x": 1218,
-          "y": 66
-        },
-        {
-          "x": 1258,
-          "y": -30
-        }
-      ],
-      "scale": 0.22,
-      "speed": 50,
-      "flapFrequencyHz": 7,
-      "faceFlightDirection": false,
-      "mirrorX": false,
-      "intervalMinMs": 3000,
-      "intervalMaxMs": 10000,
-      "syncKey": "",
-      "startDelayMs": 0,
-      "softness": 1.25,
-      "saturation": 1,
-      "soundVolume": 0.65,
-      "rotateAlongPath": false,
-      "maxRotationDeg": 8,
-      "soundTriggers": [
-        "during",
-        "tap"
-      ],
-      "motionProfile": "smooth",
-      "wobble": 14,
-      "speedVariation": 0.14,
-      "flutterFrequency": 2.1
-    },
-    {
       "id": "arc_wasp3",
       "label": "arc_wasp3",
       "frameA": "assets/ambient/flybys/arc_wasp/awc_wasp.png",
@@ -1017,10 +958,14 @@ window.SVEN_LEVEL_DEFINITIONS["LVL-0035"] = {
       "soundVolume": 0.1,
       "rotateAlongPath": false,
       "maxRotationDeg": 8,
-      "loopDuringFlyby": true,
+      "loopDuringFlyby": false,
       "brightness": 0.66,
+      "soundTriggers": [
+        "during",
+        "tap"
+      ],
       "motionProfile": "smooth",
-      "wobble": 14,
+      "wobble": 20,
       "speedVariation": 0.14,
       "flutterFrequency": 2.1
     }

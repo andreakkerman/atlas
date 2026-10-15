@@ -8,6 +8,11 @@
     Sand:"Fine Canvas 2D sand in a shallow ribbon. Uses the shared field controls; Count is capped at 480 grains before quality scaling.",
     Pollen:"Large soft motes drift slowly with light wind and almost no gravity.", Dust:"Fine, faint particles move slowly through a volume with little emission.",
     Embers:"Warm emissive particles rise from a small source, curl and fade quickly.", Snow:"Varied flakes fall slowly, with sideways wind and wandering motion.",
+    "Light Snow":"Small, sparse flakes with a gentle breeze; keeps the artwork prominent.",
+    "Fluffy Snow":"Larger soft flakes drift slowly with broad wandering motion.",
+    "Windblown Snow":"Fine flakes sweep through coherent curved gusts and gentle local eddies. No trails or glow.",
+    "Snow Squall":"Wind-carried snow curls into rolling plumes instead of falling. Gust Strength controls curl size; Turbulence spreads the streams. No fog or extra layers.",
+    Blizzard:"A forceful storm with sweeping gusts, larger flakes and stronger eddies. One bounded field; no fog or glow.",
     Drizzle:"Fine, short downward streaks with moderate wind and density.", "Heavy Rain":"Dense, fast, long downward streaks with stronger sideways wind.",
     "Magic Motes":"Colored emissive motes wander and pulse smoothly."
   };
@@ -57,6 +62,8 @@
     noiseSpeed: "Speed of beam breakup. Zero freezes the pattern; slow values keep broad rays calm.",
     noiseDetail: "Adds smaller details to the haze pattern. Lower values are broad and smooth; higher values are more textured.",
     scale: "Size of haze features. Higher values spread the pattern into larger clouds.",
+    motion: "Falling uses the original particle trajectories. Wind Flow carries flakes along curling streams; Gust Strength shapes the curls, Turbulence widens the streams. Gravity and source emission apply only to Falling.",
+    gustStrength: "Coherent curved gusts and local eddies. Zero removes the extra curls. Falling motion with zero preserves the original trajectories. Windblown Snow is subtle; Blizzard uses stronger gusts. No trails or additional fields.",
     turbulence: "Irregular drifting motion. Higher values create more wandering or curling movement.",
     streak: "Elongates particles in their travel direction. One makes motes; larger values make rain streaks.",
     wind: "Sideways particle drift. Negative moves left; positive moves right.",
@@ -181,8 +188,9 @@
       return items.find(i => i.id === selection.get(selectionKey(key))) || items[0];
     }
     function control(section, key, def, value) {
-      const canvasDepth = section === "particles" && selected(section)?.distribution === "ribbon" && ["depthInfluence", "depthSoftness"].includes(key);
-      const attrs = `data-cinematic-section="${section}" data-cinematic-setting="${key}" ${canvasDepth ? 'disabled title="Depth masking requires GPU particles; Sand uses Canvas 2D."' : ""}`;
+      const canvasDepth = section === "particles" && selected(section)?.distribution === "ribbon" && ["depthInfluence", "depthSoftness", "gustStrength", "motion"].includes(key);
+      const windFlowInactive = section === "particles" && selected(section)?.motion === "windFlow" && ["gravity", "distribution", "randomness"].includes(key);
+      const attrs = `data-cinematic-section="${section}" data-cinematic-setting="${key}" ${canvasDepth ? 'disabled title="Depth masking and gust motion require GPU particles; Sand uses Canvas 2D."' : windFlowInactive ? 'disabled title="Used by Falling motion; Wind Flow follows continuous wind streams."' : ""}`;
       if (typeof def === "boolean") return `<label class="atlasToggleField"><input type="checkbox" ${attrs} ${value ? "checked" : ""}> ${controlLabel(section,key)}</label>`;
       if (Array.isArray(def)) return `<label class="graphicsSelect">${controlLabel(section,key)}<select ${attrs}>${def.map(v => `<option value="${v}" ${value === v ? "selected" : ""}>${label(v)}</option>`).join("")}</select></label>`;
       if (typeof def === "string") return `<label class="graphicsSelect">${label(key)}<input type="color" ${attrs} value="${value}"></label>`;
@@ -203,7 +211,7 @@
     function instances(key, settings) {
       const item = selected(key, settings);
       return `<strong data-cinematic-selected="${item?.id || ''}">${item?.name || 'No instance selected'}</strong><div class="cinematicActions"><button type="button" data-cinematic-action="duplicate" data-section="${key}" ${item && settings[key].items.length < 12 ? '' : 'disabled'}>Duplicate</button><button type="button" data-cinematic-action="remove" data-section="${key}" ${item ? '' : 'disabled'}>Delete</button></div>
-        ${item && api.presets[key] ? `<label class="graphicsSelect">Starting preset<select data-cinematic-preset="${key}"><option value="">Custom / choose a starting point</option>${Object.keys(api.presets[key]).map(name=>`<option title="${presetHelp[name]}">${name}</option>`).join("")}</select></label><p class="cinematicHint" data-cinematic-preset-help>${presetHelp[view().presets[item.id]] || "Presets change behavior; placement stays put."} ${item.distribution === "ribbon" ? "Depth masking is GPU-only; the other field controls remain editable." : "All controls remain editable."}</p>` : ""}
+        ${item && api.presets[key] ? `<label class="graphicsSelect">Starting preset<select data-cinematic-preset="${key}"><option value="">Custom / choose a starting point</option>${Object.keys(api.presets[key]).map(name=>`<option value="${name}" title="${presetHelp[name]}">${api.presetLabel(name)}</option>`).join("")}</select></label><p class="cinematicHint" data-cinematic-preset-help>${presetHelp[view().presets[item.id]] || "Presets change behavior; placement stays put."} ${item.distribution === "ribbon" ? "Depth masking is GPU-only; the other field controls remain editable." : "All controls remain editable."}</p>` : ""}
         <div data-cinematic-instance="${key}">${item ? fields(key, item) : "<p>No instances. Use Add in the canvas toolbar.</p>"}</div>`;
     }
     function select(key, id) {
@@ -226,7 +234,10 @@
     }
     const environmentGroups={particles:'Weather & atmosphere',atmosphere:'Weather & atmosphere',waterSurface:'Water',waterSparkles:'Water',localLights:'Lighting',areaLights:'Lighting',shafts:'Lighting',godRays:'Lighting',grading:'Color & grading',finishing:'Color & grading',characters:'Shadows & depth',depth:'Shadows & depth',bloom:'Lighting',wrap:'Advanced',rim:'Advanced',autoExposure:'Advanced',gameplayCues:'Advanced'};
     function creationFamilies() {
-      return Object.entries(api.systems).filter(([,def])=>def.type).map(([key,def])=>({key:'cinematic:'+key,kind:'cinematic',id:key,name:({localLights:'Local light',areaLights:'Area / directional light',particles:'Particle field',atmosphere:'Haze volume'})[key] || def.label,category:environmentGroups[key],help:helpText[key],description:({particles:'Weather, dust or sparks in a positioned field.',localLights:'A local source for a torch, lantern or rune.',areaLights:'Broad illumination for sun, moon or room light.',atmosphere:'A positioned region of haze or mist.'})[key] || helpText[key],applicability:['particles','areaLights'].includes(key)?'Illustrated + Cinematic':'Cinematic preview; editable in every mode',variants:api.presets[key]?[{id:'',name:'Default'},...Object.keys(api.presets[key]).map(name=>({id:name,name}))]:[]}));
+      const families = Object.entries(api.systems).filter(([,def])=>def.type).map(([key,def])=>({key:'cinematic:'+key,kind:'cinematic',id:key,name:({localLights:'Local light',areaLights:'Area / directional light',particles:'Particle field',atmosphere:'Haze volume'})[key] || def.label,category:environmentGroups[key],help:helpText[key],description:({particles:'Weather, dust or sparks in a positioned field.',localLights:'A local source for a torch, lantern or rune.',areaLights:'Broad illumination for sun, moon or room light.',atmosphere:'A positioned region of haze or mist.'})[key] || helpText[key],applicability:['particles','areaLights'].includes(key)?'Illustrated + Cinematic':'Cinematic preview; editable in every mode',variants:api.presets[key]?[{id:'',name:'Default'},...Object.keys(api.presets[key]).filter(name=>key!=='particles'||!api.snowPresets.includes(name)).map(name=>({id:name,name:api.presetLabel(name)}))]:[]}));
+      families.find(f=>f.id==='particles').category='Particle Fields';
+      families.push({key:'cinematic:snow',kind:'cinematic',id:'particles',name:'Snow',category:'Particle Fields',description:'One scene-wide snow field. Choose falling snow, a blizzard or curling wind streams.',help:'Snowfall preserves the original Snow preset. Snow Squall uses curling wind streams; all styles share the same renderer and depth controls.',applicability:'Illustrated + Cinematic',variants:api.snowPresets.map(name=>({id:name,name:api.presetLabel(name)}))});
+      return families;
     }
     // Display priorities only: every control still comes from the existing schema and handler.
     const environmentQuickFields={depth:['enabled','filterRadius','perspective'],grading:['enabled','exposure','warmth'],characters:['groundingShadow','shadowStrength','enabled'],bloom:['enabled','intensity'],wrap:['enabled','strength'],rim:['enabled','strength'],autoExposure:['enabled','strength'],finishing:['enabled','intensity'],gameplayCues:['enabled','intensity']};
@@ -267,7 +278,13 @@
         const key = input.dataset.cinematicSection; const field = input.dataset.cinematicSetting;
         const value = (api.systems[key].type ? selected(key, settings) : settings[key])?.[field];
         if (value === undefined) return;
-        if (key === "particles" && ["depthInfluence", "depthSoftness"].includes(field)) input.disabled = selected(key, settings)?.distribution === "ribbon";
+        if (key === "particles") {
+          const item = selected(key, settings);
+          const canvasOnly = item?.distribution === "ribbon" && ["depthInfluence", "depthSoftness", "gustStrength", "motion"].includes(field);
+          const flowInactive = item?.motion === "windFlow" && ["gravity", "distribution", "randomness"].includes(field);
+          input.disabled = canvasOnly || flowInactive;
+          input.title = canvasOnly ? "Depth masking and gust motion require GPU particles; Sand uses Canvas 2D." : flowInactive ? "Used by Falling motion; Wind Flow follows continuous wind streams." : "";
+        }
         if (input.type === "checkbox") input.checked = value; else input.value = value;
         const output = input.parentElement.querySelector("output"); if (output) output.textContent = Number(value).toFixed(api.systems[key].fields[field].step === 1 ? 0 : 2);
       });
@@ -355,6 +372,9 @@
         const world = options.getLevel().world; const id = `${key}-${Date.now().toString(36)}`;
         const item=api.instance(key, { id, layer:view().layer, x: options.getCameraX()+options.getViewportWorldWidth()/2, y: world.height*0.55 });
         const added=button.dataset.addCinematicPreset ? api.preset(key,button.dataset.addCinematicPreset,item) : item;
+        if(key==='particles' && api.snowPresets.includes(button.dataset.addCinematicPreset)) {
+          Object.assign(added,{name:api.presetLabel(button.dataset.addCinematicPreset),shape:'rectangle',x:world.width/2,y:world.height/2,width:world.width,height:world.height,boundsRotation:0});
+        }
         settings[key].items.push(added);view().layer=added.layer;
         settings[key].enabled = true; selection.set(selectionKey(key), id);
       }

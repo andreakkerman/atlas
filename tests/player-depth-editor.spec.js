@@ -1,0 +1,53 @@
+const {test,expect}=require('@playwright/test');
+const fs=require('fs'),path=require('path');
+const {bootEditorTest,selectSceneItem}=require('./editor-workspace-helpers');
+const base=process.env.ATLAS_EDITOR_URL||'http://127.0.0.1:4173',root=path.join(__dirname,'..'),file=path.join(root,'Levels/world-config.js');
+require('./editor-draft-fixture').preserveEditorDrafts(test,root);
+let saved;
+test.beforeEach(()=>{saved=fs.readFileSync(file);});
+test.afterEach(async({page})=>{await page.close();if(!fs.readFileSync(file).equals(saved))fs.writeFileSync(file,saved);});
+test('shared character UI, Apply/reload and Revert preserve the applied depth configuration',async({page})=>{
+ await page.route('**/__dev/levels/*/editor-draft',r=>r.request().method()==='GET'?r.fulfill({json:{}}):r.continue());
+ await bootEditorTest(page,base+'/?dev=editor&level=LVL-0034');await page.evaluate(()=>window.eval('cinematicRenderer').sync());await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);await selectSceneItem(page,'player','player');
+ await expect(page.locator('[data-player-depth="enabled"]')).not.toBeChecked();await expect(page.locator('[data-player-depth="offset"][type="range"]')).toBeDisabled();
+ await page.locator('[data-player-depth="enabled"]').check();
+ await page.locator('[data-player-depth="offset"][type="range"]').evaluate(el=>el.value='-0.100');await page.locator('[data-player-depth="offset"][type="range"]').dispatchEvent('input');
+ await expect(page.getByRole('spinbutton',{name:'Depth Offset',exact:true})).toHaveValue('-0.100');
+ const numeric=page.getByRole('spinbutton',{name:'Depth Offset',exact:true});
+ await numeric.fill('-0.102');await expect(numeric).toHaveValue('-0.102');await numeric.press('ArrowUp');
+ await expect(numeric).toHaveValue('-0.101');
+ await expect(page.locator('[data-player-depth="offset"][type="range"]')).toHaveValue('-0.101');
+ await numeric.press('ArrowDown');await expect(numeric).toHaveValue('-0.102');
+ await numeric.fill('');
+ expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0034').playerDepthOcclusion.offset)).toBe(-.102);
+ await numeric.blur();await expect(numeric).toHaveValue('-0.102');
+ await numeric.fill('2');await numeric.blur();await expect(numeric).toHaveValue('1.000');
+ await numeric.fill('-2');await numeric.blur();await expect(numeric).toHaveValue('-1.000');
+ await numeric.fill('-0.100');
+ await numeric.evaluate(el=>{window.depthInput=el;window.depthScroll=Array.from(document.querySelectorAll('*')).filter(e=>e.scrollTop).map(e=>[e,e.scrollTop]);});
+ await numeric.press('ArrowUp');await numeric.press('ArrowDown');
+ await expect(numeric).toBeFocused();
+ expect(await numeric.evaluate(el=>el===window.depthInput&&window.depthScroll.every(([e,y])=>e.isConnected&&e.scrollTop===y))).toBe(true);
+ expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0034').playerDepthOcclusion.offset)).toBe(-.1);
+ const controls=page.locator('.atlasDepthOffsetControls');
+ expect(await controls.evaluate(el=>el.scrollWidth<=el.clientWidth)).toBe(true);
+ await controls.screenshot({path:'output/player-depth/depth-offset-numeric.png'});
+ await expect(page.locator('[data-player-depth-canvas]')).toHaveCount(1);
+ await page.evaluate(()=>{window.eval('locomotion').reset();window.previewDepthPixels=window.eval('playerDepth').surface.getContext('2d').getImageData(0,0,432,528).data;});
+ await page.keyboard.press('Control+Shift+D');
+ const mismatch=await page.evaluate(()=>{window.eval('locomotion').reset();window.eval('playerDepth').sync();const p=window.eval('playerDepth').surface.getContext('2d').getImageData(0,0,432,528).data;return p.reduce((sum,value,i)=>sum+(value!==window.previewDepthPixels[i]?1:0),0);});
+ expect(mismatch).toBe(0);
+ await page.keyboard.press('Control+Shift+D');
+ await page.getByRole('button',{name:'Apply',exact:true}).click();await expect.poll(()=>page.evaluate(()=>window.eval('walkPathEditor').status)).toBe('Applied');
+ await page.reload();await page.waitForFunction(()=>window.eval('typeof level')!=='undefined'&&window.eval('state.screen')==='scene');
+ expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0034').playerDepthOcclusion)).toEqual({enabled:true,offset:-.1});
+ await expect(page.locator('[data-player-depth-canvas]')).toHaveCount(1);
+ await selectSceneItem(page,'player','player');await page.locator('[data-player-depth="offset"][type="range"]').evaluate(el=>el.value='-0.200');await page.locator('[data-player-depth="offset"][type="range"]').dispatchEvent('input');
+ await page.locator('[data-workspace-action="changes"]').click();await page.getByRole('button',{name:'Revert',exact:true}).click();await expect.poll(()=>page.evaluate(()=>window.eval('walkPathEditor').status)).toBe('Reverted');
+ expect(await page.evaluate(()=>window.eval('worldResolver').levelSettings('LVL-0034').playerDepthOcclusion)).toEqual({enabled:true,offset:-.1});
+});
+test('server rejects malformed depth configuration without changing saved content',async({request})=>{
+ for(const depth of [{enabled:'true',offset:0},{enabled:true,offset:2},{enabled:true,offset:0,unexpected:1}]){
+ const response=await request.post(base+'/__dev/world-config',{data:{levels:{'LVL-0034':{playerDepthOcclusion:depth}}}});expect(response.status()).toBe(400);expect(fs.readFileSync(file).equals(saved)).toBe(true);
+ }
+});

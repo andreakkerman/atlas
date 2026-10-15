@@ -26,6 +26,7 @@ test('one compact family picker retains every supported definition and variant',
   await open(page);await page.locator('[data-workspace-action="add"]').click();
   const expected=await page.evaluate(()=>[
     ...Object.values(window.AtlasSceneEffects.PRESETS).filter(p=>!p.hiddenFromLibrary).map(p=>'effect:'+p.id),
+    'cinematic:snow',
     ...Object.entries(window.AtlasCinematicSettings.systems).filter(([,d])=>d.type).map(([k])=>'cinematic:'+k),
     ...['animal','flyby'].flatMap(k=>[...window.eval('discoveredAssetSets')(k).map(s=>k+':'+s.key),k+':manual'])
   ].sort());
@@ -36,9 +37,9 @@ test('one compact family picker retains every supported definition and variant',
   await page.locator('[data-cinematic-action="add"]').click();
   const item=await page.evaluate(()=>{const s=window.eval('editorWorkspace.selection');return window.eval('worldResolver').levelSettings(window.eval('level.id')).cinematicLighting[s.system].items.find(i=>i.id===s.id);});
   expect(item).toMatchObject(require('../src/cinematic-settings').presets.localLights.Fire);
-  await chooseCreation(page,'cinematic:particles');await page.locator('[data-editor-add-search]').fill('snow');
+  await chooseCreation(page,'cinematic:particles');await page.locator('[data-editor-add-search]').fill('snowfall');
   await expect(page.locator('[data-add-variant]')).toHaveValue('Snow');
-  expect(await page.locator('[data-add-family] option').evaluateAll(nodes=>nodes.map(n=>n.value))).toEqual(['cinematic:particles']);
+  expect(await page.locator('[data-add-family] option').evaluateAll(nodes=>nodes.map(n=>n.value))).toEqual(['cinematic:snow']);
   await page.screenshot({path:'qa-screenshots/editor-simplification/add-snow.png'});
   await page.locator('[data-cinematic-action="add"]').click();
   const snow=await page.evaluate(()=>{const s=window.eval('editorWorkspace.selection');return window.eval('worldResolver').levelSettings(window.eval('level.id')).cinematicLighting.particles.items.find(i=>i.id===s.id);});

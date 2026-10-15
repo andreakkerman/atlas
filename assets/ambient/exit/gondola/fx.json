@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "sprite": "gondola.png",
+  "sourceSize": {
+    "width": 1225,
+    "height": 1284
+  },
+  "effects": [
+    {
+      "id": "gondola-right-jet",
+      "label": "Right propulsion nozzle",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 3902,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 868.7,
+        "y": 1117.7,
+        "directionDeg": 89.55671350961083,
+        "width": 127.13752020719419,
+        "spreadDeg": 80.162395146476,
+        "length": 755.9648183685842
+      },
+      "overrides": {
+        "opacity": 0.75
+      },
+      "plane": "behind"
+    },
+    {
+      "id": "fx-171a3d4d-ef76-4e10-a918-b90dd8c462e9",
+      "label": "Right propulsion nozzle copy",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 3902,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 345,
+        "y": 1103.4,
+        "directionDeg": 89.55671350961083,
+        "width": 127.13752020719419,
+        "spreadDeg": 80.162395146476,
+        "length": 755.9648183685842
+      },
+      "overrides": {
+        "opacity": 0.75
+      },
+      "plane": "behind"
+    },
+    {
+      "id": "fx-fac636b1-e48c-4b1d-83c2-953b7ecc2982",
+      "label": "Illuminated gray vapor 3",
+      "presetId": "jetwash",
+      "variantId": "gray",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 598104609,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 870.5,
+        "y": 1087.5,
+        "directionDeg": 90,
+        "width": 90,
+        "spreadDeg": 65,
+        "length": 240
+      },
+      "overrides": {},
+      "plane": "behind"
+    },
+    {
+      "id": "fx-9666c331-a418-4fc0-b4b9-61108394412d",
+      "label": "Illuminated gray vapor 3 copy",
+      "presetId": "jetwash",
+      "variantId": "gray",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 598104609,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 342.1,
+        "y": 1094.6,
+        "directionDeg": 90,
+        "width": 90,
+        "spreadDeg": 65,
+        "length": 240
+      },
+      "overrides": {},
+      "plane": "behind"
+    }
+  ]
+}

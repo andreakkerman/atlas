@@ -138,6 +138,56 @@ window.SVEN_LEVEL_MANIFEST = {
       }
     },
     {
+      id: "LVL-0036",
+      title: "Frozen Atlas",
+      subtitle: "Geruchten over een Fallen Emperor in Pendola Pass. Alle ARC gaan erop af, jij ook?",
+      script: "Levels/LVL-0036/level.js",
+      menu: {
+        illustration: "Levels/LVL-0036/frozenrailway.png",
+        badge: "12 opdrachten",
+        detail: "Frozen Railway, Mountain Outpost, Old Town en Fallen Emperor"
+      }
+    },
+    {
+      id: "LVL-0037",
+      title: "Mountain Outpost",
+      subtitle: "Volg het bergpad naar de afgelegen buitenpost.",
+      script: "Levels/LVL-0037/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0036",
+      menu: {
+        illustration: "Levels/LVL-0037/mountainoutpost.png",
+        badge: "Verbonden gebied",
+        detail: "Expeditiemarkering, steenmannetje en technische installatie"
+      }
+    },
+    {
+      id: "LVL-0038",
+      title: "Old Town",
+      subtitle: "Onderzoek het besneeuwde dorpsplein van Almatera.",
+      script: "Levels/LVL-0038/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0037",
+      menu: {
+        illustration: "Levels/LVL-0038/oldtown.png",
+        badge: "Verbonden gebied",
+        detail: "Welkomstbord, standbeeld en kerkklok"
+      }
+    },
+    {
+      id: "LVL-0039",
+      title: "Fallen Emperor",
+      subtitle: "Verken het wrak en bereik de rode Ballistic Gondola.",
+      script: "Levels/LVL-0039/level.js",
+      hiddenFromMenu: true,
+      connectedFrom: "LVL-0038",
+      menu: {
+        illustration: "Levels/LVL-0039/fallenemperor.png",
+        badge: "Finale",
+        detail: "ARC-wrakstuk, schakelkasten en signaalmast"
+      }
+    },
+    {
       id: "LVL-0009",
       title: "De Ontwaakte Kamer",
       subtitle: "De Blokkenpoort begint te gloeien.",

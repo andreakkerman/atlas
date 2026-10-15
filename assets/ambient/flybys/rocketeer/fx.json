@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "sprite": "rocketeer.png",
+  "sourceSize": {
+    "width": 724,
+    "height": 543
+  },
+  "effects": [
+    {
+      "id": "fx-2701cab9-917e-4450-b90c-93b97ec4b736",
+      "label": "Compact warm propulsion 1",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 2043808093,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 569.5,
+        "y": 218.2,
+        "directionDeg": 87.59848618359047,
+        "width": 41.62538347730009,
+        "spreadDeg": 19.36654169639087,
+        "length": 36.35980166773355
+      },
+      "overrides": {
+        "opacity": 0.54
+      },
+      "plane": "front"
+    },
+    {
+      "id": "fx-e44e1db6-a2ac-4b80-aadb-1d2496f09796",
+      "label": "Compact warm propulsion 1 copy",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 2043808093,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 129,
+        "y": 247.8,
+        "directionDeg": 100.35929824715491,
+        "width": 41.62538347730009,
+        "spreadDeg": 19.36654169639087,
+        "length": 33.70259423014289
+      },
+      "overrides": {
+        "opacity": 0.54
+      },
+      "plane": "front"
+    },
+    {
+      "id": "fx-65c4cf13-9e6b-4a3d-8914-04c99c33f7c9",
+      "label": "Compact warm propulsion 1 copy copy",
+      "presetId": "orange-yellow-thruster",
+      "variantId": "warm",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 2043808093,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "directionalEmitter",
+        "x": 566.5,
+        "y": 418.2,
+        "directionDeg": 92.17445749826727,
+        "width": 20.142755845399815,
+        "spreadDeg": 16.26079643286039,
+        "length": 26.572371521601696
+      },
+      "overrides": {
+        "opacity": 0.54
+      },
+      "plane": "front"
+    },
+    {
+      "id": "fx-98968475-fef1-4107-ae37-6bd8353c3cf1",
+      "label": "Red Light 4",
+      "presetId": "red-light",
+      "variantId": "indicator",
+      "presetVersion": 1,
+      "enabled": true,
+      "seed": 1128039127,
+      "qualityTier": "auto",
+      "geometry": {
+        "type": "rectangle",
+        "x": 497.2,
+        "y": 385.2,
+        "width": 13.305803210796553,
+        "height": 5.388044101581765,
+        "directionDeg": 90.61031149887633
+      },
+      "overrides": {},
+      "plane": "front"
+    }
+  ]
+}

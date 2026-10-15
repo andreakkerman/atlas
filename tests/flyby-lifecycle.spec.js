@@ -12,14 +12,19 @@ async function harness(configs){
  const advance=ms=>{for(let i=0;i<ms;i+=100){now+=100;for(const [id,t] of [...timers])if(t.at<=now&&timers.has(id)){timers.delete(id);t.fn();}const fn=raf;raf=null;fn?.(now);}};
  return {r,advance,loads,shells,level,hide(){document.hidden=true;r.sync();},leave(){screen='menu';r.sync();}};
 }
-test('preview cancels old recurrence; full slow flight precedes the next delay',async()=>{
+test('preview owns its recurrence until stopped; normal flight keeps its delay',async()=>{
  const h=await harness([{id:'slow'},{id:'other'}]);h.r.preview('slow');h.advance(100);
  const instance=h.r.active.get('slow');
  h.advance(5000);expect(h.r.active.get('slow')).toBe(instance);expect(h.r.active.has('other')).toBe(true);
  expect(instance.distance).toBeCloseTo(5,6);h.r.preview('slow');expect(h.r.active.get('slow')).toBe(instance);
  h.advance(15000);expect(h.r.active.has('slow')).toBe(false);
  h.advance(900);expect(h.r.active.has('slow')).toBe(false);
+ h.advance(100);expect(h.r.active.has('slow')).toBe(false);
+ // Preview remains reserved after its last frame until the editor stops it.
+ h.r.stopPreview('slow');h.r.sync();
+ h.advance(900);expect(h.r.active.has('slow')).toBe(false);
  h.advance(100);expect(h.r.active.has('slow')).toBe(true);
+ h.advance(19000);expect(h.r.active.has('slow')).toBe(true);
  h.leave();h.advance(60000);expect(h.r.active.size).toBe(0);expect(h.r.timers.size).toBe(0);
 });
 test('delayed group members reserve their IDs through the entire flight',async()=>{

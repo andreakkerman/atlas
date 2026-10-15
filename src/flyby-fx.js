@@ -6,7 +6,7 @@
   const cache=new Map();
   const eligible=config=>{
     const frames=global.AtlasAmbientSystem.framesFor(config);
-    return frames.length===1 && global.AtlasAmbientSystem.playbackFor(config)==='static' && /^assets\/ambient\/flybys\/.+\/[^/]+\.png$/i.test(frames[0]);
+    return frames.length===1 && global.AtlasAmbientSystem.playbackFor(config)==='static' && /^assets\/ambient\/(?:flybys|exit)\/.+\/[^/]+\.png$/i.test(frames[0]);
   };
   const pathFor=sprite=>sprite.slice(0,sprite.lastIndexOf('/')+1)+'fx.json';
   function empty(sprite,width,height){return {version:1,sprite:sprite.split('/').at(-1),sourceSize:{width,height},effects:[]};}

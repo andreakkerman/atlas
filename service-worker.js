@@ -1,6 +1,7 @@
 const CACHE_PREFIX = "svenadventure-static-";
-const CACHE_NAME = "svenadventure-static-v281-indicator-lights";
+const CACHE_NAME = "svenadventure-static-v293-frozen-menu-copy";
 const CORE_ASSETS = [
+  "src/sprite-depth.js", "src/player-depth.js",
   "src/geometry-diagram.js", "src/content/m6/expansion-20261010.js",
   "src/content/m6/expansion/number-sense.js",
   "src/content/m6/expansion/addition-subtraction.js",
@@ -117,6 +118,11 @@ const CORE_ASSETS = [
   "assets/audio/music/leonardo-level.mp3",
   "assets/audio/music/egypt_adventure.mp3",
   "assets/audio/music/arc_atlas.mp3",
+  "assets/audio/music/frozenatlas.mp3",
+  "Levels/LVL-0036/level.js",
+  "Levels/LVL-0036/frozenrailway.png",
+  "Levels/LVL-0036/depthmap.png",
+  "Levels/LVL-0036/Niva.png",
   "Levels/LVL-0032/level.js",
   "Levels/LVL-0032/DamBattlegrounds.png",
   "Levels/LVL-0032/depthmap.png",

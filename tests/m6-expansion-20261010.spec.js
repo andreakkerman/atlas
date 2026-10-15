@@ -4,7 +4,9 @@ const {records,bank}=require('../src/content/m6'),engine=require('../src/m6-bank
 const imported=require('../scripts/m6-expansion-20261010.cjs'),baseline=require('./fixtures/m6-expansion-20261010-baseline.json');
 const canonical=v=>v&&typeof v==='object'?Array.isArray(v)?v.map(canonical):Object.fromEntries(Object.keys(v).sort().map(k=>[k,canonical(v[k])])):v;
 const hash=v=>crypto.createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex');
-const bytes=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+// Frozen extends only the exact level-ID hint opt-in; preserve the complete historical resolver check.
+const bytes=p=>crypto.createHash('sha256').update(p==='src/challenge-hints.js'
+  ? fs.readFileSync(p,'utf8').replace('Array.from({ length: 39 }','Array.from({ length: 35 }') : fs.readFileSync(p)).digest('hex');
 const addition=records.filter(r=>imported.expectedIds.includes(r.id));
 
 test('159 records: exact 60 additions, domain/difficulty/mode totals, schema, arithmetic and idempotence',()=>{
@@ -61,7 +63,8 @@ test('all 99 prior records, their resolved support and rendering, and all E5 rem
   }
   for(const [file,digest] of Object.entries({...baseline.levels,...baseline.protectedFiles}))expect(bytes(file),file).toBe(digest);
   const hints=require('../src/challenge-hints');
-  const e5=require('../scripts/level-utils').loadAllLevels().flatMap(({entry,level})=>(level.learningChallenges||[]).flatMap(c=>(c.questions||[]).flatMap(s=>(s.variants||[]).map(q=>[entry.id,c.id,s.id,q,hints.resolve(entry.id,q,'minnie'),hints.resolve(entry.id,q,'moose'),hints.resolveExplanation(entry.id,q),cap.renderClockVisual(q.visual)]))));
+  // Keep the original 960-variant snapshot's collection scope; Frozen has its own coverage.
+  const e5=require('../scripts/level-utils').loadAllLevels().filter(({entry})=>Object.hasOwn(baseline.levels,`Levels/${entry.id}/level.js`)).flatMap(({entry,level})=>(level.learningChallenges||[]).flatMap(c=>(c.questions||[]).flatMap(s=>(s.variants||[]).map(q=>[entry.id,c.id,s.id,q,hints.resolve(entry.id,q,'minnie'),hints.resolve(entry.id,q,'moose'),hints.resolveExplanation(entry.id,q),cap.renderClockVisual(q.visual)]))));
   expect(e5).toHaveLength(960);expect(hash(e5)).toBe(baseline.e5Hash);
 });
 

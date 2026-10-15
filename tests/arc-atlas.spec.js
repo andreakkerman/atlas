@@ -2,6 +2,7 @@ const challengeHints = require('../src/challenge-hints');
 const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const vm = require('vm');
+const {selectSceneItem} = require('./editor-workspace-helpers');
 const base = process.env.ATLAS_EDITOR_URL || 'http://127.0.0.1:4173';
 
 function authoredWorld() {
@@ -17,7 +18,7 @@ function authoredWorld() {
 test('registers stable worlds, measured assets, three anchors and complete authored question banks', () => {
   const { level, audio, manifest, resolver } = authoredWorld();
   expect(resolver.rootEntries({ includeDeveloper: false }).map(e => e.id)).toEqual([
-    'LVL-0001', 'LVL-0004', 'LVL-0032', 'LVL-0013', 'LVL-0021', 'LVL-0027', 'LVL-0008'
+    'LVL-0001', 'LVL-0004', 'LVL-0032', 'LVL-0036', 'LVL-0013', 'LVL-0021', 'LVL-0027', 'LVL-0008'
   ]);
   expect(resolver.rootEntries({ includeDeveloper: true }).at(-1).id).toBe('LVL-0008');
   expect(resolver.authoredEntries('LVL-0008').map(e => e.id).sort()).toEqual(['LVL-0008','LVL-0009','LVL-0010','LVL-0011','LVL-0012']);
@@ -27,7 +28,7 @@ test('registers stable worlds, measured assets, three anchors and complete autho
   expect(resolver.nextEnabled('LVL-0033').id).toBe('LVL-0034');
   expect(resolver.nextEnabled('LVL-0034').id).toBe('LVL-0035');
   expect(resolver.nextEnabled('LVL-0035')).toBeNull();
-  expect(manifest.some(e => e.id === 'LVL-0036')).toBe(false);
+  expect(resolver.rootIdFor('LVL-0036')).toBe('LVL-0036');
   expect(level.title).toBe('Dam Battlegrounds');
   for (const asset of [level.world.background, level.world.depthmap]) {
     const png = fs.readFileSync(asset);
@@ -64,12 +65,13 @@ test('registers stable worlds, measured assets, three anchors and complete autho
 async function enter(page, editor = false) {
   await page.goto(base + (editor ? '/?dev=editor' : '/?atlasSessionTest=1'));
   await page.getByRole('button', {name:'Start avontuur',exact:true}).click();
+  await expect(page.locator('.menuScreen')).toBeVisible();
   await page.waitForFunction(() => window.eval('menuAdventureStats.loaded'));
   const card = page.locator('[data-menu-tile="LVL-0032"]');
   await expect(card).toContainText('ARC Atlas');
   await expect(card).toContainText('4 plaatsen · 12 opdrachten');
   expect(await page.locator('[data-menu-tile]').evaluateAll(nodes => nodes.map(n => n.dataset.menuTile))).toEqual([
-    'LVL-0001','LVL-0004','LVL-0032','LVL-0013','LVL-0021','LVL-0027','LVL-0000','LVL-0008'
+    'LVL-0001','LVL-0004','LVL-0032','LVL-0036','LVL-0013','LVL-0021','LVL-0027','LVL-0000','LVL-0008'
   ]);
   await card.click();
   await expect(page.getByRole('heading',{name:'Dam Battlegrounds',exact:true})).toBeVisible();
@@ -83,11 +85,13 @@ for (const variant of [0,1]) test(`menu, walking, all answers, hints and saved c
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if(m.type() === 'error') errors.push(m.text()); });
   page.on('response', r => { if(r.status() >= 400) errors.push(`${r.status()} ${r.url()}`); });
+  await page.addInitScript(() => localStorage.setItem('atlas.learning.m6Percentage','0'));
   await enter(page);
   await page.evaluate(v => { Math.random = () => v ? 0.999 : 0; }, variant);
   for (const [index,id] of ['car','lootCrate','raiderCache'].entries()) {
-    // Exercise the shared Move To -> Arrive -> Action handler without teleporting Sven.
-    await page.evaluate(id => window.eval('beginInteraction')(window.eval('runeById')(id),'rune'), id);
+    // Native input observes the preparation cover/inert state before exercising
+    // the shared Move To -> Arrive -> Action handler, without teleporting Sven.
+    await page.locator(`[data-rune="${id}"]`).click();
     await expect(page.locator('[data-challenge-character="CHR-ARC-VALENTE"]')).toBeVisible({timeout:22000});
     const arrival = await page.evaluate(id => {
       const l=window.eval('level'), s=window.eval('state');
@@ -139,12 +143,15 @@ for (const variant of [0,1]) test(`menu, walking, all answers, hints and saved c
   expect(await page.evaluate(()=>window.eval('locomotionTuning')().fromIdleMovement)).toBe(.25);
   await page.evaluate(()=>window.eval('returnToMenu')());
   await page.reload();
+  await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+  await expect(page.locator('.menuScreen')).toBeVisible();
   expect(await page.evaluate(() => window.AtlasSessionReport.getSessions()[0].questions.length)).toBe(12);
   const restored = await page.evaluate(async () => {
     await window.eval('selectLevel')('LVL-0032',{startImmediately:true});
-    return [...window.eval('state.completedRunes')];
+    return {completed:[...window.eval('state.completedRunes')],answered:window.eval('state.answered'),exitReady:window.eval('isLevelExitReady')(),history:JSON.parse(localStorage.getItem(window.eval('level.storageKey')))};
   });
-  expect(restored).toEqual(['car','lootCrate','raiderCache']);
+  // Replay starts a fresh run while preserving the earned completion record.
+  expect(restored).toEqual({completed:[],answered:0,exitReady:false,history:saved.record});
   expect(errors).toEqual([]);
 });
 
@@ -168,10 +175,12 @@ test('shared audio reuses playback, changes volume, mutes, resumes and transitio
 });
 
 test('editor discovers authored path and three challenge anchors without source writes', async ({page}) => {
+  // The editor contract targets a desktop workspace, including in WebKit.
+  await page.setViewportSize({width:1280,height:800});
   await enter(page, true);
   await page.keyboard.press('Control+Shift+D');
   await expect(page.locator('[data-developer-tools]')).toBeVisible();
-  await page.getByRole('button',{name:'Challenges',exact:true}).click();
+  await selectSceneItem(page,'challenge','raiderCache');
   await expect(page.locator('[data-developer-tools]')).toContainText('Raider Cache');
   expect(await page.evaluate(() => window.eval('level.walkPath').length)).toBe(8);
   expect(await page.evaluate(() => window.eval('level.learningChallenges').length)).toBe(3);
@@ -196,7 +205,7 @@ test('Cinematic uploads and Voxel uses the supplied depth map', async ({page}) =
   expect(errors).toEqual([]);
 });
 
-test('loads every existing world with its original saved progress and music', async ({page}) => {
+test('loads every existing world with fresh run state while retaining saved history and music', async ({page}) => {
   await enter(page);
   const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   const worlds=[['LVL-0001','runeCompass'],['LVL-0004','nautilus'],['LVL-0008','minecraft'],['LVL-0013','europeGrandTour'],['LVL-0021','leonardoLevel'],['LVL-0027','egyptAdventure']];
@@ -217,7 +226,8 @@ test('loads every existing world with its original saved progress and music', as
       await window.eval('selectLevel')(id,{startImmediately:true});
       return {id:window.eval('level.id'),completed:[...window.eval('state.completedRunes')],first:window.eval('activeRunes')()[0].id,music:window.eval('audioState.currentMusicKey')};
     },id);
-    expect(loaded).toEqual({id,completed:[loaded.first],first:loaded.first,music});
+    expect(loaded).toEqual({id,completed:[],first:loaded.first,music});
+    expect(await page.evaluate(()=>window.eval('isLevelExitReady')())).toBe(false);
     await expect(page.locator('[data-actor="sven"]')).toBeVisible();
   }
   expect(await page.evaluate(keys => Object.fromEntries(keys.map(key=>[key,localStorage.getItem(key)])),Object.keys(saved))).toEqual(saved);

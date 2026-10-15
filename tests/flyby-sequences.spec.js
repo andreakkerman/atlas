@@ -1,4 +1,4 @@
-const {selectSceneItem,bootEditorTest}=require('./editor-workspace-helpers');
+const {selectSceneItem,bootEditorTest,chooseCreation}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path');
 require('./editor-draft-fixture').preserveEditorDrafts(test,path.join(__dirname,'..'));
@@ -21,6 +21,8 @@ async function enter(page,configs,options={}){
   const decode=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(){const src=this.src;return decode.call(this).then(value=>{window.sequenceDecodes.push(src);return value;});};
  });
  await page.goto(base+(options.editor?'/?dev=editor':''));
+ await page.getByRole('button',{name:'Start avontuur',exact:true}).click();
+ await expect(page.locator('.menuScreen')).toBeVisible();
  expect(await page.evaluate(()=>window.sequenceRequests.length)).toBe(0);
  await page.evaluate(async()=>{if(!await window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}))return;const s=window.eval('state');s.worldX=1100;s.cameraX=window.eval('getDesiredCameraX')();window.eval('ambientFlybyRuntime').stopAll();window.eval('render')();});
  await expect.poll(()=>page.evaluate(()=>{
@@ -193,9 +195,8 @@ test('editor Add, sequence controls and Apply/reload keep both independent defin
  await page.evaluate(()=>window.eval('selectLevel')('LVL-0032',{startImmediately:true,recordStart:false}));
  await page.keyboard.press('Control+Shift+D');
  for(const [set,playback,count]of [['bastion_walk','loop',73],['bastion_walk_aim','once',101]]){
-  await page.locator('[data-workspace-action="add"]').click();
-  const details=page.locator('[data-editor-add] details').filter({has:page.locator('summary').filter({hasText:/^Flyby$/})}).last();if(await details.getAttribute('open')===null)await details.locator('summary').first().click();
-  const form=page.locator('[data-add-flyby-form]');await form.locator('[name="assetSet"]').selectOption('flybys/'+set);await expect(form.locator('[data-flyby-sequence-summary]')).toContainText(`Frames: ${count}`);
+  await chooseCreation(page,'flyby:flybys/'+set);
+  const form=page.locator('[data-add-flyby-form]');await expect(form.locator('[name="assetSet"]')).toHaveValue('flybys/'+set);await expect(form.locator('[data-flyby-sequence-summary]')).toContainText(`Frames: ${count}`);
   await expect(form.locator('[name="playback"]')).toHaveValue('');await form.locator('[name="playback"]').selectOption(playback);await form.locator('[name="id"]').fill(set);await form.locator('[name="label"]').fill(set);await form.locator('[data-debug-action="add-flyby"]').click();
   await expect(page.locator(`[data-flyby-editor-id="${set}"]`)).toBeVisible();
   if(playback==='once'){

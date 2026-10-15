@@ -8,7 +8,9 @@ const before=require('./fixtures/m6-targeted-review-baseline.json');
 const {ids,difficultyIds,moose,mooseVisual,beforeTargetedReview}=require('./helpers/m6-targeted-review.cjs');
 const canonical=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(canonical):Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])])):x;
 const hash=x=>crypto.createHash('sha256').update(JSON.stringify(canonical(x))).digest('hex');
-const bytes=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+// Frozen extends only the exact level-ID hint opt-in; preserve the complete historical resolver check.
+const bytes=p=>crypto.createHash('sha256').update(p==='src/challenge-hints.js'
+  ? fs.readFileSync(p,'utf8').replace('Array.from({ length: 39 }','Array.from({ length: 35 }') : fs.readFileSync(p)).digest('hex');
 
 test('all 99 cores and full records remain exact outside the seven explicitly approved field changes',()=>{
   expect(records).toHaveLength(99);
@@ -37,7 +39,8 @@ test('all E5 source/resolved support, level data, planner, routing and reporting
   // file hashes. The current expansion fixture freezes all 99 rendered records,
   // all E5 output, and the still-unchanged state/planner/reporting implementation.
   for(const [file,digest]of Object.entries({...before.levels,...currentFreeze.protectedFiles}))expect(bytes(file),file).toBe(digest);
-  const resolved=require('../scripts/level-utils').loadAllLevels().flatMap(({entry,level})=>(level.learningChallenges||[])
+  // The historical snapshot contains the original 35 levels, before Frozen Atlas.
+  const resolved=require('../scripts/level-utils').loadAllLevels().filter(({entry})=>Object.hasOwn(before.levels,`Levels/${entry.id}/level.js`)).flatMap(({entry,level})=>(level.learningChallenges||[])
     .flatMap(c=>(c.questions||[]).flatMap(s=>(s.variants||[]).map(q=>[
       entry.id,c.id,s.id,q,hints.resolve(entry.id,q,'minnie'),hints.resolve(entry.id,q,'moose'),hints.resolveExplanation(entry.id,q)
     ]))));

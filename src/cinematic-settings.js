@@ -40,6 +40,8 @@
   Object.assign(systems.particles.fields, { layer: ["environment", "effects"], wind: n(0, -250, 250), streak: n(1, 1, 35), pulse: n(0, 0, 1), depthSpread: n(0.3, 0, 1), distribution: ["volume", "source"] });
   systems.particles.fields.speed = n(12, 0, 900);
   systems.particles.fields.scaleCountWithArea = false;
+  systems.particles.fields.gustStrength = n(0, 0, 2);
+  systems.particles.fields.motion = ["falling", "windFlow"];
   systems.particles.fields.boundsRotation = n(0, -180, 180, 1);
   systems.particles.fields.distribution = ["volume", "source", "ribbon"];
   systems.shafts.fields.layer = ["globalLighting", "effects"];
@@ -58,6 +60,11 @@
       Dust: { color: "#d5bd8c", count: 800, size: 0.8, speed: 4, direction: 0, gravity: 0, turbulence: 0.45, wind: 1, lifetime: 30, streak: 1, glow: 0, opacity: 0.25, depth: 0.65, depthSpread: 0.35 },
       Embers: { layer: "effects", color: "#ff8331", count: 140, size: 1.05, sizeVariation:0.95, speed: 40, direction: -90, gravity: -1.5, turbulence: 1.2, wind: 3, lifetime: 5, streak: 1.8, glow: 1.6, opacity: 0.65, distribution: "source", depth: 0.85, depthSpread: 0.15 },
       Snow: { color: "#e2efff", count: 1600, size: 2.2, sizeVariation: 0.9, speed: 65, direction: 90, gravity: 0.6, turbulence: 1, wind: 18, lifetime: 18, streak: 1, glow: 0, opacity: 0.7, depth: 0.7, depthSpread: 0.6 },
+      "Light Snow": { color: "#e2efff", count: 650, size: 1.5, sizeVariation: 0.7, speed: 42, direction: 90, gravity: 0.25, turbulence: 0.65, wind: 7, lifetime: 24, streak: 1, glow: 0, opacity: 0.5, depth: 0.7, depthSpread: 0.5 },
+      "Fluffy Snow": { color: "#edf4ff", count: 700, size: 3.8, sizeVariation: 0.85, speed: 24, direction: 90, gravity: 0.12, turbulence: 1.5, wind: 10, lifetime: 30, streak: 1, glow: 0, opacity: 0.56, depth: 0.7, depthSpread: 0.65 },
+      "Windblown Snow": { color: "#e2efff", count: 1300, size: 2.1, sizeVariation: 0.8, speed: 34, direction: 68, gravity: 0.2, turbulence: 0.65, gustStrength: 0.7, wind: 64, lifetime: 24, streak: 1, glow: 0, opacity: 0.6, depth: 0.7, depthSpread: 0.6 },
+      Blizzard: { color: "#dae8fa", count: 3200, size: 3.2, sizeVariation: 0.9, speed: 110, direction: 64, gravity: 0.35, turbulence: 1.2, gustStrength: 1.6, wind: 155, lifetime: 18, streak: 2, glow: 0, opacity: 0.74, depth: 0.82, depthSpread: 0.8 },
+      "Snow Squall": { motion: "windFlow", color: "#e2efff", count: 3200, size: 2.8, sizeVariation: 0.85, speed: 135, direction: -8, gravity: 0, turbulence: 0.45, gustStrength: 1.2, wind: 60, lifetime: 26, streak: 3.5, glow: 0, opacity: 0.68, depth: 0.82, depthSpread: 0.65 },
       Drizzle: { color: "#b4cfe2", count: 2400, scaleCountWithArea: true, size: 0.45, speed: 300, direction: 90, gravity: 3, turbulence: 0.04, wind: 22, lifetime: 4, streak: 7, glow: 0, opacity: 0.25, depth: 0.75, depthSpread: 0.45 },
       "Heavy Rain": { color: "#bacfe7", count: 7500, scaleCountWithArea: true, size: 0.7, speed: 720, direction: 90, gravity: 8, turbulence: 0.08, wind: 120, lifetime: 2.2, streak: 23, glow: 0, opacity: 0.45, depth: 0.75, depthSpread: 0.5 },
       "Magic Motes": { layer: "effects", color: "#7de9e8", count: 250, size: 2.1, speed: 6, direction: -90, gravity: 0, turbulence: 2, wind: 0, lifetime: 14, streak: 1, glow: 1.4, opacity: 0.6, pulse: 0.65, depth: 0.8, depthSpread: 0.35 }
@@ -67,6 +74,9 @@
       "Moon Sparkles": { color: "#d9eeff", sparkleStrength: 2.15, sparkleDensity: 0.36, sparkleSize: 1.85, sizeVariation: 0.7, twinkleSpeed: 0.82, twinkleVariation: 0.76, clusterScale: 175, clusterAmount: 0.8, peakIntensity: 1.7, anisotropy: 1.8, artworkInfluence: 0.78 }
     }
   };
+  // Keep the historical key and parameters; Snowfall is only its display name.
+  const snowPresets = ["Light Snow", "Snow", "Fluffy Snow", "Windblown Snow", "Blizzard", "Snow Squall"];
+  const presetLabel = name => name === "Snow" ? "Snowfall" : name;
   const clone = value => JSON.parse(JSON.stringify(value));
   function fields(schema, value = {}) {
     return Object.fromEntries(Object.entries(schema).map(([key, def]) => {
@@ -131,7 +141,7 @@
     // does not leave gravity, streaks or pulsing from the previous preset behind.
     const defaults = instance(key);
     const behavior = Object.fromEntries(Object.keys(presets[key]?.[name] || {}).map(field => [field, defaults[field]]));
-    if (key === "particles") for (const field of ["layer", "pulse", "distribution", "sizeVariation", "randomness", "scaleCountWithArea", "depthInfluence"]) behavior[field] = defaults[field];
+    if (key === "particles") for (const field of ["motion", "gustStrength", "layer", "pulse", "distribution", "sizeVariation", "randomness", "scaleCountWithArea", "depthInfluence"]) behavior[field] = defaults[field];
     return instance(key, { ...item, ...behavior, ...presets[key]?.[name] });
   }
   function particleCount(item) {
@@ -168,7 +178,7 @@
       (result.particles.enabled && result.particles.items.some(item => item.enabled && item.depthInfluence > 0));
     return result;
   }
-  const api = { systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount, gpuOnly, illustratedDefaults, illustratedFeatures, forIllustrated };
+  const api = { snowPresets, presetLabel, systems, layers, presets, preset, effective, normalize, instance, clone, replacedPresets, particleCount, gpuOnly, illustratedDefaults, illustratedFeatures, forIllustrated };
   global.AtlasCinematicSettings = api;
   if (typeof module !== "undefined") module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

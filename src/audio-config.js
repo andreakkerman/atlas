@@ -8,7 +8,8 @@ window.SVEN_AUDIO_CONFIG = {
       "europeGrandTour": "assets/audio/music/europe_grand_tour.mp3",
       "leonardoLevel": "assets/audio/music/leonardo-level.mp3",
       "egyptAdventure": "assets/audio/music/egypt_adventure.mp3",
-      "arcAtlas": "assets/audio/music/arc_atlas.mp3"
+      "arcAtlas": "assets/audio/music/arc_atlas.mp3",
+      "frozenAtlas": "assets/audio/music/frozenatlas.mp3"
     },
     "ambience": {
       "vikingForestBirds": "assets/audio/ambience/viking-forest-birds.mp3",
@@ -62,6 +63,30 @@ window.SVEN_AUDIO_CONFIG = {
     "musicVolume": 0.62
   },
   "levels": {
+    "LVL-0036": {
+      "music": "frozenAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
+    "LVL-0037": {
+      "music": "frozenAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
+    "LVL-0038": {
+      "music": "frozenAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
+    "LVL-0039": {
+      "music": "frozenAtlas",
+      "ambience": null,
+      "musicVolume": 0.64,
+      "ambienceVolume": 0.19
+    },
     "LVL-0035": {
       "music": "arcAtlas",
       "ambience": null,

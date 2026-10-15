@@ -436,7 +436,15 @@ fn appearance(input:vec3f) -> vec3f { return appearanceValues(input,d.appearance
       c+=mix(vec3f(luminance(edgeLight)),edgeLight,g.v[10].w)*g.v[10].y*0.35;
     }
   }
-  let alpha=sample.a*d.extra.y;
+  var alpha=sample.a*d.extra.y;
+  // Opt-in player occlusion only. Keep the original texture for lighting,
+  // wrap/rim and grounding; no extra texture or depth sample when disabled.
+  if(d.flags.w<=-2.0){
+    let size=textureDimensions(sceneDepth);let uvDepth=p/vec2f(g.v[2].x,g.v[1].x);
+    let pixel=vec2i(clamp(floor(uvDepth*vec2f(size-vec2u(1))+vec2f(0.5)),vec2f(0),vec2f(size-vec2u(1))));
+    let scene=textureLoad(sceneDepth,pixel,0).r;
+    alpha*=clamp(1.0+(-d.flags.w-2.0-scene)/0.01,0.0,1.0);
+  }
   if(g.v[2].w>0.5){
     // Browser Illustrated layers use encoded-sRGB source-over. Lighting stays
     // linear, but its result must cross back before alpha composition.
@@ -506,7 +514,32 @@ fn randomIndex(value:u32) -> f32 { var h=value;h=(h^(h>>16u))*0x7feb352du;h=(h^(
   let e=effects[u32(d.flags.x)];let seed=id+u32(e.v[0].w)*65537u;let life=e.v[4].w;
   let age=fract(g.v[1].y/life+randomIndex(seed*3u+2u))*life;let phase=age/life;
   let random=vec2f(randomIndex(seed*3u),randomIndex(seed*3u+1u));
-  let velocity=vec2f(cos(e.v[8].x),sin(e.v[8].x))*e.v[4].y*mix(1.0,0.5+random.x,e.v[5].w)+vec2f(e.v[7].x,0);
+  var velocity=vec2f(cos(e.v[8].x),sin(e.v[8].x))*e.v[4].y*mix(1.0,0.5+random.x,e.v[5].w)+vec2f(e.v[7].x,0);
+  var p=vec2f(0);var motionFade=1.0;
+  if(e.v[8].z>0.5){
+    // Wind-carried stream tubes: shared curls collect flakes into rolling plumes.
+    // Analytic world-space paths, no simulation state, textures or extra pass.
+    let lane=floor(random.y*7.0);let laneSeed=u32(lane)+u32(e.v[0].w)*19u;
+    let lanePhase=randomIndex(laneSeed+91u)*6.283185;
+    let width=e.v[1].z;let height=e.v[1].w;let t=g.v[1].y;
+    let flowSpeed=e.v[4].y+e.v[7].x;
+    let x=(fract(random.x+t*flowSpeed/(width*1.3))-0.5)*width*1.3;
+    motionFade=1.0-smoothstep(0.35,0.5,abs(x)/(width*1.3));
+    let radius=height*(0.08+randomIndex(laneSeed+47u)*0.10)*e.v[8].y;
+    let wave=x/max(height*0.13,1.0)+lanePhase-t*0.28;
+    let envelope=0.45+0.55*sin(x/max(width*0.2,1.0)+lanePhase+t*0.19);
+    let curl=radius*envelope;
+    let bend=sin(x/max(width*0.15,1.0)+lanePhase+t*0.24)*height*0.10;
+    let spread=(fract(random.y*7.0)-0.5)*height*(0.035+e.v[4].z*0.06);
+    let y=(randomIndex(laneSeed+23u)-0.5)*height*0.65+spread+bend;
+    let local=vec2f(x+sin(wave)*curl,y+cos(wave)*curl*0.7);
+    p=e.v[1].xy+rotate(local,-e.v[8].x);
+    // Exact path derivative aligns each flake with its own curved motion.
+    let waveRate=flowSpeed/max(height*0.13,1.0)-0.28;
+    let curlRate=radius*0.55*cos(x/max(width*0.2,1.0)+lanePhase+t*0.19)*(flowSpeed/max(width*0.2,1.0)+0.19);
+    let bendRate=cos(x/max(width*0.15,1.0)+lanePhase+t*0.24)*height*0.10*(flowSpeed/max(width*0.15,1.0)+0.24);
+    velocity=rotate(vec2f(flowSpeed+cos(wave)*curl*waveRate+sin(wave)*curlRate,bendRate-sin(wave)*curl*0.7*waveRate+cos(wave)*curlRate*0.7),-e.v[8].x);
+  }else{
   let swirl=vec2f(noise(vec2f(random.x*64.0,age*0.2)),noise(vec2f(age*0.2,random.y*64.0+9.0)))-0.5;
   let travel=velocity*age+vec2f(0,0.5*e.v[5].z*age*age)+swirl*e.v[4].z*50.0;
   // Spawn and wrap in the same local rectangle used by region() and editor
@@ -514,7 +547,26 @@ fn randomIndex(value:u32) -> f32 { var h=value;h=(h^(h>>16u))*0x7feb352du;h=(h^(
   let localTravel=rotate(travel,e.v[3].x);
   let distributed=(fract(random+localTravel/e.v[1].zw)-0.5)*e.v[1].zw;
   let offsetFromSource=(random-0.5)*e.v[1].zw*0.08+localTravel;
-  let p=e.v[1].xy+rotate(select(distributed,offsetFromSource,e.v[7].w>0.5),-e.v[3].x);
+  p=e.v[1].xy+rotate(select(distributed,offsetFromSource,e.v[7].w>0.5),-e.v[3].x);
+  // Optional spatial flow: nearby flakes share the same bends and two broad
+  // counter-rotating eddies. Analytic deformation, not integrated simulation;
+  // camera-independent, bounded, and evaluated only for opted-in fields.
+  if(e.v[8].y>0.0){
+    let strength=e.v[8].y;let t=g.v[1].y;let q=rotate(p-e.v[1].xy,e.v[3].x);
+    // Taper before the wrap boundary so region wrapping cannot expose a seam.
+    let edge=1.0-smoothstep(0.30,0.49,max(abs(q.x)/e.v[1].z,abs(q.y)/e.v[1].w));
+    let lane=sin(p.y*0.009-t*0.65)+0.35*sin(p.y*0.017+t*0.31);
+    var flow=vec2f(lane*42.0,sin(p.x*0.006-t*0.43)*24.0)*strength;
+    for(var cell=0u;cell<2u;cell++){
+      let phase=f32(cell)*3.1;
+      let center=e.v[1].xy+vec2f((f32(cell)-0.5)*e.v[1].z*0.38+sin(t*0.17+phase)*65.0,sin(t*0.23+phase)*e.v[1].w*0.16);
+      let delta=p-center;let r2=dot(delta,delta)/(180.0*180.0);
+      let angle=select(1.0,-1.0,cell==1u)*(0.7+0.3*sin(t*0.57+phase))*strength/(1.0+r2*r2);
+      flow+=rotate(delta,angle)-delta;
+    }
+    p+=flow*edge;
+  }
+  }
   let corners=array<vec2f,6>(vec2f(-1,-1),vec2f(1,-1),vec2f(-1,1),vec2f(-1,1),vec2f(1,-1),vec2f(1,1));let uv=corners[vertex];
   let z=clamp(e.v[6].x+(random.y-0.5)*e.v[6].w,0.0,1.0);
   // Size is a world-space radius, independent of emission, DPR and target scale.
@@ -527,7 +579,7 @@ fn randomIndex(value:u32) -> f32 { var h=value;h=(h^(h>>16u))*0x7feb352du;h=(h^(
   var out:ParticleVertex;out.position=vec4f(screen*vec2f(2,-2)+vec2f(-1,1),0,1);out.uv=uv;
   out.worldPoint=p+offset;out.distance=z;
   let pulse=1.0-e.v[7].z*(0.5+0.5*sin(g.v[1].y*1.6+random.x*6.28));
-  out.color=vec4f(e.v[2].rgb*(1.0+e.v[5].y),e.v[5].x*smoothstep(0.0,0.15,phase)*(1.0-smoothstep(0.65,1.0,phase))*region(e,p)*pulse);return out;
+  out.color=vec4f(e.v[2].rgb*(1.0+e.v[5].y),e.v[5].x*smoothstep(0.0,0.15,phase)*(1.0-smoothstep(0.65,1.0,phase))*region(e,p)*pulse*motionFade);return out;
 }
 @fragment fn particleColor(in:ParticleVertex) -> @location(0) vec4f {
   var e=effects[u32(d.flags.x)];e.v[6].x=in.distance;let visible=visibility(e,depthAt(in.worldPoint));

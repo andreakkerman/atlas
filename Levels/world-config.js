@@ -1,10 +1,15 @@
 window.SVEN_WORLD_CONFIG = {
   "version": 1,
   "worlds": {
-    "LVL-0032": {
+    "LVL-0036": {
       "order": [],
       "enabled": {},
       "isNew": true
+    },
+    "LVL-0032": {
+      "order": [],
+      "enabled": {},
+      "isNew": false
     },
     "LVL-0013": {
       "order": [],
@@ -328,6 +333,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.42,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 89,
               "id": "lab-waterfall-air-mist",
               "name": "lab-waterfall-air-mist"
@@ -939,6 +946,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -10,
               "id": "canopy-dust",
               "name": "canopy-dust"
@@ -1348,6 +1357,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "brazier-embers",
               "name": "brazier-embers"
@@ -1382,6 +1393,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-a8929fb0-3831-4077-bea3-9e2e7e75e7c6",
               "name": "particles-a8929fb0-3831-4077-bea3-9e2e7e75e7c6"
@@ -1416,6 +1429,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-962ab503-da3e-4bfd-870c-44502f2b6281",
               "name": "particles-962ab503-da3e-4bfd-870c-44502f2b6281"
@@ -1450,6 +1465,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f"
@@ -1484,6 +1501,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-72c61f27-cc0a-43ca-89af-76c50973846e",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f copy"
@@ -1518,6 +1537,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-bb05775a-4f3a-4658-a275-63f1971a832b",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f copy copy"
@@ -1552,6 +1573,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-35d09ac9-543f-4b49-88d3-cec507bd1d55",
               "name": "particles-232dc7eb-1d23-4d9a-93a7-b84a68886a5f copy copy copy"
@@ -2053,6 +2076,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "harbor-embers",
               "name": "harbor-embers"
@@ -2087,6 +2112,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-167b223c-a15c-467b-afba-93f17ab57747",
               "name": "harbor-embers copy"
@@ -2121,6 +2148,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-f98bb590-a27d-427c-af6c-bdb7b2a3e79d",
               "name": "harbor-embers copy 2"
@@ -2155,6 +2184,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "particles-eb74d083-74b5-4982-8fca-3e84819ff125",
               "name": "harbor-embers copy 3"
@@ -2440,6 +2471,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "tropical-pollen",
               "name": "tropical-pollen"
@@ -3458,6 +3491,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "island-pollen",
               "name": "island-pollen"
@@ -3916,6 +3951,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "source",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "sealed-left-embers",
               "name": "sealed-left-embers"
@@ -3950,6 +3987,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "source",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "sealed-right-embers",
               "name": "sealed-right-embers"
@@ -4175,6 +4214,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "netherlands-pollen",
               "name": "netherlands-pollen"
@@ -4435,6 +4476,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "italy-dust",
               "name": "italy-dust"
@@ -4660,6 +4703,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "alpine-air",
               "name": "alpine-air"
@@ -4885,6 +4930,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -10,
               "id": "posbank-pollen",
               "name": "posbank-pollen"
@@ -5104,6 +5151,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "rome-dust",
               "name": "rome-dust"
@@ -5415,6 +5464,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "source",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -105,
               "id": "marche-forge-embers",
               "name": "marche-forge-embers"
@@ -5768,6 +5819,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "tomb-dust",
               "name": "tomb-dust"
@@ -5996,6 +6049,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "sweden-pollen",
               "name": "sweden-pollen"
@@ -6292,6 +6347,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "museum-dust",
               "name": "museum-dust"
@@ -6588,6 +6645,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "return-museum-dust",
               "name": "return-museum-dust"
@@ -6888,6 +6947,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "awakened-embers",
               "name": "awakened-embers"
@@ -7112,6 +7173,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "beach-room-pollen",
               "name": "beach-room-pollen"
@@ -7437,6 +7500,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.16,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -90,
               "id": "nether-embers",
               "name": "nether-embers"
@@ -7971,6 +8036,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "england-pollen",
               "name": "england-pollen"
@@ -8195,6 +8262,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "france-pollen",
               "name": "france-pollen"
@@ -8440,6 +8509,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "fjord-air",
               "name": "fjord-air"
@@ -8690,6 +8761,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -4,
               "id": "proceno-work-dust",
               "name": "proceno-work-dust"
@@ -8909,6 +8982,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.5,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -15,
               "id": "umbria-pollen",
               "name": "umbria-pollen"
@@ -9212,6 +9287,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "florence-air-dust",
               "name": "florence-air-dust"
@@ -9506,6 +9583,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 0,
               "id": "vinci-dust",
               "name": "vinci-dust"
@@ -9734,6 +9813,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -5,
               "id": "giza-dust",
               "name": "giza-dust"
@@ -9986,6 +10067,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.35,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -4,
               "id": "abu-simbel-dust",
               "name": "abu-simbel-dust"
@@ -10195,6 +10278,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -1,
               "id": "particles-mu9khytk",
               "name": "particles-mu9khytk"
@@ -10374,6 +10459,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": -1,
               "id": "particles-mu9km1r5",
               "name": "particles-mu9km1r5"
@@ -10408,6 +10495,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.3,
               "distribution": "ribbon",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 4,
               "id": "buried-city-sand",
               "seed": 33019,
@@ -10585,6 +10674,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.45,
               "distribution": "volume",
               "scaleCountWithArea": true,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 91,
               "id": "particles-mu9levw0",
               "name": "particles-mu9levw0"
@@ -10764,6 +10855,8 @@ window.SVEN_WORLD_CONFIG = {
               "depthSpread": 0.6,
               "distribution": "volume",
               "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
               "boundsRotation": 90,
               "id": "particles-mu9mgbk7",
               "name": "particles-mu9mgbk7"
@@ -10858,6 +10951,756 @@ window.SVEN_WORLD_CONFIG = {
       "mainCharacterSettings": {
         "sven": {
           "spriteScale": 1.1
+        }
+      }
+    },
+    "LVL-0036": {
+      "cinematicLighting": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": 0,
+          "contrast": 1,
+          "highlights": 0,
+          "shadows": 0,
+          "saturation": 1,
+          "warmth": 0,
+          "tint": 0,
+          "blackPoint": 0
+        },
+        "localLights": {
+          "enabled": false,
+          "items": []
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": []
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": []
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.25,
+          "threshold": 0.8,
+          "softKnee": 0.2,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.8,
+          "localContribution": 0.3
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 362,
+              "color": "#e2efff",
+              "shape": "rectangle",
+              "width": 2172,
+              "height": 724,
+              "softness": 0.6,
+              "direction": 90,
+              "count": 650,
+              "size": 1.5,
+              "sizeVariation": 0.7,
+              "speed": 42,
+              "turbulence": 0.65,
+              "lifetime": 24,
+              "opacity": 0.5,
+              "glow": 0,
+              "gravity": 0.25,
+              "randomness": 0.8,
+              "depth": 0.7,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "layer": "environment",
+              "wind": 7,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.5,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
+              "boundsRotation": 0,
+              "id": "particles-mv5os2ri",
+              "name": "Light Snow"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 161,
+          "shadowLightSourceY": 202,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.7,
+          "colorSpill": 0.65,
+          "intensityResponse": 0.6,
+          "directionalInfluence": 0.7,
+          "atmosphereInfluence": 0.65,
+          "depthTint": 0.18,
+          "grounding": 0.12,
+          "sideLighting": 0.7,
+          "frontAtmosphere": 0.45
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.1,
+          "radius": 2,
+          "colorInfluence": 0.7
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.1,
+          "width": 1.5,
+          "colorResponse": 0.8,
+          "localInfluence": 0.8,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.15,
+          "softness": 0.7,
+          "finalExposure": 0,
+          "finalContrast": 1
+        },
+        "godRays": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": []
+        },
+        "gameplayCues": {
+          "enabled": true,
+          "intensity": 1,
+          "characterInfluence": 1
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "playerDepthOcclusion": {
+        "enabled": true,
+        "offset": -0.008
+      },
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.9
+        }
+      }
+    },
+    "LVL-0038": {
+      "cinematicLighting": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": 0,
+          "contrast": 1,
+          "highlights": 0,
+          "shadows": 0,
+          "saturation": 1,
+          "warmth": 0,
+          "tint": 0,
+          "blackPoint": 0
+        },
+        "localLights": {
+          "enabled": false,
+          "items": []
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": []
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": []
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.25,
+          "threshold": 0.8,
+          "softKnee": 0.2,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.8,
+          "localContribution": 0.3
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 362,
+              "color": "#e2efff",
+              "shape": "rectangle",
+              "width": 2172,
+              "height": 724,
+              "softness": 0.6,
+              "direction": 68,
+              "count": 2000,
+              "size": 2.1,
+              "sizeVariation": 0.8,
+              "speed": 259.05,
+              "turbulence": 1.92,
+              "lifetime": 24,
+              "opacity": 0.6,
+              "glow": 0,
+              "gravity": 0.2,
+              "randomness": 0.8,
+              "depth": 0.7,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "layer": "environment",
+              "wind": 64,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.6,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "gustStrength": 0.7,
+              "motion": "falling",
+              "boundsRotation": 0,
+              "id": "particles-mv6dejny",
+              "name": "Windblown Snow"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 161,
+          "shadowLightSourceY": 202,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.7,
+          "colorSpill": 0.65,
+          "intensityResponse": 0.6,
+          "directionalInfluence": 0.7,
+          "atmosphereInfluence": 0.65,
+          "depthTint": 0.18,
+          "grounding": 0.12,
+          "sideLighting": 0.7,
+          "frontAtmosphere": 0.45
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.1,
+          "radius": 2,
+          "colorInfluence": 0.7
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.1,
+          "width": 1.5,
+          "colorResponse": 0.8,
+          "localInfluence": 0.8,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.15,
+          "softness": 0.7,
+          "finalExposure": 0,
+          "finalContrast": 1
+        },
+        "godRays": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": []
+        },
+        "gameplayCues": {
+          "enabled": true,
+          "intensity": 1,
+          "characterInfluence": 1
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "playerDepthOcclusion": {
+        "enabled": true,
+        "offset": -0.011
+      },
+      "mainCharacter": "sven_arc",
+      "mainCharacterSettings": {
+        "sven_arc": {
+          "spriteScale": 0.75
+        },
+        "sven": {
+          "spriteScale": 0.95
+        }
+      }
+    },
+    "LVL-0037": {
+      "cinematicLighting": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": 0,
+          "contrast": 1,
+          "highlights": 0,
+          "shadows": 0,
+          "saturation": 1,
+          "warmth": 0,
+          "tint": 0,
+          "blackPoint": 0
+        },
+        "localLights": {
+          "enabled": false,
+          "items": []
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": []
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": []
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.25,
+          "threshold": 0.8,
+          "softKnee": 0.2,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.8,
+          "localContribution": 0.3
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 362,
+              "color": "#e2efff",
+              "shape": "rectangle",
+              "width": 2172,
+              "height": 724,
+              "softness": 0.6,
+              "direction": 90,
+              "count": 1600,
+              "size": 2.2,
+              "sizeVariation": 0.9,
+              "speed": 65,
+              "turbulence": 1,
+              "lifetime": 18,
+              "opacity": 0.7,
+              "glow": 0,
+              "gravity": 0.6,
+              "randomness": 0.8,
+              "depth": 0.7,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "layer": "environment",
+              "wind": 18,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.6,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
+              "boundsRotation": 0,
+              "id": "particles-mv5ofmqu",
+              "name": "Snowfall"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 161,
+          "shadowLightSourceY": 202,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.7,
+          "colorSpill": 0.65,
+          "intensityResponse": 0.6,
+          "directionalInfluence": 0.7,
+          "atmosphereInfluence": 0.65,
+          "depthTint": 0.18,
+          "grounding": 0.12,
+          "sideLighting": 0.7,
+          "frontAtmosphere": 0.45
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.1,
+          "radius": 2,
+          "colorInfluence": 0.7
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.1,
+          "width": 1.5,
+          "colorResponse": 0.8,
+          "localInfluence": 0.8,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.15,
+          "softness": 0.7,
+          "finalExposure": 0,
+          "finalContrast": 1
+        },
+        "godRays": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": []
+        },
+        "gameplayCues": {
+          "enabled": true,
+          "intensity": 1,
+          "characterInfluence": 1
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
+        }
+      },
+      "playerDepthOcclusion": {
+        "enabled": true,
+        "offset": -0.006
+      }
+    },
+    "LVL-0039": {
+      "cinematicLighting": {
+        "version": 3,
+        "layers": {
+          "environment": true,
+          "globalLighting": true,
+          "effects": true,
+          "characters": true
+        },
+        "grading": {
+          "enabled": false,
+          "exposure": 0,
+          "contrast": 1,
+          "highlights": 0,
+          "shadows": 0,
+          "saturation": 1,
+          "warmth": 0,
+          "tint": 0,
+          "blackPoint": 0
+        },
+        "localLights": {
+          "enabled": false,
+          "items": []
+        },
+        "areaLights": {
+          "enabled": false,
+          "items": []
+        },
+        "shafts": {
+          "enabled": false,
+          "items": []
+        },
+        "atmosphere": {
+          "enabled": false,
+          "items": []
+        },
+        "bloom": {
+          "enabled": false,
+          "intensity": 0.25,
+          "threshold": 0.8,
+          "softKnee": 0.2,
+          "radius": 8,
+          "falloff": 1.5,
+          "colorInfluence": 0.8,
+          "localContribution": 0.3
+        },
+        "particles": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 362,
+              "color": "#dae8fa",
+              "shape": "rectangle",
+              "width": 2172,
+              "height": 724,
+              "softness": 0.6,
+              "direction": 64,
+              "count": 3200,
+              "size": 1.64,
+              "sizeVariation": 0.58,
+              "speed": 82.8,
+              "turbulence": 3,
+              "lifetime": 18,
+              "opacity": 0.74,
+              "glow": 0,
+              "gravity": 0.35,
+              "randomness": 0.8,
+              "depth": 0.82,
+              "depthInfluence": 1,
+              "depthSoftness": 0.12,
+              "layer": "environment",
+              "wind": 155,
+              "streak": 2,
+              "pulse": 0,
+              "depthSpread": 0.8,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "gustStrength": 1.45,
+              "motion": "falling",
+              "boundsRotation": 1,
+              "id": "particles-mv5om8k8",
+              "name": "Blizzard"
+            },
+            {
+              "enabled": true,
+              "x": 1086,
+              "y": 362,
+              "color": "#e2efff",
+              "shape": "rectangle",
+              "width": 2172,
+              "height": 724,
+              "softness": 0.6,
+              "direction": 46,
+              "count": 1600,
+              "size": 2.2,
+              "sizeVariation": 0.9,
+              "speed": 65,
+              "turbulence": 1,
+              "lifetime": 18,
+              "opacity": 0.7,
+              "glow": 0,
+              "gravity": 0.6,
+              "randomness": 0.8,
+              "depth": 0.7,
+              "depthInfluence": 1,
+              "depthSoftness": 0.14,
+              "layer": "environment",
+              "wind": 18,
+              "streak": 1,
+              "pulse": 0,
+              "depthSpread": 0.6,
+              "distribution": "volume",
+              "scaleCountWithArea": false,
+              "gustStrength": 0,
+              "motion": "falling",
+              "boundsRotation": 0,
+              "id": "particles-mv6dhgut",
+              "name": "Snowfall"
+            }
+          ]
+        },
+        "characters": {
+          "enabled": false,
+          "groundingShadow": true,
+          "showShadowContactDebug": false,
+          "shadowLightSourceX": 161,
+          "shadowLightSourceY": 202,
+          "shadowShape": "silhouette",
+          "shadowGroundlineOffset": 0,
+          "shadowStrength": 5,
+          "shadowOpacity": 100,
+          "shadowSoftness": 0.72,
+          "shadowWidth": 1,
+          "shadowLength": 1,
+          "shadowScale": 1.2,
+          "shadowOffsetX": 0,
+          "shadowOffsetY": 0,
+          "shadowDirection": -10,
+          "shadowGlobalLightInfluence": 1,
+          "shadowLocalLightInfluence": 2,
+          "shadowDirectionSmoothing": 0.08,
+          "shadowDarkBackgroundSuppression": 0.85,
+          "shadowAtmosphereSuppression": 1,
+          "ambientInfluence": 0.15,
+          "localInfluence": 0.7,
+          "colorSpill": 0.65,
+          "intensityResponse": 0.6,
+          "directionalInfluence": 0.7,
+          "atmosphereInfluence": 0.65,
+          "depthTint": 0.18,
+          "grounding": 0.12,
+          "sideLighting": 0.7,
+          "frontAtmosphere": 0.45
+        },
+        "wrap": {
+          "enabled": false,
+          "strength": 0.1,
+          "radius": 2,
+          "colorInfluence": 0.7
+        },
+        "rim": {
+          "enabled": false,
+          "strength": 0.1,
+          "width": 1.5,
+          "colorResponse": 0.8,
+          "localInfluence": 0.8,
+          "ambientInfluence": 0.1
+        },
+        "autoExposure": {
+          "enabled": false,
+          "minExposure": -0.5,
+          "maxExposure": 0.5,
+          "adaptationSpeed": 0.25,
+          "strength": 0.4
+        },
+        "finishing": {
+          "enabled": false,
+          "intensity": 0.15,
+          "softness": 0.7,
+          "finalExposure": 0,
+          "finalContrast": 1
+        },
+        "godRays": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSurface": {
+          "enabled": false,
+          "items": []
+        },
+        "waterSparkles": {
+          "enabled": false,
+          "items": []
+        },
+        "gameplayCues": {
+          "enabled": true,
+          "intensity": 1,
+          "characterInfluence": 1
+        },
+        "depth": {
+          "enabled": true,
+          "filterRadius": 1.5,
+          "perspective": 0
         }
       }
     }

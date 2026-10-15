@@ -1,3 +1,4 @@
+const {selectSystem,selectSceneItem,chooseCreation}=require('./editor-workspace-helpers');
 const {test,expect}=require('@playwright/test');
 const fs=require('fs'),path=require('path');
 const contract=require('../src/cinematic-settings');
@@ -69,15 +70,17 @@ test('Sand shares dropdown, rotation handles, presets and Apply/reload on every 
  await page.waitForFunction(()=>window.eval('typeof selectLevel')==='function');
  await expect(page.locator('[data-actor="sven"]')).toBeVisible();
  await expect(page.locator('[data-gpu-preparation]')).toHaveCount(0);
- await page.keyboard.press('Control+Shift+D');await page.getByRole('button',{name:'Graphics',exact:true}).click();
+ await page.keyboard.press('Control+Shift+D');await selectSceneItem(page,'cinematic','buried-city-sand');
  const group=page.locator('[data-cinematic-group="particles"]');
  if(!await group.evaluate(e=>e.open))await group.locator('summary').click();
  const preset=group.locator('[data-cinematic-preset="particles"]'),field=key=>group.locator(`[data-cinematic-setting="${key}"]`);
  await expect(page.getByRole('button',{name:'Add Sand',exact:true})).toHaveCount(0);
  await expect(page.locator('[data-effect-preset-card="windblown-sand"]')).toHaveCount(0);
- await group.locator('[data-cinematic-select="particles"]').selectOption('buried-city-sand');
+ await expect(page.locator('[data-cinematic-selected]')).toHaveAttribute('data-cinematic-selected','buried-city-sand');
  const value=()=>page.evaluate(()=>AtlasCinematicSettings.normalize(window.eval('worldResolver').levelSettings('LVL-0033').cinematicLighting).particles.items.find(i=>i.id==='buried-city-sand'));
- expect(await value()).toMatchObject({x:974,y:514,width:2226,height:218,distribution:'ribbon'});
+ const authored={window:{}};require('vm').runInNewContext(original.toString(),authored);
+ expect(await value()).toEqual(contract.normalize(authored.window.SVEN_WORLD_CONFIG.levels['LVL-0033'].cinematicLighting).particles.items.find(i=>i.id==='buried-city-sand'));
+ expect((await value()).distribution).toBe('ribbon');
  for(const [key,v] of Object.entries({x:180,y:220,width:180,height:80}))await field(key).fill(String(v));
  expect(await value()).toMatchObject({x:180,y:220,width:180,height:80});
  for(const shape of ['ellipse','rectangle','polygon']){
@@ -116,16 +119,16 @@ test('adding Sand to an empty scene mounts shared canvas without requiring GPU p
   window.eval('render')();
  });
  await expect(page.locator('[data-scene-effects-canvas="worldAtmosphere"]')).toHaveCount(0);
- await page.keyboard.press('Control+Shift+D');await page.getByRole('button',{name:'Graphics',exact:true}).click();
- const group=page.locator('[data-cinematic-group="particles"]');
- if(!await group.evaluate(e=>e.open))await group.locator('summary').click();
- await group.locator('[data-cinematic-action="add"]').click();
- await group.locator('[data-cinematic-preset="particles"]').selectOption('Sand');
+ await page.keyboard.press('Control+Shift+D');await chooseCreation(page,'cinematic:particles');
+ await page.locator('[data-add-variant]').selectOption('Sand');await page.locator('[data-cinematic-action="add"]').click();
  await expect(page.locator('[data-scene-effects-canvas="worldAtmosphere"]')).toHaveCount(1);
  expect(await page.evaluate(()=>{
   const settings=window.eval('worldResolver').levelSettings('LVL-0033');
   return {fields:window.eval('sceneEffectRuntime').particleFields.length,gpu:AtlasCinematicRenderer.requiresGPU('illustrated',settings.cinematicLighting,settings.illustratedFeatures)};
  })).toEqual({fields:1,gpu:false});
+ await selectSceneItem(page,'environment','environment');
+ const group=page.locator('[data-environment-system="particles"]');
+ if(!await group.evaluate(e=>e.open))await group.locator('summary').click();
  await group.locator('[data-cinematic-system="particles"]').uncheck();
  expect(await page.evaluate(()=>window.eval('sceneEffectRuntime').particleFields.length)).toBe(0);
  await group.locator('[data-cinematic-system="particles"]').check();

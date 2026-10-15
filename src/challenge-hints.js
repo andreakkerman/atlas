@@ -4,7 +4,7 @@
   const arcLevels = new Set(["LVL-0032", "LVL-0033", "LVL-0034", "LVL-0035"]);
   const isArcLevel = (id) => arcLevels.has(id);
   // Exact production IDs; explicit authored stages still preserve inactive banks/drafts.
-  const reusableLevels = new Set(Array.from({ length: 35 }, (_, i) => `LVL-${String(i + 1).padStart(4, "0")}`));
+  const reusableLevels = new Set(Array.from({ length: 39 }, (_, i) => `LVL-${String(i + 1).padStart(4, "0")}`));
   const usesReusableHints = (id) => reusableLevels.has(id);
 
   function multiplication(a, b) {

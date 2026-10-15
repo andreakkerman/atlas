@@ -91,7 +91,8 @@ test('ARC output, unmigrated worlds, shared runtime and routing are unchanged', 
     expect(variants(load(id)).map(q => [q.id, hints.resolve(id, q, 'minnie'), hints.resolve(id, q, 'moose')])).toEqual(currentE5HintPairs(id,pairs));
   }
   // All production levels now opt in; authored inactive stages still take precedence.
-  expect(hints.usesReusableHints('LVL-0036')).toBe(false);
+  expect(hints.usesReusableHints('LVL-0039')).toBe(true);
+  expect(hints.usesReusableHints('LVL-0040')).toBe(false);
   expect(hints.resolve('LVL-0021', { hintMoose: 'Authored inactive hint.' }, 'moose')).toBe('Authored inactive hint.');
 });
 
